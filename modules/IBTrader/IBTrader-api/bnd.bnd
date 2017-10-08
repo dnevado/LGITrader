@@ -1,0 +1,9 @@
+Bundle-Name: IBTrader-api
+Bundle-SymbolicName: com.ibtrader.data.api
+Bundle-Version: 1.0.0
+Export-Package:\
+	com.ibtrader.data.exception,\
+	com.ibtrader.data.model,\
+	com.ibtrader.data.service,\
+	com.ibtrader.data.service.persistence
+-includeresource: META-INF/service.xml=../IBTrader-service/service.xml

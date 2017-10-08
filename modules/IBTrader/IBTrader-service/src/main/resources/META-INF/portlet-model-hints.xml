@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+
+<model-hints>
+	<model name="com.ibtrader.data.model.Config">
+		<field name="uuid" type="String" />
+		<field name="configId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="name" type="String" />
+		<field name="value" type="String" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="globaldefault" type="boolean" />
+		<field name="config_key" type="String" />
+		<field name="description" type="String" />
+	</model>
+	<model name="com.ibtrader.data.model.IBOrder">
+		<field name="uuid" type="String" />
+		<field name="ordersId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="orderID" type="long" />
+		<field name="shareID" type="long" />
+		<field name="checked" type="boolean" />
+	</model>
+	<model name="com.ibtrader.data.model.Market">
+		<field name="uuid" type="String" />
+		<field name="marketId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="active" type="boolean" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="start_hour" type="String" />
+		<field name="end_hour" type="String" />
+		<field name="identifier" type="String" />
+		<field name="currency" type="String" />
+	</model>
+	<model name="com.ibtrader.data.model.Position">
+		<field name="uuid" type="String" />
+		<field name="positionId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="shareId" type="long" />
+		<field name="value" type="double" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="state" type="String" />
+		<field name="state_in" type="String" />
+		<field name="state_out" type="String" />
+		<field name="description" type="String" />
+		<field name="price_in" type="double" />
+		<field name="price_real_in" type="double" />
+		<field name="limit_price_in" type="double" />
+		<field name="date_in" type="Date" />
+		<field name="date_real_in" type="Date" />
+		<field name="positionId_tws_out" type="long" />
+		<field name="type" type="String" />
+		<field name="price_out" type="double" />
+		<field name="price_real_out" type="double" />
+		<field name="limit_price_out" type="double" />
+		<field name="date_out" type="Date" />
+		<field name="date_real_out" type="Date" />
+		<field name="share_number_to_trade" type="long" />
+		<field name="share_number_traded" type="long" />
+		<field name="realtimeId_in" type="long" />
+		<field name="realtimeId_out" type="long" />
+		<field name="strategyId_in" type="long" />
+		<field name="strategyId_out" type="long" />
+		<field name="percentualstoplost_out" type="double" />
+		<field name="pricestoplost_out" type="double" />
+		<field name="percentualstopprofit_out" type="double" />
+		<field name="pricestopprofit_out" type="double" />
+		<field name="pendingcancelled" type="long" />
+		<field name="trading_data_operations" type="String" />
+		<field name="simulation_mode" type="boolean" />
+	</model>
+	<model name="com.ibtrader.data.model.Realtime">
+		<field name="uuid" type="String" />
+		<field name="realtimeId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="shareId" type="long" />
+		<field name="value" type="double" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="max_value" type="double" />
+		<field name="min_value" type="boolean" />
+		<field name="volume" type="int" />
+		<field name="avg_volume" type="int" />
+	</model>
+	<model name="com.ibtrader.data.model.Share">
+		<field name="uuid" type="String" />
+		<field name="shareId" type="long" />
+		<field name="name" type="String" />
+		<field name="symbol" type="String" />
+		<field name="groupId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="active" type="boolean" />
+		<field name="numbertopurchase" type="long" />
+		<field name="expiry_date" type="Date" />
+		<field name="expiry_expression" type="String" />
+		<field name="tick_futures" type="double" />
+		<field name="multiplier" type="long" />
+		<field name="last_error_data_read" type="String" />
+		<field name="last_error_data_trade" type="String" />
+		<field name="security_type" type="String" />
+		<field name="exchange" type="String" />
+		<field name="primary_exchange" type="String" />
+		<field name="date_contract_verified" type="Date" />
+		<field name="marketId" type="long" />
+	</model>
+</model-hints>

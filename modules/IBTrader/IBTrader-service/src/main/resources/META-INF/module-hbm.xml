@@ -1,0 +1,134 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping auto-import="false" default-lazy="false">
+	<import class="com.ibtrader.data.model.Config" />
+	<import class="com.ibtrader.data.model.IBOrder" />
+	<import class="com.ibtrader.data.model.Market" />
+	<import class="com.ibtrader.data.model.Position" />
+	<import class="com.ibtrader.data.model.Realtime" />
+	<import class="com.ibtrader.data.model.Share" />
+	<class name="com.ibtrader.data.model.impl.ConfigImpl" table="ibtrader_Config">
+		<id name="configId" type="long">
+			<generator class="assigned" />
+		</id>
+		<property column="uuid_" name="uuid" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="groupId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="companyId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="name" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="value" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="createDate" type="org.hibernate.type.TimestampType" />
+		<property name="modifiedDate" type="org.hibernate.type.TimestampType" />
+		<property name="globaldefault" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />
+		<property name="config_key" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="description" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+	</class>
+	<class name="com.ibtrader.data.model.impl.IBOrderImpl" table="ibtrader_IBOrder">
+		<id name="ordersId" type="long">
+			<generator class="assigned" />
+		</id>
+		<property column="uuid_" name="uuid" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="groupId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="companyId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="orderID" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="shareID" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="checked" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />
+	</class>
+	<class name="com.ibtrader.data.model.impl.MarketImpl" table="ibtrader_Market">
+		<id name="marketId" type="long">
+			<generator class="assigned" />
+		</id>
+		<property column="uuid_" name="uuid" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="groupId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="companyId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property column="active_" name="active" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />
+		<property name="createDate" type="org.hibernate.type.TimestampType" />
+		<property name="modifiedDate" type="org.hibernate.type.TimestampType" />
+		<property name="start_hour" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="end_hour" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="identifier" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property column="currency_" name="currency" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+	</class>
+	<class name="com.ibtrader.data.model.impl.PositionImpl" table="ibtrader_Position">
+		<id name="positionId" type="long">
+			<generator class="assigned" />
+		</id>
+		<property column="uuid_" name="uuid" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="groupId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="companyId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="shareId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="value" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
+		<property name="createDate" type="org.hibernate.type.TimestampType" />
+		<property name="modifiedDate" type="org.hibernate.type.TimestampType" />
+		<property column="state_" name="state" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="state_in" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="state_out" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="description" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="price_in" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
+		<property name="price_real_in" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
+		<property name="limit_price_in" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
+		<property name="date_in" type="org.hibernate.type.TimestampType" />
+		<property name="date_real_in" type="org.hibernate.type.TimestampType" />
+		<property name="positionId_tws_out" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property column="type_" name="type" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="price_out" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
+		<property name="price_real_out" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
+		<property name="limit_price_out" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
+		<property name="date_out" type="org.hibernate.type.TimestampType" />
+		<property name="date_real_out" type="org.hibernate.type.TimestampType" />
+		<property name="share_number_to_trade" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="share_number_traded" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="realtimeId_in" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="realtimeId_out" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="strategyId_in" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="strategyId_out" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="percentualstoplost_out" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
+		<property name="pricestoplost_out" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
+		<property name="percentualstopprofit_out" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
+		<property name="pricestopprofit_out" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
+		<property name="pendingcancelled" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="trading_data_operations" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="simulation_mode" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />
+	</class>
+	<class name="com.ibtrader.data.model.impl.RealtimeImpl" table="ibtrader_Realtime">
+		<id name="realtimeId" type="long">
+			<generator class="assigned" />
+		</id>
+		<property column="uuid_" name="uuid" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="groupId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="companyId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="shareId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="value" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
+		<property name="createDate" type="org.hibernate.type.TimestampType" />
+		<property name="modifiedDate" type="org.hibernate.type.TimestampType" />
+		<property name="max_value" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
+		<property name="min_value" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />
+		<property name="volume" type="com.liferay.portal.dao.orm.hibernate.IntegerType" />
+		<property name="avg_volume" type="com.liferay.portal.dao.orm.hibernate.IntegerType" />
+	</class>
+	<class name="com.ibtrader.data.model.impl.ShareImpl" table="ibtrader_Share">
+		<id name="shareId" type="long">
+			<generator class="assigned" />
+		</id>
+		<property column="uuid_" name="uuid" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="name" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="symbol" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="groupId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="companyId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="createDate" type="org.hibernate.type.TimestampType" />
+		<property name="modifiedDate" type="org.hibernate.type.TimestampType" />
+		<property column="active_" name="active" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />
+		<property name="numbertopurchase" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="expiry_date" type="org.hibernate.type.TimestampType" />
+		<property name="expiry_expression" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="tick_futures" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
+		<property name="multiplier" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="last_error_data_read" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="last_error_data_trade" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="security_type" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="exchange" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="primary_exchange" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="date_contract_verified" type="org.hibernate.type.TimestampType" />
+		<property name="marketId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+	</class>
+</hibernate-mapping>

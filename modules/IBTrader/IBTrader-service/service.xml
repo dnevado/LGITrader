@@ -1,0 +1,220 @@
+<?xml version="1.0"?>
+<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 7.0.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_7_0_0.dtd">
+
+<service-builder package-path="com.ibtrader.data" auto-namespace-tables="true">
+	<namespace>ibtrader</namespace>
+	<!--<entity data-source="sampleDataSource" local-service="true" name="Foo" remote-service="false" session-factory="sampleSessionFactory" table="foo" tx-manager="sampleTransactionManager uuid="true"">-->
+	<entity local-service="true"   name="Realtime" remote-service="false" uuid="true">
+
+		<!-- PK fields -->
+
+		<column name="realtimeId" primary="true" type="long" />
+
+		<!-- Group instance -->
+
+		<column name="groupId" type="long" />
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="shareId" type="long" />
+		<column name="value" type="double" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+
+		<!-- Other fields -->
+
+		<column name="max_value" type="double" />
+		<column name="min_value" type="boolean" />
+		<column name="volume" type="int" />
+		<column name="avg_volume" type="int" />
+
+		<!-- Order -->
+
+		<order by="asc">
+			<order-column name="shareId" />
+		</order>
+
+		<!-- Finder methods -->
+
+		<finder name="shareId" return-type="Collection">
+			<finder-column name="shareId" />
+		</finder>
+
+		<!-- References -->
+	</entity>
+	<entity local-service="true" name="Config" remote-service="false" uuid="true">
+
+		<!-- PK fields -->
+
+		<column name="configId" primary="true" type="long" />
+
+		<!-- Group instance -->
+		<column name="groupId" type="long" />
+		<!-- Audit fields -->
+		<column name="companyId" type="long" />
+		<column name="name" type="String" />
+		<column name="value" type="String" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+		<column name="globaldefault" type="boolean" />
+
+		<!-- Other fields -->
+
+		<column name="config_key" type="String" />
+		<column name="description" type="String" />
+		
+		<finder name="KeyCompany" return-type="Collection">
+			<finder-column name="companyId" />
+			<finder-column name="config_key" />		
+		</finder>
+		<finder name="KeyGlobalDefault" return-type="Collection">		
+			<finder-column name="config_key" />
+			<finder-column name="globaldefault" />			
+		</finder>
+		
+
+		<!-- References -->
+	</entity>
+	<entity local-service="true" name="Market" remote-service="false" uuid="true">
+
+		<!-- PK fields -->
+		<column name="marketId" primary="true" type="long" />
+
+		<!-- Group instance -->
+
+		<column name="groupId" type="long" />
+		<column name="companyId" type="long" />
+		<!-- Audit fields -->
+
+		<column name="active" type="boolean" />			
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+		<column name="start_hour" type="String" />
+		<column name="end_hour" type="String" />
+		<column name="identifier" type="String" />
+		<column name="currency" type="String" />
+		
+		<!-- Other fields -->
+		<finder name="ActiveStartEndHour" return-type="Collection">		
+			<finder-column name="start_hour" />
+			<finder-column name="end_hour" />		
+			<finder-column name="active" />				
+		</finder>
+
+
+	</entity>
+	
+	
+	<entity local-service="true" name="IBOrder" remote-service="false" uuid="true">
+
+		<!-- PK fields -->
+
+		<column name="ordersId" primary="true" type="long" />
+
+		<!-- Group instance -->
+
+		<column name="groupId" type="long" />
+		<column name="companyId" type="long" />
+		<column name="orderID" type="long" />
+		<column name="shareID" type="long" />
+		<column name="checked" type="boolean" />
+		
+		<!-- Other fields -->
+	</entity>
+	
+	<entity local-service="true" name="Share" remote-service="false" uuid="true">
+	
+			<column name="shareId" primary="true" type="long" />
+			<column name="name" type="String" />
+			<column name="symbol"  type="String" />
+			<column name="groupId" type="long" />
+			<column name="companyId" type="long" />
+			<column name="createDate" type="Date" />
+			<column name="modifiedDate" type="Date" />
+			<column name="active" type="boolean" />
+			<column name="numbertopurchase" type="long" />
+			<column name="expiry_date" type="Date" />
+			<column name="expiry_expression" type="String" />
+			<column name="tick_futures" type="double" />
+			<column name="multiplier" type="long" />			
+			<column name="last_error_data_read" type="String" />
+			<column name="last_error_data_trade" type="String" />
+			<column name="security_type" type="String" />
+			<column name="exchange" type="String" /> 
+			<column name="primary_exchange" type="String" />
+			<column name="date_contract_verified" type="Date" />
+	
+	        <column name="marketId" type="long"></column>
+    <!--    	<reference package-path="com.ibtrader.data" entity="Market"></reference>-->
+        	
+        	
+        	<finder name="ActiveMarket" return-type="Collection">		
+				<finder-column name="active" />
+				<finder-column name="marketId" />								
+			</finder>
+	
+	</entity>
+	
+	<entity local-service="true" name="Position" remote-service="false" uuid="true">
+
+		<!-- PK fields -->
+
+		<column name="positionId" primary="true" type="long" />
+
+		<!-- Group instance -->
+		<column name="groupId" type="long" />
+
+		<!-- Audit fields -->
+		<column name="companyId" type="long" />
+		<column name="shareId" type="long" />
+		<column name="value" type="double" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+
+		<!-- Other fields -->
+		<column name="state" type="String" />
+		<column name="state_in" type="String" />
+		<column name="state_out" type="String" />
+		<column name="description" type="String" />
+		<column name="price_in" type="double" />
+		<column name="price_real_in" type="double" />
+		<column name="limit_price_in" type="double" />
+		<column name="date_in" type="Date" />
+		<column name="date_real_in" type="Date" />
+		<column name="positionId_tws_out" type="long" />
+		<column name="type" type="String" />		
+		<column name="price_out" type="double" />		
+		<column name="price_real_out" type="double" />
+		<column name="limit_price_out" type="double" />
+		<column name="date_out" type="Date" />
+		<column name="date_real_out" type="Date" />
+		
+		<column name="share_number_to_trade" type="long" />
+		<column name="share_number_traded" type="long" />
+		
+		<column name="realtimeId_in" type="long" />
+		<column name="realtimeId_out" type="long" />
+		
+		<column name="strategyId_in" type="long" />
+		<column name="strategyId_out" type="long" />					
+		
+		<column name="percentualstoplost_out" type="double" />
+		<column name="pricestoplost_out" type="double" />
+		
+		<column name="percentualstopprofit_out" type="double" />
+		<column name="pricestopprofit_out" type="double" />
+		
+		<column name="pendingcancelled" type="long" />
+		<column name="trading_data_operations" type="String" />
+		<column name="simulation_mode" type="boolean" />
+		
+		<!-- Order -->
+		<!-- Finder methods -->
+		<!-- References -->
+	</entity>
+		<exceptions>		    
+		    <exception>positionId</exception>
+		</exceptions>
+	
+</service-builder>
