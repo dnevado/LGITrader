@@ -83,6 +83,7 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 		attributes.put("limit_price_out", getLimit_price_out());
 		attributes.put("date_out", getDate_out());
 		attributes.put("date_real_out", getDate_real_out());
+		attributes.put("share_number", getShare_number());
 		attributes.put("share_number_to_trade", getShare_number_to_trade());
 		attributes.put("share_number_traded", getShare_number_traded());
 		attributes.put("realtimeId_in", getRealtimeId_in());
@@ -244,6 +245,12 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 
 		if (date_real_out != null) {
 			setDate_real_out(date_real_out);
+		}
+
+		Long share_number = (Long)attributes.get("share_number");
+
+		if (share_number != null) {
+			setShare_number(share_number);
 		}
 
 		Long share_number_to_trade = (Long)attributes.get(
@@ -746,6 +753,16 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 	}
 
 	/**
+	* Returns the share_number of this position.
+	*
+	* @return the share_number of this position
+	*/
+	@Override
+	public long getShare_number() {
+		return _position.getShare_number();
+	}
+
+	/**
 	* Returns the share_number_to_trade of this position.
 	*
 	* @return the share_number_to_trade of this position
@@ -1079,6 +1096,16 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 	@Override
 	public void setShareId(long shareId) {
 		_position.setShareId(shareId);
+	}
+
+	/**
+	* Sets the share_number of this position.
+	*
+	* @param share_number the share_number of this position
+	*/
+	@Override
+	public void setShare_number(long share_number) {
+		_position.setShare_number(share_number);
 	}
 
 	/**

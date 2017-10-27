@@ -99,6 +99,12 @@ public class PositionLocalServiceWrapper implements PositionLocalService,
 		return _positionLocalService.fetchPositionByUuidAndGroupId(uuid, groupId);
 	}
 
+	@Override
+	public com.ibtrader.data.model.Position findByPositionID_Out_TWS(
+		long _PositionIDTWS) {
+		return _positionLocalService.findByPositionID_Out_TWS(_PositionIDTWS);
+	}
+
 	/**
 	* Returns the position with the primary key.
 	*

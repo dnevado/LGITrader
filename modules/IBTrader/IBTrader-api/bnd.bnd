@@ -5,5 +5,6 @@ Export-Package:\
 	com.ibtrader.data.exception,\
 	com.ibtrader.data.model,\
 	com.ibtrader.data.service,\
-	com.ibtrader.data.service.persistence
--includeresource: META-INF/service.xml=../IBTrader-service/service.xml
+	com.ibtrader.data.service.persistence,\		
+	com.ibtrader.data.model.Strategy,\
+../IBTrader-service/service.xml

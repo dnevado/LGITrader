@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.ibtrader.data.model.Share;
 import com.ibtrader.data.model.ShareModel;
+import com.ibtrader.data.model.ShareSoap;
 
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
@@ -25,6 +26,7 @@ import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
 import com.liferay.exportimport.kernel.lar.StagedModelType;
 
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
+import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.model.impl.BaseModelImpl;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -38,8 +40,10 @@ import java.io.Serializable;
 
 import java.sql.Types;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -55,6 +59,7 @@ import java.util.Map;
  * @see ShareModel
  * @generated
  */
+@JSON(strict = true)
 @ProviderType
 public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 	/*
@@ -74,6 +79,10 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 			{ "modifiedDate", Types.TIMESTAMP },
 			{ "active_", Types.BOOLEAN },
 			{ "numbertopurchase", Types.BIGINT },
+			{ "percentual_limit_buy", Types.DOUBLE },
+			{ "percentual_stop_lost", Types.DOUBLE },
+			{ "percentual_stop_profit", Types.DOUBLE },
+			{ "percentual_stop_profit_position", Types.DOUBLE },
 			{ "expiry_date", Types.TIMESTAMP },
 			{ "expiry_expression", Types.VARCHAR },
 			{ "tick_futures", Types.DOUBLE },
@@ -99,6 +108,10 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		TABLE_COLUMNS_MAP.put("modifiedDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("active_", Types.BOOLEAN);
 		TABLE_COLUMNS_MAP.put("numbertopurchase", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("percentual_limit_buy", Types.DOUBLE);
+		TABLE_COLUMNS_MAP.put("percentual_stop_lost", Types.DOUBLE);
+		TABLE_COLUMNS_MAP.put("percentual_stop_profit", Types.DOUBLE);
+		TABLE_COLUMNS_MAP.put("percentual_stop_profit_position", Types.DOUBLE);
 		TABLE_COLUMNS_MAP.put("expiry_date", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("expiry_expression", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("tick_futures", Types.DOUBLE);
@@ -112,7 +125,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		TABLE_COLUMNS_MAP.put("marketId", Types.BIGINT);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table ibtrader_Share (uuid_ VARCHAR(75) null,shareId LONG not null primary key,name VARCHAR(75) null,symbol VARCHAR(75) null,groupId LONG,companyId LONG,createDate DATE null,modifiedDate DATE null,active_ BOOLEAN,numbertopurchase LONG,expiry_date DATE null,expiry_expression VARCHAR(75) null,tick_futures DOUBLE,multiplier LONG,last_error_data_read VARCHAR(75) null,last_error_data_trade VARCHAR(75) null,security_type VARCHAR(75) null,exchange VARCHAR(75) null,primary_exchange VARCHAR(75) null,date_contract_verified DATE null,marketId LONG)";
+	public static final String TABLE_SQL_CREATE = "create table ibtrader_Share (uuid_ VARCHAR(75) null,shareId LONG not null primary key,name VARCHAR(500) null,symbol VARCHAR(75) null,groupId LONG,companyId LONG,createDate DATE null,modifiedDate DATE null,active_ BOOLEAN,numbertopurchase LONG,percentual_limit_buy DOUBLE,percentual_stop_lost DOUBLE,percentual_stop_profit DOUBLE,percentual_stop_profit_position DOUBLE,expiry_date DATE null,expiry_expression VARCHAR(75) null,tick_futures DOUBLE,multiplier LONG,last_error_data_read VARCHAR(75) null,last_error_data_trade VARCHAR(75) null,security_type VARCHAR(75) null,exchange VARCHAR(75) null,primary_exchange VARCHAR(75) null,date_contract_verified DATE null,marketId LONG)";
 	public static final String TABLE_SQL_DROP = "drop table ibtrader_Share";
 	public static final String ORDER_BY_JPQL = " ORDER BY share.shareId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY ibtrader_Share.shareId ASC";
@@ -134,6 +147,69 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 	public static final long MARKETID_COLUMN_BITMASK = 8L;
 	public static final long UUID_COLUMN_BITMASK = 16L;
 	public static final long SHAREID_COLUMN_BITMASK = 32L;
+
+	/**
+	 * Converts the soap model instance into a normal model instance.
+	 *
+	 * @param soapModel the soap model instance to convert
+	 * @return the normal model instance
+	 */
+	public static Share toModel(ShareSoap soapModel) {
+		if (soapModel == null) {
+			return null;
+		}
+
+		Share model = new ShareImpl();
+
+		model.setUuid(soapModel.getUuid());
+		model.setShareId(soapModel.getShareId());
+		model.setName(soapModel.getName());
+		model.setSymbol(soapModel.getSymbol());
+		model.setGroupId(soapModel.getGroupId());
+		model.setCompanyId(soapModel.getCompanyId());
+		model.setCreateDate(soapModel.getCreateDate());
+		model.setModifiedDate(soapModel.getModifiedDate());
+		model.setActive(soapModel.getActive());
+		model.setNumbertopurchase(soapModel.getNumbertopurchase());
+		model.setPercentual_limit_buy(soapModel.getPercentual_limit_buy());
+		model.setPercentual_stop_lost(soapModel.getPercentual_stop_lost());
+		model.setPercentual_stop_profit(soapModel.getPercentual_stop_profit());
+		model.setPercentual_stop_profit_position(soapModel.getPercentual_stop_profit_position());
+		model.setExpiry_date(soapModel.getExpiry_date());
+		model.setExpiry_expression(soapModel.getExpiry_expression());
+		model.setTick_futures(soapModel.getTick_futures());
+		model.setMultiplier(soapModel.getMultiplier());
+		model.setLast_error_data_read(soapModel.getLast_error_data_read());
+		model.setLast_error_data_trade(soapModel.getLast_error_data_trade());
+		model.setSecurity_type(soapModel.getSecurity_type());
+		model.setExchange(soapModel.getExchange());
+		model.setPrimary_exchange(soapModel.getPrimary_exchange());
+		model.setDate_contract_verified(soapModel.getDate_contract_verified());
+		model.setMarketId(soapModel.getMarketId());
+
+		return model;
+	}
+
+	/**
+	 * Converts the soap model instances into normal model instances.
+	 *
+	 * @param soapModels the soap model instances to convert
+	 * @return the normal model instances
+	 */
+	public static List<Share> toModels(ShareSoap[] soapModels) {
+		if (soapModels == null) {
+			return null;
+		}
+
+		List<Share> models = new ArrayList<Share>(soapModels.length);
+
+		for (ShareSoap soapModel : soapModels) {
+			models.add(toModel(soapModel));
+		}
+
+		return models;
+	}
+
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.ibtrader.data.service.util.ServiceProps.get(
 				"lock.expiration.time.com.ibtrader.data.model.Share"));
 
@@ -184,6 +260,11 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		attributes.put("modifiedDate", getModifiedDate());
 		attributes.put("active", getActive());
 		attributes.put("numbertopurchase", getNumbertopurchase());
+		attributes.put("percentual_limit_buy", getPercentual_limit_buy());
+		attributes.put("percentual_stop_lost", getPercentual_stop_lost());
+		attributes.put("percentual_stop_profit", getPercentual_stop_profit());
+		attributes.put("percentual_stop_profit_position",
+			getPercentual_stop_profit_position());
 		attributes.put("expiry_date", getExpiry_date());
 		attributes.put("expiry_expression", getExpiry_expression());
 		attributes.put("tick_futures", getTick_futures());
@@ -264,6 +345,34 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 			setNumbertopurchase(numbertopurchase);
 		}
 
+		Double percentual_limit_buy = (Double)attributes.get(
+				"percentual_limit_buy");
+
+		if (percentual_limit_buy != null) {
+			setPercentual_limit_buy(percentual_limit_buy);
+		}
+
+		Double percentual_stop_lost = (Double)attributes.get(
+				"percentual_stop_lost");
+
+		if (percentual_stop_lost != null) {
+			setPercentual_stop_lost(percentual_stop_lost);
+		}
+
+		Double percentual_stop_profit = (Double)attributes.get(
+				"percentual_stop_profit");
+
+		if (percentual_stop_profit != null) {
+			setPercentual_stop_profit(percentual_stop_profit);
+		}
+
+		Double percentual_stop_profit_position = (Double)attributes.get(
+				"percentual_stop_profit_position");
+
+		if (percentual_stop_profit_position != null) {
+			setPercentual_stop_profit_position(percentual_stop_profit_position);
+		}
+
 		Date expiry_date = (Date)attributes.get("expiry_date");
 
 		if (expiry_date != null) {
@@ -334,6 +443,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		}
 	}
 
+	@JSON
 	@Override
 	public String getUuid() {
 		if (_uuid == null) {
@@ -357,6 +467,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		return GetterUtil.getString(_originalUuid);
 	}
 
+	@JSON
 	@Override
 	public long getShareId() {
 		return _shareId;
@@ -367,6 +478,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		_shareId = shareId;
 	}
 
+	@JSON
 	@Override
 	public String getName() {
 		if (_name == null) {
@@ -382,6 +494,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		_name = name;
 	}
 
+	@JSON
 	@Override
 	public String getSymbol() {
 		if (_symbol == null) {
@@ -397,6 +510,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		_symbol = symbol;
 	}
 
+	@JSON
 	@Override
 	public long getGroupId() {
 		return _groupId;
@@ -419,6 +533,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		return _originalGroupId;
 	}
 
+	@JSON
 	@Override
 	public long getCompanyId() {
 		return _companyId;
@@ -441,6 +556,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		return _originalCompanyId;
 	}
 
+	@JSON
 	@Override
 	public Date getCreateDate() {
 		return _createDate;
@@ -451,6 +567,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		_createDate = createDate;
 	}
 
+	@JSON
 	@Override
 	public Date getModifiedDate() {
 		return _modifiedDate;
@@ -467,11 +584,13 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		_modifiedDate = modifiedDate;
 	}
 
+	@JSON
 	@Override
 	public boolean getActive() {
 		return _active;
 	}
 
+	@JSON
 	@Override
 	public boolean isActive() {
 		return _active;
@@ -494,6 +613,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		return _originalActive;
 	}
 
+	@JSON
 	@Override
 	public long getNumbertopurchase() {
 		return _numbertopurchase;
@@ -504,6 +624,52 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		_numbertopurchase = numbertopurchase;
 	}
 
+	@JSON
+	@Override
+	public double getPercentual_limit_buy() {
+		return _percentual_limit_buy;
+	}
+
+	@Override
+	public void setPercentual_limit_buy(double percentual_limit_buy) {
+		_percentual_limit_buy = percentual_limit_buy;
+	}
+
+	@JSON
+	@Override
+	public double getPercentual_stop_lost() {
+		return _percentual_stop_lost;
+	}
+
+	@Override
+	public void setPercentual_stop_lost(double percentual_stop_lost) {
+		_percentual_stop_lost = percentual_stop_lost;
+	}
+
+	@JSON
+	@Override
+	public double getPercentual_stop_profit() {
+		return _percentual_stop_profit;
+	}
+
+	@Override
+	public void setPercentual_stop_profit(double percentual_stop_profit) {
+		_percentual_stop_profit = percentual_stop_profit;
+	}
+
+	@JSON
+	@Override
+	public double getPercentual_stop_profit_position() {
+		return _percentual_stop_profit_position;
+	}
+
+	@Override
+	public void setPercentual_stop_profit_position(
+		double percentual_stop_profit_position) {
+		_percentual_stop_profit_position = percentual_stop_profit_position;
+	}
+
+	@JSON
 	@Override
 	public Date getExpiry_date() {
 		return _expiry_date;
@@ -514,6 +680,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		_expiry_date = expiry_date;
 	}
 
+	@JSON
 	@Override
 	public String getExpiry_expression() {
 		if (_expiry_expression == null) {
@@ -529,6 +696,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		_expiry_expression = expiry_expression;
 	}
 
+	@JSON
 	@Override
 	public double getTick_futures() {
 		return _tick_futures;
@@ -539,6 +707,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		_tick_futures = tick_futures;
 	}
 
+	@JSON
 	@Override
 	public long getMultiplier() {
 		return _multiplier;
@@ -549,6 +718,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		_multiplier = multiplier;
 	}
 
+	@JSON
 	@Override
 	public String getLast_error_data_read() {
 		if (_last_error_data_read == null) {
@@ -564,6 +734,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		_last_error_data_read = last_error_data_read;
 	}
 
+	@JSON
 	@Override
 	public String getLast_error_data_trade() {
 		if (_last_error_data_trade == null) {
@@ -579,6 +750,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		_last_error_data_trade = last_error_data_trade;
 	}
 
+	@JSON
 	@Override
 	public String getSecurity_type() {
 		if (_security_type == null) {
@@ -594,6 +766,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		_security_type = security_type;
 	}
 
+	@JSON
 	@Override
 	public String getExchange() {
 		if (_exchange == null) {
@@ -609,6 +782,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		_exchange = exchange;
 	}
 
+	@JSON
 	@Override
 	public String getPrimary_exchange() {
 		if (_primary_exchange == null) {
@@ -624,6 +798,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		_primary_exchange = primary_exchange;
 	}
 
+	@JSON
 	@Override
 	public Date getDate_contract_verified() {
 		return _date_contract_verified;
@@ -634,6 +809,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		_date_contract_verified = date_contract_verified;
 	}
 
+	@JSON
 	@Override
 	public long getMarketId() {
 		return _marketId;
@@ -703,6 +879,10 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		shareImpl.setModifiedDate(getModifiedDate());
 		shareImpl.setActive(getActive());
 		shareImpl.setNumbertopurchase(getNumbertopurchase());
+		shareImpl.setPercentual_limit_buy(getPercentual_limit_buy());
+		shareImpl.setPercentual_stop_lost(getPercentual_stop_lost());
+		shareImpl.setPercentual_stop_profit(getPercentual_stop_profit());
+		shareImpl.setPercentual_stop_profit_position(getPercentual_stop_profit_position());
 		shareImpl.setExpiry_date(getExpiry_date());
 		shareImpl.setExpiry_expression(getExpiry_expression());
 		shareImpl.setTick_futures(getTick_futures());
@@ -855,6 +1035,14 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 
 		shareCacheModel.numbertopurchase = getNumbertopurchase();
 
+		shareCacheModel.percentual_limit_buy = getPercentual_limit_buy();
+
+		shareCacheModel.percentual_stop_lost = getPercentual_stop_lost();
+
+		shareCacheModel.percentual_stop_profit = getPercentual_stop_profit();
+
+		shareCacheModel.percentual_stop_profit_position = getPercentual_stop_profit_position();
+
 		Date expiry_date = getExpiry_date();
 
 		if (expiry_date != null) {
@@ -934,7 +1122,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(43);
+		StringBundler sb = new StringBundler(51);
 
 		sb.append("{uuid=");
 		sb.append(getUuid());
@@ -956,6 +1144,14 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		sb.append(getActive());
 		sb.append(", numbertopurchase=");
 		sb.append(getNumbertopurchase());
+		sb.append(", percentual_limit_buy=");
+		sb.append(getPercentual_limit_buy());
+		sb.append(", percentual_stop_lost=");
+		sb.append(getPercentual_stop_lost());
+		sb.append(", percentual_stop_profit=");
+		sb.append(getPercentual_stop_profit());
+		sb.append(", percentual_stop_profit_position=");
+		sb.append(getPercentual_stop_profit_position());
 		sb.append(", expiry_date=");
 		sb.append(getExpiry_date());
 		sb.append(", expiry_expression=");
@@ -985,7 +1181,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(67);
+		StringBundler sb = new StringBundler(79);
 
 		sb.append("<model><model-name>");
 		sb.append("com.ibtrader.data.model.Share");
@@ -1030,6 +1226,22 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		sb.append(
 			"<column><column-name>numbertopurchase</column-name><column-value><![CDATA[");
 		sb.append(getNumbertopurchase());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>percentual_limit_buy</column-name><column-value><![CDATA[");
+		sb.append(getPercentual_limit_buy());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>percentual_stop_lost</column-name><column-value><![CDATA[");
+		sb.append(getPercentual_stop_lost());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>percentual_stop_profit</column-name><column-value><![CDATA[");
+		sb.append(getPercentual_stop_profit());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>percentual_stop_profit_position</column-name><column-value><![CDATA[");
+		sb.append(getPercentual_stop_profit_position());
 		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>expiry_date</column-name><column-value><![CDATA[");
@@ -1103,6 +1315,10 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 	private boolean _originalActive;
 	private boolean _setOriginalActive;
 	private long _numbertopurchase;
+	private double _percentual_limit_buy;
+	private double _percentual_stop_lost;
+	private double _percentual_stop_profit;
+	private double _percentual_stop_profit_position;
 	private Date _expiry_date;
 	private String _expiry_expression;
 	private double _tick_futures;

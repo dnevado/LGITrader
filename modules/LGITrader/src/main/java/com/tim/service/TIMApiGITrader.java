@@ -53,30 +53,12 @@ public class TIMApiGITrader extends TIMApiWrapper {
 
 	
 	Log _log = LogFactoryUtil.getLog(TIMApiGITrader.class);
-
+	long guestGroupId=0;
 	SimpleDateFormat sdf = new SimpleDateFormat ("yyyyMM");
 	
 	private String _ConnectionHOST = "127.0.0.1";
 	private int  _ConnectionPORT = 7497;
 	private int _ConnectionCLIENTID = 7;
-	
-	
-	private int LastPositionID = 0;
-	public int getLastPositionID() {
-		return LastPositionID;
-	}
-	
-	public void nextValidId(int orderId) {
-		// MyLog.log(Priority.INFO,"NextValid ID:" + orderId);
-		LastPositionID = orderId;
-	}
-
-	public void setLastPositionID(int lastPositionID) {
-		LastPositionID = lastPositionID;
-	}
-
-
-	private int lastOrderID = 0;
 	
 	
 	private static double _HISTORICAL_DATA_LOW=0;
@@ -122,25 +104,7 @@ public class TIMApiGITrader extends TIMApiWrapper {
 	 * LA TWS DEVUELVE DATOS ANTERIORES A UNA FECHA DADA, NO ENTRE FECHAS, CON LO QUE SI PIDES UN DOMINGO TE DARA 
 	 * DEL VIERNES */
 	
-	
-	//private  com.ib.client.EJavaSignal _GITradeSignal  = null;
-	//private EClientSocket _GITraderSocket = new EClientSocket(this, _GITradeSignal);
-	/// private EClientSocket _GITraderSocket = null;
-	
-	/* private EClientSocket this.getClient()=null;
-	private EReaderSignal m_signal=null;*/
-	//private EReader reader=null;   
-	
-	/* private  EReaderSignal TIMApireaderSignal=null;
-	private EClientSocket clientSocket=null;
-	*/
 	private List<Long> _lTest = null;
-	
-	
-	private Contract __GITraderContract;
-	
-	
-
 	
 	public static String get_HISTORICAL_DATA_ERRORS_CODES() {
 		return _HISTORICAL_DATA_ERRORS_CODES;
@@ -165,11 +129,7 @@ public class TIMApiGITrader extends TIMApiWrapper {
 
 	}
 	
-	/* public Contract GITraderCreateFUTUREContract(String symbol) {
-						
-				return  new FutContract(symbol, "2017/04/01");
-				
-	}*/
+
 	
 	/* METODOS PERSONALIZADOS QUE NO ESTAN EN EL INTERFACE */
 	public boolean GITradercancelOrder(int RequestID) throws InterruptedException {
@@ -193,12 +153,6 @@ public class TIMApiGITrader extends TIMApiWrapper {
 				
 	}
 	
-	/*public TIMApiGITrader()  {
-		
-		TIMApiGITrader(_ConnectionHOST, _ConnectionPORT, _ConnectionCLIENTID);
-		
-	}*/
-	
 	public void GITraderOpenOrder(int orderId, Contract contract, Order order) {
 		
 		 
@@ -215,17 +169,14 @@ public class TIMApiGITrader extends TIMApiWrapper {
 		_ConnectionPORT = _port;
 		_ConnectionCLIENTID = clientid;		
 		
-		/* TIMApireaderSignal = new EJavaSignal();
-		TIMApiclientSocket = new EClientSocket(this, TIMApireaderSignal);
-		*/
-		_lTest = new ArrayList();
-		_lTest.add(new Long(1));
-				
-		/* m_signal = new EJavaSignal();
-		this.getClient() = new EClientSocket(this, m_signal);*/
-		//reader = new EReader(this.getClient(), this.getSignal());
+		try {
+			guestGroupId = GroupLocalServiceUtil.getGroup(PortalUtil.getDefaultCompanyId(), GroupConstants.GUEST).getGroupId();
+		} catch (PortalException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
-	//	_GITraderSocket = this.getClient();
+		
 	}
 	
 	public void GITrade() {
@@ -264,42 +215,22 @@ public class TIMApiGITrader extends TIMApiWrapper {
 				return;
 			}
 			
-			
 			Realtime  oReal = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));
-			long guestGroupId=0;
-			try {
-				guestGroupId = GroupLocalServiceUtil.getGroup(PortalUtil.getDefaultCompanyId(), GroupConstants.GUEST).getGroupId();
-			} catch (PortalException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			oReal.setGroupId(guestGroupId);
 			oReal.setCompanyId(PortalUtil.getDefaultCompanyId());
 			oReal.setShareId(MyOrder.getShareID());
 			oReal.setValue(price);
 			RealtimeLocalServiceUtil.updateRealtime(oReal);
-			
 			/* checked */
 			MyOrder.setChecked(true);
 			IBOrderLocalServiceUtil.updateIBOrder(MyOrder);
-			//Share Mishare = ShareDAO.getShare(MyOrder.getShareID());
 			
-
 		}
-
-		
-		
-		
 	}
-
-
 	public void GITraderGetRealTimeContract(int RequestID, Contract contract)
 			throws InterruptedException {
 		
 		clientSocket.reqMktData(RequestID, contract,  "", false, false, null);
-		//m_client.reqHistoricalData(4001, _contractAPI31, formatted, "1 M", "1 day", "MIDPOINT", 1, 1, false, null);
-
-
 	}
 	
 	public void error(int one, int two, String str) {
@@ -478,7 +409,7 @@ public class TIMApiGITrader extends TIMApiWrapper {
 		        try {
 		            reader2.processMsgs();
 		        } catch (Exception e) {
-		            System.out.println("Exception: "+e.getMessage());
+		        	_log.info("Exception connection to TWS: "+e.getMessage());
 		        }
 		    }
 		}).start();
@@ -524,34 +455,38 @@ public class TIMApiGITrader extends TIMApiWrapper {
 	    		Position MiPosicion= null;
 	    		Share MySharePosition= null;
 	    		
-	    		MiPosicion=  (Position) PositionDAO.getPosition(orderId);
+	    		MiPosicion = PositionLocalServiceUtil.fetchPosition(orderId);  
+	    		//MiPosicion=  (Position) PositionDAO.getPosition(orderId);
 	    		
 	    		// SI ES NULL, QUIERE DECIR QUE PUEDE VENIR UNA OPERACION DE VENTA...LA BUSCAMOS.
 	    		if (MiPosicion==null)
 	    		{    			
 	    			
-	    			MiPosicion=  (Position) PositionDAO.getPositionByIdSell(orderId);
+	    			// MiPosicion=  (Position) PositionDAO.getPositionByIdSell(orderId);
+	    			MiPosicion=  PositionLocalServiceUtil.findByPositionID_Out_TWS(orderId);
 	    			if (MiPosicion==null)
 		    		{    				    		
-	    				LogTWM.log(Priority.INFO,"Error Execution Details order not found for Order Key:" + orderId);
+	    				_log.info("Error Execution Details order not found for Order Key:" + orderId);
 	    				return;
 		    		}	
 	    			else
 	    				bIsSellOperation = true;
 	    		}
-	    		 
-	    		MySharePosition= ShareDAO.getShare(MiPosicion.getShareID());
+	    		
+	    		MySharePosition = ShareLocalServiceUtil.fetchShare(MiPosicion.getShareId());  
+	    		
+	    		//MySharePosition= ShareDAO.getShare(MiPosicion.getShareID());
 	    		
 	    		/* DETECTAMOS SI ES UNA ORDER DE COMPRA O DE VENTA. VERIFICAMOS SI HA CAMBIADO . VERIFICAR SI HAY UNA ORDEN DE COMPRA PREVIA. */
 	    		boolean changed = false;
 	    		if (!bIsSellOperation)   //ENTRADA OPERATION
 	    		{	
-	    			if (MiPosicion.getState_buy()==null || (MiPosicion.getState_buy()!=null && !MiPosicion.getState_buy().toLowerCase().equals(status.toLowerCase())))
-	    			changed = true;
+	    			if (MiPosicion.getState_in()==null || (MiPosicion.getState_in()!=null && !MiPosicion.getState_in().toLowerCase().equals(status.toLowerCase())))
+	    			 changed = true;
 	    		}
 	    		else  // SALIDA OPERATION
 	    		{
-	    			if (MiPosicion.getState_sell()==null || (MiPosicion.getState_sell()!=null && !MiPosicion.getState_sell().toLowerCase().equals(status.toLowerCase())))
+	    			if (MiPosicion.getState_out()==null || (MiPosicion.getState_out()!=null && !MiPosicion.getState_out().toLowerCase().equals(status.toLowerCase())))
 		    			changed = true;
 	    		}
 	    		
@@ -566,8 +501,8 @@ public class TIMApiGITrader extends TIMApiWrapper {
 	    			{
 	    				
 
-	    				
-	    				MiPosicion.setState_buy(status);
+	    				//    				MiPosicion.setState_buy(status);
+	    				MiPosicion.setState_in(status);
 	    				/* cancelada compra  */
 	    				/* 21.09.2013 QUITO EL OR DE INACTIVE PARA CONTROLARLO EN LA RUTINA DE ERRORES 
 	    				 * || 
@@ -580,14 +515,21 @@ public class TIMApiGITrader extends TIMApiWrapper {
 	    					/* FUTURO VENCIDO D-1 DEL VENCIMIENTO */
 	    				
 	    					//Actualizamos campos de errores.
-	    					MySharePosition.setActive(new Long(0));
-	    					MySharePosition.setActive_trading(new Long(0));
+	    					MySharePosition.setActive(false);// .setActive(new Long(0));
+	    					//MySharePosition.setActive_trading(new Long(0));
 	    					MySharePosition.setLast_error_data_trade(sdf2.format(FechaError));  // desactivamos trading.
 	    					
-	    					ShareDAO.updateShare(MySharePosition);
+	    					//ShareDAO.updateShare(MySharePosition);
+	    					ShareLocalServiceUtil.updateShare(MySharePosition);
 	    					
+	    					try {
+	    						PositionLocalServiceUtil.deletePosition(MiPosicion.getPositionId());
+	    					} catch (PortalException e) {
+	    						// TODO Auto-generated catch block
+	    						_log.info("error operativa PositionLocalServiceUtil.deletePosition : [" + e.getMessage() + "]") ;
+	    					}
 	    					
-	    					PositionDAO.deletePositionByPositionID(MiPosicion);
+	    					//PositionDAO.deletePositionByPositionID(MiPosicion);
 	    					isDelete = true;
 			    			//MiPosicion.setState(PositionStates.status.CANCEL_BUY.toString());
 			    			
@@ -598,26 +540,26 @@ public class TIMApiGITrader extends TIMApiWrapper {
 			    		{
 			    			
 			    			java.sql.Timestamp FechaCompra = new Timestamp(Calendar.getInstance().getTimeInMillis());	    			
-			    			MiPosicion.setDate_real_buy(FechaCompra) ;    // OJO TIMESTAMP.			    			
-			    			MiPosicion.setPrice_real_buy(avgFillPrice);  // cogemos el avg que nos manda el TWS
+			    			MiPosicion.setDate_real_in(Calendar.getInstance().getTime()); //.setDate_real_buy(FechaCompra) ;    // OJO TIMESTAMP.			    			
+			    			MiPosicion.setPrice_real_in(avgFillPrice);  // cogemos el avg que nos manda el TWS
 			    			
 			    			// ACTUALIZAMOS EL PRECIO DE SALIDA CON EL PORCENTAJE PORQUE ES EL VALOR QUE TRATAMOS
 			    			// vemos el tipo de operacion
 			    			if (MiPosicion.getType().equals(PositionStates.statusTWSFire.SELL.toString()))  //short
 			    			{
-			    				priceStopLost = avgFillPrice +  (avgFillPrice *  MiPosicion.getSell_percentual_stop_lost());
-				    			priceStopProfit = avgFillPrice  - (avgFillPrice *  MiPosicion.getSell_percentual_stop_profit());
+			    				priceStopLost = avgFillPrice +  (avgFillPrice *  MiPosicion.getPercentualstoplost_out()); // .getSell_percentual_stop_lost()
+				    			priceStopProfit = avgFillPrice  - (avgFillPrice *  MiPosicion.getPercentualstopprofit_out());
 			    				
 			    			}
 			    			else  //long
 			    			{
-			    				priceStopLost = avgFillPrice  - (avgFillPrice *  MiPosicion.getSell_percentual_stop_lost());
-				    			priceStopProfit = avgFillPrice  + (avgFillPrice *  MiPosicion.getSell_percentual_stop_profit());
+			    				priceStopLost = avgFillPrice  - (avgFillPrice *  MiPosicion.getPercentualstoplost_out());
+				    			priceStopProfit = avgFillPrice  + (avgFillPrice *  MiPosicion.getPercentualstopprofit_out());
 			    			}
 			    				 
 			    			
-			    			MiPosicion.setSell_price_stop_lost(Utilidades.RedondeaPrice(priceStopLost));
-			    			MiPosicion.setSell_price_stop_profit(Utilidades.RedondeaPrice(priceStopProfit));
+			    			MiPosicion.setPricestoplost_out(Utilidades.RedondeaPrice(priceStopLost)); //.setSell_price_stop_lost(Utilidades.RedondeaPrice(priceStopLost));
+			    			MiPosicion.setPricestopprofit_out(Utilidades.RedondeaPrice(priceStopProfit));
 			    			
 			    			
 			    			MiPosicion.setState(PositionStates.status.BUY_OK.toString());
@@ -631,16 +573,16 @@ public class TIMApiGITrader extends TIMApiWrapper {
 	    				
 	    				if (PositionStates.statusTWSCallBack.Cancelled.toString().equals(status))
 			    		{			    						    		
-	    					MiPosicion.setState_sell(null);
-	    					MiPosicion.setDate_sell(null);
-	    					MiPosicion.setDate_real_sell(null);
-	    					MiPosicion.setLimit_price_sell(null);
-	    					MiPosicion.setPositionID_tws_sell(null);
-	    					MiPosicion.setPrice_real_sell(null);
-	    					MiPosicion.setPrice_sell(null);
-	    					MiPosicion.setRealtimeID_sell_alert(null);
-	    					MiPosicion.setStrategyID_sell(null);
-	    					MiPosicion.setState_sell(status);	 
+	    					MiPosicion.setState_out(null);
+	    					MiPosicion.setDate_out(null);
+	    					MiPosicion.setDate_real_out(null);
+	    					MiPosicion.setLimit_price_out(0);
+	    					MiPosicion.setPositionId_tws_out(0);
+	    					MiPosicion.setPrice_real_out(0);
+	    					MiPosicion.setPrice_real_out(0);
+	    					MiPosicion.setRealtimeId_out(-1);
+	    					MiPosicion.setStrategyId_out(0);
+	    					MiPosicion.setState_out(status);	 
 	    					/*MiPosicion.setSell_price_stop_lost(null);
 	    					MiPosicion.setSell_price_stop_lost(sell_price_stop_lost);
 	    					*/
@@ -657,7 +599,7 @@ public class TIMApiGITrader extends TIMApiWrapper {
 	    				 * PASARIA POR AQUI Y ACTUALIZARIA DOS VECES ERROREO EL CAMPO OPERATIONS.
 	    				 */
 	    				if (PositionStates.statusTWSCallBack.Filled.toString().equals(status)
-	    						&& MiPosicion.getState_sell()!=null)
+	    						&& MiPosicion.getState_out()!=null)
 			    		{
 	    					
 			    			java.sql.Timestamp FechaVenta = new Timestamp(Calendar.getInstance().getTimeInMillis());	    			
@@ -667,7 +609,7 @@ public class TIMApiGITrader extends TIMApiWrapper {
 			    			
 			    			StringBuilder StrOperaciones = new StringBuilder();
 			    			
-			    			StrOperaciones.append("(" + avgFillPrice + "|" + sdf2.format(FechaVenta) + "|" +  MiPosicion.getShare_number_to_trade() + "|" + MiPosicion.getStrategyID_sell() + ")");
+			    			StrOperaciones.append("(" + avgFillPrice + "|" + sdf2.format(FechaVenta) + "|" +  MiPosicion.getShare_number_to_trade() + "|" + MiPosicion.getStrategyId_out() + ")");
 			    			
 			    			// hay operacion previa
 			    			String _Operation = "";
@@ -683,8 +625,8 @@ public class TIMApiGITrader extends TIMApiWrapper {
 			    			//LogTWM.log(Priority.INFO,"Updating OutPut Operation.. " + MySharePosition.getSymbol());
 			    			
 			    			/* acumulo las acciones vendidas y a vender en la operativa */
-			    			int _RemaingShares = MiPosicion.getShare_number_to_trade().intValue() +MiPosicion.getShare_number_traded().intValue();
-			    			int _TotalShares = MiPosicion.getShare_number().intValue();
+			    			long _RemaingShares = MiPosicion.getShare_number_to_trade() + MiPosicion.getShare_number_traded();
+			    			long _TotalShares = MiPosicion.getShare_number();
 			    			
 			    			MiPosicion.setShare_number_traded(new Long(_RemaingShares));
 			    			MiPosicion.setShare_number_to_trade(MiPosicion.getShare_number() - MiPosicion.getShare_number_traded());
@@ -692,10 +634,10 @@ public class TIMApiGITrader extends TIMApiWrapper {
 			    			/* NO ES EL SELL OK y PRECIOS REALES NO SE GUARDAN EN LOS CAMPOS hasta que el numero de acciones vendidas quede cerrado*/
 			    			if (_RemaingShares==_TotalShares)   // ya no hay =
 			    			{	
-			    				MiPosicion.setState_sell(status);	 
-			    				MiPosicion.setDate_sell(FechaVenta) ; // OJO TIMESTAMP.
-			    				MiPosicion.setDate_real_sell(FechaVenta) ; // OJO TIMESTAMP.			    			
-				    			MiPosicion.setPrice_real_sell(avgFillPrice);  // cogemos el avg que nos manda el TWS
+			    				MiPosicion.setState_out(status);	 
+			    				MiPosicion.setDate_out(FechaVenta) ; // OJO TIMESTAMP.
+			    				MiPosicion.setDate_real_out(FechaVenta) ; // OJO TIMESTAMP.			    			
+				    			MiPosicion.setPrice_real_out(avgFillPrice);  // cogemos el avg que nos manda el TWS
 			    				MiPosicion.setState(PositionStates.status.SELL_OK.toString());
 			    			}
 			    			else   //  hay acciones pendientes para salir..actualizo el stop de beneficio para no dispararse
@@ -704,20 +646,20 @@ public class TIMApiGITrader extends TIMApiWrapper {
 			    				// 1. QUE EL STOP PROFIT SALTO POR DEBAJO DEL INICIAL--> DEJAMOS EL INICIAL
 			    				// 2. QUE EL STOP PROFIT SALTO POR ENCIMA DEL INICIAL --> SIGUE EN TENDENCIA, LOS MULTIPLICAMOS POR UN 50%
 			    				
-			    				MiPosicion.setState_sell(null);	
+			    				MiPosicion.setState_out(null);	
 			    				
 			    				double priceStopProfitAperturaPosicion = 0;
 			    				double priceNewStopProfit = 0;
 			    				
 			    				
-			    				if (MiPosicion.getType().equals(PositionStates.statusTWSFire.SELL.toString()))  //short
+			    				if (MiPosicion.getType().equals(PositionStates.statusTWSFire.SELL.toString()))  //short 
 				    			{
 			    					// cojo el original
-			    					priceStopProfitAperturaPosicion = MiPosicion.getPrice_real_buy()  - (MiPosicion.getPrice_real_buy() *  MySharePosition.getSell_percentual_stop_profit());
+			    					priceStopProfitAperturaPosicion = MiPosicion.getPrice_real_in()   - (MiPosicion.getPrice_real_in() *  MySharePosition.getPercentual_stop_profit());
 			    					// si el original es mayor...subio la accion mucho, la tendencia es seguir, le subo un 50% para que no salte el resto de la posicion 
-			    					if (priceStopProfitAperturaPosicion > MiPosicion.getSell_price_stop_profit().doubleValue())
+			    					if (priceStopProfitAperturaPosicion > MiPosicion.getPricestopprofit_out())  
 			    					{
-			    						priceNewStopProfit = MiPosicion.getSell_price_stop_profit().doubleValue() - (MiPosicion.getSell_price_stop_profit().doubleValue() *0.5);
+			    						priceNewStopProfit = MiPosicion.getPricestopprofit_out() - (MiPosicion.getPricestopprofit_out()  *0.5);
 			    						priceNewStopProfit  = priceNewStopProfit /100;
 			    						//MiPosicion.setSell_percentual_stop_profit(Utilidades.RedondeaPrice(priceNewStopProfit));
 			    						
@@ -731,11 +673,11 @@ public class TIMApiGITrader extends TIMApiWrapper {
 				    			else  //long position
 				    			{		
 				    				// cojo el original
-			    					priceStopProfitAperturaPosicion = MiPosicion.getPrice_real_buy()  + (MiPosicion.getPrice_real_buy() *  MySharePosition.getSell_percentual_stop_profit());
+			    					priceStopProfitAperturaPosicion = MiPosicion.getPrice_real_in()  + (MiPosicion.getPrice_real_in() *  MySharePosition.getPercentual_stop_profit());
 			    					// si el original es menor...subio la accion mucho, la tendencia es seguir, le subo un 50% para que no salte el resto 
-			    					if (priceStopProfitAperturaPosicion < MiPosicion.getSell_price_stop_profit().doubleValue())
+			    					if (priceStopProfitAperturaPosicion < MiPosicion.getPricestopprofit_out())
 			    					{
-			    						priceNewStopProfit = MiPosicion.getSell_price_stop_profit().doubleValue() + (MiPosicion.getSell_price_stop_profit().doubleValue() *0.5);
+			    						priceNewStopProfit = MiPosicion.getPricestopprofit_out()  + (MiPosicion.getPricestopprofit_out()  *0.5);
 			    						priceNewStopProfit  = priceNewStopProfit / 100;
 			    						//MiPosicion.setSell_percentual_stop_profit(Utilidades.RedondeaPrice(priceNewStopProfit));
 			    						
@@ -747,7 +689,7 @@ public class TIMApiGITrader extends TIMApiWrapper {
 			    					}
 			    				}
 			    				
-			    				MiPosicion.setSell_price_stop_profit(Utilidades.RedondeaPrice(priceNewStopProfit));
+			    				MiPosicion.setPricestopprofit_out(Utilidades.RedondeaPrice(priceNewStopProfit));
 			    				
 			    				//LogTWM.log(Priority.INFO,"New Profit Stop.. " + Utilidades.RedondeaPrice(priceNewStopProfit));
 			    				
@@ -768,7 +710,9 @@ public class TIMApiGITrader extends TIMApiWrapper {
 	    			}
 	    			if (!isDelete)  // compras canceladas se borran.
 	    			{	
-	    				PositionDAO.updatePositionByPositionID(MiPosicion);
+	    				
+	    				PositionLocalServiceUtil.updatePosition(MiPosicion);
+	    				//PositionDAO.updatePositionByPositionID(MiPosicion);
 	    			}
 	    		}	
 		    	
@@ -963,7 +907,7 @@ public class TIMApiGITrader extends TIMApiWrapper {
 	public void disconnect() {
 		this.getClient().eDisconnect();
 	}
-	*/
+	
 	protected static void saveDataLastRealTime(int shareID, String field,
 			double value) {
 
@@ -977,7 +921,7 @@ public class TIMApiGITrader extends TIMApiWrapper {
 
 	}
 
-
+*/
 	public static String get_CONTRACT_DATA_REQUEST() {
 		return _CONTRACT_DATA_REQUEST;
 	}

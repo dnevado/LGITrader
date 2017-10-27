@@ -23,9 +23,10 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * This class is used by SOAP remote services.
+ * This class is used by SOAP remote services, specifically {@link com.ibtrader.data.service.http.ShareServiceSoap}.
  *
  * @author Brian Wing Shun Chan
+ * @see com.ibtrader.data.service.http.ShareServiceSoap
  * @generated
  */
 @ProviderType
@@ -43,6 +44,10 @@ public class ShareSoap implements Serializable {
 		soapModel.setModifiedDate(model.getModifiedDate());
 		soapModel.setActive(model.getActive());
 		soapModel.setNumbertopurchase(model.getNumbertopurchase());
+		soapModel.setPercentual_limit_buy(model.getPercentual_limit_buy());
+		soapModel.setPercentual_stop_lost(model.getPercentual_stop_lost());
+		soapModel.setPercentual_stop_profit(model.getPercentual_stop_profit());
+		soapModel.setPercentual_stop_profit_position(model.getPercentual_stop_profit_position());
 		soapModel.setExpiry_date(model.getExpiry_date());
 		soapModel.setExpiry_expression(model.getExpiry_expression());
 		soapModel.setTick_futures(model.getTick_futures());
@@ -190,6 +195,39 @@ public class ShareSoap implements Serializable {
 		_numbertopurchase = numbertopurchase;
 	}
 
+	public double getPercentual_limit_buy() {
+		return _percentual_limit_buy;
+	}
+
+	public void setPercentual_limit_buy(double percentual_limit_buy) {
+		_percentual_limit_buy = percentual_limit_buy;
+	}
+
+	public double getPercentual_stop_lost() {
+		return _percentual_stop_lost;
+	}
+
+	public void setPercentual_stop_lost(double percentual_stop_lost) {
+		_percentual_stop_lost = percentual_stop_lost;
+	}
+
+	public double getPercentual_stop_profit() {
+		return _percentual_stop_profit;
+	}
+
+	public void setPercentual_stop_profit(double percentual_stop_profit) {
+		_percentual_stop_profit = percentual_stop_profit;
+	}
+
+	public double getPercentual_stop_profit_position() {
+		return _percentual_stop_profit_position;
+	}
+
+	public void setPercentual_stop_profit_position(
+		double percentual_stop_profit_position) {
+		_percentual_stop_profit_position = percentual_stop_profit_position;
+	}
+
 	public Date getExpiry_date() {
 		return _expiry_date;
 	}
@@ -288,6 +326,10 @@ public class ShareSoap implements Serializable {
 	private Date _modifiedDate;
 	private boolean _active;
 	private long _numbertopurchase;
+	private double _percentual_limit_buy;
+	private double _percentual_stop_lost;
+	private double _percentual_stop_profit;
+	private double _percentual_stop_profit_position;
 	private Date _expiry_date;
 	private String _expiry_expression;
 	private double _tick_futures;

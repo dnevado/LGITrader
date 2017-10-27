@@ -6,13 +6,17 @@
 		<field name="configId" type="long" />
 		<field name="groupId" type="long" />
 		<field name="companyId" type="long" />
-		<field name="name" type="String" />
+		<field name="name" type="String">
+			<hint name="max-length">500</hint>
+		</field>
 		<field name="value" type="String" />
 		<field name="createDate" type="Date" />
 		<field name="modifiedDate" type="Date" />
 		<field name="globaldefault" type="boolean" />
 		<field name="config_key" type="String" />
-		<field name="description" type="String" />
+		<field name="description" type="String">
+			<hint name="max-length">4000</hint>
+		</field>
 	</model>
 	<model name="com.ibtrader.data.model.IBOrder">
 		<field name="uuid" type="String" />
@@ -48,7 +52,9 @@
 		<field name="state" type="String" />
 		<field name="state_in" type="String" />
 		<field name="state_out" type="String" />
-		<field name="description" type="String" />
+		<field name="description" type="String">
+			<hint name="max-length">4000</hint>
+		</field>
 		<field name="price_in" type="double" />
 		<field name="price_real_in" type="double" />
 		<field name="limit_price_in" type="double" />
@@ -61,6 +67,7 @@
 		<field name="limit_price_out" type="double" />
 		<field name="date_out" type="Date" />
 		<field name="date_real_out" type="Date" />
+		<field name="share_number" type="long" />
 		<field name="share_number_to_trade" type="long" />
 		<field name="share_number_traded" type="long" />
 		<field name="realtimeId_in" type="long" />
@@ -92,7 +99,9 @@
 	<model name="com.ibtrader.data.model.Share">
 		<field name="uuid" type="String" />
 		<field name="shareId" type="long" />
-		<field name="name" type="String" />
+		<field name="name" type="String">
+			<hint name="max-length">500</hint>
+		</field>
 		<field name="symbol" type="String" />
 		<field name="groupId" type="long" />
 		<field name="companyId" type="long" />
@@ -100,6 +109,10 @@
 		<field name="modifiedDate" type="Date" />
 		<field name="active" type="boolean" />
 		<field name="numbertopurchase" type="long" />
+		<field name="percentual_limit_buy" type="double" />
+		<field name="percentual_stop_lost" type="double" />
+		<field name="percentual_stop_profit" type="double" />
+		<field name="percentual_stop_profit_position" type="double" />
 		<field name="expiry_date" type="Date" />
 		<field name="expiry_expression" type="String" />
 		<field name="tick_futures" type="double" />
@@ -111,5 +124,39 @@
 		<field name="primary_exchange" type="String" />
 		<field name="date_contract_verified" type="Date" />
 		<field name="marketId" type="long" />
+	</model>
+	<model name="com.ibtrader.data.model.Strategy">
+		<field name="uuid" type="String" />
+		<field name="strategyID" type="long" />
+		<field name="groupId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="name" type="String">
+			<hint name="max-length">500</hint>
+		</field>
+		<field name="description" type="String">
+			<hint name="max-length">4000</hint>
+		</field>
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="active" type="boolean" />
+		<field name="status" type="int" />
+		<field name="statusByUserId" type="long" />
+		<field name="statusByUserName" type="String" />
+		<field name="statusDate" type="Date" />
+		<field name="type" type="String" />
+		<field name="className" type="String">
+			<hint name="max-length">500</hint>
+		</field>
+		<field name="userId" type="long" />
+	</model>
+	<model name="com.ibtrader.data.model.StrategyShare">
+		<field name="uuid" type="String" />
+		<field name="strategyshareId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="strategyId" type="long" />
+		<field name="shareId" type="long" />
 	</model>
 </model-hints>

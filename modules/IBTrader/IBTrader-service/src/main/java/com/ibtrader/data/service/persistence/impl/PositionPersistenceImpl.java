@@ -37,6 +37,7 @@ import com.liferay.portal.kernel.service.persistence.CompanyProvider;
 import com.liferay.portal.kernel.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.kernel.util.ReflectionUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
@@ -45,6 +46,8 @@ import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 
 import java.io.Serializable;
+
+import java.lang.reflect.Field;
 
 import java.util.Collections;
 import java.util.Date;
@@ -1471,9 +1474,539 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 	private static final String _FINDER_COLUMN_UUID_C_UUID_2 = "position.uuid = ? AND ";
 	private static final String _FINDER_COLUMN_UUID_C_UUID_3 = "(position.uuid IS NULL OR position.uuid = '') AND ";
 	private static final String _FINDER_COLUMN_UUID_C_COMPANYID_2 = "position.companyId = ?";
+	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_POSITIONID_OUT_TWS =
+		new FinderPath(PositionModelImpl.ENTITY_CACHE_ENABLED,
+			PositionModelImpl.FINDER_CACHE_ENABLED, PositionImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByPositionID_Out_TWS",
+			new String[] {
+				Long.class.getName(),
+				
+			Integer.class.getName(), Integer.class.getName(),
+				OrderByComparator.class.getName()
+			});
+	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_POSITIONID_OUT_TWS =
+		new FinderPath(PositionModelImpl.ENTITY_CACHE_ENABLED,
+			PositionModelImpl.FINDER_CACHE_ENABLED, PositionImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"findByPositionID_Out_TWS", new String[] { Long.class.getName() },
+			PositionModelImpl.POSITIONID_TWS_OUT_COLUMN_BITMASK);
+	public static final FinderPath FINDER_PATH_COUNT_BY_POSITIONID_OUT_TWS = new FinderPath(PositionModelImpl.ENTITY_CACHE_ENABLED,
+			PositionModelImpl.FINDER_CACHE_ENABLED, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"countByPositionID_Out_TWS", new String[] { Long.class.getName() });
+
+	/**
+	 * Returns all the positions where positionId_tws_out = &#63;.
+	 *
+	 * @param positionId_tws_out the position id_tws_out
+	 * @return the matching positions
+	 */
+	@Override
+	public List<Position> findByPositionID_Out_TWS(long positionId_tws_out) {
+		return findByPositionID_Out_TWS(positionId_tws_out, QueryUtil.ALL_POS,
+			QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the positions where positionId_tws_out = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param positionId_tws_out the position id_tws_out
+	 * @param start the lower bound of the range of positions
+	 * @param end the upper bound of the range of positions (not inclusive)
+	 * @return the range of matching positions
+	 */
+	@Override
+	public List<Position> findByPositionID_Out_TWS(long positionId_tws_out,
+		int start, int end) {
+		return findByPositionID_Out_TWS(positionId_tws_out, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the positions where positionId_tws_out = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param positionId_tws_out the position id_tws_out
+	 * @param start the lower bound of the range of positions
+	 * @param end the upper bound of the range of positions (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching positions
+	 */
+	@Override
+	public List<Position> findByPositionID_Out_TWS(long positionId_tws_out,
+		int start, int end, OrderByComparator<Position> orderByComparator) {
+		return findByPositionID_Out_TWS(positionId_tws_out, start, end,
+			orderByComparator, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the positions where positionId_tws_out = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param positionId_tws_out the position id_tws_out
+	 * @param start the lower bound of the range of positions
+	 * @param end the upper bound of the range of positions (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the ordered range of matching positions
+	 */
+	@Override
+	public List<Position> findByPositionID_Out_TWS(long positionId_tws_out,
+		int start, int end, OrderByComparator<Position> orderByComparator,
+		boolean retrieveFromCache) {
+		boolean pagination = true;
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+				(orderByComparator == null)) {
+			pagination = false;
+			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_POSITIONID_OUT_TWS;
+			finderArgs = new Object[] { positionId_tws_out };
+		}
+		else {
+			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_POSITIONID_OUT_TWS;
+			finderArgs = new Object[] {
+					positionId_tws_out,
+					
+					start, end, orderByComparator
+				};
+		}
+
+		List<Position> list = null;
+
+		if (retrieveFromCache) {
+			list = (List<Position>)finderCache.getResult(finderPath,
+					finderArgs, this);
+
+			if ((list != null) && !list.isEmpty()) {
+				for (Position position : list) {
+					if ((positionId_tws_out != position.getPositionId_tws_out())) {
+						list = null;
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler query = null;
+
+			if (orderByComparator != null) {
+				query = new StringBundler(3 +
+						(orderByComparator.getOrderByFields().length * 2));
+			}
+			else {
+				query = new StringBundler(3);
+			}
+
+			query.append(_SQL_SELECT_POSITION_WHERE);
+
+			query.append(_FINDER_COLUMN_POSITIONID_OUT_TWS_POSITIONID_TWS_OUT_2);
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
+					orderByComparator);
+			}
+			else
+			 if (pagination) {
+				query.append(PositionModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(positionId_tws_out);
+
+				if (!pagination) {
+					list = (List<Position>)QueryUtil.list(q, getDialect(),
+							start, end, false);
+
+					Collections.sort(list);
+
+					list = Collections.unmodifiableList(list);
+				}
+				else {
+					list = (List<Position>)QueryUtil.list(q, getDialect(),
+							start, end);
+				}
+
+				cacheResult(list);
+
+				finderCache.putResult(finderPath, finderArgs, list);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Returns the first position in the ordered set where positionId_tws_out = &#63;.
+	 *
+	 * @param positionId_tws_out the position id_tws_out
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching position
+	 * @throws NoSuchPositionException if a matching position could not be found
+	 */
+	@Override
+	public Position findByPositionID_Out_TWS_First(long positionId_tws_out,
+		OrderByComparator<Position> orderByComparator)
+		throws NoSuchPositionException {
+		Position position = fetchByPositionID_Out_TWS_First(positionId_tws_out,
+				orderByComparator);
+
+		if (position != null) {
+			return position;
+		}
+
+		StringBundler msg = new StringBundler(4);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("positionId_tws_out=");
+		msg.append(positionId_tws_out);
+
+		msg.append(StringPool.CLOSE_CURLY_BRACE);
+
+		throw new NoSuchPositionException(msg.toString());
+	}
+
+	/**
+	 * Returns the first position in the ordered set where positionId_tws_out = &#63;.
+	 *
+	 * @param positionId_tws_out the position id_tws_out
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching position, or <code>null</code> if a matching position could not be found
+	 */
+	@Override
+	public Position fetchByPositionID_Out_TWS_First(long positionId_tws_out,
+		OrderByComparator<Position> orderByComparator) {
+		List<Position> list = findByPositionID_Out_TWS(positionId_tws_out, 0,
+				1, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last position in the ordered set where positionId_tws_out = &#63;.
+	 *
+	 * @param positionId_tws_out the position id_tws_out
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching position
+	 * @throws NoSuchPositionException if a matching position could not be found
+	 */
+	@Override
+	public Position findByPositionID_Out_TWS_Last(long positionId_tws_out,
+		OrderByComparator<Position> orderByComparator)
+		throws NoSuchPositionException {
+		Position position = fetchByPositionID_Out_TWS_Last(positionId_tws_out,
+				orderByComparator);
+
+		if (position != null) {
+			return position;
+		}
+
+		StringBundler msg = new StringBundler(4);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("positionId_tws_out=");
+		msg.append(positionId_tws_out);
+
+		msg.append(StringPool.CLOSE_CURLY_BRACE);
+
+		throw new NoSuchPositionException(msg.toString());
+	}
+
+	/**
+	 * Returns the last position in the ordered set where positionId_tws_out = &#63;.
+	 *
+	 * @param positionId_tws_out the position id_tws_out
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching position, or <code>null</code> if a matching position could not be found
+	 */
+	@Override
+	public Position fetchByPositionID_Out_TWS_Last(long positionId_tws_out,
+		OrderByComparator<Position> orderByComparator) {
+		int count = countByPositionID_Out_TWS(positionId_tws_out);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<Position> list = findByPositionID_Out_TWS(positionId_tws_out,
+				count - 1, count, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the positions before and after the current position in the ordered set where positionId_tws_out = &#63;.
+	 *
+	 * @param positionId the primary key of the current position
+	 * @param positionId_tws_out the position id_tws_out
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next position
+	 * @throws NoSuchPositionException if a position with the primary key could not be found
+	 */
+	@Override
+	public Position[] findByPositionID_Out_TWS_PrevAndNext(long positionId,
+		long positionId_tws_out, OrderByComparator<Position> orderByComparator)
+		throws NoSuchPositionException {
+		Position position = findByPrimaryKey(positionId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			Position[] array = new PositionImpl[3];
+
+			array[0] = getByPositionID_Out_TWS_PrevAndNext(session, position,
+					positionId_tws_out, orderByComparator, true);
+
+			array[1] = position;
+
+			array[2] = getByPositionID_Out_TWS_PrevAndNext(session, position,
+					positionId_tws_out, orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected Position getByPositionID_Out_TWS_PrevAndNext(Session session,
+		Position position, long positionId_tws_out,
+		OrderByComparator<Position> orderByComparator, boolean previous) {
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(4 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(3);
+		}
+
+		query.append(_SQL_SELECT_POSITION_WHERE);
+
+		query.append(_FINDER_COLUMN_POSITIONID_OUT_TWS_POSITIONID_TWS_OUT_2);
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			query.append(PositionModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = query.toString();
+
+		Query q = session.createQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(positionId_tws_out);
+
+		if (orderByComparator != null) {
+			Object[] values = orderByComparator.getOrderByConditionValues(position);
+
+			for (Object value : values) {
+				qPos.add(value);
+			}
+		}
+
+		List<Position> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Removes all the positions where positionId_tws_out = &#63; from the database.
+	 *
+	 * @param positionId_tws_out the position id_tws_out
+	 */
+	@Override
+	public void removeByPositionID_Out_TWS(long positionId_tws_out) {
+		for (Position position : findByPositionID_Out_TWS(positionId_tws_out,
+				QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+			remove(position);
+		}
+	}
+
+	/**
+	 * Returns the number of positions where positionId_tws_out = &#63;.
+	 *
+	 * @param positionId_tws_out the position id_tws_out
+	 * @return the number of matching positions
+	 */
+	@Override
+	public int countByPositionID_Out_TWS(long positionId_tws_out) {
+		FinderPath finderPath = FINDER_PATH_COUNT_BY_POSITIONID_OUT_TWS;
+
+		Object[] finderArgs = new Object[] { positionId_tws_out };
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(2);
+
+			query.append(_SQL_COUNT_POSITION_WHERE);
+
+			query.append(_FINDER_COLUMN_POSITIONID_OUT_TWS_POSITIONID_TWS_OUT_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(positionId_tws_out);
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_POSITIONID_OUT_TWS_POSITIONID_TWS_OUT_2 =
+		"position.positionId_tws_out = ?";
 
 	public PositionPersistenceImpl() {
 		setModelClass(Position.class);
+
+		try {
+			Field field = ReflectionUtil.getDeclaredField(BasePersistenceImpl.class,
+					"_dbColumnNames");
+
+			Map<String, String> dbColumnNames = new HashMap<String, String>();
+
+			dbColumnNames.put("uuid", "uuid_");
+			dbColumnNames.put("state", "state_");
+			dbColumnNames.put("type", "type_");
+
+			field.set(this, dbColumnNames);
+		}
+		catch (Exception e) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(e, e);
+			}
+		}
 	}
 
 	/**
@@ -1541,7 +2074,7 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
-		clearUniqueFindersCache((PositionModelImpl)position);
+		clearUniqueFindersCache((PositionModelImpl)position, true);
 	}
 
 	@Override
@@ -1553,49 +2086,35 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 			entityCache.removeResult(PositionModelImpl.ENTITY_CACHE_ENABLED,
 				PositionImpl.class, position.getPrimaryKey());
 
-			clearUniqueFindersCache((PositionModelImpl)position);
+			clearUniqueFindersCache((PositionModelImpl)position, true);
 		}
 	}
 
-	protected void cacheUniqueFindersCache(
-		PositionModelImpl positionModelImpl, boolean isNew) {
-		if (isNew) {
-			Object[] args = new Object[] {
-					positionModelImpl.getUuid(), positionModelImpl.getGroupId()
-				};
-
-			finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
-				Long.valueOf(1));
-			finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
-				positionModelImpl);
-		}
-		else {
-			if ((positionModelImpl.getColumnBitmask() &
-					FINDER_PATH_FETCH_BY_UUID_G.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						positionModelImpl.getUuid(),
-						positionModelImpl.getGroupId()
-					};
-
-				finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
-					Long.valueOf(1));
-				finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
-					positionModelImpl);
-			}
-		}
-	}
-
-	protected void clearUniqueFindersCache(PositionModelImpl positionModelImpl) {
+	protected void cacheUniqueFindersCache(PositionModelImpl positionModelImpl) {
 		Object[] args = new Object[] {
 				positionModelImpl.getUuid(), positionModelImpl.getGroupId()
 			};
 
-		finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
-		finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
+		finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
+			Long.valueOf(1), false);
+		finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
+			positionModelImpl, false);
+	}
+
+	protected void clearUniqueFindersCache(
+		PositionModelImpl positionModelImpl, boolean clearCurrent) {
+		if (clearCurrent) {
+			Object[] args = new Object[] {
+					positionModelImpl.getUuid(), positionModelImpl.getGroupId()
+				};
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
+			finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
+		}
 
 		if ((positionModelImpl.getColumnBitmask() &
 				FINDER_PATH_FETCH_BY_UUID_G.getColumnBitmask()) != 0) {
-			args = new Object[] {
+			Object[] args = new Object[] {
 					positionModelImpl.getOriginalUuid(),
 					positionModelImpl.getOriginalGroupId()
 				};
@@ -1770,8 +2289,36 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 
-		if (isNew || !PositionModelImpl.COLUMN_BITMASK_ENABLED) {
+		if (!PositionModelImpl.COLUMN_BITMASK_ENABLED) {
 			finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+		}
+		else
+		 if (isNew) {
+			Object[] args = new Object[] { positionModelImpl.getUuid() };
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID, args);
+			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID,
+				args);
+
+			args = new Object[] {
+					positionModelImpl.getUuid(),
+					positionModelImpl.getCompanyId()
+				};
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_C, args);
+			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID_C,
+				args);
+
+			args = new Object[] { positionModelImpl.getPositionId_tws_out() };
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_POSITIONID_OUT_TWS,
+				args);
+			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_POSITIONID_OUT_TWS,
+				args);
+
+			finderCache.removeResult(FINDER_PATH_COUNT_ALL, FINDER_ARGS_EMPTY);
+			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_ALL,
+				FINDER_ARGS_EMPTY);
 		}
 
 		else {
@@ -1810,13 +2357,32 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID_C,
 					args);
 			}
+
+			if ((positionModelImpl.getColumnBitmask() &
+					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_POSITIONID_OUT_TWS.getColumnBitmask()) != 0) {
+				Object[] args = new Object[] {
+						positionModelImpl.getOriginalPositionId_tws_out()
+					};
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_POSITIONID_OUT_TWS,
+					args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_POSITIONID_OUT_TWS,
+					args);
+
+				args = new Object[] { positionModelImpl.getPositionId_tws_out() };
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_POSITIONID_OUT_TWS,
+					args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_POSITIONID_OUT_TWS,
+					args);
+			}
 		}
 
 		entityCache.putResult(PositionModelImpl.ENTITY_CACHE_ENABLED,
 			PositionImpl.class, position.getPrimaryKey(), position, false);
 
-		clearUniqueFindersCache(positionModelImpl);
-		cacheUniqueFindersCache(positionModelImpl, isNew);
+		clearUniqueFindersCache(positionModelImpl, false);
+		cacheUniqueFindersCache(positionModelImpl);
 
 		position.resetOriginalValues();
 
@@ -1857,6 +2423,7 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 		positionImpl.setLimit_price_out(position.getLimit_price_out());
 		positionImpl.setDate_out(position.getDate_out());
 		positionImpl.setDate_real_out(position.getDate_real_out());
+		positionImpl.setShare_number(position.getShare_number());
 		positionImpl.setShare_number_to_trade(position.getShare_number_to_trade());
 		positionImpl.setShare_number_traded(position.getShare_number_traded());
 		positionImpl.setRealtimeId_in(position.getRealtimeId_in());
@@ -2022,7 +2589,7 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 		query.append(_SQL_SELECT_POSITION_WHERE_PKS_IN);
 
 		for (Serializable primaryKey : uncachedPrimaryKeys) {
-			query.append(String.valueOf(primaryKey));
+			query.append((long)primaryKey);
 
 			query.append(StringPool.COMMA);
 		}

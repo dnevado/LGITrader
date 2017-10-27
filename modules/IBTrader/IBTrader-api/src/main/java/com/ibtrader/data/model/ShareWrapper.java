@@ -69,6 +69,11 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 		attributes.put("modifiedDate", getModifiedDate());
 		attributes.put("active", getActive());
 		attributes.put("numbertopurchase", getNumbertopurchase());
+		attributes.put("percentual_limit_buy", getPercentual_limit_buy());
+		attributes.put("percentual_stop_lost", getPercentual_stop_lost());
+		attributes.put("percentual_stop_profit", getPercentual_stop_profit());
+		attributes.put("percentual_stop_profit_position",
+			getPercentual_stop_profit_position());
 		attributes.put("expiry_date", getExpiry_date());
 		attributes.put("expiry_expression", getExpiry_expression());
 		attributes.put("tick_futures", getTick_futures());
@@ -144,6 +149,34 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 
 		if (numbertopurchase != null) {
 			setNumbertopurchase(numbertopurchase);
+		}
+
+		Double percentual_limit_buy = (Double)attributes.get(
+				"percentual_limit_buy");
+
+		if (percentual_limit_buy != null) {
+			setPercentual_limit_buy(percentual_limit_buy);
+		}
+
+		Double percentual_stop_lost = (Double)attributes.get(
+				"percentual_stop_lost");
+
+		if (percentual_stop_lost != null) {
+			setPercentual_stop_lost(percentual_stop_lost);
+		}
+
+		Double percentual_stop_profit = (Double)attributes.get(
+				"percentual_stop_profit");
+
+		if (percentual_stop_profit != null) {
+			setPercentual_stop_profit(percentual_stop_profit);
+		}
+
+		Double percentual_stop_profit_position = (Double)attributes.get(
+				"percentual_stop_profit_position");
+
+		if (percentual_stop_profit_position != null) {
+			setPercentual_stop_profit_position(percentual_stop_profit_position);
 		}
 
 		Date expiry_date = (Date)attributes.get("expiry_date");
@@ -269,6 +302,46 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 	@Override
 	public com.liferay.portal.kernel.model.CacheModel<Share> toCacheModel() {
 		return _share.toCacheModel();
+	}
+
+	/**
+	* Returns the percentual_limit_buy of this share.
+	*
+	* @return the percentual_limit_buy of this share
+	*/
+	@Override
+	public double getPercentual_limit_buy() {
+		return _share.getPercentual_limit_buy();
+	}
+
+	/**
+	* Returns the percentual_stop_lost of this share.
+	*
+	* @return the percentual_stop_lost of this share
+	*/
+	@Override
+	public double getPercentual_stop_lost() {
+		return _share.getPercentual_stop_lost();
+	}
+
+	/**
+	* Returns the percentual_stop_profit of this share.
+	*
+	* @return the percentual_stop_profit of this share
+	*/
+	@Override
+	public double getPercentual_stop_profit() {
+		return _share.getPercentual_stop_profit();
+	}
+
+	/**
+	* Returns the percentual_stop_profit_position of this share.
+	*
+	* @return the percentual_stop_profit_position of this share
+	*/
+	@Override
+	public double getPercentual_stop_profit_position() {
+		return _share.getPercentual_stop_profit_position();
 	}
 
 	/**
@@ -690,6 +763,47 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 	@Override
 	public void setNumbertopurchase(long numbertopurchase) {
 		_share.setNumbertopurchase(numbertopurchase);
+	}
+
+	/**
+	* Sets the percentual_limit_buy of this share.
+	*
+	* @param percentual_limit_buy the percentual_limit_buy of this share
+	*/
+	@Override
+	public void setPercentual_limit_buy(double percentual_limit_buy) {
+		_share.setPercentual_limit_buy(percentual_limit_buy);
+	}
+
+	/**
+	* Sets the percentual_stop_lost of this share.
+	*
+	* @param percentual_stop_lost the percentual_stop_lost of this share
+	*/
+	@Override
+	public void setPercentual_stop_lost(double percentual_stop_lost) {
+		_share.setPercentual_stop_lost(percentual_stop_lost);
+	}
+
+	/**
+	* Sets the percentual_stop_profit of this share.
+	*
+	* @param percentual_stop_profit the percentual_stop_profit of this share
+	*/
+	@Override
+	public void setPercentual_stop_profit(double percentual_stop_profit) {
+		_share.setPercentual_stop_profit(percentual_stop_profit);
+	}
+
+	/**
+	* Sets the percentual_stop_profit_position of this share.
+	*
+	* @param percentual_stop_profit_position the percentual_stop_profit_position of this share
+	*/
+	@Override
+	public void setPercentual_stop_profit_position(
+		double percentual_stop_profit_position) {
+		_share.setPercentual_stop_profit_position(percentual_stop_profit_position);
 	}
 
 	/**

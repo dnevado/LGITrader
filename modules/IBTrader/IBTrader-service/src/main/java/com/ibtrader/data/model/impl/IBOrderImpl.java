@@ -30,7 +30,7 @@ public class IBOrderImpl extends IBOrderBaseImpl {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never reference this class directly. All methods that expect a i b order model instance should use the {@link com.ibtrader.data.model.IBOrder} interface instead.
+	 * Never reference this class directly. All methods that expect a ib order model instance should use the {@link com.ibtrader.data.model.IBOrder} interface instead.
 	 */
 	public IBOrderImpl() {
 	}

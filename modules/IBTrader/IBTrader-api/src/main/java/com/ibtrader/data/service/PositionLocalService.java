@@ -114,6 +114,8 @@ public interface PositionLocalService extends BaseLocalService,
 	public Position fetchPositionByUuidAndGroupId(java.lang.String uuid,
 		long groupId);
 
+	public Position findByPositionID_Out_TWS(long _PositionIDTWS);
+
 	/**
 	* Returns the position with the primary key.
 	*

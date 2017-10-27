@@ -37,6 +37,7 @@ import com.liferay.portal.kernel.service.persistence.CompanyProvider;
 import com.liferay.portal.kernel.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.kernel.util.ReflectionUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
@@ -45,6 +46,8 @@ import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 
 import java.io.Serializable;
+
+import java.lang.reflect.Field;
 
 import java.util.Collections;
 import java.util.Date;
@@ -2652,6 +2655,22 @@ public class ConfigPersistenceImpl extends BasePersistenceImpl<Config>
 
 	public ConfigPersistenceImpl() {
 		setModelClass(Config.class);
+
+		try {
+			Field field = ReflectionUtil.getDeclaredField(BasePersistenceImpl.class,
+					"_dbColumnNames");
+
+			Map<String, String> dbColumnNames = new HashMap<String, String>();
+
+			dbColumnNames.put("uuid", "uuid_");
+
+			field.set(this, dbColumnNames);
+		}
+		catch (Exception e) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(e, e);
+			}
+		}
 	}
 
 	/**
@@ -2719,7 +2738,7 @@ public class ConfigPersistenceImpl extends BasePersistenceImpl<Config>
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
-		clearUniqueFindersCache((ConfigModelImpl)config);
+		clearUniqueFindersCache((ConfigModelImpl)config, true);
 	}
 
 	@Override
@@ -2731,48 +2750,35 @@ public class ConfigPersistenceImpl extends BasePersistenceImpl<Config>
 			entityCache.removeResult(ConfigModelImpl.ENTITY_CACHE_ENABLED,
 				ConfigImpl.class, config.getPrimaryKey());
 
-			clearUniqueFindersCache((ConfigModelImpl)config);
+			clearUniqueFindersCache((ConfigModelImpl)config, true);
 		}
 	}
 
-	protected void cacheUniqueFindersCache(ConfigModelImpl configModelImpl,
-		boolean isNew) {
-		if (isNew) {
-			Object[] args = new Object[] {
-					configModelImpl.getUuid(), configModelImpl.getGroupId()
-				};
-
-			finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
-				Long.valueOf(1));
-			finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
-				configModelImpl);
-		}
-		else {
-			if ((configModelImpl.getColumnBitmask() &
-					FINDER_PATH_FETCH_BY_UUID_G.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						configModelImpl.getUuid(), configModelImpl.getGroupId()
-					};
-
-				finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
-					Long.valueOf(1));
-				finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
-					configModelImpl);
-			}
-		}
-	}
-
-	protected void clearUniqueFindersCache(ConfigModelImpl configModelImpl) {
+	protected void cacheUniqueFindersCache(ConfigModelImpl configModelImpl) {
 		Object[] args = new Object[] {
 				configModelImpl.getUuid(), configModelImpl.getGroupId()
 			};
 
-		finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
-		finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
+		finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
+			Long.valueOf(1), false);
+		finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
+			configModelImpl, false);
+	}
+
+	protected void clearUniqueFindersCache(ConfigModelImpl configModelImpl,
+		boolean clearCurrent) {
+		if (clearCurrent) {
+			Object[] args = new Object[] {
+					configModelImpl.getUuid(), configModelImpl.getGroupId()
+				};
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
+			finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
+		}
 
 		if ((configModelImpl.getColumnBitmask() &
 				FINDER_PATH_FETCH_BY_UUID_G.getColumnBitmask()) != 0) {
-			args = new Object[] {
+			Object[] args = new Object[] {
 					configModelImpl.getOriginalUuid(),
 					configModelImpl.getOriginalGroupId()
 				};
@@ -2945,8 +2951,46 @@ public class ConfigPersistenceImpl extends BasePersistenceImpl<Config>
 
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 
-		if (isNew || !ConfigModelImpl.COLUMN_BITMASK_ENABLED) {
+		if (!ConfigModelImpl.COLUMN_BITMASK_ENABLED) {
 			finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+		}
+		else
+		 if (isNew) {
+			Object[] args = new Object[] { configModelImpl.getUuid() };
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID, args);
+			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID,
+				args);
+
+			args = new Object[] {
+					configModelImpl.getUuid(), configModelImpl.getCompanyId()
+				};
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_C, args);
+			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID_C,
+				args);
+
+			args = new Object[] {
+					configModelImpl.getCompanyId(),
+					configModelImpl.getConfig_key()
+				};
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_KEYCOMPANY, args);
+			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_KEYCOMPANY,
+				args);
+
+			args = new Object[] {
+					configModelImpl.getConfig_key(),
+					configModelImpl.getGlobaldefault()
+				};
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_KEYGLOBALDEFAULT, args);
+			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_KEYGLOBALDEFAULT,
+				args);
+
+			finderCache.removeResult(FINDER_PATH_COUNT_ALL, FINDER_ARGS_EMPTY);
+			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_ALL,
+				FINDER_ARGS_EMPTY);
 		}
 
 		else {
@@ -3034,8 +3078,8 @@ public class ConfigPersistenceImpl extends BasePersistenceImpl<Config>
 		entityCache.putResult(ConfigModelImpl.ENTITY_CACHE_ENABLED,
 			ConfigImpl.class, config.getPrimaryKey(), config, false);
 
-		clearUniqueFindersCache(configModelImpl);
-		cacheUniqueFindersCache(configModelImpl, isNew);
+		clearUniqueFindersCache(configModelImpl, false);
+		cacheUniqueFindersCache(configModelImpl);
 
 		config.resetOriginalValues();
 
@@ -3214,7 +3258,7 @@ public class ConfigPersistenceImpl extends BasePersistenceImpl<Config>
 		query.append(_SQL_SELECT_CONFIG_WHERE_PKS_IN);
 
 		for (Serializable primaryKey : uncachedPrimaryKeys) {
-			query.append(String.valueOf(primaryKey));
+			query.append((long)primaryKey);
 
 			query.append(StringPool.COMMA);
 		}

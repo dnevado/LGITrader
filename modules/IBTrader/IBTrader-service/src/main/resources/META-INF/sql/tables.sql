@@ -3,13 +3,13 @@ create table ibtrader_Config (
 	configId LONG not null primary key,
 	groupId LONG,
 	companyId LONG,
-	name VARCHAR(75) null,
+	name VARCHAR(500) null,
 	value VARCHAR(75) null,
 	createDate DATE null,
 	modifiedDate DATE null,
 	globaldefault BOOLEAN,
 	config_key VARCHAR(75) null,
-	description VARCHAR(75) null
+	description STRING null
 );
 
 create table ibtrader_IBOrder (
@@ -36,16 +36,6 @@ create table ibtrader_Market (
 	currency_ VARCHAR(75) null
 );
 
-create table ibtrader_Order (
-	uuid_ VARCHAR(75) null,
-	ordersId LONG not null primary key,
-	groupId LONG,
-	companyId LONG,
-	orderID LONG,
-	shareID LONG,
-	checked BOOLEAN
-);
-
 create table ibtrader_Position (
 	uuid_ VARCHAR(75) null,
 	positionId LONG not null primary key,
@@ -58,7 +48,7 @@ create table ibtrader_Position (
 	state_ VARCHAR(75) null,
 	state_in VARCHAR(75) null,
 	state_out VARCHAR(75) null,
-	description VARCHAR(75) null,
+	description STRING null,
 	price_in DOUBLE,
 	price_real_in DOUBLE,
 	limit_price_in DOUBLE,
@@ -71,6 +61,7 @@ create table ibtrader_Position (
 	limit_price_out DOUBLE,
 	date_out DATE null,
 	date_real_out DATE null,
+	share_number LONG,
 	share_number_to_trade LONG,
 	share_number_traded LONG,
 	realtimeId_in LONG,
@@ -104,7 +95,7 @@ create table ibtrader_Realtime (
 create table ibtrader_Share (
 	uuid_ VARCHAR(75) null,
 	shareId LONG not null primary key,
-	name VARCHAR(75) null,
+	name VARCHAR(500) null,
 	symbol VARCHAR(75) null,
 	groupId LONG,
 	companyId LONG,
@@ -112,6 +103,10 @@ create table ibtrader_Share (
 	modifiedDate DATE null,
 	active_ BOOLEAN,
 	numbertopurchase LONG,
+	percentual_limit_buy DOUBLE,
+	percentual_stop_lost DOUBLE,
+	percentual_stop_profit DOUBLE,
+	percentual_stop_profit_position DOUBLE,
 	expiry_date DATE null,
 	expiry_expression VARCHAR(75) null,
 	tick_futures DOUBLE,
@@ -123,4 +118,34 @@ create table ibtrader_Share (
 	primary_exchange VARCHAR(75) null,
 	date_contract_verified DATE null,
 	marketId LONG
+);
+
+create table ibtrader_Strategy (
+	uuid_ VARCHAR(75) null,
+	strategyID LONG not null primary key,
+	groupId LONG,
+	companyId LONG,
+	name VARCHAR(500) null,
+	description STRING null,
+	createDate DATE null,
+	modifiedDate DATE null,
+	active_ BOOLEAN,
+	status INTEGER,
+	statusByUserId LONG,
+	statusByUserName VARCHAR(75) null,
+	statusDate DATE null,
+	type_ VARCHAR(75) null,
+	className VARCHAR(500) null,
+	userId LONG
+);
+
+create table ibtrader_StrategyShare (
+	uuid_ VARCHAR(75) null,
+	strategyshareId LONG not null primary key,
+	groupId LONG,
+	companyId LONG,
+	createDate DATE null,
+	modifiedDate DATE null,
+	strategyId LONG,
+	shareId LONG
 );

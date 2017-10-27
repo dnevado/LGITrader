@@ -23,9 +23,10 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * This class is used by SOAP remote services.
+ * This class is used by SOAP remote services, specifically {@link com.ibtrader.data.service.http.PositionServiceSoap}.
  *
  * @author Brian Wing Shun Chan
+ * @see com.ibtrader.data.service.http.PositionServiceSoap
  * @generated
  */
 @ProviderType
@@ -57,6 +58,7 @@ public class PositionSoap implements Serializable {
 		soapModel.setLimit_price_out(model.getLimit_price_out());
 		soapModel.setDate_out(model.getDate_out());
 		soapModel.setDate_real_out(model.getDate_real_out());
+		soapModel.setShare_number(model.getShare_number());
 		soapModel.setShare_number_to_trade(model.getShare_number_to_trade());
 		soapModel.setShare_number_traded(model.getShare_number_traded());
 		soapModel.setRealtimeId_in(model.getRealtimeId_in());
@@ -314,6 +316,14 @@ public class PositionSoap implements Serializable {
 		_date_real_out = date_real_out;
 	}
 
+	public long getShare_number() {
+		return _share_number;
+	}
+
+	public void setShare_number(long share_number) {
+		_share_number = share_number;
+	}
+
 	public long getShare_number_to_trade() {
 		return _share_number_to_trade;
 	}
@@ -446,6 +456,7 @@ public class PositionSoap implements Serializable {
 	private double _limit_price_out;
 	private Date _date_out;
 	private Date _date_real_out;
+	private long _share_number;
 	private long _share_number_to_trade;
 	private long _share_number_traded;
 	private long _realtimeId_in;

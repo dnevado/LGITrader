@@ -14,7 +14,11 @@
 
 package com.ibtrader.data.service.impl;
 
+import java.util.List;
+
+import com.ibtrader.data.model.Position;
 import com.ibtrader.data.service.base.PositionLocalServiceBaseImpl;
+import com.ibtrader.data.service.persistence.PositionPersistence;
 
 /**
  * The implementation of the position local service.
@@ -36,4 +40,15 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 	 *
 	 * Never reference this class directly. Always use {@link com.ibtrader.data.service.PositionLocalServiceUtil} to access the position local service.
 	 */
+	public Position findByPositionID_Out_TWS(long _PositionIDTWS)
+	{
+		Position _rPosition = null; 
+		List<Position> _lPosition = getPositionPersistence().findByPositionID_Out_TWS(_PositionIDTWS);
+		if (!_lPosition.isEmpty())
+		{
+			_rPosition = _lPosition.get(0);
+		}
+		return _rPosition;
+		
+	}
 }

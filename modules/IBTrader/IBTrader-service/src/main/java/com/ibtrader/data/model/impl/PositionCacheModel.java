@@ -65,7 +65,7 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(75);
+		StringBundler sb = new StringBundler(77);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -115,6 +115,8 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 		sb.append(date_out);
 		sb.append(", date_real_out=");
 		sb.append(date_real_out);
+		sb.append(", share_number=");
+		sb.append(share_number);
 		sb.append(", share_number_to_trade=");
 		sb.append(share_number_to_trade);
 		sb.append(", share_number_traded=");
@@ -250,6 +252,7 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 			positionImpl.setDate_real_out(new Date(date_real_out));
 		}
 
+		positionImpl.setShare_number(share_number);
 		positionImpl.setShare_number_to_trade(share_number_to_trade);
 		positionImpl.setShare_number_traded(share_number_traded);
 		positionImpl.setRealtimeId_in(realtimeId_in);
@@ -314,6 +317,8 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 		limit_price_out = objectInput.readDouble();
 		date_out = objectInput.readLong();
 		date_real_out = objectInput.readLong();
+
+		share_number = objectInput.readLong();
 
 		share_number_to_trade = objectInput.readLong();
 
@@ -416,6 +421,8 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 		objectOutput.writeLong(date_out);
 		objectOutput.writeLong(date_real_out);
 
+		objectOutput.writeLong(share_number);
+
 		objectOutput.writeLong(share_number_to_trade);
 
 		objectOutput.writeLong(share_number_traded);
@@ -472,6 +479,7 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 	public double limit_price_out;
 	public long date_out;
 	public long date_real_out;
+	public long share_number;
 	public long share_number_to_trade;
 	public long share_number_traded;
 	public long realtimeId_in;

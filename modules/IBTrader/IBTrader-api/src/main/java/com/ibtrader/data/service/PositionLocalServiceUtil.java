@@ -105,6 +105,11 @@ public class PositionLocalServiceUtil {
 		return getService().fetchPositionByUuidAndGroupId(uuid, groupId);
 	}
 
+	public static com.ibtrader.data.model.Position findByPositionID_Out_TWS(
+		long _PositionIDTWS) {
+		return getService().findByPositionID_Out_TWS(_PositionIDTWS);
+	}
+
 	/**
 	* Returns the position with the primary key.
 	*

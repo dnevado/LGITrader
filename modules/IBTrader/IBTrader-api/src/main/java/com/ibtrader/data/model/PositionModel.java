@@ -416,6 +416,20 @@ public interface PositionModel extends BaseModel<Position>, ShardedModel,
 	public void setDate_real_out(Date date_real_out);
 
 	/**
+	 * Returns the share_number of this position.
+	 *
+	 * @return the share_number of this position
+	 */
+	public long getShare_number();
+
+	/**
+	 * Sets the share_number of this position.
+	 *
+	 * @param share_number the share_number of this position
+	 */
+	public void setShare_number(long share_number);
+
+	/**
 	 * Returns the share_number_to_trade of this position.
 	 *
 	 * @return the share_number_to_trade of this position

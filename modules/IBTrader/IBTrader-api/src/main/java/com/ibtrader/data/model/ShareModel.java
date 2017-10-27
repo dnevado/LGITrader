@@ -223,6 +223,63 @@ public interface ShareModel extends BaseModel<Share>, ShardedModel, StagedModel 
 	public void setNumbertopurchase(long numbertopurchase);
 
 	/**
+	 * Returns the percentual_limit_buy of this share.
+	 *
+	 * @return the percentual_limit_buy of this share
+	 */
+	public double getPercentual_limit_buy();
+
+	/**
+	 * Sets the percentual_limit_buy of this share.
+	 *
+	 * @param percentual_limit_buy the percentual_limit_buy of this share
+	 */
+	public void setPercentual_limit_buy(double percentual_limit_buy);
+
+	/**
+	 * Returns the percentual_stop_lost of this share.
+	 *
+	 * @return the percentual_stop_lost of this share
+	 */
+	public double getPercentual_stop_lost();
+
+	/**
+	 * Sets the percentual_stop_lost of this share.
+	 *
+	 * @param percentual_stop_lost the percentual_stop_lost of this share
+	 */
+	public void setPercentual_stop_lost(double percentual_stop_lost);
+
+	/**
+	 * Returns the percentual_stop_profit of this share.
+	 *
+	 * @return the percentual_stop_profit of this share
+	 */
+	public double getPercentual_stop_profit();
+
+	/**
+	 * Sets the percentual_stop_profit of this share.
+	 *
+	 * @param percentual_stop_profit the percentual_stop_profit of this share
+	 */
+	public void setPercentual_stop_profit(double percentual_stop_profit);
+
+	/**
+	 * Returns the percentual_stop_profit_position of this share.
+	 *
+	 * @return the percentual_stop_profit_position of this share
+	 */
+	public double getPercentual_stop_profit_position();
+
+	/**
+	 * Sets the percentual_stop_profit_position of this share.
+	 *
+	 * @param percentual_stop_profit_position the percentual_stop_profit_position of this share
+	 */
+	public void setPercentual_stop_profit_position(
+		double percentual_stop_profit_position);
+
+	/**
 	 * Returns the expiry_date of this share.
 	 *
 	 * @return the expiry_date of this share

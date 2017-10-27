@@ -1,6 +1,6 @@
 buildscript {
 	dependencies {
-		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.workspace", version: "1.0.40"
+		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.workspace", version: "1.5.0"
 		classpath group: "net.saliman", name: "gradle-properties-plugin", version: "1.4.6"
 	}
 

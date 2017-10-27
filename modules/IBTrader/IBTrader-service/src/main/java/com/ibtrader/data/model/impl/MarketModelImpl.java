@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.ibtrader.data.model.Market;
 import com.ibtrader.data.model.MarketModel;
+import com.ibtrader.data.model.MarketSoap;
 
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
@@ -25,6 +26,7 @@ import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
 import com.liferay.exportimport.kernel.lar.StagedModelType;
 
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
+import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.model.impl.BaseModelImpl;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -38,8 +40,10 @@ import java.io.Serializable;
 
 import java.sql.Types;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -55,6 +59,7 @@ import java.util.Map;
  * @see MarketModel
  * @generated
  */
+@JSON(strict = true)
 @ProviderType
 public class MarketModelImpl extends BaseModelImpl<Market>
 	implements MarketModel {
@@ -116,6 +121,55 @@ public class MarketModelImpl extends BaseModelImpl<Market>
 	public static final long START_HOUR_COLUMN_BITMASK = 16L;
 	public static final long UUID_COLUMN_BITMASK = 32L;
 	public static final long MARKETID_COLUMN_BITMASK = 64L;
+
+	/**
+	 * Converts the soap model instance into a normal model instance.
+	 *
+	 * @param soapModel the soap model instance to convert
+	 * @return the normal model instance
+	 */
+	public static Market toModel(MarketSoap soapModel) {
+		if (soapModel == null) {
+			return null;
+		}
+
+		Market model = new MarketImpl();
+
+		model.setUuid(soapModel.getUuid());
+		model.setMarketId(soapModel.getMarketId());
+		model.setGroupId(soapModel.getGroupId());
+		model.setCompanyId(soapModel.getCompanyId());
+		model.setActive(soapModel.getActive());
+		model.setCreateDate(soapModel.getCreateDate());
+		model.setModifiedDate(soapModel.getModifiedDate());
+		model.setStart_hour(soapModel.getStart_hour());
+		model.setEnd_hour(soapModel.getEnd_hour());
+		model.setIdentifier(soapModel.getIdentifier());
+		model.setCurrency(soapModel.getCurrency());
+
+		return model;
+	}
+
+	/**
+	 * Converts the soap model instances into normal model instances.
+	 *
+	 * @param soapModels the soap model instances to convert
+	 * @return the normal model instances
+	 */
+	public static List<Market> toModels(MarketSoap[] soapModels) {
+		if (soapModels == null) {
+			return null;
+		}
+
+		List<Market> models = new ArrayList<Market>(soapModels.length);
+
+		for (MarketSoap soapModel : soapModels) {
+			models.add(toModel(soapModel));
+		}
+
+		return models;
+	}
+
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.ibtrader.data.service.util.ServiceProps.get(
 				"lock.expiration.time.com.ibtrader.data.model.Market"));
 
@@ -243,6 +297,7 @@ public class MarketModelImpl extends BaseModelImpl<Market>
 		}
 	}
 
+	@JSON
 	@Override
 	public String getUuid() {
 		if (_uuid == null) {
@@ -266,6 +321,7 @@ public class MarketModelImpl extends BaseModelImpl<Market>
 		return GetterUtil.getString(_originalUuid);
 	}
 
+	@JSON
 	@Override
 	public long getMarketId() {
 		return _marketId;
@@ -276,6 +332,7 @@ public class MarketModelImpl extends BaseModelImpl<Market>
 		_marketId = marketId;
 	}
 
+	@JSON
 	@Override
 	public long getGroupId() {
 		return _groupId;
@@ -298,6 +355,7 @@ public class MarketModelImpl extends BaseModelImpl<Market>
 		return _originalGroupId;
 	}
 
+	@JSON
 	@Override
 	public long getCompanyId() {
 		return _companyId;
@@ -320,11 +378,13 @@ public class MarketModelImpl extends BaseModelImpl<Market>
 		return _originalCompanyId;
 	}
 
+	@JSON
 	@Override
 	public boolean getActive() {
 		return _active;
 	}
 
+	@JSON
 	@Override
 	public boolean isActive() {
 		return _active;
@@ -347,6 +407,7 @@ public class MarketModelImpl extends BaseModelImpl<Market>
 		return _originalActive;
 	}
 
+	@JSON
 	@Override
 	public Date getCreateDate() {
 		return _createDate;
@@ -357,6 +418,7 @@ public class MarketModelImpl extends BaseModelImpl<Market>
 		_createDate = createDate;
 	}
 
+	@JSON
 	@Override
 	public Date getModifiedDate() {
 		return _modifiedDate;
@@ -373,6 +435,7 @@ public class MarketModelImpl extends BaseModelImpl<Market>
 		_modifiedDate = modifiedDate;
 	}
 
+	@JSON
 	@Override
 	public String getStart_hour() {
 		if (_start_hour == null) {
@@ -398,6 +461,7 @@ public class MarketModelImpl extends BaseModelImpl<Market>
 		return GetterUtil.getString(_originalStart_hour);
 	}
 
+	@JSON
 	@Override
 	public String getEnd_hour() {
 		if (_end_hour == null) {
@@ -423,6 +487,7 @@ public class MarketModelImpl extends BaseModelImpl<Market>
 		return GetterUtil.getString(_originalEnd_hour);
 	}
 
+	@JSON
 	@Override
 	public String getIdentifier() {
 		if (_identifier == null) {
@@ -438,6 +503,7 @@ public class MarketModelImpl extends BaseModelImpl<Market>
 		_identifier = identifier;
 	}
 
+	@JSON
 	@Override
 	public String getCurrency() {
 		if (_currency == null) {

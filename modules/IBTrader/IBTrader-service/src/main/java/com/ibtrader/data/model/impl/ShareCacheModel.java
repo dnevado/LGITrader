@@ -65,7 +65,7 @@ public class ShareCacheModel implements CacheModel<Share>, Externalizable {
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(43);
+		StringBundler sb = new StringBundler(51);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -87,6 +87,14 @@ public class ShareCacheModel implements CacheModel<Share>, Externalizable {
 		sb.append(active);
 		sb.append(", numbertopurchase=");
 		sb.append(numbertopurchase);
+		sb.append(", percentual_limit_buy=");
+		sb.append(percentual_limit_buy);
+		sb.append(", percentual_stop_lost=");
+		sb.append(percentual_stop_lost);
+		sb.append(", percentual_stop_profit=");
+		sb.append(percentual_stop_profit);
+		sb.append(", percentual_stop_profit_position=");
+		sb.append(percentual_stop_profit_position);
 		sb.append(", expiry_date=");
 		sb.append(expiry_date);
 		sb.append(", expiry_expression=");
@@ -160,6 +168,10 @@ public class ShareCacheModel implements CacheModel<Share>, Externalizable {
 
 		shareImpl.setActive(active);
 		shareImpl.setNumbertopurchase(numbertopurchase);
+		shareImpl.setPercentual_limit_buy(percentual_limit_buy);
+		shareImpl.setPercentual_stop_lost(percentual_stop_lost);
+		shareImpl.setPercentual_stop_profit(percentual_stop_profit);
+		shareImpl.setPercentual_stop_profit_position(percentual_stop_profit_position);
 
 		if (expiry_date == Long.MIN_VALUE) {
 			shareImpl.setExpiry_date(null);
@@ -244,6 +256,14 @@ public class ShareCacheModel implements CacheModel<Share>, Externalizable {
 		active = objectInput.readBoolean();
 
 		numbertopurchase = objectInput.readLong();
+
+		percentual_limit_buy = objectInput.readDouble();
+
+		percentual_stop_lost = objectInput.readDouble();
+
+		percentual_stop_profit = objectInput.readDouble();
+
+		percentual_stop_profit_position = objectInput.readDouble();
 		expiry_date = objectInput.readLong();
 		expiry_expression = objectInput.readUTF();
 
@@ -295,6 +315,14 @@ public class ShareCacheModel implements CacheModel<Share>, Externalizable {
 		objectOutput.writeBoolean(active);
 
 		objectOutput.writeLong(numbertopurchase);
+
+		objectOutput.writeDouble(percentual_limit_buy);
+
+		objectOutput.writeDouble(percentual_stop_lost);
+
+		objectOutput.writeDouble(percentual_stop_profit);
+
+		objectOutput.writeDouble(percentual_stop_profit_position);
 		objectOutput.writeLong(expiry_date);
 
 		if (expiry_expression == null) {
@@ -358,6 +386,10 @@ public class ShareCacheModel implements CacheModel<Share>, Externalizable {
 	public long modifiedDate;
 	public boolean active;
 	public long numbertopurchase;
+	public double percentual_limit_buy;
+	public double percentual_stop_lost;
+	public double percentual_stop_profit;
+	public double percentual_stop_profit_position;
 	public long expiry_date;
 	public String expiry_expression;
 	public double tick_futures;

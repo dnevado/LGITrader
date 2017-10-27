@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.ibtrader.data.model.Position;
 import com.ibtrader.data.model.PositionModel;
+import com.ibtrader.data.model.PositionSoap;
 
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
@@ -25,6 +26,7 @@ import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
 import com.liferay.exportimport.kernel.lar.StagedModelType;
 
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
+import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.model.impl.BaseModelImpl;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -38,8 +40,10 @@ import java.io.Serializable;
 
 import java.sql.Types;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -55,6 +59,7 @@ import java.util.Map;
  * @see PositionModel
  * @generated
  */
+@JSON(strict = true)
 @ProviderType
 public class PositionModelImpl extends BaseModelImpl<Position>
 	implements PositionModel {
@@ -89,6 +94,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 			{ "limit_price_out", Types.DOUBLE },
 			{ "date_out", Types.TIMESTAMP },
 			{ "date_real_out", Types.TIMESTAMP },
+			{ "share_number", Types.BIGINT },
 			{ "share_number_to_trade", Types.BIGINT },
 			{ "share_number_traded", Types.BIGINT },
 			{ "realtimeId_in", Types.BIGINT },
@@ -130,6 +136,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		TABLE_COLUMNS_MAP.put("limit_price_out", Types.DOUBLE);
 		TABLE_COLUMNS_MAP.put("date_out", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("date_real_out", Types.TIMESTAMP);
+		TABLE_COLUMNS_MAP.put("share_number", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("share_number_to_trade", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("share_number_traded", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("realtimeId_in", Types.BIGINT);
@@ -145,7 +152,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		TABLE_COLUMNS_MAP.put("simulation_mode", Types.BOOLEAN);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table ibtrader_Position (uuid_ VARCHAR(75) null,positionId LONG not null primary key,groupId LONG,companyId LONG,shareId LONG,value DOUBLE,createDate DATE null,modifiedDate DATE null,state_ VARCHAR(75) null,state_in VARCHAR(75) null,state_out VARCHAR(75) null,description VARCHAR(75) null,price_in DOUBLE,price_real_in DOUBLE,limit_price_in DOUBLE,date_in DATE null,date_real_in DATE null,positionId_tws_out LONG,type_ VARCHAR(75) null,price_out DOUBLE,price_real_out DOUBLE,limit_price_out DOUBLE,date_out DATE null,date_real_out DATE null,share_number_to_trade LONG,share_number_traded LONG,realtimeId_in LONG,realtimeId_out LONG,strategyId_in LONG,strategyId_out LONG,percentualstoplost_out DOUBLE,pricestoplost_out DOUBLE,percentualstopprofit_out DOUBLE,pricestopprofit_out DOUBLE,pendingcancelled LONG,trading_data_operations VARCHAR(75) null,simulation_mode BOOLEAN)";
+	public static final String TABLE_SQL_CREATE = "create table ibtrader_Position (uuid_ VARCHAR(75) null,positionId LONG not null primary key,groupId LONG,companyId LONG,shareId LONG,value DOUBLE,createDate DATE null,modifiedDate DATE null,state_ VARCHAR(75) null,state_in VARCHAR(75) null,state_out VARCHAR(75) null,description STRING null,price_in DOUBLE,price_real_in DOUBLE,limit_price_in DOUBLE,date_in DATE null,date_real_in DATE null,positionId_tws_out LONG,type_ VARCHAR(75) null,price_out DOUBLE,price_real_out DOUBLE,limit_price_out DOUBLE,date_out DATE null,date_real_out DATE null,share_number LONG,share_number_to_trade LONG,share_number_traded LONG,realtimeId_in LONG,realtimeId_out LONG,strategyId_in LONG,strategyId_out LONG,percentualstoplost_out DOUBLE,pricestoplost_out DOUBLE,percentualstopprofit_out DOUBLE,pricestopprofit_out DOUBLE,pendingcancelled LONG,trading_data_operations VARCHAR(75) null,simulation_mode BOOLEAN)";
 	public static final String TABLE_SQL_DROP = "drop table ibtrader_Position";
 	public static final String ORDER_BY_JPQL = " ORDER BY position.positionId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY ibtrader_Position.positionId ASC";
@@ -163,8 +170,85 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 			true);
 	public static final long COMPANYID_COLUMN_BITMASK = 1L;
 	public static final long GROUPID_COLUMN_BITMASK = 2L;
-	public static final long UUID_COLUMN_BITMASK = 4L;
-	public static final long POSITIONID_COLUMN_BITMASK = 8L;
+	public static final long POSITIONID_TWS_OUT_COLUMN_BITMASK = 4L;
+	public static final long UUID_COLUMN_BITMASK = 8L;
+	public static final long POSITIONID_COLUMN_BITMASK = 16L;
+
+	/**
+	 * Converts the soap model instance into a normal model instance.
+	 *
+	 * @param soapModel the soap model instance to convert
+	 * @return the normal model instance
+	 */
+	public static Position toModel(PositionSoap soapModel) {
+		if (soapModel == null) {
+			return null;
+		}
+
+		Position model = new PositionImpl();
+
+		model.setUuid(soapModel.getUuid());
+		model.setPositionId(soapModel.getPositionId());
+		model.setGroupId(soapModel.getGroupId());
+		model.setCompanyId(soapModel.getCompanyId());
+		model.setShareId(soapModel.getShareId());
+		model.setValue(soapModel.getValue());
+		model.setCreateDate(soapModel.getCreateDate());
+		model.setModifiedDate(soapModel.getModifiedDate());
+		model.setState(soapModel.getState());
+		model.setState_in(soapModel.getState_in());
+		model.setState_out(soapModel.getState_out());
+		model.setDescription(soapModel.getDescription());
+		model.setPrice_in(soapModel.getPrice_in());
+		model.setPrice_real_in(soapModel.getPrice_real_in());
+		model.setLimit_price_in(soapModel.getLimit_price_in());
+		model.setDate_in(soapModel.getDate_in());
+		model.setDate_real_in(soapModel.getDate_real_in());
+		model.setPositionId_tws_out(soapModel.getPositionId_tws_out());
+		model.setType(soapModel.getType());
+		model.setPrice_out(soapModel.getPrice_out());
+		model.setPrice_real_out(soapModel.getPrice_real_out());
+		model.setLimit_price_out(soapModel.getLimit_price_out());
+		model.setDate_out(soapModel.getDate_out());
+		model.setDate_real_out(soapModel.getDate_real_out());
+		model.setShare_number(soapModel.getShare_number());
+		model.setShare_number_to_trade(soapModel.getShare_number_to_trade());
+		model.setShare_number_traded(soapModel.getShare_number_traded());
+		model.setRealtimeId_in(soapModel.getRealtimeId_in());
+		model.setRealtimeId_out(soapModel.getRealtimeId_out());
+		model.setStrategyId_in(soapModel.getStrategyId_in());
+		model.setStrategyId_out(soapModel.getStrategyId_out());
+		model.setPercentualstoplost_out(soapModel.getPercentualstoplost_out());
+		model.setPricestoplost_out(soapModel.getPricestoplost_out());
+		model.setPercentualstopprofit_out(soapModel.getPercentualstopprofit_out());
+		model.setPricestopprofit_out(soapModel.getPricestopprofit_out());
+		model.setPendingcancelled(soapModel.getPendingcancelled());
+		model.setTrading_data_operations(soapModel.getTrading_data_operations());
+		model.setSimulation_mode(soapModel.getSimulation_mode());
+
+		return model;
+	}
+
+	/**
+	 * Converts the soap model instances into normal model instances.
+	 *
+	 * @param soapModels the soap model instances to convert
+	 * @return the normal model instances
+	 */
+	public static List<Position> toModels(PositionSoap[] soapModels) {
+		if (soapModels == null) {
+			return null;
+		}
+
+		List<Position> models = new ArrayList<Position>(soapModels.length);
+
+		for (PositionSoap soapModel : soapModels) {
+			models.add(toModel(soapModel));
+		}
+
+		return models;
+	}
+
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.ibtrader.data.service.util.ServiceProps.get(
 				"lock.expiration.time.com.ibtrader.data.model.Position"));
 
@@ -229,6 +313,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		attributes.put("limit_price_out", getLimit_price_out());
 		attributes.put("date_out", getDate_out());
 		attributes.put("date_real_out", getDate_real_out());
+		attributes.put("share_number", getShare_number());
 		attributes.put("share_number_to_trade", getShare_number_to_trade());
 		attributes.put("share_number_traded", getShare_number_traded());
 		attributes.put("realtimeId_in", getRealtimeId_in());
@@ -395,6 +480,12 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 			setDate_real_out(date_real_out);
 		}
 
+		Long share_number = (Long)attributes.get("share_number");
+
+		if (share_number != null) {
+			setShare_number(share_number);
+		}
+
 		Long share_number_to_trade = (Long)attributes.get(
 				"share_number_to_trade");
 
@@ -479,6 +570,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		}
 	}
 
+	@JSON
 	@Override
 	public String getUuid() {
 		if (_uuid == null) {
@@ -502,6 +594,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		return GetterUtil.getString(_originalUuid);
 	}
 
+	@JSON
 	@Override
 	public long getPositionId() {
 		return _positionId;
@@ -512,6 +605,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		_positionId = positionId;
 	}
 
+	@JSON
 	@Override
 	public long getGroupId() {
 		return _groupId;
@@ -534,6 +628,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		return _originalGroupId;
 	}
 
+	@JSON
 	@Override
 	public long getCompanyId() {
 		return _companyId;
@@ -556,6 +651,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		return _originalCompanyId;
 	}
 
+	@JSON
 	@Override
 	public long getShareId() {
 		return _shareId;
@@ -566,6 +662,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		_shareId = shareId;
 	}
 
+	@JSON
 	@Override
 	public double getValue() {
 		return _value;
@@ -576,6 +673,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		_value = value;
 	}
 
+	@JSON
 	@Override
 	public Date getCreateDate() {
 		return _createDate;
@@ -586,6 +684,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		_createDate = createDate;
 	}
 
+	@JSON
 	@Override
 	public Date getModifiedDate() {
 		return _modifiedDate;
@@ -602,6 +701,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		_modifiedDate = modifiedDate;
 	}
 
+	@JSON
 	@Override
 	public String getState() {
 		if (_state == null) {
@@ -617,6 +717,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		_state = state;
 	}
 
+	@JSON
 	@Override
 	public String getState_in() {
 		if (_state_in == null) {
@@ -632,6 +733,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		_state_in = state_in;
 	}
 
+	@JSON
 	@Override
 	public String getState_out() {
 		if (_state_out == null) {
@@ -647,6 +749,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		_state_out = state_out;
 	}
 
+	@JSON
 	@Override
 	public String getDescription() {
 		if (_description == null) {
@@ -662,6 +765,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		_description = description;
 	}
 
+	@JSON
 	@Override
 	public double getPrice_in() {
 		return _price_in;
@@ -672,6 +776,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		_price_in = price_in;
 	}
 
+	@JSON
 	@Override
 	public double getPrice_real_in() {
 		return _price_real_in;
@@ -682,6 +787,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		_price_real_in = price_real_in;
 	}
 
+	@JSON
 	@Override
 	public double getLimit_price_in() {
 		return _limit_price_in;
@@ -692,6 +798,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		_limit_price_in = limit_price_in;
 	}
 
+	@JSON
 	@Override
 	public Date getDate_in() {
 		return _date_in;
@@ -702,6 +809,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		_date_in = date_in;
 	}
 
+	@JSON
 	@Override
 	public Date getDate_real_in() {
 		return _date_real_in;
@@ -712,6 +820,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		_date_real_in = date_real_in;
 	}
 
+	@JSON
 	@Override
 	public long getPositionId_tws_out() {
 		return _positionId_tws_out;
@@ -719,9 +828,22 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 	@Override
 	public void setPositionId_tws_out(long positionId_tws_out) {
+		_columnBitmask |= POSITIONID_TWS_OUT_COLUMN_BITMASK;
+
+		if (!_setOriginalPositionId_tws_out) {
+			_setOriginalPositionId_tws_out = true;
+
+			_originalPositionId_tws_out = _positionId_tws_out;
+		}
+
 		_positionId_tws_out = positionId_tws_out;
 	}
 
+	public long getOriginalPositionId_tws_out() {
+		return _originalPositionId_tws_out;
+	}
+
+	@JSON
 	@Override
 	public String getType() {
 		if (_type == null) {
@@ -737,6 +859,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		_type = type;
 	}
 
+	@JSON
 	@Override
 	public double getPrice_out() {
 		return _price_out;
@@ -747,6 +870,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		_price_out = price_out;
 	}
 
+	@JSON
 	@Override
 	public double getPrice_real_out() {
 		return _price_real_out;
@@ -757,6 +881,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		_price_real_out = price_real_out;
 	}
 
+	@JSON
 	@Override
 	public double getLimit_price_out() {
 		return _limit_price_out;
@@ -767,6 +892,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		_limit_price_out = limit_price_out;
 	}
 
+	@JSON
 	@Override
 	public Date getDate_out() {
 		return _date_out;
@@ -777,6 +903,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		_date_out = date_out;
 	}
 
+	@JSON
 	@Override
 	public Date getDate_real_out() {
 		return _date_real_out;
@@ -787,6 +914,18 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		_date_real_out = date_real_out;
 	}
 
+	@JSON
+	@Override
+	public long getShare_number() {
+		return _share_number;
+	}
+
+	@Override
+	public void setShare_number(long share_number) {
+		_share_number = share_number;
+	}
+
+	@JSON
 	@Override
 	public long getShare_number_to_trade() {
 		return _share_number_to_trade;
@@ -797,6 +936,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		_share_number_to_trade = share_number_to_trade;
 	}
 
+	@JSON
 	@Override
 	public long getShare_number_traded() {
 		return _share_number_traded;
@@ -807,6 +947,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		_share_number_traded = share_number_traded;
 	}
 
+	@JSON
 	@Override
 	public long getRealtimeId_in() {
 		return _realtimeId_in;
@@ -817,6 +958,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		_realtimeId_in = realtimeId_in;
 	}
 
+	@JSON
 	@Override
 	public long getRealtimeId_out() {
 		return _realtimeId_out;
@@ -827,6 +969,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		_realtimeId_out = realtimeId_out;
 	}
 
+	@JSON
 	@Override
 	public long getStrategyId_in() {
 		return _strategyId_in;
@@ -837,6 +980,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		_strategyId_in = strategyId_in;
 	}
 
+	@JSON
 	@Override
 	public long getStrategyId_out() {
 		return _strategyId_out;
@@ -847,6 +991,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		_strategyId_out = strategyId_out;
 	}
 
+	@JSON
 	@Override
 	public double getPercentualstoplost_out() {
 		return _percentualstoplost_out;
@@ -857,6 +1002,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		_percentualstoplost_out = percentualstoplost_out;
 	}
 
+	@JSON
 	@Override
 	public double getPricestoplost_out() {
 		return _pricestoplost_out;
@@ -867,6 +1013,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		_pricestoplost_out = pricestoplost_out;
 	}
 
+	@JSON
 	@Override
 	public double getPercentualstopprofit_out() {
 		return _percentualstopprofit_out;
@@ -877,6 +1024,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		_percentualstopprofit_out = percentualstopprofit_out;
 	}
 
+	@JSON
 	@Override
 	public double getPricestopprofit_out() {
 		return _pricestopprofit_out;
@@ -887,6 +1035,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		_pricestopprofit_out = pricestopprofit_out;
 	}
 
+	@JSON
 	@Override
 	public long getPendingcancelled() {
 		return _pendingcancelled;
@@ -897,6 +1046,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		_pendingcancelled = pendingcancelled;
 	}
 
+	@JSON
 	@Override
 	public String getTrading_data_operations() {
 		if (_trading_data_operations == null) {
@@ -912,11 +1062,13 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		_trading_data_operations = trading_data_operations;
 	}
 
+	@JSON
 	@Override
 	public boolean getSimulation_mode() {
 		return _simulation_mode;
 	}
 
+	@JSON
 	@Override
 	public boolean isSimulation_mode() {
 		return _simulation_mode;
@@ -988,6 +1140,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		positionImpl.setLimit_price_out(getLimit_price_out());
 		positionImpl.setDate_out(getDate_out());
 		positionImpl.setDate_real_out(getDate_real_out());
+		positionImpl.setShare_number(getShare_number());
 		positionImpl.setShare_number_to_trade(getShare_number_to_trade());
 		positionImpl.setShare_number_traded(getShare_number_traded());
 		positionImpl.setRealtimeId_in(getRealtimeId_in());
@@ -1074,6 +1227,10 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		positionModelImpl._setOriginalCompanyId = false;
 
 		positionModelImpl._setModifiedDate = false;
+
+		positionModelImpl._originalPositionId_tws_out = positionModelImpl._positionId_tws_out;
+
+		positionModelImpl._setOriginalPositionId_tws_out = false;
 
 		positionModelImpl._columnBitmask = 0;
 	}
@@ -1208,6 +1365,8 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 			positionCacheModel.date_real_out = Long.MIN_VALUE;
 		}
 
+		positionCacheModel.share_number = getShare_number();
+
 		positionCacheModel.share_number_to_trade = getShare_number_to_trade();
 
 		positionCacheModel.share_number_traded = getShare_number_traded();
@@ -1246,7 +1405,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(75);
+		StringBundler sb = new StringBundler(77);
 
 		sb.append("{uuid=");
 		sb.append(getUuid());
@@ -1296,6 +1455,8 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		sb.append(getDate_out());
 		sb.append(", date_real_out=");
 		sb.append(getDate_real_out());
+		sb.append(", share_number=");
+		sb.append(getShare_number());
 		sb.append(", share_number_to_trade=");
 		sb.append(getShare_number_to_trade());
 		sb.append(", share_number_traded=");
@@ -1329,7 +1490,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(115);
+		StringBundler sb = new StringBundler(118);
 
 		sb.append("<model><model-name>");
 		sb.append("com.ibtrader.data.model.Position");
@@ -1432,6 +1593,10 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		sb.append(getDate_real_out());
 		sb.append("]]></column-value></column>");
 		sb.append(
+			"<column><column-name>share_number</column-name><column-value><![CDATA[");
+		sb.append(getShare_number());
+		sb.append("]]></column-value></column>");
+		sb.append(
 			"<column><column-name>share_number_to_trade</column-name><column-value><![CDATA[");
 		sb.append(getShare_number_to_trade());
 		sb.append("]]></column-value></column>");
@@ -1517,12 +1682,15 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 	private Date _date_in;
 	private Date _date_real_in;
 	private long _positionId_tws_out;
+	private long _originalPositionId_tws_out;
+	private boolean _setOriginalPositionId_tws_out;
 	private String _type;
 	private double _price_out;
 	private double _price_real_out;
 	private double _limit_price_out;
 	private Date _date_out;
 	private Date _date_real_out;
+	private long _share_number;
 	private long _share_number_to_trade;
 	private long _share_number_traded;
 	private long _realtimeId_in;

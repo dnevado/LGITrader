@@ -499,6 +499,175 @@ public class PositionUtil {
 	}
 
 	/**
+	* Returns all the positions where positionId_tws_out = &#63;.
+	*
+	* @param positionId_tws_out the position id_tws_out
+	* @return the matching positions
+	*/
+	public static List<Position> findByPositionID_Out_TWS(
+		long positionId_tws_out) {
+		return getPersistence().findByPositionID_Out_TWS(positionId_tws_out);
+	}
+
+	/**
+	* Returns a range of all the positions where positionId_tws_out = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param positionId_tws_out the position id_tws_out
+	* @param start the lower bound of the range of positions
+	* @param end the upper bound of the range of positions (not inclusive)
+	* @return the range of matching positions
+	*/
+	public static List<Position> findByPositionID_Out_TWS(
+		long positionId_tws_out, int start, int end) {
+		return getPersistence()
+				   .findByPositionID_Out_TWS(positionId_tws_out, start, end);
+	}
+
+	/**
+	* Returns an ordered range of all the positions where positionId_tws_out = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param positionId_tws_out the position id_tws_out
+	* @param start the lower bound of the range of positions
+	* @param end the upper bound of the range of positions (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching positions
+	*/
+	public static List<Position> findByPositionID_Out_TWS(
+		long positionId_tws_out, int start, int end,
+		OrderByComparator<Position> orderByComparator) {
+		return getPersistence()
+				   .findByPositionID_Out_TWS(positionId_tws_out, start, end,
+			orderByComparator);
+	}
+
+	/**
+	* Returns an ordered range of all the positions where positionId_tws_out = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param positionId_tws_out the position id_tws_out
+	* @param start the lower bound of the range of positions
+	* @param end the upper bound of the range of positions (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching positions
+	*/
+	public static List<Position> findByPositionID_Out_TWS(
+		long positionId_tws_out, int start, int end,
+		OrderByComparator<Position> orderByComparator, boolean retrieveFromCache) {
+		return getPersistence()
+				   .findByPositionID_Out_TWS(positionId_tws_out, start, end,
+			orderByComparator, retrieveFromCache);
+	}
+
+	/**
+	* Returns the first position in the ordered set where positionId_tws_out = &#63;.
+	*
+	* @param positionId_tws_out the position id_tws_out
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching position
+	* @throws NoSuchPositionException if a matching position could not be found
+	*/
+	public static Position findByPositionID_Out_TWS_First(
+		long positionId_tws_out, OrderByComparator<Position> orderByComparator)
+		throws com.ibtrader.data.exception.NoSuchPositionException {
+		return getPersistence()
+				   .findByPositionID_Out_TWS_First(positionId_tws_out,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the first position in the ordered set where positionId_tws_out = &#63;.
+	*
+	* @param positionId_tws_out the position id_tws_out
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching position, or <code>null</code> if a matching position could not be found
+	*/
+	public static Position fetchByPositionID_Out_TWS_First(
+		long positionId_tws_out, OrderByComparator<Position> orderByComparator) {
+		return getPersistence()
+				   .fetchByPositionID_Out_TWS_First(positionId_tws_out,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the last position in the ordered set where positionId_tws_out = &#63;.
+	*
+	* @param positionId_tws_out the position id_tws_out
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching position
+	* @throws NoSuchPositionException if a matching position could not be found
+	*/
+	public static Position findByPositionID_Out_TWS_Last(
+		long positionId_tws_out, OrderByComparator<Position> orderByComparator)
+		throws com.ibtrader.data.exception.NoSuchPositionException {
+		return getPersistence()
+				   .findByPositionID_Out_TWS_Last(positionId_tws_out,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the last position in the ordered set where positionId_tws_out = &#63;.
+	*
+	* @param positionId_tws_out the position id_tws_out
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching position, or <code>null</code> if a matching position could not be found
+	*/
+	public static Position fetchByPositionID_Out_TWS_Last(
+		long positionId_tws_out, OrderByComparator<Position> orderByComparator) {
+		return getPersistence()
+				   .fetchByPositionID_Out_TWS_Last(positionId_tws_out,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the positions before and after the current position in the ordered set where positionId_tws_out = &#63;.
+	*
+	* @param positionId the primary key of the current position
+	* @param positionId_tws_out the position id_tws_out
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next position
+	* @throws NoSuchPositionException if a position with the primary key could not be found
+	*/
+	public static Position[] findByPositionID_Out_TWS_PrevAndNext(
+		long positionId, long positionId_tws_out,
+		OrderByComparator<Position> orderByComparator)
+		throws com.ibtrader.data.exception.NoSuchPositionException {
+		return getPersistence()
+				   .findByPositionID_Out_TWS_PrevAndNext(positionId,
+			positionId_tws_out, orderByComparator);
+	}
+
+	/**
+	* Removes all the positions where positionId_tws_out = &#63; from the database.
+	*
+	* @param positionId_tws_out the position id_tws_out
+	*/
+	public static void removeByPositionID_Out_TWS(long positionId_tws_out) {
+		getPersistence().removeByPositionID_Out_TWS(positionId_tws_out);
+	}
+
+	/**
+	* Returns the number of positions where positionId_tws_out = &#63;.
+	*
+	* @param positionId_tws_out the position id_tws_out
+	* @return the number of matching positions
+	*/
+	public static int countByPositionID_Out_TWS(long positionId_tws_out) {
+		return getPersistence().countByPositionID_Out_TWS(positionId_tws_out);
+	}
+
+	/**
 	* Caches the position in the entity cache if it is enabled.
 	*
 	* @param position the position

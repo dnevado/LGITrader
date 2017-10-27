@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.ibtrader.data.model.Realtime;
 import com.ibtrader.data.model.RealtimeModel;
+import com.ibtrader.data.model.RealtimeSoap;
 
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
@@ -25,6 +26,7 @@ import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
 import com.liferay.exportimport.kernel.lar.StagedModelType;
 
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
+import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.model.impl.BaseModelImpl;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -38,8 +40,10 @@ import java.io.Serializable;
 
 import java.sql.Types;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -55,6 +59,7 @@ import java.util.Map;
  * @see RealtimeModel
  * @generated
  */
+@JSON(strict = true)
 @ProviderType
 public class RealtimeModelImpl extends BaseModelImpl<Realtime>
 	implements RealtimeModel {
@@ -115,6 +120,56 @@ public class RealtimeModelImpl extends BaseModelImpl<Realtime>
 	public static final long GROUPID_COLUMN_BITMASK = 2L;
 	public static final long SHAREID_COLUMN_BITMASK = 4L;
 	public static final long UUID_COLUMN_BITMASK = 8L;
+
+	/**
+	 * Converts the soap model instance into a normal model instance.
+	 *
+	 * @param soapModel the soap model instance to convert
+	 * @return the normal model instance
+	 */
+	public static Realtime toModel(RealtimeSoap soapModel) {
+		if (soapModel == null) {
+			return null;
+		}
+
+		Realtime model = new RealtimeImpl();
+
+		model.setUuid(soapModel.getUuid());
+		model.setRealtimeId(soapModel.getRealtimeId());
+		model.setGroupId(soapModel.getGroupId());
+		model.setCompanyId(soapModel.getCompanyId());
+		model.setShareId(soapModel.getShareId());
+		model.setValue(soapModel.getValue());
+		model.setCreateDate(soapModel.getCreateDate());
+		model.setModifiedDate(soapModel.getModifiedDate());
+		model.setMax_value(soapModel.getMax_value());
+		model.setMin_value(soapModel.getMin_value());
+		model.setVolume(soapModel.getVolume());
+		model.setAvg_volume(soapModel.getAvg_volume());
+
+		return model;
+	}
+
+	/**
+	 * Converts the soap model instances into normal model instances.
+	 *
+	 * @param soapModels the soap model instances to convert
+	 * @return the normal model instances
+	 */
+	public static List<Realtime> toModels(RealtimeSoap[] soapModels) {
+		if (soapModels == null) {
+			return null;
+		}
+
+		List<Realtime> models = new ArrayList<Realtime>(soapModels.length);
+
+		for (RealtimeSoap soapModel : soapModels) {
+			models.add(toModel(soapModel));
+		}
+
+		return models;
+	}
+
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.ibtrader.data.service.util.ServiceProps.get(
 				"lock.expiration.time.com.ibtrader.data.model.Realtime"));
 
@@ -249,6 +304,7 @@ public class RealtimeModelImpl extends BaseModelImpl<Realtime>
 		}
 	}
 
+	@JSON
 	@Override
 	public String getUuid() {
 		if (_uuid == null) {
@@ -272,6 +328,7 @@ public class RealtimeModelImpl extends BaseModelImpl<Realtime>
 		return GetterUtil.getString(_originalUuid);
 	}
 
+	@JSON
 	@Override
 	public long getRealtimeId() {
 		return _realtimeId;
@@ -282,6 +339,7 @@ public class RealtimeModelImpl extends BaseModelImpl<Realtime>
 		_realtimeId = realtimeId;
 	}
 
+	@JSON
 	@Override
 	public long getGroupId() {
 		return _groupId;
@@ -304,6 +362,7 @@ public class RealtimeModelImpl extends BaseModelImpl<Realtime>
 		return _originalGroupId;
 	}
 
+	@JSON
 	@Override
 	public long getCompanyId() {
 		return _companyId;
@@ -326,6 +385,7 @@ public class RealtimeModelImpl extends BaseModelImpl<Realtime>
 		return _originalCompanyId;
 	}
 
+	@JSON
 	@Override
 	public long getShareId() {
 		return _shareId;
@@ -348,6 +408,7 @@ public class RealtimeModelImpl extends BaseModelImpl<Realtime>
 		return _originalShareId;
 	}
 
+	@JSON
 	@Override
 	public double getValue() {
 		return _value;
@@ -358,6 +419,7 @@ public class RealtimeModelImpl extends BaseModelImpl<Realtime>
 		_value = value;
 	}
 
+	@JSON
 	@Override
 	public Date getCreateDate() {
 		return _createDate;
@@ -368,6 +430,7 @@ public class RealtimeModelImpl extends BaseModelImpl<Realtime>
 		_createDate = createDate;
 	}
 
+	@JSON
 	@Override
 	public Date getModifiedDate() {
 		return _modifiedDate;
@@ -384,6 +447,7 @@ public class RealtimeModelImpl extends BaseModelImpl<Realtime>
 		_modifiedDate = modifiedDate;
 	}
 
+	@JSON
 	@Override
 	public double getMax_value() {
 		return _max_value;
@@ -394,11 +458,13 @@ public class RealtimeModelImpl extends BaseModelImpl<Realtime>
 		_max_value = max_value;
 	}
 
+	@JSON
 	@Override
 	public boolean getMin_value() {
 		return _min_value;
 	}
 
+	@JSON
 	@Override
 	public boolean isMin_value() {
 		return _min_value;
@@ -409,6 +475,7 @@ public class RealtimeModelImpl extends BaseModelImpl<Realtime>
 		_min_value = min_value;
 	}
 
+	@JSON
 	@Override
 	public int getVolume() {
 		return _volume;
@@ -419,6 +486,7 @@ public class RealtimeModelImpl extends BaseModelImpl<Realtime>
 		_volume = volume;
 	}
 
+	@JSON
 	@Override
 	public int getAvg_volume() {
 		return _avg_volume;

@@ -3,8 +3,8 @@
 
 <service-builder package-path="com.ibtrader.data" auto-namespace-tables="true">
 	<namespace>ibtrader</namespace>
-	<!--<entity data-source="sampleDataSource" local-service="true" name="Foo" remote-service="false" session-factory="sampleSessionFactory" table="foo" tx-manager="sampleTransactionManager uuid="true"">-->
-	<entity local-service="true"   name="Realtime" remote-service="false" uuid="true">
+	<!--<entity data-source="sampleDataSource" local-service="true" name="Foo" remote-service="true" session-factory="sampleSessionFactory" table="foo" tx-manager="sampleTransactionManager uuid="true"">-->
+	<entity local-service="true"   name="Realtime" remote-service="true" uuid="true">
 
 		<!-- PK fields -->
 
@@ -43,7 +43,81 @@
 
 		<!-- References -->
 	</entity>
-	<entity local-service="true" name="Config" remote-service="false" uuid="true">
+	
+		
+	<entity local-service="true" name="StrategyShare" remote-service="true" uuid="true">
+		<column name="strategyshareId" primary="true" type="long" />
+		<!-- Group instance -->
+		<column name="groupId" type="long" />
+		<!-- Audit fields -->
+		<column name="companyId"    type="long" />
+		<column name="createDate"   type="Date" />
+		<column name="modifiedDate" type="Date" />
+		
+		<column name="strategyId"   type="long" />
+		<column name="shareId" 	   type="long" />
+		<!-- References -->
+	</entity>
+	
+	
+	<entity   cache-enabled="true" local-service="true" name="Strategy" remote-service="true" uuid="true">
+
+		<!-- PK fields -->
+
+		<column name="strategyID" primary="true" type="long" />
+
+		<!-- Group instance -->
+		<column name="groupId" type="long" />
+		<!-- Audit fields -->
+		<column name="companyId" type="long" />
+		<column name="name" type="String" />
+		<column name="description" type="String" />		
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+		<column name="active" type="boolean" />
+		<column name="status" type="int" />		
+		<column name="statusByUserId" type="long" />
+		<column name="statusByUserName" type="String" />
+		<column name="statusDate" type="Date" />
+		<column name="type" type="String" />
+		<column name="className" type="String" />
+		<column name="userId" type="long" />
+
+
+
+		<finder name="CompanyId" return-type="Collection">		
+			<finder-column name="companyId" />
+		
+		</finder>
+		
+		<finder name="ActiveCompanyId" return-type="Collection">		
+			<finder-column name="companyId" />
+			<finder-column name="active" />
+		</finder>
+
+		<!--  NECESARIO PARA QUE APAREZCAN COMO ASSETS  -->		
+		<finder name="Status" return-type="Collection">
+		    <finder-column name="status" />
+		</finder>
+		<!--  NECESARIO PARA QUE APAREZCAN ACTIVADAS EN EL WORKFLOW  -->
+		<finder name="G_S" return-type="Collection">
+		    <finder-column name="groupId" />
+		    <finder-column name="status" />
+		</finder>
+		
+		<reference package-path="com.liferay.portlet.asset" entity="AssetEntry" />
+		<reference package-path="com.liferay.portlet.asset" entity="AssetLink" />
+		<reference package-path="com.liferay.portlet.expando" entity="ExpandoValue" />
+		<reference package-path="com.liferay.portlet.expando" entity="ExpandoRow" />
+		<reference package-path="com.liferay.portlet.expando" entity="ExpandoTable" />
+		<reference package-path="com.liferay.portal" entity="ClassName" />
+		
+		
+		<!-- References -->
+	</entity>
+	
+	
+	<entity cache-enabled="true" local-service="true" name="Config" remote-service="true" uuid="true">
 
 		<!-- PK fields -->
 
@@ -76,7 +150,7 @@
 
 		<!-- References -->
 	</entity>
-	<entity local-service="true" name="Market" remote-service="false" uuid="true">
+	<entity  cache-enabled="true" local-service="true" name="Market" remote-service="true" uuid="true">
 
 		<!-- PK fields -->
 		<column name="marketId" primary="true" type="long" />
@@ -106,7 +180,7 @@
 	</entity>
 	
 	
-	<entity local-service="true" name="IBOrder" remote-service="false" uuid="true">
+	<entity local-service="true" name="IBOrder" remote-service="true" uuid="true">
 
 		<!-- PK fields -->
 
@@ -123,7 +197,7 @@
 		<!-- Other fields -->
 	</entity>
 	
-	<entity local-service="true" name="Share" remote-service="false" uuid="true">
+	<entity  cache-enabled="true" local-service="true" name="Share" remote-service="true" uuid="true">
 	
 			<column name="shareId" primary="true" type="long" />
 			<column name="name" type="String" />
@@ -134,6 +208,10 @@
 			<column name="modifiedDate" type="Date" />
 			<column name="active" type="boolean" />
 			<column name="numbertopurchase" type="long" />
+			<column name="percentual_limit_buy" type="double" />
+			<column name="percentual_stop_lost" type="double" />
+			<column name="percentual_stop_profit" type="double" />
+			<column name="percentual_stop_profit_position" type="double" />			
 			<column name="expiry_date" type="Date" />
 			<column name="expiry_expression" type="String" />
 			<column name="tick_futures" type="double" />
@@ -156,7 +234,7 @@
 	
 	</entity>
 	
-	<entity local-service="true" name="Position" remote-service="false" uuid="true">
+	<entity  cache-enabled="true" local-service="true" name="Position" remote-service="true" uuid="true">
 
 		<!-- PK fields -->
 
@@ -190,6 +268,7 @@
 		<column name="date_out" type="Date" />
 		<column name="date_real_out" type="Date" />
 		
+		<column name="share_number" type="long" />
 		<column name="share_number_to_trade" type="long" />
 		<column name="share_number_traded" type="long" />
 		
@@ -209,6 +288,10 @@
 		<column name="trading_data_operations" type="String" />
 		<column name="simulation_mode" type="boolean" />
 		
+		
+		<finder name="PositionID_Out_TWS" return-type="Collection">		
+				<finder-column name="positionId_tws_out" />					
+		</finder>
 		<!-- Order -->
 		<!-- Finder methods -->
 		<!-- References -->

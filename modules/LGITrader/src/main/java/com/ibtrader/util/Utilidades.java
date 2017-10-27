@@ -59,10 +59,7 @@ public class Utilidades {
    public final static String _IBTRADER_FUTURE_LONG_DATE="dd/MM/yyyy";
    
    
-   sdfSorted
    
-   
-
     public static void closeTWSConnection(TIMApiGITrader oTWS)
     {
     try

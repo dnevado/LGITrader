@@ -1,6 +1,16 @@
 <%@ include file="/init.jsp" %>
 
 
+<portlet:actionURL name="CronRead" var="CronRead" />
+
+<aui:a href="<%= CronRead %>" >CronRead</aui:a>
+
+<portlet:actionURL name="CronTrade" var="CronTrade" />
+
+<aui:a href="<%= CronTrade %>" >CronTrade</aui:a>
+
+
+
 
 <table id="dashboard" class="table responsive table-bordered table-hover table-striped"  style="width: 100%;"  role="grid">
 <thead>

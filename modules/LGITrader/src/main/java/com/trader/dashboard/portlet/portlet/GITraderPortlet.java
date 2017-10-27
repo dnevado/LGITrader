@@ -5,10 +5,12 @@ import com.ibtrader.constants.IBTraderConstants;
 import com.ibtrader.data.model.Config;
 import com.ibtrader.data.model.ConfigWrapper;
 import com.ibtrader.data.service.ConfigLocalServiceUtil;
+import com.ibtrader.util.CronUtil;
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
@@ -18,6 +20,8 @@ import com.liferay.portal.kernel.util.PortalUtil;
 
 import java.util.List;
 
+import javax.portlet.ActionRequest;
+import javax.portlet.ActionResponse;
 import javax.portlet.Portlet;
 import javax.portlet.PortletException;
 
@@ -52,8 +56,7 @@ public class GITraderPortlet extends MVCPortlet {
 		
 		long guestGroupId=0;
 		Config  _conf = null;
-		_log.info("Verifying Config Table for all companies" );
-		
+		_log.info("Verifying Configuration Table for All Companies" );
 		List<Company> lCompanies = CompanyLocalServiceUtil.getCompanies();
 		if (!lCompanies.isEmpty())
 		{
@@ -81,6 +84,7 @@ public class GITraderPortlet extends MVCPortlet {
 					 _conf.setValue(IBTraderConstants.vTWS_HOST);
 					 _conf.setName(IBTraderConstants.keyTWS_HOST);
 					 _conf.setDescription(IBTraderConstants.keyTWS_HOST);
+					 _conf.setGlobaldefault(true);					 
 					 ConfigLocalServiceUtil.updateConfig(_conf);
 					  
 					 /* TWS ACOOUNT */
@@ -91,6 +95,7 @@ public class GITraderPortlet extends MVCPortlet {
 					 _conf.setValue(IBTraderConstants.vACCOUNT_IB_NAME);
 					 _conf.setName(IBTraderConstants.keyACCOUNT_IB_NAME);
 					 _conf.setDescription(IBTraderConstants.keyACCOUNT_IB_NAME);
+					 _conf.setGlobaldefault(true);
 					 ConfigLocalServiceUtil.updateConfig(_conf);
 					 
 					 /* TWS PORT  */
@@ -101,6 +106,7 @@ public class GITraderPortlet extends MVCPortlet {
 					 _conf.setValue(String.valueOf(IBTraderConstants.vTWS_PORT));
 					 _conf.setName(IBTraderConstants.keyTWS_PORT);
 					 _conf.setDescription(IBTraderConstants.keyTWS_PORT);
+					 _conf.setGlobaldefault(true);
 					 ConfigLocalServiceUtil.updateConfig(_conf);
 					 
 					 /* TWS tick future  */
@@ -121,9 +127,33 @@ public class GITraderPortlet extends MVCPortlet {
 					 _conf.setValue(String.valueOf(IBTraderConstants.vNUM_DAYS_PAST_REALTIME));
 					 _conf.setName(IBTraderConstants.keyNUM_DAYS_PAST_REALTIME);
 					 _conf.setDescription(IBTraderConstants.keyNUM_DAYS_PAST_REALTIME);
+					 _conf.setGlobaldefault(true);
 					 ConfigLocalServiceUtil.updateConfig(_conf);
-					
-					
+					 
+					 
+					 /* PREVENT CRON TRADE  CONCURRENCY */   
+					 _conf = ConfigLocalServiceUtil.createConfig(CounterLocalServiceUtil.increment(Config.class.getName()));
+					 _conf.setGroupId(guestGroupId);
+					 _conf.setCompanyId(_Company.getCompanyId());
+					 _conf.setConfig_key(IBTraderConstants.keyCRON_TRADING_STATUS);
+					 _conf.setValue(String.valueOf(IBTraderConstants.vCRON_TRADING_STATUS));
+					 _conf.setName(IBTraderConstants.keyCRON_TRADING_STATUS);
+					 _conf.setDescription(IBTraderConstants.keyCRON_TRADING_STATUS);
+					 _conf.setGlobaldefault(true);
+					 ConfigLocalServiceUtil.updateConfig(_conf); 
+					 
+					 /* PREVENT CRON READ CONCURRENCY */   
+					 _conf = ConfigLocalServiceUtil.createConfig(CounterLocalServiceUtil.increment(Config.class.getName()));
+					 _conf.setGroupId(guestGroupId);
+					 _conf.setCompanyId(_Company.getCompanyId());
+					 _conf.setConfig_key(IBTraderConstants.keyCRON_READING_STATUS);
+					 _conf.setValue(String.valueOf(IBTraderConstants.vCRON_READING_STATUS));
+					 _conf.setName(IBTraderConstants.keyCRON_READING_STATUS);
+					 _conf.setDescription(IBTraderConstants.keyCRON_READING_STATUS);
+					 _conf.setGlobaldefault(true);
+					 ConfigLocalServiceUtil.updateConfig(_conf);   
+					 
+					 
 				}
 				
 				
@@ -134,5 +164,27 @@ public class GITraderPortlet extends MVCPortlet {
 			
 		
 		
+	}
+	
+	public  void  CronTrade(ActionRequest actionRequest, ActionResponse actionResponse)
+			throws PortletException {
+		// TODO Auto-generated method stub
+		try {
+			CronUtil.StartTradingCron(new Message());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public  void  CronRead(ActionRequest actionRequest, ActionResponse actionResponse)
+			throws PortletException {
+		// TODO Auto-generated method stub
+		try {
+			CronUtil.StartReadingCron(new Message());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

@@ -24,6 +24,8 @@ import com.ibtrader.data.service.persistence.MarketPersistence;
 import com.ibtrader.data.service.persistence.PositionPersistence;
 import com.ibtrader.data.service.persistence.RealtimePersistence;
 import com.ibtrader.data.service.persistence.SharePersistence;
+import com.ibtrader.data.service.persistence.StrategyPersistence;
+import com.ibtrader.data.service.persistence.StrategySharePersistence;
 
 import com.liferay.exportimport.kernel.lar.ExportImportHelperUtil;
 import com.liferay.exportimport.kernel.lar.ManifestSummary;
@@ -464,18 +466,18 @@ public abstract class ShareLocalServiceBaseImpl extends BaseLocalServiceImpl
 	}
 
 	/**
-	 * Returns the i b order local service.
+	 * Returns the ib order local service.
 	 *
-	 * @return the i b order local service
+	 * @return the ib order local service
 	 */
 	public com.ibtrader.data.service.IBOrderLocalService getIBOrderLocalService() {
 		return ibOrderLocalService;
 	}
 
 	/**
-	 * Sets the i b order local service.
+	 * Sets the ib order local service.
 	 *
-	 * @param ibOrderLocalService the i b order local service
+	 * @param ibOrderLocalService the ib order local service
 	 */
 	public void setIBOrderLocalService(
 		com.ibtrader.data.service.IBOrderLocalService ibOrderLocalService) {
@@ -483,18 +485,18 @@ public abstract class ShareLocalServiceBaseImpl extends BaseLocalServiceImpl
 	}
 
 	/**
-	 * Returns the i b order persistence.
+	 * Returns the ib order persistence.
 	 *
-	 * @return the i b order persistence
+	 * @return the ib order persistence
 	 */
 	public IBOrderPersistence getIBOrderPersistence() {
 		return ibOrderPersistence;
 	}
 
 	/**
-	 * Sets the i b order persistence.
+	 * Sets the ib order persistence.
 	 *
-	 * @param ibOrderPersistence the i b order persistence
+	 * @param ibOrderPersistence the ib order persistence
 	 */
 	public void setIBOrderPersistence(IBOrderPersistence ibOrderPersistence) {
 		this.ibOrderPersistence = ibOrderPersistence;
@@ -645,6 +647,81 @@ public abstract class ShareLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 */
 	public void setSharePersistence(SharePersistence sharePersistence) {
 		this.sharePersistence = sharePersistence;
+	}
+
+	/**
+	 * Returns the strategy local service.
+	 *
+	 * @return the strategy local service
+	 */
+	public com.ibtrader.data.service.StrategyLocalService getStrategyLocalService() {
+		return strategyLocalService;
+	}
+
+	/**
+	 * Sets the strategy local service.
+	 *
+	 * @param strategyLocalService the strategy local service
+	 */
+	public void setStrategyLocalService(
+		com.ibtrader.data.service.StrategyLocalService strategyLocalService) {
+		this.strategyLocalService = strategyLocalService;
+	}
+
+	/**
+	 * Returns the strategy persistence.
+	 *
+	 * @return the strategy persistence
+	 */
+	public StrategyPersistence getStrategyPersistence() {
+		return strategyPersistence;
+	}
+
+	/**
+	 * Sets the strategy persistence.
+	 *
+	 * @param strategyPersistence the strategy persistence
+	 */
+	public void setStrategyPersistence(StrategyPersistence strategyPersistence) {
+		this.strategyPersistence = strategyPersistence;
+	}
+
+	/**
+	 * Returns the strategy share local service.
+	 *
+	 * @return the strategy share local service
+	 */
+	public com.ibtrader.data.service.StrategyShareLocalService getStrategyShareLocalService() {
+		return strategyShareLocalService;
+	}
+
+	/**
+	 * Sets the strategy share local service.
+	 *
+	 * @param strategyShareLocalService the strategy share local service
+	 */
+	public void setStrategyShareLocalService(
+		com.ibtrader.data.service.StrategyShareLocalService strategyShareLocalService) {
+		this.strategyShareLocalService = strategyShareLocalService;
+	}
+
+	/**
+	 * Returns the strategy share persistence.
+	 *
+	 * @return the strategy share persistence
+	 */
+	public StrategySharePersistence getStrategySharePersistence() {
+		return strategySharePersistence;
+	}
+
+	/**
+	 * Sets the strategy share persistence.
+	 *
+	 * @param strategySharePersistence the strategy share persistence
+	 */
+	public void setStrategySharePersistence(
+		StrategySharePersistence strategySharePersistence) {
+		this.strategySharePersistence = strategySharePersistence;
 	}
 
 	/**
@@ -836,6 +913,14 @@ public abstract class ShareLocalServiceBaseImpl extends BaseLocalServiceImpl
 	protected ShareLocalService shareLocalService;
 	@BeanReference(type = SharePersistence.class)
 	protected SharePersistence sharePersistence;
+	@BeanReference(type = com.ibtrader.data.service.StrategyLocalService.class)
+	protected com.ibtrader.data.service.StrategyLocalService strategyLocalService;
+	@BeanReference(type = StrategyPersistence.class)
+	protected StrategyPersistence strategyPersistence;
+	@BeanReference(type = com.ibtrader.data.service.StrategyShareLocalService.class)
+	protected com.ibtrader.data.service.StrategyShareLocalService strategyShareLocalService;
+	@BeanReference(type = StrategySharePersistence.class)
+	protected StrategySharePersistence strategySharePersistence;
 	@ServiceReference(type = com.liferay.counter.kernel.service.CounterLocalService.class)
 	protected com.liferay.counter.kernel.service.CounterLocalService counterLocalService;
 	@ServiceReference(type = com.liferay.portal.kernel.service.ClassNameLocalService.class)

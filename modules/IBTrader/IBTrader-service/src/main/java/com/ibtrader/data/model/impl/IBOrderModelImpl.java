@@ -18,11 +18,13 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.ibtrader.data.model.IBOrder;
 import com.ibtrader.data.model.IBOrderModel;
+import com.ibtrader.data.model.IBOrderSoap;
 
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
 
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
+import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.model.impl.BaseModelImpl;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -35,7 +37,9 @@ import java.io.Serializable;
 
 import java.sql.Types;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -51,13 +55,14 @@ import java.util.Map;
  * @see IBOrderModel
  * @generated
  */
+@JSON(strict = true)
 @ProviderType
 public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 	implements IBOrderModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this class directly. All methods that expect a i b order model instance should use the {@link IBOrder} interface instead.
+	 * Never modify or reference this class directly. All methods that expect a ib order model instance should use the {@link IBOrder} interface instead.
 	 */
 	public static final String TABLE_NAME = "ibtrader_IBOrder";
 	public static final Object[][] TABLE_COLUMNS = {
@@ -101,6 +106,51 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 	public static final long GROUPID_COLUMN_BITMASK = 2L;
 	public static final long UUID_COLUMN_BITMASK = 4L;
 	public static final long ORDERSID_COLUMN_BITMASK = 8L;
+
+	/**
+	 * Converts the soap model instance into a normal model instance.
+	 *
+	 * @param soapModel the soap model instance to convert
+	 * @return the normal model instance
+	 */
+	public static IBOrder toModel(IBOrderSoap soapModel) {
+		if (soapModel == null) {
+			return null;
+		}
+
+		IBOrder model = new IBOrderImpl();
+
+		model.setUuid(soapModel.getUuid());
+		model.setOrdersId(soapModel.getOrdersId());
+		model.setGroupId(soapModel.getGroupId());
+		model.setCompanyId(soapModel.getCompanyId());
+		model.setOrderID(soapModel.getOrderID());
+		model.setShareID(soapModel.getShareID());
+		model.setChecked(soapModel.getChecked());
+
+		return model;
+	}
+
+	/**
+	 * Converts the soap model instances into normal model instances.
+	 *
+	 * @param soapModels the soap model instances to convert
+	 * @return the normal model instances
+	 */
+	public static List<IBOrder> toModels(IBOrderSoap[] soapModels) {
+		if (soapModels == null) {
+			return null;
+		}
+
+		List<IBOrder> models = new ArrayList<IBOrder>(soapModels.length);
+
+		for (IBOrderSoap soapModel : soapModels) {
+			models.add(toModel(soapModel));
+		}
+
+		return models;
+	}
+
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.ibtrader.data.service.util.ServiceProps.get(
 				"lock.expiration.time.com.ibtrader.data.model.IBOrder"));
 
@@ -200,6 +250,7 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 		}
 	}
 
+	@JSON
 	@Override
 	public String getUuid() {
 		if (_uuid == null) {
@@ -223,6 +274,7 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 		return GetterUtil.getString(_originalUuid);
 	}
 
+	@JSON
 	@Override
 	public long getOrdersId() {
 		return _ordersId;
@@ -233,6 +285,7 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 		_ordersId = ordersId;
 	}
 
+	@JSON
 	@Override
 	public long getGroupId() {
 		return _groupId;
@@ -255,6 +308,7 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 		return _originalGroupId;
 	}
 
+	@JSON
 	@Override
 	public long getCompanyId() {
 		return _companyId;
@@ -277,6 +331,7 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 		return _originalCompanyId;
 	}
 
+	@JSON
 	@Override
 	public long getOrderID() {
 		return _orderID;
@@ -287,6 +342,7 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 		_orderID = orderID;
 	}
 
+	@JSON
 	@Override
 	public long getShareID() {
 		return _shareID;
@@ -297,11 +353,13 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 		_shareID = shareID;
 	}
 
+	@JSON
 	@Override
 	public boolean getChecked() {
 		return _checked;
 	}
 
+	@JSON
 	@Override
 	public boolean isChecked() {
 		return _checked;

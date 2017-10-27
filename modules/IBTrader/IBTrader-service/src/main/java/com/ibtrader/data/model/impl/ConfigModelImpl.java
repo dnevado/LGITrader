@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.ibtrader.data.model.Config;
 import com.ibtrader.data.model.ConfigModel;
+import com.ibtrader.data.model.ConfigSoap;
 
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
@@ -25,6 +26,7 @@ import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
 import com.liferay.exportimport.kernel.lar.StagedModelType;
 
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
+import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.model.impl.BaseModelImpl;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -38,8 +40,10 @@ import java.io.Serializable;
 
 import java.sql.Types;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -55,6 +59,7 @@ import java.util.Map;
  * @see ConfigModel
  * @generated
  */
+@JSON(strict = true)
 @ProviderType
 public class ConfigModelImpl extends BaseModelImpl<Config>
 	implements ConfigModel {
@@ -93,7 +98,7 @@ public class ConfigModelImpl extends BaseModelImpl<Config>
 		TABLE_COLUMNS_MAP.put("description", Types.VARCHAR);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table ibtrader_Config (uuid_ VARCHAR(75) null,configId LONG not null primary key,groupId LONG,companyId LONG,name VARCHAR(75) null,value VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,globaldefault BOOLEAN,config_key VARCHAR(75) null,description VARCHAR(75) null)";
+	public static final String TABLE_SQL_CREATE = "create table ibtrader_Config (uuid_ VARCHAR(75) null,configId LONG not null primary key,groupId LONG,companyId LONG,name VARCHAR(500) null,value VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,globaldefault BOOLEAN,config_key VARCHAR(75) null,description STRING null)";
 	public static final String TABLE_SQL_DROP = "drop table ibtrader_Config";
 	public static final String ORDER_BY_JPQL = " ORDER BY config.configId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY ibtrader_Config.configId ASC";
@@ -115,6 +120,55 @@ public class ConfigModelImpl extends BaseModelImpl<Config>
 	public static final long GROUPID_COLUMN_BITMASK = 8L;
 	public static final long UUID_COLUMN_BITMASK = 16L;
 	public static final long CONFIGID_COLUMN_BITMASK = 32L;
+
+	/**
+	 * Converts the soap model instance into a normal model instance.
+	 *
+	 * @param soapModel the soap model instance to convert
+	 * @return the normal model instance
+	 */
+	public static Config toModel(ConfigSoap soapModel) {
+		if (soapModel == null) {
+			return null;
+		}
+
+		Config model = new ConfigImpl();
+
+		model.setUuid(soapModel.getUuid());
+		model.setConfigId(soapModel.getConfigId());
+		model.setGroupId(soapModel.getGroupId());
+		model.setCompanyId(soapModel.getCompanyId());
+		model.setName(soapModel.getName());
+		model.setValue(soapModel.getValue());
+		model.setCreateDate(soapModel.getCreateDate());
+		model.setModifiedDate(soapModel.getModifiedDate());
+		model.setGlobaldefault(soapModel.getGlobaldefault());
+		model.setConfig_key(soapModel.getConfig_key());
+		model.setDescription(soapModel.getDescription());
+
+		return model;
+	}
+
+	/**
+	 * Converts the soap model instances into normal model instances.
+	 *
+	 * @param soapModels the soap model instances to convert
+	 * @return the normal model instances
+	 */
+	public static List<Config> toModels(ConfigSoap[] soapModels) {
+		if (soapModels == null) {
+			return null;
+		}
+
+		List<Config> models = new ArrayList<Config>(soapModels.length);
+
+		for (ConfigSoap soapModel : soapModels) {
+			models.add(toModel(soapModel));
+		}
+
+		return models;
+	}
+
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.ibtrader.data.service.util.ServiceProps.get(
 				"lock.expiration.time.com.ibtrader.data.model.Config"));
 
@@ -242,6 +296,7 @@ public class ConfigModelImpl extends BaseModelImpl<Config>
 		}
 	}
 
+	@JSON
 	@Override
 	public String getUuid() {
 		if (_uuid == null) {
@@ -265,6 +320,7 @@ public class ConfigModelImpl extends BaseModelImpl<Config>
 		return GetterUtil.getString(_originalUuid);
 	}
 
+	@JSON
 	@Override
 	public long getConfigId() {
 		return _configId;
@@ -275,6 +331,7 @@ public class ConfigModelImpl extends BaseModelImpl<Config>
 		_configId = configId;
 	}
 
+	@JSON
 	@Override
 	public long getGroupId() {
 		return _groupId;
@@ -297,6 +354,7 @@ public class ConfigModelImpl extends BaseModelImpl<Config>
 		return _originalGroupId;
 	}
 
+	@JSON
 	@Override
 	public long getCompanyId() {
 		return _companyId;
@@ -319,6 +377,7 @@ public class ConfigModelImpl extends BaseModelImpl<Config>
 		return _originalCompanyId;
 	}
 
+	@JSON
 	@Override
 	public String getName() {
 		if (_name == null) {
@@ -334,6 +393,7 @@ public class ConfigModelImpl extends BaseModelImpl<Config>
 		_name = name;
 	}
 
+	@JSON
 	@Override
 	public String getValue() {
 		if (_value == null) {
@@ -349,6 +409,7 @@ public class ConfigModelImpl extends BaseModelImpl<Config>
 		_value = value;
 	}
 
+	@JSON
 	@Override
 	public Date getCreateDate() {
 		return _createDate;
@@ -359,6 +420,7 @@ public class ConfigModelImpl extends BaseModelImpl<Config>
 		_createDate = createDate;
 	}
 
+	@JSON
 	@Override
 	public Date getModifiedDate() {
 		return _modifiedDate;
@@ -375,11 +437,13 @@ public class ConfigModelImpl extends BaseModelImpl<Config>
 		_modifiedDate = modifiedDate;
 	}
 
+	@JSON
 	@Override
 	public boolean getGlobaldefault() {
 		return _globaldefault;
 	}
 
+	@JSON
 	@Override
 	public boolean isGlobaldefault() {
 		return _globaldefault;
@@ -402,6 +466,7 @@ public class ConfigModelImpl extends BaseModelImpl<Config>
 		return _originalGlobaldefault;
 	}
 
+	@JSON
 	@Override
 	public String getConfig_key() {
 		if (_config_key == null) {
@@ -427,6 +492,7 @@ public class ConfigModelImpl extends BaseModelImpl<Config>
 		return GetterUtil.getString(_originalConfig_key);
 	}
 
+	@JSON
 	@Override
 	public String getDescription() {
 		if (_description == null) {

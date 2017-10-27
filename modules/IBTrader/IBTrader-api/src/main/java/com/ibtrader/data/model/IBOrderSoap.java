@@ -22,9 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class is used by SOAP remote services.
+ * This class is used by SOAP remote services, specifically {@link com.ibtrader.data.service.http.IBOrderServiceSoap}.
  *
  * @author Brian Wing Shun Chan
+ * @see com.ibtrader.data.service.http.IBOrderServiceSoap
  * @generated
  */
 @ProviderType
