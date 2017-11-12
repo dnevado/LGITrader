@@ -2,6 +2,7 @@ package com.ibtrader.admin.portlet;
 
 import com.ibtrader.admin.constants.IBStrategyPortletKeys;
 import com.ibtrader.data.model.Strategy;
+import com.ibtrader.data.service.StrategyLocalService;
 import com.ibtrader.data.service.StrategyLocalServiceUtil;
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.service.AssetEntryServiceUtil;
@@ -21,6 +22,10 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
+/* import DNMAssetService.model.dnmAsset;
+import DNMAssetService.service.dnmAssetLocalService;
+import DNMAssetService.service.dnmAssetLocalServiceUtil;
+*/
 import java.io.IOException;
 import java.util.List;
 
@@ -34,6 +39,7 @@ import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author DAVIDNEVADO
@@ -48,6 +54,9 @@ import org.osgi.service.component.annotations.Component;
 		"javax.portlet.init-param.view-template=/view.jsp",
 		"javax.portlet.name=" + IBStrategyPortletKeys.IBStrategy,	
 		"javax.portlet.resource-bundle=content.Language",
+        "com.liferay.portlet.scopeable=true",
+        "javax.portlet.expiration-cache=0",
+        "javax.portlet.supports.mime-type=text/html",
 		"javax.portlet.security-role-ref=power-user,user"
 	},
 	service = Portlet.class
@@ -56,6 +65,14 @@ public class IBStrategyPortlet extends MVCPortlet {
 
 	ThemeDisplay themeDisplay;
 	 private static final Log   _log = LogFactoryUtil.getLog(IBStrategyPortlet.class);
+	 
+	/*  @Reference
+     public void set_dnmAssetLocalService(dnmAssetLocalService _dnmAssetLocalService) {
+        this._dnmAssetLocalService = _dnmAssetLocalService;
+     }
+	 
+	 private dnmAssetLocalService _dnmAssetLocalService;
+	 */
 
 	@Override
 	public void doView(RenderRequest renderRequest, RenderResponse renderResponse)
@@ -63,6 +80,10 @@ public class IBStrategyPortlet extends MVCPortlet {
 		themeDisplay = (ThemeDisplay)renderRequest.getAttribute(WebKeys.THEME_DISPLAY); 
 		// TODO Auto-generated method stub
 		
+		_log.info("2");
+		/*_log.info(CounterLocalServiceUtil.increment(dnmAsset.class.getName()));
+	 	dnmAsset _dnmAsset = dnmAssetLocalServiceUtil.creatednmAsset(CounterLocalServiceUtil.increment(dnmAsset.class.getName()));
+		*/
 		AssetEntryQuery assetEntryQuery = new AssetEntryQuery();
 		 
 		
@@ -94,7 +115,7 @@ public class IBStrategyPortlet extends MVCPortlet {
 		else
 		{
 			//List<Strategy> _lStrg = StrategyLocalServiceUtil.findByCompanyId(themeDisplay.getCompanyId()); 
-			List<Strategy> _lStrg = StrategyLocalServiceUtil.findBYGroupIDStatus(themeDisplay.getScopeGroupId(), WorkflowConstants.STATUS_APPROVED);
+			List<Strategy> _lStrg = _strategyLocalService.findBYGroupIDStatus(themeDisplay.getScopeGroupId(), WorkflowConstants.STATUS_APPROVED);
 			
 			//List<Strategy> _lStrg = StrategyLocalServiceUtil.find
 			renderRequest.setAttribute("_lStrg", _lStrg);
@@ -152,7 +173,7 @@ public class IBStrategyPortlet extends MVCPortlet {
 			String _className = ParamUtil.getString(request, "classname","");
 			
 			 
-			Strategy _strategy = StrategyLocalServiceUtil.createStrategy(CounterLocalServiceUtil.increment(Strategy.class.getName())); 
+			Strategy _strategy = _strategyLocalService.createStrategy(CounterLocalServiceUtil.increment(Strategy.class.getName())); 
 
 			
 			
@@ -167,7 +188,7 @@ public class IBStrategyPortlet extends MVCPortlet {
 			_strategy.setClassName(_className);
 			_strategy.setUserId(themeDisplay.getUser().getUserId()); 
 			
-			StrategyLocalServiceUtil.addStrategy(_strategy, serviceContext);
+			_strategyLocalService.addStrategy(_strategy, serviceContext);
 			
 			} catch (PortalException e) {
 				// TODO Auto-generated catch block
@@ -175,6 +196,7 @@ public class IBStrategyPortlet extends MVCPortlet {
 			}
 		
 		
+			 
 		
 	}
 	public void edit(RenderRequest renderRequest, RenderResponse renderResponse)
@@ -182,5 +204,13 @@ public class IBStrategyPortlet extends MVCPortlet {
 		
 	}
 	
+	@Reference(unbind = "-")
+    protected void setStrategyService(StrategyLocalService strategyLocalService) {
+		_strategyLocalService = strategyLocalService;
+    }
+
+    
+    private StrategyLocalService _strategyLocalService;
+
 	
 }
