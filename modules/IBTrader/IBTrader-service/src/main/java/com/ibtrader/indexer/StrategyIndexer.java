@@ -23,6 +23,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.BaseIndexer;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.search.IndexWriterHelper;
 import com.liferay.portal.kernel.search.IndexWriterHelperUtil;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.Summary;
@@ -34,15 +35,22 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 @Component(immediate = true,service = Indexer.class,
 property = { "indexer.class.name=com.ibtrader.data.model.Strategy"}
 )
-	public class IBStrategyIndexer extends BaseIndexer<Strategy> {
+	public class StrategyIndexer extends BaseIndexer<Strategy> {
 
 	    public static final String CLASS_NAME = Strategy.class.getName();
 		private Log _log = LogFactoryUtil.getLog(Strategy.class);
 		public static final String PORTLET_ID = IBStrategyPortletKeys.IBStrategy;
 
 
-		public IBStrategyIndexer() {
+		public StrategyIndexer() {
+			_log.info("StrategyIndexer");
 			setPermissionAware(true);
+			setDefaultSelectedFieldNames(
+					Field.ASSET_TAG_NAMES, Field.COMPANY_ID, Field.CONTENT,
+					Field.ENTRY_CLASS_NAME, Field.ENTRY_CLASS_PK, Field.GROUP_ID,
+					Field.MODIFIED_DATE, Field.SCOPE_GROUP_ID, Field.TITLE, Field.UID);
+				setFilterSearch(true);
+				setPermissionAware(true);
 		}
 		
 		@Override
@@ -54,13 +62,14 @@ property = { "indexer.class.name=com.ibtrader.data.model.Strategy"}
 		@Override
 		protected void doDelete(Strategy strategy) throws Exception {
 			// TODO Auto-generated method stub
-			
+			_log.info("doDelete");
 			deleteDocument(strategy.getCompanyId(), strategy.getStrategyID());
 		}
 
 		@Override
 		protected Document doGetDocument(Strategy strategy) throws Exception {
-			// TODO Auto-generated method stub			
+			// TODO Auto-generated method stub
+			_log.info("doGetDocument");
 			Document doc = getBaseModelDocument(IBStrategyPortletKeys.IBStrategy, strategy);
 
 			doc.addKeyword(Field.USER_ID, strategy.getUserId());
@@ -89,6 +98,8 @@ property = { "indexer.class.name=com.ibtrader.data.model.Strategy"}
 			 _strategyLocalService = strategyLocalService;
 		 }
 		
+		  
+		 
 		@Override
 		protected void doReindex(String className, long classPK) throws Exception {
 			// TODO Auto-generated method stub
@@ -169,10 +180,11 @@ property = { "indexer.class.name=com.ibtrader.data.model.Strategy"}
 			IndexWriterHelperUtil.updateDocument(this.getSearchEngineId(), strategy.getCompanyId(), doc, isCommitImmediately());
 		}
 		
-		
-		private StrategyLocalService _strategyLocalService;
+		@Reference
+		 protected   StrategyLocalService _strategyLocalService;
 
-		
+		@Reference
+		protected IndexWriterHelper _indexWriterHelper;
 		@Override
 		protected boolean isVisible(int entryStatus, int queryStatus) {
 			// TODO Auto-generated method stub

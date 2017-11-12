@@ -230,6 +230,11 @@ public class StrategyLocalServiceWrapper implements StrategyLocalService,
 		return _strategyLocalService.getStrategiesCount();
 	}
 
+	@Override
+	public int getStrategysCount(long groupId) {
+		return _strategyLocalService.getStrategysCount(groupId);
+	}
+
 	/**
 	* Returns the OSGi service identifier.
 	*
@@ -359,6 +364,25 @@ public class StrategyLocalServiceWrapper implements StrategyLocalService,
 		com.liferay.portal.kernel.util.OrderByComparator<com.ibtrader.data.model.Strategy> orderByComparator) {
 		return _strategyLocalService.getStrategiesByUuidAndCompanyId(uuid,
 			companyId, start, end, orderByComparator);
+	}
+
+	@Override
+	public java.util.List<com.ibtrader.data.model.Strategy> getStrategys(
+		long groupId) {
+		return _strategyLocalService.getStrategys(groupId);
+	}
+
+	@Override
+	public java.util.List<com.ibtrader.data.model.Strategy> getStrategys(
+		long groupId, int start, int end) {
+		return _strategyLocalService.getStrategys(groupId, start, end);
+	}
+
+	@Override
+	public java.util.List<com.ibtrader.data.model.Strategy> getStrategys(
+		long groupId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.ibtrader.data.model.Strategy> obc) {
+		return _strategyLocalService.getStrategys(groupId, start, end, obc);
 	}
 
 	/**

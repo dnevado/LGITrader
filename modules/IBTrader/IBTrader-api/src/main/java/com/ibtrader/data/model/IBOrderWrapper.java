@@ -123,9 +123,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Returns the checked of this ib order.
+	* Returns the checked of this i b order.
 	*
-	* @return the checked of this ib order
+	* @return the checked of this i b order
 	*/
 	@Override
 	public boolean getChecked() {
@@ -138,9 +138,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Returns <code>true</code> if this ib order is checked.
+	* Returns <code>true</code> if this i b order is checked.
 	*
-	* @return <code>true</code> if this ib order is checked; <code>false</code> otherwise
+	* @return <code>true</code> if this i b order is checked; <code>false</code> otherwise
 	*/
 	@Override
 	public boolean isChecked() {
@@ -188,9 +188,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Returns the uuid of this ib order.
+	* Returns the uuid of this i b order.
 	*
-	* @return the uuid of this ib order
+	* @return the uuid of this i b order
 	*/
 	@Override
 	public java.lang.String getUuid() {
@@ -208,9 +208,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Returns the company ID of this ib order.
+	* Returns the company ID of this i b order.
 	*
-	* @return the company ID of this ib order
+	* @return the company ID of this i b order
 	*/
 	@Override
 	public long getCompanyId() {
@@ -218,9 +218,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Returns the group ID of this ib order.
+	* Returns the group ID of this i b order.
 	*
-	* @return the group ID of this ib order
+	* @return the group ID of this i b order
 	*/
 	@Override
 	public long getGroupId() {
@@ -228,9 +228,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Returns the order ID of this ib order.
+	* Returns the order i d of this i b order.
 	*
-	* @return the order ID of this ib order
+	* @return the order i d of this i b order
 	*/
 	@Override
 	public long getOrderID() {
@@ -238,9 +238,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Returns the orders ID of this ib order.
+	* Returns the orders ID of this i b order.
 	*
-	* @return the orders ID of this ib order
+	* @return the orders ID of this i b order
 	*/
 	@Override
 	public long getOrdersId() {
@@ -248,9 +248,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Returns the primary key of this ib order.
+	* Returns the primary key of this i b order.
 	*
-	* @return the primary key of this ib order
+	* @return the primary key of this i b order
 	*/
 	@Override
 	public long getPrimaryKey() {
@@ -258,9 +258,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Returns the share ID of this ib order.
+	* Returns the share i d of this i b order.
 	*
-	* @return the share ID of this ib order
+	* @return the share i d of this i b order
 	*/
 	@Override
 	public long getShareID() {
@@ -278,9 +278,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Sets whether this ib order is checked.
+	* Sets whether this i b order is checked.
 	*
-	* @param checked the checked of this ib order
+	* @param checked the checked of this i b order
 	*/
 	@Override
 	public void setChecked(boolean checked) {
@@ -288,9 +288,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Sets the company ID of this ib order.
+	* Sets the company ID of this i b order.
 	*
-	* @param companyId the company ID of this ib order
+	* @param companyId the company ID of this i b order
 	*/
 	@Override
 	public void setCompanyId(long companyId) {
@@ -314,9 +314,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Sets the group ID of this ib order.
+	* Sets the group ID of this i b order.
 	*
-	* @param groupId the group ID of this ib order
+	* @param groupId the group ID of this i b order
 	*/
 	@Override
 	public void setGroupId(long groupId) {
@@ -329,9 +329,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Sets the order ID of this ib order.
+	* Sets the order i d of this i b order.
 	*
-	* @param orderID the order ID of this ib order
+	* @param orderID the order i d of this i b order
 	*/
 	@Override
 	public void setOrderID(long orderID) {
@@ -339,9 +339,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Sets the orders ID of this ib order.
+	* Sets the orders ID of this i b order.
 	*
-	* @param ordersId the orders ID of this ib order
+	* @param ordersId the orders ID of this i b order
 	*/
 	@Override
 	public void setOrdersId(long ordersId) {
@@ -349,9 +349,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Sets the primary key of this ib order.
+	* Sets the primary key of this i b order.
 	*
-	* @param primaryKey the primary key of this ib order
+	* @param primaryKey the primary key of this i b order
 	*/
 	@Override
 	public void setPrimaryKey(long primaryKey) {
@@ -364,9 +364,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Sets the share ID of this ib order.
+	* Sets the share i d of this i b order.
 	*
-	* @param shareID the share ID of this ib order
+	* @param shareID the share i d of this i b order
 	*/
 	@Override
 	public void setShareID(long shareID) {
@@ -374,9 +374,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Sets the uuid of this ib order.
+	* Sets the uuid of this i b order.
 	*
-	* @param uuid the uuid of this ib order
+	* @param uuid the uuid of this i b order
 	*/
 	@Override
 	public void setUuid(java.lang.String uuid) {

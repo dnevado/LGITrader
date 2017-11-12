@@ -62,7 +62,7 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this class directly. All methods that expect a ib order model instance should use the {@link IBOrder} interface instead.
+	 * Never modify or reference this class directly. All methods that expect a i b order model instance should use the {@link IBOrder} interface instead.
 	 */
 	public static final String TABLE_NAME = "ibtrader_IBOrder";
 	public static final Object[][] TABLE_COLUMNS = {

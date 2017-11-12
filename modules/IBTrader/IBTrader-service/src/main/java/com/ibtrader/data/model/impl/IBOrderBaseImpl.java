@@ -37,7 +37,7 @@ public abstract class IBOrderBaseImpl extends IBOrderModelImpl
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this class directly. All methods that expect a ib order model instance should use the {@link IBOrder} interface instead.
+	 * Never modify or reference this class directly. All methods that expect a i b order model instance should use the {@link IBOrder} interface instead.
 	 */
 	@Override
 	public void persist() {

@@ -47,7 +47,7 @@ public interface IBOrderService extends BaseService {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this interface directly. Always use {@link IBOrderServiceUtil} to access the ib order remote service. Add custom service methods to {@link com.ibtrader.data.service.impl.IBOrderServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
+	 * Never modify or reference this interface directly. Always use {@link IBOrderServiceUtil} to access the i b order remote service. Add custom service methods to {@link com.ibtrader.data.service.impl.IBOrderServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
 
 	/**

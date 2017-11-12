@@ -37,7 +37,6 @@ import com.liferay.portal.kernel.service.persistence.CompanyProvider;
 import com.liferay.portal.kernel.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.ReflectionUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
@@ -46,8 +45,6 @@ import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 
 import java.io.Serializable;
-
-import java.lang.reflect.Field;
 
 import java.util.Collections;
 import java.util.Date;
@@ -1978,22 +1975,6 @@ public class RealtimePersistenceImpl extends BasePersistenceImpl<Realtime>
 
 	public RealtimePersistenceImpl() {
 		setModelClass(Realtime.class);
-
-		try {
-			Field field = ReflectionUtil.getDeclaredField(BasePersistenceImpl.class,
-					"_dbColumnNames");
-
-			Map<String, String> dbColumnNames = new HashMap<String, String>();
-
-			dbColumnNames.put("uuid", "uuid_");
-
-			field.set(this, dbColumnNames);
-		}
-		catch (Exception e) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(e, e);
-			}
-		}
 	}
 
 	/**
@@ -2061,7 +2042,7 @@ public class RealtimePersistenceImpl extends BasePersistenceImpl<Realtime>
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
-		clearUniqueFindersCache((RealtimeModelImpl)realtime, true);
+		clearUniqueFindersCache((RealtimeModelImpl)realtime);
 	}
 
 	@Override
@@ -2073,35 +2054,49 @@ public class RealtimePersistenceImpl extends BasePersistenceImpl<Realtime>
 			entityCache.removeResult(RealtimeModelImpl.ENTITY_CACHE_ENABLED,
 				RealtimeImpl.class, realtime.getPrimaryKey());
 
-			clearUniqueFindersCache((RealtimeModelImpl)realtime, true);
+			clearUniqueFindersCache((RealtimeModelImpl)realtime);
 		}
 	}
 
-	protected void cacheUniqueFindersCache(RealtimeModelImpl realtimeModelImpl) {
-		Object[] args = new Object[] {
-				realtimeModelImpl.getUuid(), realtimeModelImpl.getGroupId()
-			};
-
-		finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
-			Long.valueOf(1), false);
-		finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
-			realtimeModelImpl, false);
-	}
-
-	protected void clearUniqueFindersCache(
-		RealtimeModelImpl realtimeModelImpl, boolean clearCurrent) {
-		if (clearCurrent) {
+	protected void cacheUniqueFindersCache(
+		RealtimeModelImpl realtimeModelImpl, boolean isNew) {
+		if (isNew) {
 			Object[] args = new Object[] {
 					realtimeModelImpl.getUuid(), realtimeModelImpl.getGroupId()
 				};
 
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
-			finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
+			finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
+				Long.valueOf(1));
+			finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
+				realtimeModelImpl);
 		}
+		else {
+			if ((realtimeModelImpl.getColumnBitmask() &
+					FINDER_PATH_FETCH_BY_UUID_G.getColumnBitmask()) != 0) {
+				Object[] args = new Object[] {
+						realtimeModelImpl.getUuid(),
+						realtimeModelImpl.getGroupId()
+					};
+
+				finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
+					Long.valueOf(1));
+				finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
+					realtimeModelImpl);
+			}
+		}
+	}
+
+	protected void clearUniqueFindersCache(RealtimeModelImpl realtimeModelImpl) {
+		Object[] args = new Object[] {
+				realtimeModelImpl.getUuid(), realtimeModelImpl.getGroupId()
+			};
+
+		finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
+		finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
 
 		if ((realtimeModelImpl.getColumnBitmask() &
 				FINDER_PATH_FETCH_BY_UUID_G.getColumnBitmask()) != 0) {
-			Object[] args = new Object[] {
+			args = new Object[] {
 					realtimeModelImpl.getOriginalUuid(),
 					realtimeModelImpl.getOriginalGroupId()
 				};
@@ -2276,35 +2271,8 @@ public class RealtimePersistenceImpl extends BasePersistenceImpl<Realtime>
 
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 
-		if (!RealtimeModelImpl.COLUMN_BITMASK_ENABLED) {
+		if (isNew || !RealtimeModelImpl.COLUMN_BITMASK_ENABLED) {
 			finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
-		}
-		else
-		 if (isNew) {
-			Object[] args = new Object[] { realtimeModelImpl.getUuid() };
-
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID, args);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID,
-				args);
-
-			args = new Object[] {
-					realtimeModelImpl.getUuid(),
-					realtimeModelImpl.getCompanyId()
-				};
-
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_C, args);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID_C,
-				args);
-
-			args = new Object[] { realtimeModelImpl.getShareId() };
-
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_SHAREID, args);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_SHAREID,
-				args);
-
-			finderCache.removeResult(FINDER_PATH_COUNT_ALL, FINDER_ARGS_EMPTY);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_ALL,
-				FINDER_ARGS_EMPTY);
 		}
 
 		else {
@@ -2365,8 +2333,8 @@ public class RealtimePersistenceImpl extends BasePersistenceImpl<Realtime>
 		entityCache.putResult(RealtimeModelImpl.ENTITY_CACHE_ENABLED,
 			RealtimeImpl.class, realtime.getPrimaryKey(), realtime, false);
 
-		clearUniqueFindersCache(realtimeModelImpl, false);
-		cacheUniqueFindersCache(realtimeModelImpl);
+		clearUniqueFindersCache(realtimeModelImpl);
+		cacheUniqueFindersCache(realtimeModelImpl, isNew);
 
 		realtime.resetOriginalValues();
 
@@ -2547,7 +2515,7 @@ public class RealtimePersistenceImpl extends BasePersistenceImpl<Realtime>
 		query.append(_SQL_SELECT_REALTIME_WHERE_PKS_IN);
 
 		for (Serializable primaryKey : uncachedPrimaryKeys) {
-			query.append((long)primaryKey);
+			query.append(String.valueOf(primaryKey));
 
 			query.append(StringPool.COMMA);
 		}

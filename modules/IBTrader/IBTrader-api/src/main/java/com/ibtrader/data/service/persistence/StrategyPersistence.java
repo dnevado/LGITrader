@@ -500,6 +500,137 @@ public interface StrategyPersistence extends BasePersistence<Strategy> {
 	public int countByCompanyId(long companyId);
 
 	/**
+	* Returns all the strategies where groupId = &#63;.
+	*
+	* @param groupId the group ID
+	* @return the matching strategies
+	*/
+	public java.util.List<Strategy> findByGroupId(long groupId);
+
+	/**
+	* Returns a range of all the strategies where groupId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link StrategyModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param start the lower bound of the range of strategies
+	* @param end the upper bound of the range of strategies (not inclusive)
+	* @return the range of matching strategies
+	*/
+	public java.util.List<Strategy> findByGroupId(long groupId, int start,
+		int end);
+
+	/**
+	* Returns an ordered range of all the strategies where groupId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link StrategyModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param start the lower bound of the range of strategies
+	* @param end the upper bound of the range of strategies (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching strategies
+	*/
+	public java.util.List<Strategy> findByGroupId(long groupId, int start,
+		int end,
+		com.liferay.portal.kernel.util.OrderByComparator<Strategy> orderByComparator);
+
+	/**
+	* Returns an ordered range of all the strategies where groupId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link StrategyModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param start the lower bound of the range of strategies
+	* @param end the upper bound of the range of strategies (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching strategies
+	*/
+	public java.util.List<Strategy> findByGroupId(long groupId, int start,
+		int end,
+		com.liferay.portal.kernel.util.OrderByComparator<Strategy> orderByComparator,
+		boolean retrieveFromCache);
+
+	/**
+	* Returns the first strategy in the ordered set where groupId = &#63;.
+	*
+	* @param groupId the group ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching strategy
+	* @throws NoSuchStrategyException if a matching strategy could not be found
+	*/
+	public Strategy findByGroupId_First(long groupId,
+		com.liferay.portal.kernel.util.OrderByComparator<Strategy> orderByComparator)
+		throws NoSuchStrategyException;
+
+	/**
+	* Returns the first strategy in the ordered set where groupId = &#63;.
+	*
+	* @param groupId the group ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching strategy, or <code>null</code> if a matching strategy could not be found
+	*/
+	public Strategy fetchByGroupId_First(long groupId,
+		com.liferay.portal.kernel.util.OrderByComparator<Strategy> orderByComparator);
+
+	/**
+	* Returns the last strategy in the ordered set where groupId = &#63;.
+	*
+	* @param groupId the group ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching strategy
+	* @throws NoSuchStrategyException if a matching strategy could not be found
+	*/
+	public Strategy findByGroupId_Last(long groupId,
+		com.liferay.portal.kernel.util.OrderByComparator<Strategy> orderByComparator)
+		throws NoSuchStrategyException;
+
+	/**
+	* Returns the last strategy in the ordered set where groupId = &#63;.
+	*
+	* @param groupId the group ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching strategy, or <code>null</code> if a matching strategy could not be found
+	*/
+	public Strategy fetchByGroupId_Last(long groupId,
+		com.liferay.portal.kernel.util.OrderByComparator<Strategy> orderByComparator);
+
+	/**
+	* Returns the strategies before and after the current strategy in the ordered set where groupId = &#63;.
+	*
+	* @param strategyID the primary key of the current strategy
+	* @param groupId the group ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next strategy
+	* @throws NoSuchStrategyException if a strategy with the primary key could not be found
+	*/
+	public Strategy[] findByGroupId_PrevAndNext(long strategyID, long groupId,
+		com.liferay.portal.kernel.util.OrderByComparator<Strategy> orderByComparator)
+		throws NoSuchStrategyException;
+
+	/**
+	* Removes all the strategies where groupId = &#63; from the database.
+	*
+	* @param groupId the group ID
+	*/
+	public void removeByGroupId(long groupId);
+
+	/**
+	* Returns the number of strategies where groupId = &#63;.
+	*
+	* @param groupId the group ID
+	* @return the number of matching strategies
+	*/
+	public int countByGroupId(long groupId);
+
+	/**
 	* Returns all the strategies where companyId = &#63; and active = &#63;.
 	*
 	* @param companyId the company ID
@@ -916,6 +1047,134 @@ public interface StrategyPersistence extends BasePersistence<Strategy> {
 	* @return the number of matching strategies
 	*/
 	public int countByG_S(long groupId, int status);
+
+	/**
+	* Returns all the strategies where groupId = &#63; and strategyID = &#63;.
+	*
+	* @param groupId the group ID
+	* @param strategyID the strategy i d
+	* @return the matching strategies
+	*/
+	public java.util.List<Strategy> findByG_G(long groupId, long strategyID);
+
+	/**
+	* Returns a range of all the strategies where groupId = &#63; and strategyID = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link StrategyModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param strategyID the strategy i d
+	* @param start the lower bound of the range of strategies
+	* @param end the upper bound of the range of strategies (not inclusive)
+	* @return the range of matching strategies
+	*/
+	public java.util.List<Strategy> findByG_G(long groupId, long strategyID,
+		int start, int end);
+
+	/**
+	* Returns an ordered range of all the strategies where groupId = &#63; and strategyID = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link StrategyModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param strategyID the strategy i d
+	* @param start the lower bound of the range of strategies
+	* @param end the upper bound of the range of strategies (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching strategies
+	*/
+	public java.util.List<Strategy> findByG_G(long groupId, long strategyID,
+		int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<Strategy> orderByComparator);
+
+	/**
+	* Returns an ordered range of all the strategies where groupId = &#63; and strategyID = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link StrategyModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param strategyID the strategy i d
+	* @param start the lower bound of the range of strategies
+	* @param end the upper bound of the range of strategies (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching strategies
+	*/
+	public java.util.List<Strategy> findByG_G(long groupId, long strategyID,
+		int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<Strategy> orderByComparator,
+		boolean retrieveFromCache);
+
+	/**
+	* Returns the first strategy in the ordered set where groupId = &#63; and strategyID = &#63;.
+	*
+	* @param groupId the group ID
+	* @param strategyID the strategy i d
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching strategy
+	* @throws NoSuchStrategyException if a matching strategy could not be found
+	*/
+	public Strategy findByG_G_First(long groupId, long strategyID,
+		com.liferay.portal.kernel.util.OrderByComparator<Strategy> orderByComparator)
+		throws NoSuchStrategyException;
+
+	/**
+	* Returns the first strategy in the ordered set where groupId = &#63; and strategyID = &#63;.
+	*
+	* @param groupId the group ID
+	* @param strategyID the strategy i d
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching strategy, or <code>null</code> if a matching strategy could not be found
+	*/
+	public Strategy fetchByG_G_First(long groupId, long strategyID,
+		com.liferay.portal.kernel.util.OrderByComparator<Strategy> orderByComparator);
+
+	/**
+	* Returns the last strategy in the ordered set where groupId = &#63; and strategyID = &#63;.
+	*
+	* @param groupId the group ID
+	* @param strategyID the strategy i d
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching strategy
+	* @throws NoSuchStrategyException if a matching strategy could not be found
+	*/
+	public Strategy findByG_G_Last(long groupId, long strategyID,
+		com.liferay.portal.kernel.util.OrderByComparator<Strategy> orderByComparator)
+		throws NoSuchStrategyException;
+
+	/**
+	* Returns the last strategy in the ordered set where groupId = &#63; and strategyID = &#63;.
+	*
+	* @param groupId the group ID
+	* @param strategyID the strategy i d
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching strategy, or <code>null</code> if a matching strategy could not be found
+	*/
+	public Strategy fetchByG_G_Last(long groupId, long strategyID,
+		com.liferay.portal.kernel.util.OrderByComparator<Strategy> orderByComparator);
+
+	/**
+	* Removes all the strategies where groupId = &#63; and strategyID = &#63; from the database.
+	*
+	* @param groupId the group ID
+	* @param strategyID the strategy i d
+	*/
+	public void removeByG_G(long groupId, long strategyID);
+
+	/**
+	* Returns the number of strategies where groupId = &#63; and strategyID = &#63;.
+	*
+	* @param groupId the group ID
+	* @param strategyID the strategy i d
+	* @return the number of matching strategies
+	*/
+	public int countByG_G(long groupId, long strategyID);
 
 	/**
 	* Caches the strategy in the entity cache if it is enabled.

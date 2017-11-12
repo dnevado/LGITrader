@@ -42,6 +42,8 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.ContentTypes;
+import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.workflow.WorkflowHandlerRegistryUtil;
 
@@ -67,6 +69,34 @@ public class StrategyLocalServiceImpl extends StrategyLocalServiceBaseImpl {
 	 */
 	
 	private static final Log _log = LogFactoryUtil.getLog(StrategyLocalServiceImpl.class);
+	
+	
+	protected void validate(String name) throws PortalException {
+	    if (Validator.isNull(name)) {
+	        throw new PortalException();
+	    }
+	}
+	
+    public List<Strategy> getStrategys(long groupId) {
+
+	    return strategyPersistence.findByGroupId(groupId);
+	}
+
+	public List<Strategy> getStrategys(long groupId, int start, int end,OrderByComparator<Strategy> obc) {
+
+	    return strategyPersistence.findByGroupId(groupId, start, end, obc);
+	}
+
+	public List<Strategy> getStrategys(long groupId, int start, int end) {
+
+	    return strategyPersistence.findByGroupId(groupId, start, end);
+	}
+
+	public int getStrategysCount(long groupId) {
+
+	    return strategyPersistence.countByGroupId(groupId);
+	}
+	
 	
 	public List<Strategy> findByActiveCompanyId(boolean _active, long companyid)
 	{
@@ -162,17 +192,21 @@ public class StrategyLocalServiceImpl extends StrategyLocalServiceBaseImpl {
 	 @SystemEvent(type = SystemEventConstants.TYPE_DEFAULT)	 
 	public Strategy addStrategy(Strategy strategy, ServiceContext serviceContext) throws PortalException   {
             
-	
+		 Date now = new Date();
 		
 		Strategy _strategy =  strategyPersistence.create(CounterLocalServiceUtil.increment(Strategy.class.getName())); 
 
 		User _user = UserLocalServiceUtil.getUser(strategy.getUserId());
 		
+		
+		_strategy.setUuid(serviceContext.getUuid());
 		_strategy.setActive(strategy.getActive());
 		_strategy.setDescription(strategy.getDescription());
 		_strategy.setName(strategy.getName());
 		_strategy.setType(strategy.getType());
 		_strategy.setClassName(strategy.getClassName());
+		_strategy.setCreateDate(serviceContext.getCreateDate(now));
+		_strategy.setModifiedDate(serviceContext.getModifiedDate(now));
 		_strategy.setGroupId(strategy.getGroupId());
 		_strategy.setCompanyId(strategy.getCompanyId());		
 		_strategy.setUserId(strategy.getUserId());
@@ -180,6 +214,10 @@ public class StrategyLocalServiceImpl extends StrategyLocalServiceBaseImpl {
 		_strategy.setStatusByUserId(strategy.getUserId());
 		_strategy.setStatusByUserName(_user.getFullName());
 		_strategy.setStatusDate(serviceContext.getModifiedDate(null));
+		
+		_strategy.setExpandoBridgeAttributes(serviceContext);
+
+		strategyPersistence.update(_strategy);
 		
 //        User user = userLocalService.getUser(userId);
     
@@ -193,18 +231,18 @@ public class StrategyLocalServiceImpl extends StrategyLocalServiceBaseImpl {
 		e.printStackTrace();
 		}
 		
-	   _strategy = strategyPersistence.update(_strategy);
+	
    
 	   Indexer<Strategy> indexer = IndexerRegistryUtil.getIndexer(Strategy.class.getName());
 	   
 	   indexer.reindex(_strategy);
 		   
-	   AssetEntry assetEntry =  assetEntryLocalService.updateEntry(serviceContext.getUserId(),
+	    /* assetEntry =  assetEntryLocalService.updateEntry(serviceContext.getUserId(),
 	        		_strategy.getGroupId(), Strategy.class.getName(),
 	        		_strategy.getStrategyID(), null, null);
 
-		
-		 assetEntry = assetEntryLocalService.updateEntry(_strategy.getUserId(),
+		*/
+	    AssetEntry assetEntry = assetEntryLocalService.updateEntry(_strategy.getUserId(),
 				_strategy.getGroupId(), _strategy.getCreateDate(),
 				_strategy.getModifiedDate(), Strategy.class.getName(),
 			   _strategy.getPrimaryKey(), _strategy.getUuid(), 0,

@@ -37,7 +37,6 @@ import com.liferay.portal.kernel.service.persistence.CompanyProvider;
 import com.liferay.portal.kernel.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.ReflectionUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
@@ -46,8 +45,6 @@ import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 
 import java.io.Serializable;
-
-import java.lang.reflect.Field;
 
 import java.util.Collections;
 import java.util.Date;
@@ -2009,23 +2006,6 @@ public class SharePersistenceImpl extends BasePersistenceImpl<Share>
 
 	public SharePersistenceImpl() {
 		setModelClass(Share.class);
-
-		try {
-			Field field = ReflectionUtil.getDeclaredField(BasePersistenceImpl.class,
-					"_dbColumnNames");
-
-			Map<String, String> dbColumnNames = new HashMap<String, String>();
-
-			dbColumnNames.put("uuid", "uuid_");
-			dbColumnNames.put("active", "active_");
-
-			field.set(this, dbColumnNames);
-		}
-		catch (Exception e) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(e, e);
-			}
-		}
 	}
 
 	/**
@@ -2093,7 +2073,7 @@ public class SharePersistenceImpl extends BasePersistenceImpl<Share>
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
-		clearUniqueFindersCache((ShareModelImpl)share, true);
+		clearUniqueFindersCache((ShareModelImpl)share);
 	}
 
 	@Override
@@ -2105,35 +2085,48 @@ public class SharePersistenceImpl extends BasePersistenceImpl<Share>
 			entityCache.removeResult(ShareModelImpl.ENTITY_CACHE_ENABLED,
 				ShareImpl.class, share.getPrimaryKey());
 
-			clearUniqueFindersCache((ShareModelImpl)share, true);
+			clearUniqueFindersCache((ShareModelImpl)share);
 		}
 	}
 
-	protected void cacheUniqueFindersCache(ShareModelImpl shareModelImpl) {
-		Object[] args = new Object[] {
-				shareModelImpl.getUuid(), shareModelImpl.getGroupId()
-			};
-
-		finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
-			Long.valueOf(1), false);
-		finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
-			shareModelImpl, false);
-	}
-
-	protected void clearUniqueFindersCache(ShareModelImpl shareModelImpl,
-		boolean clearCurrent) {
-		if (clearCurrent) {
+	protected void cacheUniqueFindersCache(ShareModelImpl shareModelImpl,
+		boolean isNew) {
+		if (isNew) {
 			Object[] args = new Object[] {
 					shareModelImpl.getUuid(), shareModelImpl.getGroupId()
 				};
 
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
-			finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
+			finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
+				Long.valueOf(1));
+			finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
+				shareModelImpl);
 		}
+		else {
+			if ((shareModelImpl.getColumnBitmask() &
+					FINDER_PATH_FETCH_BY_UUID_G.getColumnBitmask()) != 0) {
+				Object[] args = new Object[] {
+						shareModelImpl.getUuid(), shareModelImpl.getGroupId()
+					};
+
+				finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
+					Long.valueOf(1));
+				finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
+					shareModelImpl);
+			}
+		}
+	}
+
+	protected void clearUniqueFindersCache(ShareModelImpl shareModelImpl) {
+		Object[] args = new Object[] {
+				shareModelImpl.getUuid(), shareModelImpl.getGroupId()
+			};
+
+		finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
+		finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
 
 		if ((shareModelImpl.getColumnBitmask() &
 				FINDER_PATH_FETCH_BY_UUID_G.getColumnBitmask()) != 0) {
-			Object[] args = new Object[] {
+			args = new Object[] {
 					shareModelImpl.getOriginalUuid(),
 					shareModelImpl.getOriginalGroupId()
 				};
@@ -2306,36 +2299,8 @@ public class SharePersistenceImpl extends BasePersistenceImpl<Share>
 
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 
-		if (!ShareModelImpl.COLUMN_BITMASK_ENABLED) {
+		if (isNew || !ShareModelImpl.COLUMN_BITMASK_ENABLED) {
 			finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
-		}
-		else
-		 if (isNew) {
-			Object[] args = new Object[] { shareModelImpl.getUuid() };
-
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID, args);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID,
-				args);
-
-			args = new Object[] {
-					shareModelImpl.getUuid(), shareModelImpl.getCompanyId()
-				};
-
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_C, args);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID_C,
-				args);
-
-			args = new Object[] {
-					shareModelImpl.getActive(), shareModelImpl.getMarketId()
-				};
-
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_ACTIVEMARKET, args);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ACTIVEMARKET,
-				args);
-
-			finderCache.removeResult(FINDER_PATH_COUNT_ALL, FINDER_ARGS_EMPTY);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_ALL,
-				FINDER_ARGS_EMPTY);
 		}
 
 		else {
@@ -2398,8 +2363,8 @@ public class SharePersistenceImpl extends BasePersistenceImpl<Share>
 		entityCache.putResult(ShareModelImpl.ENTITY_CACHE_ENABLED,
 			ShareImpl.class, share.getPrimaryKey(), share, false);
 
-		clearUniqueFindersCache(shareModelImpl, false);
-		cacheUniqueFindersCache(shareModelImpl);
+		clearUniqueFindersCache(shareModelImpl);
+		cacheUniqueFindersCache(shareModelImpl, isNew);
 
 		share.resetOriginalValues();
 
@@ -2592,7 +2557,7 @@ public class SharePersistenceImpl extends BasePersistenceImpl<Share>
 		query.append(_SQL_SELECT_SHARE_WHERE_PKS_IN);
 
 		for (Serializable primaryKey : uncachedPrimaryKeys) {
-			query.append((long)primaryKey);
+			query.append(String.valueOf(primaryKey));
 
 			query.append(StringPool.COMMA);
 		}

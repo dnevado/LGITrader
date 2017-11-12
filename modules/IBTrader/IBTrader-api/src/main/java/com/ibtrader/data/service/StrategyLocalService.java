@@ -201,6 +201,9 @@ public interface StrategyLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getStrategiesCount();
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getStrategysCount(long groupId);
+
 	/**
 	* Returns the OSGi service identifier.
 	*
@@ -293,6 +296,16 @@ public interface StrategyLocalService extends BaseLocalService,
 	public List<Strategy> getStrategiesByUuidAndCompanyId(
 		java.lang.String uuid, long companyId, int start, int end,
 		OrderByComparator<Strategy> orderByComparator);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Strategy> getStrategys(long groupId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Strategy> getStrategys(long groupId, int start, int end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Strategy> getStrategys(long groupId, int start, int end,
+		OrderByComparator<Strategy> obc);
 
 	/**
 	* Returns the number of rows matching the dynamic query.

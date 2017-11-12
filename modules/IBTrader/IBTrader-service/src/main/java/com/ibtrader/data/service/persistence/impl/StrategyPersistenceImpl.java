@@ -37,7 +37,6 @@ import com.liferay.portal.kernel.service.persistence.CompanyProvider;
 import com.liferay.portal.kernel.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.ReflectionUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
@@ -46,8 +45,6 @@ import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 
 import java.io.Serializable;
-
-import java.lang.reflect.Field;
 
 import java.util.Collections;
 import java.util.Date;
@@ -1975,6 +1972,505 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 	}
 
 	private static final String _FINDER_COLUMN_COMPANYID_COMPANYID_2 = "strategy.companyId = ?";
+	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_GROUPID = new FinderPath(StrategyModelImpl.ENTITY_CACHE_ENABLED,
+			StrategyModelImpl.FINDER_CACHE_ENABLED, StrategyImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByGroupId",
+			new String[] {
+				Long.class.getName(),
+				
+			Integer.class.getName(), Integer.class.getName(),
+				OrderByComparator.class.getName()
+			});
+	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_GROUPID =
+		new FinderPath(StrategyModelImpl.ENTITY_CACHE_ENABLED,
+			StrategyModelImpl.FINDER_CACHE_ENABLED, StrategyImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByGroupId",
+			new String[] { Long.class.getName() },
+			StrategyModelImpl.GROUPID_COLUMN_BITMASK);
+	public static final FinderPath FINDER_PATH_COUNT_BY_GROUPID = new FinderPath(StrategyModelImpl.ENTITY_CACHE_ENABLED,
+			StrategyModelImpl.FINDER_CACHE_ENABLED, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByGroupId",
+			new String[] { Long.class.getName() });
+
+	/**
+	 * Returns all the strategies where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @return the matching strategies
+	 */
+	@Override
+	public List<Strategy> findByGroupId(long groupId) {
+		return findByGroupId(groupId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the strategies where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link StrategyModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of strategies
+	 * @param end the upper bound of the range of strategies (not inclusive)
+	 * @return the range of matching strategies
+	 */
+	@Override
+	public List<Strategy> findByGroupId(long groupId, int start, int end) {
+		return findByGroupId(groupId, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the strategies where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link StrategyModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of strategies
+	 * @param end the upper bound of the range of strategies (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching strategies
+	 */
+	@Override
+	public List<Strategy> findByGroupId(long groupId, int start, int end,
+		OrderByComparator<Strategy> orderByComparator) {
+		return findByGroupId(groupId, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the strategies where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link StrategyModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of strategies
+	 * @param end the upper bound of the range of strategies (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the ordered range of matching strategies
+	 */
+	@Override
+	public List<Strategy> findByGroupId(long groupId, int start, int end,
+		OrderByComparator<Strategy> orderByComparator, boolean retrieveFromCache) {
+		boolean pagination = true;
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+				(orderByComparator == null)) {
+			pagination = false;
+			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_GROUPID;
+			finderArgs = new Object[] { groupId };
+		}
+		else {
+			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_GROUPID;
+			finderArgs = new Object[] { groupId, start, end, orderByComparator };
+		}
+
+		List<Strategy> list = null;
+
+		if (retrieveFromCache) {
+			list = (List<Strategy>)finderCache.getResult(finderPath,
+					finderArgs, this);
+
+			if ((list != null) && !list.isEmpty()) {
+				for (Strategy strategy : list) {
+					if ((groupId != strategy.getGroupId())) {
+						list = null;
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler query = null;
+
+			if (orderByComparator != null) {
+				query = new StringBundler(3 +
+						(orderByComparator.getOrderByFields().length * 2));
+			}
+			else {
+				query = new StringBundler(3);
+			}
+
+			query.append(_SQL_SELECT_STRATEGY_WHERE);
+
+			query.append(_FINDER_COLUMN_GROUPID_GROUPID_2);
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
+					orderByComparator);
+			}
+			else
+			 if (pagination) {
+				query.append(StrategyModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(groupId);
+
+				if (!pagination) {
+					list = (List<Strategy>)QueryUtil.list(q, getDialect(),
+							start, end, false);
+
+					Collections.sort(list);
+
+					list = Collections.unmodifiableList(list);
+				}
+				else {
+					list = (List<Strategy>)QueryUtil.list(q, getDialect(),
+							start, end);
+				}
+
+				cacheResult(list);
+
+				finderCache.putResult(finderPath, finderArgs, list);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Returns the first strategy in the ordered set where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching strategy
+	 * @throws NoSuchStrategyException if a matching strategy could not be found
+	 */
+	@Override
+	public Strategy findByGroupId_First(long groupId,
+		OrderByComparator<Strategy> orderByComparator)
+		throws NoSuchStrategyException {
+		Strategy strategy = fetchByGroupId_First(groupId, orderByComparator);
+
+		if (strategy != null) {
+			return strategy;
+		}
+
+		StringBundler msg = new StringBundler(4);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("groupId=");
+		msg.append(groupId);
+
+		msg.append(StringPool.CLOSE_CURLY_BRACE);
+
+		throw new NoSuchStrategyException(msg.toString());
+	}
+
+	/**
+	 * Returns the first strategy in the ordered set where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching strategy, or <code>null</code> if a matching strategy could not be found
+	 */
+	@Override
+	public Strategy fetchByGroupId_First(long groupId,
+		OrderByComparator<Strategy> orderByComparator) {
+		List<Strategy> list = findByGroupId(groupId, 0, 1, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last strategy in the ordered set where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching strategy
+	 * @throws NoSuchStrategyException if a matching strategy could not be found
+	 */
+	@Override
+	public Strategy findByGroupId_Last(long groupId,
+		OrderByComparator<Strategy> orderByComparator)
+		throws NoSuchStrategyException {
+		Strategy strategy = fetchByGroupId_Last(groupId, orderByComparator);
+
+		if (strategy != null) {
+			return strategy;
+		}
+
+		StringBundler msg = new StringBundler(4);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("groupId=");
+		msg.append(groupId);
+
+		msg.append(StringPool.CLOSE_CURLY_BRACE);
+
+		throw new NoSuchStrategyException(msg.toString());
+	}
+
+	/**
+	 * Returns the last strategy in the ordered set where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching strategy, or <code>null</code> if a matching strategy could not be found
+	 */
+	@Override
+	public Strategy fetchByGroupId_Last(long groupId,
+		OrderByComparator<Strategy> orderByComparator) {
+		int count = countByGroupId(groupId);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<Strategy> list = findByGroupId(groupId, count - 1, count,
+				orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the strategies before and after the current strategy in the ordered set where groupId = &#63;.
+	 *
+	 * @param strategyID the primary key of the current strategy
+	 * @param groupId the group ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next strategy
+	 * @throws NoSuchStrategyException if a strategy with the primary key could not be found
+	 */
+	@Override
+	public Strategy[] findByGroupId_PrevAndNext(long strategyID, long groupId,
+		OrderByComparator<Strategy> orderByComparator)
+		throws NoSuchStrategyException {
+		Strategy strategy = findByPrimaryKey(strategyID);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			Strategy[] array = new StrategyImpl[3];
+
+			array[0] = getByGroupId_PrevAndNext(session, strategy, groupId,
+					orderByComparator, true);
+
+			array[1] = strategy;
+
+			array[2] = getByGroupId_PrevAndNext(session, strategy, groupId,
+					orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected Strategy getByGroupId_PrevAndNext(Session session,
+		Strategy strategy, long groupId,
+		OrderByComparator<Strategy> orderByComparator, boolean previous) {
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(4 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(3);
+		}
+
+		query.append(_SQL_SELECT_STRATEGY_WHERE);
+
+		query.append(_FINDER_COLUMN_GROUPID_GROUPID_2);
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			query.append(StrategyModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = query.toString();
+
+		Query q = session.createQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(groupId);
+
+		if (orderByComparator != null) {
+			Object[] values = orderByComparator.getOrderByConditionValues(strategy);
+
+			for (Object value : values) {
+				qPos.add(value);
+			}
+		}
+
+		List<Strategy> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Removes all the strategies where groupId = &#63; from the database.
+	 *
+	 * @param groupId the group ID
+	 */
+	@Override
+	public void removeByGroupId(long groupId) {
+		for (Strategy strategy : findByGroupId(groupId, QueryUtil.ALL_POS,
+				QueryUtil.ALL_POS, null)) {
+			remove(strategy);
+		}
+	}
+
+	/**
+	 * Returns the number of strategies where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @return the number of matching strategies
+	 */
+	@Override
+	public int countByGroupId(long groupId) {
+		FinderPath finderPath = FINDER_PATH_COUNT_BY_GROUPID;
+
+		Object[] finderArgs = new Object[] { groupId };
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(2);
+
+			query.append(_SQL_COUNT_STRATEGY_WHERE);
+
+			query.append(_FINDER_COLUMN_GROUPID_GROUPID_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(groupId);
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_GROUPID_GROUPID_2 = "strategy.groupId = ?";
 	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_ACTIVECOMPANYID =
 		new FinderPath(StrategyModelImpl.ENTITY_CACHE_ENABLED,
 			StrategyModelImpl.FINDER_CACHE_ENABLED, StrategyImpl.class,
@@ -3555,27 +4051,399 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 
 	private static final String _FINDER_COLUMN_G_S_GROUPID_2 = "strategy.groupId = ? AND ";
 	private static final String _FINDER_COLUMN_G_S_STATUS_2 = "strategy.status = ?";
+	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_G_G = new FinderPath(StrategyModelImpl.ENTITY_CACHE_ENABLED,
+			StrategyModelImpl.FINDER_CACHE_ENABLED, StrategyImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByG_G",
+			new String[] {
+				Long.class.getName(), Long.class.getName(),
+				
+			Integer.class.getName(), Integer.class.getName(),
+				OrderByComparator.class.getName()
+			});
+	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_G_G = new FinderPath(StrategyModelImpl.ENTITY_CACHE_ENABLED,
+			StrategyModelImpl.FINDER_CACHE_ENABLED, StrategyImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByG_G",
+			new String[] { Long.class.getName(), Long.class.getName() },
+			StrategyModelImpl.GROUPID_COLUMN_BITMASK |
+			StrategyModelImpl.STRATEGYID_COLUMN_BITMASK);
+	public static final FinderPath FINDER_PATH_COUNT_BY_G_G = new FinderPath(StrategyModelImpl.ENTITY_CACHE_ENABLED,
+			StrategyModelImpl.FINDER_CACHE_ENABLED, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByG_G",
+			new String[] { Long.class.getName(), Long.class.getName() });
+
+	/**
+	 * Returns all the strategies where groupId = &#63; and strategyID = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param strategyID the strategy i d
+	 * @return the matching strategies
+	 */
+	@Override
+	public List<Strategy> findByG_G(long groupId, long strategyID) {
+		return findByG_G(groupId, strategyID, QueryUtil.ALL_POS,
+			QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the strategies where groupId = &#63; and strategyID = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link StrategyModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param strategyID the strategy i d
+	 * @param start the lower bound of the range of strategies
+	 * @param end the upper bound of the range of strategies (not inclusive)
+	 * @return the range of matching strategies
+	 */
+	@Override
+	public List<Strategy> findByG_G(long groupId, long strategyID, int start,
+		int end) {
+		return findByG_G(groupId, strategyID, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the strategies where groupId = &#63; and strategyID = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link StrategyModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param strategyID the strategy i d
+	 * @param start the lower bound of the range of strategies
+	 * @param end the upper bound of the range of strategies (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching strategies
+	 */
+	@Override
+	public List<Strategy> findByG_G(long groupId, long strategyID, int start,
+		int end, OrderByComparator<Strategy> orderByComparator) {
+		return findByG_G(groupId, strategyID, start, end, orderByComparator,
+			true);
+	}
+
+	/**
+	 * Returns an ordered range of all the strategies where groupId = &#63; and strategyID = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link StrategyModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param strategyID the strategy i d
+	 * @param start the lower bound of the range of strategies
+	 * @param end the upper bound of the range of strategies (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the ordered range of matching strategies
+	 */
+	@Override
+	public List<Strategy> findByG_G(long groupId, long strategyID, int start,
+		int end, OrderByComparator<Strategy> orderByComparator,
+		boolean retrieveFromCache) {
+		boolean pagination = true;
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+				(orderByComparator == null)) {
+			pagination = false;
+			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_G_G;
+			finderArgs = new Object[] { groupId, strategyID };
+		}
+		else {
+			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_G_G;
+			finderArgs = new Object[] {
+					groupId, strategyID,
+					
+					start, end, orderByComparator
+				};
+		}
+
+		List<Strategy> list = null;
+
+		if (retrieveFromCache) {
+			list = (List<Strategy>)finderCache.getResult(finderPath,
+					finderArgs, this);
+
+			if ((list != null) && !list.isEmpty()) {
+				for (Strategy strategy : list) {
+					if ((groupId != strategy.getGroupId()) ||
+							(strategyID != strategy.getStrategyID())) {
+						list = null;
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler query = null;
+
+			if (orderByComparator != null) {
+				query = new StringBundler(4 +
+						(orderByComparator.getOrderByFields().length * 2));
+			}
+			else {
+				query = new StringBundler(4);
+			}
+
+			query.append(_SQL_SELECT_STRATEGY_WHERE);
+
+			query.append(_FINDER_COLUMN_G_G_GROUPID_2);
+
+			query.append(_FINDER_COLUMN_G_G_STRATEGYID_2);
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
+					orderByComparator);
+			}
+			else
+			 if (pagination) {
+				query.append(StrategyModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(groupId);
+
+				qPos.add(strategyID);
+
+				if (!pagination) {
+					list = (List<Strategy>)QueryUtil.list(q, getDialect(),
+							start, end, false);
+
+					Collections.sort(list);
+
+					list = Collections.unmodifiableList(list);
+				}
+				else {
+					list = (List<Strategy>)QueryUtil.list(q, getDialect(),
+							start, end);
+				}
+
+				cacheResult(list);
+
+				finderCache.putResult(finderPath, finderArgs, list);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Returns the first strategy in the ordered set where groupId = &#63; and strategyID = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param strategyID the strategy i d
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching strategy
+	 * @throws NoSuchStrategyException if a matching strategy could not be found
+	 */
+	@Override
+	public Strategy findByG_G_First(long groupId, long strategyID,
+		OrderByComparator<Strategy> orderByComparator)
+		throws NoSuchStrategyException {
+		Strategy strategy = fetchByG_G_First(groupId, strategyID,
+				orderByComparator);
+
+		if (strategy != null) {
+			return strategy;
+		}
+
+		StringBundler msg = new StringBundler(6);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("groupId=");
+		msg.append(groupId);
+
+		msg.append(", strategyID=");
+		msg.append(strategyID);
+
+		msg.append(StringPool.CLOSE_CURLY_BRACE);
+
+		throw new NoSuchStrategyException(msg.toString());
+	}
+
+	/**
+	 * Returns the first strategy in the ordered set where groupId = &#63; and strategyID = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param strategyID the strategy i d
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching strategy, or <code>null</code> if a matching strategy could not be found
+	 */
+	@Override
+	public Strategy fetchByG_G_First(long groupId, long strategyID,
+		OrderByComparator<Strategy> orderByComparator) {
+		List<Strategy> list = findByG_G(groupId, strategyID, 0, 1,
+				orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last strategy in the ordered set where groupId = &#63; and strategyID = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param strategyID the strategy i d
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching strategy
+	 * @throws NoSuchStrategyException if a matching strategy could not be found
+	 */
+	@Override
+	public Strategy findByG_G_Last(long groupId, long strategyID,
+		OrderByComparator<Strategy> orderByComparator)
+		throws NoSuchStrategyException {
+		Strategy strategy = fetchByG_G_Last(groupId, strategyID,
+				orderByComparator);
+
+		if (strategy != null) {
+			return strategy;
+		}
+
+		StringBundler msg = new StringBundler(6);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("groupId=");
+		msg.append(groupId);
+
+		msg.append(", strategyID=");
+		msg.append(strategyID);
+
+		msg.append(StringPool.CLOSE_CURLY_BRACE);
+
+		throw new NoSuchStrategyException(msg.toString());
+	}
+
+	/**
+	 * Returns the last strategy in the ordered set where groupId = &#63; and strategyID = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param strategyID the strategy i d
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching strategy, or <code>null</code> if a matching strategy could not be found
+	 */
+	@Override
+	public Strategy fetchByG_G_Last(long groupId, long strategyID,
+		OrderByComparator<Strategy> orderByComparator) {
+		int count = countByG_G(groupId, strategyID);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<Strategy> list = findByG_G(groupId, strategyID, count - 1, count,
+				orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Removes all the strategies where groupId = &#63; and strategyID = &#63; from the database.
+	 *
+	 * @param groupId the group ID
+	 * @param strategyID the strategy i d
+	 */
+	@Override
+	public void removeByG_G(long groupId, long strategyID) {
+		for (Strategy strategy : findByG_G(groupId, strategyID,
+				QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+			remove(strategy);
+		}
+	}
+
+	/**
+	 * Returns the number of strategies where groupId = &#63; and strategyID = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param strategyID the strategy i d
+	 * @return the number of matching strategies
+	 */
+	@Override
+	public int countByG_G(long groupId, long strategyID) {
+		FinderPath finderPath = FINDER_PATH_COUNT_BY_G_G;
+
+		Object[] finderArgs = new Object[] { groupId, strategyID };
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(3);
+
+			query.append(_SQL_COUNT_STRATEGY_WHERE);
+
+			query.append(_FINDER_COLUMN_G_G_GROUPID_2);
+
+			query.append(_FINDER_COLUMN_G_G_STRATEGYID_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(groupId);
+
+				qPos.add(strategyID);
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_G_G_GROUPID_2 = "strategy.groupId = ? AND ";
+	private static final String _FINDER_COLUMN_G_G_STRATEGYID_2 = "strategy.strategyID = ?";
 
 	public StrategyPersistenceImpl() {
 		setModelClass(Strategy.class);
-
-		try {
-			Field field = ReflectionUtil.getDeclaredField(BasePersistenceImpl.class,
-					"_dbColumnNames");
-
-			Map<String, String> dbColumnNames = new HashMap<String, String>();
-
-			dbColumnNames.put("uuid", "uuid_");
-			dbColumnNames.put("active", "active_");
-			dbColumnNames.put("type", "type_");
-
-			field.set(this, dbColumnNames);
-		}
-		catch (Exception e) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(e, e);
-			}
-		}
 	}
 
 	/**
@@ -3643,7 +4511,7 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
-		clearUniqueFindersCache((StrategyModelImpl)strategy, true);
+		clearUniqueFindersCache((StrategyModelImpl)strategy);
 	}
 
 	@Override
@@ -3655,35 +4523,49 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 			entityCache.removeResult(StrategyModelImpl.ENTITY_CACHE_ENABLED,
 				StrategyImpl.class, strategy.getPrimaryKey());
 
-			clearUniqueFindersCache((StrategyModelImpl)strategy, true);
+			clearUniqueFindersCache((StrategyModelImpl)strategy);
 		}
 	}
 
-	protected void cacheUniqueFindersCache(StrategyModelImpl strategyModelImpl) {
-		Object[] args = new Object[] {
-				strategyModelImpl.getUuid(), strategyModelImpl.getGroupId()
-			};
-
-		finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
-			Long.valueOf(1), false);
-		finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
-			strategyModelImpl, false);
-	}
-
-	protected void clearUniqueFindersCache(
-		StrategyModelImpl strategyModelImpl, boolean clearCurrent) {
-		if (clearCurrent) {
+	protected void cacheUniqueFindersCache(
+		StrategyModelImpl strategyModelImpl, boolean isNew) {
+		if (isNew) {
 			Object[] args = new Object[] {
 					strategyModelImpl.getUuid(), strategyModelImpl.getGroupId()
 				};
 
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
-			finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
+			finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
+				Long.valueOf(1));
+			finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
+				strategyModelImpl);
 		}
+		else {
+			if ((strategyModelImpl.getColumnBitmask() &
+					FINDER_PATH_FETCH_BY_UUID_G.getColumnBitmask()) != 0) {
+				Object[] args = new Object[] {
+						strategyModelImpl.getUuid(),
+						strategyModelImpl.getGroupId()
+					};
+
+				finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
+					Long.valueOf(1));
+				finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
+					strategyModelImpl);
+			}
+		}
+	}
+
+	protected void clearUniqueFindersCache(StrategyModelImpl strategyModelImpl) {
+		Object[] args = new Object[] {
+				strategyModelImpl.getUuid(), strategyModelImpl.getGroupId()
+			};
+
+		finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
+		finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
 
 		if ((strategyModelImpl.getColumnBitmask() &
 				FINDER_PATH_FETCH_BY_UUID_G.getColumnBitmask()) != 0) {
-			Object[] args = new Object[] {
+			args = new Object[] {
 					strategyModelImpl.getOriginalUuid(),
 					strategyModelImpl.getOriginalGroupId()
 				};
@@ -3858,59 +4740,8 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 
-		if (!StrategyModelImpl.COLUMN_BITMASK_ENABLED) {
+		if (isNew || !StrategyModelImpl.COLUMN_BITMASK_ENABLED) {
 			finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
-		}
-		else
-		 if (isNew) {
-			Object[] args = new Object[] { strategyModelImpl.getUuid() };
-
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID, args);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID,
-				args);
-
-			args = new Object[] {
-					strategyModelImpl.getUuid(),
-					strategyModelImpl.getCompanyId()
-				};
-
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_C, args);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID_C,
-				args);
-
-			args = new Object[] { strategyModelImpl.getCompanyId() };
-
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_COMPANYID, args);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_COMPANYID,
-				args);
-
-			args = new Object[] {
-					strategyModelImpl.getCompanyId(),
-					strategyModelImpl.getActive()
-				};
-
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_ACTIVECOMPANYID, args);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ACTIVECOMPANYID,
-				args);
-
-			args = new Object[] { strategyModelImpl.getStatus() };
-
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_STATUS, args);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_STATUS,
-				args);
-
-			args = new Object[] {
-					strategyModelImpl.getGroupId(),
-					strategyModelImpl.getStatus()
-				};
-
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_G_S, args);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_G_S,
-				args);
-
-			finderCache.removeResult(FINDER_PATH_COUNT_ALL, FINDER_ARGS_EMPTY);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_ALL,
-				FINDER_ARGS_EMPTY);
 		}
 
 		else {
@@ -3964,6 +4795,23 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 
 				finderCache.removeResult(FINDER_PATH_COUNT_BY_COMPANYID, args);
 				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_COMPANYID,
+					args);
+			}
+
+			if ((strategyModelImpl.getColumnBitmask() &
+					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_GROUPID.getColumnBitmask()) != 0) {
+				Object[] args = new Object[] {
+						strategyModelImpl.getOriginalGroupId()
+					};
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_GROUPID, args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_GROUPID,
+					args);
+
+				args = new Object[] { strategyModelImpl.getGroupId() };
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_GROUPID, args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_GROUPID,
 					args);
 			}
 
@@ -4027,13 +4875,34 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_G_S,
 					args);
 			}
+
+			if ((strategyModelImpl.getColumnBitmask() &
+					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_G_G.getColumnBitmask()) != 0) {
+				Object[] args = new Object[] {
+						strategyModelImpl.getOriginalGroupId(),
+						strategyModelImpl.getOriginalStrategyID()
+					};
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_G_G, args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_G_G,
+					args);
+
+				args = new Object[] {
+						strategyModelImpl.getGroupId(),
+						strategyModelImpl.getStrategyID()
+					};
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_G_G, args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_G_G,
+					args);
+			}
 		}
 
 		entityCache.putResult(StrategyModelImpl.ENTITY_CACHE_ENABLED,
 			StrategyImpl.class, strategy.getPrimaryKey(), strategy, false);
 
-		clearUniqueFindersCache(strategyModelImpl, false);
-		cacheUniqueFindersCache(strategyModelImpl);
+		clearUniqueFindersCache(strategyModelImpl);
+		cacheUniqueFindersCache(strategyModelImpl, isNew);
 
 		strategy.resetOriginalValues();
 
@@ -4218,7 +5087,7 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 		query.append(_SQL_SELECT_STRATEGY_WHERE_PKS_IN);
 
 		for (Serializable primaryKey : uncachedPrimaryKeys) {
-			query.append((long)primaryKey);
+			query.append(String.valueOf(primaryKey));
 
 			query.append(StringPool.COMMA);
 		}

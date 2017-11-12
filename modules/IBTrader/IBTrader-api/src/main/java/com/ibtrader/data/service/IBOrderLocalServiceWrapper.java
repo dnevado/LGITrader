@@ -33,10 +33,10 @@ public class IBOrderLocalServiceWrapper implements IBOrderLocalService,
 	}
 
 	/**
-	* Adds the ib order to the database. Also notifies the appropriate model listeners.
+	* Adds the i b order to the database. Also notifies the appropriate model listeners.
 	*
-	* @param ibOrder the ib order
-	* @return the ib order that was added
+	* @param ibOrder the i b order
+	* @return the i b order that was added
 	*/
 	@Override
 	public com.ibtrader.data.model.IBOrder addIBOrder(
@@ -45,10 +45,10 @@ public class IBOrderLocalServiceWrapper implements IBOrderLocalService,
 	}
 
 	/**
-	* Creates a new ib order with the primary key. Does not add the ib order to the database.
+	* Creates a new i b order with the primary key. Does not add the i b order to the database.
 	*
-	* @param ordersId the primary key for the new ib order
-	* @return the new ib order
+	* @param ordersId the primary key for the new i b order
+	* @return the new i b order
 	*/
 	@Override
 	public com.ibtrader.data.model.IBOrder createIBOrder(long ordersId) {
@@ -56,10 +56,10 @@ public class IBOrderLocalServiceWrapper implements IBOrderLocalService,
 	}
 
 	/**
-	* Deletes the ib order from the database. Also notifies the appropriate model listeners.
+	* Deletes the i b order from the database. Also notifies the appropriate model listeners.
 	*
-	* @param ibOrder the ib order
-	* @return the ib order that was removed
+	* @param ibOrder the i b order
+	* @return the i b order that was removed
 	*/
 	@Override
 	public com.ibtrader.data.model.IBOrder deleteIBOrder(
@@ -68,11 +68,11 @@ public class IBOrderLocalServiceWrapper implements IBOrderLocalService,
 	}
 
 	/**
-	* Deletes the ib order with the primary key from the database. Also notifies the appropriate model listeners.
+	* Deletes the i b order with the primary key from the database. Also notifies the appropriate model listeners.
 	*
-	* @param ordersId the primary key of the ib order
-	* @return the ib order that was removed
-	* @throws PortalException if a ib order with the primary key could not be found
+	* @param ordersId the primary key of the i b order
+	* @return the i b order that was removed
+	* @throws PortalException if a i b order with the primary key could not be found
 	*/
 	@Override
 	public com.ibtrader.data.model.IBOrder deleteIBOrder(long ordersId)
@@ -86,11 +86,11 @@ public class IBOrderLocalServiceWrapper implements IBOrderLocalService,
 	}
 
 	/**
-	* Returns the ib order matching the UUID and group.
+	* Returns the i b order matching the UUID and group.
 	*
-	* @param uuid the ib order's UUID
+	* @param uuid the i b order's UUID
 	* @param groupId the primary key of the group
-	* @return the matching ib order, or <code>null</code> if a matching ib order could not be found
+	* @return the matching i b order, or <code>null</code> if a matching i b order could not be found
 	*/
 	@Override
 	public com.ibtrader.data.model.IBOrder fetchIBOrderByUuidAndGroupId(
@@ -99,11 +99,11 @@ public class IBOrderLocalServiceWrapper implements IBOrderLocalService,
 	}
 
 	/**
-	* Returns the ib order with the primary key.
+	* Returns the i b order with the primary key.
 	*
-	* @param ordersId the primary key of the ib order
-	* @return the ib order
-	* @throws PortalException if a ib order with the primary key could not be found
+	* @param ordersId the primary key of the i b order
+	* @return the i b order
+	* @throws PortalException if a i b order with the primary key could not be found
 	*/
 	@Override
 	public com.ibtrader.data.model.IBOrder getIBOrder(long ordersId)
@@ -112,12 +112,12 @@ public class IBOrderLocalServiceWrapper implements IBOrderLocalService,
 	}
 
 	/**
-	* Returns the ib order matching the UUID and group.
+	* Returns the i b order matching the UUID and group.
 	*
-	* @param uuid the ib order's UUID
+	* @param uuid the i b order's UUID
 	* @param groupId the primary key of the group
-	* @return the matching ib order
-	* @throws PortalException if a matching ib order could not be found
+	* @return the matching i b order
+	* @throws PortalException if a matching i b order could not be found
 	*/
 	@Override
 	public com.ibtrader.data.model.IBOrder getIBOrderByUuidAndGroupId(
@@ -127,10 +127,10 @@ public class IBOrderLocalServiceWrapper implements IBOrderLocalService,
 	}
 
 	/**
-	* Updates the ib order in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	* Updates the i b order in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*
-	* @param ibOrder the ib order
-	* @return the ib order that was updated
+	* @param ibOrder the i b order
+	* @return the i b order that was updated
 	*/
 	@Override
 	public com.ibtrader.data.model.IBOrder updateIBOrder(
@@ -171,9 +171,9 @@ public class IBOrderLocalServiceWrapper implements IBOrderLocalService,
 	}
 
 	/**
-	* Returns the number of ib orders.
+	* Returns the number of i b orders.
 	*
-	* @return the number of ib orders
+	* @return the number of i b orders
 	*/
 	@Override
 	public int getIBOrdersCount() {
@@ -244,15 +244,15 @@ public class IBOrderLocalServiceWrapper implements IBOrderLocalService,
 	}
 
 	/**
-	* Returns a range of all the ib orders.
+	* Returns a range of all the i b orders.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.ibtrader.data.model.impl.IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
-	* @param start the lower bound of the range of ib orders
-	* @param end the upper bound of the range of ib orders (not inclusive)
-	* @return the range of ib orders
+	* @param start the lower bound of the range of i b orders
+	* @param end the upper bound of the range of i b orders (not inclusive)
+	* @return the range of i b orders
 	*/
 	@Override
 	public java.util.List<com.ibtrader.data.model.IBOrder> getIBOrders(
@@ -261,11 +261,11 @@ public class IBOrderLocalServiceWrapper implements IBOrderLocalService,
 	}
 
 	/**
-	* Returns all the ib orders matching the UUID and company.
+	* Returns all the i b orders matching the UUID and company.
 	*
-	* @param uuid the UUID of the ib orders
+	* @param uuid the UUID of the i b orders
 	* @param companyId the primary key of the company
-	* @return the matching ib orders, or an empty list if no matches were found
+	* @return the matching i b orders, or an empty list if no matches were found
 	*/
 	@Override
 	public java.util.List<com.ibtrader.data.model.IBOrder> getIBOrdersByUuidAndCompanyId(
@@ -275,14 +275,14 @@ public class IBOrderLocalServiceWrapper implements IBOrderLocalService,
 	}
 
 	/**
-	* Returns a range of ib orders matching the UUID and company.
+	* Returns a range of i b orders matching the UUID and company.
 	*
-	* @param uuid the UUID of the ib orders
+	* @param uuid the UUID of the i b orders
 	* @param companyId the primary key of the company
-	* @param start the lower bound of the range of ib orders
-	* @param end the upper bound of the range of ib orders (not inclusive)
+	* @param start the lower bound of the range of i b orders
+	* @param end the upper bound of the range of i b orders (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	* @return the range of matching ib orders, or an empty list if no matches were found
+	* @return the range of matching i b orders, or an empty list if no matches were found
 	*/
 	@Override
 	public java.util.List<com.ibtrader.data.model.IBOrder> getIBOrdersByUuidAndCompanyId(

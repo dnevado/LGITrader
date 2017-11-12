@@ -24,6 +24,7 @@ create unique index IX_DCF10CE3 on ibtrader_Share (uuid_[$COLUMN_LENGTH:75$], gr
 
 create index IX_2BA54552 on ibtrader_Strategy (companyId, active_);
 create index IX_A5F719BF on ibtrader_Strategy (groupId, status);
+create index IX_95F2591B on ibtrader_Strategy (groupId, strategyID);
 create index IX_244BCDD7 on ibtrader_Strategy (status);
 create index IX_B6BAD7A5 on ibtrader_Strategy (uuid_[$COLUMN_LENGTH:75$], companyId);
 create unique index IX_2FEF0367 on ibtrader_Strategy (uuid_[$COLUMN_LENGTH:75$], groupId);

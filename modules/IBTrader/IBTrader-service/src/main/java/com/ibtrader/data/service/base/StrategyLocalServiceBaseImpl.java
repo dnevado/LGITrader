@@ -329,7 +329,6 @@ public abstract class StrategyLocalServiceBaseImpl extends BaseLocalServiceImpl
 				public void addCriteria(DynamicQuery dynamicQuery) {
 					Criterion modifiedDateCriterion = portletDataContext.getDateRangeCriteria(
 							"modifiedDate");
-
 					Criterion statusDateCriterion = portletDataContext.getDateRangeCriteria(
 							"statusDate");
 
@@ -511,18 +510,18 @@ public abstract class StrategyLocalServiceBaseImpl extends BaseLocalServiceImpl
 	}
 
 	/**
-	 * Returns the ib order local service.
+	 * Returns the i b order local service.
 	 *
-	 * @return the ib order local service
+	 * @return the i b order local service
 	 */
 	public com.ibtrader.data.service.IBOrderLocalService getIBOrderLocalService() {
 		return ibOrderLocalService;
 	}
 
 	/**
-	 * Sets the ib order local service.
+	 * Sets the i b order local service.
 	 *
-	 * @param ibOrderLocalService the ib order local service
+	 * @param ibOrderLocalService the i b order local service
 	 */
 	public void setIBOrderLocalService(
 		com.ibtrader.data.service.IBOrderLocalService ibOrderLocalService) {
@@ -530,18 +529,18 @@ public abstract class StrategyLocalServiceBaseImpl extends BaseLocalServiceImpl
 	}
 
 	/**
-	 * Returns the ib order persistence.
+	 * Returns the i b order persistence.
 	 *
-	 * @return the ib order persistence
+	 * @return the i b order persistence
 	 */
 	public IBOrderPersistence getIBOrderPersistence() {
 		return ibOrderPersistence;
 	}
 
 	/**
-	 * Sets the ib order persistence.
+	 * Sets the i b order persistence.
 	 *
-	 * @param ibOrderPersistence the ib order persistence
+	 * @param ibOrderPersistence the i b order persistence
 	 */
 	public void setIBOrderPersistence(IBOrderPersistence ibOrderPersistence) {
 		this.ibOrderPersistence = ibOrderPersistence;

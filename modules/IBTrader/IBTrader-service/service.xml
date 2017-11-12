@@ -90,6 +90,10 @@
 		
 		</finder>
 		
+		<finder name="GroupId" return-type="Collection">
+	        <finder-column name="groupId" />
+    	</finder>
+		
 		<finder name="ActiveCompanyId" return-type="Collection">		
 			<finder-column name="companyId" />
 			<finder-column name="active" />
@@ -104,6 +108,13 @@
 		    <finder-column name="groupId" />
 		    <finder-column name="status" />
 		</finder>
+		
+		<finder name="G_G" return-type="Collection">
+			<finder-column name="groupId" />
+			<finder-column name="strategyID" />
+		</finder>
+		
+		
 		
 		<reference package-path="com.liferay.portlet.asset" entity="AssetEntry" />
 		<reference package-path="com.liferay.portlet.asset" entity="AssetLink" />
@@ -296,8 +307,9 @@
 		<!-- Finder methods -->
 		<!-- References -->
 	</entity>
-		<exceptions>		    
-		    <exception>positionId</exception>
+		<exceptions>
+		    <exception>positionId</exception>		    
+		    <exception>StrategyName</exception>
 		</exceptions>
 	
 </service-builder>

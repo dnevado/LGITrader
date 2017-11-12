@@ -37,7 +37,7 @@ public interface Strategy extends StrategyModel, PersistedModel {
 	 *
 	 * Never modify this interface directly. Add methods to {@link com.ibtrader.data.model.impl.StrategyImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	public static final Accessor<Strategy, Long> STRATEGY_ID_ACCESSOR = new Accessor<Strategy, Long>() {
+	public static final Accessor<Strategy, Long> STRATEGY_I_D_ACCESSOR = new Accessor<Strategy, Long>() {
 			@Override
 			public Long get(Strategy strategy) {
 				return strategy.getStrategyID();

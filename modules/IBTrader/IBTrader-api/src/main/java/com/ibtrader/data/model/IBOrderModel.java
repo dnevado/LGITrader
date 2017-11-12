@@ -44,128 +44,128 @@ public interface IBOrderModel extends BaseModel<IBOrder>, ShardedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this interface directly. All methods that expect a ib order model instance should use the {@link IBOrder} interface instead.
+	 * Never modify or reference this interface directly. All methods that expect a i b order model instance should use the {@link IBOrder} interface instead.
 	 */
 
 	/**
-	 * Returns the primary key of this ib order.
+	 * Returns the primary key of this i b order.
 	 *
-	 * @return the primary key of this ib order
+	 * @return the primary key of this i b order
 	 */
 	public long getPrimaryKey();
 
 	/**
-	 * Sets the primary key of this ib order.
+	 * Sets the primary key of this i b order.
 	 *
-	 * @param primaryKey the primary key of this ib order
+	 * @param primaryKey the primary key of this i b order
 	 */
 	public void setPrimaryKey(long primaryKey);
 
 	/**
-	 * Returns the uuid of this ib order.
+	 * Returns the uuid of this i b order.
 	 *
-	 * @return the uuid of this ib order
+	 * @return the uuid of this i b order
 	 */
 	@AutoEscape
 	public String getUuid();
 
 	/**
-	 * Sets the uuid of this ib order.
+	 * Sets the uuid of this i b order.
 	 *
-	 * @param uuid the uuid of this ib order
+	 * @param uuid the uuid of this i b order
 	 */
 	public void setUuid(String uuid);
 
 	/**
-	 * Returns the orders ID of this ib order.
+	 * Returns the orders ID of this i b order.
 	 *
-	 * @return the orders ID of this ib order
+	 * @return the orders ID of this i b order
 	 */
 	public long getOrdersId();
 
 	/**
-	 * Sets the orders ID of this ib order.
+	 * Sets the orders ID of this i b order.
 	 *
-	 * @param ordersId the orders ID of this ib order
+	 * @param ordersId the orders ID of this i b order
 	 */
 	public void setOrdersId(long ordersId);
 
 	/**
-	 * Returns the group ID of this ib order.
+	 * Returns the group ID of this i b order.
 	 *
-	 * @return the group ID of this ib order
+	 * @return the group ID of this i b order
 	 */
 	public long getGroupId();
 
 	/**
-	 * Sets the group ID of this ib order.
+	 * Sets the group ID of this i b order.
 	 *
-	 * @param groupId the group ID of this ib order
+	 * @param groupId the group ID of this i b order
 	 */
 	public void setGroupId(long groupId);
 
 	/**
-	 * Returns the company ID of this ib order.
+	 * Returns the company ID of this i b order.
 	 *
-	 * @return the company ID of this ib order
+	 * @return the company ID of this i b order
 	 */
 	@Override
 	public long getCompanyId();
 
 	/**
-	 * Sets the company ID of this ib order.
+	 * Sets the company ID of this i b order.
 	 *
-	 * @param companyId the company ID of this ib order
+	 * @param companyId the company ID of this i b order
 	 */
 	@Override
 	public void setCompanyId(long companyId);
 
 	/**
-	 * Returns the order ID of this ib order.
+	 * Returns the order i d of this i b order.
 	 *
-	 * @return the order ID of this ib order
+	 * @return the order i d of this i b order
 	 */
 	public long getOrderID();
 
 	/**
-	 * Sets the order ID of this ib order.
+	 * Sets the order i d of this i b order.
 	 *
-	 * @param orderID the order ID of this ib order
+	 * @param orderID the order i d of this i b order
 	 */
 	public void setOrderID(long orderID);
 
 	/**
-	 * Returns the share ID of this ib order.
+	 * Returns the share i d of this i b order.
 	 *
-	 * @return the share ID of this ib order
+	 * @return the share i d of this i b order
 	 */
 	public long getShareID();
 
 	/**
-	 * Sets the share ID of this ib order.
+	 * Sets the share i d of this i b order.
 	 *
-	 * @param shareID the share ID of this ib order
+	 * @param shareID the share i d of this i b order
 	 */
 	public void setShareID(long shareID);
 
 	/**
-	 * Returns the checked of this ib order.
+	 * Returns the checked of this i b order.
 	 *
-	 * @return the checked of this ib order
+	 * @return the checked of this i b order
 	 */
 	public boolean getChecked();
 
 	/**
-	 * Returns <code>true</code> if this ib order is checked.
+	 * Returns <code>true</code> if this i b order is checked.
 	 *
-	 * @return <code>true</code> if this ib order is checked; <code>false</code> otherwise
+	 * @return <code>true</code> if this i b order is checked; <code>false</code> otherwise
 	 */
 	public boolean isChecked();
 
 	/**
-	 * Sets whether this ib order is checked.
+	 * Sets whether this i b order is checked.
 	 *
-	 * @param checked the checked of this ib order
+	 * @param checked the checked of this i b order
 	 */
 	public void setChecked(boolean checked);
 

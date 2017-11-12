@@ -222,6 +222,10 @@ public class StrategyLocalServiceUtil {
 		return getService().getStrategiesCount();
 	}
 
+	public static int getStrategysCount(long groupId) {
+		return getService().getStrategysCount(groupId);
+	}
+
 	/**
 	* Returns the OSGi service identifier.
 	*
@@ -341,6 +345,22 @@ public class StrategyLocalServiceUtil {
 		return getService()
 				   .getStrategiesByUuidAndCompanyId(uuid, companyId, start,
 			end, orderByComparator);
+	}
+
+	public static java.util.List<com.ibtrader.data.model.Strategy> getStrategys(
+		long groupId) {
+		return getService().getStrategys(groupId);
+	}
+
+	public static java.util.List<com.ibtrader.data.model.Strategy> getStrategys(
+		long groupId, int start, int end) {
+		return getService().getStrategys(groupId, start, end);
+	}
+
+	public static java.util.List<com.ibtrader.data.model.Strategy> getStrategys(
+		long groupId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.ibtrader.data.model.Strategy> obc) {
+		return getService().getStrategys(groupId, start, end, obc);
 	}
 
 	/**

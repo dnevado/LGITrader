@@ -132,8 +132,8 @@ public class StrategyModelImpl extends BaseModelImpl<Strategy>
 	public static final long COMPANYID_COLUMN_BITMASK = 2L;
 	public static final long GROUPID_COLUMN_BITMASK = 4L;
 	public static final long STATUS_COLUMN_BITMASK = 8L;
-	public static final long UUID_COLUMN_BITMASK = 16L;
-	public static final long STRATEGYID_COLUMN_BITMASK = 32L;
+	public static final long STRATEGYID_COLUMN_BITMASK = 16L;
+	public static final long UUID_COLUMN_BITMASK = 32L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -382,7 +382,19 @@ public class StrategyModelImpl extends BaseModelImpl<Strategy>
 
 	@Override
 	public void setStrategyID(long strategyID) {
+		_columnBitmask |= STRATEGYID_COLUMN_BITMASK;
+
+		if (!_setOriginalStrategyID) {
+			_setOriginalStrategyID = true;
+
+			_originalStrategyID = _strategyID;
+		}
+
 		_strategyID = strategyID;
+	}
+
+	public long getOriginalStrategyID() {
+		return _originalStrategyID;
 	}
 
 	@JSON
@@ -853,6 +865,10 @@ public class StrategyModelImpl extends BaseModelImpl<Strategy>
 
 		strategyModelImpl._originalUuid = strategyModelImpl._uuid;
 
+		strategyModelImpl._originalStrategyID = strategyModelImpl._strategyID;
+
+		strategyModelImpl._setOriginalStrategyID = false;
+
 		strategyModelImpl._originalGroupId = strategyModelImpl._groupId;
 
 		strategyModelImpl._setOriginalGroupId = false;
@@ -1096,6 +1112,8 @@ public class StrategyModelImpl extends BaseModelImpl<Strategy>
 	private String _uuid;
 	private String _originalUuid;
 	private long _strategyID;
+	private long _originalStrategyID;
+	private boolean _setOriginalStrategyID;
 	private long _groupId;
 	private long _originalGroupId;
 	private boolean _setOriginalGroupId;
