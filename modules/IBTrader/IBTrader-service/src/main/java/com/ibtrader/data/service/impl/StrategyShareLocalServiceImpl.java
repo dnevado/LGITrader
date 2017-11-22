@@ -14,6 +14,10 @@
 
 package com.ibtrader.data.service.impl;
 
+import java.util.List;
+
+import com.ibtrader.data.model.Strategy;
+import com.ibtrader.data.model.StrategyShare;
 import com.ibtrader.data.service.base.StrategyShareLocalServiceBaseImpl;
 
 /**
@@ -30,11 +34,14 @@ import com.ibtrader.data.service.base.StrategyShareLocalServiceBaseImpl;
  * @see StrategyShareLocalServiceBaseImpl
  * @see com.ibtrader.data.service.StrategyShareLocalServiceUtil
  */
-public class StrategyShareLocalServiceImpl
-	extends StrategyShareLocalServiceBaseImpl {
+public class StrategyShareLocalServiceImpl 	extends StrategyShareLocalServiceBaseImpl {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
 	 * Never reference this class directly. Always use {@link com.ibtrader.data.service.StrategyShareLocalServiceUtil} to access the strategy share local service.
 	 */
+	public List<StrategyShare>getByGroupCompanyShareId(long groupid, long companyid, long shareId)
+	{
+			return getStrategySharePersistence().findByCommpanyShareId(shareId, groupid, companyid);
+	}
 }

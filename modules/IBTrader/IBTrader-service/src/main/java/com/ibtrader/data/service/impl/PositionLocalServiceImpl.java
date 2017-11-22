@@ -40,6 +40,19 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 	 *
 	 * Never reference this class directly. Always use {@link com.ibtrader.data.service.PositionLocalServiceUtil} to access the position local service.
 	 */
+	
+	public Position findByCompany(long _companyId)
+	{
+		Position _rPosition = null; 
+		List<Position> _lPosition = getPositionPersistence().findByCompany(_companyId);
+		if (!_lPosition.isEmpty() && _lPosition.size()>0)
+		{
+			_rPosition = _lPosition.get(0);
+		}
+		return _rPosition;
+		
+	}
+	
 	public Position findByPositionID_Out_TWS(long _PositionIDTWS)
 	{
 		Position _rPosition = null; 
@@ -49,6 +62,15 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 			_rPosition = _lPosition.get(0);
 		}
 		return _rPosition;
+		
+	}
+	/* FECHA DE ENTRADA A NULL */
+	public boolean   ExistsOpenPosition(long groupId, long companyId, long shareId)
+	{
+		Position _rPosition = null; 
+		List<Position> _lPosition = getPositionPersistence().findByPositionShareDateIn(groupId, companyId, shareId, null);
+		return (!_lPosition.isEmpty() && _lPosition.size()>0);
+		
 		
 	}
 }

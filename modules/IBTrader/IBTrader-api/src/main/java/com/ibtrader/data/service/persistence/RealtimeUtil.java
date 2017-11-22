@@ -499,158 +499,195 @@ public class RealtimeUtil {
 	}
 
 	/**
-	* Returns all the realtimes where shareId = &#63;.
+	* Returns all the realtimes where shareId = &#63; and groupId = &#63; and companyId = &#63;.
 	*
 	* @param shareId the share ID
+	* @param groupId the group ID
+	* @param companyId the company ID
 	* @return the matching realtimes
 	*/
-	public static List<Realtime> findByshareId(long shareId) {
-		return getPersistence().findByshareId(shareId);
+	public static List<Realtime> findByshareId(long shareId, long groupId,
+		long companyId) {
+		return getPersistence().findByshareId(shareId, groupId, companyId);
 	}
 
 	/**
-	* Returns a range of all the realtimes where shareId = &#63;.
+	* Returns a range of all the realtimes where shareId = &#63; and groupId = &#63; and companyId = &#63;.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link RealtimeModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
 	* @param shareId the share ID
+	* @param groupId the group ID
+	* @param companyId the company ID
 	* @param start the lower bound of the range of realtimes
 	* @param end the upper bound of the range of realtimes (not inclusive)
 	* @return the range of matching realtimes
 	*/
-	public static List<Realtime> findByshareId(long shareId, int start, int end) {
-		return getPersistence().findByshareId(shareId, start, end);
+	public static List<Realtime> findByshareId(long shareId, long groupId,
+		long companyId, int start, int end) {
+		return getPersistence()
+				   .findByshareId(shareId, groupId, companyId, start, end);
 	}
 
 	/**
-	* Returns an ordered range of all the realtimes where shareId = &#63;.
+	* Returns an ordered range of all the realtimes where shareId = &#63; and groupId = &#63; and companyId = &#63;.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link RealtimeModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
 	* @param shareId the share ID
+	* @param groupId the group ID
+	* @param companyId the company ID
 	* @param start the lower bound of the range of realtimes
 	* @param end the upper bound of the range of realtimes (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching realtimes
 	*/
-	public static List<Realtime> findByshareId(long shareId, int start,
-		int end, OrderByComparator<Realtime> orderByComparator) {
+	public static List<Realtime> findByshareId(long shareId, long groupId,
+		long companyId, int start, int end,
+		OrderByComparator<Realtime> orderByComparator) {
 		return getPersistence()
-				   .findByshareId(shareId, start, end, orderByComparator);
+				   .findByshareId(shareId, groupId, companyId, start, end,
+			orderByComparator);
 	}
 
 	/**
-	* Returns an ordered range of all the realtimes where shareId = &#63;.
+	* Returns an ordered range of all the realtimes where shareId = &#63; and groupId = &#63; and companyId = &#63;.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link RealtimeModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
 	* @param shareId the share ID
+	* @param groupId the group ID
+	* @param companyId the company ID
 	* @param start the lower bound of the range of realtimes
 	* @param end the upper bound of the range of realtimes (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @param retrieveFromCache whether to retrieve from the finder cache
 	* @return the ordered range of matching realtimes
 	*/
-	public static List<Realtime> findByshareId(long shareId, int start,
-		int end, OrderByComparator<Realtime> orderByComparator,
-		boolean retrieveFromCache) {
+	public static List<Realtime> findByshareId(long shareId, long groupId,
+		long companyId, int start, int end,
+		OrderByComparator<Realtime> orderByComparator, boolean retrieveFromCache) {
 		return getPersistence()
-				   .findByshareId(shareId, start, end, orderByComparator,
-			retrieveFromCache);
+				   .findByshareId(shareId, groupId, companyId, start, end,
+			orderByComparator, retrieveFromCache);
 	}
 
 	/**
-	* Returns the first realtime in the ordered set where shareId = &#63;.
+	* Returns the first realtime in the ordered set where shareId = &#63; and groupId = &#63; and companyId = &#63;.
 	*
 	* @param shareId the share ID
+	* @param groupId the group ID
+	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching realtime
 	* @throws NoSuchRealtimeException if a matching realtime could not be found
 	*/
-	public static Realtime findByshareId_First(long shareId,
-		OrderByComparator<Realtime> orderByComparator)
+	public static Realtime findByshareId_First(long shareId, long groupId,
+		long companyId, OrderByComparator<Realtime> orderByComparator)
 		throws com.ibtrader.data.exception.NoSuchRealtimeException {
-		return getPersistence().findByshareId_First(shareId, orderByComparator);
+		return getPersistence()
+				   .findByshareId_First(shareId, groupId, companyId,
+			orderByComparator);
 	}
 
 	/**
-	* Returns the first realtime in the ordered set where shareId = &#63;.
+	* Returns the first realtime in the ordered set where shareId = &#63; and groupId = &#63; and companyId = &#63;.
 	*
 	* @param shareId the share ID
+	* @param groupId the group ID
+	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching realtime, or <code>null</code> if a matching realtime could not be found
 	*/
-	public static Realtime fetchByshareId_First(long shareId,
-		OrderByComparator<Realtime> orderByComparator) {
-		return getPersistence().fetchByshareId_First(shareId, orderByComparator);
+	public static Realtime fetchByshareId_First(long shareId, long groupId,
+		long companyId, OrderByComparator<Realtime> orderByComparator) {
+		return getPersistence()
+				   .fetchByshareId_First(shareId, groupId, companyId,
+			orderByComparator);
 	}
 
 	/**
-	* Returns the last realtime in the ordered set where shareId = &#63;.
+	* Returns the last realtime in the ordered set where shareId = &#63; and groupId = &#63; and companyId = &#63;.
 	*
 	* @param shareId the share ID
+	* @param groupId the group ID
+	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching realtime
 	* @throws NoSuchRealtimeException if a matching realtime could not be found
 	*/
-	public static Realtime findByshareId_Last(long shareId,
-		OrderByComparator<Realtime> orderByComparator)
+	public static Realtime findByshareId_Last(long shareId, long groupId,
+		long companyId, OrderByComparator<Realtime> orderByComparator)
 		throws com.ibtrader.data.exception.NoSuchRealtimeException {
-		return getPersistence().findByshareId_Last(shareId, orderByComparator);
+		return getPersistence()
+				   .findByshareId_Last(shareId, groupId, companyId,
+			orderByComparator);
 	}
 
 	/**
-	* Returns the last realtime in the ordered set where shareId = &#63;.
+	* Returns the last realtime in the ordered set where shareId = &#63; and groupId = &#63; and companyId = &#63;.
 	*
 	* @param shareId the share ID
+	* @param groupId the group ID
+	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching realtime, or <code>null</code> if a matching realtime could not be found
 	*/
-	public static Realtime fetchByshareId_Last(long shareId,
-		OrderByComparator<Realtime> orderByComparator) {
-		return getPersistence().fetchByshareId_Last(shareId, orderByComparator);
+	public static Realtime fetchByshareId_Last(long shareId, long groupId,
+		long companyId, OrderByComparator<Realtime> orderByComparator) {
+		return getPersistence()
+				   .fetchByshareId_Last(shareId, groupId, companyId,
+			orderByComparator);
 	}
 
 	/**
-	* Returns the realtimes before and after the current realtime in the ordered set where shareId = &#63;.
+	* Returns the realtimes before and after the current realtime in the ordered set where shareId = &#63; and groupId = &#63; and companyId = &#63;.
 	*
 	* @param realtimeId the primary key of the current realtime
 	* @param shareId the share ID
+	* @param groupId the group ID
+	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next realtime
 	* @throws NoSuchRealtimeException if a realtime with the primary key could not be found
 	*/
 	public static Realtime[] findByshareId_PrevAndNext(long realtimeId,
-		long shareId, OrderByComparator<Realtime> orderByComparator)
+		long shareId, long groupId, long companyId,
+		OrderByComparator<Realtime> orderByComparator)
 		throws com.ibtrader.data.exception.NoSuchRealtimeException {
 		return getPersistence()
-				   .findByshareId_PrevAndNext(realtimeId, shareId,
-			orderByComparator);
+				   .findByshareId_PrevAndNext(realtimeId, shareId, groupId,
+			companyId, orderByComparator);
 	}
 
 	/**
-	* Removes all the realtimes where shareId = &#63; from the database.
+	* Removes all the realtimes where shareId = &#63; and groupId = &#63; and companyId = &#63; from the database.
 	*
 	* @param shareId the share ID
+	* @param groupId the group ID
+	* @param companyId the company ID
 	*/
-	public static void removeByshareId(long shareId) {
-		getPersistence().removeByshareId(shareId);
+	public static void removeByshareId(long shareId, long groupId,
+		long companyId) {
+		getPersistence().removeByshareId(shareId, groupId, companyId);
 	}
 
 	/**
-	* Returns the number of realtimes where shareId = &#63;.
+	* Returns the number of realtimes where shareId = &#63; and groupId = &#63; and companyId = &#63;.
 	*
 	* @param shareId the share ID
+	* @param groupId the group ID
+	* @param companyId the company ID
 	* @return the number of matching realtimes
 	*/
-	public static int countByshareId(long shareId) {
-		return getPersistence().countByshareId(shareId);
+	public static int countByshareId(long shareId, long groupId, long companyId) {
+		return getPersistence().countByshareId(shareId, groupId, companyId);
 	}
 
 	/**

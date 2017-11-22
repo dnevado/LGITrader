@@ -93,6 +93,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 			{ "exchange", Types.VARCHAR },
 			{ "primary_exchange", Types.VARCHAR },
 			{ "date_contract_verified", Types.TIMESTAMP },
+			{ "userCreatedId", Types.BIGINT },
 			{ "marketId", Types.BIGINT }
 		};
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP = new HashMap<String, Integer>();
@@ -122,10 +123,11 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		TABLE_COLUMNS_MAP.put("exchange", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("primary_exchange", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("date_contract_verified", Types.TIMESTAMP);
+		TABLE_COLUMNS_MAP.put("userCreatedId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("marketId", Types.BIGINT);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table ibtrader_Share (uuid_ VARCHAR(75) null,shareId LONG not null primary key,name VARCHAR(500) null,symbol VARCHAR(75) null,groupId LONG,companyId LONG,createDate DATE null,modifiedDate DATE null,active_ BOOLEAN,numbertopurchase LONG,percentual_limit_buy DOUBLE,percentual_stop_lost DOUBLE,percentual_stop_profit DOUBLE,percentual_stop_profit_position DOUBLE,expiry_date DATE null,expiry_expression VARCHAR(75) null,tick_futures DOUBLE,multiplier LONG,last_error_data_read VARCHAR(75) null,last_error_data_trade VARCHAR(75) null,security_type VARCHAR(75) null,exchange VARCHAR(75) null,primary_exchange VARCHAR(75) null,date_contract_verified DATE null,marketId LONG)";
+	public static final String TABLE_SQL_CREATE = "create table ibtrader_Share (uuid_ VARCHAR(75) null,shareId LONG not null primary key,name VARCHAR(75) null,symbol VARCHAR(75) null,groupId LONG,companyId LONG,createDate DATE null,modifiedDate DATE null,active_ BOOLEAN,numbertopurchase LONG,percentual_limit_buy DOUBLE,percentual_stop_lost DOUBLE,percentual_stop_profit DOUBLE,percentual_stop_profit_position DOUBLE,expiry_date DATE null,expiry_expression VARCHAR(75) null,tick_futures DOUBLE,multiplier LONG,last_error_data_read VARCHAR(75) null,last_error_data_trade VARCHAR(75) null,security_type VARCHAR(75) null,exchange VARCHAR(75) null,primary_exchange VARCHAR(75) null,date_contract_verified DATE null,userCreatedId LONG,marketId LONG)";
 	public static final String TABLE_SQL_DROP = "drop table ibtrader_Share";
 	public static final String ORDER_BY_JPQL = " ORDER BY share.shareId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY ibtrader_Share.shareId ASC";
@@ -185,6 +187,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		model.setExchange(soapModel.getExchange());
 		model.setPrimary_exchange(soapModel.getPrimary_exchange());
 		model.setDate_contract_verified(soapModel.getDate_contract_verified());
+		model.setUserCreatedId(soapModel.getUserCreatedId());
 		model.setMarketId(soapModel.getMarketId());
 
 		return model;
@@ -275,6 +278,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		attributes.put("exchange", getExchange());
 		attributes.put("primary_exchange", getPrimary_exchange());
 		attributes.put("date_contract_verified", getDate_contract_verified());
+		attributes.put("userCreatedId", getUserCreatedId());
 		attributes.put("marketId", getMarketId());
 
 		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
@@ -434,6 +438,12 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 
 		if (date_contract_verified != null) {
 			setDate_contract_verified(date_contract_verified);
+		}
+
+		Long userCreatedId = (Long)attributes.get("userCreatedId");
+
+		if (userCreatedId != null) {
+			setUserCreatedId(userCreatedId);
 		}
 
 		Long marketId = (Long)attributes.get("marketId");
@@ -811,6 +821,17 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 
 	@JSON
 	@Override
+	public long getUserCreatedId() {
+		return _userCreatedId;
+	}
+
+	@Override
+	public void setUserCreatedId(long userCreatedId) {
+		_userCreatedId = userCreatedId;
+	}
+
+	@JSON
+	@Override
 	public long getMarketId() {
 		return _marketId;
 	}
@@ -893,6 +914,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		shareImpl.setExchange(getExchange());
 		shareImpl.setPrimary_exchange(getPrimary_exchange());
 		shareImpl.setDate_contract_verified(getDate_contract_verified());
+		shareImpl.setUserCreatedId(getUserCreatedId());
 		shareImpl.setMarketId(getMarketId());
 
 		shareImpl.resetOriginalValues();
@@ -1115,6 +1137,8 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 			shareCacheModel.date_contract_verified = Long.MIN_VALUE;
 		}
 
+		shareCacheModel.userCreatedId = getUserCreatedId();
+
 		shareCacheModel.marketId = getMarketId();
 
 		return shareCacheModel;
@@ -1122,7 +1146,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(51);
+		StringBundler sb = new StringBundler(53);
 
 		sb.append("{uuid=");
 		sb.append(getUuid());
@@ -1172,6 +1196,8 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		sb.append(getPrimary_exchange());
 		sb.append(", date_contract_verified=");
 		sb.append(getDate_contract_verified());
+		sb.append(", userCreatedId=");
+		sb.append(getUserCreatedId());
 		sb.append(", marketId=");
 		sb.append(getMarketId());
 		sb.append("}");
@@ -1181,7 +1207,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(79);
+		StringBundler sb = new StringBundler(82);
 
 		sb.append("<model><model-name>");
 		sb.append("com.ibtrader.data.model.Share");
@@ -1284,6 +1310,10 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		sb.append(getDate_contract_verified());
 		sb.append("]]></column-value></column>");
 		sb.append(
+			"<column><column-name>userCreatedId</column-name><column-value><![CDATA[");
+		sb.append(getUserCreatedId());
+		sb.append("]]></column-value></column>");
+		sb.append(
 			"<column><column-name>marketId</column-name><column-value><![CDATA[");
 		sb.append(getMarketId());
 		sb.append("]]></column-value></column>");
@@ -1329,6 +1359,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 	private String _exchange;
 	private String _primary_exchange;
 	private Date _date_contract_verified;
+	private long _userCreatedId;
 	private long _marketId;
 	private long _originalMarketId;
 	private boolean _setOriginalMarketId;

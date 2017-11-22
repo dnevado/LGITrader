@@ -66,7 +66,7 @@ public class StrategyShareCacheModel implements CacheModel<StrategyShare>,
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(17);
+		StringBundler sb = new StringBundler(19);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -84,6 +84,8 @@ public class StrategyShareCacheModel implements CacheModel<StrategyShare>,
 		sb.append(strategyId);
 		sb.append(", shareId=");
 		sb.append(shareId);
+		sb.append(", strategyparamsoverride=");
+		sb.append(strategyparamsoverride);
 		sb.append("}");
 
 		return sb.toString();
@@ -121,6 +123,13 @@ public class StrategyShareCacheModel implements CacheModel<StrategyShare>,
 		strategyShareImpl.setStrategyId(strategyId);
 		strategyShareImpl.setShareId(shareId);
 
+		if (strategyparamsoverride == null) {
+			strategyShareImpl.setStrategyparamsoverride(StringPool.BLANK);
+		}
+		else {
+			strategyShareImpl.setStrategyparamsoverride(strategyparamsoverride);
+		}
+
 		strategyShareImpl.resetOriginalValues();
 
 		return strategyShareImpl;
@@ -141,6 +150,7 @@ public class StrategyShareCacheModel implements CacheModel<StrategyShare>,
 		strategyId = objectInput.readLong();
 
 		shareId = objectInput.readLong();
+		strategyparamsoverride = objectInput.readUTF();
 	}
 
 	@Override
@@ -164,6 +174,13 @@ public class StrategyShareCacheModel implements CacheModel<StrategyShare>,
 		objectOutput.writeLong(strategyId);
 
 		objectOutput.writeLong(shareId);
+
+		if (strategyparamsoverride == null) {
+			objectOutput.writeUTF(StringPool.BLANK);
+		}
+		else {
+			objectOutput.writeUTF(strategyparamsoverride);
+		}
 	}
 
 	public String uuid;
@@ -174,4 +191,5 @@ public class StrategyShareCacheModel implements CacheModel<StrategyShare>,
 	public long modifiedDate;
 	public long strategyId;
 	public long shareId;
+	public String strategyparamsoverride;
 }

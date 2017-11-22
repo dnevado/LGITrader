@@ -33,6 +33,12 @@ public class PositionLocalServiceWrapper implements PositionLocalService,
 		_positionLocalService = positionLocalService;
 	}
 
+	@Override
+	public boolean ExistsOpenPosition(long groupId, long companyId, long shareId) {
+		return _positionLocalService.ExistsOpenPosition(groupId, companyId,
+			shareId);
+	}
+
 	/**
 	* Adds the position to the database. Also notifies the appropriate model listeners.
 	*
@@ -97,6 +103,11 @@ public class PositionLocalServiceWrapper implements PositionLocalService,
 	public com.ibtrader.data.model.Position fetchPositionByUuidAndGroupId(
 		java.lang.String uuid, long groupId) {
 		return _positionLocalService.fetchPositionByUuidAndGroupId(uuid, groupId);
+	}
+
+	@Override
+	public com.ibtrader.data.model.Position findByCompany(long _companyId) {
+		return _positionLocalService.findByCompany(_companyId);
 	}
 
 	@Override

@@ -65,7 +65,7 @@ public class MarketCacheModel implements CacheModel<Market>, Externalizable {
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(23);
+		StringBundler sb = new StringBundler(27);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -89,6 +89,10 @@ public class MarketCacheModel implements CacheModel<Market>, Externalizable {
 		sb.append(identifier);
 		sb.append(", currency=");
 		sb.append(currency);
+		sb.append(", name=");
+		sb.append(name);
+		sb.append(", description=");
+		sb.append(description);
 		sb.append("}");
 
 		return sb.toString();
@@ -152,6 +156,20 @@ public class MarketCacheModel implements CacheModel<Market>, Externalizable {
 			marketImpl.setCurrency(currency);
 		}
 
+		if (name == null) {
+			marketImpl.setName(StringPool.BLANK);
+		}
+		else {
+			marketImpl.setName(name);
+		}
+
+		if (description == null) {
+			marketImpl.setDescription(StringPool.BLANK);
+		}
+		else {
+			marketImpl.setDescription(description);
+		}
+
 		marketImpl.resetOriginalValues();
 
 		return marketImpl;
@@ -174,6 +192,8 @@ public class MarketCacheModel implements CacheModel<Market>, Externalizable {
 		end_hour = objectInput.readUTF();
 		identifier = objectInput.readUTF();
 		currency = objectInput.readUTF();
+		name = objectInput.readUTF();
+		description = objectInput.readUTF();
 	}
 
 	@Override
@@ -223,6 +243,20 @@ public class MarketCacheModel implements CacheModel<Market>, Externalizable {
 		else {
 			objectOutput.writeUTF(currency);
 		}
+
+		if (name == null) {
+			objectOutput.writeUTF(StringPool.BLANK);
+		}
+		else {
+			objectOutput.writeUTF(name);
+		}
+
+		if (description == null) {
+			objectOutput.writeUTF(StringPool.BLANK);
+		}
+		else {
+			objectOutput.writeUTF(description);
+		}
 	}
 
 	public String uuid;
@@ -236,4 +270,6 @@ public class MarketCacheModel implements CacheModel<Market>, Externalizable {
 	public String end_hour;
 	public String identifier;
 	public String currency;
+	public String name;
+	public String description;
 }

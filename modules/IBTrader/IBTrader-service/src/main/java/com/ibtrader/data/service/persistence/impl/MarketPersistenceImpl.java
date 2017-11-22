@@ -1473,6 +1473,7 @@ public class MarketPersistenceImpl extends BasePersistenceImpl<Market>
 			MarketModelImpl.FINDER_CACHE_ENABLED, MarketImpl.class,
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByActiveStartEndHour",
 			new String[] {
+				Long.class.getName(), Long.class.getName(),
 				String.class.getName(), String.class.getName(),
 				Boolean.class.getName(),
 				
@@ -1485,9 +1486,12 @@ public class MarketPersistenceImpl extends BasePersistenceImpl<Market>
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
 			"findByActiveStartEndHour",
 			new String[] {
+				Long.class.getName(), Long.class.getName(),
 				String.class.getName(), String.class.getName(),
 				Boolean.class.getName()
 			},
+			MarketModelImpl.GROUPID_COLUMN_BITMASK |
+			MarketModelImpl.COMPANYID_COLUMN_BITMASK |
 			MarketModelImpl.START_HOUR_COLUMN_BITMASK |
 			MarketModelImpl.END_HOUR_COLUMN_BITMASK |
 			MarketModelImpl.ACTIVE_COLUMN_BITMASK);
@@ -1496,32 +1500,37 @@ public class MarketPersistenceImpl extends BasePersistenceImpl<Market>
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
 			"countByActiveStartEndHour",
 			new String[] {
+				Long.class.getName(), Long.class.getName(),
 				String.class.getName(), String.class.getName(),
 				Boolean.class.getName()
 			});
 
 	/**
-	 * Returns all the markets where start_hour = &#63; and end_hour = &#63; and active = &#63;.
+	 * Returns all the markets where groupId = &#63; and companyId = &#63; and start_hour = &#63; and end_hour = &#63; and active = &#63;.
 	 *
+	 * @param groupId the group ID
+	 * @param companyId the company ID
 	 * @param start_hour the start_hour
 	 * @param end_hour the end_hour
 	 * @param active the active
 	 * @return the matching markets
 	 */
 	@Override
-	public List<Market> findByActiveStartEndHour(String start_hour,
-		String end_hour, boolean active) {
-		return findByActiveStartEndHour(start_hour, end_hour, active,
-			QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	public List<Market> findByActiveStartEndHour(long groupId, long companyId,
+		String start_hour, String end_hour, boolean active) {
+		return findByActiveStartEndHour(groupId, companyId, start_hour,
+			end_hour, active, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 	}
 
 	/**
-	 * Returns a range of all the markets where start_hour = &#63; and end_hour = &#63; and active = &#63;.
+	 * Returns a range of all the markets where groupId = &#63; and companyId = &#63; and start_hour = &#63; and end_hour = &#63; and active = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link MarketModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @param groupId the group ID
+	 * @param companyId the company ID
 	 * @param start_hour the start_hour
 	 * @param end_hour the end_hour
 	 * @param active the active
@@ -1530,19 +1539,21 @@ public class MarketPersistenceImpl extends BasePersistenceImpl<Market>
 	 * @return the range of matching markets
 	 */
 	@Override
-	public List<Market> findByActiveStartEndHour(String start_hour,
-		String end_hour, boolean active, int start, int end) {
-		return findByActiveStartEndHour(start_hour, end_hour, active, start,
-			end, null);
+	public List<Market> findByActiveStartEndHour(long groupId, long companyId,
+		String start_hour, String end_hour, boolean active, int start, int end) {
+		return findByActiveStartEndHour(groupId, companyId, start_hour,
+			end_hour, active, start, end, null);
 	}
 
 	/**
-	 * Returns an ordered range of all the markets where start_hour = &#63; and end_hour = &#63; and active = &#63;.
+	 * Returns an ordered range of all the markets where groupId = &#63; and companyId = &#63; and start_hour = &#63; and end_hour = &#63; and active = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link MarketModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @param groupId the group ID
+	 * @param companyId the company ID
 	 * @param start_hour the start_hour
 	 * @param end_hour the end_hour
 	 * @param active the active
@@ -1552,20 +1563,22 @@ public class MarketPersistenceImpl extends BasePersistenceImpl<Market>
 	 * @return the ordered range of matching markets
 	 */
 	@Override
-	public List<Market> findByActiveStartEndHour(String start_hour,
-		String end_hour, boolean active, int start, int end,
+	public List<Market> findByActiveStartEndHour(long groupId, long companyId,
+		String start_hour, String end_hour, boolean active, int start, int end,
 		OrderByComparator<Market> orderByComparator) {
-		return findByActiveStartEndHour(start_hour, end_hour, active, start,
-			end, orderByComparator, true);
+		return findByActiveStartEndHour(groupId, companyId, start_hour,
+			end_hour, active, start, end, orderByComparator, true);
 	}
 
 	/**
-	 * Returns an ordered range of all the markets where start_hour = &#63; and end_hour = &#63; and active = &#63;.
+	 * Returns an ordered range of all the markets where groupId = &#63; and companyId = &#63; and start_hour = &#63; and end_hour = &#63; and active = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link MarketModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @param groupId the group ID
+	 * @param companyId the company ID
 	 * @param start_hour the start_hour
 	 * @param end_hour the end_hour
 	 * @param active the active
@@ -1576,8 +1589,8 @@ public class MarketPersistenceImpl extends BasePersistenceImpl<Market>
 	 * @return the ordered range of matching markets
 	 */
 	@Override
-	public List<Market> findByActiveStartEndHour(String start_hour,
-		String end_hour, boolean active, int start, int end,
+	public List<Market> findByActiveStartEndHour(long groupId, long companyId,
+		String start_hour, String end_hour, boolean active, int start, int end,
 		OrderByComparator<Market> orderByComparator, boolean retrieveFromCache) {
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -1587,12 +1600,14 @@ public class MarketPersistenceImpl extends BasePersistenceImpl<Market>
 				(orderByComparator == null)) {
 			pagination = false;
 			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ACTIVESTARTENDHOUR;
-			finderArgs = new Object[] { start_hour, end_hour, active };
+			finderArgs = new Object[] {
+					groupId, companyId, start_hour, end_hour, active
+				};
 		}
 		else {
 			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_ACTIVESTARTENDHOUR;
 			finderArgs = new Object[] {
-					start_hour, end_hour, active,
+					groupId, companyId, start_hour, end_hour, active,
 					
 					start, end, orderByComparator
 				};
@@ -1606,7 +1621,9 @@ public class MarketPersistenceImpl extends BasePersistenceImpl<Market>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (Market market : list) {
-					if (!Objects.equals(start_hour, market.getStart_hour()) ||
+					if ((groupId != market.getGroupId()) ||
+							(companyId != market.getCompanyId()) ||
+							!Objects.equals(start_hour, market.getStart_hour()) ||
 							!Objects.equals(end_hour, market.getEnd_hour()) ||
 							(active != market.getActive())) {
 						list = null;
@@ -1621,14 +1638,18 @@ public class MarketPersistenceImpl extends BasePersistenceImpl<Market>
 			StringBundler query = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(5 +
+				query = new StringBundler(7 +
 						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
-				query = new StringBundler(5);
+				query = new StringBundler(7);
 			}
 
 			query.append(_SQL_SELECT_MARKET_WHERE);
+
+			query.append(_FINDER_COLUMN_ACTIVESTARTENDHOUR_GROUPID_2);
+
+			query.append(_FINDER_COLUMN_ACTIVESTARTENDHOUR_COMPANYID_2);
 
 			boolean bindStart_hour = false;
 
@@ -1680,6 +1701,10 @@ public class MarketPersistenceImpl extends BasePersistenceImpl<Market>
 
 				QueryPos qPos = QueryPos.getInstance(q);
 
+				qPos.add(groupId);
+
+				qPos.add(companyId);
+
 				if (bindStart_hour) {
 					qPos.add(start_hour);
 				}
@@ -1721,8 +1746,10 @@ public class MarketPersistenceImpl extends BasePersistenceImpl<Market>
 	}
 
 	/**
-	 * Returns the first market in the ordered set where start_hour = &#63; and end_hour = &#63; and active = &#63;.
+	 * Returns the first market in the ordered set where groupId = &#63; and companyId = &#63; and start_hour = &#63; and end_hour = &#63; and active = &#63;.
 	 *
+	 * @param groupId the group ID
+	 * @param companyId the company ID
 	 * @param start_hour the start_hour
 	 * @param end_hour the end_hour
 	 * @param active the active
@@ -1731,22 +1758,28 @@ public class MarketPersistenceImpl extends BasePersistenceImpl<Market>
 	 * @throws NoSuchMarketException if a matching market could not be found
 	 */
 	@Override
-	public Market findByActiveStartEndHour_First(String start_hour,
-		String end_hour, boolean active,
+	public Market findByActiveStartEndHour_First(long groupId, long companyId,
+		String start_hour, String end_hour, boolean active,
 		OrderByComparator<Market> orderByComparator)
 		throws NoSuchMarketException {
-		Market market = fetchByActiveStartEndHour_First(start_hour, end_hour,
-				active, orderByComparator);
+		Market market = fetchByActiveStartEndHour_First(groupId, companyId,
+				start_hour, end_hour, active, orderByComparator);
 
 		if (market != null) {
 			return market;
 		}
 
-		StringBundler msg = new StringBundler(8);
+		StringBundler msg = new StringBundler(12);
 
 		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
 
-		msg.append("start_hour=");
+		msg.append("groupId=");
+		msg.append(groupId);
+
+		msg.append(", companyId=");
+		msg.append(companyId);
+
+		msg.append(", start_hour=");
 		msg.append(start_hour);
 
 		msg.append(", end_hour=");
@@ -1761,8 +1794,10 @@ public class MarketPersistenceImpl extends BasePersistenceImpl<Market>
 	}
 
 	/**
-	 * Returns the first market in the ordered set where start_hour = &#63; and end_hour = &#63; and active = &#63;.
+	 * Returns the first market in the ordered set where groupId = &#63; and companyId = &#63; and start_hour = &#63; and end_hour = &#63; and active = &#63;.
 	 *
+	 * @param groupId the group ID
+	 * @param companyId the company ID
 	 * @param start_hour the start_hour
 	 * @param end_hour the end_hour
 	 * @param active the active
@@ -1770,11 +1805,11 @@ public class MarketPersistenceImpl extends BasePersistenceImpl<Market>
 	 * @return the first matching market, or <code>null</code> if a matching market could not be found
 	 */
 	@Override
-	public Market fetchByActiveStartEndHour_First(String start_hour,
-		String end_hour, boolean active,
+	public Market fetchByActiveStartEndHour_First(long groupId, long companyId,
+		String start_hour, String end_hour, boolean active,
 		OrderByComparator<Market> orderByComparator) {
-		List<Market> list = findByActiveStartEndHour(start_hour, end_hour,
-				active, 0, 1, orderByComparator);
+		List<Market> list = findByActiveStartEndHour(groupId, companyId,
+				start_hour, end_hour, active, 0, 1, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -1784,8 +1819,10 @@ public class MarketPersistenceImpl extends BasePersistenceImpl<Market>
 	}
 
 	/**
-	 * Returns the last market in the ordered set where start_hour = &#63; and end_hour = &#63; and active = &#63;.
+	 * Returns the last market in the ordered set where groupId = &#63; and companyId = &#63; and start_hour = &#63; and end_hour = &#63; and active = &#63;.
 	 *
+	 * @param groupId the group ID
+	 * @param companyId the company ID
 	 * @param start_hour the start_hour
 	 * @param end_hour the end_hour
 	 * @param active the active
@@ -1794,22 +1831,28 @@ public class MarketPersistenceImpl extends BasePersistenceImpl<Market>
 	 * @throws NoSuchMarketException if a matching market could not be found
 	 */
 	@Override
-	public Market findByActiveStartEndHour_Last(String start_hour,
-		String end_hour, boolean active,
+	public Market findByActiveStartEndHour_Last(long groupId, long companyId,
+		String start_hour, String end_hour, boolean active,
 		OrderByComparator<Market> orderByComparator)
 		throws NoSuchMarketException {
-		Market market = fetchByActiveStartEndHour_Last(start_hour, end_hour,
-				active, orderByComparator);
+		Market market = fetchByActiveStartEndHour_Last(groupId, companyId,
+				start_hour, end_hour, active, orderByComparator);
 
 		if (market != null) {
 			return market;
 		}
 
-		StringBundler msg = new StringBundler(8);
+		StringBundler msg = new StringBundler(12);
 
 		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
 
-		msg.append("start_hour=");
+		msg.append("groupId=");
+		msg.append(groupId);
+
+		msg.append(", companyId=");
+		msg.append(companyId);
+
+		msg.append(", start_hour=");
 		msg.append(start_hour);
 
 		msg.append(", end_hour=");
@@ -1824,8 +1867,10 @@ public class MarketPersistenceImpl extends BasePersistenceImpl<Market>
 	}
 
 	/**
-	 * Returns the last market in the ordered set where start_hour = &#63; and end_hour = &#63; and active = &#63;.
+	 * Returns the last market in the ordered set where groupId = &#63; and companyId = &#63; and start_hour = &#63; and end_hour = &#63; and active = &#63;.
 	 *
+	 * @param groupId the group ID
+	 * @param companyId the company ID
 	 * @param start_hour the start_hour
 	 * @param end_hour the end_hour
 	 * @param active the active
@@ -1833,17 +1878,19 @@ public class MarketPersistenceImpl extends BasePersistenceImpl<Market>
 	 * @return the last matching market, or <code>null</code> if a matching market could not be found
 	 */
 	@Override
-	public Market fetchByActiveStartEndHour_Last(String start_hour,
-		String end_hour, boolean active,
+	public Market fetchByActiveStartEndHour_Last(long groupId, long companyId,
+		String start_hour, String end_hour, boolean active,
 		OrderByComparator<Market> orderByComparator) {
-		int count = countByActiveStartEndHour(start_hour, end_hour, active);
+		int count = countByActiveStartEndHour(groupId, companyId, start_hour,
+				end_hour, active);
 
 		if (count == 0) {
 			return null;
 		}
 
-		List<Market> list = findByActiveStartEndHour(start_hour, end_hour,
-				active, count - 1, count, orderByComparator);
+		List<Market> list = findByActiveStartEndHour(groupId, companyId,
+				start_hour, end_hour, active, count - 1, count,
+				orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -1853,9 +1900,11 @@ public class MarketPersistenceImpl extends BasePersistenceImpl<Market>
 	}
 
 	/**
-	 * Returns the markets before and after the current market in the ordered set where start_hour = &#63; and end_hour = &#63; and active = &#63;.
+	 * Returns the markets before and after the current market in the ordered set where groupId = &#63; and companyId = &#63; and start_hour = &#63; and end_hour = &#63; and active = &#63;.
 	 *
 	 * @param marketId the primary key of the current market
+	 * @param groupId the group ID
+	 * @param companyId the company ID
 	 * @param start_hour the start_hour
 	 * @param end_hour the end_hour
 	 * @param active the active
@@ -1865,8 +1914,8 @@ public class MarketPersistenceImpl extends BasePersistenceImpl<Market>
 	 */
 	@Override
 	public Market[] findByActiveStartEndHour_PrevAndNext(long marketId,
-		String start_hour, String end_hour, boolean active,
-		OrderByComparator<Market> orderByComparator)
+		long groupId, long companyId, String start_hour, String end_hour,
+		boolean active, OrderByComparator<Market> orderByComparator)
 		throws NoSuchMarketException {
 		Market market = findByPrimaryKey(marketId);
 
@@ -1878,12 +1927,14 @@ public class MarketPersistenceImpl extends BasePersistenceImpl<Market>
 			Market[] array = new MarketImpl[3];
 
 			array[0] = getByActiveStartEndHour_PrevAndNext(session, market,
-					start_hour, end_hour, active, orderByComparator, true);
+					groupId, companyId, start_hour, end_hour, active,
+					orderByComparator, true);
 
 			array[1] = market;
 
 			array[2] = getByActiveStartEndHour_PrevAndNext(session, market,
-					start_hour, end_hour, active, orderByComparator, false);
+					groupId, companyId, start_hour, end_hour, active,
+					orderByComparator, false);
 
 			return array;
 		}
@@ -1896,20 +1947,25 @@ public class MarketPersistenceImpl extends BasePersistenceImpl<Market>
 	}
 
 	protected Market getByActiveStartEndHour_PrevAndNext(Session session,
-		Market market, String start_hour, String end_hour, boolean active,
+		Market market, long groupId, long companyId, String start_hour,
+		String end_hour, boolean active,
 		OrderByComparator<Market> orderByComparator, boolean previous) {
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
+			query = new StringBundler(8 +
 					(orderByComparator.getOrderByConditionFields().length * 3) +
 					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
-			query = new StringBundler(5);
+			query = new StringBundler(7);
 		}
 
 		query.append(_SQL_SELECT_MARKET_WHERE);
+
+		query.append(_FINDER_COLUMN_ACTIVESTARTENDHOUR_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_ACTIVESTARTENDHOUR_COMPANYID_2);
 
 		boolean bindStart_hour = false;
 
@@ -2009,6 +2065,10 @@ public class MarketPersistenceImpl extends BasePersistenceImpl<Market>
 
 		QueryPos qPos = QueryPos.getInstance(q);
 
+		qPos.add(groupId);
+
+		qPos.add(companyId);
+
 		if (bindStart_hour) {
 			qPos.add(start_hour);
 		}
@@ -2038,42 +2098,53 @@ public class MarketPersistenceImpl extends BasePersistenceImpl<Market>
 	}
 
 	/**
-	 * Removes all the markets where start_hour = &#63; and end_hour = &#63; and active = &#63; from the database.
+	 * Removes all the markets where groupId = &#63; and companyId = &#63; and start_hour = &#63; and end_hour = &#63; and active = &#63; from the database.
 	 *
+	 * @param groupId the group ID
+	 * @param companyId the company ID
 	 * @param start_hour the start_hour
 	 * @param end_hour the end_hour
 	 * @param active the active
 	 */
 	@Override
-	public void removeByActiveStartEndHour(String start_hour, String end_hour,
-		boolean active) {
-		for (Market market : findByActiveStartEndHour(start_hour, end_hour,
-				active, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+	public void removeByActiveStartEndHour(long groupId, long companyId,
+		String start_hour, String end_hour, boolean active) {
+		for (Market market : findByActiveStartEndHour(groupId, companyId,
+				start_hour, end_hour, active, QueryUtil.ALL_POS,
+				QueryUtil.ALL_POS, null)) {
 			remove(market);
 		}
 	}
 
 	/**
-	 * Returns the number of markets where start_hour = &#63; and end_hour = &#63; and active = &#63;.
+	 * Returns the number of markets where groupId = &#63; and companyId = &#63; and start_hour = &#63; and end_hour = &#63; and active = &#63;.
 	 *
+	 * @param groupId the group ID
+	 * @param companyId the company ID
 	 * @param start_hour the start_hour
 	 * @param end_hour the end_hour
 	 * @param active the active
 	 * @return the number of matching markets
 	 */
 	@Override
-	public int countByActiveStartEndHour(String start_hour, String end_hour,
-		boolean active) {
+	public int countByActiveStartEndHour(long groupId, long companyId,
+		String start_hour, String end_hour, boolean active) {
 		FinderPath finderPath = FINDER_PATH_COUNT_BY_ACTIVESTARTENDHOUR;
 
-		Object[] finderArgs = new Object[] { start_hour, end_hour, active };
+		Object[] finderArgs = new Object[] {
+				groupId, companyId, start_hour, end_hour, active
+			};
 
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
-			StringBundler query = new StringBundler(4);
+			StringBundler query = new StringBundler(6);
 
 			query.append(_SQL_COUNT_MARKET_WHERE);
+
+			query.append(_FINDER_COLUMN_ACTIVESTARTENDHOUR_GROUPID_2);
+
+			query.append(_FINDER_COLUMN_ACTIVESTARTENDHOUR_COMPANYID_2);
 
 			boolean bindStart_hour = false;
 
@@ -2116,6 +2187,10 @@ public class MarketPersistenceImpl extends BasePersistenceImpl<Market>
 
 				QueryPos qPos = QueryPos.getInstance(q);
 
+				qPos.add(groupId);
+
+				qPos.add(companyId);
+
 				if (bindStart_hour) {
 					qPos.add(start_hour);
 				}
@@ -2143,6 +2218,8 @@ public class MarketPersistenceImpl extends BasePersistenceImpl<Market>
 		return count.intValue();
 	}
 
+	private static final String _FINDER_COLUMN_ACTIVESTARTENDHOUR_GROUPID_2 = "market.groupId = ? AND ";
+	private static final String _FINDER_COLUMN_ACTIVESTARTENDHOUR_COMPANYID_2 = "market.companyId = ? AND ";
 	private static final String _FINDER_COLUMN_ACTIVESTARTENDHOUR_START_HOUR_1 = "market.start_hour IS NULL AND ";
 	private static final String _FINDER_COLUMN_ACTIVESTARTENDHOUR_START_HOUR_2 = "market.start_hour = ? AND ";
 	private static final String _FINDER_COLUMN_ACTIVESTARTENDHOUR_START_HOUR_3 = "(market.start_hour IS NULL OR market.start_hour = '') AND ";
@@ -2490,6 +2567,8 @@ public class MarketPersistenceImpl extends BasePersistenceImpl<Market>
 			if ((marketModelImpl.getColumnBitmask() &
 					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ACTIVESTARTENDHOUR.getColumnBitmask()) != 0) {
 				Object[] args = new Object[] {
+						marketModelImpl.getOriginalGroupId(),
+						marketModelImpl.getOriginalCompanyId(),
 						marketModelImpl.getOriginalStart_hour(),
 						marketModelImpl.getOriginalEnd_hour(),
 						marketModelImpl.getOriginalActive()
@@ -2501,6 +2580,8 @@ public class MarketPersistenceImpl extends BasePersistenceImpl<Market>
 					args);
 
 				args = new Object[] {
+						marketModelImpl.getGroupId(),
+						marketModelImpl.getCompanyId(),
 						marketModelImpl.getStart_hour(),
 						marketModelImpl.getEnd_hour(),
 						marketModelImpl.getActive()
@@ -2545,6 +2626,8 @@ public class MarketPersistenceImpl extends BasePersistenceImpl<Market>
 		marketImpl.setEnd_hour(market.getEnd_hour());
 		marketImpl.setIdentifier(market.getIdentifier());
 		marketImpl.setCurrency(market.getCurrency());
+		marketImpl.setName(market.getName());
+		marketImpl.setDescription(market.getDescription());
 
 		return marketImpl;
 	}

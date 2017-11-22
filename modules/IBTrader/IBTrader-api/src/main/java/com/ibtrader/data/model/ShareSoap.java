@@ -58,6 +58,7 @@ public class ShareSoap implements Serializable {
 		soapModel.setExchange(model.getExchange());
 		soapModel.setPrimary_exchange(model.getPrimary_exchange());
 		soapModel.setDate_contract_verified(model.getDate_contract_verified());
+		soapModel.setUserCreatedId(model.getUserCreatedId());
 		soapModel.setMarketId(model.getMarketId());
 
 		return soapModel;
@@ -308,6 +309,14 @@ public class ShareSoap implements Serializable {
 		_date_contract_verified = date_contract_verified;
 	}
 
+	public long getUserCreatedId() {
+		return _userCreatedId;
+	}
+
+	public void setUserCreatedId(long userCreatedId) {
+		_userCreatedId = userCreatedId;
+	}
+
 	public long getMarketId() {
 		return _marketId;
 	}
@@ -340,5 +349,6 @@ public class ShareSoap implements Serializable {
 	private String _exchange;
 	private String _primary_exchange;
 	private Date _date_contract_verified;
+	private long _userCreatedId;
 	private long _marketId;
 }

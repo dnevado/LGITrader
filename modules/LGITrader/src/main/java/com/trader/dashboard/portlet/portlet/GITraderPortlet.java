@@ -154,6 +154,18 @@ public class GITraderPortlet extends MVCPortlet {
 					 ConfigLocalServiceUtil.updateConfig(_conf);   
 					 
 					 
+					 /* SIMULATION MODE */   
+					 _conf = ConfigLocalServiceUtil.createConfig(CounterLocalServiceUtil.increment(Config.class.getName()));
+					 _conf.setGroupId(guestGroupId);
+					 _conf.setCompanyId(_Company.getCompanyId());
+					 _conf.setConfig_key(IBTraderConstants.keySIMULATION_MODE);
+					 _conf.setValue(String.valueOf(IBTraderConstants.vSIMULATION_MODE));
+					 _conf.setName(IBTraderConstants.keySIMULATION_MODE);
+					 _conf.setDescription(IBTraderConstants.keySIMULATION_MODE);
+					 _conf.setGlobaldefault(true);
+					 ConfigLocalServiceUtil.updateConfig(_conf);   
+					 
+					 
 				}
 				
 				

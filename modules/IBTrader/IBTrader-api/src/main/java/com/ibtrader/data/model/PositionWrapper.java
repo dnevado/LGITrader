@@ -76,6 +76,7 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 		attributes.put("limit_price_in", getLimit_price_in());
 		attributes.put("date_in", getDate_in());
 		attributes.put("date_real_in", getDate_real_in());
+		attributes.put("positionId_tws_in", getPositionId_tws_in());
 		attributes.put("positionId_tws_out", getPositionId_tws_out());
 		attributes.put("type", getType());
 		attributes.put("price_out", getPrice_out());
@@ -88,8 +89,8 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 		attributes.put("share_number_traded", getShare_number_traded());
 		attributes.put("realtimeId_in", getRealtimeId_in());
 		attributes.put("realtimeId_out", getRealtimeId_out());
-		attributes.put("strategyId_in", getStrategyId_in());
-		attributes.put("strategyId_out", getStrategyId_out());
+		attributes.put("strategy_in", getStrategy_in());
+		attributes.put("strategy_out", getStrategy_out());
 		attributes.put("percentualstoplost_out", getPercentualstoplost_out());
 		attributes.put("pricestoplost_out", getPricestoplost_out());
 		attributes.put("percentualstopprofit_out", getPercentualstopprofit_out());
@@ -205,6 +206,12 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 			setDate_real_in(date_real_in);
 		}
 
+		Long positionId_tws_in = (Long)attributes.get("positionId_tws_in");
+
+		if (positionId_tws_in != null) {
+			setPositionId_tws_in(positionId_tws_in);
+		}
+
 		Long positionId_tws_out = (Long)attributes.get("positionId_tws_out");
 
 		if (positionId_tws_out != null) {
@@ -278,16 +285,16 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 			setRealtimeId_out(realtimeId_out);
 		}
 
-		Long strategyId_in = (Long)attributes.get("strategyId_in");
+		String strategy_in = (String)attributes.get("strategy_in");
 
-		if (strategyId_in != null) {
-			setStrategyId_in(strategyId_in);
+		if (strategy_in != null) {
+			setStrategy_in(strategy_in);
 		}
 
-		Long strategyId_out = (Long)attributes.get("strategyId_out");
+		String strategy_out = (String)attributes.get("strategy_out");
 
-		if (strategyId_out != null) {
-			setStrategyId_out(strategyId_out);
+		if (strategy_out != null) {
+			setStrategy_out(strategy_out);
 		}
 
 		Double percentualstoplost_out = (Double)attributes.get(
@@ -563,6 +570,26 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 	}
 
 	/**
+	* Returns the strategy_in of this position.
+	*
+	* @return the strategy_in of this position
+	*/
+	@Override
+	public java.lang.String getStrategy_in() {
+		return _position.getStrategy_in();
+	}
+
+	/**
+	* Returns the strategy_out of this position.
+	*
+	* @return the strategy_out of this position
+	*/
+	@Override
+	public java.lang.String getStrategy_out() {
+		return _position.getStrategy_out();
+	}
+
+	/**
 	* Returns the trading_data_operations of this position.
 	*
 	* @return the trading_data_operations of this position
@@ -703,6 +730,16 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 	}
 
 	/**
+	* Returns the position id_tws_in of this position.
+	*
+	* @return the position id_tws_in of this position
+	*/
+	@Override
+	public long getPositionId_tws_in() {
+		return _position.getPositionId_tws_in();
+	}
+
+	/**
 	* Returns the position id_tws_out of this position.
 	*
 	* @return the position id_tws_out of this position
@@ -780,26 +817,6 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 	@Override
 	public long getShare_number_traded() {
 		return _position.getShare_number_traded();
-	}
-
-	/**
-	* Returns the strategy id_in of this position.
-	*
-	* @return the strategy id_in of this position
-	*/
-	@Override
-	public long getStrategyId_in() {
-		return _position.getStrategyId_in();
-	}
-
-	/**
-	* Returns the strategy id_out of this position.
-	*
-	* @return the strategy id_out of this position
-	*/
-	@Override
-	public long getStrategyId_out() {
-		return _position.getStrategyId_out();
 	}
 
 	@Override
@@ -981,6 +998,16 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 	@Override
 	public void setPositionId(long positionId) {
 		_position.setPositionId(positionId);
+	}
+
+	/**
+	* Sets the position id_tws_in of this position.
+	*
+	* @param positionId_tws_in the position id_tws_in of this position
+	*/
+	@Override
+	public void setPositionId_tws_in(long positionId_tws_in) {
+		_position.setPositionId_tws_in(positionId_tws_in);
 	}
 
 	/**
@@ -1169,23 +1196,23 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 	}
 
 	/**
-	* Sets the strategy id_in of this position.
+	* Sets the strategy_in of this position.
 	*
-	* @param strategyId_in the strategy id_in of this position
+	* @param strategy_in the strategy_in of this position
 	*/
 	@Override
-	public void setStrategyId_in(long strategyId_in) {
-		_position.setStrategyId_in(strategyId_in);
+	public void setStrategy_in(java.lang.String strategy_in) {
+		_position.setStrategy_in(strategy_in);
 	}
 
 	/**
-	* Sets the strategy id_out of this position.
+	* Sets the strategy_out of this position.
 	*
-	* @param strategyId_out the strategy id_out of this position
+	* @param strategy_out the strategy_out of this position
 	*/
 	@Override
-	public void setStrategyId_out(long strategyId_out) {
-		_position.setStrategyId_out(strategyId_out);
+	public void setStrategy_out(java.lang.String strategy_out) {
+		_position.setStrategy_out(strategy_out);
 	}
 
 	/**

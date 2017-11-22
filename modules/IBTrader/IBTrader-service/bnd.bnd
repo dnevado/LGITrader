@@ -4,8 +4,10 @@ Bundle-Version: 1.0.0
 Liferay-Require-SchemaVersion: 1.0.0
 Liferay-Service: true
 Export-Package: \
-	com.ibtrader.admin.constants,\
-	com.ibtrader.asset,\
 	com.ibtrader.indexer,\
 	com.ibtrader.service.data.permission,\
-	com.ibtrader.strategy.types
+	com.ibtrader.strategy.types,\
+	com.ibtrader.service.data.model,\
+	com.ibtrader.strategy
+Include-Resource:\
+     @tws-api-9.72.05.jar,\	

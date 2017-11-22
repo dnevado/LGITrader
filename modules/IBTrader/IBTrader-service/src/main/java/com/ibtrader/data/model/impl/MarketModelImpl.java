@@ -80,7 +80,9 @@ public class MarketModelImpl extends BaseModelImpl<Market>
 			{ "start_hour", Types.VARCHAR },
 			{ "end_hour", Types.VARCHAR },
 			{ "identifier", Types.VARCHAR },
-			{ "currency_", Types.VARCHAR }
+			{ "currency_", Types.VARCHAR },
+			{ "name", Types.VARCHAR },
+			{ "description", Types.VARCHAR }
 		};
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP = new HashMap<String, Integer>();
 
@@ -96,9 +98,11 @@ public class MarketModelImpl extends BaseModelImpl<Market>
 		TABLE_COLUMNS_MAP.put("end_hour", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("identifier", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("currency_", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("name", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("description", Types.VARCHAR);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table ibtrader_Market (uuid_ VARCHAR(75) null,marketId LONG not null primary key,groupId LONG,companyId LONG,active_ BOOLEAN,createDate DATE null,modifiedDate DATE null,start_hour VARCHAR(75) null,end_hour VARCHAR(75) null,identifier VARCHAR(75) null,currency_ VARCHAR(75) null)";
+	public static final String TABLE_SQL_CREATE = "create table ibtrader_Market (uuid_ VARCHAR(75) null,marketId LONG not null primary key,groupId LONG,companyId LONG,active_ BOOLEAN,createDate DATE null,modifiedDate DATE null,start_hour VARCHAR(75) null,end_hour VARCHAR(75) null,identifier VARCHAR(75) null,currency_ VARCHAR(75) null,name VARCHAR(75) null,description VARCHAR(75) null)";
 	public static final String TABLE_SQL_DROP = "drop table ibtrader_Market";
 	public static final String ORDER_BY_JPQL = " ORDER BY market.marketId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY ibtrader_Market.marketId ASC";
@@ -146,6 +150,8 @@ public class MarketModelImpl extends BaseModelImpl<Market>
 		model.setEnd_hour(soapModel.getEnd_hour());
 		model.setIdentifier(soapModel.getIdentifier());
 		model.setCurrency(soapModel.getCurrency());
+		model.setName(soapModel.getName());
+		model.setDescription(soapModel.getDescription());
 
 		return model;
 	}
@@ -221,6 +227,8 @@ public class MarketModelImpl extends BaseModelImpl<Market>
 		attributes.put("end_hour", getEnd_hour());
 		attributes.put("identifier", getIdentifier());
 		attributes.put("currency", getCurrency());
+		attributes.put("name", getName());
+		attributes.put("description", getDescription());
 
 		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
 		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
@@ -294,6 +302,18 @@ public class MarketModelImpl extends BaseModelImpl<Market>
 
 		if (currency != null) {
 			setCurrency(currency);
+		}
+
+		String name = (String)attributes.get("name");
+
+		if (name != null) {
+			setName(name);
+		}
+
+		String description = (String)attributes.get("description");
+
+		if (description != null) {
+			setDescription(description);
 		}
 	}
 
@@ -519,6 +539,38 @@ public class MarketModelImpl extends BaseModelImpl<Market>
 		_currency = currency;
 	}
 
+	@JSON
+	@Override
+	public String getName() {
+		if (_name == null) {
+			return StringPool.BLANK;
+		}
+		else {
+			return _name;
+		}
+	}
+
+	@Override
+	public void setName(String name) {
+		_name = name;
+	}
+
+	@JSON
+	@Override
+	public String getDescription() {
+		if (_description == null) {
+			return StringPool.BLANK;
+		}
+		else {
+			return _description;
+		}
+	}
+
+	@Override
+	public void setDescription(String description) {
+		_description = description;
+	}
+
 	@Override
 	public StagedModelType getStagedModelType() {
 		return new StagedModelType(PortalUtil.getClassNameId(
@@ -567,6 +619,8 @@ public class MarketModelImpl extends BaseModelImpl<Market>
 		marketImpl.setEnd_hour(getEnd_hour());
 		marketImpl.setIdentifier(getIdentifier());
 		marketImpl.setCurrency(getCurrency());
+		marketImpl.setName(getName());
+		marketImpl.setDescription(getDescription());
 
 		marketImpl.resetOriginalValues();
 
@@ -722,12 +776,28 @@ public class MarketModelImpl extends BaseModelImpl<Market>
 			marketCacheModel.currency = null;
 		}
 
+		marketCacheModel.name = getName();
+
+		String name = marketCacheModel.name;
+
+		if ((name != null) && (name.length() == 0)) {
+			marketCacheModel.name = null;
+		}
+
+		marketCacheModel.description = getDescription();
+
+		String description = marketCacheModel.description;
+
+		if ((description != null) && (description.length() == 0)) {
+			marketCacheModel.description = null;
+		}
+
 		return marketCacheModel;
 	}
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(23);
+		StringBundler sb = new StringBundler(27);
 
 		sb.append("{uuid=");
 		sb.append(getUuid());
@@ -751,6 +821,10 @@ public class MarketModelImpl extends BaseModelImpl<Market>
 		sb.append(getIdentifier());
 		sb.append(", currency=");
 		sb.append(getCurrency());
+		sb.append(", name=");
+		sb.append(getName());
+		sb.append(", description=");
+		sb.append(getDescription());
 		sb.append("}");
 
 		return sb.toString();
@@ -758,7 +832,7 @@ public class MarketModelImpl extends BaseModelImpl<Market>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(37);
+		StringBundler sb = new StringBundler(43);
 
 		sb.append("<model><model-name>");
 		sb.append("com.ibtrader.data.model.Market");
@@ -808,6 +882,14 @@ public class MarketModelImpl extends BaseModelImpl<Market>
 			"<column><column-name>currency</column-name><column-value><![CDATA[");
 		sb.append(getCurrency());
 		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>name</column-name><column-value><![CDATA[");
+		sb.append(getName());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>description</column-name><column-value><![CDATA[");
+		sb.append(getDescription());
+		sb.append("]]></column-value></column>");
 
 		sb.append("</model>");
 
@@ -839,6 +921,8 @@ public class MarketModelImpl extends BaseModelImpl<Market>
 	private String _originalEnd_hour;
 	private String _identifier;
 	private String _currency;
+	private String _name;
+	private String _description;
 	private long _columnBitmask;
 	private Market _escapedModel;
 }

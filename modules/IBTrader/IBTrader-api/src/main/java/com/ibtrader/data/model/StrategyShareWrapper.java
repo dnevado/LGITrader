@@ -68,6 +68,7 @@ public class StrategyShareWrapper implements StrategyShare,
 		attributes.put("modifiedDate", getModifiedDate());
 		attributes.put("strategyId", getStrategyId());
 		attributes.put("shareId", getShareId());
+		attributes.put("strategyparamsoverride", getStrategyparamsoverride());
 
 		return attributes;
 	}
@@ -120,6 +121,13 @@ public class StrategyShareWrapper implements StrategyShare,
 
 		if (shareId != null) {
 			setShareId(shareId);
+		}
+
+		String strategyparamsoverride = (String)attributes.get(
+				"strategyparamsoverride");
+
+		if (strategyparamsoverride != null) {
+			setStrategyparamsoverride(strategyparamsoverride);
 		}
 	}
 
@@ -176,6 +184,16 @@ public class StrategyShareWrapper implements StrategyShare,
 	@Override
 	public java.lang.Object clone() {
 		return new StrategyShareWrapper((StrategyShare)_strategyShare.clone());
+	}
+
+	/**
+	* Returns the strategyparamsoverride of this strategy share.
+	*
+	* @return the strategyparamsoverride of this strategy share
+	*/
+	@Override
+	public java.lang.String getStrategyparamsoverride() {
+		return _strategyShare.getStrategyparamsoverride();
 	}
 
 	/**
@@ -382,6 +400,17 @@ public class StrategyShareWrapper implements StrategyShare,
 	@Override
 	public void setStrategyId(long strategyId) {
 		_strategyShare.setStrategyId(strategyId);
+	}
+
+	/**
+	* Sets the strategyparamsoverride of this strategy share.
+	*
+	* @param strategyparamsoverride the strategyparamsoverride of this strategy share
+	*/
+	@Override
+	public void setStrategyparamsoverride(
+		java.lang.String strategyparamsoverride) {
+		_strategyShare.setStrategyparamsoverride(strategyparamsoverride);
 	}
 
 	/**

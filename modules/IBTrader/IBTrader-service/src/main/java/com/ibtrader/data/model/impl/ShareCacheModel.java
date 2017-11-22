@@ -65,7 +65,7 @@ public class ShareCacheModel implements CacheModel<Share>, Externalizable {
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(51);
+		StringBundler sb = new StringBundler(53);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -115,6 +115,8 @@ public class ShareCacheModel implements CacheModel<Share>, Externalizable {
 		sb.append(primary_exchange);
 		sb.append(", date_contract_verified=");
 		sb.append(date_contract_verified);
+		sb.append(", userCreatedId=");
+		sb.append(userCreatedId);
 		sb.append(", marketId=");
 		sb.append(marketId);
 		sb.append("}");
@@ -232,6 +234,7 @@ public class ShareCacheModel implements CacheModel<Share>, Externalizable {
 			shareImpl.setDate_contract_verified(new Date(date_contract_verified));
 		}
 
+		shareImpl.setUserCreatedId(userCreatedId);
 		shareImpl.setMarketId(marketId);
 
 		shareImpl.resetOriginalValues();
@@ -276,6 +279,8 @@ public class ShareCacheModel implements CacheModel<Share>, Externalizable {
 		exchange = objectInput.readUTF();
 		primary_exchange = objectInput.readUTF();
 		date_contract_verified = objectInput.readLong();
+
+		userCreatedId = objectInput.readLong();
 
 		marketId = objectInput.readLong();
 	}
@@ -373,6 +378,8 @@ public class ShareCacheModel implements CacheModel<Share>, Externalizable {
 
 		objectOutput.writeLong(date_contract_verified);
 
+		objectOutput.writeLong(userCreatedId);
+
 		objectOutput.writeLong(marketId);
 	}
 
@@ -400,5 +407,6 @@ public class ShareCacheModel implements CacheModel<Share>, Externalizable {
 	public String exchange;
 	public String primary_exchange;
 	public long date_contract_verified;
+	public long userCreatedId;
 	public long marketId;
 }

@@ -257,6 +257,13 @@ public class StrategyShareLocalServiceWrapper
 			end, orderByComparator);
 	}
 
+	@Override
+	public java.util.List<com.ibtrader.data.model.StrategyShare> getByGroupCompanyShareId(
+		long groupid, long companyid, long shareId) {
+		return _strategyShareLocalService.getByGroupCompanyShareId(groupid,
+			companyid, shareId);
+	}
+
 	/**
 	* Returns a range of all the strategy shares.
 	*

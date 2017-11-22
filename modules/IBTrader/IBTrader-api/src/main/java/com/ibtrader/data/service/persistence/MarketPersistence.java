@@ -368,23 +368,28 @@ public interface MarketPersistence extends BasePersistence<Market> {
 	public int countByUuid_C(java.lang.String uuid, long companyId);
 
 	/**
-	* Returns all the markets where start_hour = &#63; and end_hour = &#63; and active = &#63;.
+	* Returns all the markets where groupId = &#63; and companyId = &#63; and start_hour = &#63; and end_hour = &#63; and active = &#63;.
 	*
+	* @param groupId the group ID
+	* @param companyId the company ID
 	* @param start_hour the start_hour
 	* @param end_hour the end_hour
 	* @param active the active
 	* @return the matching markets
 	*/
-	public java.util.List<Market> findByActiveStartEndHour(
-		java.lang.String start_hour, java.lang.String end_hour, boolean active);
+	public java.util.List<Market> findByActiveStartEndHour(long groupId,
+		long companyId, java.lang.String start_hour, java.lang.String end_hour,
+		boolean active);
 
 	/**
-	* Returns a range of all the markets where start_hour = &#63; and end_hour = &#63; and active = &#63;.
+	* Returns a range of all the markets where groupId = &#63; and companyId = &#63; and start_hour = &#63; and end_hour = &#63; and active = &#63;.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link MarketModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
+	* @param groupId the group ID
+	* @param companyId the company ID
 	* @param start_hour the start_hour
 	* @param end_hour the end_hour
 	* @param active the active
@@ -392,17 +397,19 @@ public interface MarketPersistence extends BasePersistence<Market> {
 	* @param end the upper bound of the range of markets (not inclusive)
 	* @return the range of matching markets
 	*/
-	public java.util.List<Market> findByActiveStartEndHour(
-		java.lang.String start_hour, java.lang.String end_hour, boolean active,
-		int start, int end);
+	public java.util.List<Market> findByActiveStartEndHour(long groupId,
+		long companyId, java.lang.String start_hour, java.lang.String end_hour,
+		boolean active, int start, int end);
 
 	/**
-	* Returns an ordered range of all the markets where start_hour = &#63; and end_hour = &#63; and active = &#63;.
+	* Returns an ordered range of all the markets where groupId = &#63; and companyId = &#63; and start_hour = &#63; and end_hour = &#63; and active = &#63;.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link MarketModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
+	* @param groupId the group ID
+	* @param companyId the company ID
 	* @param start_hour the start_hour
 	* @param end_hour the end_hour
 	* @param active the active
@@ -411,18 +418,20 @@ public interface MarketPersistence extends BasePersistence<Market> {
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching markets
 	*/
-	public java.util.List<Market> findByActiveStartEndHour(
-		java.lang.String start_hour, java.lang.String end_hour, boolean active,
-		int start, int end,
+	public java.util.List<Market> findByActiveStartEndHour(long groupId,
+		long companyId, java.lang.String start_hour, java.lang.String end_hour,
+		boolean active, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<Market> orderByComparator);
 
 	/**
-	* Returns an ordered range of all the markets where start_hour = &#63; and end_hour = &#63; and active = &#63;.
+	* Returns an ordered range of all the markets where groupId = &#63; and companyId = &#63; and start_hour = &#63; and end_hour = &#63; and active = &#63;.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link MarketModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
+	* @param groupId the group ID
+	* @param companyId the company ID
 	* @param start_hour the start_hour
 	* @param end_hour the end_hour
 	* @param active the active
@@ -432,15 +441,17 @@ public interface MarketPersistence extends BasePersistence<Market> {
 	* @param retrieveFromCache whether to retrieve from the finder cache
 	* @return the ordered range of matching markets
 	*/
-	public java.util.List<Market> findByActiveStartEndHour(
-		java.lang.String start_hour, java.lang.String end_hour, boolean active,
-		int start, int end,
+	public java.util.List<Market> findByActiveStartEndHour(long groupId,
+		long companyId, java.lang.String start_hour, java.lang.String end_hour,
+		boolean active, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<Market> orderByComparator,
 		boolean retrieveFromCache);
 
 	/**
-	* Returns the first market in the ordered set where start_hour = &#63; and end_hour = &#63; and active = &#63;.
+	* Returns the first market in the ordered set where groupId = &#63; and companyId = &#63; and start_hour = &#63; and end_hour = &#63; and active = &#63;.
 	*
+	* @param groupId the group ID
+	* @param companyId the company ID
 	* @param start_hour the start_hour
 	* @param end_hour the end_hour
 	* @param active the active
@@ -448,27 +459,31 @@ public interface MarketPersistence extends BasePersistence<Market> {
 	* @return the first matching market
 	* @throws NoSuchMarketException if a matching market could not be found
 	*/
-	public Market findByActiveStartEndHour_First(java.lang.String start_hour,
-		java.lang.String end_hour, boolean active,
+	public Market findByActiveStartEndHour_First(long groupId, long companyId,
+		java.lang.String start_hour, java.lang.String end_hour, boolean active,
 		com.liferay.portal.kernel.util.OrderByComparator<Market> orderByComparator)
 		throws NoSuchMarketException;
 
 	/**
-	* Returns the first market in the ordered set where start_hour = &#63; and end_hour = &#63; and active = &#63;.
+	* Returns the first market in the ordered set where groupId = &#63; and companyId = &#63; and start_hour = &#63; and end_hour = &#63; and active = &#63;.
 	*
+	* @param groupId the group ID
+	* @param companyId the company ID
 	* @param start_hour the start_hour
 	* @param end_hour the end_hour
 	* @param active the active
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching market, or <code>null</code> if a matching market could not be found
 	*/
-	public Market fetchByActiveStartEndHour_First(java.lang.String start_hour,
-		java.lang.String end_hour, boolean active,
+	public Market fetchByActiveStartEndHour_First(long groupId, long companyId,
+		java.lang.String start_hour, java.lang.String end_hour, boolean active,
 		com.liferay.portal.kernel.util.OrderByComparator<Market> orderByComparator);
 
 	/**
-	* Returns the last market in the ordered set where start_hour = &#63; and end_hour = &#63; and active = &#63;.
+	* Returns the last market in the ordered set where groupId = &#63; and companyId = &#63; and start_hour = &#63; and end_hour = &#63; and active = &#63;.
 	*
+	* @param groupId the group ID
+	* @param companyId the company ID
 	* @param start_hour the start_hour
 	* @param end_hour the end_hour
 	* @param active the active
@@ -476,28 +491,32 @@ public interface MarketPersistence extends BasePersistence<Market> {
 	* @return the last matching market
 	* @throws NoSuchMarketException if a matching market could not be found
 	*/
-	public Market findByActiveStartEndHour_Last(java.lang.String start_hour,
-		java.lang.String end_hour, boolean active,
+	public Market findByActiveStartEndHour_Last(long groupId, long companyId,
+		java.lang.String start_hour, java.lang.String end_hour, boolean active,
 		com.liferay.portal.kernel.util.OrderByComparator<Market> orderByComparator)
 		throws NoSuchMarketException;
 
 	/**
-	* Returns the last market in the ordered set where start_hour = &#63; and end_hour = &#63; and active = &#63;.
+	* Returns the last market in the ordered set where groupId = &#63; and companyId = &#63; and start_hour = &#63; and end_hour = &#63; and active = &#63;.
 	*
+	* @param groupId the group ID
+	* @param companyId the company ID
 	* @param start_hour the start_hour
 	* @param end_hour the end_hour
 	* @param active the active
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching market, or <code>null</code> if a matching market could not be found
 	*/
-	public Market fetchByActiveStartEndHour_Last(java.lang.String start_hour,
-		java.lang.String end_hour, boolean active,
+	public Market fetchByActiveStartEndHour_Last(long groupId, long companyId,
+		java.lang.String start_hour, java.lang.String end_hour, boolean active,
 		com.liferay.portal.kernel.util.OrderByComparator<Market> orderByComparator);
 
 	/**
-	* Returns the markets before and after the current market in the ordered set where start_hour = &#63; and end_hour = &#63; and active = &#63;.
+	* Returns the markets before and after the current market in the ordered set where groupId = &#63; and companyId = &#63; and start_hour = &#63; and end_hour = &#63; and active = &#63;.
 	*
 	* @param marketId the primary key of the current market
+	* @param groupId the group ID
+	* @param companyId the company ID
 	* @param start_hour the start_hour
 	* @param end_hour the end_hour
 	* @param active the active
@@ -506,30 +525,35 @@ public interface MarketPersistence extends BasePersistence<Market> {
 	* @throws NoSuchMarketException if a market with the primary key could not be found
 	*/
 	public Market[] findByActiveStartEndHour_PrevAndNext(long marketId,
-		java.lang.String start_hour, java.lang.String end_hour, boolean active,
+		long groupId, long companyId, java.lang.String start_hour,
+		java.lang.String end_hour, boolean active,
 		com.liferay.portal.kernel.util.OrderByComparator<Market> orderByComparator)
 		throws NoSuchMarketException;
 
 	/**
-	* Removes all the markets where start_hour = &#63; and end_hour = &#63; and active = &#63; from the database.
+	* Removes all the markets where groupId = &#63; and companyId = &#63; and start_hour = &#63; and end_hour = &#63; and active = &#63; from the database.
 	*
+	* @param groupId the group ID
+	* @param companyId the company ID
 	* @param start_hour the start_hour
 	* @param end_hour the end_hour
 	* @param active the active
 	*/
-	public void removeByActiveStartEndHour(java.lang.String start_hour,
-		java.lang.String end_hour, boolean active);
+	public void removeByActiveStartEndHour(long groupId, long companyId,
+		java.lang.String start_hour, java.lang.String end_hour, boolean active);
 
 	/**
-	* Returns the number of markets where start_hour = &#63; and end_hour = &#63; and active = &#63;.
+	* Returns the number of markets where groupId = &#63; and companyId = &#63; and start_hour = &#63; and end_hour = &#63; and active = &#63;.
 	*
+	* @param groupId the group ID
+	* @param companyId the company ID
 	* @param start_hour the start_hour
 	* @param end_hour the end_hour
 	* @param active the active
 	* @return the number of matching markets
 	*/
-	public int countByActiveStartEndHour(java.lang.String start_hour,
-		java.lang.String end_hour, boolean active);
+	public int countByActiveStartEndHour(long groupId, long companyId,
+		java.lang.String start_hour, java.lang.String end_hour, boolean active);
 
 	/**
 	* Caches the market in the entity cache if it is enabled.

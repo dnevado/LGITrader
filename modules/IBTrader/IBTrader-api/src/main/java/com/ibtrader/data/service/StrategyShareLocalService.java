@@ -225,6 +225,10 @@ public interface StrategyShareLocalService extends BaseLocalService,
 	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
 		int end, OrderByComparator<T> orderByComparator);
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<StrategyShare> getByGroupCompanyShareId(long groupid,
+		long companyid, long shareId);
+
 	/**
 	* Returns a range of all the strategy shares.
 	*

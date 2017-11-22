@@ -3,13 +3,13 @@ create table ibtrader_Config (
 	configId LONG not null primary key,
 	groupId LONG,
 	companyId LONG,
-	name VARCHAR(500) null,
+	name VARCHAR(75) null,
 	value VARCHAR(75) null,
 	createDate DATE null,
 	modifiedDate DATE null,
 	globaldefault BOOLEAN,
 	config_key VARCHAR(75) null,
-	description STRING null
+	description VARCHAR(75) null
 );
 
 create table ibtrader_IBOrder (
@@ -33,7 +33,9 @@ create table ibtrader_Market (
 	start_hour VARCHAR(75) null,
 	end_hour VARCHAR(75) null,
 	identifier VARCHAR(75) null,
-	currency_ VARCHAR(75) null
+	currency_ VARCHAR(75) null,
+	name VARCHAR(75) null,
+	description VARCHAR(75) null
 );
 
 create table ibtrader_Position (
@@ -48,12 +50,13 @@ create table ibtrader_Position (
 	state_ VARCHAR(75) null,
 	state_in VARCHAR(75) null,
 	state_out VARCHAR(75) null,
-	description STRING null,
+	description VARCHAR(75) null,
 	price_in DOUBLE,
 	price_real_in DOUBLE,
 	limit_price_in DOUBLE,
 	date_in DATE null,
 	date_real_in DATE null,
+	positionId_tws_in LONG,
 	positionId_tws_out LONG,
 	type_ VARCHAR(75) null,
 	price_out DOUBLE,
@@ -66,8 +69,8 @@ create table ibtrader_Position (
 	share_number_traded LONG,
 	realtimeId_in LONG,
 	realtimeId_out LONG,
-	strategyId_in LONG,
-	strategyId_out LONG,
+	strategy_in VARCHAR(75) null,
+	strategy_out VARCHAR(75) null,
 	percentualstoplost_out DOUBLE,
 	pricestoplost_out DOUBLE,
 	percentualstopprofit_out DOUBLE,
@@ -95,7 +98,7 @@ create table ibtrader_Realtime (
 create table ibtrader_Share (
 	uuid_ VARCHAR(75) null,
 	shareId LONG not null primary key,
-	name VARCHAR(500) null,
+	name VARCHAR(75) null,
 	symbol VARCHAR(75) null,
 	groupId LONG,
 	companyId LONG,
@@ -117,6 +120,7 @@ create table ibtrader_Share (
 	exchange VARCHAR(75) null,
 	primary_exchange VARCHAR(75) null,
 	date_contract_verified DATE null,
+	userCreatedId LONG,
 	marketId LONG
 );
 
@@ -125,8 +129,8 @@ create table ibtrader_Strategy (
 	strategyID LONG not null primary key,
 	groupId LONG,
 	companyId LONG,
-	name VARCHAR(500) null,
-	description STRING null,
+	name VARCHAR(75) null,
+	description VARCHAR(75) null,
 	createDate DATE null,
 	modifiedDate DATE null,
 	active_ BOOLEAN,
@@ -135,7 +139,7 @@ create table ibtrader_Strategy (
 	statusByUserName VARCHAR(75) null,
 	statusDate DATE null,
 	type_ VARCHAR(75) null,
-	className VARCHAR(500) null,
+	className VARCHAR(75) null,
 	userId LONG
 );
 
@@ -147,5 +151,6 @@ create table ibtrader_StrategyShare (
 	createDate DATE null,
 	modifiedDate DATE null,
 	strategyId LONG,
-	shareId LONG
+	shareId LONG,
+	strategyparamsoverride TEXT null
 );

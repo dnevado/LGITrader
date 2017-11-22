@@ -65,7 +65,7 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(77);
+		StringBundler sb = new StringBundler(79);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -101,6 +101,8 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 		sb.append(date_in);
 		sb.append(", date_real_in=");
 		sb.append(date_real_in);
+		sb.append(", positionId_tws_in=");
+		sb.append(positionId_tws_in);
 		sb.append(", positionId_tws_out=");
 		sb.append(positionId_tws_out);
 		sb.append(", type=");
@@ -125,10 +127,10 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 		sb.append(realtimeId_in);
 		sb.append(", realtimeId_out=");
 		sb.append(realtimeId_out);
-		sb.append(", strategyId_in=");
-		sb.append(strategyId_in);
-		sb.append(", strategyId_out=");
-		sb.append(strategyId_out);
+		sb.append(", strategy_in=");
+		sb.append(strategy_in);
+		sb.append(", strategy_out=");
+		sb.append(strategy_out);
 		sb.append(", percentualstoplost_out=");
 		sb.append(percentualstoplost_out);
 		sb.append(", pricestoplost_out=");
@@ -225,6 +227,7 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 			positionImpl.setDate_real_in(new Date(date_real_in));
 		}
 
+		positionImpl.setPositionId_tws_in(positionId_tws_in);
 		positionImpl.setPositionId_tws_out(positionId_tws_out);
 
 		if (type == null) {
@@ -257,8 +260,21 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 		positionImpl.setShare_number_traded(share_number_traded);
 		positionImpl.setRealtimeId_in(realtimeId_in);
 		positionImpl.setRealtimeId_out(realtimeId_out);
-		positionImpl.setStrategyId_in(strategyId_in);
-		positionImpl.setStrategyId_out(strategyId_out);
+
+		if (strategy_in == null) {
+			positionImpl.setStrategy_in(StringPool.BLANK);
+		}
+		else {
+			positionImpl.setStrategy_in(strategy_in);
+		}
+
+		if (strategy_out == null) {
+			positionImpl.setStrategy_out(StringPool.BLANK);
+		}
+		else {
+			positionImpl.setStrategy_out(strategy_out);
+		}
+
 		positionImpl.setPercentualstoplost_out(percentualstoplost_out);
 		positionImpl.setPricestoplost_out(pricestoplost_out);
 		positionImpl.setPercentualstopprofit_out(percentualstopprofit_out);
@@ -307,6 +323,8 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 		date_in = objectInput.readLong();
 		date_real_in = objectInput.readLong();
 
+		positionId_tws_in = objectInput.readLong();
+
 		positionId_tws_out = objectInput.readLong();
 		type = objectInput.readUTF();
 
@@ -327,10 +345,8 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 		realtimeId_in = objectInput.readLong();
 
 		realtimeId_out = objectInput.readLong();
-
-		strategyId_in = objectInput.readLong();
-
-		strategyId_out = objectInput.readLong();
+		strategy_in = objectInput.readUTF();
+		strategy_out = objectInput.readUTF();
 
 		percentualstoplost_out = objectInput.readDouble();
 
@@ -404,6 +420,8 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 		objectOutput.writeLong(date_in);
 		objectOutput.writeLong(date_real_in);
 
+		objectOutput.writeLong(positionId_tws_in);
+
 		objectOutput.writeLong(positionId_tws_out);
 
 		if (type == null) {
@@ -431,9 +449,19 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 
 		objectOutput.writeLong(realtimeId_out);
 
-		objectOutput.writeLong(strategyId_in);
+		if (strategy_in == null) {
+			objectOutput.writeUTF(StringPool.BLANK);
+		}
+		else {
+			objectOutput.writeUTF(strategy_in);
+		}
 
-		objectOutput.writeLong(strategyId_out);
+		if (strategy_out == null) {
+			objectOutput.writeUTF(StringPool.BLANK);
+		}
+		else {
+			objectOutput.writeUTF(strategy_out);
+		}
 
 		objectOutput.writeDouble(percentualstoplost_out);
 
@@ -472,6 +500,7 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 	public double limit_price_in;
 	public long date_in;
 	public long date_real_in;
+	public long positionId_tws_in;
 	public long positionId_tws_out;
 	public String type;
 	public double price_out;
@@ -484,8 +513,8 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 	public long share_number_traded;
 	public long realtimeId_in;
 	public long realtimeId_out;
-	public long strategyId_in;
-	public long strategyId_out;
+	public String strategy_in;
+	public String strategy_out;
 	public double percentualstoplost_out;
 	public double pricestoplost_out;
 	public double percentualstopprofit_out;

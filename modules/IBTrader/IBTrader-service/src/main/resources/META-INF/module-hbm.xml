@@ -50,6 +50,8 @@
 		<property name="end_hour" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="identifier" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property column="currency_" name="currency" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="name" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="description" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 	</class>
 	<class name="com.ibtrader.data.model.impl.PositionImpl" table="ibtrader_Position">
 		<id name="positionId" type="long">
@@ -71,6 +73,7 @@
 		<property name="limit_price_in" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
 		<property name="date_in" type="org.hibernate.type.TimestampType" />
 		<property name="date_real_in" type="org.hibernate.type.TimestampType" />
+		<property name="positionId_tws_in" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 		<property name="positionId_tws_out" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 		<property column="type_" name="type" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="price_out" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
@@ -83,8 +86,8 @@
 		<property name="share_number_traded" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 		<property name="realtimeId_in" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 		<property name="realtimeId_out" type="com.liferay.portal.dao.orm.hibernate.LongType" />
-		<property name="strategyId_in" type="com.liferay.portal.dao.orm.hibernate.LongType" />
-		<property name="strategyId_out" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="strategy_in" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="strategy_out" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="percentualstoplost_out" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
 		<property name="pricestoplost_out" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
 		<property name="percentualstopprofit_out" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
@@ -136,6 +139,7 @@
 		<property name="exchange" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="primary_exchange" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="date_contract_verified" type="org.hibernate.type.TimestampType" />
+		<property name="userCreatedId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 		<property name="marketId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 	</class>
 	<class name="com.ibtrader.data.model.impl.StrategyImpl" table="ibtrader_Strategy">
@@ -169,5 +173,6 @@
 		<property name="modifiedDate" type="org.hibernate.type.TimestampType" />
 		<property name="strategyId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 		<property name="shareId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="strategyparamsoverride" type="com.liferay.portal.dao.orm.hibernate.StringClobType" />
 	</class>
 </hibernate-mapping>

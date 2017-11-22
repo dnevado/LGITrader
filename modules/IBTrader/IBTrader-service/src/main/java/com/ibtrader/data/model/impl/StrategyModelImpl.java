@@ -112,7 +112,7 @@ public class StrategyModelImpl extends BaseModelImpl<Strategy>
 		TABLE_COLUMNS_MAP.put("userId", Types.BIGINT);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table ibtrader_Strategy (uuid_ VARCHAR(75) null,strategyID LONG not null primary key,groupId LONG,companyId LONG,name VARCHAR(500) null,description STRING null,createDate DATE null,modifiedDate DATE null,active_ BOOLEAN,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null,type_ VARCHAR(75) null,className VARCHAR(500) null,userId LONG)";
+	public static final String TABLE_SQL_CREATE = "create table ibtrader_Strategy (uuid_ VARCHAR(75) null,strategyID LONG not null primary key,groupId LONG,companyId LONG,name VARCHAR(75) null,description VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,active_ BOOLEAN,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null,type_ VARCHAR(75) null,className VARCHAR(75) null,userId LONG)";
 	public static final String TABLE_SQL_DROP = "drop table ibtrader_Strategy";
 	public static final String ORDER_BY_JPQL = " ORDER BY strategy.strategyID ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY ibtrader_Strategy.strategyID ASC";

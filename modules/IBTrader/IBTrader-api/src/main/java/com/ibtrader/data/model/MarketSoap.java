@@ -45,6 +45,8 @@ public class MarketSoap implements Serializable {
 		soapModel.setEnd_hour(model.getEnd_hour());
 		soapModel.setIdentifier(model.getIdentifier());
 		soapModel.setCurrency(model.getCurrency());
+		soapModel.setName(model.getName());
+		soapModel.setDescription(model.getDescription());
 
 		return soapModel;
 	}
@@ -189,6 +191,22 @@ public class MarketSoap implements Serializable {
 		_currency = currency;
 	}
 
+	public String getName() {
+		return _name;
+	}
+
+	public void setName(String name) {
+		_name = name;
+	}
+
+	public String getDescription() {
+		return _description;
+	}
+
+	public void setDescription(String description) {
+		_description = description;
+	}
+
 	private String _uuid;
 	private long _marketId;
 	private long _groupId;
@@ -200,4 +218,6 @@ public class MarketSoap implements Serializable {
 	private String _end_hour;
 	private String _identifier;
 	private String _currency;
+	private String _name;
+	private String _description;
 }

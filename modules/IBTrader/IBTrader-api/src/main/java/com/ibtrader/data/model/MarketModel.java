@@ -238,6 +238,36 @@ public interface MarketModel extends BaseModel<Market>, ShardedModel, StagedMode
 	 */
 	public void setCurrency(String currency);
 
+	/**
+	 * Returns the name of this market.
+	 *
+	 * @return the name of this market
+	 */
+	@AutoEscape
+	public String getName();
+
+	/**
+	 * Sets the name of this market.
+	 *
+	 * @param name the name of this market
+	 */
+	public void setName(String name);
+
+	/**
+	 * Returns the description of this market.
+	 *
+	 * @return the description of this market
+	 */
+	@AutoEscape
+	public String getDescription();
+
+	/**
+	 * Sets the description of this market.
+	 *
+	 * @param description the description of this market
+	 */
+	public void setDescription(String description);
+
 	@Override
 	public boolean isNew();
 

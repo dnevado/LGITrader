@@ -188,6 +188,11 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 		return new StrategyWrapper(_strategy.toUnescapedModel());
 	}
 
+	@Override
+	public boolean activated() {
+		return _strategy.activated();
+	}
+
 	/**
 	* Returns the active of this strategy.
 	*
@@ -304,6 +309,21 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 	}
 
 	@Override
+	public boolean verify(Share _share, Market _market) {
+		return _strategy.verify(_share, _market);
+	}
+
+	@Override
+	public com.ibtrader.interactive.TIMApiGITrader getTimAPIW() {
+		return _strategy.getTimAPIW();
+	}
+
+	@Override
+	public com.liferay.asset.kernel.model.AssetEntry getIBStrategyAssetEntry() {
+		return _strategy.getIBStrategyAssetEntry();
+	}
+
+	@Override
 	public ExpandoBridge getExpandoBridge() {
 		return _strategy.getExpandoBridge();
 	}
@@ -314,8 +334,33 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 	}
 
 	@Override
+	public float getValueIn() {
+		return _strategy.getValueIn();
+	}
+
+	@Override
+	public float getValueLimitIn() {
+		return _strategy.getValueLimitIn();
+	}
+
+	@Override
+	public float getValueLimitOut() {
+		return _strategy.getValueLimitOut();
+	}
+
+	@Override
+	public float getValueOut() {
+		return _strategy.getValueOut();
+	}
+
+	@Override
 	public int compareTo(Strategy strategy) {
 		return _strategy.compareTo(strategy);
+	}
+
+	@Override
+	public int getCLIENT_ID() {
+		return _strategy.getCLIENT_ID();
 	}
 
 	/**
@@ -463,6 +508,11 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 		return _strategy.getStatusDate();
 	}
 
+	@Override
+	public java.util.List<com.liferay.expando.kernel.model.ExpandoColumn> get_IBStrategyParams() {
+		return _strategy.get_IBStrategyParams();
+	}
+
 	/**
 	* Returns the company ID of this strategy.
 	*
@@ -524,6 +574,11 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 	}
 
 	@Override
+	public void execute(Share _share, Market _market) {
+		_strategy.execute(_share, _market);
+	}
+
+	@Override
 	public void persist() {
 		_strategy.persist();
 	}
@@ -536,6 +591,11 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 	@Override
 	public void setActive(boolean active) {
 		_strategy.setActive(active);
+	}
+
+	@Override
+	public void setCLIENT_ID(int _CLIENT_ID) {
+		_strategy.setCLIENT_ID(_CLIENT_ID);
 	}
 
 	@Override
@@ -607,6 +667,18 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 	@Override
 	public void setGroupId(long groupId) {
 		_strategy.setGroupId(groupId);
+	}
+
+	@Override
+	public void setIBStrategyAssetEntry(
+		com.liferay.asset.kernel.model.AssetEntry _IBStrategyAssetEntry) {
+		_strategy.setIBStrategyAssetEntry(_IBStrategyAssetEntry);
+	}
+
+	@Override
+	public void setIBStrategyParams(
+		java.util.List<com.liferay.expando.kernel.model.ExpandoColumn> _IBStrategyParams) {
+		_strategy.setIBStrategyParams(_IBStrategyParams);
 	}
 
 	/**
@@ -709,6 +781,11 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 		_strategy.setStrategyID(strategyID);
 	}
 
+	@Override
+	public void setTimAPIW(com.ibtrader.interactive.TIMApiGITrader _timAPIW) {
+		_strategy.setTimAPIW(_timAPIW);
+	}
+
 	/**
 	* Sets the type of this strategy.
 	*
@@ -747,6 +824,26 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 	@Override
 	public void setUuid(java.lang.String uuid) {
 		_strategy.setUuid(uuid);
+	}
+
+	@Override
+	public void setValueIn(float _valueIn) {
+		_strategy.setValueIn(_valueIn);
+	}
+
+	@Override
+	public void setValueLimitIn(float _valueLimitIn) {
+		_strategy.setValueLimitIn(_valueLimitIn);
+	}
+
+	@Override
+	public void setValueLimitOut(float _valueLimitOut) {
+		_strategy.setValueLimitOut(_valueLimitOut);
+	}
+
+	@Override
+	public void setValueOut(float _valueOut) {
+		_strategy.setValueOut(_valueOut);
 	}
 
 	@Override

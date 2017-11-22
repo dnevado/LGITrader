@@ -3,7 +3,7 @@ package com.ibtrader.service.data.permission;
 
 
 
-import com.ibtrader.asset.StrategyAssetRenderer;
+
 import com.ibtrader.data.model.Strategy;
 import com.ibtrader.data.service.StrategyLocalService;
 import com.liferay.portal.kernel.exception.PortalException;

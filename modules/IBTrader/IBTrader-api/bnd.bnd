@@ -1,10 +1,26 @@
 Bundle-Name: IBTrader-api
 Bundle-SymbolicName: com.ibtrader.data.api
 Bundle-Version: 1.0.0
-Export-Package:\
+Export-Package: \
+	com.ibtrader.constants,\
 	com.ibtrader.data.exception,\
 	com.ibtrader.data.model,\
 	com.ibtrader.data.service,\
-	com.ibtrader.data.service.persistence,\		
+	com.ibtrader.data.service.persistence,\
+	com.ibtrader.util,\
+	com.ibtrader.interactive
+	com.ibtrader.data.model,\
+	com.ibtrader.data.service,\
+	com.ibtrader.data.service.persistence,\
+	com.ibtrader.admin.constants,\	
+	com.ibtrader.cron,\
+	com.ibtrader.data.exception,\	
+	com.ibtrader.interactive,\
+	com.ibtrader.util,\	
 	com.ibtrader.data.model.Strategy,\
-../IBTrader-service/service.xml
+	../IBTrader-service/service.xml	
+Include-Resource:\
+     com.ibtrader.strategy,\	
+     com.ibtrader.data.model 
+Include-Resource:\
+     @tws-api-9.72.05.jar,\

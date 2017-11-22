@@ -6,17 +6,13 @@
 		<field name="configId" type="long" />
 		<field name="groupId" type="long" />
 		<field name="companyId" type="long" />
-		<field name="name" type="String">
-			<hint name="max-length">500</hint>
-		</field>
+		<field name="name" type="String" />
 		<field name="value" type="String" />
 		<field name="createDate" type="Date" />
 		<field name="modifiedDate" type="Date" />
 		<field name="globaldefault" type="boolean" />
 		<field name="config_key" type="String" />
-		<field name="description" type="String">
-			<hint name="max-length">4000</hint>
-		</field>
+		<field name="description" type="String" />
 	</model>
 	<model name="com.ibtrader.data.model.IBOrder">
 		<field name="uuid" type="String" />
@@ -39,6 +35,8 @@
 		<field name="end_hour" type="String" />
 		<field name="identifier" type="String" />
 		<field name="currency" type="String" />
+		<field name="name" type="String" />
+		<field name="description" type="String" />
 	</model>
 	<model name="com.ibtrader.data.model.Position">
 		<field name="uuid" type="String" />
@@ -52,14 +50,13 @@
 		<field name="state" type="String" />
 		<field name="state_in" type="String" />
 		<field name="state_out" type="String" />
-		<field name="description" type="String">
-			<hint name="max-length">4000</hint>
-		</field>
+		<field name="description" type="String" />
 		<field name="price_in" type="double" />
 		<field name="price_real_in" type="double" />
 		<field name="limit_price_in" type="double" />
 		<field name="date_in" type="Date" />
 		<field name="date_real_in" type="Date" />
+		<field name="positionId_tws_in" type="long" />
 		<field name="positionId_tws_out" type="long" />
 		<field name="type" type="String" />
 		<field name="price_out" type="double" />
@@ -72,8 +69,8 @@
 		<field name="share_number_traded" type="long" />
 		<field name="realtimeId_in" type="long" />
 		<field name="realtimeId_out" type="long" />
-		<field name="strategyId_in" type="long" />
-		<field name="strategyId_out" type="long" />
+		<field name="strategy_in" type="String" />
+		<field name="strategy_out" type="String" />
 		<field name="percentualstoplost_out" type="double" />
 		<field name="pricestoplost_out" type="double" />
 		<field name="percentualstopprofit_out" type="double" />
@@ -99,9 +96,7 @@
 	<model name="com.ibtrader.data.model.Share">
 		<field name="uuid" type="String" />
 		<field name="shareId" type="long" />
-		<field name="name" type="String">
-			<hint name="max-length">500</hint>
-		</field>
+		<field name="name" type="String" />
 		<field name="symbol" type="String" />
 		<field name="groupId" type="long" />
 		<field name="companyId" type="long" />
@@ -123,6 +118,7 @@
 		<field name="exchange" type="String" />
 		<field name="primary_exchange" type="String" />
 		<field name="date_contract_verified" type="Date" />
+		<field name="userCreatedId" type="long" />
 		<field name="marketId" type="long" />
 	</model>
 	<model name="com.ibtrader.data.model.Strategy">
@@ -130,12 +126,8 @@
 		<field name="strategyID" type="long" />
 		<field name="groupId" type="long" />
 		<field name="companyId" type="long" />
-		<field name="name" type="String">
-			<hint name="max-length">500</hint>
-		</field>
-		<field name="description" type="String">
-			<hint name="max-length">4000</hint>
-		</field>
+		<field name="name" type="String" />
+		<field name="description" type="String" />
 		<field name="createDate" type="Date" />
 		<field name="modifiedDate" type="Date" />
 		<field name="active" type="boolean" />
@@ -144,9 +136,7 @@
 		<field name="statusByUserName" type="String" />
 		<field name="statusDate" type="Date" />
 		<field name="type" type="String" />
-		<field name="className" type="String">
-			<hint name="max-length">500</hint>
-		</field>
+		<field name="className" type="String" />
 		<field name="userId" type="long" />
 	</model>
 	<model name="com.ibtrader.data.model.StrategyShare">
@@ -158,5 +148,8 @@
 		<field name="modifiedDate" type="Date" />
 		<field name="strategyId" type="long" />
 		<field name="shareId" type="long" />
+		<field name="strategyparamsoverride" type="String">
+			<hint-collection name="CLOB" />
+		</field>
 	</model>
 </model-hints>

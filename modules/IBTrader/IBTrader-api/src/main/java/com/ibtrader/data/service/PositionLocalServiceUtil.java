@@ -41,6 +41,10 @@ public class PositionLocalServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to {@link com.ibtrader.data.service.impl.PositionLocalServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
+	public static boolean ExistsOpenPosition(long groupId, long companyId,
+		long shareId) {
+		return getService().ExistsOpenPosition(groupId, companyId, shareId);
+	}
 
 	/**
 	* Adds the position to the database. Also notifies the appropriate model listeners.
@@ -103,6 +107,11 @@ public class PositionLocalServiceUtil {
 	public static com.ibtrader.data.model.Position fetchPositionByUuidAndGroupId(
 		java.lang.String uuid, long groupId) {
 		return getService().fetchPositionByUuidAndGroupId(uuid, groupId);
+	}
+
+	public static com.ibtrader.data.model.Position findByCompany(
+		long _companyId) {
+		return getService().findByCompany(_companyId);
 	}
 
 	public static com.ibtrader.data.model.Position findByPositionID_Out_TWS(

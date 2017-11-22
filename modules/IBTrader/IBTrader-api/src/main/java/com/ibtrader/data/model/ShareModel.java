@@ -426,6 +426,20 @@ public interface ShareModel extends BaseModel<Share>, ShardedModel, StagedModel 
 	public void setDate_contract_verified(Date date_contract_verified);
 
 	/**
+	 * Returns the user created ID of this share.
+	 *
+	 * @return the user created ID of this share
+	 */
+	public long getUserCreatedId();
+
+	/**
+	 * Sets the user created ID of this share.
+	 *
+	 * @param userCreatedId the user created ID of this share
+	 */
+	public void setUserCreatedId(long userCreatedId);
+
+	/**
 	 * Returns the market ID of this share.
 	 *
 	 * @return the market ID of this share

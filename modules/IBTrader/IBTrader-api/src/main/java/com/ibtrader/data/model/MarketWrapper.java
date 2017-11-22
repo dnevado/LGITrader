@@ -70,6 +70,8 @@ public class MarketWrapper implements Market, ModelWrapper<Market> {
 		attributes.put("end_hour", getEnd_hour());
 		attributes.put("identifier", getIdentifier());
 		attributes.put("currency", getCurrency());
+		attributes.put("name", getName());
+		attributes.put("description", getDescription());
 
 		return attributes;
 	}
@@ -140,6 +142,18 @@ public class MarketWrapper implements Market, ModelWrapper<Market> {
 
 		if (currency != null) {
 			setCurrency(currency);
+		}
+
+		String name = (String)attributes.get("name");
+
+		if (name != null) {
+			setName(name);
+		}
+
+		String description = (String)attributes.get("description");
+
+		if (description != null) {
+			setDescription(description);
 		}
 	}
 
@@ -229,6 +243,16 @@ public class MarketWrapper implements Market, ModelWrapper<Market> {
 	}
 
 	/**
+	* Returns the description of this market.
+	*
+	* @return the description of this market
+	*/
+	@Override
+	public java.lang.String getDescription() {
+		return _market.getDescription();
+	}
+
+	/**
 	* Returns the end_hour of this market.
 	*
 	* @return the end_hour of this market
@@ -246,6 +270,16 @@ public class MarketWrapper implements Market, ModelWrapper<Market> {
 	@Override
 	public java.lang.String getIdentifier() {
 		return _market.getIdentifier();
+	}
+
+	/**
+	* Returns the name of this market.
+	*
+	* @return the name of this market
+	*/
+	@Override
+	public java.lang.String getName() {
+		return _market.getName();
 	}
 
 	/**
@@ -389,6 +423,16 @@ public class MarketWrapper implements Market, ModelWrapper<Market> {
 	}
 
 	/**
+	* Sets the description of this market.
+	*
+	* @param description the description of this market
+	*/
+	@Override
+	public void setDescription(java.lang.String description) {
+		_market.setDescription(description);
+	}
+
+	/**
 	* Sets the end_hour of this market.
 	*
 	* @param end_hour the end_hour of this market
@@ -452,6 +496,16 @@ public class MarketWrapper implements Market, ModelWrapper<Market> {
 	@Override
 	public void setModifiedDate(Date modifiedDate) {
 		_market.setModifiedDate(modifiedDate);
+	}
+
+	/**
+	* Sets the name of this market.
+	*
+	* @param name the name of this market
+	*/
+	@Override
+	public void setName(java.lang.String name) {
+		_market.setName(name);
 	}
 
 	@Override

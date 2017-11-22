@@ -186,6 +186,21 @@ public interface StrategyShareModel extends BaseModel<StrategyShare>,
 	 */
 	public void setShareId(long shareId);
 
+	/**
+	 * Returns the strategyparamsoverride of this strategy share.
+	 *
+	 * @return the strategyparamsoverride of this strategy share
+	 */
+	@AutoEscape
+	public String getStrategyparamsoverride();
+
+	/**
+	 * Sets the strategyparamsoverride of this strategy share.
+	 *
+	 * @param strategyparamsoverride the strategyparamsoverride of this strategy share
+	 */
+	public void setStrategyparamsoverride(String strategyparamsoverride);
+
 	@Override
 	public boolean isNew();
 

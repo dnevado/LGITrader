@@ -84,6 +84,7 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 		attributes.put("exchange", getExchange());
 		attributes.put("primary_exchange", getPrimary_exchange());
 		attributes.put("date_contract_verified", getDate_contract_verified());
+		attributes.put("userCreatedId", getUserCreatedId());
 		attributes.put("marketId", getMarketId());
 
 		return attributes;
@@ -240,6 +241,12 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 
 		if (date_contract_verified != null) {
 			setDate_contract_verified(date_contract_verified);
+		}
+
+		Long userCreatedId = (Long)attributes.get("userCreatedId");
+
+		if (userCreatedId != null) {
+			setUserCreatedId(userCreatedId);
 		}
 
 		Long marketId = (Long)attributes.get("marketId");
@@ -584,6 +591,16 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 		return _share.getShareId();
 	}
 
+	/**
+	* Returns the user created ID of this share.
+	*
+	* @return the user created ID of this share
+	*/
+	@Override
+	public long getUserCreatedId() {
+		return _share.getUserCreatedId();
+	}
+
 	@Override
 	public void persist() {
 		_share.persist();
@@ -869,6 +886,16 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 	@Override
 	public void setTick_futures(double tick_futures) {
 		_share.setTick_futures(tick_futures);
+	}
+
+	/**
+	* Sets the user created ID of this share.
+	*
+	* @param userCreatedId the user created ID of this share
+	*/
+	@Override
+	public void setUserCreatedId(long userCreatedId) {
+		_share.setUserCreatedId(userCreatedId);
 	}
 
 	/**

@@ -53,4 +53,44 @@ public interface Strategy extends StrategyModel, PersistedModel {
 				return Strategy.class;
 			}
 		};
+
+	public void execute(Share _share, Market _market);
+
+	public boolean verify(Share _share, Market _market);
+
+	public boolean activated();
+
+	public java.util.List<com.liferay.expando.kernel.model.ExpandoColumn> get_IBStrategyParams();
+
+	public void setIBStrategyParams(
+		java.util.List<com.liferay.expando.kernel.model.ExpandoColumn> _IBStrategyParams);
+
+	public com.liferay.asset.kernel.model.AssetEntry getIBStrategyAssetEntry();
+
+	public void setIBStrategyAssetEntry(
+		com.liferay.asset.kernel.model.AssetEntry _IBStrategyAssetEntry);
+
+	public float getValueIn();
+
+	public void setValueIn(float _valueIn);
+
+	public float getValueLimitIn();
+
+	public void setValueLimitIn(float _valueLimitIn);
+
+	public float getValueOut();
+
+	public void setValueOut(float _valueOut);
+
+	public float getValueLimitOut();
+
+	public void setValueLimitOut(float _valueLimitOut);
+
+	public com.ibtrader.interactive.TIMApiGITrader getTimAPIW();
+
+	public void setTimAPIW(com.ibtrader.interactive.TIMApiGITrader _timAPIW);
+
+	public int getCLIENT_ID();
+
+	public void setCLIENT_ID(int _CLIENT_ID);
 }

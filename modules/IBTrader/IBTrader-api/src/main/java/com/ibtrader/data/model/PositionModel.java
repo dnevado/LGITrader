@@ -317,6 +317,20 @@ public interface PositionModel extends BaseModel<Position>, ShardedModel,
 	public void setDate_real_in(Date date_real_in);
 
 	/**
+	 * Returns the position id_tws_in of this position.
+	 *
+	 * @return the position id_tws_in of this position
+	 */
+	public long getPositionId_tws_in();
+
+	/**
+	 * Sets the position id_tws_in of this position.
+	 *
+	 * @param positionId_tws_in the position id_tws_in of this position
+	 */
+	public void setPositionId_tws_in(long positionId_tws_in);
+
+	/**
 	 * Returns the position id_tws_out of this position.
 	 *
 	 * @return the position id_tws_out of this position
@@ -486,32 +500,34 @@ public interface PositionModel extends BaseModel<Position>, ShardedModel,
 	public void setRealtimeId_out(long realtimeId_out);
 
 	/**
-	 * Returns the strategy id_in of this position.
+	 * Returns the strategy_in of this position.
 	 *
-	 * @return the strategy id_in of this position
+	 * @return the strategy_in of this position
 	 */
-	public long getStrategyId_in();
+	@AutoEscape
+	public String getStrategy_in();
 
 	/**
-	 * Sets the strategy id_in of this position.
+	 * Sets the strategy_in of this position.
 	 *
-	 * @param strategyId_in the strategy id_in of this position
+	 * @param strategy_in the strategy_in of this position
 	 */
-	public void setStrategyId_in(long strategyId_in);
+	public void setStrategy_in(String strategy_in);
 
 	/**
-	 * Returns the strategy id_out of this position.
+	 * Returns the strategy_out of this position.
 	 *
-	 * @return the strategy id_out of this position
+	 * @return the strategy_out of this position
 	 */
-	public long getStrategyId_out();
+	@AutoEscape
+	public String getStrategy_out();
 
 	/**
-	 * Sets the strategy id_out of this position.
+	 * Sets the strategy_out of this position.
 	 *
-	 * @param strategyId_out the strategy id_out of this position
+	 * @param strategy_out the strategy_out of this position
 	 */
-	public void setStrategyId_out(long strategyId_out);
+	public void setStrategy_out(String strategy_out);
 
 	/**
 	 * Returns the percentualstoplost_out of this position.

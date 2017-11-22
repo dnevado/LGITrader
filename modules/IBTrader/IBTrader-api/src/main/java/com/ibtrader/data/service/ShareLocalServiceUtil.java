@@ -240,8 +240,15 @@ public class ShareLocalServiceUtil {
 	}
 
 	public static java.util.List<com.ibtrader.data.model.Share> findByActiveMarket(
-		long _MarketId, boolean _Active) {
-		return getService().findByActiveMarket(_MarketId, _Active);
+		long _marketId, boolean _active) {
+		return getService().findByActiveMarket(_marketId, _active);
+	}
+
+	public static java.util.List<com.ibtrader.data.model.Share> findByActiveMarketGroupCompany(
+		long _marketId, boolean _active, long groupId, long companyId) {
+		return getService()
+				   .findByActiveMarketGroupCompany(_marketId, _active, groupId,
+			companyId);
 	}
 
 	/**

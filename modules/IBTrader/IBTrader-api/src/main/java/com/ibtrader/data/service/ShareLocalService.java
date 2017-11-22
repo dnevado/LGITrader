@@ -222,7 +222,10 @@ public interface ShareLocalService extends BaseLocalService,
 	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
 		int end, OrderByComparator<T> orderByComparator);
 
-	public List<Share> findByActiveMarket(long _MarketId, boolean _Active);
+	public List<Share> findByActiveMarket(long _marketId, boolean _active);
+
+	public List<Share> findByActiveMarketGroupCompany(long _marketId,
+		boolean _active, long groupId, long companyId);
 
 	/**
 	* Returns a range of all the shares.

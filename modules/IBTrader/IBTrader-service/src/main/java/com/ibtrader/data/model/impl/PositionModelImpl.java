@@ -87,6 +87,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 			{ "limit_price_in", Types.DOUBLE },
 			{ "date_in", Types.TIMESTAMP },
 			{ "date_real_in", Types.TIMESTAMP },
+			{ "positionId_tws_in", Types.BIGINT },
 			{ "positionId_tws_out", Types.BIGINT },
 			{ "type_", Types.VARCHAR },
 			{ "price_out", Types.DOUBLE },
@@ -99,8 +100,8 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 			{ "share_number_traded", Types.BIGINT },
 			{ "realtimeId_in", Types.BIGINT },
 			{ "realtimeId_out", Types.BIGINT },
-			{ "strategyId_in", Types.BIGINT },
-			{ "strategyId_out", Types.BIGINT },
+			{ "strategy_in", Types.VARCHAR },
+			{ "strategy_out", Types.VARCHAR },
 			{ "percentualstoplost_out", Types.DOUBLE },
 			{ "pricestoplost_out", Types.DOUBLE },
 			{ "percentualstopprofit_out", Types.DOUBLE },
@@ -129,6 +130,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		TABLE_COLUMNS_MAP.put("limit_price_in", Types.DOUBLE);
 		TABLE_COLUMNS_MAP.put("date_in", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("date_real_in", Types.TIMESTAMP);
+		TABLE_COLUMNS_MAP.put("positionId_tws_in", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("positionId_tws_out", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("type_", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("price_out", Types.DOUBLE);
@@ -141,8 +143,8 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		TABLE_COLUMNS_MAP.put("share_number_traded", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("realtimeId_in", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("realtimeId_out", Types.BIGINT);
-		TABLE_COLUMNS_MAP.put("strategyId_in", Types.BIGINT);
-		TABLE_COLUMNS_MAP.put("strategyId_out", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("strategy_in", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("strategy_out", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("percentualstoplost_out", Types.DOUBLE);
 		TABLE_COLUMNS_MAP.put("pricestoplost_out", Types.DOUBLE);
 		TABLE_COLUMNS_MAP.put("percentualstopprofit_out", Types.DOUBLE);
@@ -152,10 +154,10 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		TABLE_COLUMNS_MAP.put("simulation_mode", Types.BOOLEAN);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table ibtrader_Position (uuid_ VARCHAR(75) null,positionId LONG not null primary key,groupId LONG,companyId LONG,shareId LONG,value DOUBLE,createDate DATE null,modifiedDate DATE null,state_ VARCHAR(75) null,state_in VARCHAR(75) null,state_out VARCHAR(75) null,description STRING null,price_in DOUBLE,price_real_in DOUBLE,limit_price_in DOUBLE,date_in DATE null,date_real_in DATE null,positionId_tws_out LONG,type_ VARCHAR(75) null,price_out DOUBLE,price_real_out DOUBLE,limit_price_out DOUBLE,date_out DATE null,date_real_out DATE null,share_number LONG,share_number_to_trade LONG,share_number_traded LONG,realtimeId_in LONG,realtimeId_out LONG,strategyId_in LONG,strategyId_out LONG,percentualstoplost_out DOUBLE,pricestoplost_out DOUBLE,percentualstopprofit_out DOUBLE,pricestopprofit_out DOUBLE,pendingcancelled LONG,trading_data_operations VARCHAR(75) null,simulation_mode BOOLEAN)";
+	public static final String TABLE_SQL_CREATE = "create table ibtrader_Position (uuid_ VARCHAR(75) null,positionId LONG not null primary key,groupId LONG,companyId LONG,shareId LONG,value DOUBLE,createDate DATE null,modifiedDate DATE null,state_ VARCHAR(75) null,state_in VARCHAR(75) null,state_out VARCHAR(75) null,description VARCHAR(75) null,price_in DOUBLE,price_real_in DOUBLE,limit_price_in DOUBLE,date_in DATE null,date_real_in DATE null,positionId_tws_in LONG,positionId_tws_out LONG,type_ VARCHAR(75) null,price_out DOUBLE,price_real_out DOUBLE,limit_price_out DOUBLE,date_out DATE null,date_real_out DATE null,share_number LONG,share_number_to_trade LONG,share_number_traded LONG,realtimeId_in LONG,realtimeId_out LONG,strategy_in VARCHAR(75) null,strategy_out VARCHAR(75) null,percentualstoplost_out DOUBLE,pricestoplost_out DOUBLE,percentualstopprofit_out DOUBLE,pricestopprofit_out DOUBLE,pendingcancelled LONG,trading_data_operations VARCHAR(75) null,simulation_mode BOOLEAN)";
 	public static final String TABLE_SQL_DROP = "drop table ibtrader_Position";
-	public static final String ORDER_BY_JPQL = " ORDER BY position.positionId ASC";
-	public static final String ORDER_BY_SQL = " ORDER BY ibtrader_Position.positionId ASC";
+	public static final String ORDER_BY_JPQL = " ORDER BY position.positionId_tws_in DESC";
+	public static final String ORDER_BY_SQL = " ORDER BY ibtrader_Position.positionId_tws_in DESC";
 	public static final String DATA_SOURCE = "liferayDataSource";
 	public static final String SESSION_FACTORY = "liferaySessionFactory";
 	public static final String TX_MANAGER = "liferayTransactionManager";
@@ -169,10 +171,16 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 				"value.object.column.bitmask.enabled.com.ibtrader.data.model.Position"),
 			true);
 	public static final long COMPANYID_COLUMN_BITMASK = 1L;
-	public static final long GROUPID_COLUMN_BITMASK = 2L;
-	public static final long POSITIONID_TWS_OUT_COLUMN_BITMASK = 4L;
-	public static final long UUID_COLUMN_BITMASK = 8L;
-	public static final long POSITIONID_COLUMN_BITMASK = 16L;
+	public static final long DATE_IN_COLUMN_BITMASK = 2L;
+	public static final long DATE_OUT_COLUMN_BITMASK = 4L;
+	public static final long DATE_REAL_IN_COLUMN_BITMASK = 8L;
+	public static final long DATE_REAL_OUT_COLUMN_BITMASK = 16L;
+	public static final long GROUPID_COLUMN_BITMASK = 32L;
+	public static final long POSITIONID_TWS_OUT_COLUMN_BITMASK = 64L;
+	public static final long SHAREID_COLUMN_BITMASK = 128L;
+	public static final long STATE_COLUMN_BITMASK = 256L;
+	public static final long UUID_COLUMN_BITMASK = 512L;
+	public static final long POSITIONID_TWS_IN_COLUMN_BITMASK = 1024L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -204,6 +212,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		model.setLimit_price_in(soapModel.getLimit_price_in());
 		model.setDate_in(soapModel.getDate_in());
 		model.setDate_real_in(soapModel.getDate_real_in());
+		model.setPositionId_tws_in(soapModel.getPositionId_tws_in());
 		model.setPositionId_tws_out(soapModel.getPositionId_tws_out());
 		model.setType(soapModel.getType());
 		model.setPrice_out(soapModel.getPrice_out());
@@ -216,8 +225,8 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		model.setShare_number_traded(soapModel.getShare_number_traded());
 		model.setRealtimeId_in(soapModel.getRealtimeId_in());
 		model.setRealtimeId_out(soapModel.getRealtimeId_out());
-		model.setStrategyId_in(soapModel.getStrategyId_in());
-		model.setStrategyId_out(soapModel.getStrategyId_out());
+		model.setStrategy_in(soapModel.getStrategy_in());
+		model.setStrategy_out(soapModel.getStrategy_out());
 		model.setPercentualstoplost_out(soapModel.getPercentualstoplost_out());
 		model.setPricestoplost_out(soapModel.getPricestoplost_out());
 		model.setPercentualstopprofit_out(soapModel.getPercentualstopprofit_out());
@@ -306,6 +315,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		attributes.put("limit_price_in", getLimit_price_in());
 		attributes.put("date_in", getDate_in());
 		attributes.put("date_real_in", getDate_real_in());
+		attributes.put("positionId_tws_in", getPositionId_tws_in());
 		attributes.put("positionId_tws_out", getPositionId_tws_out());
 		attributes.put("type", getType());
 		attributes.put("price_out", getPrice_out());
@@ -318,8 +328,8 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		attributes.put("share_number_traded", getShare_number_traded());
 		attributes.put("realtimeId_in", getRealtimeId_in());
 		attributes.put("realtimeId_out", getRealtimeId_out());
-		attributes.put("strategyId_in", getStrategyId_in());
-		attributes.put("strategyId_out", getStrategyId_out());
+		attributes.put("strategy_in", getStrategy_in());
+		attributes.put("strategy_out", getStrategy_out());
 		attributes.put("percentualstoplost_out", getPercentualstoplost_out());
 		attributes.put("pricestoplost_out", getPricestoplost_out());
 		attributes.put("percentualstopprofit_out", getPercentualstopprofit_out());
@@ -438,6 +448,12 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 			setDate_real_in(date_real_in);
 		}
 
+		Long positionId_tws_in = (Long)attributes.get("positionId_tws_in");
+
+		if (positionId_tws_in != null) {
+			setPositionId_tws_in(positionId_tws_in);
+		}
+
 		Long positionId_tws_out = (Long)attributes.get("positionId_tws_out");
 
 		if (positionId_tws_out != null) {
@@ -511,16 +527,16 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 			setRealtimeId_out(realtimeId_out);
 		}
 
-		Long strategyId_in = (Long)attributes.get("strategyId_in");
+		String strategy_in = (String)attributes.get("strategy_in");
 
-		if (strategyId_in != null) {
-			setStrategyId_in(strategyId_in);
+		if (strategy_in != null) {
+			setStrategy_in(strategy_in);
 		}
 
-		Long strategyId_out = (Long)attributes.get("strategyId_out");
+		String strategy_out = (String)attributes.get("strategy_out");
 
-		if (strategyId_out != null) {
-			setStrategyId_out(strategyId_out);
+		if (strategy_out != null) {
+			setStrategy_out(strategy_out);
 		}
 
 		Double percentualstoplost_out = (Double)attributes.get(
@@ -659,7 +675,19 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 	@Override
 	public void setShareId(long shareId) {
+		_columnBitmask |= SHAREID_COLUMN_BITMASK;
+
+		if (!_setOriginalShareId) {
+			_setOriginalShareId = true;
+
+			_originalShareId = _shareId;
+		}
+
 		_shareId = shareId;
+	}
+
+	public long getOriginalShareId() {
+		return _originalShareId;
 	}
 
 	@JSON
@@ -714,7 +742,17 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 	@Override
 	public void setState(String state) {
+		_columnBitmask |= STATE_COLUMN_BITMASK;
+
+		if (_originalState == null) {
+			_originalState = _state;
+		}
+
 		_state = state;
+	}
+
+	public String getOriginalState() {
+		return GetterUtil.getString(_originalState);
 	}
 
 	@JSON
@@ -806,7 +844,17 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 	@Override
 	public void setDate_in(Date date_in) {
+		_columnBitmask |= DATE_IN_COLUMN_BITMASK;
+
+		if (_originalDate_in == null) {
+			_originalDate_in = _date_in;
+		}
+
 		_date_in = date_in;
+	}
+
+	public Date getOriginalDate_in() {
+		return _originalDate_in;
 	}
 
 	@JSON
@@ -817,7 +865,30 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 	@Override
 	public void setDate_real_in(Date date_real_in) {
+		_columnBitmask |= DATE_REAL_IN_COLUMN_BITMASK;
+
+		if (_originalDate_real_in == null) {
+			_originalDate_real_in = _date_real_in;
+		}
+
 		_date_real_in = date_real_in;
+	}
+
+	public Date getOriginalDate_real_in() {
+		return _originalDate_real_in;
+	}
+
+	@JSON
+	@Override
+	public long getPositionId_tws_in() {
+		return _positionId_tws_in;
+	}
+
+	@Override
+	public void setPositionId_tws_in(long positionId_tws_in) {
+		_columnBitmask = -1L;
+
+		_positionId_tws_in = positionId_tws_in;
 	}
 
 	@JSON
@@ -900,7 +971,17 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 	@Override
 	public void setDate_out(Date date_out) {
+		_columnBitmask |= DATE_OUT_COLUMN_BITMASK;
+
+		if (_originalDate_out == null) {
+			_originalDate_out = _date_out;
+		}
+
 		_date_out = date_out;
+	}
+
+	public Date getOriginalDate_out() {
+		return _originalDate_out;
 	}
 
 	@JSON
@@ -911,7 +992,17 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 	@Override
 	public void setDate_real_out(Date date_real_out) {
+		_columnBitmask |= DATE_REAL_OUT_COLUMN_BITMASK;
+
+		if (_originalDate_real_out == null) {
+			_originalDate_real_out = _date_real_out;
+		}
+
 		_date_real_out = date_real_out;
+	}
+
+	public Date getOriginalDate_real_out() {
+		return _originalDate_real_out;
 	}
 
 	@JSON
@@ -971,24 +1062,34 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 	@JSON
 	@Override
-	public long getStrategyId_in() {
-		return _strategyId_in;
+	public String getStrategy_in() {
+		if (_strategy_in == null) {
+			return StringPool.BLANK;
+		}
+		else {
+			return _strategy_in;
+		}
 	}
 
 	@Override
-	public void setStrategyId_in(long strategyId_in) {
-		_strategyId_in = strategyId_in;
+	public void setStrategy_in(String strategy_in) {
+		_strategy_in = strategy_in;
 	}
 
 	@JSON
 	@Override
-	public long getStrategyId_out() {
-		return _strategyId_out;
+	public String getStrategy_out() {
+		if (_strategy_out == null) {
+			return StringPool.BLANK;
+		}
+		else {
+			return _strategy_out;
+		}
 	}
 
 	@Override
-	public void setStrategyId_out(long strategyId_out) {
-		_strategyId_out = strategyId_out;
+	public void setStrategy_out(String strategy_out) {
+		_strategy_out = strategy_out;
 	}
 
 	@JSON
@@ -1133,6 +1234,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		positionImpl.setLimit_price_in(getLimit_price_in());
 		positionImpl.setDate_in(getDate_in());
 		positionImpl.setDate_real_in(getDate_real_in());
+		positionImpl.setPositionId_tws_in(getPositionId_tws_in());
 		positionImpl.setPositionId_tws_out(getPositionId_tws_out());
 		positionImpl.setType(getType());
 		positionImpl.setPrice_out(getPrice_out());
@@ -1145,8 +1247,8 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		positionImpl.setShare_number_traded(getShare_number_traded());
 		positionImpl.setRealtimeId_in(getRealtimeId_in());
 		positionImpl.setRealtimeId_out(getRealtimeId_out());
-		positionImpl.setStrategyId_in(getStrategyId_in());
-		positionImpl.setStrategyId_out(getStrategyId_out());
+		positionImpl.setStrategy_in(getStrategy_in());
+		positionImpl.setStrategy_out(getStrategy_out());
 		positionImpl.setPercentualstoplost_out(getPercentualstoplost_out());
 		positionImpl.setPricestoplost_out(getPricestoplost_out());
 		positionImpl.setPercentualstopprofit_out(getPercentualstopprofit_out());
@@ -1162,17 +1264,25 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 	@Override
 	public int compareTo(Position position) {
-		long primaryKey = position.getPrimaryKey();
+		int value = 0;
 
-		if (getPrimaryKey() < primaryKey) {
-			return -1;
+		if (getPositionId_tws_in() < position.getPositionId_tws_in()) {
+			value = -1;
 		}
-		else if (getPrimaryKey() > primaryKey) {
-			return 1;
+		else if (getPositionId_tws_in() > position.getPositionId_tws_in()) {
+			value = 1;
 		}
 		else {
-			return 0;
+			value = 0;
 		}
+
+		value = value * -1;
+
+		if (value != 0) {
+			return value;
+		}
+
+		return 0;
 	}
 
 	@Override
@@ -1226,11 +1336,25 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 		positionModelImpl._setOriginalCompanyId = false;
 
+		positionModelImpl._originalShareId = positionModelImpl._shareId;
+
+		positionModelImpl._setOriginalShareId = false;
+
 		positionModelImpl._setModifiedDate = false;
+
+		positionModelImpl._originalState = positionModelImpl._state;
+
+		positionModelImpl._originalDate_in = positionModelImpl._date_in;
+
+		positionModelImpl._originalDate_real_in = positionModelImpl._date_real_in;
 
 		positionModelImpl._originalPositionId_tws_out = positionModelImpl._positionId_tws_out;
 
 		positionModelImpl._setOriginalPositionId_tws_out = false;
+
+		positionModelImpl._originalDate_out = positionModelImpl._date_out;
+
+		positionModelImpl._originalDate_real_out = positionModelImpl._date_real_out;
 
 		positionModelImpl._columnBitmask = 0;
 	}
@@ -1331,6 +1455,8 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 			positionCacheModel.date_real_in = Long.MIN_VALUE;
 		}
 
+		positionCacheModel.positionId_tws_in = getPositionId_tws_in();
+
 		positionCacheModel.positionId_tws_out = getPositionId_tws_out();
 
 		positionCacheModel.type = getType();
@@ -1375,9 +1501,21 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 		positionCacheModel.realtimeId_out = getRealtimeId_out();
 
-		positionCacheModel.strategyId_in = getStrategyId_in();
+		positionCacheModel.strategy_in = getStrategy_in();
 
-		positionCacheModel.strategyId_out = getStrategyId_out();
+		String strategy_in = positionCacheModel.strategy_in;
+
+		if ((strategy_in != null) && (strategy_in.length() == 0)) {
+			positionCacheModel.strategy_in = null;
+		}
+
+		positionCacheModel.strategy_out = getStrategy_out();
+
+		String strategy_out = positionCacheModel.strategy_out;
+
+		if ((strategy_out != null) && (strategy_out.length() == 0)) {
+			positionCacheModel.strategy_out = null;
+		}
 
 		positionCacheModel.percentualstoplost_out = getPercentualstoplost_out();
 
@@ -1405,7 +1543,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(77);
+		StringBundler sb = new StringBundler(79);
 
 		sb.append("{uuid=");
 		sb.append(getUuid());
@@ -1441,6 +1579,8 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		sb.append(getDate_in());
 		sb.append(", date_real_in=");
 		sb.append(getDate_real_in());
+		sb.append(", positionId_tws_in=");
+		sb.append(getPositionId_tws_in());
 		sb.append(", positionId_tws_out=");
 		sb.append(getPositionId_tws_out());
 		sb.append(", type=");
@@ -1465,10 +1605,10 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		sb.append(getRealtimeId_in());
 		sb.append(", realtimeId_out=");
 		sb.append(getRealtimeId_out());
-		sb.append(", strategyId_in=");
-		sb.append(getStrategyId_in());
-		sb.append(", strategyId_out=");
-		sb.append(getStrategyId_out());
+		sb.append(", strategy_in=");
+		sb.append(getStrategy_in());
+		sb.append(", strategy_out=");
+		sb.append(getStrategy_out());
 		sb.append(", percentualstoplost_out=");
 		sb.append(getPercentualstoplost_out());
 		sb.append(", pricestoplost_out=");
@@ -1490,7 +1630,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(118);
+		StringBundler sb = new StringBundler(121);
 
 		sb.append("<model><model-name>");
 		sb.append("com.ibtrader.data.model.Position");
@@ -1565,6 +1705,10 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		sb.append(getDate_real_in());
 		sb.append("]]></column-value></column>");
 		sb.append(
+			"<column><column-name>positionId_tws_in</column-name><column-value><![CDATA[");
+		sb.append(getPositionId_tws_in());
+		sb.append("]]></column-value></column>");
+		sb.append(
 			"<column><column-name>positionId_tws_out</column-name><column-value><![CDATA[");
 		sb.append(getPositionId_tws_out());
 		sb.append("]]></column-value></column>");
@@ -1613,12 +1757,12 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		sb.append(getRealtimeId_out());
 		sb.append("]]></column-value></column>");
 		sb.append(
-			"<column><column-name>strategyId_in</column-name><column-value><![CDATA[");
-		sb.append(getStrategyId_in());
+			"<column><column-name>strategy_in</column-name><column-value><![CDATA[");
+		sb.append(getStrategy_in());
 		sb.append("]]></column-value></column>");
 		sb.append(
-			"<column><column-name>strategyId_out</column-name><column-value><![CDATA[");
-		sb.append(getStrategyId_out());
+			"<column><column-name>strategy_out</column-name><column-value><![CDATA[");
+		sb.append(getStrategy_out());
 		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>percentualstoplost_out</column-name><column-value><![CDATA[");
@@ -1668,11 +1812,14 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 	private long _originalCompanyId;
 	private boolean _setOriginalCompanyId;
 	private long _shareId;
+	private long _originalShareId;
+	private boolean _setOriginalShareId;
 	private double _value;
 	private Date _createDate;
 	private Date _modifiedDate;
 	private boolean _setModifiedDate;
 	private String _state;
+	private String _originalState;
 	private String _state_in;
 	private String _state_out;
 	private String _description;
@@ -1680,7 +1827,10 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 	private double _price_real_in;
 	private double _limit_price_in;
 	private Date _date_in;
+	private Date _originalDate_in;
 	private Date _date_real_in;
+	private Date _originalDate_real_in;
+	private long _positionId_tws_in;
 	private long _positionId_tws_out;
 	private long _originalPositionId_tws_out;
 	private boolean _setOriginalPositionId_tws_out;
@@ -1689,14 +1839,16 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 	private double _price_real_out;
 	private double _limit_price_out;
 	private Date _date_out;
+	private Date _originalDate_out;
 	private Date _date_real_out;
+	private Date _originalDate_real_out;
 	private long _share_number;
 	private long _share_number_to_trade;
 	private long _share_number_traded;
 	private long _realtimeId_in;
 	private long _realtimeId_out;
-	private long _strategyId_in;
-	private long _strategyId_out;
+	private String _strategy_in;
+	private String _strategy_out;
 	private double _percentualstoplost_out;
 	private double _pricestoplost_out;
 	private double _percentualstopprofit_out;

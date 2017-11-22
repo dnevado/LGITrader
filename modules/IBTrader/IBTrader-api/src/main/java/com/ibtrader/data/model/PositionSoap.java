@@ -51,6 +51,7 @@ public class PositionSoap implements Serializable {
 		soapModel.setLimit_price_in(model.getLimit_price_in());
 		soapModel.setDate_in(model.getDate_in());
 		soapModel.setDate_real_in(model.getDate_real_in());
+		soapModel.setPositionId_tws_in(model.getPositionId_tws_in());
 		soapModel.setPositionId_tws_out(model.getPositionId_tws_out());
 		soapModel.setType(model.getType());
 		soapModel.setPrice_out(model.getPrice_out());
@@ -63,8 +64,8 @@ public class PositionSoap implements Serializable {
 		soapModel.setShare_number_traded(model.getShare_number_traded());
 		soapModel.setRealtimeId_in(model.getRealtimeId_in());
 		soapModel.setRealtimeId_out(model.getRealtimeId_out());
-		soapModel.setStrategyId_in(model.getStrategyId_in());
-		soapModel.setStrategyId_out(model.getStrategyId_out());
+		soapModel.setStrategy_in(model.getStrategy_in());
+		soapModel.setStrategy_out(model.getStrategy_out());
 		soapModel.setPercentualstoplost_out(model.getPercentualstoplost_out());
 		soapModel.setPricestoplost_out(model.getPricestoplost_out());
 		soapModel.setPercentualstopprofit_out(model.getPercentualstopprofit_out());
@@ -260,6 +261,14 @@ public class PositionSoap implements Serializable {
 		_date_real_in = date_real_in;
 	}
 
+	public long getPositionId_tws_in() {
+		return _positionId_tws_in;
+	}
+
+	public void setPositionId_tws_in(long positionId_tws_in) {
+		_positionId_tws_in = positionId_tws_in;
+	}
+
 	public long getPositionId_tws_out() {
 		return _positionId_tws_out;
 	}
@@ -356,20 +365,20 @@ public class PositionSoap implements Serializable {
 		_realtimeId_out = realtimeId_out;
 	}
 
-	public long getStrategyId_in() {
-		return _strategyId_in;
+	public String getStrategy_in() {
+		return _strategy_in;
 	}
 
-	public void setStrategyId_in(long strategyId_in) {
-		_strategyId_in = strategyId_in;
+	public void setStrategy_in(String strategy_in) {
+		_strategy_in = strategy_in;
 	}
 
-	public long getStrategyId_out() {
-		return _strategyId_out;
+	public String getStrategy_out() {
+		return _strategy_out;
 	}
 
-	public void setStrategyId_out(long strategyId_out) {
-		_strategyId_out = strategyId_out;
+	public void setStrategy_out(String strategy_out) {
+		_strategy_out = strategy_out;
 	}
 
 	public double getPercentualstoplost_out() {
@@ -449,6 +458,7 @@ public class PositionSoap implements Serializable {
 	private double _limit_price_in;
 	private Date _date_in;
 	private Date _date_real_in;
+	private long _positionId_tws_in;
 	private long _positionId_tws_out;
 	private String _type;
 	private double _price_out;
@@ -461,8 +471,8 @@ public class PositionSoap implements Serializable {
 	private long _share_number_traded;
 	private long _realtimeId_in;
 	private long _realtimeId_out;
-	private long _strategyId_in;
-	private long _strategyId_out;
+	private String _strategy_in;
+	private String _strategy_out;
 	private double _percentualstoplost_out;
 	private double _pricestoplost_out;
 	private double _percentualstopprofit_out;

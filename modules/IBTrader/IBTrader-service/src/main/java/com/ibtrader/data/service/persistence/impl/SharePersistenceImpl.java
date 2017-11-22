@@ -2003,6 +2003,639 @@ public class SharePersistenceImpl extends BasePersistenceImpl<Share>
 
 	private static final String _FINDER_COLUMN_ACTIVEMARKET_ACTIVE_2 = "share.active = ? AND ";
 	private static final String _FINDER_COLUMN_ACTIVEMARKET_MARKETID_2 = "share.marketId = ?";
+	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_ACTIVEMARKETGROUPCOMPANY =
+		new FinderPath(ShareModelImpl.ENTITY_CACHE_ENABLED,
+			ShareModelImpl.FINDER_CACHE_ENABLED, ShareImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+			"findByActiveMarketGroupCompany",
+			new String[] {
+				Long.class.getName(), Long.class.getName(),
+				Boolean.class.getName(), Long.class.getName(),
+				
+			Integer.class.getName(), Integer.class.getName(),
+				OrderByComparator.class.getName()
+			});
+	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ACTIVEMARKETGROUPCOMPANY =
+		new FinderPath(ShareModelImpl.ENTITY_CACHE_ENABLED,
+			ShareModelImpl.FINDER_CACHE_ENABLED, ShareImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"findByActiveMarketGroupCompany",
+			new String[] {
+				Long.class.getName(), Long.class.getName(),
+				Boolean.class.getName(), Long.class.getName()
+			},
+			ShareModelImpl.GROUPID_COLUMN_BITMASK |
+			ShareModelImpl.COMPANYID_COLUMN_BITMASK |
+			ShareModelImpl.ACTIVE_COLUMN_BITMASK |
+			ShareModelImpl.MARKETID_COLUMN_BITMASK);
+	public static final FinderPath FINDER_PATH_COUNT_BY_ACTIVEMARKETGROUPCOMPANY =
+		new FinderPath(ShareModelImpl.ENTITY_CACHE_ENABLED,
+			ShareModelImpl.FINDER_CACHE_ENABLED, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"countByActiveMarketGroupCompany",
+			new String[] {
+				Long.class.getName(), Long.class.getName(),
+				Boolean.class.getName(), Long.class.getName()
+			});
+
+	/**
+	 * Returns all the shares where groupId = &#63; and companyId = &#63; and active = &#63; and marketId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @param marketId the market ID
+	 * @return the matching shares
+	 */
+	@Override
+	public List<Share> findByActiveMarketGroupCompany(long groupId,
+		long companyId, boolean active, long marketId) {
+		return findByActiveMarketGroupCompany(groupId, companyId, active,
+			marketId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the shares where groupId = &#63; and companyId = &#63; and active = &#63; and marketId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ShareModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @param marketId the market ID
+	 * @param start the lower bound of the range of shares
+	 * @param end the upper bound of the range of shares (not inclusive)
+	 * @return the range of matching shares
+	 */
+	@Override
+	public List<Share> findByActiveMarketGroupCompany(long groupId,
+		long companyId, boolean active, long marketId, int start, int end) {
+		return findByActiveMarketGroupCompany(groupId, companyId, active,
+			marketId, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the shares where groupId = &#63; and companyId = &#63; and active = &#63; and marketId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ShareModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @param marketId the market ID
+	 * @param start the lower bound of the range of shares
+	 * @param end the upper bound of the range of shares (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching shares
+	 */
+	@Override
+	public List<Share> findByActiveMarketGroupCompany(long groupId,
+		long companyId, boolean active, long marketId, int start, int end,
+		OrderByComparator<Share> orderByComparator) {
+		return findByActiveMarketGroupCompany(groupId, companyId, active,
+			marketId, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the shares where groupId = &#63; and companyId = &#63; and active = &#63; and marketId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ShareModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @param marketId the market ID
+	 * @param start the lower bound of the range of shares
+	 * @param end the upper bound of the range of shares (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the ordered range of matching shares
+	 */
+	@Override
+	public List<Share> findByActiveMarketGroupCompany(long groupId,
+		long companyId, boolean active, long marketId, int start, int end,
+		OrderByComparator<Share> orderByComparator, boolean retrieveFromCache) {
+		boolean pagination = true;
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+				(orderByComparator == null)) {
+			pagination = false;
+			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ACTIVEMARKETGROUPCOMPANY;
+			finderArgs = new Object[] { groupId, companyId, active, marketId };
+		}
+		else {
+			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_ACTIVEMARKETGROUPCOMPANY;
+			finderArgs = new Object[] {
+					groupId, companyId, active, marketId,
+					
+					start, end, orderByComparator
+				};
+		}
+
+		List<Share> list = null;
+
+		if (retrieveFromCache) {
+			list = (List<Share>)finderCache.getResult(finderPath, finderArgs,
+					this);
+
+			if ((list != null) && !list.isEmpty()) {
+				for (Share share : list) {
+					if ((groupId != share.getGroupId()) ||
+							(companyId != share.getCompanyId()) ||
+							(active != share.getActive()) ||
+							(marketId != share.getMarketId())) {
+						list = null;
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler query = null;
+
+			if (orderByComparator != null) {
+				query = new StringBundler(6 +
+						(orderByComparator.getOrderByFields().length * 2));
+			}
+			else {
+				query = new StringBundler(6);
+			}
+
+			query.append(_SQL_SELECT_SHARE_WHERE);
+
+			query.append(_FINDER_COLUMN_ACTIVEMARKETGROUPCOMPANY_GROUPID_2);
+
+			query.append(_FINDER_COLUMN_ACTIVEMARKETGROUPCOMPANY_COMPANYID_2);
+
+			query.append(_FINDER_COLUMN_ACTIVEMARKETGROUPCOMPANY_ACTIVE_2);
+
+			query.append(_FINDER_COLUMN_ACTIVEMARKETGROUPCOMPANY_MARKETID_2);
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
+					orderByComparator);
+			}
+			else
+			 if (pagination) {
+				query.append(ShareModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(groupId);
+
+				qPos.add(companyId);
+
+				qPos.add(active);
+
+				qPos.add(marketId);
+
+				if (!pagination) {
+					list = (List<Share>)QueryUtil.list(q, getDialect(), start,
+							end, false);
+
+					Collections.sort(list);
+
+					list = Collections.unmodifiableList(list);
+				}
+				else {
+					list = (List<Share>)QueryUtil.list(q, getDialect(), start,
+							end);
+				}
+
+				cacheResult(list);
+
+				finderCache.putResult(finderPath, finderArgs, list);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Returns the first share in the ordered set where groupId = &#63; and companyId = &#63; and active = &#63; and marketId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @param marketId the market ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching share
+	 * @throws NoSuchShareException if a matching share could not be found
+	 */
+	@Override
+	public Share findByActiveMarketGroupCompany_First(long groupId,
+		long companyId, boolean active, long marketId,
+		OrderByComparator<Share> orderByComparator) throws NoSuchShareException {
+		Share share = fetchByActiveMarketGroupCompany_First(groupId, companyId,
+				active, marketId, orderByComparator);
+
+		if (share != null) {
+			return share;
+		}
+
+		StringBundler msg = new StringBundler(10);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("groupId=");
+		msg.append(groupId);
+
+		msg.append(", companyId=");
+		msg.append(companyId);
+
+		msg.append(", active=");
+		msg.append(active);
+
+		msg.append(", marketId=");
+		msg.append(marketId);
+
+		msg.append(StringPool.CLOSE_CURLY_BRACE);
+
+		throw new NoSuchShareException(msg.toString());
+	}
+
+	/**
+	 * Returns the first share in the ordered set where groupId = &#63; and companyId = &#63; and active = &#63; and marketId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @param marketId the market ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching share, or <code>null</code> if a matching share could not be found
+	 */
+	@Override
+	public Share fetchByActiveMarketGroupCompany_First(long groupId,
+		long companyId, boolean active, long marketId,
+		OrderByComparator<Share> orderByComparator) {
+		List<Share> list = findByActiveMarketGroupCompany(groupId, companyId,
+				active, marketId, 0, 1, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last share in the ordered set where groupId = &#63; and companyId = &#63; and active = &#63; and marketId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @param marketId the market ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching share
+	 * @throws NoSuchShareException if a matching share could not be found
+	 */
+	@Override
+	public Share findByActiveMarketGroupCompany_Last(long groupId,
+		long companyId, boolean active, long marketId,
+		OrderByComparator<Share> orderByComparator) throws NoSuchShareException {
+		Share share = fetchByActiveMarketGroupCompany_Last(groupId, companyId,
+				active, marketId, orderByComparator);
+
+		if (share != null) {
+			return share;
+		}
+
+		StringBundler msg = new StringBundler(10);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("groupId=");
+		msg.append(groupId);
+
+		msg.append(", companyId=");
+		msg.append(companyId);
+
+		msg.append(", active=");
+		msg.append(active);
+
+		msg.append(", marketId=");
+		msg.append(marketId);
+
+		msg.append(StringPool.CLOSE_CURLY_BRACE);
+
+		throw new NoSuchShareException(msg.toString());
+	}
+
+	/**
+	 * Returns the last share in the ordered set where groupId = &#63; and companyId = &#63; and active = &#63; and marketId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @param marketId the market ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching share, or <code>null</code> if a matching share could not be found
+	 */
+	@Override
+	public Share fetchByActiveMarketGroupCompany_Last(long groupId,
+		long companyId, boolean active, long marketId,
+		OrderByComparator<Share> orderByComparator) {
+		int count = countByActiveMarketGroupCompany(groupId, companyId, active,
+				marketId);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<Share> list = findByActiveMarketGroupCompany(groupId, companyId,
+				active, marketId, count - 1, count, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the shares before and after the current share in the ordered set where groupId = &#63; and companyId = &#63; and active = &#63; and marketId = &#63;.
+	 *
+	 * @param shareId the primary key of the current share
+	 * @param groupId the group ID
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @param marketId the market ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next share
+	 * @throws NoSuchShareException if a share with the primary key could not be found
+	 */
+	@Override
+	public Share[] findByActiveMarketGroupCompany_PrevAndNext(long shareId,
+		long groupId, long companyId, boolean active, long marketId,
+		OrderByComparator<Share> orderByComparator) throws NoSuchShareException {
+		Share share = findByPrimaryKey(shareId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			Share[] array = new ShareImpl[3];
+
+			array[0] = getByActiveMarketGroupCompany_PrevAndNext(session,
+					share, groupId, companyId, active, marketId,
+					orderByComparator, true);
+
+			array[1] = share;
+
+			array[2] = getByActiveMarketGroupCompany_PrevAndNext(session,
+					share, groupId, companyId, active, marketId,
+					orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected Share getByActiveMarketGroupCompany_PrevAndNext(Session session,
+		Share share, long groupId, long companyId, boolean active,
+		long marketId, OrderByComparator<Share> orderByComparator,
+		boolean previous) {
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(7 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(6);
+		}
+
+		query.append(_SQL_SELECT_SHARE_WHERE);
+
+		query.append(_FINDER_COLUMN_ACTIVEMARKETGROUPCOMPANY_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_ACTIVEMARKETGROUPCOMPANY_COMPANYID_2);
+
+		query.append(_FINDER_COLUMN_ACTIVEMARKETGROUPCOMPANY_ACTIVE_2);
+
+		query.append(_FINDER_COLUMN_ACTIVEMARKETGROUPCOMPANY_MARKETID_2);
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			query.append(ShareModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = query.toString();
+
+		Query q = session.createQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(groupId);
+
+		qPos.add(companyId);
+
+		qPos.add(active);
+
+		qPos.add(marketId);
+
+		if (orderByComparator != null) {
+			Object[] values = orderByComparator.getOrderByConditionValues(share);
+
+			for (Object value : values) {
+				qPos.add(value);
+			}
+		}
+
+		List<Share> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Removes all the shares where groupId = &#63; and companyId = &#63; and active = &#63; and marketId = &#63; from the database.
+	 *
+	 * @param groupId the group ID
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @param marketId the market ID
+	 */
+	@Override
+	public void removeByActiveMarketGroupCompany(long groupId, long companyId,
+		boolean active, long marketId) {
+		for (Share share : findByActiveMarketGroupCompany(groupId, companyId,
+				active, marketId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+			remove(share);
+		}
+	}
+
+	/**
+	 * Returns the number of shares where groupId = &#63; and companyId = &#63; and active = &#63; and marketId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param companyId the company ID
+	 * @param active the active
+	 * @param marketId the market ID
+	 * @return the number of matching shares
+	 */
+	@Override
+	public int countByActiveMarketGroupCompany(long groupId, long companyId,
+		boolean active, long marketId) {
+		FinderPath finderPath = FINDER_PATH_COUNT_BY_ACTIVEMARKETGROUPCOMPANY;
+
+		Object[] finderArgs = new Object[] { groupId, companyId, active, marketId };
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(5);
+
+			query.append(_SQL_COUNT_SHARE_WHERE);
+
+			query.append(_FINDER_COLUMN_ACTIVEMARKETGROUPCOMPANY_GROUPID_2);
+
+			query.append(_FINDER_COLUMN_ACTIVEMARKETGROUPCOMPANY_COMPANYID_2);
+
+			query.append(_FINDER_COLUMN_ACTIVEMARKETGROUPCOMPANY_ACTIVE_2);
+
+			query.append(_FINDER_COLUMN_ACTIVEMARKETGROUPCOMPANY_MARKETID_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(groupId);
+
+				qPos.add(companyId);
+
+				qPos.add(active);
+
+				qPos.add(marketId);
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_ACTIVEMARKETGROUPCOMPANY_GROUPID_2 =
+		"share.groupId = ? AND ";
+	private static final String _FINDER_COLUMN_ACTIVEMARKETGROUPCOMPANY_COMPANYID_2 =
+		"share.companyId = ? AND ";
+	private static final String _FINDER_COLUMN_ACTIVEMARKETGROUPCOMPANY_ACTIVE_2 =
+		"share.active = ? AND ";
+	private static final String _FINDER_COLUMN_ACTIVEMARKETGROUPCOMPANY_MARKETID_2 =
+		"share.marketId = ?";
 
 	public SharePersistenceImpl() {
 		setModelClass(Share.class);
@@ -2358,6 +2991,32 @@ public class SharePersistenceImpl extends BasePersistenceImpl<Share>
 				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ACTIVEMARKET,
 					args);
 			}
+
+			if ((shareModelImpl.getColumnBitmask() &
+					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ACTIVEMARKETGROUPCOMPANY.getColumnBitmask()) != 0) {
+				Object[] args = new Object[] {
+						shareModelImpl.getOriginalGroupId(),
+						shareModelImpl.getOriginalCompanyId(),
+						shareModelImpl.getOriginalActive(),
+						shareModelImpl.getOriginalMarketId()
+					};
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_ACTIVEMARKETGROUPCOMPANY,
+					args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ACTIVEMARKETGROUPCOMPANY,
+					args);
+
+				args = new Object[] {
+						shareModelImpl.getGroupId(),
+						shareModelImpl.getCompanyId(),
+						shareModelImpl.getActive(), shareModelImpl.getMarketId()
+					};
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_ACTIVEMARKETGROUPCOMPANY,
+					args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ACTIVEMARKETGROUPCOMPANY,
+					args);
+			}
 		}
 
 		entityCache.putResult(ShareModelImpl.ENTITY_CACHE_ENABLED,
@@ -2405,6 +3064,7 @@ public class SharePersistenceImpl extends BasePersistenceImpl<Share>
 		shareImpl.setExchange(share.getExchange());
 		shareImpl.setPrimary_exchange(share.getPrimary_exchange());
 		shareImpl.setDate_contract_verified(share.getDate_contract_verified());
+		shareImpl.setUserCreatedId(share.getUserCreatedId());
 		shareImpl.setMarketId(share.getMarketId());
 
 		return shareImpl;
