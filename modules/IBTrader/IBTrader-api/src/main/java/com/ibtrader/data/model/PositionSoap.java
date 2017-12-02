@@ -39,7 +39,6 @@ public class PositionSoap implements Serializable {
 		soapModel.setGroupId(model.getGroupId());
 		soapModel.setCompanyId(model.getCompanyId());
 		soapModel.setShareId(model.getShareId());
-		soapModel.setValue(model.getValue());
 		soapModel.setCreateDate(model.getCreateDate());
 		soapModel.setModifiedDate(model.getModifiedDate());
 		soapModel.setState(model.getState());
@@ -163,14 +162,6 @@ public class PositionSoap implements Serializable {
 
 	public void setShareId(long shareId) {
 		_shareId = shareId;
-	}
-
-	public double getValue() {
-		return _value;
-	}
-
-	public void setValue(double value) {
-		_value = value;
 	}
 
 	public Date getCreateDate() {
@@ -446,7 +437,6 @@ public class PositionSoap implements Serializable {
 	private long _groupId;
 	private long _companyId;
 	private long _shareId;
-	private double _value;
 	private Date _createDate;
 	private Date _modifiedDate;
 	private String _state;

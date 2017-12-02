@@ -86,10 +86,6 @@ public interface Strategy extends StrategyModel, PersistedModel {
 
 	public void setValueLimitOut(float _valueLimitOut);
 
-	public com.ibtrader.interactive.TIMApiGITrader getTimAPIW();
-
-	public void setTimAPIW(com.ibtrader.interactive.TIMApiGITrader _timAPIW);
-
 	public int getCLIENT_ID();
 
 	public void setCLIENT_ID(int _CLIENT_ID);

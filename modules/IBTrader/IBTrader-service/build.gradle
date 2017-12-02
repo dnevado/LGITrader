@@ -7,11 +7,15 @@ dependencies {
 	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel", version: "2.6.0"
 	compileOnly project(":modules:IBTrader:IBTrader-api")
 	compileOnly  group: "com.interactivebrokers.tws", name: "tws-api", version: "9.72.05"
+	compileOnly "com.liferay:com.liferay.portal.dao.orm.custom.sql:1.0.5"
+	
 	
 }
 
 buildService {
 	apiDir = "../IBTrader-api/src/main/java"
+	osgiModule = true
+	propsUtil = "com.liferay.service.foo.service.util.PropsUtil"
 }
 
 group = "com.ibtrader.data"

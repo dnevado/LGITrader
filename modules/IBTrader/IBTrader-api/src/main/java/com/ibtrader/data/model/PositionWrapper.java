@@ -64,7 +64,6 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 		attributes.put("groupId", getGroupId());
 		attributes.put("companyId", getCompanyId());
 		attributes.put("shareId", getShareId());
-		attributes.put("value", getValue());
 		attributes.put("createDate", getCreateDate());
 		attributes.put("modifiedDate", getModifiedDate());
 		attributes.put("state", getState());
@@ -132,12 +131,6 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 
 		if (shareId != null) {
 			setShareId(shareId);
-		}
-
-		Double value = (Double)attributes.get("value");
-
-		if (value != null) {
-			setValue(value);
 		}
 
 		Date createDate = (Date)attributes.get("createDate");
@@ -497,16 +490,6 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 	@Override
 	public double getPricestopprofit_out() {
 		return _position.getPricestopprofit_out();
-	}
-
-	/**
-	* Returns the value of this position.
-	*
-	* @return the value of this position
-	*/
-	@Override
-	public double getValue() {
-		return _position.getValue();
 	}
 
 	@Override
@@ -1244,16 +1227,6 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 	@Override
 	public void setUuid(java.lang.String uuid) {
 		_position.setUuid(uuid);
-	}
-
-	/**
-	* Sets the value of this position.
-	*
-	* @param value the value of this position
-	*/
-	@Override
-	public void setValue(double value) {
-		_position.setValue(value);
 	}
 
 	@Override

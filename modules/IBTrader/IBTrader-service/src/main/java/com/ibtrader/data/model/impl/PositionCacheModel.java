@@ -65,7 +65,7 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(79);
+		StringBundler sb = new StringBundler(77);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -77,8 +77,6 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 		sb.append(companyId);
 		sb.append(", shareId=");
 		sb.append(shareId);
-		sb.append(", value=");
-		sb.append(value);
 		sb.append(", createDate=");
 		sb.append(createDate);
 		sb.append(", modifiedDate=");
@@ -165,7 +163,6 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 		positionImpl.setGroupId(groupId);
 		positionImpl.setCompanyId(companyId);
 		positionImpl.setShareId(shareId);
-		positionImpl.setValue(value);
 
 		if (createDate == Long.MIN_VALUE) {
 			positionImpl.setCreateDate(null);
@@ -306,8 +303,6 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 		companyId = objectInput.readLong();
 
 		shareId = objectInput.readLong();
-
-		value = objectInput.readDouble();
 		createDate = objectInput.readLong();
 		modifiedDate = objectInput.readLong();
 		state = objectInput.readUTF();
@@ -379,8 +374,6 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 		objectOutput.writeLong(companyId);
 
 		objectOutput.writeLong(shareId);
-
-		objectOutput.writeDouble(value);
 		objectOutput.writeLong(createDate);
 		objectOutput.writeLong(modifiedDate);
 
@@ -488,7 +481,6 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 	public long groupId;
 	public long companyId;
 	public long shareId;
-	public double value;
 	public long createDate;
 	public long modifiedDate;
 	public String state;

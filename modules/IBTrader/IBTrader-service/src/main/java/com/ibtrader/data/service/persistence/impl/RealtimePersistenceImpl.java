@@ -46,6 +46,8 @@ import com.liferay.portal.spring.extender.service.ServiceReference;
 
 import java.io.Serializable;
 
+import java.sql.Timestamp;
+
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -1473,100 +1475,90 @@ public class RealtimePersistenceImpl extends BasePersistenceImpl<Realtime>
 	private static final String _FINDER_COLUMN_UUID_C_UUID_2 = "realtime.uuid = ? AND ";
 	private static final String _FINDER_COLUMN_UUID_C_UUID_3 = "(realtime.uuid IS NULL OR realtime.uuid = '') AND ";
 	private static final String _FINDER_COLUMN_UUID_C_COMPANYID_2 = "realtime.companyId = ?";
-	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_SHAREID = new FinderPath(RealtimeModelImpl.ENTITY_CACHE_ENABLED,
+	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_COMPANYSHARE =
+		new FinderPath(RealtimeModelImpl.ENTITY_CACHE_ENABLED,
 			RealtimeModelImpl.FINDER_CACHE_ENABLED, RealtimeImpl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByshareId",
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByCompanyShare",
 			new String[] {
-				Long.class.getName(), Long.class.getName(), Long.class.getName(),
+				Long.class.getName(), Long.class.getName(),
 				
 			Integer.class.getName(), Integer.class.getName(),
 				OrderByComparator.class.getName()
 			});
-	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_SHAREID =
+	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_COMPANYSHARE =
 		new FinderPath(RealtimeModelImpl.ENTITY_CACHE_ENABLED,
 			RealtimeModelImpl.FINDER_CACHE_ENABLED, RealtimeImpl.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByshareId",
-			new String[] {
-				Long.class.getName(), Long.class.getName(), Long.class.getName()
-			},
-			RealtimeModelImpl.SHAREID_COLUMN_BITMASK |
-			RealtimeModelImpl.GROUPID_COLUMN_BITMASK |
-			RealtimeModelImpl.COMPANYID_COLUMN_BITMASK);
-	public static final FinderPath FINDER_PATH_COUNT_BY_SHAREID = new FinderPath(RealtimeModelImpl.ENTITY_CACHE_ENABLED,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByCompanyShare",
+			new String[] { Long.class.getName(), Long.class.getName() },
+			RealtimeModelImpl.COMPANYID_COLUMN_BITMASK |
+			RealtimeModelImpl.SHAREID_COLUMN_BITMASK);
+	public static final FinderPath FINDER_PATH_COUNT_BY_COMPANYSHARE = new FinderPath(RealtimeModelImpl.ENTITY_CACHE_ENABLED,
 			RealtimeModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByshareId",
-			new String[] {
-				Long.class.getName(), Long.class.getName(), Long.class.getName()
-			});
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByCompanyShare",
+			new String[] { Long.class.getName(), Long.class.getName() });
 
 	/**
-	 * Returns all the realtimes where shareId = &#63; and groupId = &#63; and companyId = &#63;.
+	 * Returns all the realtimes where companyId = &#63; and shareId = &#63;.
 	 *
-	 * @param shareId the share ID
-	 * @param groupId the group ID
 	 * @param companyId the company ID
+	 * @param shareId the share ID
 	 * @return the matching realtimes
 	 */
 	@Override
-	public List<Realtime> findByshareId(long shareId, long groupId,
-		long companyId) {
-		return findByshareId(shareId, groupId, companyId, QueryUtil.ALL_POS,
+	public List<Realtime> findByCompanyShare(long companyId, long shareId) {
+		return findByCompanyShare(companyId, shareId, QueryUtil.ALL_POS,
 			QueryUtil.ALL_POS, null);
 	}
 
 	/**
-	 * Returns a range of all the realtimes where shareId = &#63; and groupId = &#63; and companyId = &#63;.
+	 * Returns a range of all the realtimes where companyId = &#63; and shareId = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link RealtimeModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @param shareId the share ID
-	 * @param groupId the group ID
 	 * @param companyId the company ID
+	 * @param shareId the share ID
 	 * @param start the lower bound of the range of realtimes
 	 * @param end the upper bound of the range of realtimes (not inclusive)
 	 * @return the range of matching realtimes
 	 */
 	@Override
-	public List<Realtime> findByshareId(long shareId, long groupId,
-		long companyId, int start, int end) {
-		return findByshareId(shareId, groupId, companyId, start, end, null);
+	public List<Realtime> findByCompanyShare(long companyId, long shareId,
+		int start, int end) {
+		return findByCompanyShare(companyId, shareId, start, end, null);
 	}
 
 	/**
-	 * Returns an ordered range of all the realtimes where shareId = &#63; and groupId = &#63; and companyId = &#63;.
+	 * Returns an ordered range of all the realtimes where companyId = &#63; and shareId = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link RealtimeModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @param shareId the share ID
-	 * @param groupId the group ID
 	 * @param companyId the company ID
+	 * @param shareId the share ID
 	 * @param start the lower bound of the range of realtimes
 	 * @param end the upper bound of the range of realtimes (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching realtimes
 	 */
 	@Override
-	public List<Realtime> findByshareId(long shareId, long groupId,
-		long companyId, int start, int end,
-		OrderByComparator<Realtime> orderByComparator) {
-		return findByshareId(shareId, groupId, companyId, start, end,
+	public List<Realtime> findByCompanyShare(long companyId, long shareId,
+		int start, int end, OrderByComparator<Realtime> orderByComparator) {
+		return findByCompanyShare(companyId, shareId, start, end,
 			orderByComparator, true);
 	}
 
 	/**
-	 * Returns an ordered range of all the realtimes where shareId = &#63; and groupId = &#63; and companyId = &#63;.
+	 * Returns an ordered range of all the realtimes where companyId = &#63; and shareId = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link RealtimeModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @param shareId the share ID
-	 * @param groupId the group ID
 	 * @param companyId the company ID
+	 * @param shareId the share ID
 	 * @param start the lower bound of the range of realtimes
 	 * @param end the upper bound of the range of realtimes (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
@@ -1574,9 +1566,9 @@ public class RealtimePersistenceImpl extends BasePersistenceImpl<Realtime>
 	 * @return the ordered range of matching realtimes
 	 */
 	@Override
-	public List<Realtime> findByshareId(long shareId, long groupId,
-		long companyId, int start, int end,
-		OrderByComparator<Realtime> orderByComparator, boolean retrieveFromCache) {
+	public List<Realtime> findByCompanyShare(long companyId, long shareId,
+		int start, int end, OrderByComparator<Realtime> orderByComparator,
+		boolean retrieveFromCache) {
 		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
@@ -1584,13 +1576,13 @@ public class RealtimePersistenceImpl extends BasePersistenceImpl<Realtime>
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
 				(orderByComparator == null)) {
 			pagination = false;
-			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_SHAREID;
-			finderArgs = new Object[] { shareId, groupId, companyId };
+			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_COMPANYSHARE;
+			finderArgs = new Object[] { companyId, shareId };
 		}
 		else {
-			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_SHAREID;
+			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_COMPANYSHARE;
 			finderArgs = new Object[] {
-					shareId, groupId, companyId,
+					companyId, shareId,
 					
 					start, end, orderByComparator
 				};
@@ -1604,9 +1596,8 @@ public class RealtimePersistenceImpl extends BasePersistenceImpl<Realtime>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (Realtime realtime : list) {
-					if ((shareId != realtime.getShareId()) ||
-							(groupId != realtime.getGroupId()) ||
-							(companyId != realtime.getCompanyId())) {
+					if ((companyId != realtime.getCompanyId()) ||
+							(shareId != realtime.getShareId())) {
 						list = null;
 
 						break;
@@ -1619,20 +1610,18 @@ public class RealtimePersistenceImpl extends BasePersistenceImpl<Realtime>
 			StringBundler query = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(5 +
+				query = new StringBundler(4 +
 						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
-				query = new StringBundler(5);
+				query = new StringBundler(4);
 			}
 
 			query.append(_SQL_SELECT_REALTIME_WHERE);
 
-			query.append(_FINDER_COLUMN_SHAREID_SHAREID_2);
+			query.append(_FINDER_COLUMN_COMPANYSHARE_COMPANYID_2);
 
-			query.append(_FINDER_COLUMN_SHAREID_GROUPID_2);
-
-			query.append(_FINDER_COLUMN_SHAREID_COMPANYID_2);
+			query.append(_FINDER_COLUMN_COMPANYSHARE_SHAREID_2);
 
 			if (orderByComparator != null) {
 				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
@@ -1654,11 +1643,9 @@ public class RealtimePersistenceImpl extends BasePersistenceImpl<Realtime>
 
 				QueryPos qPos = QueryPos.getInstance(q);
 
-				qPos.add(shareId);
-
-				qPos.add(groupId);
-
 				qPos.add(companyId);
+
+				qPos.add(shareId);
 
 				if (!pagination) {
 					list = (List<Realtime>)QueryUtil.list(q, getDialect(),
@@ -1691,38 +1678,34 @@ public class RealtimePersistenceImpl extends BasePersistenceImpl<Realtime>
 	}
 
 	/**
-	 * Returns the first realtime in the ordered set where shareId = &#63; and groupId = &#63; and companyId = &#63;.
+	 * Returns the first realtime in the ordered set where companyId = &#63; and shareId = &#63;.
 	 *
-	 * @param shareId the share ID
-	 * @param groupId the group ID
 	 * @param companyId the company ID
+	 * @param shareId the share ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching realtime
 	 * @throws NoSuchRealtimeException if a matching realtime could not be found
 	 */
 	@Override
-	public Realtime findByshareId_First(long shareId, long groupId,
-		long companyId, OrderByComparator<Realtime> orderByComparator)
+	public Realtime findByCompanyShare_First(long companyId, long shareId,
+		OrderByComparator<Realtime> orderByComparator)
 		throws NoSuchRealtimeException {
-		Realtime realtime = fetchByshareId_First(shareId, groupId, companyId,
+		Realtime realtime = fetchByCompanyShare_First(companyId, shareId,
 				orderByComparator);
 
 		if (realtime != null) {
 			return realtime;
 		}
 
-		StringBundler msg = new StringBundler(8);
+		StringBundler msg = new StringBundler(6);
 
 		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
 
-		msg.append("shareId=");
-		msg.append(shareId);
-
-		msg.append(", groupId=");
-		msg.append(groupId);
-
-		msg.append(", companyId=");
+		msg.append("companyId=");
 		msg.append(companyId);
+
+		msg.append(", shareId=");
+		msg.append(shareId);
 
 		msg.append(StringPool.CLOSE_CURLY_BRACE);
 
@@ -1730,18 +1713,17 @@ public class RealtimePersistenceImpl extends BasePersistenceImpl<Realtime>
 	}
 
 	/**
-	 * Returns the first realtime in the ordered set where shareId = &#63; and groupId = &#63; and companyId = &#63;.
+	 * Returns the first realtime in the ordered set where companyId = &#63; and shareId = &#63;.
 	 *
-	 * @param shareId the share ID
-	 * @param groupId the group ID
 	 * @param companyId the company ID
+	 * @param shareId the share ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching realtime, or <code>null</code> if a matching realtime could not be found
 	 */
 	@Override
-	public Realtime fetchByshareId_First(long shareId, long groupId,
-		long companyId, OrderByComparator<Realtime> orderByComparator) {
-		List<Realtime> list = findByshareId(shareId, groupId, companyId, 0, 1,
+	public Realtime fetchByCompanyShare_First(long companyId, long shareId,
+		OrderByComparator<Realtime> orderByComparator) {
+		List<Realtime> list = findByCompanyShare(companyId, shareId, 0, 1,
 				orderByComparator);
 
 		if (!list.isEmpty()) {
@@ -1752,38 +1734,34 @@ public class RealtimePersistenceImpl extends BasePersistenceImpl<Realtime>
 	}
 
 	/**
-	 * Returns the last realtime in the ordered set where shareId = &#63; and groupId = &#63; and companyId = &#63;.
+	 * Returns the last realtime in the ordered set where companyId = &#63; and shareId = &#63;.
 	 *
-	 * @param shareId the share ID
-	 * @param groupId the group ID
 	 * @param companyId the company ID
+	 * @param shareId the share ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching realtime
 	 * @throws NoSuchRealtimeException if a matching realtime could not be found
 	 */
 	@Override
-	public Realtime findByshareId_Last(long shareId, long groupId,
-		long companyId, OrderByComparator<Realtime> orderByComparator)
+	public Realtime findByCompanyShare_Last(long companyId, long shareId,
+		OrderByComparator<Realtime> orderByComparator)
 		throws NoSuchRealtimeException {
-		Realtime realtime = fetchByshareId_Last(shareId, groupId, companyId,
+		Realtime realtime = fetchByCompanyShare_Last(companyId, shareId,
 				orderByComparator);
 
 		if (realtime != null) {
 			return realtime;
 		}
 
-		StringBundler msg = new StringBundler(8);
+		StringBundler msg = new StringBundler(6);
 
 		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
 
-		msg.append("shareId=");
-		msg.append(shareId);
-
-		msg.append(", groupId=");
-		msg.append(groupId);
-
-		msg.append(", companyId=");
+		msg.append("companyId=");
 		msg.append(companyId);
+
+		msg.append(", shareId=");
+		msg.append(shareId);
 
 		msg.append(StringPool.CLOSE_CURLY_BRACE);
 
@@ -1791,25 +1769,24 @@ public class RealtimePersistenceImpl extends BasePersistenceImpl<Realtime>
 	}
 
 	/**
-	 * Returns the last realtime in the ordered set where shareId = &#63; and groupId = &#63; and companyId = &#63;.
+	 * Returns the last realtime in the ordered set where companyId = &#63; and shareId = &#63;.
 	 *
-	 * @param shareId the share ID
-	 * @param groupId the group ID
 	 * @param companyId the company ID
+	 * @param shareId the share ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching realtime, or <code>null</code> if a matching realtime could not be found
 	 */
 	@Override
-	public Realtime fetchByshareId_Last(long shareId, long groupId,
-		long companyId, OrderByComparator<Realtime> orderByComparator) {
-		int count = countByshareId(shareId, groupId, companyId);
+	public Realtime fetchByCompanyShare_Last(long companyId, long shareId,
+		OrderByComparator<Realtime> orderByComparator) {
+		int count = countByCompanyShare(companyId, shareId);
 
 		if (count == 0) {
 			return null;
 		}
 
-		List<Realtime> list = findByshareId(shareId, groupId, companyId,
-				count - 1, count, orderByComparator);
+		List<Realtime> list = findByCompanyShare(companyId, shareId, count - 1,
+				count, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -1819,19 +1796,18 @@ public class RealtimePersistenceImpl extends BasePersistenceImpl<Realtime>
 	}
 
 	/**
-	 * Returns the realtimes before and after the current realtime in the ordered set where shareId = &#63; and groupId = &#63; and companyId = &#63;.
+	 * Returns the realtimes before and after the current realtime in the ordered set where companyId = &#63; and shareId = &#63;.
 	 *
 	 * @param realtimeId the primary key of the current realtime
-	 * @param shareId the share ID
-	 * @param groupId the group ID
 	 * @param companyId the company ID
+	 * @param shareId the share ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next realtime
 	 * @throws NoSuchRealtimeException if a realtime with the primary key could not be found
 	 */
 	@Override
-	public Realtime[] findByshareId_PrevAndNext(long realtimeId, long shareId,
-		long groupId, long companyId,
+	public Realtime[] findByCompanyShare_PrevAndNext(long realtimeId,
+		long companyId, long shareId,
 		OrderByComparator<Realtime> orderByComparator)
 		throws NoSuchRealtimeException {
 		Realtime realtime = findByPrimaryKey(realtimeId);
@@ -1843,13 +1819,13 @@ public class RealtimePersistenceImpl extends BasePersistenceImpl<Realtime>
 
 			Realtime[] array = new RealtimeImpl[3];
 
-			array[0] = getByshareId_PrevAndNext(session, realtime, shareId,
-					groupId, companyId, orderByComparator, true);
+			array[0] = getByCompanyShare_PrevAndNext(session, realtime,
+					companyId, shareId, orderByComparator, true);
 
 			array[1] = realtime;
 
-			array[2] = getByshareId_PrevAndNext(session, realtime, shareId,
-					groupId, companyId, orderByComparator, false);
+			array[2] = getByCompanyShare_PrevAndNext(session, realtime,
+					companyId, shareId, orderByComparator, false);
 
 			return array;
 		}
@@ -1861,27 +1837,25 @@ public class RealtimePersistenceImpl extends BasePersistenceImpl<Realtime>
 		}
 	}
 
-	protected Realtime getByshareId_PrevAndNext(Session session,
-		Realtime realtime, long shareId, long groupId, long companyId,
+	protected Realtime getByCompanyShare_PrevAndNext(Session session,
+		Realtime realtime, long companyId, long shareId,
 		OrderByComparator<Realtime> orderByComparator, boolean previous) {
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
+			query = new StringBundler(5 +
 					(orderByComparator.getOrderByConditionFields().length * 3) +
 					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
-			query = new StringBundler(5);
+			query = new StringBundler(4);
 		}
 
 		query.append(_SQL_SELECT_REALTIME_WHERE);
 
-		query.append(_FINDER_COLUMN_SHAREID_SHAREID_2);
+		query.append(_FINDER_COLUMN_COMPANYSHARE_COMPANYID_2);
 
-		query.append(_FINDER_COLUMN_SHAREID_GROUPID_2);
-
-		query.append(_FINDER_COLUMN_SHAREID_COMPANYID_2);
+		query.append(_FINDER_COLUMN_COMPANYSHARE_SHAREID_2);
 
 		if (orderByComparator != null) {
 			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
@@ -1951,11 +1925,9 @@ public class RealtimePersistenceImpl extends BasePersistenceImpl<Realtime>
 
 		QueryPos qPos = QueryPos.getInstance(q);
 
-		qPos.add(shareId);
-
-		qPos.add(groupId);
-
 		qPos.add(companyId);
+
+		qPos.add(shareId);
 
 		if (orderByComparator != null) {
 			Object[] values = orderByComparator.getOrderByConditionValues(realtime);
@@ -1976,46 +1948,42 @@ public class RealtimePersistenceImpl extends BasePersistenceImpl<Realtime>
 	}
 
 	/**
-	 * Removes all the realtimes where shareId = &#63; and groupId = &#63; and companyId = &#63; from the database.
+	 * Removes all the realtimes where companyId = &#63; and shareId = &#63; from the database.
 	 *
-	 * @param shareId the share ID
-	 * @param groupId the group ID
 	 * @param companyId the company ID
+	 * @param shareId the share ID
 	 */
 	@Override
-	public void removeByshareId(long shareId, long groupId, long companyId) {
-		for (Realtime realtime : findByshareId(shareId, groupId, companyId,
+	public void removeByCompanyShare(long companyId, long shareId) {
+		for (Realtime realtime : findByCompanyShare(companyId, shareId,
 				QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
 			remove(realtime);
 		}
 	}
 
 	/**
-	 * Returns the number of realtimes where shareId = &#63; and groupId = &#63; and companyId = &#63;.
+	 * Returns the number of realtimes where companyId = &#63; and shareId = &#63;.
 	 *
-	 * @param shareId the share ID
-	 * @param groupId the group ID
 	 * @param companyId the company ID
+	 * @param shareId the share ID
 	 * @return the number of matching realtimes
 	 */
 	@Override
-	public int countByshareId(long shareId, long groupId, long companyId) {
-		FinderPath finderPath = FINDER_PATH_COUNT_BY_SHAREID;
+	public int countByCompanyShare(long companyId, long shareId) {
+		FinderPath finderPath = FINDER_PATH_COUNT_BY_COMPANYSHARE;
 
-		Object[] finderArgs = new Object[] { shareId, groupId, companyId };
+		Object[] finderArgs = new Object[] { companyId, shareId };
 
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
-			StringBundler query = new StringBundler(4);
+			StringBundler query = new StringBundler(3);
 
 			query.append(_SQL_COUNT_REALTIME_WHERE);
 
-			query.append(_FINDER_COLUMN_SHAREID_SHAREID_2);
+			query.append(_FINDER_COLUMN_COMPANYSHARE_COMPANYID_2);
 
-			query.append(_FINDER_COLUMN_SHAREID_GROUPID_2);
-
-			query.append(_FINDER_COLUMN_SHAREID_COMPANYID_2);
+			query.append(_FINDER_COLUMN_COMPANYSHARE_SHAREID_2);
 
 			String sql = query.toString();
 
@@ -2028,11 +1996,9 @@ public class RealtimePersistenceImpl extends BasePersistenceImpl<Realtime>
 
 				QueryPos qPos = QueryPos.getInstance(q);
 
-				qPos.add(shareId);
-
-				qPos.add(groupId);
-
 				qPos.add(companyId);
+
+				qPos.add(shareId);
 
 				count = (Long)q.uniqueResult();
 
@@ -2051,9 +2017,629 @@ public class RealtimePersistenceImpl extends BasePersistenceImpl<Realtime>
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_SHAREID_SHAREID_2 = "realtime.shareId = ? AND ";
-	private static final String _FINDER_COLUMN_SHAREID_GROUPID_2 = "realtime.groupId = ? AND ";
-	private static final String _FINDER_COLUMN_SHAREID_COMPANYID_2 = "realtime.companyId = ?";
+	private static final String _FINDER_COLUMN_COMPANYSHARE_COMPANYID_2 = "realtime.companyId = ? AND ";
+	private static final String _FINDER_COLUMN_COMPANYSHARE_SHAREID_2 = "realtime.shareId = ?";
+	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_COMPANYSHAREDATE =
+		new FinderPath(RealtimeModelImpl.ENTITY_CACHE_ENABLED,
+			RealtimeModelImpl.FINDER_CACHE_ENABLED, RealtimeImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByCompanyShareDate",
+			new String[] {
+				Long.class.getName(), Long.class.getName(), Date.class.getName(),
+				
+			Integer.class.getName(), Integer.class.getName(),
+				OrderByComparator.class.getName()
+			});
+	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_COMPANYSHAREDATE =
+		new FinderPath(RealtimeModelImpl.ENTITY_CACHE_ENABLED,
+			RealtimeModelImpl.FINDER_CACHE_ENABLED, RealtimeImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"findByCompanyShareDate",
+			new String[] {
+				Long.class.getName(), Long.class.getName(), Date.class.getName()
+			},
+			RealtimeModelImpl.COMPANYID_COLUMN_BITMASK |
+			RealtimeModelImpl.SHAREID_COLUMN_BITMASK |
+			RealtimeModelImpl.CREATEDATE_COLUMN_BITMASK);
+	public static final FinderPath FINDER_PATH_COUNT_BY_COMPANYSHAREDATE = new FinderPath(RealtimeModelImpl.ENTITY_CACHE_ENABLED,
+			RealtimeModelImpl.FINDER_CACHE_ENABLED, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"countByCompanyShareDate",
+			new String[] {
+				Long.class.getName(), Long.class.getName(), Date.class.getName()
+			});
+
+	/**
+	 * Returns all the realtimes where companyId = &#63; and shareId = &#63; and createDate = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param shareId the share ID
+	 * @param createDate the create date
+	 * @return the matching realtimes
+	 */
+	@Override
+	public List<Realtime> findByCompanyShareDate(long companyId, long shareId,
+		Date createDate) {
+		return findByCompanyShareDate(companyId, shareId, createDate,
+			QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the realtimes where companyId = &#63; and shareId = &#63; and createDate = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link RealtimeModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param shareId the share ID
+	 * @param createDate the create date
+	 * @param start the lower bound of the range of realtimes
+	 * @param end the upper bound of the range of realtimes (not inclusive)
+	 * @return the range of matching realtimes
+	 */
+	@Override
+	public List<Realtime> findByCompanyShareDate(long companyId, long shareId,
+		Date createDate, int start, int end) {
+		return findByCompanyShareDate(companyId, shareId, createDate, start,
+			end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the realtimes where companyId = &#63; and shareId = &#63; and createDate = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link RealtimeModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param shareId the share ID
+	 * @param createDate the create date
+	 * @param start the lower bound of the range of realtimes
+	 * @param end the upper bound of the range of realtimes (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching realtimes
+	 */
+	@Override
+	public List<Realtime> findByCompanyShareDate(long companyId, long shareId,
+		Date createDate, int start, int end,
+		OrderByComparator<Realtime> orderByComparator) {
+		return findByCompanyShareDate(companyId, shareId, createDate, start,
+			end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the realtimes where companyId = &#63; and shareId = &#63; and createDate = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link RealtimeModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param shareId the share ID
+	 * @param createDate the create date
+	 * @param start the lower bound of the range of realtimes
+	 * @param end the upper bound of the range of realtimes (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the ordered range of matching realtimes
+	 */
+	@Override
+	public List<Realtime> findByCompanyShareDate(long companyId, long shareId,
+		Date createDate, int start, int end,
+		OrderByComparator<Realtime> orderByComparator, boolean retrieveFromCache) {
+		boolean pagination = true;
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+				(orderByComparator == null)) {
+			pagination = false;
+			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_COMPANYSHAREDATE;
+			finderArgs = new Object[] { companyId, shareId, createDate };
+		}
+		else {
+			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_COMPANYSHAREDATE;
+			finderArgs = new Object[] {
+					companyId, shareId, createDate,
+					
+					start, end, orderByComparator
+				};
+		}
+
+		List<Realtime> list = null;
+
+		if (retrieveFromCache) {
+			list = (List<Realtime>)finderCache.getResult(finderPath,
+					finderArgs, this);
+
+			if ((list != null) && !list.isEmpty()) {
+				for (Realtime realtime : list) {
+					if ((companyId != realtime.getCompanyId()) ||
+							(shareId != realtime.getShareId()) ||
+							!Objects.equals(createDate, realtime.getCreateDate())) {
+						list = null;
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler query = null;
+
+			if (orderByComparator != null) {
+				query = new StringBundler(5 +
+						(orderByComparator.getOrderByFields().length * 2));
+			}
+			else {
+				query = new StringBundler(5);
+			}
+
+			query.append(_SQL_SELECT_REALTIME_WHERE);
+
+			query.append(_FINDER_COLUMN_COMPANYSHAREDATE_COMPANYID_2);
+
+			query.append(_FINDER_COLUMN_COMPANYSHAREDATE_SHAREID_2);
+
+			boolean bindCreateDate = false;
+
+			if (createDate == null) {
+				query.append(_FINDER_COLUMN_COMPANYSHAREDATE_CREATEDATE_1);
+			}
+			else {
+				bindCreateDate = true;
+
+				query.append(_FINDER_COLUMN_COMPANYSHAREDATE_CREATEDATE_2);
+			}
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
+					orderByComparator);
+			}
+			else
+			 if (pagination) {
+				query.append(RealtimeModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(companyId);
+
+				qPos.add(shareId);
+
+				if (bindCreateDate) {
+					qPos.add(new Timestamp(createDate.getTime()));
+				}
+
+				if (!pagination) {
+					list = (List<Realtime>)QueryUtil.list(q, getDialect(),
+							start, end, false);
+
+					Collections.sort(list);
+
+					list = Collections.unmodifiableList(list);
+				}
+				else {
+					list = (List<Realtime>)QueryUtil.list(q, getDialect(),
+							start, end);
+				}
+
+				cacheResult(list);
+
+				finderCache.putResult(finderPath, finderArgs, list);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Returns the first realtime in the ordered set where companyId = &#63; and shareId = &#63; and createDate = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param shareId the share ID
+	 * @param createDate the create date
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching realtime
+	 * @throws NoSuchRealtimeException if a matching realtime could not be found
+	 */
+	@Override
+	public Realtime findByCompanyShareDate_First(long companyId, long shareId,
+		Date createDate, OrderByComparator<Realtime> orderByComparator)
+		throws NoSuchRealtimeException {
+		Realtime realtime = fetchByCompanyShareDate_First(companyId, shareId,
+				createDate, orderByComparator);
+
+		if (realtime != null) {
+			return realtime;
+		}
+
+		StringBundler msg = new StringBundler(8);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("companyId=");
+		msg.append(companyId);
+
+		msg.append(", shareId=");
+		msg.append(shareId);
+
+		msg.append(", createDate=");
+		msg.append(createDate);
+
+		msg.append(StringPool.CLOSE_CURLY_BRACE);
+
+		throw new NoSuchRealtimeException(msg.toString());
+	}
+
+	/**
+	 * Returns the first realtime in the ordered set where companyId = &#63; and shareId = &#63; and createDate = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param shareId the share ID
+	 * @param createDate the create date
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching realtime, or <code>null</code> if a matching realtime could not be found
+	 */
+	@Override
+	public Realtime fetchByCompanyShareDate_First(long companyId, long shareId,
+		Date createDate, OrderByComparator<Realtime> orderByComparator) {
+		List<Realtime> list = findByCompanyShareDate(companyId, shareId,
+				createDate, 0, 1, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last realtime in the ordered set where companyId = &#63; and shareId = &#63; and createDate = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param shareId the share ID
+	 * @param createDate the create date
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching realtime
+	 * @throws NoSuchRealtimeException if a matching realtime could not be found
+	 */
+	@Override
+	public Realtime findByCompanyShareDate_Last(long companyId, long shareId,
+		Date createDate, OrderByComparator<Realtime> orderByComparator)
+		throws NoSuchRealtimeException {
+		Realtime realtime = fetchByCompanyShareDate_Last(companyId, shareId,
+				createDate, orderByComparator);
+
+		if (realtime != null) {
+			return realtime;
+		}
+
+		StringBundler msg = new StringBundler(8);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("companyId=");
+		msg.append(companyId);
+
+		msg.append(", shareId=");
+		msg.append(shareId);
+
+		msg.append(", createDate=");
+		msg.append(createDate);
+
+		msg.append(StringPool.CLOSE_CURLY_BRACE);
+
+		throw new NoSuchRealtimeException(msg.toString());
+	}
+
+	/**
+	 * Returns the last realtime in the ordered set where companyId = &#63; and shareId = &#63; and createDate = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param shareId the share ID
+	 * @param createDate the create date
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching realtime, or <code>null</code> if a matching realtime could not be found
+	 */
+	@Override
+	public Realtime fetchByCompanyShareDate_Last(long companyId, long shareId,
+		Date createDate, OrderByComparator<Realtime> orderByComparator) {
+		int count = countByCompanyShareDate(companyId, shareId, createDate);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<Realtime> list = findByCompanyShareDate(companyId, shareId,
+				createDate, count - 1, count, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the realtimes before and after the current realtime in the ordered set where companyId = &#63; and shareId = &#63; and createDate = &#63;.
+	 *
+	 * @param realtimeId the primary key of the current realtime
+	 * @param companyId the company ID
+	 * @param shareId the share ID
+	 * @param createDate the create date
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next realtime
+	 * @throws NoSuchRealtimeException if a realtime with the primary key could not be found
+	 */
+	@Override
+	public Realtime[] findByCompanyShareDate_PrevAndNext(long realtimeId,
+		long companyId, long shareId, Date createDate,
+		OrderByComparator<Realtime> orderByComparator)
+		throws NoSuchRealtimeException {
+		Realtime realtime = findByPrimaryKey(realtimeId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			Realtime[] array = new RealtimeImpl[3];
+
+			array[0] = getByCompanyShareDate_PrevAndNext(session, realtime,
+					companyId, shareId, createDate, orderByComparator, true);
+
+			array[1] = realtime;
+
+			array[2] = getByCompanyShareDate_PrevAndNext(session, realtime,
+					companyId, shareId, createDate, orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected Realtime getByCompanyShareDate_PrevAndNext(Session session,
+		Realtime realtime, long companyId, long shareId, Date createDate,
+		OrderByComparator<Realtime> orderByComparator, boolean previous) {
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(6 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(5);
+		}
+
+		query.append(_SQL_SELECT_REALTIME_WHERE);
+
+		query.append(_FINDER_COLUMN_COMPANYSHAREDATE_COMPANYID_2);
+
+		query.append(_FINDER_COLUMN_COMPANYSHAREDATE_SHAREID_2);
+
+		boolean bindCreateDate = false;
+
+		if (createDate == null) {
+			query.append(_FINDER_COLUMN_COMPANYSHAREDATE_CREATEDATE_1);
+		}
+		else {
+			bindCreateDate = true;
+
+			query.append(_FINDER_COLUMN_COMPANYSHAREDATE_CREATEDATE_2);
+		}
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			query.append(RealtimeModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = query.toString();
+
+		Query q = session.createQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(companyId);
+
+		qPos.add(shareId);
+
+		if (bindCreateDate) {
+			qPos.add(new Timestamp(createDate.getTime()));
+		}
+
+		if (orderByComparator != null) {
+			Object[] values = orderByComparator.getOrderByConditionValues(realtime);
+
+			for (Object value : values) {
+				qPos.add(value);
+			}
+		}
+
+		List<Realtime> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Removes all the realtimes where companyId = &#63; and shareId = &#63; and createDate = &#63; from the database.
+	 *
+	 * @param companyId the company ID
+	 * @param shareId the share ID
+	 * @param createDate the create date
+	 */
+	@Override
+	public void removeByCompanyShareDate(long companyId, long shareId,
+		Date createDate) {
+		for (Realtime realtime : findByCompanyShareDate(companyId, shareId,
+				createDate, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+			remove(realtime);
+		}
+	}
+
+	/**
+	 * Returns the number of realtimes where companyId = &#63; and shareId = &#63; and createDate = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param shareId the share ID
+	 * @param createDate the create date
+	 * @return the number of matching realtimes
+	 */
+	@Override
+	public int countByCompanyShareDate(long companyId, long shareId,
+		Date createDate) {
+		FinderPath finderPath = FINDER_PATH_COUNT_BY_COMPANYSHAREDATE;
+
+		Object[] finderArgs = new Object[] { companyId, shareId, createDate };
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(4);
+
+			query.append(_SQL_COUNT_REALTIME_WHERE);
+
+			query.append(_FINDER_COLUMN_COMPANYSHAREDATE_COMPANYID_2);
+
+			query.append(_FINDER_COLUMN_COMPANYSHAREDATE_SHAREID_2);
+
+			boolean bindCreateDate = false;
+
+			if (createDate == null) {
+				query.append(_FINDER_COLUMN_COMPANYSHAREDATE_CREATEDATE_1);
+			}
+			else {
+				bindCreateDate = true;
+
+				query.append(_FINDER_COLUMN_COMPANYSHAREDATE_CREATEDATE_2);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(companyId);
+
+				qPos.add(shareId);
+
+				if (bindCreateDate) {
+					qPos.add(new Timestamp(createDate.getTime()));
+				}
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_COMPANYSHAREDATE_COMPANYID_2 = "realtime.companyId = ? AND ";
+	private static final String _FINDER_COLUMN_COMPANYSHAREDATE_SHAREID_2 = "realtime.shareId = ? AND ";
+	private static final String _FINDER_COLUMN_COMPANYSHAREDATE_CREATEDATE_1 = "realtime.createDate IS NULL";
+	private static final String _FINDER_COLUMN_COMPANYSHAREDATE_CREATEDATE_2 = "realtime.createDate = ?";
 
 	public RealtimePersistenceImpl() {
 		setModelClass(Realtime.class);
@@ -2395,25 +2981,48 @@ public class RealtimePersistenceImpl extends BasePersistenceImpl<Realtime>
 			}
 
 			if ((realtimeModelImpl.getColumnBitmask() &
-					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_SHAREID.getColumnBitmask()) != 0) {
+					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_COMPANYSHARE.getColumnBitmask()) != 0) {
 				Object[] args = new Object[] {
-						realtimeModelImpl.getOriginalShareId(),
-						realtimeModelImpl.getOriginalGroupId(),
-						realtimeModelImpl.getOriginalCompanyId()
+						realtimeModelImpl.getOriginalCompanyId(),
+						realtimeModelImpl.getOriginalShareId()
 					};
 
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_SHAREID, args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_SHAREID,
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_COMPANYSHARE, args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_COMPANYSHARE,
 					args);
 
 				args = new Object[] {
-						realtimeModelImpl.getShareId(),
-						realtimeModelImpl.getGroupId(),
-						realtimeModelImpl.getCompanyId()
+						realtimeModelImpl.getCompanyId(),
+						realtimeModelImpl.getShareId()
 					};
 
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_SHAREID, args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_SHAREID,
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_COMPANYSHARE, args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_COMPANYSHARE,
+					args);
+			}
+
+			if ((realtimeModelImpl.getColumnBitmask() &
+					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_COMPANYSHAREDATE.getColumnBitmask()) != 0) {
+				Object[] args = new Object[] {
+						realtimeModelImpl.getOriginalCompanyId(),
+						realtimeModelImpl.getOriginalShareId(),
+						realtimeModelImpl.getOriginalCreateDate()
+					};
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_COMPANYSHAREDATE,
+					args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_COMPANYSHAREDATE,
+					args);
+
+				args = new Object[] {
+						realtimeModelImpl.getCompanyId(),
+						realtimeModelImpl.getShareId(),
+						realtimeModelImpl.getCreateDate()
+					};
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_COMPANYSHAREDATE,
+					args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_COMPANYSHAREDATE,
 					args);
 			}
 		}

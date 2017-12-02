@@ -43,8 +43,6 @@ catch (Exception e)
 </portlet:renderURL>
 <liferay-ui:icon-menu> 
 
-
-
 		 <c:if test="<%=_CanUpdate%>">
 	         <liferay-ui:icon image="edit" message="Edit" url="${editURL}%>" />
         </c:if>

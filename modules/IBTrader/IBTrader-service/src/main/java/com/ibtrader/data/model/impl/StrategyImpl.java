@@ -47,7 +47,7 @@ public class StrategyImpl extends StrategyBaseImpl {
 	/* LISTA DE PARAMETROS EXPANDOS  */
 	private List<ExpandoColumn> _IBStrategyParams;
 	private AssetEntry _IBStrategyAssetEntry;	
-	private TIMApiGITrader  _timApiGITrader;
+	//private TIMApiGITrader  _timApiGITrader;
 	private int _CLIENT_ID = 7;	  //  TIMApiWrapper data 		
 	/* PRECIOS DE ENTRADA SALIDA  */
 	private float _valueIn; 
@@ -116,13 +116,13 @@ public class StrategyImpl extends StrategyBaseImpl {
 		this._valueLimitOut = _valueLimitOut;
 	}
 
-	public TIMApiGITrader getTimAPIW() {
+	/* public TIMApiGITrader getTimAPIW() {
 		return _timApiGITrader;
 	}
 
 	public void setTimAPIW(TIMApiGITrader _timAPIW) {
 		this._timApiGITrader = _timAPIW;
-	}
+	}*/
 
 	public int getCLIENT_ID() {
 		return _CLIENT_ID;

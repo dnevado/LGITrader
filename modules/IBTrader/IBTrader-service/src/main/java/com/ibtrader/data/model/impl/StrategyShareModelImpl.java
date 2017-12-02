@@ -101,13 +101,13 @@ public class StrategyShareModelImpl extends BaseModelImpl<StrategyShare>
 	public static final String DATA_SOURCE = "liferayDataSource";
 	public static final String SESSION_FACTORY = "liferaySessionFactory";
 	public static final String TX_MANAGER = "liferayTransactionManager";
-	public static final boolean ENTITY_CACHE_ENABLED = GetterUtil.getBoolean(com.ibtrader.data.service.util.ServiceProps.get(
+	public static final boolean ENTITY_CACHE_ENABLED = GetterUtil.getBoolean(com.liferay.service.foo.service.util.PropsUtil.get(
 				"value.object.entity.cache.enabled.com.ibtrader.data.model.StrategyShare"),
 			true);
-	public static final boolean FINDER_CACHE_ENABLED = GetterUtil.getBoolean(com.ibtrader.data.service.util.ServiceProps.get(
+	public static final boolean FINDER_CACHE_ENABLED = GetterUtil.getBoolean(com.liferay.service.foo.service.util.PropsUtil.get(
 				"value.object.finder.cache.enabled.com.ibtrader.data.model.StrategyShare"),
 			true);
-	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.ibtrader.data.service.util.ServiceProps.get(
+	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.service.foo.service.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.ibtrader.data.model.StrategyShare"),
 			true);
 	public static final long COMPANYID_COLUMN_BITMASK = 1L;
@@ -162,7 +162,7 @@ public class StrategyShareModelImpl extends BaseModelImpl<StrategyShare>
 		return models;
 	}
 
-	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.ibtrader.data.service.util.ServiceProps.get(
+	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.liferay.service.foo.service.util.PropsUtil.get(
 				"lock.expiration.time.com.ibtrader.data.model.StrategyShare"));
 
 	public StrategyShareModelImpl() {

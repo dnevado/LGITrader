@@ -107,19 +107,20 @@ public class RealtimeModelImpl extends BaseModelImpl<Realtime>
 	public static final String DATA_SOURCE = "liferayDataSource";
 	public static final String SESSION_FACTORY = "liferaySessionFactory";
 	public static final String TX_MANAGER = "liferayTransactionManager";
-	public static final boolean ENTITY_CACHE_ENABLED = GetterUtil.getBoolean(com.ibtrader.data.service.util.ServiceProps.get(
+	public static final boolean ENTITY_CACHE_ENABLED = GetterUtil.getBoolean(com.liferay.service.foo.service.util.PropsUtil.get(
 				"value.object.entity.cache.enabled.com.ibtrader.data.model.Realtime"),
 			true);
-	public static final boolean FINDER_CACHE_ENABLED = GetterUtil.getBoolean(com.ibtrader.data.service.util.ServiceProps.get(
+	public static final boolean FINDER_CACHE_ENABLED = GetterUtil.getBoolean(com.liferay.service.foo.service.util.PropsUtil.get(
 				"value.object.finder.cache.enabled.com.ibtrader.data.model.Realtime"),
 			true);
-	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.ibtrader.data.service.util.ServiceProps.get(
+	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.service.foo.service.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.ibtrader.data.model.Realtime"),
 			true);
 	public static final long COMPANYID_COLUMN_BITMASK = 1L;
-	public static final long GROUPID_COLUMN_BITMASK = 2L;
-	public static final long SHAREID_COLUMN_BITMASK = 4L;
-	public static final long UUID_COLUMN_BITMASK = 8L;
+	public static final long CREATEDATE_COLUMN_BITMASK = 2L;
+	public static final long GROUPID_COLUMN_BITMASK = 4L;
+	public static final long SHAREID_COLUMN_BITMASK = 8L;
+	public static final long UUID_COLUMN_BITMASK = 16L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -170,7 +171,7 @@ public class RealtimeModelImpl extends BaseModelImpl<Realtime>
 		return models;
 	}
 
-	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.ibtrader.data.service.util.ServiceProps.get(
+	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.liferay.service.foo.service.util.PropsUtil.get(
 				"lock.expiration.time.com.ibtrader.data.model.Realtime"));
 
 	public RealtimeModelImpl() {
@@ -427,7 +428,17 @@ public class RealtimeModelImpl extends BaseModelImpl<Realtime>
 
 	@Override
 	public void setCreateDate(Date createDate) {
+		_columnBitmask |= CREATEDATE_COLUMN_BITMASK;
+
+		if (_originalCreateDate == null) {
+			_originalCreateDate = _createDate;
+		}
+
 		_createDate = createDate;
+	}
+
+	public Date getOriginalCreateDate() {
+		return _originalCreateDate;
 	}
 
 	@JSON
@@ -628,6 +639,8 @@ public class RealtimeModelImpl extends BaseModelImpl<Realtime>
 
 		realtimeModelImpl._setOriginalShareId = false;
 
+		realtimeModelImpl._originalCreateDate = realtimeModelImpl._createDate;
+
 		realtimeModelImpl._setModifiedDate = false;
 
 		realtimeModelImpl._columnBitmask = 0;
@@ -797,6 +810,7 @@ public class RealtimeModelImpl extends BaseModelImpl<Realtime>
 	private boolean _setOriginalShareId;
 	private double _value;
 	private Date _createDate;
+	private Date _originalCreateDate;
 	private Date _modifiedDate;
 	private boolean _setModifiedDate;
 	private double _max_value;

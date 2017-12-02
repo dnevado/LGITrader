@@ -14,7 +14,16 @@
 
 package com.ibtrader.data.service.impl;
 
+import aQute.bnd.annotation.ProviderType;
+
+import java.util.List;
+
+import com.ibtrader.data.model.Realtime;
 import com.ibtrader.data.service.base.RealtimeLocalServiceBaseImpl;
+import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.dao.orm.Projection;
+import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 
 /**
  * The implementation of the realtime local service.
@@ -30,10 +39,45 @@ import com.ibtrader.data.service.base.RealtimeLocalServiceBaseImpl;
  * @see RealtimeLocalServiceBaseImpl
  * @see com.ibtrader.data.service.RealtimeLocalServiceUtil
  */
+@ProviderType
 public class RealtimeLocalServiceImpl extends RealtimeLocalServiceBaseImpl {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
 	 * Never reference this class directly. Always use {@link com.ibtrader.data.service.RealtimeLocalServiceUtil} to access the realtime local service.
 	 */
+	/* public Realtime findLastCompanyShare(long companyId, long shareId)
+	{
+		List<Realtime> lRealTime = getRealtimePersistence().findByCompanyShare(companyId, shareId);
+		return lRealTime.get(0);
+	}
+	*/
+	
+	 public Realtime findLastCompanyShare(long companyId, long shareId)
+	{
+		Realtime _returnRT=null;
+		DynamicQuery _DQ = realtimeLocalService.dynamicQuery();
+
+		Projection projection_max = PropertyFactoryUtil.forName("realtimeId").max();
+
+		
+		_DQ.add(RestrictionsFactoryUtil.eq("companyId", companyId));
+		_DQ.add(RestrictionsFactoryUtil.le("shareId", shareId));
+		_DQ.setProjection(projection_max);
+		
+		
+		
+		List<Long> LastRealTime = realtimeLocalService.dynamicQuery(_DQ);
+	
+		/* hay tiempo real*/ 
+		if (!LastRealTime.isEmpty())
+		{
+			_returnRT = realtimeLocalService.fetchRealtime(LastRealTime.get(0));
+		}
+				
+		
+		return _returnRT;
+		
+				
+	}
 }

@@ -26,8 +26,6 @@
 <liferay-ui:search-container-column-text name="strategy.createdate" property="createDate"/>
 <liferay-ui:search-container-column-text name="strategy.type" property="type"/>
 <liferay-ui:search-container-column-jsp path="/strategy_actions.jsp"/>
-
-
 </liferay-ui:search-container-row>    
 <liferay-ui:search-iterator/>
 </liferay-ui:search-container>

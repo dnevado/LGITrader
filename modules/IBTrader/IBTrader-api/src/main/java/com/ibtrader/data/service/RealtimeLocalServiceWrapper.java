@@ -99,6 +99,12 @@ public class RealtimeLocalServiceWrapper implements RealtimeLocalService,
 		return _realtimeLocalService.fetchRealtimeByUuidAndGroupId(uuid, groupId);
 	}
 
+	@Override
+	public com.ibtrader.data.model.Realtime findLastCompanyShare(
+		long companyId, long shareId) {
+		return _realtimeLocalService.findLastCompanyShare(companyId, shareId);
+	}
+
 	/**
 	* Returns the realtime with the primary key.
 	*

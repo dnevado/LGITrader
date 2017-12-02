@@ -5,8 +5,8 @@ dependencies {
 	compileOnly group: "org.osgi", name: "org.osgi.core", version: "6.0.0"
 	compileOnly  group: "com.interactivebrokers.tws", name: "tws-api", version: "9.72.05"
 	
-	/* # runtime por el tema de la instanciación de las estrategias en el service */ 
-	/* runtime project(":modules:IBTrader:IBTrader-api") */
+	/* # runtime por el tema de la instanciación de las estrategias en el service */ 		
+	
 	
 	
 }

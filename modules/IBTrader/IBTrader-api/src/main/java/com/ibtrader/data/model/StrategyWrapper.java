@@ -314,11 +314,6 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 	}
 
 	@Override
-	public com.ibtrader.interactive.TIMApiGITrader getTimAPIW() {
-		return _strategy.getTimAPIW();
-	}
-
-	@Override
 	public com.liferay.asset.kernel.model.AssetEntry getIBStrategyAssetEntry() {
 		return _strategy.getIBStrategyAssetEntry();
 	}
@@ -779,11 +774,6 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 	@Override
 	public void setStrategyID(long strategyID) {
 		_strategy.setStrategyID(strategyID);
-	}
-
-	@Override
-	public void setTimAPIW(com.ibtrader.interactive.TIMApiGITrader _timAPIW) {
-		_strategy.setTimAPIW(_timAPIW);
 	}
 
 	/**

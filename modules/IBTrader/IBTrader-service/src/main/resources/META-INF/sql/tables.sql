@@ -44,7 +44,6 @@ create table ibtrader_Position (
 	groupId LONG,
 	companyId LONG,
 	shareId LONG,
-	value DOUBLE,
 	createDate DATE null,
 	modifiedDate DATE null,
 	state_ VARCHAR(75) null,

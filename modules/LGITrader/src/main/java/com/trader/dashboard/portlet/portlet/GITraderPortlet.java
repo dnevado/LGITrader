@@ -182,7 +182,7 @@ public class GITraderPortlet extends MVCPortlet {
 			throws PortletException {
 		// TODO Auto-generated method stub
 		try {
-			CronUtil.StartTradingCron(new Message());
+			//CronUtil.StartTradingCron(new Message());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -193,7 +193,7 @@ public class GITraderPortlet extends MVCPortlet {
 			throws PortletException {
 		// TODO Auto-generated method stub
 		try {
-			CronUtil.StartReadingCron(new Message());
+		//	CronUtil.StartReadingCron(new Message());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

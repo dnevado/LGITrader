@@ -106,14 +106,16 @@ public class PositionLocalServiceWrapper implements PositionLocalService,
 	}
 
 	@Override
-	public com.ibtrader.data.model.Position findByCompany(long _companyId) {
-		return _positionLocalService.findByCompany(_companyId);
+	public com.ibtrader.data.model.Position findByCompanyGroup(long companyId,
+		long groupId) {
+		return _positionLocalService.findByCompanyGroup(companyId, groupId);
 	}
 
 	@Override
 	public com.ibtrader.data.model.Position findByPositionID_Out_TWS(
-		long _PositionIDTWS) {
-		return _positionLocalService.findByPositionID_Out_TWS(_PositionIDTWS);
+		long groupId, long companyId, long _PositionIDTWS) {
+		return _positionLocalService.findByPositionID_Out_TWS(groupId,
+			companyId, _PositionIDTWS);
 	}
 
 	/**
@@ -265,6 +267,14 @@ public class PositionLocalServiceWrapper implements PositionLocalService,
 		com.liferay.portal.kernel.util.OrderByComparator<T> orderByComparator) {
 		return _positionLocalService.dynamicQuery(dynamicQuery, start, end,
 			orderByComparator);
+	}
+
+	@Override
+	public java.util.List<com.ibtrader.data.model.Position> findByCompanyGroupDate(
+		long companyId, long groupId, java.util.Date start_date_in,
+		java.util.Date end_date_in) {
+		return _positionLocalService.findByCompanyGroupDate(companyId, groupId,
+			start_date_in, end_date_in);
 	}
 
 	/**

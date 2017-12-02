@@ -44,7 +44,6 @@
 		<field name="groupId" type="long" />
 		<field name="companyId" type="long" />
 		<field name="shareId" type="long" />
-		<field name="value" type="double" />
 		<field name="createDate" type="Date" />
 		<field name="modifiedDate" type="Date" />
 		<field name="state" type="String" />

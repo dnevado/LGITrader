@@ -105,6 +105,11 @@ public class RealtimeLocalServiceUtil {
 		return getService().fetchRealtimeByUuidAndGroupId(uuid, groupId);
 	}
 
+	public static com.ibtrader.data.model.Realtime findLastCompanyShare(
+		long companyId, long shareId) {
+		return getService().findLastCompanyShare(companyId, shareId);
+	}
+
 	/**
 	* Returns the realtime with the primary key.
 	*

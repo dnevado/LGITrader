@@ -141,20 +141,6 @@ public interface PositionModel extends BaseModel<Position>, ShardedModel,
 	public void setShareId(long shareId);
 
 	/**
-	 * Returns the value of this position.
-	 *
-	 * @return the value of this position
-	 */
-	public double getValue();
-
-	/**
-	 * Sets the value of this position.
-	 *
-	 * @param value the value of this position
-	 */
-	public void setValue(double value);
-
-	/**
 	 * Returns the create date of this position.
 	 *
 	 * @return the create date of this position

@@ -36,12 +36,17 @@
 		</order>
 
 		<!-- Finder methods -->
-
-		<finder name="shareId" return-type="Collection">
-			<finder-column name="shareId"/>
-			<finder-column name="groupId"/>
-			<finder-column name="companyId"/>
+		<finder name="CompanyShare" return-type="Collection">
+		    <finder-column name="companyId" />
+		    <finder-column name="shareId" />
 		</finder>
+		<finder name="CompanyShareDate" return-type="Collection">
+		    <finder-column name="companyId" />
+		    <finder-column name="shareId" />
+		    <finder-column name="createDate" />
+		    
+		</finder>
+		
 
 		<!-- References -->
 	</entity>
@@ -247,8 +252,7 @@
 			<column name="exchange" type="String" /> 
 			<column name="primary_exchange" type="String" />
 			<column name="date_contract_verified" type="Date" />
-			<column name="userCreatedId" type="long" />
-	
+			<column name="userCreatedId" type="long" />	
 	        <column name="marketId" type="long"></column>
     <!--    	<reference package-path="com.ibtrader.data" entity="Market"></reference>-->
         	
@@ -279,7 +283,7 @@
 		<!-- Audit fields -->
 		<column name="companyId" type="long" />
 		<column name="shareId" type="long" />
-		<column name="value" type="double" />
+		<!-- <column name="value" type="double" /> -->
 		<column name="createDate" type="Date" />
 		<column name="modifiedDate" type="Date" />
 
@@ -350,22 +354,45 @@
 			<finder-column name="date_in" />
 		</finder>
 		
-		<finder name="Company" return-type="Collection">		
-				<finder-column name="companyId"/>					
+		<finder name="CompanyGroup" return-type="Collection">		
+				<finder-column name="companyId"/>
+				<finder-column name="groupId"/>					
+		</finder>	
+		<finder name="CompanyGroupDate" return-type="Collection">		
+			<finder-column name="companyId"/>
+			<finder-column name="groupId"/>
+			<finder-column name="date_in"/>  <!--  INICIO Y FIN  -->	
+										
+		</finder>	
+		
+		<finder name="CompanyGroupDateStatus" return-type="Collection">		
+			<finder-column name="companyId"/>
+			<finder-column name="groupId"/>
+			<finder-column name="date_in"/>	
+			<finder-column name="state"/>		
+			</finder>
+			
+		<finder name="CompanyGroupDateStatusIn" return-type="Collection">		
+			<finder-column name="companyId"/>
+			<finder-column name="groupId"/>
+			<finder-column name="date_in"/>	
+			<finder-column name="state_in"/>												
+		</finder>							
+		<finder name="CompanyGroupDateStatusOut" return-type="Collection">		
+			<finder-column name="companyId"/>
+			<finder-column name="groupId"/>
+			<finder-column name="date_out"/>	
+			<finder-column name="state_out"/>												
 		</finder>
+			
+	
 		
 		<finder name="PositionID_Out_TWS" return-type="Collection">		
+				<finder-column name="groupId"/>
+				<finder-column name="companyId"/>		
 				<finder-column name="positionId_tws_out" />					
 		</finder>
-		<finder  name="PositionbyID" return-type="Collection">	
-			<finder-column name="groupId"/>
-			<finder-column name="companyId"/>		
-			<finder-column name="shareId" />
-			<finder-column name="date_real_in" />
-			<finder-column name="date_real_out" />
-			<finder-column name="date_in" />
-			<finder-column name="date_out" />
-		</finder>
+		
 		<!-- Order -->
 		<!-- Finder methods -->
 		<!-- References -->

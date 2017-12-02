@@ -158,8 +158,7 @@ property = { "indexer.class.name=com.ibtrader.data.model.Strategy"}
 
 	        indexableActionableDynamicQuery.performActions();
 	    }
-		
-		
+				
 		@Override
 		protected void doReindex(Strategy strategy) throws Exception {
 			// TODO Auto-generated method stub

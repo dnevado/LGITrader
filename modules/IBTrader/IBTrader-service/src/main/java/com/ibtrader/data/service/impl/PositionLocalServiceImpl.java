@@ -14,11 +14,17 @@
 
 package com.ibtrader.data.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import com.ibtrader.data.model.Position;
+import com.ibtrader.data.service.MarketLocalServiceUtil;
+import com.ibtrader.data.service.PositionLocalServiceUtil;
 import com.ibtrader.data.service.base.PositionLocalServiceBaseImpl;
 import com.ibtrader.data.service.persistence.PositionPersistence;
+import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.dao.orm.OrderFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 
 /**
  * The implementation of the position local service.
@@ -41,10 +47,30 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 	 * Never reference this class directly. Always use {@link com.ibtrader.data.service.PositionLocalServiceUtil} to access the position local service.
 	 */
 	
-	public Position findByCompany(long _companyId)
+	
+	public List<Position> findByCompanyGroupDate(long companyId, long groupId, Date start_date_in,Date end_date_in)
+	{	
+		DynamicQuery _DQ = PositionLocalServiceUtil.dynamicQuery();
+
+		_DQ.add(RestrictionsFactoryUtil.eq("companyId", companyId));
+		_DQ.add(RestrictionsFactoryUtil.eq("groupId", groupId));
+		 _DQ.add(RestrictionsFactoryUtil.le("date_in", end_date_in));
+		_DQ.add(RestrictionsFactoryUtil.ge("date_in", start_date_in));
+		_DQ.addOrder(OrderFactoryUtil.desc("date_in"));
+		
+		//List<Market>  = MarketLocalServiceUtil.dynamicQuery(_DQ);
+		
+		return PositionLocalServiceUtil.dynamicQuery(_DQ);
+		
+		//return  getPositionPersistence().findByCompanyDate(companyId,start_date_in,end_date_in);
+	}
+	
+	
+	
+	public Position findByCompanyGroup(long companyId, long groupId)
 	{
 		Position _rPosition = null; 
-		List<Position> _lPosition = getPositionPersistence().findByCompany(_companyId);
+		List<Position> _lPosition = getPositionPersistence().findByCompanyGroup(companyId,groupId);
 		if (!_lPosition.isEmpty() && _lPosition.size()>0)
 		{
 			_rPosition = _lPosition.get(0);
@@ -53,10 +79,10 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 		
 	}
 	
-	public Position findByPositionID_Out_TWS(long _PositionIDTWS)
+	public Position findByPositionID_Out_TWS(long groupId, long companyId, long _PositionIDTWS)
 	{
 		Position _rPosition = null; 
-		List<Position> _lPosition = getPositionPersistence().findByPositionID_Out_TWS(_PositionIDTWS);
+		List<Position> _lPosition = getPositionPersistence().findByPositionID_Out_TWS(groupId,companyId, _PositionIDTWS);
 		if (!_lPosition.isEmpty())
 		{
 			_rPosition = _lPosition.get(0);
@@ -73,4 +99,5 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 		
 		
 	}
+
 }

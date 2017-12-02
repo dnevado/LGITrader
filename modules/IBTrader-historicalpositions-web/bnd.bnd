@@ -1,0 +1,4 @@
+Bundle-Name: IBTrader-historicalpositions-web
+Bundle-SymbolicName: IBTrader.historicalpositions.web
+Bundle-Version: 1.0.0
+Export-Package: IBTrader.historicalpositions.web.constants

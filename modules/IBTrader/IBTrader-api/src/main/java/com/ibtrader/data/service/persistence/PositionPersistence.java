@@ -946,185 +946,894 @@ public interface PositionPersistence extends BasePersistence<Position> {
 		long shareId, Date date_in);
 
 	/**
-	* Returns all the positions where companyId = &#63;.
+	* Returns all the positions where companyId = &#63; and groupId = &#63;.
 	*
 	* @param companyId the company ID
+	* @param groupId the group ID
 	* @return the matching positions
 	*/
-	public java.util.List<Position> findByCompany(long companyId);
+	public java.util.List<Position> findByCompanyGroup(long companyId,
+		long groupId);
 
 	/**
-	* Returns a range of all the positions where companyId = &#63;.
+	* Returns a range of all the positions where companyId = &#63; and groupId = &#63;.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
 	* @param companyId the company ID
+	* @param groupId the group ID
 	* @param start the lower bound of the range of positions
 	* @param end the upper bound of the range of positions (not inclusive)
 	* @return the range of matching positions
 	*/
-	public java.util.List<Position> findByCompany(long companyId, int start,
-		int end);
+	public java.util.List<Position> findByCompanyGroup(long companyId,
+		long groupId, int start, int end);
 
 	/**
-	* Returns an ordered range of all the positions where companyId = &#63;.
+	* Returns an ordered range of all the positions where companyId = &#63; and groupId = &#63;.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
 	* @param companyId the company ID
+	* @param groupId the group ID
 	* @param start the lower bound of the range of positions
 	* @param end the upper bound of the range of positions (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching positions
 	*/
-	public java.util.List<Position> findByCompany(long companyId, int start,
-		int end,
+	public java.util.List<Position> findByCompanyGroup(long companyId,
+		long groupId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator);
 
 	/**
-	* Returns an ordered range of all the positions where companyId = &#63;.
+	* Returns an ordered range of all the positions where companyId = &#63; and groupId = &#63;.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
 	* @param companyId the company ID
+	* @param groupId the group ID
 	* @param start the lower bound of the range of positions
 	* @param end the upper bound of the range of positions (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @param retrieveFromCache whether to retrieve from the finder cache
 	* @return the ordered range of matching positions
 	*/
-	public java.util.List<Position> findByCompany(long companyId, int start,
-		int end,
+	public java.util.List<Position> findByCompanyGroup(long companyId,
+		long groupId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator,
 		boolean retrieveFromCache);
 
 	/**
-	* Returns the first position in the ordered set where companyId = &#63;.
+	* Returns the first position in the ordered set where companyId = &#63; and groupId = &#63;.
 	*
 	* @param companyId the company ID
+	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching position
 	* @throws NoSuchPositionException if a matching position could not be found
 	*/
-	public Position findByCompany_First(long companyId,
+	public Position findByCompanyGroup_First(long companyId, long groupId,
 		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator)
 		throws NoSuchPositionException;
 
 	/**
-	* Returns the first position in the ordered set where companyId = &#63;.
+	* Returns the first position in the ordered set where companyId = &#63; and groupId = &#63;.
 	*
 	* @param companyId the company ID
+	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching position, or <code>null</code> if a matching position could not be found
 	*/
-	public Position fetchByCompany_First(long companyId,
+	public Position fetchByCompanyGroup_First(long companyId, long groupId,
 		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator);
 
 	/**
-	* Returns the last position in the ordered set where companyId = &#63;.
+	* Returns the last position in the ordered set where companyId = &#63; and groupId = &#63;.
 	*
 	* @param companyId the company ID
+	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching position
 	* @throws NoSuchPositionException if a matching position could not be found
 	*/
-	public Position findByCompany_Last(long companyId,
+	public Position findByCompanyGroup_Last(long companyId, long groupId,
 		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator)
 		throws NoSuchPositionException;
 
 	/**
-	* Returns the last position in the ordered set where companyId = &#63;.
+	* Returns the last position in the ordered set where companyId = &#63; and groupId = &#63;.
 	*
 	* @param companyId the company ID
+	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching position, or <code>null</code> if a matching position could not be found
 	*/
-	public Position fetchByCompany_Last(long companyId,
+	public Position fetchByCompanyGroup_Last(long companyId, long groupId,
 		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator);
 
 	/**
-	* Returns the positions before and after the current position in the ordered set where companyId = &#63;.
+	* Returns the positions before and after the current position in the ordered set where companyId = &#63; and groupId = &#63;.
 	*
 	* @param positionId the primary key of the current position
 	* @param companyId the company ID
+	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next position
 	* @throws NoSuchPositionException if a position with the primary key could not be found
 	*/
-	public Position[] findByCompany_PrevAndNext(long positionId,
-		long companyId,
+	public Position[] findByCompanyGroup_PrevAndNext(long positionId,
+		long companyId, long groupId,
 		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator)
 		throws NoSuchPositionException;
 
 	/**
-	* Removes all the positions where companyId = &#63; from the database.
+	* Removes all the positions where companyId = &#63; and groupId = &#63; from the database.
 	*
 	* @param companyId the company ID
+	* @param groupId the group ID
 	*/
-	public void removeByCompany(long companyId);
+	public void removeByCompanyGroup(long companyId, long groupId);
 
 	/**
-	* Returns the number of positions where companyId = &#63;.
+	* Returns the number of positions where companyId = &#63; and groupId = &#63;.
 	*
 	* @param companyId the company ID
+	* @param groupId the group ID
 	* @return the number of matching positions
 	*/
-	public int countByCompany(long companyId);
+	public int countByCompanyGroup(long companyId, long groupId);
 
 	/**
-	* Returns all the positions where positionId_tws_out = &#63;.
+	* Returns all the positions where companyId = &#63; and groupId = &#63; and date_in = &#63;.
 	*
-	* @param positionId_tws_out the position id_tws_out
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_in the date_in
 	* @return the matching positions
 	*/
-	public java.util.List<Position> findByPositionID_Out_TWS(
-		long positionId_tws_out);
+	public java.util.List<Position> findByCompanyGroupDate(long companyId,
+		long groupId, Date date_in);
 
 	/**
-	* Returns a range of all the positions where positionId_tws_out = &#63;.
+	* Returns a range of all the positions where companyId = &#63; and groupId = &#63; and date_in = &#63;.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_in the date_in
+	* @param start the lower bound of the range of positions
+	* @param end the upper bound of the range of positions (not inclusive)
+	* @return the range of matching positions
+	*/
+	public java.util.List<Position> findByCompanyGroupDate(long companyId,
+		long groupId, Date date_in, int start, int end);
+
+	/**
+	* Returns an ordered range of all the positions where companyId = &#63; and groupId = &#63; and date_in = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_in the date_in
+	* @param start the lower bound of the range of positions
+	* @param end the upper bound of the range of positions (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching positions
+	*/
+	public java.util.List<Position> findByCompanyGroupDate(long companyId,
+		long groupId, Date date_in, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator);
+
+	/**
+	* Returns an ordered range of all the positions where companyId = &#63; and groupId = &#63; and date_in = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_in the date_in
+	* @param start the lower bound of the range of positions
+	* @param end the upper bound of the range of positions (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching positions
+	*/
+	public java.util.List<Position> findByCompanyGroupDate(long companyId,
+		long groupId, Date date_in, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator,
+		boolean retrieveFromCache);
+
+	/**
+	* Returns the first position in the ordered set where companyId = &#63; and groupId = &#63; and date_in = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_in the date_in
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching position
+	* @throws NoSuchPositionException if a matching position could not be found
+	*/
+	public Position findByCompanyGroupDate_First(long companyId, long groupId,
+		Date date_in,
+		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator)
+		throws NoSuchPositionException;
+
+	/**
+	* Returns the first position in the ordered set where companyId = &#63; and groupId = &#63; and date_in = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_in the date_in
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching position, or <code>null</code> if a matching position could not be found
+	*/
+	public Position fetchByCompanyGroupDate_First(long companyId, long groupId,
+		Date date_in,
+		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator);
+
+	/**
+	* Returns the last position in the ordered set where companyId = &#63; and groupId = &#63; and date_in = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_in the date_in
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching position
+	* @throws NoSuchPositionException if a matching position could not be found
+	*/
+	public Position findByCompanyGroupDate_Last(long companyId, long groupId,
+		Date date_in,
+		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator)
+		throws NoSuchPositionException;
+
+	/**
+	* Returns the last position in the ordered set where companyId = &#63; and groupId = &#63; and date_in = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_in the date_in
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching position, or <code>null</code> if a matching position could not be found
+	*/
+	public Position fetchByCompanyGroupDate_Last(long companyId, long groupId,
+		Date date_in,
+		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator);
+
+	/**
+	* Returns the positions before and after the current position in the ordered set where companyId = &#63; and groupId = &#63; and date_in = &#63;.
+	*
+	* @param positionId the primary key of the current position
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_in the date_in
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next position
+	* @throws NoSuchPositionException if a position with the primary key could not be found
+	*/
+	public Position[] findByCompanyGroupDate_PrevAndNext(long positionId,
+		long companyId, long groupId, Date date_in,
+		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator)
+		throws NoSuchPositionException;
+
+	/**
+	* Removes all the positions where companyId = &#63; and groupId = &#63; and date_in = &#63; from the database.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_in the date_in
+	*/
+	public void removeByCompanyGroupDate(long companyId, long groupId,
+		Date date_in);
+
+	/**
+	* Returns the number of positions where companyId = &#63; and groupId = &#63; and date_in = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_in the date_in
+	* @return the number of matching positions
+	*/
+	public int countByCompanyGroupDate(long companyId, long groupId,
+		Date date_in);
+
+	/**
+	* Returns all the positions where companyId = &#63; and groupId = &#63; and date_in = &#63; and state = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_in the date_in
+	* @param state the state
+	* @return the matching positions
+	*/
+	public java.util.List<Position> findByCompanyGroupDateStatus(
+		long companyId, long groupId, Date date_in, java.lang.String state);
+
+	/**
+	* Returns a range of all the positions where companyId = &#63; and groupId = &#63; and date_in = &#63; and state = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_in the date_in
+	* @param state the state
+	* @param start the lower bound of the range of positions
+	* @param end the upper bound of the range of positions (not inclusive)
+	* @return the range of matching positions
+	*/
+	public java.util.List<Position> findByCompanyGroupDateStatus(
+		long companyId, long groupId, Date date_in, java.lang.String state,
+		int start, int end);
+
+	/**
+	* Returns an ordered range of all the positions where companyId = &#63; and groupId = &#63; and date_in = &#63; and state = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_in the date_in
+	* @param state the state
+	* @param start the lower bound of the range of positions
+	* @param end the upper bound of the range of positions (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching positions
+	*/
+	public java.util.List<Position> findByCompanyGroupDateStatus(
+		long companyId, long groupId, Date date_in, java.lang.String state,
+		int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator);
+
+	/**
+	* Returns an ordered range of all the positions where companyId = &#63; and groupId = &#63; and date_in = &#63; and state = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_in the date_in
+	* @param state the state
+	* @param start the lower bound of the range of positions
+	* @param end the upper bound of the range of positions (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching positions
+	*/
+	public java.util.List<Position> findByCompanyGroupDateStatus(
+		long companyId, long groupId, Date date_in, java.lang.String state,
+		int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator,
+		boolean retrieveFromCache);
+
+	/**
+	* Returns the first position in the ordered set where companyId = &#63; and groupId = &#63; and date_in = &#63; and state = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_in the date_in
+	* @param state the state
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching position
+	* @throws NoSuchPositionException if a matching position could not be found
+	*/
+	public Position findByCompanyGroupDateStatus_First(long companyId,
+		long groupId, Date date_in, java.lang.String state,
+		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator)
+		throws NoSuchPositionException;
+
+	/**
+	* Returns the first position in the ordered set where companyId = &#63; and groupId = &#63; and date_in = &#63; and state = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_in the date_in
+	* @param state the state
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching position, or <code>null</code> if a matching position could not be found
+	*/
+	public Position fetchByCompanyGroupDateStatus_First(long companyId,
+		long groupId, Date date_in, java.lang.String state,
+		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator);
+
+	/**
+	* Returns the last position in the ordered set where companyId = &#63; and groupId = &#63; and date_in = &#63; and state = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_in the date_in
+	* @param state the state
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching position
+	* @throws NoSuchPositionException if a matching position could not be found
+	*/
+	public Position findByCompanyGroupDateStatus_Last(long companyId,
+		long groupId, Date date_in, java.lang.String state,
+		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator)
+		throws NoSuchPositionException;
+
+	/**
+	* Returns the last position in the ordered set where companyId = &#63; and groupId = &#63; and date_in = &#63; and state = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_in the date_in
+	* @param state the state
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching position, or <code>null</code> if a matching position could not be found
+	*/
+	public Position fetchByCompanyGroupDateStatus_Last(long companyId,
+		long groupId, Date date_in, java.lang.String state,
+		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator);
+
+	/**
+	* Returns the positions before and after the current position in the ordered set where companyId = &#63; and groupId = &#63; and date_in = &#63; and state = &#63;.
+	*
+	* @param positionId the primary key of the current position
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_in the date_in
+	* @param state the state
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next position
+	* @throws NoSuchPositionException if a position with the primary key could not be found
+	*/
+	public Position[] findByCompanyGroupDateStatus_PrevAndNext(
+		long positionId, long companyId, long groupId, Date date_in,
+		java.lang.String state,
+		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator)
+		throws NoSuchPositionException;
+
+	/**
+	* Removes all the positions where companyId = &#63; and groupId = &#63; and date_in = &#63; and state = &#63; from the database.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_in the date_in
+	* @param state the state
+	*/
+	public void removeByCompanyGroupDateStatus(long companyId, long groupId,
+		Date date_in, java.lang.String state);
+
+	/**
+	* Returns the number of positions where companyId = &#63; and groupId = &#63; and date_in = &#63; and state = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_in the date_in
+	* @param state the state
+	* @return the number of matching positions
+	*/
+	public int countByCompanyGroupDateStatus(long companyId, long groupId,
+		Date date_in, java.lang.String state);
+
+	/**
+	* Returns all the positions where companyId = &#63; and groupId = &#63; and date_in = &#63; and state_in = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_in the date_in
+	* @param state_in the state_in
+	* @return the matching positions
+	*/
+	public java.util.List<Position> findByCompanyGroupDateStatusIn(
+		long companyId, long groupId, Date date_in, java.lang.String state_in);
+
+	/**
+	* Returns a range of all the positions where companyId = &#63; and groupId = &#63; and date_in = &#63; and state_in = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_in the date_in
+	* @param state_in the state_in
+	* @param start the lower bound of the range of positions
+	* @param end the upper bound of the range of positions (not inclusive)
+	* @return the range of matching positions
+	*/
+	public java.util.List<Position> findByCompanyGroupDateStatusIn(
+		long companyId, long groupId, Date date_in, java.lang.String state_in,
+		int start, int end);
+
+	/**
+	* Returns an ordered range of all the positions where companyId = &#63; and groupId = &#63; and date_in = &#63; and state_in = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_in the date_in
+	* @param state_in the state_in
+	* @param start the lower bound of the range of positions
+	* @param end the upper bound of the range of positions (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching positions
+	*/
+	public java.util.List<Position> findByCompanyGroupDateStatusIn(
+		long companyId, long groupId, Date date_in, java.lang.String state_in,
+		int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator);
+
+	/**
+	* Returns an ordered range of all the positions where companyId = &#63; and groupId = &#63; and date_in = &#63; and state_in = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_in the date_in
+	* @param state_in the state_in
+	* @param start the lower bound of the range of positions
+	* @param end the upper bound of the range of positions (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching positions
+	*/
+	public java.util.List<Position> findByCompanyGroupDateStatusIn(
+		long companyId, long groupId, Date date_in, java.lang.String state_in,
+		int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator,
+		boolean retrieveFromCache);
+
+	/**
+	* Returns the first position in the ordered set where companyId = &#63; and groupId = &#63; and date_in = &#63; and state_in = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_in the date_in
+	* @param state_in the state_in
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching position
+	* @throws NoSuchPositionException if a matching position could not be found
+	*/
+	public Position findByCompanyGroupDateStatusIn_First(long companyId,
+		long groupId, Date date_in, java.lang.String state_in,
+		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator)
+		throws NoSuchPositionException;
+
+	/**
+	* Returns the first position in the ordered set where companyId = &#63; and groupId = &#63; and date_in = &#63; and state_in = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_in the date_in
+	* @param state_in the state_in
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching position, or <code>null</code> if a matching position could not be found
+	*/
+	public Position fetchByCompanyGroupDateStatusIn_First(long companyId,
+		long groupId, Date date_in, java.lang.String state_in,
+		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator);
+
+	/**
+	* Returns the last position in the ordered set where companyId = &#63; and groupId = &#63; and date_in = &#63; and state_in = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_in the date_in
+	* @param state_in the state_in
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching position
+	* @throws NoSuchPositionException if a matching position could not be found
+	*/
+	public Position findByCompanyGroupDateStatusIn_Last(long companyId,
+		long groupId, Date date_in, java.lang.String state_in,
+		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator)
+		throws NoSuchPositionException;
+
+	/**
+	* Returns the last position in the ordered set where companyId = &#63; and groupId = &#63; and date_in = &#63; and state_in = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_in the date_in
+	* @param state_in the state_in
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching position, or <code>null</code> if a matching position could not be found
+	*/
+	public Position fetchByCompanyGroupDateStatusIn_Last(long companyId,
+		long groupId, Date date_in, java.lang.String state_in,
+		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator);
+
+	/**
+	* Returns the positions before and after the current position in the ordered set where companyId = &#63; and groupId = &#63; and date_in = &#63; and state_in = &#63;.
+	*
+	* @param positionId the primary key of the current position
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_in the date_in
+	* @param state_in the state_in
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next position
+	* @throws NoSuchPositionException if a position with the primary key could not be found
+	*/
+	public Position[] findByCompanyGroupDateStatusIn_PrevAndNext(
+		long positionId, long companyId, long groupId, Date date_in,
+		java.lang.String state_in,
+		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator)
+		throws NoSuchPositionException;
+
+	/**
+	* Removes all the positions where companyId = &#63; and groupId = &#63; and date_in = &#63; and state_in = &#63; from the database.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_in the date_in
+	* @param state_in the state_in
+	*/
+	public void removeByCompanyGroupDateStatusIn(long companyId, long groupId,
+		Date date_in, java.lang.String state_in);
+
+	/**
+	* Returns the number of positions where companyId = &#63; and groupId = &#63; and date_in = &#63; and state_in = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_in the date_in
+	* @param state_in the state_in
+	* @return the number of matching positions
+	*/
+	public int countByCompanyGroupDateStatusIn(long companyId, long groupId,
+		Date date_in, java.lang.String state_in);
+
+	/**
+	* Returns all the positions where companyId = &#63; and groupId = &#63; and date_out = &#63; and state_out = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_out the date_out
+	* @param state_out the state_out
+	* @return the matching positions
+	*/
+	public java.util.List<Position> findByCompanyGroupDateStatusOut(
+		long companyId, long groupId, Date date_out, java.lang.String state_out);
+
+	/**
+	* Returns a range of all the positions where companyId = &#63; and groupId = &#63; and date_out = &#63; and state_out = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_out the date_out
+	* @param state_out the state_out
+	* @param start the lower bound of the range of positions
+	* @param end the upper bound of the range of positions (not inclusive)
+	* @return the range of matching positions
+	*/
+	public java.util.List<Position> findByCompanyGroupDateStatusOut(
+		long companyId, long groupId, Date date_out,
+		java.lang.String state_out, int start, int end);
+
+	/**
+	* Returns an ordered range of all the positions where companyId = &#63; and groupId = &#63; and date_out = &#63; and state_out = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_out the date_out
+	* @param state_out the state_out
+	* @param start the lower bound of the range of positions
+	* @param end the upper bound of the range of positions (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching positions
+	*/
+	public java.util.List<Position> findByCompanyGroupDateStatusOut(
+		long companyId, long groupId, Date date_out,
+		java.lang.String state_out, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator);
+
+	/**
+	* Returns an ordered range of all the positions where companyId = &#63; and groupId = &#63; and date_out = &#63; and state_out = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_out the date_out
+	* @param state_out the state_out
+	* @param start the lower bound of the range of positions
+	* @param end the upper bound of the range of positions (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching positions
+	*/
+	public java.util.List<Position> findByCompanyGroupDateStatusOut(
+		long companyId, long groupId, Date date_out,
+		java.lang.String state_out, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator,
+		boolean retrieveFromCache);
+
+	/**
+	* Returns the first position in the ordered set where companyId = &#63; and groupId = &#63; and date_out = &#63; and state_out = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_out the date_out
+	* @param state_out the state_out
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching position
+	* @throws NoSuchPositionException if a matching position could not be found
+	*/
+	public Position findByCompanyGroupDateStatusOut_First(long companyId,
+		long groupId, Date date_out, java.lang.String state_out,
+		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator)
+		throws NoSuchPositionException;
+
+	/**
+	* Returns the first position in the ordered set where companyId = &#63; and groupId = &#63; and date_out = &#63; and state_out = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_out the date_out
+	* @param state_out the state_out
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching position, or <code>null</code> if a matching position could not be found
+	*/
+	public Position fetchByCompanyGroupDateStatusOut_First(long companyId,
+		long groupId, Date date_out, java.lang.String state_out,
+		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator);
+
+	/**
+	* Returns the last position in the ordered set where companyId = &#63; and groupId = &#63; and date_out = &#63; and state_out = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_out the date_out
+	* @param state_out the state_out
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching position
+	* @throws NoSuchPositionException if a matching position could not be found
+	*/
+	public Position findByCompanyGroupDateStatusOut_Last(long companyId,
+		long groupId, Date date_out, java.lang.String state_out,
+		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator)
+		throws NoSuchPositionException;
+
+	/**
+	* Returns the last position in the ordered set where companyId = &#63; and groupId = &#63; and date_out = &#63; and state_out = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_out the date_out
+	* @param state_out the state_out
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching position, or <code>null</code> if a matching position could not be found
+	*/
+	public Position fetchByCompanyGroupDateStatusOut_Last(long companyId,
+		long groupId, Date date_out, java.lang.String state_out,
+		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator);
+
+	/**
+	* Returns the positions before and after the current position in the ordered set where companyId = &#63; and groupId = &#63; and date_out = &#63; and state_out = &#63;.
+	*
+	* @param positionId the primary key of the current position
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_out the date_out
+	* @param state_out the state_out
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next position
+	* @throws NoSuchPositionException if a position with the primary key could not be found
+	*/
+	public Position[] findByCompanyGroupDateStatusOut_PrevAndNext(
+		long positionId, long companyId, long groupId, Date date_out,
+		java.lang.String state_out,
+		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator)
+		throws NoSuchPositionException;
+
+	/**
+	* Removes all the positions where companyId = &#63; and groupId = &#63; and date_out = &#63; and state_out = &#63; from the database.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_out the date_out
+	* @param state_out the state_out
+	*/
+	public void removeByCompanyGroupDateStatusOut(long companyId, long groupId,
+		Date date_out, java.lang.String state_out);
+
+	/**
+	* Returns the number of positions where companyId = &#63; and groupId = &#63; and date_out = &#63; and state_out = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param date_out the date_out
+	* @param state_out the state_out
+	* @return the number of matching positions
+	*/
+	public int countByCompanyGroupDateStatusOut(long companyId, long groupId,
+		Date date_out, java.lang.String state_out);
+
+	/**
+	* Returns all the positions where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63;.
+	*
+	* @param groupId the group ID
+	* @param companyId the company ID
+	* @param positionId_tws_out the position id_tws_out
+	* @return the matching positions
+	*/
+	public java.util.List<Position> findByPositionID_Out_TWS(long groupId,
+		long companyId, long positionId_tws_out);
+
+	/**
+	* Returns a range of all the positions where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param companyId the company ID
 	* @param positionId_tws_out the position id_tws_out
 	* @param start the lower bound of the range of positions
 	* @param end the upper bound of the range of positions (not inclusive)
 	* @return the range of matching positions
 	*/
-	public java.util.List<Position> findByPositionID_Out_TWS(
-		long positionId_tws_out, int start, int end);
+	public java.util.List<Position> findByPositionID_Out_TWS(long groupId,
+		long companyId, long positionId_tws_out, int start, int end);
 
 	/**
-	* Returns an ordered range of all the positions where positionId_tws_out = &#63;.
+	* Returns an ordered range of all the positions where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63;.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
+	* @param groupId the group ID
+	* @param companyId the company ID
 	* @param positionId_tws_out the position id_tws_out
 	* @param start the lower bound of the range of positions
 	* @param end the upper bound of the range of positions (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching positions
 	*/
-	public java.util.List<Position> findByPositionID_Out_TWS(
-		long positionId_tws_out, int start, int end,
+	public java.util.List<Position> findByPositionID_Out_TWS(long groupId,
+		long companyId, long positionId_tws_out, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator);
 
 	/**
-	* Returns an ordered range of all the positions where positionId_tws_out = &#63;.
+	* Returns an ordered range of all the positions where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63;.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
+	* @param groupId the group ID
+	* @param companyId the company ID
 	* @param positionId_tws_out the position id_tws_out
 	* @param start the lower bound of the range of positions
 	* @param end the upper bound of the range of positions (not inclusive)
@@ -1132,298 +1841,103 @@ public interface PositionPersistence extends BasePersistence<Position> {
 	* @param retrieveFromCache whether to retrieve from the finder cache
 	* @return the ordered range of matching positions
 	*/
-	public java.util.List<Position> findByPositionID_Out_TWS(
-		long positionId_tws_out, int start, int end,
+	public java.util.List<Position> findByPositionID_Out_TWS(long groupId,
+		long companyId, long positionId_tws_out, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator,
 		boolean retrieveFromCache);
 
 	/**
-	* Returns the first position in the ordered set where positionId_tws_out = &#63;.
+	* Returns the first position in the ordered set where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63;.
 	*
+	* @param groupId the group ID
+	* @param companyId the company ID
 	* @param positionId_tws_out the position id_tws_out
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching position
 	* @throws NoSuchPositionException if a matching position could not be found
 	*/
-	public Position findByPositionID_Out_TWS_First(long positionId_tws_out,
+	public Position findByPositionID_Out_TWS_First(long groupId,
+		long companyId, long positionId_tws_out,
 		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator)
 		throws NoSuchPositionException;
 
 	/**
-	* Returns the first position in the ordered set where positionId_tws_out = &#63;.
+	* Returns the first position in the ordered set where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63;.
 	*
+	* @param groupId the group ID
+	* @param companyId the company ID
 	* @param positionId_tws_out the position id_tws_out
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching position, or <code>null</code> if a matching position could not be found
 	*/
-	public Position fetchByPositionID_Out_TWS_First(long positionId_tws_out,
+	public Position fetchByPositionID_Out_TWS_First(long groupId,
+		long companyId, long positionId_tws_out,
 		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator);
 
 	/**
-	* Returns the last position in the ordered set where positionId_tws_out = &#63;.
+	* Returns the last position in the ordered set where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63;.
 	*
+	* @param groupId the group ID
+	* @param companyId the company ID
 	* @param positionId_tws_out the position id_tws_out
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching position
 	* @throws NoSuchPositionException if a matching position could not be found
 	*/
-	public Position findByPositionID_Out_TWS_Last(long positionId_tws_out,
+	public Position findByPositionID_Out_TWS_Last(long groupId, long companyId,
+		long positionId_tws_out,
 		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator)
 		throws NoSuchPositionException;
 
 	/**
-	* Returns the last position in the ordered set where positionId_tws_out = &#63;.
+	* Returns the last position in the ordered set where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63;.
 	*
+	* @param groupId the group ID
+	* @param companyId the company ID
 	* @param positionId_tws_out the position id_tws_out
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching position, or <code>null</code> if a matching position could not be found
 	*/
-	public Position fetchByPositionID_Out_TWS_Last(long positionId_tws_out,
+	public Position fetchByPositionID_Out_TWS_Last(long groupId,
+		long companyId, long positionId_tws_out,
 		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator);
 
 	/**
-	* Returns the positions before and after the current position in the ordered set where positionId_tws_out = &#63;.
+	* Returns the positions before and after the current position in the ordered set where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63;.
 	*
 	* @param positionId the primary key of the current position
+	* @param groupId the group ID
+	* @param companyId the company ID
 	* @param positionId_tws_out the position id_tws_out
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next position
 	* @throws NoSuchPositionException if a position with the primary key could not be found
 	*/
 	public Position[] findByPositionID_Out_TWS_PrevAndNext(long positionId,
-		long positionId_tws_out,
+		long groupId, long companyId, long positionId_tws_out,
 		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator)
 		throws NoSuchPositionException;
 
 	/**
-	* Removes all the positions where positionId_tws_out = &#63; from the database.
+	* Removes all the positions where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63; from the database.
 	*
+	* @param groupId the group ID
+	* @param companyId the company ID
 	* @param positionId_tws_out the position id_tws_out
 	*/
-	public void removeByPositionID_Out_TWS(long positionId_tws_out);
+	public void removeByPositionID_Out_TWS(long groupId, long companyId,
+		long positionId_tws_out);
 
 	/**
-	* Returns the number of positions where positionId_tws_out = &#63;.
+	* Returns the number of positions where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63;.
 	*
+	* @param groupId the group ID
+	* @param companyId the company ID
 	* @param positionId_tws_out the position id_tws_out
 	* @return the number of matching positions
 	*/
-	public int countByPositionID_Out_TWS(long positionId_tws_out);
-
-	/**
-	* Returns all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_in = &#63; and date_real_out = &#63; and date_in = &#63; and date_out = &#63;.
-	*
-	* @param groupId the group ID
-	* @param companyId the company ID
-	* @param shareId the share ID
-	* @param date_real_in the date_real_in
-	* @param date_real_out the date_real_out
-	* @param date_in the date_in
-	* @param date_out the date_out
-	* @return the matching positions
-	*/
-	public java.util.List<Position> findByPositionbyID(long groupId,
-		long companyId, long shareId, Date date_real_in, Date date_real_out,
-		Date date_in, Date date_out);
-
-	/**
-	* Returns a range of all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_in = &#63; and date_real_out = &#63; and date_in = &#63; and date_out = &#63;.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	* </p>
-	*
-	* @param groupId the group ID
-	* @param companyId the company ID
-	* @param shareId the share ID
-	* @param date_real_in the date_real_in
-	* @param date_real_out the date_real_out
-	* @param date_in the date_in
-	* @param date_out the date_out
-	* @param start the lower bound of the range of positions
-	* @param end the upper bound of the range of positions (not inclusive)
-	* @return the range of matching positions
-	*/
-	public java.util.List<Position> findByPositionbyID(long groupId,
-		long companyId, long shareId, Date date_real_in, Date date_real_out,
-		Date date_in, Date date_out, int start, int end);
-
-	/**
-	* Returns an ordered range of all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_in = &#63; and date_real_out = &#63; and date_in = &#63; and date_out = &#63;.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	* </p>
-	*
-	* @param groupId the group ID
-	* @param companyId the company ID
-	* @param shareId the share ID
-	* @param date_real_in the date_real_in
-	* @param date_real_out the date_real_out
-	* @param date_in the date_in
-	* @param date_out the date_out
-	* @param start the lower bound of the range of positions
-	* @param end the upper bound of the range of positions (not inclusive)
-	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	* @return the ordered range of matching positions
-	*/
-	public java.util.List<Position> findByPositionbyID(long groupId,
-		long companyId, long shareId, Date date_real_in, Date date_real_out,
-		Date date_in, Date date_out, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator);
-
-	/**
-	* Returns an ordered range of all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_in = &#63; and date_real_out = &#63; and date_in = &#63; and date_out = &#63;.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	* </p>
-	*
-	* @param groupId the group ID
-	* @param companyId the company ID
-	* @param shareId the share ID
-	* @param date_real_in the date_real_in
-	* @param date_real_out the date_real_out
-	* @param date_in the date_in
-	* @param date_out the date_out
-	* @param start the lower bound of the range of positions
-	* @param end the upper bound of the range of positions (not inclusive)
-	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	* @param retrieveFromCache whether to retrieve from the finder cache
-	* @return the ordered range of matching positions
-	*/
-	public java.util.List<Position> findByPositionbyID(long groupId,
-		long companyId, long shareId, Date date_real_in, Date date_real_out,
-		Date date_in, Date date_out, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator,
-		boolean retrieveFromCache);
-
-	/**
-	* Returns the first position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_in = &#63; and date_real_out = &#63; and date_in = &#63; and date_out = &#63;.
-	*
-	* @param groupId the group ID
-	* @param companyId the company ID
-	* @param shareId the share ID
-	* @param date_real_in the date_real_in
-	* @param date_real_out the date_real_out
-	* @param date_in the date_in
-	* @param date_out the date_out
-	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	* @return the first matching position
-	* @throws NoSuchPositionException if a matching position could not be found
-	*/
-	public Position findByPositionbyID_First(long groupId, long companyId,
-		long shareId, Date date_real_in, Date date_real_out, Date date_in,
-		Date date_out,
-		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator)
-		throws NoSuchPositionException;
-
-	/**
-	* Returns the first position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_in = &#63; and date_real_out = &#63; and date_in = &#63; and date_out = &#63;.
-	*
-	* @param groupId the group ID
-	* @param companyId the company ID
-	* @param shareId the share ID
-	* @param date_real_in the date_real_in
-	* @param date_real_out the date_real_out
-	* @param date_in the date_in
-	* @param date_out the date_out
-	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	* @return the first matching position, or <code>null</code> if a matching position could not be found
-	*/
-	public Position fetchByPositionbyID_First(long groupId, long companyId,
-		long shareId, Date date_real_in, Date date_real_out, Date date_in,
-		Date date_out,
-		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator);
-
-	/**
-	* Returns the last position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_in = &#63; and date_real_out = &#63; and date_in = &#63; and date_out = &#63;.
-	*
-	* @param groupId the group ID
-	* @param companyId the company ID
-	* @param shareId the share ID
-	* @param date_real_in the date_real_in
-	* @param date_real_out the date_real_out
-	* @param date_in the date_in
-	* @param date_out the date_out
-	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	* @return the last matching position
-	* @throws NoSuchPositionException if a matching position could not be found
-	*/
-	public Position findByPositionbyID_Last(long groupId, long companyId,
-		long shareId, Date date_real_in, Date date_real_out, Date date_in,
-		Date date_out,
-		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator)
-		throws NoSuchPositionException;
-
-	/**
-	* Returns the last position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_in = &#63; and date_real_out = &#63; and date_in = &#63; and date_out = &#63;.
-	*
-	* @param groupId the group ID
-	* @param companyId the company ID
-	* @param shareId the share ID
-	* @param date_real_in the date_real_in
-	* @param date_real_out the date_real_out
-	* @param date_in the date_in
-	* @param date_out the date_out
-	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	* @return the last matching position, or <code>null</code> if a matching position could not be found
-	*/
-	public Position fetchByPositionbyID_Last(long groupId, long companyId,
-		long shareId, Date date_real_in, Date date_real_out, Date date_in,
-		Date date_out,
-		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator);
-
-	/**
-	* Returns the positions before and after the current position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_in = &#63; and date_real_out = &#63; and date_in = &#63; and date_out = &#63;.
-	*
-	* @param positionId the primary key of the current position
-	* @param groupId the group ID
-	* @param companyId the company ID
-	* @param shareId the share ID
-	* @param date_real_in the date_real_in
-	* @param date_real_out the date_real_out
-	* @param date_in the date_in
-	* @param date_out the date_out
-	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	* @return the previous, current, and next position
-	* @throws NoSuchPositionException if a position with the primary key could not be found
-	*/
-	public Position[] findByPositionbyID_PrevAndNext(long positionId,
-		long groupId, long companyId, long shareId, Date date_real_in,
-		Date date_real_out, Date date_in, Date date_out,
-		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator)
-		throws NoSuchPositionException;
-
-	/**
-	* Removes all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_in = &#63; and date_real_out = &#63; and date_in = &#63; and date_out = &#63; from the database.
-	*
-	* @param groupId the group ID
-	* @param companyId the company ID
-	* @param shareId the share ID
-	* @param date_real_in the date_real_in
-	* @param date_real_out the date_real_out
-	* @param date_in the date_in
-	* @param date_out the date_out
-	*/
-	public void removeByPositionbyID(long groupId, long companyId,
-		long shareId, Date date_real_in, Date date_real_out, Date date_in,
-		Date date_out);
-
-	/**
-	* Returns the number of positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_in = &#63; and date_real_out = &#63; and date_in = &#63; and date_out = &#63;.
-	*
-	* @param groupId the group ID
-	* @param companyId the company ID
-	* @param shareId the share ID
-	* @param date_real_in the date_real_in
-	* @param date_real_out the date_real_out
-	* @param date_in the date_in
-	* @param date_out the date_out
-	* @return the number of matching positions
-	*/
-	public int countByPositionbyID(long groupId, long companyId, long shareId,
-		Date date_real_in, Date date_real_out, Date date_in, Date date_out);
+	public int countByPositionID_Out_TWS(long groupId, long companyId,
+		long positionId_tws_out);
 
 	/**
 	* Caches the position in the entity cache if it is enabled.

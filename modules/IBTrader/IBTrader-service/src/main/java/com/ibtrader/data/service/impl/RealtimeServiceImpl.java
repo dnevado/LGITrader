@@ -14,6 +14,8 @@
 
 package com.ibtrader.data.service.impl;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.ibtrader.data.service.base.RealtimeServiceBaseImpl;
 
 /**
@@ -30,6 +32,7 @@ import com.ibtrader.data.service.base.RealtimeServiceBaseImpl;
  * @see RealtimeServiceBaseImpl
  * @see com.ibtrader.data.service.RealtimeServiceUtil
  */
+@ProviderType
 public class RealtimeServiceImpl extends RealtimeServiceBaseImpl {
 	/*
 	 * NOTE FOR DEVELOPERS:

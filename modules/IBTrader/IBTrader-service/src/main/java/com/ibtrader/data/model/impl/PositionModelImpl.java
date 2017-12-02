@@ -75,7 +75,6 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 			{ "groupId", Types.BIGINT },
 			{ "companyId", Types.BIGINT },
 			{ "shareId", Types.BIGINT },
-			{ "value", Types.DOUBLE },
 			{ "createDate", Types.TIMESTAMP },
 			{ "modifiedDate", Types.TIMESTAMP },
 			{ "state_", Types.VARCHAR },
@@ -118,7 +117,6 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		TABLE_COLUMNS_MAP.put("groupId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("companyId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("shareId", Types.BIGINT);
-		TABLE_COLUMNS_MAP.put("value", Types.DOUBLE);
 		TABLE_COLUMNS_MAP.put("createDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("modifiedDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("state_", Types.VARCHAR);
@@ -154,20 +152,20 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		TABLE_COLUMNS_MAP.put("simulation_mode", Types.BOOLEAN);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table ibtrader_Position (uuid_ VARCHAR(75) null,positionId LONG not null primary key,groupId LONG,companyId LONG,shareId LONG,value DOUBLE,createDate DATE null,modifiedDate DATE null,state_ VARCHAR(75) null,state_in VARCHAR(75) null,state_out VARCHAR(75) null,description VARCHAR(75) null,price_in DOUBLE,price_real_in DOUBLE,limit_price_in DOUBLE,date_in DATE null,date_real_in DATE null,positionId_tws_in LONG,positionId_tws_out LONG,type_ VARCHAR(75) null,price_out DOUBLE,price_real_out DOUBLE,limit_price_out DOUBLE,date_out DATE null,date_real_out DATE null,share_number LONG,share_number_to_trade LONG,share_number_traded LONG,realtimeId_in LONG,realtimeId_out LONG,strategy_in VARCHAR(75) null,strategy_out VARCHAR(75) null,percentualstoplost_out DOUBLE,pricestoplost_out DOUBLE,percentualstopprofit_out DOUBLE,pricestopprofit_out DOUBLE,pendingcancelled LONG,trading_data_operations VARCHAR(75) null,simulation_mode BOOLEAN)";
+	public static final String TABLE_SQL_CREATE = "create table ibtrader_Position (uuid_ VARCHAR(75) null,positionId LONG not null primary key,groupId LONG,companyId LONG,shareId LONG,createDate DATE null,modifiedDate DATE null,state_ VARCHAR(75) null,state_in VARCHAR(75) null,state_out VARCHAR(75) null,description VARCHAR(75) null,price_in DOUBLE,price_real_in DOUBLE,limit_price_in DOUBLE,date_in DATE null,date_real_in DATE null,positionId_tws_in LONG,positionId_tws_out LONG,type_ VARCHAR(75) null,price_out DOUBLE,price_real_out DOUBLE,limit_price_out DOUBLE,date_out DATE null,date_real_out DATE null,share_number LONG,share_number_to_trade LONG,share_number_traded LONG,realtimeId_in LONG,realtimeId_out LONG,strategy_in VARCHAR(75) null,strategy_out VARCHAR(75) null,percentualstoplost_out DOUBLE,pricestoplost_out DOUBLE,percentualstopprofit_out DOUBLE,pricestopprofit_out DOUBLE,pendingcancelled LONG,trading_data_operations VARCHAR(75) null,simulation_mode BOOLEAN)";
 	public static final String TABLE_SQL_DROP = "drop table ibtrader_Position";
 	public static final String ORDER_BY_JPQL = " ORDER BY position.positionId_tws_in DESC";
 	public static final String ORDER_BY_SQL = " ORDER BY ibtrader_Position.positionId_tws_in DESC";
 	public static final String DATA_SOURCE = "liferayDataSource";
 	public static final String SESSION_FACTORY = "liferaySessionFactory";
 	public static final String TX_MANAGER = "liferayTransactionManager";
-	public static final boolean ENTITY_CACHE_ENABLED = GetterUtil.getBoolean(com.ibtrader.data.service.util.ServiceProps.get(
+	public static final boolean ENTITY_CACHE_ENABLED = GetterUtil.getBoolean(com.liferay.service.foo.service.util.PropsUtil.get(
 				"value.object.entity.cache.enabled.com.ibtrader.data.model.Position"),
 			true);
-	public static final boolean FINDER_CACHE_ENABLED = GetterUtil.getBoolean(com.ibtrader.data.service.util.ServiceProps.get(
+	public static final boolean FINDER_CACHE_ENABLED = GetterUtil.getBoolean(com.liferay.service.foo.service.util.PropsUtil.get(
 				"value.object.finder.cache.enabled.com.ibtrader.data.model.Position"),
 			true);
-	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.ibtrader.data.service.util.ServiceProps.get(
+	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.service.foo.service.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.ibtrader.data.model.Position"),
 			true);
 	public static final long COMPANYID_COLUMN_BITMASK = 1L;
@@ -179,8 +177,10 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 	public static final long POSITIONID_TWS_OUT_COLUMN_BITMASK = 64L;
 	public static final long SHAREID_COLUMN_BITMASK = 128L;
 	public static final long STATE_COLUMN_BITMASK = 256L;
-	public static final long UUID_COLUMN_BITMASK = 512L;
-	public static final long POSITIONID_TWS_IN_COLUMN_BITMASK = 1024L;
+	public static final long STATE_IN_COLUMN_BITMASK = 512L;
+	public static final long STATE_OUT_COLUMN_BITMASK = 1024L;
+	public static final long UUID_COLUMN_BITMASK = 2048L;
+	public static final long POSITIONID_TWS_IN_COLUMN_BITMASK = 4096L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -200,7 +200,6 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		model.setGroupId(soapModel.getGroupId());
 		model.setCompanyId(soapModel.getCompanyId());
 		model.setShareId(soapModel.getShareId());
-		model.setValue(soapModel.getValue());
 		model.setCreateDate(soapModel.getCreateDate());
 		model.setModifiedDate(soapModel.getModifiedDate());
 		model.setState(soapModel.getState());
@@ -258,7 +257,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		return models;
 	}
 
-	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.ibtrader.data.service.util.ServiceProps.get(
+	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.liferay.service.foo.service.util.PropsUtil.get(
 				"lock.expiration.time.com.ibtrader.data.model.Position"));
 
 	public PositionModelImpl() {
@@ -303,7 +302,6 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		attributes.put("groupId", getGroupId());
 		attributes.put("companyId", getCompanyId());
 		attributes.put("shareId", getShareId());
-		attributes.put("value", getValue());
 		attributes.put("createDate", getCreateDate());
 		attributes.put("modifiedDate", getModifiedDate());
 		attributes.put("state", getState());
@@ -374,12 +372,6 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 		if (shareId != null) {
 			setShareId(shareId);
-		}
-
-		Double value = (Double)attributes.get("value");
-
-		if (value != null) {
-			setValue(value);
 		}
 
 		Date createDate = (Date)attributes.get("createDate");
@@ -692,17 +684,6 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 	@JSON
 	@Override
-	public double getValue() {
-		return _value;
-	}
-
-	@Override
-	public void setValue(double value) {
-		_value = value;
-	}
-
-	@JSON
-	@Override
 	public Date getCreateDate() {
 		return _createDate;
 	}
@@ -768,7 +749,17 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 	@Override
 	public void setState_in(String state_in) {
+		_columnBitmask |= STATE_IN_COLUMN_BITMASK;
+
+		if (_originalState_in == null) {
+			_originalState_in = _state_in;
+		}
+
 		_state_in = state_in;
+	}
+
+	public String getOriginalState_in() {
+		return GetterUtil.getString(_originalState_in);
 	}
 
 	@JSON
@@ -784,7 +775,17 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 	@Override
 	public void setState_out(String state_out) {
+		_columnBitmask |= STATE_OUT_COLUMN_BITMASK;
+
+		if (_originalState_out == null) {
+			_originalState_out = _state_out;
+		}
+
 		_state_out = state_out;
+	}
+
+	public String getOriginalState_out() {
+		return GetterUtil.getString(_originalState_out);
 	}
 
 	@JSON
@@ -1222,7 +1223,6 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		positionImpl.setGroupId(getGroupId());
 		positionImpl.setCompanyId(getCompanyId());
 		positionImpl.setShareId(getShareId());
-		positionImpl.setValue(getValue());
 		positionImpl.setCreateDate(getCreateDate());
 		positionImpl.setModifiedDate(getModifiedDate());
 		positionImpl.setState(getState());
@@ -1344,6 +1344,10 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 		positionModelImpl._originalState = positionModelImpl._state;
 
+		positionModelImpl._originalState_in = positionModelImpl._state_in;
+
+		positionModelImpl._originalState_out = positionModelImpl._state_out;
+
 		positionModelImpl._originalDate_in = positionModelImpl._date_in;
 
 		positionModelImpl._originalDate_real_in = positionModelImpl._date_real_in;
@@ -1378,8 +1382,6 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		positionCacheModel.companyId = getCompanyId();
 
 		positionCacheModel.shareId = getShareId();
-
-		positionCacheModel.value = getValue();
 
 		Date createDate = getCreateDate();
 
@@ -1543,7 +1545,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(79);
+		StringBundler sb = new StringBundler(77);
 
 		sb.append("{uuid=");
 		sb.append(getUuid());
@@ -1555,8 +1557,6 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		sb.append(getCompanyId());
 		sb.append(", shareId=");
 		sb.append(getShareId());
-		sb.append(", value=");
-		sb.append(getValue());
 		sb.append(", createDate=");
 		sb.append(getCreateDate());
 		sb.append(", modifiedDate=");
@@ -1630,7 +1630,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(121);
+		StringBundler sb = new StringBundler(118);
 
 		sb.append("<model><model-name>");
 		sb.append("com.ibtrader.data.model.Position");
@@ -1655,10 +1655,6 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		sb.append(
 			"<column><column-name>shareId</column-name><column-value><![CDATA[");
 		sb.append(getShareId());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>value</column-name><column-value><![CDATA[");
-		sb.append(getValue());
 		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>createDate</column-name><column-value><![CDATA[");
@@ -1814,14 +1810,15 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 	private long _shareId;
 	private long _originalShareId;
 	private boolean _setOriginalShareId;
-	private double _value;
 	private Date _createDate;
 	private Date _modifiedDate;
 	private boolean _setModifiedDate;
 	private String _state;
 	private String _originalState;
 	private String _state_in;
+	private String _originalState_in;
 	private String _state_out;
+	private String _originalState_out;
 	private String _description;
 	private double _price_in;
 	private double _price_real_in;

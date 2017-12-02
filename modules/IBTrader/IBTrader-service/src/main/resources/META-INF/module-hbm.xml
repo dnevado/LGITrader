@@ -61,7 +61,6 @@
 		<property name="groupId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 		<property name="companyId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 		<property name="shareId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
-		<property name="value" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
 		<property name="createDate" type="org.hibernate.type.TimestampType" />
 		<property name="modifiedDate" type="org.hibernate.type.TimestampType" />
 		<property column="state_" name="state" type="com.liferay.portal.dao.orm.hibernate.StringType" />

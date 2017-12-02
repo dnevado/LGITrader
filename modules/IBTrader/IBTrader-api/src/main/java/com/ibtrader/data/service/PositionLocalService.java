@@ -39,6 +39,7 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 
 import java.io.Serializable;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -115,9 +116,10 @@ public interface PositionLocalService extends BaseLocalService,
 	public Position fetchPositionByUuidAndGroupId(java.lang.String uuid,
 		long groupId);
 
-	public Position findByCompany(long _companyId);
+	public Position findByCompanyGroup(long companyId, long groupId);
 
-	public Position findByPositionID_Out_TWS(long _PositionIDTWS);
+	public Position findByPositionID_Out_TWS(long groupId, long companyId,
+		long _PositionIDTWS);
 
 	/**
 	* Returns the position with the primary key.
@@ -227,6 +229,9 @@ public interface PositionLocalService extends BaseLocalService,
 	*/
 	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
 		int end, OrderByComparator<T> orderByComparator);
+
+	public List<Position> findByCompanyGroupDate(long companyId, long groupId,
+		Date start_date_in, Date end_date_in);
 
 	/**
 	* Returns a range of all the positions.

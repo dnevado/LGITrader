@@ -7,20 +7,23 @@ create index IX_273F8717 on ibtrader_IBOrder (uuid_[$COLUMN_LENGTH:75$], company
 create unique index IX_45CE759 on ibtrader_IBOrder (uuid_[$COLUMN_LENGTH:75$], groupId);
 
 create index IX_46891320 on ibtrader_Market (groupId, companyId, start_hour[$COLUMN_LENGTH:75$], end_hour[$COLUMN_LENGTH:75$], active_);
-create index IX_D43E7B1E on ibtrader_Market (start_hour[$COLUMN_LENGTH:75$], end_hour[$COLUMN_LENGTH:75$], active_);
 create index IX_F83507EE on ibtrader_Market (uuid_[$COLUMN_LENGTH:75$], companyId);
 create unique index IX_2D9AB1F0 on ibtrader_Market (uuid_[$COLUMN_LENGTH:75$], groupId);
 
-create index IX_D227C5A1 on ibtrader_Position (companyId);
+create index IX_B8234567 on ibtrader_Position (companyId, date_in, state_[$COLUMN_LENGTH:75$]);
+create index IX_3C85640C on ibtrader_Position (companyId, date_in, state_in[$COLUMN_LENGTH:75$]);
+create index IX_F34693BE on ibtrader_Position (companyId, date_out, state_out[$COLUMN_LENGTH:75$]);
+create index IX_FD6177DF on ibtrader_Position (companyId, groupId, date_in, state_[$COLUMN_LENGTH:75$]);
+create index IX_2B00D884 on ibtrader_Position (companyId, groupId, date_in, state_in[$COLUMN_LENGTH:75$]);
+create index IX_30B6CA36 on ibtrader_Position (companyId, groupId, date_out, state_out[$COLUMN_LENGTH:75$]);
+create index IX_E1297A9D on ibtrader_Position (groupId, companyId, positionId_tws_out);
 create index IX_2F0E62E1 on ibtrader_Position (groupId, companyId, shareId, date_in);
 create index IX_1F62F1F7 on ibtrader_Position (groupId, companyId, shareId, date_real_in, date_real_out, date_in, date_out);
 create index IX_62F7B2D8 on ibtrader_Position (groupId, companyId, shareId, state_[$COLUMN_LENGTH:75$], date_out);
-create index IX_5C9B7DDF on ibtrader_Position (positionId_tws_out);
-create index IX_52532FF5 on ibtrader_Position (shareId, date_real_in, date_real_out, date_in, date_out);
 create index IX_BB6FD65B on ibtrader_Position (uuid_[$COLUMN_LENGTH:75$], companyId);
 create unique index IX_7C20379D on ibtrader_Position (uuid_[$COLUMN_LENGTH:75$], groupId);
 
-create index IX_B4172EFF on ibtrader_Realtime (shareId, groupId, companyId);
+create index IX_AE70EA89 on ibtrader_Realtime (companyId, shareId, createDate);
 create index IX_4CC4359D on ibtrader_Realtime (uuid_[$COLUMN_LENGTH:75$], companyId);
 create unique index IX_72277F5F on ibtrader_Realtime (uuid_[$COLUMN_LENGTH:75$], groupId);
 
