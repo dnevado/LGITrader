@@ -226,6 +226,10 @@ public interface StrategyShareLocalService extends BaseLocalService,
 		int end, OrderByComparator<T> orderByComparator);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<StrategyShare> getByCommpanyShareStrategyId(long groupid,
+		long companyid, long shareId, long strategyId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<StrategyShare> getByGroupCompanyShareId(long groupid,
 		long companyid, long shareId);
 

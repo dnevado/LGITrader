@@ -2,9 +2,12 @@ package com.ibtrader.strategy;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.ib.client.Contract;
 import com.ib.client.Order;
@@ -17,12 +20,19 @@ import com.ibtrader.data.model.Market;
 import com.ibtrader.data.model.Position;
 import com.ibtrader.data.model.Realtime;
 import com.ibtrader.data.model.Share;
+import com.ibtrader.data.model.Strategy;
 import com.ibtrader.data.model.impl.StrategyImpl;
 import com.ibtrader.data.service.ConfigLocalServiceUtil;
 import com.ibtrader.data.service.IBOrderLocalServiceUtil;
 import com.ibtrader.data.service.PositionLocalServiceUtil;
 import com.liferay.counter.kernel.service.CounterLocalService;
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
+import com.liferay.expando.kernel.model.ExpandoColumn;
+import com.liferay.expando.kernel.model.ExpandoColumnConstants;
+import com.liferay.expando.kernel.model.ExpandoTable;
+import com.liferay.expando.kernel.service.ExpandoColumnLocalServiceUtil;
+import com.liferay.expando.kernel.service.ExpandoTableLocalServiceUtil;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
@@ -36,7 +46,19 @@ public class IBStrategyMinMax extends StrategyImpl {
 
 	
 	private static Log _log = LogFactoryUtil.getLog(IBStrategyMinMax.class);
+	/* PAIR NAME / DATA TYPE PARAMETERES */	
+	private static HashMap<String, Long> Parameters = new HashMap<String,Long>();
 	
+	
+	private List<ExpandoColumn> ExpandoColumns = new ArrayList<ExpandoColumn>(); 
+	
+	private static String _EXPANDO_OFFSET1_FROM_OPENMARKET = "OffSet1FromOpenMarket";
+	private static String _EXPANDO_OFFSET2_FROM_OPENMARKET = "OffSet2FromOpenMarket";
+	
+	
+	/*Parameters.put("OffSet1FromOpenMarket", Long.valueOf(ExpandoColumnConstants.LONG));
+	Parameters.put("OffSet2FromOpenMarket",  Long.valueOf(ExpandoColumnConstants.LONG));
+	*/
 	@Override
 	public void execute(Share _share, Market _market) {
 		// TODO Auto-generated method stub
@@ -164,32 +186,7 @@ public class IBStrategyMinMax extends StrategyImpl {
 			/* Posicion en MYSQL de CONTROL */
 			_log.info("Opening order...");
 
-			//this.getTimAPIW().GITraderOpenOrder(new Long(LastPositionID).intValue(), oContrat, BuyPositionTWS);
 			
-			
-			
-			//oTIMApiWrapper.LastPositionID;  //position solo una vez.. EL WRAPPER YA ME LO INDICA
-			//oTIMApiWrapper.lastOrderID = oTIMApiWrapper.lastOrderID + 2; 	// orders dos, para evitar con la lectura
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			/* MANDAMOS CORREO 	      				
-			String _MailText= "[SIMULADO]." + Utilidades.getActualHourFormat() + " " + BuyPositionTWS.m_action + " " + ShareStrategy.getSymbol() + " a " + ValueToBuy + ", " + ShareStrategy.getNumber_purchase() + " acciones ";
-			_MailText += " Mix  Max :  " + this.MinValue + "," + this.MaxValue;
-			_MailText += " Gap Porcentual :  " +  ShareStrategy.getPercentual_value_gap();
-			String[] Recipients = {"rfdiestro@gmail.com","trading1@ono.com","david_nevado@yahoo.es"};
-			TWSMail Mail = new TWSMail(Recipients,_MailText, _MailText);
-			Mail.SendMail();*/
-		    /* FIN MANDAMOS CORREO */
-			
-			
-		
         }
 			catch (Exception er)
 	        {
@@ -200,6 +197,7 @@ public class IBStrategyMinMax extends StrategyImpl {
 	}
 	
 	public IBStrategyMinMax() {
+		
 		super();
 		// TODO Auto-generated constructor stub
 	}
@@ -303,6 +301,57 @@ public class IBStrategyMinMax extends StrategyImpl {
 		return verified;
 	}
 
+	@Override
+	public void init(long companyId) {
+		// TODO Auto-generated method stub
+		// CREAMOS LOS EXPANDOS NECESARIOS 
+		
+	Parameters.put(_EXPANDO_OFFSET1_FROM_OPENMARKET, Long.valueOf(ExpandoColumnConstants.LONG));
+	Parameters.put(_EXPANDO_OFFSET2_FROM_OPENMARKET,  Long.valueOf(ExpandoColumnConstants.LONG));
 	
-
+	
+	
+	ExpandoTable expandoTable;
+	try {
+		expandoTable = ExpandoTableLocalServiceUtil.addDefaultTable(companyId, IBStrategyMinMax.class.getName());
+		long i = 0;
+		for (Map.Entry<String, Long> parameter : Parameters.entrySet()) {
+		
+			String _paramName = parameter.getKey();
+			Long _paramValue = parameter.getValue();
+			
+			/* EXISTE, SI NO , LO CREAMOS */
+			ExpandoColumn ExistsExpando = ExpandoColumnLocalServiceUtil.getColumn(expandoTable.getTableId(), _paramName);
+			
+			if (ExistsExpando==null)
+			{
+				ExpandoColumn paramColumn = ExpandoColumnLocalServiceUtil.createExpandoColumn(CounterLocalServiceUtil.increment(ExpandoColumn.class.getName()));
+				paramColumn.setName(_paramName);
+				paramColumn.setType(_paramValue.intValue());	
+				paramColumn.setTypeSettings("hidden=0\nindex-type=0\nvisible-with-update-permission=0");
+				paramColumn.setCompanyId(companyId);
+				paramColumn.setTableId(expandoTable.getTableId());
+				ExpandoColumnLocalServiceUtil.updateExpandoColumn(paramColumn);
+				
+				ExpandoColumns.add(paramColumn);
+			}
+			else
+			{
+				ExpandoColumns.add(ExistsExpando);	
+			}
+			
+			
+			
+			
+		}
+		/* method of the interface */
+		this.setIBStrategyParams(ExpandoColumns);
+		
+	} catch (PortalException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+		
+}
+	
 }

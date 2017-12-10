@@ -257,6 +257,9 @@ public interface StrategyLocalService extends BaseLocalService,
 
 	public List<Strategy> findByCompanyId(long companyid);
 
+	public List<Strategy> findStrategies(long shareId, long companyId,
+		long groupId);
+
 	/**
 	* Returns a range of all the strategies.
 	*

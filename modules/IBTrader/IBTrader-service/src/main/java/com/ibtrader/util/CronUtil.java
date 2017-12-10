@@ -18,7 +18,7 @@ import com.ibtrader.data.model.Market;
 import com.ibtrader.data.model.Share;
 import com.ibtrader.data.model.Strategy;
 import com.ibtrader.data.model.StrategyShare;
-
+import com.ibtrader.data.model.impl.StrategyImpl;
 import com.ibtrader.data.service.ConfigLocalServiceUtil;
 import com.ibtrader.data.service.IBOrderLocalServiceUtil;
 import com.ibtrader.data.service.MarketLocalServiceUtil;
@@ -134,7 +134,7 @@ public class CronUtil {
 		    		Market oMarket = lActiveMarkets.get(j);
 		    		
 	    			
-		    		 lShare =  ShareLocalServiceUtil.findByActiveMarket(oMarket.getMarketId(), true);
+		    		 lShare =  ShareLocalServiceUtil.findByActiveMarketGroupCompany(oMarket.getMarketId(), true, oMarket.getGroupId(), oMarket.getCompanyId());
 		         	
 		    	    //	lShare = ShareDAO.getListActiveShareByMarket(oMarket.getMarketID());
 		    			    		
@@ -347,11 +347,9 @@ public class CronUtil {
 		    				{		    					
 		    					
 		    					
-		    					
-		    					Strategy _strategyImpl2  = (Strategy)   InstanceFactory.newInstance(getContextClassLoader(),oStrategy.getClassName());
-		    					Strategy _strategyImpl= (Strategy)getContextClassLoader().loadClass(oStrategy.getClassName()).newInstance();
-		    						    			
-	    					//	ClassLoaderProxy classLoaderProxy = new ClassLoaderProxy(Class.forName(type, true,PortletClassLoaderUtil.getClassLoader(context[1])).newInstance(), type,		    					
+		    							    					
+		    					StrategyImpl _strategyImpl= (StrategyImpl) Utilities.getContextClassLoader().loadClass(oStrategy.getClassName()).newInstance();
+		    					_strategyImpl.init(oShare.getCompanyId());   // verify if custom fields are created and filled 	    						    				
 		    					if (_strategyImpl.verify(oShare, oMarket))
 		    							_strategyImpl.execute(oShare, oMarket);	
 		    					
@@ -369,15 +367,7 @@ public class CronUtil {
 	}  //if (_CRON_RUNNING==0) 
 }
 		
-
-private static ClassLoader getContextClassLoader() {
-	if(_ClassLoader==null) {
-		ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
-	   _ClassLoader=currentClassLoader;
-	}
 	
-	return _ClassLoader;
-}
+	
 
-private static ClassLoader _ClassLoader;
 }

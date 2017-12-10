@@ -44,4 +44,9 @@ public class StrategyShareLocalServiceImpl 	extends StrategyShareLocalServiceBas
 	{
 			return getStrategySharePersistence().findByCommpanyShareId(shareId, groupid, companyid);
 	}
+	public List<StrategyShare>getByCommpanyShareStrategyId(long groupid, long companyid, long shareId, long strategyId)
+	{
+			return getStrategySharePersistence().findByCommpanyShareStrategyId(shareId, strategyId, groupid, companyid);
+	}
+	
 }

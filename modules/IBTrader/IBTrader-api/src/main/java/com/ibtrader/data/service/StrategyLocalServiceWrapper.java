@@ -317,6 +317,12 @@ public class StrategyLocalServiceWrapper implements StrategyLocalService,
 		return _strategyLocalService.findByCompanyId(companyid);
 	}
 
+	@Override
+	public java.util.List<com.ibtrader.data.model.Strategy> findStrategies(
+		long shareId, long companyId, long groupId) {
+		return _strategyLocalService.findStrategies(shareId, companyId, groupId);
+	}
+
 	/**
 	* Returns a range of all the strategies.
 	*

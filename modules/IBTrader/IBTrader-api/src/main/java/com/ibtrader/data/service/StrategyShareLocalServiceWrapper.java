@@ -258,6 +258,13 @@ public class StrategyShareLocalServiceWrapper
 	}
 
 	@Override
+	public java.util.List<com.ibtrader.data.model.StrategyShare> getByCommpanyShareStrategyId(
+		long groupid, long companyid, long shareId, long strategyId) {
+		return _strategyShareLocalService.getByCommpanyShareStrategyId(groupid,
+			companyid, shareId, strategyId);
+	}
+
+	@Override
 	public java.util.List<com.ibtrader.data.model.StrategyShare> getByGroupCompanyShareId(
 		long groupid, long companyid, long shareId) {
 		return _strategyShareLocalService.getByGroupCompanyShareId(groupid,

@@ -2227,6 +2227,596 @@ public class MarketPersistenceImpl extends BasePersistenceImpl<Market>
 	private static final String _FINDER_COLUMN_ACTIVESTARTENDHOUR_END_HOUR_2 = "market.end_hour = ? AND ";
 	private static final String _FINDER_COLUMN_ACTIVESTARTENDHOUR_END_HOUR_3 = "(market.end_hour IS NULL OR market.end_hour = '') AND ";
 	private static final String _FINDER_COLUMN_ACTIVESTARTENDHOUR_ACTIVE_2 = "market.active = ?";
+	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_ACTIVECOMPANYGROUP =
+		new FinderPath(MarketModelImpl.ENTITY_CACHE_ENABLED,
+			MarketModelImpl.FINDER_CACHE_ENABLED, MarketImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByActiveCompanyGroup",
+			new String[] {
+				Long.class.getName(), Long.class.getName(),
+				Boolean.class.getName(),
+				
+			Integer.class.getName(), Integer.class.getName(),
+				OrderByComparator.class.getName()
+			});
+	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ACTIVECOMPANYGROUP =
+		new FinderPath(MarketModelImpl.ENTITY_CACHE_ENABLED,
+			MarketModelImpl.FINDER_CACHE_ENABLED, MarketImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"findByActiveCompanyGroup",
+			new String[] {
+				Long.class.getName(), Long.class.getName(),
+				Boolean.class.getName()
+			},
+			MarketModelImpl.COMPANYID_COLUMN_BITMASK |
+			MarketModelImpl.GROUPID_COLUMN_BITMASK |
+			MarketModelImpl.ACTIVE_COLUMN_BITMASK);
+	public static final FinderPath FINDER_PATH_COUNT_BY_ACTIVECOMPANYGROUP = new FinderPath(MarketModelImpl.ENTITY_CACHE_ENABLED,
+			MarketModelImpl.FINDER_CACHE_ENABLED, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"countByActiveCompanyGroup",
+			new String[] {
+				Long.class.getName(), Long.class.getName(),
+				Boolean.class.getName()
+			});
+
+	/**
+	 * Returns all the markets where companyId = &#63; and groupId = &#63; and active = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param active the active
+	 * @return the matching markets
+	 */
+	@Override
+	public List<Market> findByActiveCompanyGroup(long companyId, long groupId,
+		boolean active) {
+		return findByActiveCompanyGroup(companyId, groupId, active,
+			QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the markets where companyId = &#63; and groupId = &#63; and active = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link MarketModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param active the active
+	 * @param start the lower bound of the range of markets
+	 * @param end the upper bound of the range of markets (not inclusive)
+	 * @return the range of matching markets
+	 */
+	@Override
+	public List<Market> findByActiveCompanyGroup(long companyId, long groupId,
+		boolean active, int start, int end) {
+		return findByActiveCompanyGroup(companyId, groupId, active, start, end,
+			null);
+	}
+
+	/**
+	 * Returns an ordered range of all the markets where companyId = &#63; and groupId = &#63; and active = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link MarketModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param active the active
+	 * @param start the lower bound of the range of markets
+	 * @param end the upper bound of the range of markets (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching markets
+	 */
+	@Override
+	public List<Market> findByActiveCompanyGroup(long companyId, long groupId,
+		boolean active, int start, int end,
+		OrderByComparator<Market> orderByComparator) {
+		return findByActiveCompanyGroup(companyId, groupId, active, start, end,
+			orderByComparator, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the markets where companyId = &#63; and groupId = &#63; and active = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link MarketModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param active the active
+	 * @param start the lower bound of the range of markets
+	 * @param end the upper bound of the range of markets (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the ordered range of matching markets
+	 */
+	@Override
+	public List<Market> findByActiveCompanyGroup(long companyId, long groupId,
+		boolean active, int start, int end,
+		OrderByComparator<Market> orderByComparator, boolean retrieveFromCache) {
+		boolean pagination = true;
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+				(orderByComparator == null)) {
+			pagination = false;
+			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ACTIVECOMPANYGROUP;
+			finderArgs = new Object[] { companyId, groupId, active };
+		}
+		else {
+			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_ACTIVECOMPANYGROUP;
+			finderArgs = new Object[] {
+					companyId, groupId, active,
+					
+					start, end, orderByComparator
+				};
+		}
+
+		List<Market> list = null;
+
+		if (retrieveFromCache) {
+			list = (List<Market>)finderCache.getResult(finderPath, finderArgs,
+					this);
+
+			if ((list != null) && !list.isEmpty()) {
+				for (Market market : list) {
+					if ((companyId != market.getCompanyId()) ||
+							(groupId != market.getGroupId()) ||
+							(active != market.getActive())) {
+						list = null;
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler query = null;
+
+			if (orderByComparator != null) {
+				query = new StringBundler(5 +
+						(orderByComparator.getOrderByFields().length * 2));
+			}
+			else {
+				query = new StringBundler(5);
+			}
+
+			query.append(_SQL_SELECT_MARKET_WHERE);
+
+			query.append(_FINDER_COLUMN_ACTIVECOMPANYGROUP_COMPANYID_2);
+
+			query.append(_FINDER_COLUMN_ACTIVECOMPANYGROUP_GROUPID_2);
+
+			query.append(_FINDER_COLUMN_ACTIVECOMPANYGROUP_ACTIVE_2);
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
+					orderByComparator);
+			}
+			else
+			 if (pagination) {
+				query.append(MarketModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(companyId);
+
+				qPos.add(groupId);
+
+				qPos.add(active);
+
+				if (!pagination) {
+					list = (List<Market>)QueryUtil.list(q, getDialect(), start,
+							end, false);
+
+					Collections.sort(list);
+
+					list = Collections.unmodifiableList(list);
+				}
+				else {
+					list = (List<Market>)QueryUtil.list(q, getDialect(), start,
+							end);
+				}
+
+				cacheResult(list);
+
+				finderCache.putResult(finderPath, finderArgs, list);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Returns the first market in the ordered set where companyId = &#63; and groupId = &#63; and active = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param active the active
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching market
+	 * @throws NoSuchMarketException if a matching market could not be found
+	 */
+	@Override
+	public Market findByActiveCompanyGroup_First(long companyId, long groupId,
+		boolean active, OrderByComparator<Market> orderByComparator)
+		throws NoSuchMarketException {
+		Market market = fetchByActiveCompanyGroup_First(companyId, groupId,
+				active, orderByComparator);
+
+		if (market != null) {
+			return market;
+		}
+
+		StringBundler msg = new StringBundler(8);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("companyId=");
+		msg.append(companyId);
+
+		msg.append(", groupId=");
+		msg.append(groupId);
+
+		msg.append(", active=");
+		msg.append(active);
+
+		msg.append(StringPool.CLOSE_CURLY_BRACE);
+
+		throw new NoSuchMarketException(msg.toString());
+	}
+
+	/**
+	 * Returns the first market in the ordered set where companyId = &#63; and groupId = &#63; and active = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param active the active
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching market, or <code>null</code> if a matching market could not be found
+	 */
+	@Override
+	public Market fetchByActiveCompanyGroup_First(long companyId, long groupId,
+		boolean active, OrderByComparator<Market> orderByComparator) {
+		List<Market> list = findByActiveCompanyGroup(companyId, groupId,
+				active, 0, 1, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last market in the ordered set where companyId = &#63; and groupId = &#63; and active = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param active the active
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching market
+	 * @throws NoSuchMarketException if a matching market could not be found
+	 */
+	@Override
+	public Market findByActiveCompanyGroup_Last(long companyId, long groupId,
+		boolean active, OrderByComparator<Market> orderByComparator)
+		throws NoSuchMarketException {
+		Market market = fetchByActiveCompanyGroup_Last(companyId, groupId,
+				active, orderByComparator);
+
+		if (market != null) {
+			return market;
+		}
+
+		StringBundler msg = new StringBundler(8);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("companyId=");
+		msg.append(companyId);
+
+		msg.append(", groupId=");
+		msg.append(groupId);
+
+		msg.append(", active=");
+		msg.append(active);
+
+		msg.append(StringPool.CLOSE_CURLY_BRACE);
+
+		throw new NoSuchMarketException(msg.toString());
+	}
+
+	/**
+	 * Returns the last market in the ordered set where companyId = &#63; and groupId = &#63; and active = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param active the active
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching market, or <code>null</code> if a matching market could not be found
+	 */
+	@Override
+	public Market fetchByActiveCompanyGroup_Last(long companyId, long groupId,
+		boolean active, OrderByComparator<Market> orderByComparator) {
+		int count = countByActiveCompanyGroup(companyId, groupId, active);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<Market> list = findByActiveCompanyGroup(companyId, groupId,
+				active, count - 1, count, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the markets before and after the current market in the ordered set where companyId = &#63; and groupId = &#63; and active = &#63;.
+	 *
+	 * @param marketId the primary key of the current market
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param active the active
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next market
+	 * @throws NoSuchMarketException if a market with the primary key could not be found
+	 */
+	@Override
+	public Market[] findByActiveCompanyGroup_PrevAndNext(long marketId,
+		long companyId, long groupId, boolean active,
+		OrderByComparator<Market> orderByComparator)
+		throws NoSuchMarketException {
+		Market market = findByPrimaryKey(marketId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			Market[] array = new MarketImpl[3];
+
+			array[0] = getByActiveCompanyGroup_PrevAndNext(session, market,
+					companyId, groupId, active, orderByComparator, true);
+
+			array[1] = market;
+
+			array[2] = getByActiveCompanyGroup_PrevAndNext(session, market,
+					companyId, groupId, active, orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected Market getByActiveCompanyGroup_PrevAndNext(Session session,
+		Market market, long companyId, long groupId, boolean active,
+		OrderByComparator<Market> orderByComparator, boolean previous) {
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(6 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(5);
+		}
+
+		query.append(_SQL_SELECT_MARKET_WHERE);
+
+		query.append(_FINDER_COLUMN_ACTIVECOMPANYGROUP_COMPANYID_2);
+
+		query.append(_FINDER_COLUMN_ACTIVECOMPANYGROUP_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_ACTIVECOMPANYGROUP_ACTIVE_2);
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			query.append(MarketModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = query.toString();
+
+		Query q = session.createQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(companyId);
+
+		qPos.add(groupId);
+
+		qPos.add(active);
+
+		if (orderByComparator != null) {
+			Object[] values = orderByComparator.getOrderByConditionValues(market);
+
+			for (Object value : values) {
+				qPos.add(value);
+			}
+		}
+
+		List<Market> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Removes all the markets where companyId = &#63; and groupId = &#63; and active = &#63; from the database.
+	 *
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param active the active
+	 */
+	@Override
+	public void removeByActiveCompanyGroup(long companyId, long groupId,
+		boolean active) {
+		for (Market market : findByActiveCompanyGroup(companyId, groupId,
+				active, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+			remove(market);
+		}
+	}
+
+	/**
+	 * Returns the number of markets where companyId = &#63; and groupId = &#63; and active = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param active the active
+	 * @return the number of matching markets
+	 */
+	@Override
+	public int countByActiveCompanyGroup(long companyId, long groupId,
+		boolean active) {
+		FinderPath finderPath = FINDER_PATH_COUNT_BY_ACTIVECOMPANYGROUP;
+
+		Object[] finderArgs = new Object[] { companyId, groupId, active };
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(4);
+
+			query.append(_SQL_COUNT_MARKET_WHERE);
+
+			query.append(_FINDER_COLUMN_ACTIVECOMPANYGROUP_COMPANYID_2);
+
+			query.append(_FINDER_COLUMN_ACTIVECOMPANYGROUP_GROUPID_2);
+
+			query.append(_FINDER_COLUMN_ACTIVECOMPANYGROUP_ACTIVE_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(companyId);
+
+				qPos.add(groupId);
+
+				qPos.add(active);
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_ACTIVECOMPANYGROUP_COMPANYID_2 = "market.companyId = ? AND ";
+	private static final String _FINDER_COLUMN_ACTIVECOMPANYGROUP_GROUPID_2 = "market.groupId = ? AND ";
+	private static final String _FINDER_COLUMN_ACTIVECOMPANYGROUP_ACTIVE_2 = "market.active = ?";
 
 	public MarketPersistenceImpl() {
 		setModelClass(Market.class);
@@ -2590,6 +3180,31 @@ public class MarketPersistenceImpl extends BasePersistenceImpl<Market>
 				finderCache.removeResult(FINDER_PATH_COUNT_BY_ACTIVESTARTENDHOUR,
 					args);
 				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ACTIVESTARTENDHOUR,
+					args);
+			}
+
+			if ((marketModelImpl.getColumnBitmask() &
+					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ACTIVECOMPANYGROUP.getColumnBitmask()) != 0) {
+				Object[] args = new Object[] {
+						marketModelImpl.getOriginalCompanyId(),
+						marketModelImpl.getOriginalGroupId(),
+						marketModelImpl.getOriginalActive()
+					};
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_ACTIVECOMPANYGROUP,
+					args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ACTIVECOMPANYGROUP,
+					args);
+
+				args = new Object[] {
+						marketModelImpl.getCompanyId(),
+						marketModelImpl.getGroupId(),
+						marketModelImpl.getActive()
+					};
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_ACTIVECOMPANYGROUP,
+					args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ACTIVECOMPANYGROUP,
 					args);
 			}
 		}

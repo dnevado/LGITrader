@@ -223,6 +223,9 @@ public interface MarketLocalService extends BaseLocalService,
 	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
 		int end, OrderByComparator<T> orderByComparator);
 
+	public List<Market> findByActiveCompanyGroup(long companyId, long groupId,
+		boolean active);
+
 	public List<Market> findByActiveStartEndHour(java.lang.String _Start,
 		java.lang.String _End, boolean _Active);
 

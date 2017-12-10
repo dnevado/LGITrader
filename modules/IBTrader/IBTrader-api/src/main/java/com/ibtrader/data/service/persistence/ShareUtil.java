@@ -496,177 +496,340 @@ public class ShareUtil {
 	}
 
 	/**
-	* Returns all the shares where active = &#63; and marketId = &#63;.
+	* Returns all the shares where companyId = &#63; and groupId = &#63;.
 	*
-	* @param active the active
-	* @param marketId the market ID
+	* @param companyId the company ID
+	* @param groupId the group ID
 	* @return the matching shares
 	*/
-	public static List<Share> findByActiveMarket(boolean active, long marketId) {
-		return getPersistence().findByActiveMarket(active, marketId);
+	public static List<Share> findByCompanyGroup(long companyId, long groupId) {
+		return getPersistence().findByCompanyGroup(companyId, groupId);
 	}
 
 	/**
-	* Returns a range of all the shares where active = &#63; and marketId = &#63;.
+	* Returns a range of all the shares where companyId = &#63; and groupId = &#63;.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ShareModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
-	* @param active the active
-	* @param marketId the market ID
+	* @param companyId the company ID
+	* @param groupId the group ID
 	* @param start the lower bound of the range of shares
 	* @param end the upper bound of the range of shares (not inclusive)
 	* @return the range of matching shares
 	*/
-	public static List<Share> findByActiveMarket(boolean active, long marketId,
+	public static List<Share> findByCompanyGroup(long companyId, long groupId,
 		int start, int end) {
-		return getPersistence().findByActiveMarket(active, marketId, start, end);
+		return getPersistence()
+				   .findByCompanyGroup(companyId, groupId, start, end);
 	}
 
 	/**
-	* Returns an ordered range of all the shares where active = &#63; and marketId = &#63;.
+	* Returns an ordered range of all the shares where companyId = &#63; and groupId = &#63;.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ShareModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
-	* @param active the active
-	* @param marketId the market ID
+	* @param companyId the company ID
+	* @param groupId the group ID
 	* @param start the lower bound of the range of shares
 	* @param end the upper bound of the range of shares (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching shares
 	*/
-	public static List<Share> findByActiveMarket(boolean active, long marketId,
+	public static List<Share> findByCompanyGroup(long companyId, long groupId,
 		int start, int end, OrderByComparator<Share> orderByComparator) {
 		return getPersistence()
-				   .findByActiveMarket(active, marketId, start, end,
+				   .findByCompanyGroup(companyId, groupId, start, end,
 			orderByComparator);
 	}
 
 	/**
-	* Returns an ordered range of all the shares where active = &#63; and marketId = &#63;.
+	* Returns an ordered range of all the shares where companyId = &#63; and groupId = &#63;.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ShareModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
-	* @param active the active
-	* @param marketId the market ID
+	* @param companyId the company ID
+	* @param groupId the group ID
 	* @param start the lower bound of the range of shares
 	* @param end the upper bound of the range of shares (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @param retrieveFromCache whether to retrieve from the finder cache
 	* @return the ordered range of matching shares
 	*/
-	public static List<Share> findByActiveMarket(boolean active, long marketId,
+	public static List<Share> findByCompanyGroup(long companyId, long groupId,
 		int start, int end, OrderByComparator<Share> orderByComparator,
 		boolean retrieveFromCache) {
 		return getPersistence()
-				   .findByActiveMarket(active, marketId, start, end,
+				   .findByCompanyGroup(companyId, groupId, start, end,
 			orderByComparator, retrieveFromCache);
 	}
 
 	/**
-	* Returns the first share in the ordered set where active = &#63; and marketId = &#63;.
+	* Returns the first share in the ordered set where companyId = &#63; and groupId = &#63;.
 	*
-	* @param active the active
-	* @param marketId the market ID
+	* @param companyId the company ID
+	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching share
 	* @throws NoSuchShareException if a matching share could not be found
 	*/
-	public static Share findByActiveMarket_First(boolean active, long marketId,
+	public static Share findByCompanyGroup_First(long companyId, long groupId,
 		OrderByComparator<Share> orderByComparator)
 		throws com.ibtrader.data.exception.NoSuchShareException {
 		return getPersistence()
-				   .findByActiveMarket_First(active, marketId, orderByComparator);
-	}
-
-	/**
-	* Returns the first share in the ordered set where active = &#63; and marketId = &#63;.
-	*
-	* @param active the active
-	* @param marketId the market ID
-	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	* @return the first matching share, or <code>null</code> if a matching share could not be found
-	*/
-	public static Share fetchByActiveMarket_First(boolean active,
-		long marketId, OrderByComparator<Share> orderByComparator) {
-		return getPersistence()
-				   .fetchByActiveMarket_First(active, marketId,
+				   .findByCompanyGroup_First(companyId, groupId,
 			orderByComparator);
 	}
 
 	/**
-	* Returns the last share in the ordered set where active = &#63; and marketId = &#63;.
+	* Returns the first share in the ordered set where companyId = &#63; and groupId = &#63;.
 	*
-	* @param active the active
-	* @param marketId the market ID
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching share, or <code>null</code> if a matching share could not be found
+	*/
+	public static Share fetchByCompanyGroup_First(long companyId, long groupId,
+		OrderByComparator<Share> orderByComparator) {
+		return getPersistence()
+				   .fetchByCompanyGroup_First(companyId, groupId,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the last share in the ordered set where companyId = &#63; and groupId = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching share
 	* @throws NoSuchShareException if a matching share could not be found
 	*/
-	public static Share findByActiveMarket_Last(boolean active, long marketId,
+	public static Share findByCompanyGroup_Last(long companyId, long groupId,
 		OrderByComparator<Share> orderByComparator)
 		throws com.ibtrader.data.exception.NoSuchShareException {
 		return getPersistence()
-				   .findByActiveMarket_Last(active, marketId, orderByComparator);
-	}
-
-	/**
-	* Returns the last share in the ordered set where active = &#63; and marketId = &#63;.
-	*
-	* @param active the active
-	* @param marketId the market ID
-	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	* @return the last matching share, or <code>null</code> if a matching share could not be found
-	*/
-	public static Share fetchByActiveMarket_Last(boolean active, long marketId,
-		OrderByComparator<Share> orderByComparator) {
-		return getPersistence()
-				   .fetchByActiveMarket_Last(active, marketId, orderByComparator);
-	}
-
-	/**
-	* Returns the shares before and after the current share in the ordered set where active = &#63; and marketId = &#63;.
-	*
-	* @param shareId the primary key of the current share
-	* @param active the active
-	* @param marketId the market ID
-	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	* @return the previous, current, and next share
-	* @throws NoSuchShareException if a share with the primary key could not be found
-	*/
-	public static Share[] findByActiveMarket_PrevAndNext(long shareId,
-		boolean active, long marketId,
-		OrderByComparator<Share> orderByComparator)
-		throws com.ibtrader.data.exception.NoSuchShareException {
-		return getPersistence()
-				   .findByActiveMarket_PrevAndNext(shareId, active, marketId,
+				   .findByCompanyGroup_Last(companyId, groupId,
 			orderByComparator);
 	}
 
 	/**
-	* Removes all the shares where active = &#63; and marketId = &#63; from the database.
+	* Returns the last share in the ordered set where companyId = &#63; and groupId = &#63;.
 	*
-	* @param active the active
-	* @param marketId the market ID
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching share, or <code>null</code> if a matching share could not be found
 	*/
-	public static void removeByActiveMarket(boolean active, long marketId) {
-		getPersistence().removeByActiveMarket(active, marketId);
+	public static Share fetchByCompanyGroup_Last(long companyId, long groupId,
+		OrderByComparator<Share> orderByComparator) {
+		return getPersistence()
+				   .fetchByCompanyGroup_Last(companyId, groupId,
+			orderByComparator);
 	}
 
 	/**
-	* Returns the number of shares where active = &#63; and marketId = &#63;.
+	* Returns the shares before and after the current share in the ordered set where companyId = &#63; and groupId = &#63;.
 	*
-	* @param active the active
+	* @param shareId the primary key of the current share
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next share
+	* @throws NoSuchShareException if a share with the primary key could not be found
+	*/
+	public static Share[] findByCompanyGroup_PrevAndNext(long shareId,
+		long companyId, long groupId, OrderByComparator<Share> orderByComparator)
+		throws com.ibtrader.data.exception.NoSuchShareException {
+		return getPersistence()
+				   .findByCompanyGroup_PrevAndNext(shareId, companyId, groupId,
+			orderByComparator);
+	}
+
+	/**
+	* Removes all the shares where companyId = &#63; and groupId = &#63; from the database.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	*/
+	public static void removeByCompanyGroup(long companyId, long groupId) {
+		getPersistence().removeByCompanyGroup(companyId, groupId);
+	}
+
+	/**
+	* Returns the number of shares where companyId = &#63; and groupId = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @return the number of matching shares
+	*/
+	public static int countByCompanyGroup(long companyId, long groupId) {
+		return getPersistence().countByCompanyGroup(companyId, groupId);
+	}
+
+	/**
+	* Returns the share where companyId = &#63; and groupId = &#63; and name = &#63; and marketId = &#63; or throws a {@link NoSuchShareException} if it could not be found.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param name the name
+	* @param marketId the market ID
+	* @return the matching share
+	* @throws NoSuchShareException if a matching share could not be found
+	*/
+	public static Share findByNameMarketCompanyGroup(long companyId,
+		long groupId, java.lang.String name, long marketId)
+		throws com.ibtrader.data.exception.NoSuchShareException {
+		return getPersistence()
+				   .findByNameMarketCompanyGroup(companyId, groupId, name,
+			marketId);
+	}
+
+	/**
+	* Returns the share where companyId = &#63; and groupId = &#63; and name = &#63; and marketId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param name the name
+	* @param marketId the market ID
+	* @return the matching share, or <code>null</code> if a matching share could not be found
+	*/
+	public static Share fetchByNameMarketCompanyGroup(long companyId,
+		long groupId, java.lang.String name, long marketId) {
+		return getPersistence()
+				   .fetchByNameMarketCompanyGroup(companyId, groupId, name,
+			marketId);
+	}
+
+	/**
+	* Returns the share where companyId = &#63; and groupId = &#63; and name = &#63; and marketId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param name the name
+	* @param marketId the market ID
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the matching share, or <code>null</code> if a matching share could not be found
+	*/
+	public static Share fetchByNameMarketCompanyGroup(long companyId,
+		long groupId, java.lang.String name, long marketId,
+		boolean retrieveFromCache) {
+		return getPersistence()
+				   .fetchByNameMarketCompanyGroup(companyId, groupId, name,
+			marketId, retrieveFromCache);
+	}
+
+	/**
+	* Removes the share where companyId = &#63; and groupId = &#63; and name = &#63; and marketId = &#63; from the database.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param name the name
+	* @param marketId the market ID
+	* @return the share that was removed
+	*/
+	public static Share removeByNameMarketCompanyGroup(long companyId,
+		long groupId, java.lang.String name, long marketId)
+		throws com.ibtrader.data.exception.NoSuchShareException {
+		return getPersistence()
+				   .removeByNameMarketCompanyGroup(companyId, groupId, name,
+			marketId);
+	}
+
+	/**
+	* Returns the number of shares where companyId = &#63; and groupId = &#63; and name = &#63; and marketId = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param name the name
 	* @param marketId the market ID
 	* @return the number of matching shares
 	*/
-	public static int countByActiveMarket(boolean active, long marketId) {
-		return getPersistence().countByActiveMarket(active, marketId);
+	public static int countByNameMarketCompanyGroup(long companyId,
+		long groupId, java.lang.String name, long marketId) {
+		return getPersistence()
+				   .countByNameMarketCompanyGroup(companyId, groupId, name,
+			marketId);
+	}
+
+	/**
+	* Returns the share where companyId = &#63; and groupId = &#63; and symbol = &#63; or throws a {@link NoSuchShareException} if it could not be found.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param symbol the symbol
+	* @return the matching share
+	* @throws NoSuchShareException if a matching share could not be found
+	*/
+	public static Share findBySymbolCompanyGroup(long companyId, long groupId,
+		java.lang.String symbol)
+		throws com.ibtrader.data.exception.NoSuchShareException {
+		return getPersistence()
+				   .findBySymbolCompanyGroup(companyId, groupId, symbol);
+	}
+
+	/**
+	* Returns the share where companyId = &#63; and groupId = &#63; and symbol = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param symbol the symbol
+	* @return the matching share, or <code>null</code> if a matching share could not be found
+	*/
+	public static Share fetchBySymbolCompanyGroup(long companyId, long groupId,
+		java.lang.String symbol) {
+		return getPersistence()
+				   .fetchBySymbolCompanyGroup(companyId, groupId, symbol);
+	}
+
+	/**
+	* Returns the share where companyId = &#63; and groupId = &#63; and symbol = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param symbol the symbol
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the matching share, or <code>null</code> if a matching share could not be found
+	*/
+	public static Share fetchBySymbolCompanyGroup(long companyId, long groupId,
+		java.lang.String symbol, boolean retrieveFromCache) {
+		return getPersistence()
+				   .fetchBySymbolCompanyGroup(companyId, groupId, symbol,
+			retrieveFromCache);
+	}
+
+	/**
+	* Removes the share where companyId = &#63; and groupId = &#63; and symbol = &#63; from the database.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param symbol the symbol
+	* @return the share that was removed
+	*/
+	public static Share removeBySymbolCompanyGroup(long companyId,
+		long groupId, java.lang.String symbol)
+		throws com.ibtrader.data.exception.NoSuchShareException {
+		return getPersistence()
+				   .removeBySymbolCompanyGroup(companyId, groupId, symbol);
+	}
+
+	/**
+	* Returns the number of shares where companyId = &#63; and groupId = &#63; and symbol = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param symbol the symbol
+	* @return the number of matching shares
+	*/
+	public static int countBySymbolCompanyGroup(long companyId, long groupId,
+		java.lang.String symbol) {
+		return getPersistence()
+				   .countBySymbolCompanyGroup(companyId, groupId, symbol);
 	}
 
 	/**

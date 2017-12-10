@@ -113,8 +113,9 @@ public class StrategyShareModelImpl extends BaseModelImpl<StrategyShare>
 	public static final long COMPANYID_COLUMN_BITMASK = 1L;
 	public static final long GROUPID_COLUMN_BITMASK = 2L;
 	public static final long SHAREID_COLUMN_BITMASK = 4L;
-	public static final long UUID_COLUMN_BITMASK = 8L;
-	public static final long STRATEGYSHAREID_COLUMN_BITMASK = 16L;
+	public static final long STRATEGYID_COLUMN_BITMASK = 8L;
+	public static final long UUID_COLUMN_BITMASK = 16L;
+	public static final long STRATEGYSHAREID_COLUMN_BITMASK = 32L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -393,7 +394,19 @@ public class StrategyShareModelImpl extends BaseModelImpl<StrategyShare>
 
 	@Override
 	public void setStrategyId(long strategyId) {
+		_columnBitmask |= STRATEGYID_COLUMN_BITMASK;
+
+		if (!_setOriginalStrategyId) {
+			_setOriginalStrategyId = true;
+
+			_originalStrategyId = _strategyId;
+		}
+
 		_strategyId = strategyId;
+	}
+
+	public long getOriginalStrategyId() {
+		return _originalStrategyId;
 	}
 
 	@JSON
@@ -555,6 +568,10 @@ public class StrategyShareModelImpl extends BaseModelImpl<StrategyShare>
 
 		strategyShareModelImpl._setModifiedDate = false;
 
+		strategyShareModelImpl._originalStrategyId = strategyShareModelImpl._strategyId;
+
+		strategyShareModelImpl._setOriginalStrategyId = false;
+
 		strategyShareModelImpl._originalShareId = strategyShareModelImpl._shareId;
 
 		strategyShareModelImpl._setOriginalShareId = false;
@@ -708,6 +725,8 @@ public class StrategyShareModelImpl extends BaseModelImpl<StrategyShare>
 	private Date _modifiedDate;
 	private boolean _setModifiedDate;
 	private long _strategyId;
+	private long _originalStrategyId;
+	private boolean _setOriginalStrategyId;
 	private long _shareId;
 	private long _originalShareId;
 	private boolean _setOriginalShareId;

@@ -1,4 +1,9 @@
 <%@ include file="/init.jsp" %>
+<%@page import="com.liferay.portal.kernel.portlet.LiferayWindowState"%>
+<%@page import="com.liferay.portal.kernel.portlet.LiferayPortletMode"%>
+<%@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
+<%@page import="com.liferay.portal.kernel.theme.ThemeDisplay"%>
+<%@page import="com.liferay.portal.kernel.util.WebKeys"%>
 
 
 <portlet:actionURL   name="delete" var="deleteURL">    
@@ -7,6 +12,8 @@
 
 <portlet:resourceURL var="PositionListResourceURL">
 </portlet:resourceURL>
+
+<%	ThemeDisplay _themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY); %> 
 
 
 <script>
@@ -21,7 +28,23 @@
 	
 	function <portlet:namespace/>CallBackRefreshPosition() {
 	 
-		console.log("do some stuff DOM changes ")
+		/* CREACIOM DE UN RENDER Y UN ICON PARA 
+		1.CERRAR LA POSICION EN UN MOMENTO DADO
+		*/
+
+		var actionURL = Liferay.PortletURL.createActionURL();
+		actionURL.setWindowState("<%=LiferayWindowState.NORMAL.toString() %>");
+		actionURL.setPortletMode("<%=LiferayPortletMode.VIEW %>");
+		actionURL.setParameter("PositionId", "-1");		
+		actionURL.setParameter("action","DeletePosition");
+		actionURL.setPortletId("<%=_themeDisplay.getPortletDisplay().getId() %>");
+		
+		
+		
+		console.log("do some stuff DOM changes ");
+		console.log(actionURL);
+		
+		
 	} 
 
 	function <portlet:namespace/>RefreshPosition() {
@@ -108,6 +131,7 @@
                 <th><liferay-ui:message key="Price.Out"/></th>
                 <th><liferay-ui:message key="State.Out"/></th>
                 <th><liferay-ui:message key="ROI"/></th>
+                <th></th>
                 
             </tr>
         </thead>

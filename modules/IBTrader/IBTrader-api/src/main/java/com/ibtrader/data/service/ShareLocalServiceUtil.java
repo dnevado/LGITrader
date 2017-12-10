@@ -41,6 +41,18 @@ public class ShareLocalServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to {@link com.ibtrader.data.service.impl.ShareLocalServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
+	public static boolean ExistsExchange(java.lang.String exchange) {
+		return getService().ExistsExchange(exchange);
+	}
+
+	public static boolean ExistsPrimaryExchange(
+		java.lang.String primaryexchange) {
+		return getService().ExistsPrimaryExchange(primaryexchange);
+	}
+
+	public static boolean ExistsSecurityType(java.lang.String type) {
+		return getService().ExistsSecurityType(type);
+	}
 
 	/**
 	* Adds the share to the database. Also notifies the appropriate model listeners.
@@ -51,6 +63,13 @@ public class ShareLocalServiceUtil {
 	public static com.ibtrader.data.model.Share addShare(
 		com.ibtrader.data.model.Share share) {
 		return getService().addShare(share);
+	}
+
+	public static com.ibtrader.data.model.Share addShare(
+		com.ibtrader.data.model.Share share,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().addShare(share, serviceContext);
 	}
 
 	/**
@@ -86,6 +105,13 @@ public class ShareLocalServiceUtil {
 		return getService().deleteShare(shareId);
 	}
 
+	public static com.ibtrader.data.model.Share editShare(
+		com.ibtrader.data.model.Share share,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().editShare(share, serviceContext);
+	}
+
 	public static com.ibtrader.data.model.Share fetchShare(long shareId) {
 		return getService().fetchShare(shareId);
 	}
@@ -100,6 +126,18 @@ public class ShareLocalServiceUtil {
 	public static com.ibtrader.data.model.Share fetchShareByUuidAndGroupId(
 		java.lang.String uuid, long groupId) {
 		return getService().fetchShareByUuidAndGroupId(uuid, groupId);
+	}
+
+	public static com.ibtrader.data.model.Share findByNameMarketCompanyGroup(
+		long companyId, long groupId, java.lang.String name, long marketId) {
+		return getService()
+				   .findByNameMarketCompanyGroup(companyId, groupId, name,
+			marketId);
+	}
+
+	public static com.ibtrader.data.model.Share findBySymbolCompanyGroup(
+		long companyId, long groupId, java.lang.String name) {
+		return getService().findBySymbolCompanyGroup(companyId, groupId, name);
 	}
 
 	/**
@@ -239,16 +277,16 @@ public class ShareLocalServiceUtil {
 				   .dynamicQuery(dynamicQuery, start, end, orderByComparator);
 	}
 
-	public static java.util.List<com.ibtrader.data.model.Share> findByActiveMarket(
-		long _marketId, boolean _active) {
-		return getService().findByActiveMarket(_marketId, _active);
-	}
-
 	public static java.util.List<com.ibtrader.data.model.Share> findByActiveMarketGroupCompany(
 		long _marketId, boolean _active, long groupId, long companyId) {
 		return getService()
 				   .findByActiveMarketGroupCompany(_marketId, _active, groupId,
 			companyId);
+	}
+
+	public static java.util.List<com.ibtrader.data.model.Share> findCompanyGroup(
+		long companyId, long groupId) {
+		return getService().findCompanyGroup(companyId, groupId);
 	}
 
 	/**

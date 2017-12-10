@@ -18,7 +18,11 @@ package com.ibtrader.data.service.impl;
 import java.util.Date;
 import java.util.List;
 
+import com.ibtrader.data.exception.NoSuchShareException;
+import com.ibtrader.data.model.Share;
 import com.ibtrader.data.model.Strategy;
+import com.ibtrader.data.model.StrategyShare;
+import com.ibtrader.data.service.MarketLocalServiceUtil;
 import com.ibtrader.data.service.StrategyLocalServiceUtil;
 import com.ibtrader.data.service.base.StrategyLocalServiceBaseImpl;
 import com.ibtrader.data.service.persistence.StrategyPersistence;
@@ -26,6 +30,11 @@ import com.ibtrader.data.service.persistence.impl.StrategyPersistenceImpl;
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.model.AssetLinkConstants;
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
+import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.ProjectionFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
@@ -33,6 +42,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.SystemEventConstants;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.portlet.PortletClassLoaderUtil;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.search.Indexer;
@@ -95,6 +105,36 @@ public class StrategyLocalServiceImpl extends StrategyLocalServiceBaseImpl {
 	public int getStrategysCount(long groupId) {
 
 	    return strategyPersistence.countByGroupId(groupId);
+	}
+	
+	public List<Strategy> findStrategies(long shareId, long companyId, long groupId) {
+		// TODO Auto-generated method stub
+		
+		
+				
+
+		/*  DynamicQuery _DQStrategyOfShare =  strategyShareLocalService.dynamicQuery(); 
+
+		  ESTRATEGIAS DE UNA SHARE 		 
+		 _DQStrategyOfShare.add(RestrictionsFactoryUtil.eq("shareId",shareId));
+		 _DQStrategyOfShare.add(RestrictionsFactoryUtil.eq("companyId", companyId));
+		 _DQStrategyOfShare.add(RestrictionsFactoryUtil.eq("groupId", groupId));
+		 _DQStrategyOfShare.setProjection(ProjectionFactoryUtil.property("strategyId"));
+		
+	      
+		 List<Long> StrategyIds =strategyShareLocalService.dynamicQuery(_DQStrategyOfShare); 
+		 	*/
+
+		 /* ESTRATEGIAS  */		 
+		 DynamicQuery _DQ = strategyLocalService.dynamicQuery();
+		 _DQ.add(RestrictionsFactoryUtil.eq("companyId", companyId));
+		 _DQ.add(RestrictionsFactoryUtil.eq("groupId", groupId));
+		 //_DQ.add(RestrictionsFactoryUtil.in("strategyID",StrategyIds));
+		 
+		
+		//List<Market>  = MarketLocalServiceUtil.dynamicQuery(_DQ);
+		
+		return strategyLocalService.dynamicQuery(_DQ);
 	}
 	
 	

@@ -73,6 +73,10 @@ public class Utilities {
    
    public final static String _IBTRADER_WEB_FORMAT_DATE="dd-MM-yyyy";
    
+   public final static String _IBTRADER_STRATEGY_CUSTOM_FIELDS_="exp_";
+   
+   
+   
    
    
    
@@ -660,6 +664,17 @@ public class Utilities {
 		
     		
     }
+    
+    public static ClassLoader getContextClassLoader() {
+    	if(_ClassLoader==null) {
+    		ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
+    	   _ClassLoader=currentClassLoader;
+    	}
+    	
+    	return _ClassLoader;
+    }
+
+    private static ClassLoader _ClassLoader;
     
     
     public static void main(String[] args) throws Exception {

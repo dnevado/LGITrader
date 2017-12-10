@@ -504,8 +504,8 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 	}
 
 	@Override
-	public java.util.List<com.liferay.expando.kernel.model.ExpandoColumn> get_IBStrategyParams() {
-		return _strategy.get_IBStrategyParams();
+	public java.util.List<com.liferay.expando.kernel.model.ExpandoColumn> getIBStrategyParams() {
+		return _strategy.getIBStrategyParams();
 	}
 
 	/**
@@ -571,6 +571,11 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 	@Override
 	public void execute(Share _share, Market _market) {
 		_strategy.execute(_share, _market);
+	}
+
+	@Override
+	public void init(long companyId) {
+		_strategy.init(companyId);
 	}
 
 	@Override

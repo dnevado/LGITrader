@@ -367,148 +367,266 @@ public interface SharePersistence extends BasePersistence<Share> {
 	public int countByUuid_C(java.lang.String uuid, long companyId);
 
 	/**
-	* Returns all the shares where active = &#63; and marketId = &#63;.
+	* Returns all the shares where companyId = &#63; and groupId = &#63;.
 	*
-	* @param active the active
-	* @param marketId the market ID
+	* @param companyId the company ID
+	* @param groupId the group ID
 	* @return the matching shares
 	*/
-	public java.util.List<Share> findByActiveMarket(boolean active,
-		long marketId);
+	public java.util.List<Share> findByCompanyGroup(long companyId, long groupId);
 
 	/**
-	* Returns a range of all the shares where active = &#63; and marketId = &#63;.
+	* Returns a range of all the shares where companyId = &#63; and groupId = &#63;.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ShareModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
-	* @param active the active
-	* @param marketId the market ID
+	* @param companyId the company ID
+	* @param groupId the group ID
 	* @param start the lower bound of the range of shares
 	* @param end the upper bound of the range of shares (not inclusive)
 	* @return the range of matching shares
 	*/
-	public java.util.List<Share> findByActiveMarket(boolean active,
-		long marketId, int start, int end);
+	public java.util.List<Share> findByCompanyGroup(long companyId,
+		long groupId, int start, int end);
 
 	/**
-	* Returns an ordered range of all the shares where active = &#63; and marketId = &#63;.
+	* Returns an ordered range of all the shares where companyId = &#63; and groupId = &#63;.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ShareModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
-	* @param active the active
-	* @param marketId the market ID
+	* @param companyId the company ID
+	* @param groupId the group ID
 	* @param start the lower bound of the range of shares
 	* @param end the upper bound of the range of shares (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching shares
 	*/
-	public java.util.List<Share> findByActiveMarket(boolean active,
-		long marketId, int start, int end,
+	public java.util.List<Share> findByCompanyGroup(long companyId,
+		long groupId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<Share> orderByComparator);
 
 	/**
-	* Returns an ordered range of all the shares where active = &#63; and marketId = &#63;.
+	* Returns an ordered range of all the shares where companyId = &#63; and groupId = &#63;.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ShareModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
-	* @param active the active
-	* @param marketId the market ID
+	* @param companyId the company ID
+	* @param groupId the group ID
 	* @param start the lower bound of the range of shares
 	* @param end the upper bound of the range of shares (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @param retrieveFromCache whether to retrieve from the finder cache
 	* @return the ordered range of matching shares
 	*/
-	public java.util.List<Share> findByActiveMarket(boolean active,
-		long marketId, int start, int end,
+	public java.util.List<Share> findByCompanyGroup(long companyId,
+		long groupId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<Share> orderByComparator,
 		boolean retrieveFromCache);
 
 	/**
-	* Returns the first share in the ordered set where active = &#63; and marketId = &#63;.
+	* Returns the first share in the ordered set where companyId = &#63; and groupId = &#63;.
 	*
-	* @param active the active
-	* @param marketId the market ID
+	* @param companyId the company ID
+	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching share
 	* @throws NoSuchShareException if a matching share could not be found
 	*/
-	public Share findByActiveMarket_First(boolean active, long marketId,
+	public Share findByCompanyGroup_First(long companyId, long groupId,
 		com.liferay.portal.kernel.util.OrderByComparator<Share> orderByComparator)
 		throws NoSuchShareException;
 
 	/**
-	* Returns the first share in the ordered set where active = &#63; and marketId = &#63;.
+	* Returns the first share in the ordered set where companyId = &#63; and groupId = &#63;.
 	*
-	* @param active the active
-	* @param marketId the market ID
+	* @param companyId the company ID
+	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching share, or <code>null</code> if a matching share could not be found
 	*/
-	public Share fetchByActiveMarket_First(boolean active, long marketId,
+	public Share fetchByCompanyGroup_First(long companyId, long groupId,
 		com.liferay.portal.kernel.util.OrderByComparator<Share> orderByComparator);
 
 	/**
-	* Returns the last share in the ordered set where active = &#63; and marketId = &#63;.
+	* Returns the last share in the ordered set where companyId = &#63; and groupId = &#63;.
 	*
-	* @param active the active
-	* @param marketId the market ID
+	* @param companyId the company ID
+	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching share
 	* @throws NoSuchShareException if a matching share could not be found
 	*/
-	public Share findByActiveMarket_Last(boolean active, long marketId,
+	public Share findByCompanyGroup_Last(long companyId, long groupId,
 		com.liferay.portal.kernel.util.OrderByComparator<Share> orderByComparator)
 		throws NoSuchShareException;
 
 	/**
-	* Returns the last share in the ordered set where active = &#63; and marketId = &#63;.
+	* Returns the last share in the ordered set where companyId = &#63; and groupId = &#63;.
 	*
-	* @param active the active
-	* @param marketId the market ID
+	* @param companyId the company ID
+	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching share, or <code>null</code> if a matching share could not be found
 	*/
-	public Share fetchByActiveMarket_Last(boolean active, long marketId,
+	public Share fetchByCompanyGroup_Last(long companyId, long groupId,
 		com.liferay.portal.kernel.util.OrderByComparator<Share> orderByComparator);
 
 	/**
-	* Returns the shares before and after the current share in the ordered set where active = &#63; and marketId = &#63;.
+	* Returns the shares before and after the current share in the ordered set where companyId = &#63; and groupId = &#63;.
 	*
 	* @param shareId the primary key of the current share
-	* @param active the active
-	* @param marketId the market ID
+	* @param companyId the company ID
+	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next share
 	* @throws NoSuchShareException if a share with the primary key could not be found
 	*/
-	public Share[] findByActiveMarket_PrevAndNext(long shareId, boolean active,
-		long marketId,
+	public Share[] findByCompanyGroup_PrevAndNext(long shareId, long companyId,
+		long groupId,
 		com.liferay.portal.kernel.util.OrderByComparator<Share> orderByComparator)
 		throws NoSuchShareException;
 
 	/**
-	* Removes all the shares where active = &#63; and marketId = &#63; from the database.
+	* Removes all the shares where companyId = &#63; and groupId = &#63; from the database.
 	*
-	* @param active the active
-	* @param marketId the market ID
+	* @param companyId the company ID
+	* @param groupId the group ID
 	*/
-	public void removeByActiveMarket(boolean active, long marketId);
+	public void removeByCompanyGroup(long companyId, long groupId);
 
 	/**
-	* Returns the number of shares where active = &#63; and marketId = &#63;.
+	* Returns the number of shares where companyId = &#63; and groupId = &#63;.
 	*
-	* @param active the active
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @return the number of matching shares
+	*/
+	public int countByCompanyGroup(long companyId, long groupId);
+
+	/**
+	* Returns the share where companyId = &#63; and groupId = &#63; and name = &#63; and marketId = &#63; or throws a {@link NoSuchShareException} if it could not be found.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param name the name
+	* @param marketId the market ID
+	* @return the matching share
+	* @throws NoSuchShareException if a matching share could not be found
+	*/
+	public Share findByNameMarketCompanyGroup(long companyId, long groupId,
+		java.lang.String name, long marketId) throws NoSuchShareException;
+
+	/**
+	* Returns the share where companyId = &#63; and groupId = &#63; and name = &#63; and marketId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param name the name
+	* @param marketId the market ID
+	* @return the matching share, or <code>null</code> if a matching share could not be found
+	*/
+	public Share fetchByNameMarketCompanyGroup(long companyId, long groupId,
+		java.lang.String name, long marketId);
+
+	/**
+	* Returns the share where companyId = &#63; and groupId = &#63; and name = &#63; and marketId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param name the name
+	* @param marketId the market ID
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the matching share, or <code>null</code> if a matching share could not be found
+	*/
+	public Share fetchByNameMarketCompanyGroup(long companyId, long groupId,
+		java.lang.String name, long marketId, boolean retrieveFromCache);
+
+	/**
+	* Removes the share where companyId = &#63; and groupId = &#63; and name = &#63; and marketId = &#63; from the database.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param name the name
+	* @param marketId the market ID
+	* @return the share that was removed
+	*/
+	public Share removeByNameMarketCompanyGroup(long companyId, long groupId,
+		java.lang.String name, long marketId) throws NoSuchShareException;
+
+	/**
+	* Returns the number of shares where companyId = &#63; and groupId = &#63; and name = &#63; and marketId = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param name the name
 	* @param marketId the market ID
 	* @return the number of matching shares
 	*/
-	public int countByActiveMarket(boolean active, long marketId);
+	public int countByNameMarketCompanyGroup(long companyId, long groupId,
+		java.lang.String name, long marketId);
+
+	/**
+	* Returns the share where companyId = &#63; and groupId = &#63; and symbol = &#63; or throws a {@link NoSuchShareException} if it could not be found.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param symbol the symbol
+	* @return the matching share
+	* @throws NoSuchShareException if a matching share could not be found
+	*/
+	public Share findBySymbolCompanyGroup(long companyId, long groupId,
+		java.lang.String symbol) throws NoSuchShareException;
+
+	/**
+	* Returns the share where companyId = &#63; and groupId = &#63; and symbol = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param symbol the symbol
+	* @return the matching share, or <code>null</code> if a matching share could not be found
+	*/
+	public Share fetchBySymbolCompanyGroup(long companyId, long groupId,
+		java.lang.String symbol);
+
+	/**
+	* Returns the share where companyId = &#63; and groupId = &#63; and symbol = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param symbol the symbol
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the matching share, or <code>null</code> if a matching share could not be found
+	*/
+	public Share fetchBySymbolCompanyGroup(long companyId, long groupId,
+		java.lang.String symbol, boolean retrieveFromCache);
+
+	/**
+	* Removes the share where companyId = &#63; and groupId = &#63; and symbol = &#63; from the database.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param symbol the symbol
+	* @return the share that was removed
+	*/
+	public Share removeBySymbolCompanyGroup(long companyId, long groupId,
+		java.lang.String symbol) throws NoSuchShareException;
+
+	/**
+	* Returns the number of shares where companyId = &#63; and groupId = &#63; and symbol = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param symbol the symbol
+	* @return the number of matching shares
+	*/
+	public int countBySymbolCompanyGroup(long companyId, long groupId,
+		java.lang.String symbol);
 
 	/**
 	* Returns all the shares where groupId = &#63; and companyId = &#63; and active = &#63; and marketId = &#63;.

@@ -57,17 +57,22 @@ public class StrategyImpl extends StrategyBaseImpl {
 	/* PRECIOS DE ENTRADA SALIDA  */
 	
 
+	
 	public void execute(Share _share, Market _market) {}
 	
 	public boolean verify(Share _share, Market _market) {return Boolean.TRUE;}
 	
+	/* CREATE THE REQUERIMENT EXPANDOS PARAMETERS */
+	public void init(long companyId) {}
+	
 	public boolean activated() {return Boolean.TRUE;}
 	
+	/* GET LIST EXPANDOS FIELDS */
 	public StrategyImpl() {
 	}
 
 
-	public List<ExpandoColumn> get_IBStrategyParams() {
+	public List<ExpandoColumn> getIBStrategyParams() {
 		return _IBStrategyParams;
 	}
 

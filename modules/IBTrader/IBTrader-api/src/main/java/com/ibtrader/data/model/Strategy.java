@@ -58,9 +58,11 @@ public interface Strategy extends StrategyModel, PersistedModel {
 
 	public boolean verify(Share _share, Market _market);
 
+	public void init(long companyId);
+
 	public boolean activated();
 
-	public java.util.List<com.liferay.expando.kernel.model.ExpandoColumn> get_IBStrategyParams();
+	public java.util.List<com.liferay.expando.kernel.model.ExpandoColumn> getIBStrategyParams();
 
 	public void setIBStrategyParams(
 		java.util.List<com.liferay.expando.kernel.model.ExpandoColumn> _IBStrategyParams);

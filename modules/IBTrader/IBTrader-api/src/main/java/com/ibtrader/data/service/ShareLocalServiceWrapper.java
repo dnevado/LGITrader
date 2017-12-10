@@ -32,6 +32,21 @@ public class ShareLocalServiceWrapper implements ShareLocalService,
 		_shareLocalService = shareLocalService;
 	}
 
+	@Override
+	public boolean ExistsExchange(java.lang.String exchange) {
+		return _shareLocalService.ExistsExchange(exchange);
+	}
+
+	@Override
+	public boolean ExistsPrimaryExchange(java.lang.String primaryexchange) {
+		return _shareLocalService.ExistsPrimaryExchange(primaryexchange);
+	}
+
+	@Override
+	public boolean ExistsSecurityType(java.lang.String type) {
+		return _shareLocalService.ExistsSecurityType(type);
+	}
+
 	/**
 	* Adds the share to the database. Also notifies the appropriate model listeners.
 	*
@@ -42,6 +57,14 @@ public class ShareLocalServiceWrapper implements ShareLocalService,
 	public com.ibtrader.data.model.Share addShare(
 		com.ibtrader.data.model.Share share) {
 		return _shareLocalService.addShare(share);
+	}
+
+	@Override
+	public com.ibtrader.data.model.Share addShare(
+		com.ibtrader.data.model.Share share,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _shareLocalService.addShare(share, serviceContext);
 	}
 
 	/**
@@ -81,6 +104,14 @@ public class ShareLocalServiceWrapper implements ShareLocalService,
 	}
 
 	@Override
+	public com.ibtrader.data.model.Share editShare(
+		com.ibtrader.data.model.Share share,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _shareLocalService.editShare(share, serviceContext);
+	}
+
+	@Override
 	public com.ibtrader.data.model.Share fetchShare(long shareId) {
 		return _shareLocalService.fetchShare(shareId);
 	}
@@ -96,6 +127,20 @@ public class ShareLocalServiceWrapper implements ShareLocalService,
 	public com.ibtrader.data.model.Share fetchShareByUuidAndGroupId(
 		java.lang.String uuid, long groupId) {
 		return _shareLocalService.fetchShareByUuidAndGroupId(uuid, groupId);
+	}
+
+	@Override
+	public com.ibtrader.data.model.Share findByNameMarketCompanyGroup(
+		long companyId, long groupId, java.lang.String name, long marketId) {
+		return _shareLocalService.findByNameMarketCompanyGroup(companyId,
+			groupId, name, marketId);
+	}
+
+	@Override
+	public com.ibtrader.data.model.Share findBySymbolCompanyGroup(
+		long companyId, long groupId, java.lang.String name) {
+		return _shareLocalService.findBySymbolCompanyGroup(companyId, groupId,
+			name);
 	}
 
 	/**
@@ -250,16 +295,16 @@ public class ShareLocalServiceWrapper implements ShareLocalService,
 	}
 
 	@Override
-	public java.util.List<com.ibtrader.data.model.Share> findByActiveMarket(
-		long _marketId, boolean _active) {
-		return _shareLocalService.findByActiveMarket(_marketId, _active);
-	}
-
-	@Override
 	public java.util.List<com.ibtrader.data.model.Share> findByActiveMarketGroupCompany(
 		long _marketId, boolean _active, long groupId, long companyId) {
 		return _shareLocalService.findByActiveMarketGroupCompany(_marketId,
 			_active, groupId, companyId);
+	}
+
+	@Override
+	public java.util.List<com.ibtrader.data.model.Share> findCompanyGroup(
+		long companyId, long groupId) {
+		return _shareLocalService.findCompanyGroup(companyId, groupId);
 	}
 
 	/**

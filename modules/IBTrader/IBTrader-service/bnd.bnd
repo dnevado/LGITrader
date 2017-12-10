@@ -7,7 +7,9 @@ Export-Package: \
 	com.ibtrader.service.data.permission,\
 	com.ibtrader.constants,\
 	com.ibtrader.interactive,\
-	com.ibtrader.util
+	com.ibtrader.util,\
+	com.ibtrader.data.model.impl,\
+	com.ibtrader.strategy
 	com.ibtrader.data.service.impl,\
 	com.ibtrader.service.data.permission,\	
 	com.ibtrader.data.model.impl,\

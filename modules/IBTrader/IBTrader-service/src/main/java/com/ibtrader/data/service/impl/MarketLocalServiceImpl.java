@@ -58,4 +58,14 @@ public class MarketLocalServiceImpl extends MarketLocalServiceBaseImpl {
 				
 							
 	}
+	public List<Market> findByActiveCompanyGroup(long companyId, long groupId, boolean active)
+	{
+	
+			return getMarketPersistence().findByActiveCompanyGroup(companyId, groupId, active);
+				
+							
+	}
+	
+	
+	
 }

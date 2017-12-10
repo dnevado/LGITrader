@@ -14,10 +14,25 @@
 
 package com.ibtrader.data.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
+import com.ibtrader.data.exception.NoSuchShareException;
 import com.ibtrader.data.model.Share;
+import com.ibtrader.data.model.Strategy;
 import com.ibtrader.data.service.base.ShareLocalServiceBaseImpl;
+import com.ibtrader.util.ConfigKeys;
+import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.model.AssetLinkConstants;
+import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.search.Indexer;
+import com.liferay.portal.kernel.search.IndexerRegistryUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
+import com.liferay.portal.kernel.util.ContentTypes;
+import com.liferay.portal.kernel.workflow.WorkflowHandlerRegistryUtil;
 
 /**
  * The implementation of the share local service.
@@ -44,10 +59,129 @@ public class ShareLocalServiceImpl extends ShareLocalServiceBaseImpl {
 		return getSharePersistence().findByActiveMarketGroupCompany(groupId, companyId,_active, _marketId);
 	}
 	
-	public List<Share> findByActiveMarket(long _marketId, boolean _active) {
-		// TODO Auto-generated method stub
-		return getSharePersistence().findByActiveMarket(_active, _marketId);
-	}
 
+	public List<Share> findCompanyGroup(long companyId, long groupId) {
+		// TODO Auto-generated method stub
+		return getSharePersistence().findByCompanyGroup(companyId, groupId);
+	}
+	
+	public Share findBySymbolCompanyGroup(long companyId, long groupId, String name) {
+		// TODO Auto-generated method stub
+		Share share=null;
+		try {
+			share= getSharePersistence().findBySymbolCompanyGroup(companyId, groupId, name);
+		} catch (NoSuchShareException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+		}
+		return share;
+	}
+	
+	
+	
+	/* SHARES BY MARKET  Y NAME */
+	public Share findByNameMarketCompanyGroup(long companyId, long groupId, String name, long marketId) {
+		// TODO Auto-generated method stub
+		Share share=null;
+		try {
+			share= getSharePersistence().findByNameMarketCompanyGroup(companyId, groupId, name, marketId);
+		} catch (NoSuchShareException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+		}
+		return share;
+	}
+	
+	public boolean ExistsSecurityType(String type)
+	{
+		return (type.equals(ConfigKeys.SECURITY_TYPE_FUTUROS) || type.equals(ConfigKeys.SECURITY_TYPE_STOCK)); 
+	}
+	public boolean ExistsExchange(String exchange)
+	{
+		boolean _bFound =false;
+		for (String pExchange : ConfigKeys._MARKET_EXCHANGES)
+		{
+			if (pExchange.equals(exchange))
+			{
+				_bFound = true;
+				break;
+			}
+				
+		}
+		return _bFound;
+	}
+	public boolean ExistsPrimaryExchange(String primaryexchange)
+	{
+		
+		boolean _bFound =false;
+		for (String pExchange : ConfigKeys._PRIMARY_MARKET_EXCHANGES)
+		{
+			if (pExchange.equals(primaryexchange))
+			{
+				_bFound = true;
+				break;
+			}
+				
+		}
+		return _bFound;
+		
+	}
+	
+	public Share addShare(Share share, ServiceContext serviceContext) throws PortalException   {
+            
+		//shareLocalService.get
+
+		/*  VERIFICACIONES,
+		 * QUE NO EXISTA POR NOMBRE
+		 * QUE LOS PARAMETROS ESTEN CORRECTOS NUMEROS
+		 * QUE TODOS LOS PARAMETROS OBLIGATORIOS EXISTAN
+		 */
+		
+		Share _share = shareLocalService.createShare(CounterLocalServiceUtil.increment(Share.class.getName()));
+		
+		_share.setActive(share.getActive());
+		_share.setName(share.getName());
+		_share.setSymbol(share.getSymbol());
+		_share.setNumbertopurchase(share.getNumbertopurchase());
+		_share.setPercentual_limit_buy(share.getPercentual_limit_buy());
+		_share.setPercentual_stop_lost(share.getPercentual_stop_lost());
+		_share.setPercentual_stop_profit(share.getPercentual_stop_profit());
+		_share.setCompanyId(share.getCompanyId());
+		_share.setGroupId(share.getGroupId());
+		_share.setExpiry_date(share.getExpiry_date());
+		_share.setMultiplier(share.getMultiplier());
+		_share.setTick_futures(share.getTick_futures());
+		_share.setSecurity_type(share.getSecurity_type());					
+		_share.setPrimary_exchange(share.getPrimary_exchange());
+		_share.setExchange(share.getExchange());
+		_share.setMarketId(share.getMarketId());
+		_share.setCreateDate(share.getCreateDate());
+		_share.setModifiedDate(share.getModifiedDate());
+		_share.setUserCreatedId(share.getUserCreatedId());
+		
+		
+		sharePersistence.update(_share);
+		   
+	   
+	    return share;
+	}
+	
+	public Share editShare(Share share, ServiceContext serviceContext) throws PortalException   {
+        
+		//shareLocalService.get
+
+		/*  VERIFICACIONES,
+		 * QUE NO EXISTA POR NOMBRE
+		 * QUE LOS PARAMETROS ESTEN CORRECTOS NUMEROS
+		 * QUE TODOS LOS PARAMETROS OBLIGATORIOS EXISTAN
+		 */
+		
+		sharePersistence.update(share);
+		   
+	   
+	    return share;
+	}
+	
+	
 	
 }

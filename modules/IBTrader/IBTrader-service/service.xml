@@ -65,10 +65,16 @@
 		<column name="shareId" 	   type="long" />
 		<!-- References -->
 		<!-- strategyparamsoverride VALOR EN JSON PARA ALMACENAR LOS PARAMETROS SOBREESCRITOS DE LA ESTRATEGIA GENERAL  -->
-		<column name="strategyparamsoverride" 	   type="String" />
+		<column name="strategyparamsoverride"  type="String" />
 		<!-- References -->
 		<finder name="CommpanyShareId" return-type="Collection">
 			<finder-column name="shareId"/>
+			<finder-column name="groupId"/>
+			<finder-column name="companyId"/>
+		</finder>
+		<finder name="CommpanyShareStrategyId" return-type="Collection">
+			<finder-column name="shareId"/>
+			<finder-column name="strategyId"/>
 			<finder-column name="groupId"/>
 			<finder-column name="companyId"/>
 		</finder>
@@ -205,6 +211,11 @@
 			<finder-column name="end_hour" />		
 			<finder-column name="active" />				
 		</finder>
+		<finder name="ActiveCompanyGroup" return-type="Collection">
+			<finder-column name="companyId"/>		
+			<finder-column name="groupId"/>	
+			<finder-column name="active" />				
+		</finder>
 
 
 	</entity>
@@ -255,12 +266,22 @@
 			<column name="userCreatedId" type="long" />	
 	        <column name="marketId" type="long"></column>
     <!--    	<reference package-path="com.ibtrader.data" entity="Market"></reference>-->
-        	
-        	<finder name="ActiveMarket" return-type="Collection">	        			
-				<finder-column name="active" />
-				<finder-column name="marketId" />								
+        	        
+        	<finder name="CompanyGroup" return-type="Collection">	
+        		<finder-column name="companyId"/>	
+        		<finder-column name="groupId"/>											
 			</finder>
-        	
+			<finder name="NameMarketCompanyGroup" return-type="Share">	
+        		<finder-column name="companyId"/>	
+        		<finder-column name="groupId"/>
+        		<finder-column name="name" />
+        		<finder-column name="marketId" />												
+			</finder>
+			<finder name="SymbolCompanyGroup" return-type="Share">	
+        		<finder-column name="companyId"/>	
+        		<finder-column name="groupId"/>
+        		<finder-column name="symbol" />        													
+			</finder>
         	
         	<finder name="ActiveMarketGroupCompany" return-type="Collection">	
         		<finder-column name="groupId"/>

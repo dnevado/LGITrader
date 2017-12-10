@@ -243,6 +243,13 @@ public class StrategyShareLocalServiceUtil {
 				   .dynamicQuery(dynamicQuery, start, end, orderByComparator);
 	}
 
+	public static java.util.List<com.ibtrader.data.model.StrategyShare> getByCommpanyShareStrategyId(
+		long groupid, long companyid, long shareId, long strategyId) {
+		return getService()
+				   .getByCommpanyShareStrategyId(groupid, companyid, shareId,
+			strategyId);
+	}
+
 	public static java.util.List<com.ibtrader.data.model.StrategyShare> getByGroupCompanyShareId(
 		long groupid, long companyid, long shareId) {
 		return getService().getByGroupCompanyShareId(groupid, companyid, shareId);

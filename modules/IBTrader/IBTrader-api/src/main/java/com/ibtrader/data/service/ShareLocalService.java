@@ -32,6 +32,7 @@ import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.BaseLocalService;
 import com.liferay.portal.kernel.service.PersistedModelLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
@@ -63,6 +64,11 @@ public interface ShareLocalService extends BaseLocalService,
 	 *
 	 * Never modify or reference this interface directly. Always use {@link ShareLocalServiceUtil} to access the share local service. Add custom service methods to {@link com.ibtrader.data.service.impl.ShareLocalServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
+	public boolean ExistsExchange(java.lang.String exchange);
+
+	public boolean ExistsPrimaryExchange(java.lang.String primaryexchange);
+
+	public boolean ExistsSecurityType(java.lang.String type);
 
 	/**
 	* Adds the share to the database. Also notifies the appropriate model listeners.
@@ -72,6 +78,9 @@ public interface ShareLocalService extends BaseLocalService,
 	*/
 	@Indexable(type = IndexableType.REINDEX)
 	public Share addShare(Share share);
+
+	public Share addShare(Share share, ServiceContext serviceContext)
+		throws PortalException;
 
 	/**
 	* Creates a new share with the primary key. Does not add the share to the database.
@@ -100,6 +109,9 @@ public interface ShareLocalService extends BaseLocalService,
 	@Indexable(type = IndexableType.DELETE)
 	public Share deleteShare(long shareId) throws PortalException;
 
+	public Share editShare(Share share, ServiceContext serviceContext)
+		throws PortalException;
+
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public Share fetchShare(long shareId);
 
@@ -112,6 +124,12 @@ public interface ShareLocalService extends BaseLocalService,
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public Share fetchShareByUuidAndGroupId(java.lang.String uuid, long groupId);
+
+	public Share findByNameMarketCompanyGroup(long companyId, long groupId,
+		java.lang.String name, long marketId);
+
+	public Share findBySymbolCompanyGroup(long companyId, long groupId,
+		java.lang.String name);
 
 	/**
 	* Returns the share with the primary key.
@@ -222,10 +240,10 @@ public interface ShareLocalService extends BaseLocalService,
 	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
 		int end, OrderByComparator<T> orderByComparator);
 
-	public List<Share> findByActiveMarket(long _marketId, boolean _active);
-
 	public List<Share> findByActiveMarketGroupCompany(long _marketId,
 		boolean _active, long groupId, long companyId);
+
+	public List<Share> findCompanyGroup(long companyId, long groupId);
 
 	/**
 	* Returns a range of all the shares.

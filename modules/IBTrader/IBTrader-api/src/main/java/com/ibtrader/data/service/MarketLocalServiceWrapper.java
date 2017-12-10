@@ -250,6 +250,13 @@ public class MarketLocalServiceWrapper implements MarketLocalService,
 	}
 
 	@Override
+	public java.util.List<com.ibtrader.data.model.Market> findByActiveCompanyGroup(
+		long companyId, long groupId, boolean active) {
+		return _marketLocalService.findByActiveCompanyGroup(companyId, groupId,
+			active);
+	}
+
+	@Override
 	public java.util.List<com.ibtrader.data.model.Market> findByActiveStartEndHour(
 		java.lang.String _Start, java.lang.String _End, boolean _Active) {
 		return _marketLocalService.findByActiveStartEndHour(_Start, _End,

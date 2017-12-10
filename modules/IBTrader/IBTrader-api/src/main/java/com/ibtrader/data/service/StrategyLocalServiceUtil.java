@@ -301,6 +301,11 @@ public class StrategyLocalServiceUtil {
 		return getService().findByCompanyId(companyid);
 	}
 
+	public static java.util.List<com.ibtrader.data.model.Strategy> findStrategies(
+		long shareId, long companyId, long groupId) {
+		return getService().findStrategies(shareId, companyId, groupId);
+	}
+
 	/**
 	* Returns a range of all the strategies.
 	*

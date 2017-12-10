@@ -239,6 +239,11 @@ public class MarketLocalServiceUtil {
 				   .dynamicQuery(dynamicQuery, start, end, orderByComparator);
 	}
 
+	public static java.util.List<com.ibtrader.data.model.Market> findByActiveCompanyGroup(
+		long companyId, long groupId, boolean active) {
+		return getService().findByActiveCompanyGroup(companyId, groupId, active);
+	}
+
 	public static java.util.List<com.ibtrader.data.model.Market> findByActiveStartEndHour(
 		java.lang.String _Start, java.lang.String _End, boolean _Active) {
 		return getService().findByActiveStartEndHour(_Start, _End, _Active);

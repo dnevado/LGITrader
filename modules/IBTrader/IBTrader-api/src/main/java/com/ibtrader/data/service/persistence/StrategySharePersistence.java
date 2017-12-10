@@ -532,6 +532,182 @@ public interface StrategySharePersistence extends BasePersistence<StrategyShare>
 	public int countByCommpanyShareId(long shareId, long groupId, long companyId);
 
 	/**
+	* Returns all the strategy shares where shareId = &#63; and strategyId = &#63; and groupId = &#63; and companyId = &#63;.
+	*
+	* @param shareId the share ID
+	* @param strategyId the strategy ID
+	* @param groupId the group ID
+	* @param companyId the company ID
+	* @return the matching strategy shares
+	*/
+	public java.util.List<StrategyShare> findByCommpanyShareStrategyId(
+		long shareId, long strategyId, long groupId, long companyId);
+
+	/**
+	* Returns a range of all the strategy shares where shareId = &#63; and strategyId = &#63; and groupId = &#63; and companyId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link StrategyShareModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param shareId the share ID
+	* @param strategyId the strategy ID
+	* @param groupId the group ID
+	* @param companyId the company ID
+	* @param start the lower bound of the range of strategy shares
+	* @param end the upper bound of the range of strategy shares (not inclusive)
+	* @return the range of matching strategy shares
+	*/
+	public java.util.List<StrategyShare> findByCommpanyShareStrategyId(
+		long shareId, long strategyId, long groupId, long companyId, int start,
+		int end);
+
+	/**
+	* Returns an ordered range of all the strategy shares where shareId = &#63; and strategyId = &#63; and groupId = &#63; and companyId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link StrategyShareModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param shareId the share ID
+	* @param strategyId the strategy ID
+	* @param groupId the group ID
+	* @param companyId the company ID
+	* @param start the lower bound of the range of strategy shares
+	* @param end the upper bound of the range of strategy shares (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching strategy shares
+	*/
+	public java.util.List<StrategyShare> findByCommpanyShareStrategyId(
+		long shareId, long strategyId, long groupId, long companyId, int start,
+		int end,
+		com.liferay.portal.kernel.util.OrderByComparator<StrategyShare> orderByComparator);
+
+	/**
+	* Returns an ordered range of all the strategy shares where shareId = &#63; and strategyId = &#63; and groupId = &#63; and companyId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link StrategyShareModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param shareId the share ID
+	* @param strategyId the strategy ID
+	* @param groupId the group ID
+	* @param companyId the company ID
+	* @param start the lower bound of the range of strategy shares
+	* @param end the upper bound of the range of strategy shares (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching strategy shares
+	*/
+	public java.util.List<StrategyShare> findByCommpanyShareStrategyId(
+		long shareId, long strategyId, long groupId, long companyId, int start,
+		int end,
+		com.liferay.portal.kernel.util.OrderByComparator<StrategyShare> orderByComparator,
+		boolean retrieveFromCache);
+
+	/**
+	* Returns the first strategy share in the ordered set where shareId = &#63; and strategyId = &#63; and groupId = &#63; and companyId = &#63;.
+	*
+	* @param shareId the share ID
+	* @param strategyId the strategy ID
+	* @param groupId the group ID
+	* @param companyId the company ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching strategy share
+	* @throws NoSuchStrategyShareException if a matching strategy share could not be found
+	*/
+	public StrategyShare findByCommpanyShareStrategyId_First(long shareId,
+		long strategyId, long groupId, long companyId,
+		com.liferay.portal.kernel.util.OrderByComparator<StrategyShare> orderByComparator)
+		throws NoSuchStrategyShareException;
+
+	/**
+	* Returns the first strategy share in the ordered set where shareId = &#63; and strategyId = &#63; and groupId = &#63; and companyId = &#63;.
+	*
+	* @param shareId the share ID
+	* @param strategyId the strategy ID
+	* @param groupId the group ID
+	* @param companyId the company ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching strategy share, or <code>null</code> if a matching strategy share could not be found
+	*/
+	public StrategyShare fetchByCommpanyShareStrategyId_First(long shareId,
+		long strategyId, long groupId, long companyId,
+		com.liferay.portal.kernel.util.OrderByComparator<StrategyShare> orderByComparator);
+
+	/**
+	* Returns the last strategy share in the ordered set where shareId = &#63; and strategyId = &#63; and groupId = &#63; and companyId = &#63;.
+	*
+	* @param shareId the share ID
+	* @param strategyId the strategy ID
+	* @param groupId the group ID
+	* @param companyId the company ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching strategy share
+	* @throws NoSuchStrategyShareException if a matching strategy share could not be found
+	*/
+	public StrategyShare findByCommpanyShareStrategyId_Last(long shareId,
+		long strategyId, long groupId, long companyId,
+		com.liferay.portal.kernel.util.OrderByComparator<StrategyShare> orderByComparator)
+		throws NoSuchStrategyShareException;
+
+	/**
+	* Returns the last strategy share in the ordered set where shareId = &#63; and strategyId = &#63; and groupId = &#63; and companyId = &#63;.
+	*
+	* @param shareId the share ID
+	* @param strategyId the strategy ID
+	* @param groupId the group ID
+	* @param companyId the company ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching strategy share, or <code>null</code> if a matching strategy share could not be found
+	*/
+	public StrategyShare fetchByCommpanyShareStrategyId_Last(long shareId,
+		long strategyId, long groupId, long companyId,
+		com.liferay.portal.kernel.util.OrderByComparator<StrategyShare> orderByComparator);
+
+	/**
+	* Returns the strategy shares before and after the current strategy share in the ordered set where shareId = &#63; and strategyId = &#63; and groupId = &#63; and companyId = &#63;.
+	*
+	* @param strategyshareId the primary key of the current strategy share
+	* @param shareId the share ID
+	* @param strategyId the strategy ID
+	* @param groupId the group ID
+	* @param companyId the company ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next strategy share
+	* @throws NoSuchStrategyShareException if a strategy share with the primary key could not be found
+	*/
+	public StrategyShare[] findByCommpanyShareStrategyId_PrevAndNext(
+		long strategyshareId, long shareId, long strategyId, long groupId,
+		long companyId,
+		com.liferay.portal.kernel.util.OrderByComparator<StrategyShare> orderByComparator)
+		throws NoSuchStrategyShareException;
+
+	/**
+	* Removes all the strategy shares where shareId = &#63; and strategyId = &#63; and groupId = &#63; and companyId = &#63; from the database.
+	*
+	* @param shareId the share ID
+	* @param strategyId the strategy ID
+	* @param groupId the group ID
+	* @param companyId the company ID
+	*/
+	public void removeByCommpanyShareStrategyId(long shareId, long strategyId,
+		long groupId, long companyId);
+
+	/**
+	* Returns the number of strategy shares where shareId = &#63; and strategyId = &#63; and groupId = &#63; and companyId = &#63;.
+	*
+	* @param shareId the share ID
+	* @param strategyId the strategy ID
+	* @param groupId the group ID
+	* @param companyId the company ID
+	* @return the number of matching strategy shares
+	*/
+	public int countByCommpanyShareStrategyId(long shareId, long strategyId,
+		long groupId, long companyId);
+
+	/**
 	* Caches the strategy share in the entity cache if it is enabled.
 	*
 	* @param strategyShare the strategy share
