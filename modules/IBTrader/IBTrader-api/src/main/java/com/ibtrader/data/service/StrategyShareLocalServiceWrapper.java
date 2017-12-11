@@ -104,6 +104,13 @@ public class StrategyShareLocalServiceWrapper
 			groupId);
 	}
 
+	@Override
+	public com.ibtrader.data.model.StrategyShare getByCommpanyShareStrategyId(
+		long groupid, long companyid, long shareId, long strategyId) {
+		return _strategyShareLocalService.getByCommpanyShareStrategyId(groupid,
+			companyid, shareId, strategyId);
+	}
+
 	/**
 	* Returns the strategy share with the primary key.
 	*
@@ -255,13 +262,6 @@ public class StrategyShareLocalServiceWrapper
 		com.liferay.portal.kernel.util.OrderByComparator<T> orderByComparator) {
 		return _strategyShareLocalService.dynamicQuery(dynamicQuery, start,
 			end, orderByComparator);
-	}
-
-	@Override
-	public java.util.List<com.ibtrader.data.model.StrategyShare> getByCommpanyShareStrategyId(
-		long groupid, long companyid, long shareId, long strategyId) {
-		return _strategyShareLocalService.getByCommpanyShareStrategyId(groupid,
-			companyid, shareId, strategyId);
 	}
 
 	@Override

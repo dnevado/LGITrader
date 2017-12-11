@@ -40,6 +40,7 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.spring.extender.service.ServiceReference;
@@ -2070,23 +2071,10 @@ public class StrategySharePersistenceImpl extends BasePersistenceImpl<StrategySh
 	private static final String _FINDER_COLUMN_COMMPANYSHAREID_SHAREID_2 = "strategyShare.shareId = ? AND ";
 	private static final String _FINDER_COLUMN_COMMPANYSHAREID_GROUPID_2 = "strategyShare.groupId = ? AND ";
 	private static final String _FINDER_COLUMN_COMMPANYSHAREID_COMPANYID_2 = "strategyShare.companyId = ?";
-	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_COMMPANYSHARESTRATEGYID =
-		new FinderPath(StrategyShareModelImpl.ENTITY_CACHE_ENABLED,
+	public static final FinderPath FINDER_PATH_FETCH_BY_COMMPANYSHARESTRATEGYID = new FinderPath(StrategyShareModelImpl.ENTITY_CACHE_ENABLED,
 			StrategyShareModelImpl.FINDER_CACHE_ENABLED,
-			StrategyShareImpl.class, FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
-			"findByCommpanyShareStrategyId",
-			new String[] {
-				Long.class.getName(), Long.class.getName(), Long.class.getName(),
-				Long.class.getName(),
-				
-			Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			});
-	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_COMMPANYSHARESTRATEGYID =
-		new FinderPath(StrategyShareModelImpl.ENTITY_CACHE_ENABLED,
-			StrategyShareModelImpl.FINDER_CACHE_ENABLED,
-			StrategyShareImpl.class, FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"findByCommpanyShareStrategyId",
+			StrategyShareImpl.class, FINDER_CLASS_NAME_ENTITY,
+			"fetchByCommpanyShareStrategyId",
 			new String[] {
 				Long.class.getName(), Long.class.getName(), Long.class.getName(),
 				Long.class.getName()
@@ -2105,138 +2093,104 @@ public class StrategySharePersistenceImpl extends BasePersistenceImpl<StrategySh
 			});
 
 	/**
-	 * Returns all the strategy shares where shareId = &#63; and strategyId = &#63; and groupId = &#63; and companyId = &#63;.
+	 * Returns the strategy share where shareId = &#63; and strategyId = &#63; and groupId = &#63; and companyId = &#63; or throws a {@link NoSuchStrategyShareException} if it could not be found.
 	 *
 	 * @param shareId the share ID
 	 * @param strategyId the strategy ID
 	 * @param groupId the group ID
 	 * @param companyId the company ID
-	 * @return the matching strategy shares
+	 * @return the matching strategy share
+	 * @throws NoSuchStrategyShareException if a matching strategy share could not be found
 	 */
 	@Override
-	public List<StrategyShare> findByCommpanyShareStrategyId(long shareId,
+	public StrategyShare findByCommpanyShareStrategyId(long shareId,
+		long strategyId, long groupId, long companyId)
+		throws NoSuchStrategyShareException {
+		StrategyShare strategyShare = fetchByCommpanyShareStrategyId(shareId,
+				strategyId, groupId, companyId);
+
+		if (strategyShare == null) {
+			StringBundler msg = new StringBundler(10);
+
+			msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+			msg.append("shareId=");
+			msg.append(shareId);
+
+			msg.append(", strategyId=");
+			msg.append(strategyId);
+
+			msg.append(", groupId=");
+			msg.append(groupId);
+
+			msg.append(", companyId=");
+			msg.append(companyId);
+
+			msg.append(StringPool.CLOSE_CURLY_BRACE);
+
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
+			}
+
+			throw new NoSuchStrategyShareException(msg.toString());
+		}
+
+		return strategyShare;
+	}
+
+	/**
+	 * Returns the strategy share where shareId = &#63; and strategyId = &#63; and groupId = &#63; and companyId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param shareId the share ID
+	 * @param strategyId the strategy ID
+	 * @param groupId the group ID
+	 * @param companyId the company ID
+	 * @return the matching strategy share, or <code>null</code> if a matching strategy share could not be found
+	 */
+	@Override
+	public StrategyShare fetchByCommpanyShareStrategyId(long shareId,
 		long strategyId, long groupId, long companyId) {
-		return findByCommpanyShareStrategyId(shareId, strategyId, groupId,
-			companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+		return fetchByCommpanyShareStrategyId(shareId, strategyId, groupId,
+			companyId, true);
 	}
 
 	/**
-	 * Returns a range of all the strategy shares where shareId = &#63; and strategyId = &#63; and groupId = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link StrategyShareModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	 * </p>
+	 * Returns the strategy share where shareId = &#63; and strategyId = &#63; and groupId = &#63; and companyId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param shareId the share ID
 	 * @param strategyId the strategy ID
 	 * @param groupId the group ID
 	 * @param companyId the company ID
-	 * @param start the lower bound of the range of strategy shares
-	 * @param end the upper bound of the range of strategy shares (not inclusive)
-	 * @return the range of matching strategy shares
-	 */
-	@Override
-	public List<StrategyShare> findByCommpanyShareStrategyId(long shareId,
-		long strategyId, long groupId, long companyId, int start, int end) {
-		return findByCommpanyShareStrategyId(shareId, strategyId, groupId,
-			companyId, start, end, null);
-	}
-
-	/**
-	 * Returns an ordered range of all the strategy shares where shareId = &#63; and strategyId = &#63; and groupId = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link StrategyShareModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	 * </p>
-	 *
-	 * @param shareId the share ID
-	 * @param strategyId the strategy ID
-	 * @param groupId the group ID
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of strategy shares
-	 * @param end the upper bound of the range of strategy shares (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching strategy shares
-	 */
-	@Override
-	public List<StrategyShare> findByCommpanyShareStrategyId(long shareId,
-		long strategyId, long groupId, long companyId, int start, int end,
-		OrderByComparator<StrategyShare> orderByComparator) {
-		return findByCommpanyShareStrategyId(shareId, strategyId, groupId,
-			companyId, start, end, orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the strategy shares where shareId = &#63; and strategyId = &#63; and groupId = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link StrategyShareModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	 * </p>
-	 *
-	 * @param shareId the share ID
-	 * @param strategyId the strategy ID
-	 * @param groupId the group ID
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of strategy shares
-	 * @param end the upper bound of the range of strategy shares (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @param retrieveFromCache whether to retrieve from the finder cache
-	 * @return the ordered range of matching strategy shares
+	 * @return the matching strategy share, or <code>null</code> if a matching strategy share could not be found
 	 */
 	@Override
-	public List<StrategyShare> findByCommpanyShareStrategyId(long shareId,
-		long strategyId, long groupId, long companyId, int start, int end,
-		OrderByComparator<StrategyShare> orderByComparator,
-		boolean retrieveFromCache) {
-		boolean pagination = true;
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
+	public StrategyShare fetchByCommpanyShareStrategyId(long shareId,
+		long strategyId, long groupId, long companyId, boolean retrieveFromCache) {
+		Object[] finderArgs = new Object[] {
+				shareId, strategyId, groupId, companyId
+			};
 
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-			pagination = false;
-			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_COMMPANYSHARESTRATEGYID;
-			finderArgs = new Object[] { shareId, strategyId, groupId, companyId };
-		}
-		else {
-			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_COMMPANYSHARESTRATEGYID;
-			finderArgs = new Object[] {
-					shareId, strategyId, groupId, companyId,
-					
-					start, end, orderByComparator
-				};
-		}
-
-		List<StrategyShare> list = null;
+		Object result = null;
 
 		if (retrieveFromCache) {
-			list = (List<StrategyShare>)finderCache.getResult(finderPath,
+			result = finderCache.getResult(FINDER_PATH_FETCH_BY_COMMPANYSHARESTRATEGYID,
 					finderArgs, this);
+		}
 
-			if ((list != null) && !list.isEmpty()) {
-				for (StrategyShare strategyShare : list) {
-					if ((shareId != strategyShare.getShareId()) ||
-							(strategyId != strategyShare.getStrategyId()) ||
-							(groupId != strategyShare.getGroupId()) ||
-							(companyId != strategyShare.getCompanyId())) {
-						list = null;
+		if (result instanceof StrategyShare) {
+			StrategyShare strategyShare = (StrategyShare)result;
 
-						break;
-					}
-				}
+			if ((shareId != strategyShare.getShareId()) ||
+					(strategyId != strategyShare.getStrategyId()) ||
+					(groupId != strategyShare.getGroupId()) ||
+					(companyId != strategyShare.getCompanyId())) {
+				result = null;
 			}
 		}
 
-		if (list == null) {
-			StringBundler query = null;
-
-			if (orderByComparator != null) {
-				query = new StringBundler(6 +
-						(orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				query = new StringBundler(6);
-			}
+		if (result == null) {
+			StringBundler query = new StringBundler(6);
 
 			query.append(_SQL_SELECT_STRATEGYSHARE_WHERE);
 
@@ -2247,15 +2201,6 @@ public class StrategySharePersistenceImpl extends BasePersistenceImpl<StrategySh
 			query.append(_FINDER_COLUMN_COMMPANYSHARESTRATEGYID_GROUPID_2);
 
 			query.append(_FINDER_COLUMN_COMMPANYSHARESTRATEGYID_COMPANYID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
-					orderByComparator);
-			}
-			else
-			 if (pagination) {
-				query.append(StrategyShareModelImpl.ORDER_BY_JPQL);
-			}
 
 			String sql = query.toString();
 
@@ -2276,25 +2221,38 @@ public class StrategySharePersistenceImpl extends BasePersistenceImpl<StrategySh
 
 				qPos.add(companyId);
 
-				if (!pagination) {
-					list = (List<StrategyShare>)QueryUtil.list(q, getDialect(),
-							start, end, false);
+				List<StrategyShare> list = q.list();
 
-					Collections.sort(list);
-
-					list = Collections.unmodifiableList(list);
+				if (list.isEmpty()) {
+					finderCache.putResult(FINDER_PATH_FETCH_BY_COMMPANYSHARESTRATEGYID,
+						finderArgs, list);
 				}
 				else {
-					list = (List<StrategyShare>)QueryUtil.list(q, getDialect(),
-							start, end);
+					if ((list.size() > 1) && _log.isWarnEnabled()) {
+						_log.warn(
+							"StrategySharePersistenceImpl.fetchByCommpanyShareStrategyId(long, long, long, long, boolean) with parameters (" +
+							StringUtil.merge(finderArgs) +
+							") yields a result set with more than 1 result. This violates the logical unique restriction. There is no order guarantee on which result is returned by this finder.");
+					}
+
+					StrategyShare strategyShare = list.get(0);
+
+					result = strategyShare;
+
+					cacheResult(strategyShare);
+
+					if ((strategyShare.getShareId() != shareId) ||
+							(strategyShare.getStrategyId() != strategyId) ||
+							(strategyShare.getGroupId() != groupId) ||
+							(strategyShare.getCompanyId() != companyId)) {
+						finderCache.putResult(FINDER_PATH_FETCH_BY_COMMPANYSHARESTRATEGYID,
+							finderArgs, strategyShare);
+					}
 				}
-
-				cacheResult(list);
-
-				finderCache.putResult(finderPath, finderArgs, list);
 			}
 			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
+				finderCache.removeResult(FINDER_PATH_FETCH_BY_COMMPANYSHARESTRATEGYID,
+					finderArgs);
 
 				throw processException(e);
 			}
@@ -2303,334 +2261,31 @@ public class StrategySharePersistenceImpl extends BasePersistenceImpl<StrategySh
 			}
 		}
 
-		return list;
-	}
-
-	/**
-	 * Returns the first strategy share in the ordered set where shareId = &#63; and strategyId = &#63; and groupId = &#63; and companyId = &#63;.
-	 *
-	 * @param shareId the share ID
-	 * @param strategyId the strategy ID
-	 * @param groupId the group ID
-	 * @param companyId the company ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the first matching strategy share
-	 * @throws NoSuchStrategyShareException if a matching strategy share could not be found
-	 */
-	@Override
-	public StrategyShare findByCommpanyShareStrategyId_First(long shareId,
-		long strategyId, long groupId, long companyId,
-		OrderByComparator<StrategyShare> orderByComparator)
-		throws NoSuchStrategyShareException {
-		StrategyShare strategyShare = fetchByCommpanyShareStrategyId_First(shareId,
-				strategyId, groupId, companyId, orderByComparator);
-
-		if (strategyShare != null) {
-			return strategyShare;
-		}
-
-		StringBundler msg = new StringBundler(10);
-
-		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		msg.append("shareId=");
-		msg.append(shareId);
-
-		msg.append(", strategyId=");
-		msg.append(strategyId);
-
-		msg.append(", groupId=");
-		msg.append(groupId);
-
-		msg.append(", companyId=");
-		msg.append(companyId);
-
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
-
-		throw new NoSuchStrategyShareException(msg.toString());
-	}
-
-	/**
-	 * Returns the first strategy share in the ordered set where shareId = &#63; and strategyId = &#63; and groupId = &#63; and companyId = &#63;.
-	 *
-	 * @param shareId the share ID
-	 * @param strategyId the strategy ID
-	 * @param groupId the group ID
-	 * @param companyId the company ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the first matching strategy share, or <code>null</code> if a matching strategy share could not be found
-	 */
-	@Override
-	public StrategyShare fetchByCommpanyShareStrategyId_First(long shareId,
-		long strategyId, long groupId, long companyId,
-		OrderByComparator<StrategyShare> orderByComparator) {
-		List<StrategyShare> list = findByCommpanyShareStrategyId(shareId,
-				strategyId, groupId, companyId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
-	}
-
-	/**
-	 * Returns the last strategy share in the ordered set where shareId = &#63; and strategyId = &#63; and groupId = &#63; and companyId = &#63;.
-	 *
-	 * @param shareId the share ID
-	 * @param strategyId the strategy ID
-	 * @param groupId the group ID
-	 * @param companyId the company ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching strategy share
-	 * @throws NoSuchStrategyShareException if a matching strategy share could not be found
-	 */
-	@Override
-	public StrategyShare findByCommpanyShareStrategyId_Last(long shareId,
-		long strategyId, long groupId, long companyId,
-		OrderByComparator<StrategyShare> orderByComparator)
-		throws NoSuchStrategyShareException {
-		StrategyShare strategyShare = fetchByCommpanyShareStrategyId_Last(shareId,
-				strategyId, groupId, companyId, orderByComparator);
-
-		if (strategyShare != null) {
-			return strategyShare;
-		}
-
-		StringBundler msg = new StringBundler(10);
-
-		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		msg.append("shareId=");
-		msg.append(shareId);
-
-		msg.append(", strategyId=");
-		msg.append(strategyId);
-
-		msg.append(", groupId=");
-		msg.append(groupId);
-
-		msg.append(", companyId=");
-		msg.append(companyId);
-
-		msg.append(StringPool.CLOSE_CURLY_BRACE);
-
-		throw new NoSuchStrategyShareException(msg.toString());
-	}
-
-	/**
-	 * Returns the last strategy share in the ordered set where shareId = &#63; and strategyId = &#63; and groupId = &#63; and companyId = &#63;.
-	 *
-	 * @param shareId the share ID
-	 * @param strategyId the strategy ID
-	 * @param groupId the group ID
-	 * @param companyId the company ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching strategy share, or <code>null</code> if a matching strategy share could not be found
-	 */
-	@Override
-	public StrategyShare fetchByCommpanyShareStrategyId_Last(long shareId,
-		long strategyId, long groupId, long companyId,
-		OrderByComparator<StrategyShare> orderByComparator) {
-		int count = countByCommpanyShareStrategyId(shareId, strategyId,
-				groupId, companyId);
-
-		if (count == 0) {
+		if (result instanceof List<?>) {
 			return null;
 		}
-
-		List<StrategyShare> list = findByCommpanyShareStrategyId(shareId,
-				strategyId, groupId, companyId, count - 1, count,
-				orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
+		else {
+			return (StrategyShare)result;
 		}
-
-		return null;
 	}
 
 	/**
-	 * Returns the strategy shares before and after the current strategy share in the ordered set where shareId = &#63; and strategyId = &#63; and groupId = &#63; and companyId = &#63;.
+	 * Removes the strategy share where shareId = &#63; and strategyId = &#63; and groupId = &#63; and companyId = &#63; from the database.
 	 *
-	 * @param strategyshareId the primary key of the current strategy share
 	 * @param shareId the share ID
 	 * @param strategyId the strategy ID
 	 * @param groupId the group ID
 	 * @param companyId the company ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the previous, current, and next strategy share
-	 * @throws NoSuchStrategyShareException if a strategy share with the primary key could not be found
+	 * @return the strategy share that was removed
 	 */
 	@Override
-	public StrategyShare[] findByCommpanyShareStrategyId_PrevAndNext(
-		long strategyshareId, long shareId, long strategyId, long groupId,
-		long companyId, OrderByComparator<StrategyShare> orderByComparator)
+	public StrategyShare removeByCommpanyShareStrategyId(long shareId,
+		long strategyId, long groupId, long companyId)
 		throws NoSuchStrategyShareException {
-		StrategyShare strategyShare = findByPrimaryKey(strategyshareId);
+		StrategyShare strategyShare = findByCommpanyShareStrategyId(shareId,
+				strategyId, groupId, companyId);
 
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			StrategyShare[] array = new StrategyShareImpl[3];
-
-			array[0] = getByCommpanyShareStrategyId_PrevAndNext(session,
-					strategyShare, shareId, strategyId, groupId, companyId,
-					orderByComparator, true);
-
-			array[1] = strategyShare;
-
-			array[2] = getByCommpanyShareStrategyId_PrevAndNext(session,
-					strategyShare, shareId, strategyId, groupId, companyId,
-					orderByComparator, false);
-
-			return array;
-		}
-		catch (Exception e) {
-			throw processException(e);
-		}
-		finally {
-			closeSession(session);
-		}
-	}
-
-	protected StrategyShare getByCommpanyShareStrategyId_PrevAndNext(
-		Session session, StrategyShare strategyShare, long shareId,
-		long strategyId, long groupId, long companyId,
-		OrderByComparator<StrategyShare> orderByComparator, boolean previous) {
-		StringBundler query = null;
-
-		if (orderByComparator != null) {
-			query = new StringBundler(7 +
-					(orderByComparator.getOrderByConditionFields().length * 3) +
-					(orderByComparator.getOrderByFields().length * 3));
-		}
-		else {
-			query = new StringBundler(6);
-		}
-
-		query.append(_SQL_SELECT_STRATEGYSHARE_WHERE);
-
-		query.append(_FINDER_COLUMN_COMMPANYSHARESTRATEGYID_SHAREID_2);
-
-		query.append(_FINDER_COLUMN_COMMPANYSHARESTRATEGYID_STRATEGYID_2);
-
-		query.append(_FINDER_COLUMN_COMMPANYSHARESTRATEGYID_GROUPID_2);
-
-		query.append(_FINDER_COLUMN_COMMPANYSHARESTRATEGYID_COMPANYID_2);
-
-		if (orderByComparator != null) {
-			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
-
-			if (orderByConditionFields.length > 0) {
-				query.append(WHERE_AND);
-			}
-
-			for (int i = 0; i < orderByConditionFields.length; i++) {
-				query.append(_ORDER_BY_ENTITY_ALIAS);
-				query.append(orderByConditionFields[i]);
-
-				if ((i + 1) < orderByConditionFields.length) {
-					if (orderByComparator.isAscending() ^ previous) {
-						query.append(WHERE_GREATER_THAN_HAS_NEXT);
-					}
-					else {
-						query.append(WHERE_LESSER_THAN_HAS_NEXT);
-					}
-				}
-				else {
-					if (orderByComparator.isAscending() ^ previous) {
-						query.append(WHERE_GREATER_THAN);
-					}
-					else {
-						query.append(WHERE_LESSER_THAN);
-					}
-				}
-			}
-
-			query.append(ORDER_BY_CLAUSE);
-
-			String[] orderByFields = orderByComparator.getOrderByFields();
-
-			for (int i = 0; i < orderByFields.length; i++) {
-				query.append(_ORDER_BY_ENTITY_ALIAS);
-				query.append(orderByFields[i]);
-
-				if ((i + 1) < orderByFields.length) {
-					if (orderByComparator.isAscending() ^ previous) {
-						query.append(ORDER_BY_ASC_HAS_NEXT);
-					}
-					else {
-						query.append(ORDER_BY_DESC_HAS_NEXT);
-					}
-				}
-				else {
-					if (orderByComparator.isAscending() ^ previous) {
-						query.append(ORDER_BY_ASC);
-					}
-					else {
-						query.append(ORDER_BY_DESC);
-					}
-				}
-			}
-		}
-		else {
-			query.append(StrategyShareModelImpl.ORDER_BY_JPQL);
-		}
-
-		String sql = query.toString();
-
-		Query q = session.createQuery(sql);
-
-		q.setFirstResult(0);
-		q.setMaxResults(2);
-
-		QueryPos qPos = QueryPos.getInstance(q);
-
-		qPos.add(shareId);
-
-		qPos.add(strategyId);
-
-		qPos.add(groupId);
-
-		qPos.add(companyId);
-
-		if (orderByComparator != null) {
-			Object[] values = orderByComparator.getOrderByConditionValues(strategyShare);
-
-			for (Object value : values) {
-				qPos.add(value);
-			}
-		}
-
-		List<StrategyShare> list = q.list();
-
-		if (list.size() == 2) {
-			return list.get(1);
-		}
-		else {
-			return null;
-		}
-	}
-
-	/**
-	 * Removes all the strategy shares where shareId = &#63; and strategyId = &#63; and groupId = &#63; and companyId = &#63; from the database.
-	 *
-	 * @param shareId the share ID
-	 * @param strategyId the strategy ID
-	 * @param groupId the group ID
-	 * @param companyId the company ID
-	 */
-	@Override
-	public void removeByCommpanyShareStrategyId(long shareId, long strategyId,
-		long groupId, long companyId) {
-		for (StrategyShare strategyShare : findByCommpanyShareStrategyId(
-				shareId, strategyId, groupId, companyId, QueryUtil.ALL_POS,
-				QueryUtil.ALL_POS, null)) {
-			remove(strategyShare);
-		}
+		return remove(strategyShare);
 	}
 
 	/**
@@ -2730,6 +2385,12 @@ public class StrategySharePersistenceImpl extends BasePersistenceImpl<StrategySh
 			new Object[] { strategyShare.getUuid(), strategyShare.getGroupId() },
 			strategyShare);
 
+		finderCache.putResult(FINDER_PATH_FETCH_BY_COMMPANYSHARESTRATEGYID,
+			new Object[] {
+				strategyShare.getShareId(), strategyShare.getStrategyId(),
+				strategyShare.getGroupId(), strategyShare.getCompanyId()
+			}, strategyShare);
+
 		strategyShare.resetOriginalValues();
 	}
 
@@ -2811,6 +2472,18 @@ public class StrategySharePersistenceImpl extends BasePersistenceImpl<StrategySh
 				Long.valueOf(1));
 			finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
 				strategyShareModelImpl);
+
+			args = new Object[] {
+					strategyShareModelImpl.getShareId(),
+					strategyShareModelImpl.getStrategyId(),
+					strategyShareModelImpl.getGroupId(),
+					strategyShareModelImpl.getCompanyId()
+				};
+
+			finderCache.putResult(FINDER_PATH_COUNT_BY_COMMPANYSHARESTRATEGYID,
+				args, Long.valueOf(1));
+			finderCache.putResult(FINDER_PATH_FETCH_BY_COMMPANYSHARESTRATEGYID,
+				args, strategyShareModelImpl);
 		}
 		else {
 			if ((strategyShareModelImpl.getColumnBitmask() &
@@ -2824,6 +2497,21 @@ public class StrategySharePersistenceImpl extends BasePersistenceImpl<StrategySh
 					Long.valueOf(1));
 				finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
 					strategyShareModelImpl);
+			}
+
+			if ((strategyShareModelImpl.getColumnBitmask() &
+					FINDER_PATH_FETCH_BY_COMMPANYSHARESTRATEGYID.getColumnBitmask()) != 0) {
+				Object[] args = new Object[] {
+						strategyShareModelImpl.getShareId(),
+						strategyShareModelImpl.getStrategyId(),
+						strategyShareModelImpl.getGroupId(),
+						strategyShareModelImpl.getCompanyId()
+					};
+
+				finderCache.putResult(FINDER_PATH_COUNT_BY_COMMPANYSHARESTRATEGYID,
+					args, Long.valueOf(1));
+				finderCache.putResult(FINDER_PATH_FETCH_BY_COMMPANYSHARESTRATEGYID,
+					args, strategyShareModelImpl);
 			}
 		}
 	}
@@ -2847,6 +2535,33 @@ public class StrategySharePersistenceImpl extends BasePersistenceImpl<StrategySh
 
 			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
 			finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
+		}
+
+		args = new Object[] {
+				strategyShareModelImpl.getShareId(),
+				strategyShareModelImpl.getStrategyId(),
+				strategyShareModelImpl.getGroupId(),
+				strategyShareModelImpl.getCompanyId()
+			};
+
+		finderCache.removeResult(FINDER_PATH_COUNT_BY_COMMPANYSHARESTRATEGYID,
+			args);
+		finderCache.removeResult(FINDER_PATH_FETCH_BY_COMMPANYSHARESTRATEGYID,
+			args);
+
+		if ((strategyShareModelImpl.getColumnBitmask() &
+				FINDER_PATH_FETCH_BY_COMMPANYSHARESTRATEGYID.getColumnBitmask()) != 0) {
+			args = new Object[] {
+					strategyShareModelImpl.getOriginalShareId(),
+					strategyShareModelImpl.getOriginalStrategyId(),
+					strategyShareModelImpl.getOriginalGroupId(),
+					strategyShareModelImpl.getOriginalCompanyId()
+				};
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_COMMPANYSHARESTRATEGYID,
+				args);
+			finderCache.removeResult(FINDER_PATH_FETCH_BY_COMMPANYSHARESTRATEGYID,
+				args);
 		}
 	}
 
@@ -3082,33 +2797,6 @@ public class StrategySharePersistenceImpl extends BasePersistenceImpl<StrategySh
 				finderCache.removeResult(FINDER_PATH_COUNT_BY_COMMPANYSHAREID,
 					args);
 				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_COMMPANYSHAREID,
-					args);
-			}
-
-			if ((strategyShareModelImpl.getColumnBitmask() &
-					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_COMMPANYSHARESTRATEGYID.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						strategyShareModelImpl.getOriginalShareId(),
-						strategyShareModelImpl.getOriginalStrategyId(),
-						strategyShareModelImpl.getOriginalGroupId(),
-						strategyShareModelImpl.getOriginalCompanyId()
-					};
-
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_COMMPANYSHARESTRATEGYID,
-					args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_COMMPANYSHARESTRATEGYID,
-					args);
-
-				args = new Object[] {
-						strategyShareModelImpl.getShareId(),
-						strategyShareModelImpl.getStrategyId(),
-						strategyShareModelImpl.getGroupId(),
-						strategyShareModelImpl.getCompanyId()
-					};
-
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_COMMPANYSHARESTRATEGYID,
-					args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_COMMPANYSHARESTRATEGYID,
 					args);
 			}
 		}

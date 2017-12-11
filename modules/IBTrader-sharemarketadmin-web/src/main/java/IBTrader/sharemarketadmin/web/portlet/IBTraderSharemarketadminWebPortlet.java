@@ -133,7 +133,7 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 		
 		String name = ParamUtil.getString(actionRequest,"name","");
 		String symbol = ParamUtil.getString(actionRequest,"symbol","");
-		String active = ParamUtil.getString(actionRequest,"active","");
+		String active = ParamUtil.getString(actionRequest,"active","");			
 		long numbertopurchase =  ParamUtil.getLong(actionRequest,"numbertopurchase",-1);
 		double percentual_limit_buy=  ParamUtil.getDouble(actionRequest,"percentual_limit_buy",0);
 		double percentual_stop_lost=  ParamUtil.getDouble(actionRequest,"percentual_stop_lost",0);
@@ -261,14 +261,14 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 		SessionErrors.clear(actionRequest);
 		
 		
-		List<StrategyShare> lStrategyShare = _strategyshareLocalService.getByCommpanyShareStrategyId(themeDisplay.getScopeGroupId(), themeDisplay.getCompanyId(), shareId, strategyId);
-		if (!lStrategyShare.isEmpty())
+		StrategyShare StrategyShare = _strategyshareLocalService.getByCommpanyShareStrategyId(themeDisplay.getScopeGroupId(), themeDisplay.getCompanyId(), shareId, strategyId);
+		if (StrategyShare!=null)
 			bExists = true;
 		
 		if (!bExists)
 			strategyshare = _strategyshareLocalService.createStrategyShare(CounterLocalServiceUtil.increment(StrategyShare.class.getName()));
 		else
-			strategyshare = lStrategyShare.get(0);
+			strategyshare = StrategyShare;
 			
 		
 		try 

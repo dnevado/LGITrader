@@ -16,6 +16,7 @@ package com.ibtrader.data.service.impl;
 
 import java.util.List;
 
+import com.ibtrader.data.exception.NoSuchStrategyShareException;
 import com.ibtrader.data.model.Strategy;
 import com.ibtrader.data.model.StrategyShare;
 import com.ibtrader.data.service.base.StrategyShareLocalServiceBaseImpl;
@@ -44,9 +45,17 @@ public class StrategyShareLocalServiceImpl 	extends StrategyShareLocalServiceBas
 	{
 			return getStrategySharePersistence().findByCommpanyShareId(shareId, groupid, companyid);
 	}
-	public List<StrategyShare>getByCommpanyShareStrategyId(long groupid, long companyid, long shareId, long strategyId)
-	{
-			return getStrategySharePersistence().findByCommpanyShareStrategyId(shareId, strategyId, groupid, companyid);
+	public StrategyShare getByCommpanyShareStrategyId(long groupid, long companyid, long shareId, long strategyId)
+	{	
+		
+			StrategyShare strategyshare=null;
+			try {
+				strategyshare= getStrategySharePersistence().findByCommpanyShareStrategyId(shareId, strategyId, groupid, companyid);
+			} catch (NoSuchStrategyShareException e) {
+				// TODO Auto-generated catch block
+			//e.printStackTrace();
+			}
+			return strategyshare;
 	}
 	
 }

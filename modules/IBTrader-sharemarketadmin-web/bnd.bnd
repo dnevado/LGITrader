@@ -4,4 +4,5 @@ Bundle-Version: 1.0.0
 Export-Package: IBTrader.sharemarketadmin.web.constants
 Import-Package: \
 	com.ibtrader.strategy,\
+	com.ibtrader.util,\
 	*

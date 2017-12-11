@@ -72,7 +72,7 @@
 			<finder-column name="groupId"/>
 			<finder-column name="companyId"/>
 		</finder>
-		<finder name="CommpanyShareStrategyId" return-type="Collection">
+		<finder name="CommpanyShareStrategyId" return-type="StrategyShare">
 			<finder-column name="shareId"/>
 			<finder-column name="strategyId"/>
 			<finder-column name="groupId"/>

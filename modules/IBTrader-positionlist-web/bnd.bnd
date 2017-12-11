@@ -4,3 +4,7 @@ Bundle-Version: 1.0.0
 Export-Package: IBTrader.positionlist.web.constants
 Web-ContextPath: /IBTrader-positionlist-web
 Liferay-JS-Config: /META-INF/resources/config.js
+Import-Package: \
+	com.ibtrader.strategy,\
+	com.ibtrader.util,\
+	*

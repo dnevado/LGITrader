@@ -115,6 +115,10 @@ public interface StrategyShareLocalService extends BaseLocalService,
 	public StrategyShare fetchStrategyShareByUuidAndGroupId(
 		java.lang.String uuid, long groupId);
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public StrategyShare getByCommpanyShareStrategyId(long groupid,
+		long companyid, long shareId, long strategyId);
+
 	/**
 	* Returns the strategy share with the primary key.
 	*
@@ -224,10 +228,6 @@ public interface StrategyShareLocalService extends BaseLocalService,
 	*/
 	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
 		int end, OrderByComparator<T> orderByComparator);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<StrategyShare> getByCommpanyShareStrategyId(long groupid,
-		long companyid, long shareId, long strategyId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<StrategyShare> getByGroupCompanyShareId(long groupid,
