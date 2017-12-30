@@ -9,6 +9,7 @@
 <%@ page import="com.liferay.taglib.search.*" %>
 <%@ page import="com.ibtrader.data.model.Position" %>
 <%@ page import="com.ibtrader.data.model.Share" %>
+<%@ page import="com.ibtrader.data.model.Market" %>
 <%@ page import="com.ibtrader.data.model.Strategy" %>
 <%@ page import="com.ibtrader.data.service.ShareLocalServiceUtil" %>
 <%@ page import="com.ibtrader.util.ConfigKeys" %>
@@ -25,4 +26,3 @@
 <%@ taglib uri="http://liferay.com/tld/security" prefix="liferay-security" %>
 <liferay-theme:defineObjects />
 <portlet:defineObjects />
-

@@ -3,7 +3,7 @@
 <%@ include file="/init.jsp" %>		
 
 
-
+<div class="container-fluid-1280">
 <aui:container cssClass='super-awesome-container'>
 <liferay-ui:search-container  searchContainer="${searchPosition}" iteratorURL="${iteratorURL}"> 
 <liferay-ui:search-container-results results="${searchPosition.getResults()}"/>    
@@ -25,4 +25,4 @@
 <liferay-ui:search-iterator/>
 </liferay-ui:search-container>
 </aui:container>
-
+</div>

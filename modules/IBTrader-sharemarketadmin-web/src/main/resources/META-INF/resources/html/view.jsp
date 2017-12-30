@@ -16,17 +16,18 @@
     <portlet:param name="mvcRenderCommandName" value="/html/add_edit_market"></portlet:param>
     <portlet:param name="marketId" value="0"></portlet:param>
 </portlet:renderURL>
+<portlet:renderURL var="viewMarketURL">
+    <portlet:param name="mvcRenderCommandName" value="/html/view_market"></portlet:param>    
+</portlet:renderURL>
 
 
 
 <liferay-frontend:add-menu>
-    <liferay-frontend:add-menu-item title='<%= LanguageUtil.get(request,"share.addshare") %>' url="<%= addShareURL.toString() %>" />
-    <liferay-frontend:add-menu-item title='<%= LanguageUtil.get(request,"share.addmarket") %>' url="<%= addMarketURL.toString() %>" />
+    <liferay-frontend:add-menu-item title='<%= LanguageUtil.get(request,"share.addshare") %>' url="<%= addShareURL.toString() %>" />    
 </liferay-frontend:add-menu>
 
-<aui:button-row>
-    <aui:button onClick="${addShareURL}" value="share.addshare"></aui:button>
-    <aui:button onClick="${addMarketURL}" value="market.addmarket"></aui:button>
+<aui:button-row>    
+    <aui:button onClick="${viewMarketURL}" value="market.view_market"></aui:button>
 </aui:button-row>
 
 
