@@ -78,14 +78,17 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 		attributes.put("expiry_expression", getExpiry_expression());
 		attributes.put("tick_futures", getTick_futures());
 		attributes.put("multiplier", getMultiplier());
-		attributes.put("last_error_data_read", getLast_error_data_read());
-		attributes.put("last_error_data_trade", getLast_error_data_trade());
 		attributes.put("security_type", getSecurity_type());
 		attributes.put("exchange", getExchange());
 		attributes.put("primary_exchange", getPrimary_exchange());
-		attributes.put("date_contract_verified", getDate_contract_verified());
 		attributes.put("userCreatedId", getUserCreatedId());
 		attributes.put("marketId", getMarketId());
+		attributes.put("validated_trader_provider",
+			getValidated_trader_provider());
+		attributes.put("date_validated_trader_provider",
+			getDate_validated_trader_provider());
+		attributes.put("last_error_trader_provider",
+			getLast_error_trader_provider());
 
 		return attributes;
 	}
@@ -204,20 +207,6 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 			setMultiplier(multiplier);
 		}
 
-		String last_error_data_read = (String)attributes.get(
-				"last_error_data_read");
-
-		if (last_error_data_read != null) {
-			setLast_error_data_read(last_error_data_read);
-		}
-
-		String last_error_data_trade = (String)attributes.get(
-				"last_error_data_trade");
-
-		if (last_error_data_trade != null) {
-			setLast_error_data_trade(last_error_data_trade);
-		}
-
 		String security_type = (String)attributes.get("security_type");
 
 		if (security_type != null) {
@@ -236,13 +225,6 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 			setPrimary_exchange(primary_exchange);
 		}
 
-		Date date_contract_verified = (Date)attributes.get(
-				"date_contract_verified");
-
-		if (date_contract_verified != null) {
-			setDate_contract_verified(date_contract_verified);
-		}
-
 		Long userCreatedId = (Long)attributes.get("userCreatedId");
 
 		if (userCreatedId != null) {
@@ -253,6 +235,27 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 
 		if (marketId != null) {
 			setMarketId(marketId);
+		}
+
+		Boolean validated_trader_provider = (Boolean)attributes.get(
+				"validated_trader_provider");
+
+		if (validated_trader_provider != null) {
+			setValidated_trader_provider(validated_trader_provider);
+		}
+
+		Date date_validated_trader_provider = (Date)attributes.get(
+				"date_validated_trader_provider");
+
+		if (date_validated_trader_provider != null) {
+			setDate_validated_trader_provider(date_validated_trader_provider);
+		}
+
+		String last_error_trader_provider = (String)attributes.get(
+				"last_error_trader_provider");
+
+		if (last_error_trader_provider != null) {
+			setLast_error_trader_provider(last_error_trader_provider);
 		}
 	}
 
@@ -266,6 +269,11 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 		return new ShareWrapper(_share.toUnescapedModel());
 	}
 
+	@Override
+	public boolean IsTradeable() {
+		return _share.IsTradeable();
+	}
+
 	/**
 	* Returns the active of this share.
 	*
@@ -274,6 +282,16 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 	@Override
 	public boolean getActive() {
 		return _share.getActive();
+	}
+
+	/**
+	* Returns the validated_trader_provider of this share.
+	*
+	* @return the validated_trader_provider of this share
+	*/
+	@Override
+	public boolean getValidated_trader_provider() {
+		return _share.getValidated_trader_provider();
 	}
 
 	/**
@@ -299,6 +317,16 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 	@Override
 	public boolean isNew() {
 		return _share.isNew();
+	}
+
+	/**
+	* Returns <code>true</code> if this share is validated_trader_provider.
+	*
+	* @return <code>true</code> if this share is validated_trader_provider; <code>false</code> otherwise
+	*/
+	@Override
+	public boolean isValidated_trader_provider() {
+		return _share.isValidated_trader_provider();
 	}
 
 	@Override
@@ -402,23 +430,13 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 	}
 
 	/**
-	* Returns the last_error_data_read of this share.
+	* Returns the last_error_trader_provider of this share.
 	*
-	* @return the last_error_data_read of this share
+	* @return the last_error_trader_provider of this share
 	*/
 	@Override
-	public java.lang.String getLast_error_data_read() {
-		return _share.getLast_error_data_read();
-	}
-
-	/**
-	* Returns the last_error_data_trade of this share.
-	*
-	* @return the last_error_data_trade of this share
-	*/
-	@Override
-	public java.lang.String getLast_error_data_trade() {
-		return _share.getLast_error_data_trade();
+	public java.lang.String getLast_error_trader_provider() {
+		return _share.getLast_error_trader_provider();
 	}
 
 	/**
@@ -492,13 +510,13 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 	}
 
 	/**
-	* Returns the date_contract_verified of this share.
+	* Returns the date_validated_trader_provider of this share.
 	*
-	* @return the date_contract_verified of this share
+	* @return the date_validated_trader_provider of this share
 	*/
 	@Override
-	public Date getDate_contract_verified() {
-		return _share.getDate_contract_verified();
+	public Date getDate_validated_trader_provider() {
+		return _share.getDate_validated_trader_provider();
 	}
 
 	/**
@@ -642,13 +660,14 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 	}
 
 	/**
-	* Sets the date_contract_verified of this share.
+	* Sets the date_validated_trader_provider of this share.
 	*
-	* @param date_contract_verified the date_contract_verified of this share
+	* @param date_validated_trader_provider the date_validated_trader_provider of this share
 	*/
 	@Override
-	public void setDate_contract_verified(Date date_contract_verified) {
-		_share.setDate_contract_verified(date_contract_verified);
+	public void setDate_validated_trader_provider(
+		Date date_validated_trader_provider) {
+		_share.setDate_validated_trader_provider(date_validated_trader_provider);
 	}
 
 	/**
@@ -708,23 +727,14 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 	}
 
 	/**
-	* Sets the last_error_data_read of this share.
+	* Sets the last_error_trader_provider of this share.
 	*
-	* @param last_error_data_read the last_error_data_read of this share
+	* @param last_error_trader_provider the last_error_trader_provider of this share
 	*/
 	@Override
-	public void setLast_error_data_read(java.lang.String last_error_data_read) {
-		_share.setLast_error_data_read(last_error_data_read);
-	}
-
-	/**
-	* Sets the last_error_data_trade of this share.
-	*
-	* @param last_error_data_trade the last_error_data_trade of this share
-	*/
-	@Override
-	public void setLast_error_data_trade(java.lang.String last_error_data_trade) {
-		_share.setLast_error_data_trade(last_error_data_trade);
+	public void setLast_error_trader_provider(
+		java.lang.String last_error_trader_provider) {
+		_share.setLast_error_trader_provider(last_error_trader_provider);
 	}
 
 	/**
@@ -906,6 +916,16 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 	@Override
 	public void setUuid(java.lang.String uuid) {
 		_share.setUuid(uuid);
+	}
+
+	/**
+	* Sets whether this share is validated_trader_provider.
+	*
+	* @param validated_trader_provider the validated_trader_provider of this share
+	*/
+	@Override
+	public void setValidated_trader_provider(boolean validated_trader_provider) {
+		_share.setValidated_trader_provider(validated_trader_provider);
 	}
 
 	@Override

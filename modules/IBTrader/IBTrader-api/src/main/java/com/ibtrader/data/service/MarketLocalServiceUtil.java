@@ -53,6 +53,13 @@ public class MarketLocalServiceUtil {
 		return getService().addMarket(market);
 	}
 
+	public static com.ibtrader.data.model.Market addMarket(
+		com.ibtrader.data.model.Market market,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().addMarket(market, serviceContext);
+	}
+
 	/**
 	* Creates a new market with the primary key. Does not add the market to the database.
 	*
@@ -86,6 +93,13 @@ public class MarketLocalServiceUtil {
 		return getService().deleteMarket(marketId);
 	}
 
+	public static com.ibtrader.data.model.Market editMarket(
+		com.ibtrader.data.model.Market market,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().editMarket(market, serviceContext);
+	}
+
 	public static com.ibtrader.data.model.Market fetchMarket(long marketId) {
 		return getService().fetchMarket(marketId);
 	}
@@ -100,6 +114,18 @@ public class MarketLocalServiceUtil {
 	public static com.ibtrader.data.model.Market fetchMarketByUuidAndGroupId(
 		java.lang.String uuid, long groupId) {
 		return getService().fetchMarketByUuidAndGroupId(uuid, groupId);
+	}
+
+	public static com.ibtrader.data.model.Market findByIdentifierCompanyGroup(
+		long companyId, long groupId, java.lang.String identifier) {
+		return getService()
+				   .findByIdentifierCompanyGroup(companyId, groupId, identifier);
+	}
+
+	public static com.ibtrader.data.model.Market findByNameMarketCompanyGroup(
+		long companyId, long groupId, java.lang.String name) {
+		return getService()
+				   .findByNameMarketCompanyGroup(companyId, groupId, name);
 	}
 
 	/**
@@ -239,14 +265,24 @@ public class MarketLocalServiceUtil {
 				   .dynamicQuery(dynamicQuery, start, end, orderByComparator);
 	}
 
+	public static java.util.List<com.ibtrader.data.model.Market> findByActive(
+		boolean active) {
+		return getService().findByActive(active);
+	}
+
 	public static java.util.List<com.ibtrader.data.model.Market> findByActiveCompanyGroup(
 		long companyId, long groupId, boolean active) {
 		return getService().findByActiveCompanyGroup(companyId, groupId, active);
 	}
 
 	public static java.util.List<com.ibtrader.data.model.Market> findByActiveStartEndHour(
-		java.lang.String _Start, java.lang.String _End, boolean _Active) {
-		return getService().findByActiveStartEndHour(_Start, _End, _Active);
+		java.lang.String _Start, java.lang.String _End, boolean active) {
+		return getService().findByActiveStartEndHour(_Start, _End, active);
+	}
+
+	public static java.util.List<com.ibtrader.data.model.Market> findByCompanyGroup(
+		long companyId, long groupId) {
+		return getService().findByCompanyGroup(companyId, groupId);
 	}
 
 	/**

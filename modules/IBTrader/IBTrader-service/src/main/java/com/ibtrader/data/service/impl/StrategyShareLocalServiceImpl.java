@@ -14,12 +14,14 @@
 
 package com.ibtrader.data.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import com.ibtrader.data.exception.NoSuchStrategyShareException;
 import com.ibtrader.data.model.Strategy;
 import com.ibtrader.data.model.StrategyShare;
 import com.ibtrader.data.service.base.StrategyShareLocalServiceBaseImpl;
+import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 
 /**
  * The implementation of the strategy share local service.
@@ -41,6 +43,24 @@ public class StrategyShareLocalServiceImpl 	extends StrategyShareLocalServiceBas
 	 *
 	 * Never reference this class directly. Always use {@link com.ibtrader.data.service.StrategyShareLocalServiceUtil} to access the strategy share local service.
 	 */
+	
+	public StrategyShare  addStrategyShare(StrategyShare _strategyshare)
+	{
+			StrategyShare strategyshare = strategyShareLocalService.createStrategyShare(CounterLocalServiceUtil.increment(StrategyShare.class.getName()));
+			strategyshare.setActive(_strategyshare.getActive());
+			strategyshare.setGroupId(_strategyshare.getGroupId());
+			strategyshare.setCompanyId(_strategyshare.getCompanyId());
+			strategyshare.setCreateDate(new Date());
+			strategyshare.setShareId(_strategyshare.getShareId());
+			strategyshare.setStrategyId(_strategyshare.getStrategyId());
+			
+		    strategyShareLocalService.updateStrategyShare(strategyshare);
+			
+		    return strategyshare;
+			
+	}
+	
+	
 	public List<StrategyShare>getByGroupCompanyShareId(long groupid, long companyid, long shareId)
 	{
 			return getStrategySharePersistence().findByCommpanyShareId(shareId, groupid, companyid);

@@ -1,19 +1,33 @@
 package com.ibtrader.interactive;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
+import com.ib.client.Bar;
 import com.ib.client.CommissionReport;
 import com.ib.client.Contract;
+import com.ib.client.ContractDescription;
 import com.ib.client.ContractDetails;
 import com.ib.client.DeltaNeutralContract;
+import com.ib.client.DepthMktDataDescription;
 import com.ib.client.EClientSocket;
 import com.ib.client.EJavaSignal;
 import com.ib.client.EReaderSignal;
 import com.ib.client.EWrapper;
 import com.ib.client.Execution;
+import com.ib.client.FamilyCode;
+import com.ib.client.HistogramEntry;
+import com.ib.client.HistoricalTick;
+import com.ib.client.HistoricalTickBidAsk;
+import com.ib.client.HistoricalTickLast;
+import com.ib.client.NewsProvider;
 import com.ib.client.Order;
 import com.ib.client.OrderState;
-import com.ib.client.TickType;
+import com.ib.client.PriceIncrement;
+import com.ib.client.SoftDollarTier;
+import com.ib.client.TickAttr;
 
 
 //! [ewrapperimpl]
@@ -45,16 +59,13 @@ public class TIMApiWrapper implements EWrapper {
 	}
 	
 	 //! [tickprice]
-	@Override
-	public void tickPrice(int tickerId, int field, double price, int canAutoExecute) {
-		System.out.println("Tick Price. Ticker Id:"+tickerId+", Field: "+field+", Price: "+price+", CanAutoExecute: "+canAutoExecute);
-	}
+
 	//! [tickprice]
 	
 	//! [ticksize]
 	@Override
 	public void tickSize(int tickerId, int field, int size) {
-		System.out.println("Tick Size. Ticker Id:" + tickerId + ", Field: " + field + ", Size: " + size);
+		//System.out.println("Tick Size. Ticker Id:" + tickerId + ", Field: " + field + ", Size: " + size);
 	}
 	//! [ticksize]
 	
@@ -72,14 +83,14 @@ public class TIMApiWrapper implements EWrapper {
 	//! [tickgeneric]
 	@Override
 	public void tickGeneric(int tickerId, int tickType, double value) {
-		System.out.println("Tick Generic. Ticker Id:" + tickerId + ", Field: " + TickType.getField(tickType) + ", Value: " + value);
+		System.out.println("Tick Generic. Ticker Id:" + tickerId + ", Field: " + ", Value: " + value);
 	}
 	//! [tickgeneric]
 	
 	//! [tickstring]
 	@Override
 	public void tickString(int tickerId, int tickType, String value) {
-		System.out.println("Tick string. Ticker Id:" + tickerId + ", Type: " + tickType + ", Value: " + value);
+	//	System.out.println("Tick string. Ticker Id:" + tickerId + ", Type: " + tickType + ", Value: " + value);
 	}
 	//! [tickstring]
 	@Override
@@ -208,12 +219,7 @@ public class TIMApiWrapper implements EWrapper {
 	//! [receivefa]
 	
 	//! [historicaldata]
-	@Override
-	public void historicalData(int reqId, String date, double open,
-			double high, double low, double close, int volume, int count,
-			double WAP, boolean hasGaps) {
-		System.out.println("HistoricalData. "+reqId+" - Date: "+date+", Open: "+open+", High: "+high+", Low: "+low+", Close: "+close+", Volume: "+volume+", Count: "+count+", WAP: "+WAP+", HasGaps: "+hasGaps);
-	}
+
 	//! [historicaldata]
 	
 	//! [scannerparameters]
@@ -365,30 +371,184 @@ public class TIMApiWrapper implements EWrapper {
 			clientSocket.startAPI();
 		}
 	}
-	//! [connectack]
-	
-
-	
-
-	
-
-
 	@Override
-	public void orderStatus(int orderId, String status, int filled, int remaining, double avgFillPrice, int permId,
-			int parentId, double lastFillPrice, int clientId, String whyHeld) {
+	public void tickPrice(int tickerId, int field, double price, TickAttr attrib) {
+		System.out.println("tickPrice: " + tickerId + ", field: " + field);
+
+		
+	}
+	@Override
+	public void orderStatus(int orderId, String status, double filled, double remaining, double avgFillPrice,
+			int permId, int parentId, double lastFillPrice, int clientId, String whyHeld, double mktCapPrice) {
 		// TODO Auto-generated method stub
 		
 	}
 	@Override
-	public void updatePortfolio(Contract contract, int position, double marketPrice, double marketValue,
+	public void updatePortfolio(Contract contract, double position, double marketPrice, double marketValue,
 			double averageCost, double unrealizedPNL, double realizedPNL, String accountName) {
 		// TODO Auto-generated method stub
 		
 	}
 	@Override
-	public void position(String account, Contract contract, int pos, double avgCost) {
+	public void historicalData(int reqId, Bar bar) {
 		// TODO Auto-generated method stub
 		
 	}
+	@Override
+	public void position(String account, Contract contract, double pos, double avgCost) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void positionMulti(int reqId, String account, String modelCode, Contract contract, double pos,
+			double avgCost) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void positionMultiEnd(int reqId) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void accountUpdateMulti(int reqId, String account, String modelCode, String key, String value,
+			String currency) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void accountUpdateMultiEnd(int reqId) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void securityDefinitionOptionalParameter(int reqId, String exchange, int underlyingConId,
+			String tradingClass, String multiplier, Set<String> expirations, Set<Double> strikes) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void securityDefinitionOptionalParameterEnd(int reqId) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void softDollarTiers(int reqId, SoftDollarTier[] tiers) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void familyCodes(FamilyCode[] familyCodes) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void symbolSamples(int reqId, ContractDescription[] contractDescriptions) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void historicalDataEnd(int reqId, String startDateStr, String endDateStr) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void mktDepthExchanges(DepthMktDataDescription[] depthMktDataDescriptions) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void tickNews(int tickerId, long timeStamp, String providerCode, String articleId, String headline,
+			String extraData) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void smartComponents(int reqId, Map<Integer, Entry<String, Character>> theMap) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void tickReqParams(int tickerId, double minTick, String bboExchange, int snapshotPermissions) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void newsProviders(NewsProvider[] newsProviders) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void newsArticle(int requestId, int articleType, String articleText) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void historicalNews(int requestId, String time, String providerCode, String articleId, String headline) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void historicalNewsEnd(int requestId, boolean hasMore) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void headTimestamp(int reqId, String headTimestamp) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void histogramData(int reqId, List<HistogramEntry> items) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void historicalDataUpdate(int reqId, Bar bar) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void rerouteMktDataReq(int reqId, int conId, String exchange) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void rerouteMktDepthReq(int reqId, int conId, String exchange) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void marketRule(int marketRuleId, PriceIncrement[] priceIncrements) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void pnl(int reqId, double dailyPnL, double unrealizedPnL) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void pnlSingle(int reqId, int pos, double dailyPnL, double unrealizedPnL, double value) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void historicalTicks(int reqId, List<HistoricalTick> ticks, boolean done) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void historicalTicksBidAsk(int reqId, List<HistoricalTickBidAsk> ticks, boolean done) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void historicalTicksLast(int reqId, List<HistoricalTickLast> ticks, boolean done) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
 
 }

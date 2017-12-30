@@ -497,185 +497,78 @@ public class ConfigUtil {
 	}
 
 	/**
-	* Returns all the configs where companyId = &#63; and config_key = &#63;.
+	* Returns the config where companyId = &#63; and groupId = &#63; and config_key = &#63; or throws a {@link NoSuchConfigException} if it could not be found.
 	*
 	* @param companyId the company ID
+	* @param groupId the group ID
 	* @param config_key the config_key
-	* @return the matching configs
+	* @return the matching config
+	* @throws NoSuchConfigException if a matching config could not be found
 	*/
-	public static List<Config> findByKeyCompany(long companyId,
+	public static Config findByKeyCompanyGroup(long companyId, long groupId,
+		java.lang.String config_key)
+		throws com.ibtrader.data.exception.NoSuchConfigException {
+		return getPersistence()
+				   .findByKeyCompanyGroup(companyId, groupId, config_key);
+	}
+
+	/**
+	* Returns the config where companyId = &#63; and groupId = &#63; and config_key = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param config_key the config_key
+	* @return the matching config, or <code>null</code> if a matching config could not be found
+	*/
+	public static Config fetchByKeyCompanyGroup(long companyId, long groupId,
 		java.lang.String config_key) {
-		return getPersistence().findByKeyCompany(companyId, config_key);
-	}
-
-	/**
-	* Returns a range of all the configs where companyId = &#63; and config_key = &#63;.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ConfigModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	* </p>
-	*
-	* @param companyId the company ID
-	* @param config_key the config_key
-	* @param start the lower bound of the range of configs
-	* @param end the upper bound of the range of configs (not inclusive)
-	* @return the range of matching configs
-	*/
-	public static List<Config> findByKeyCompany(long companyId,
-		java.lang.String config_key, int start, int end) {
 		return getPersistence()
-				   .findByKeyCompany(companyId, config_key, start, end);
+				   .fetchByKeyCompanyGroup(companyId, groupId, config_key);
 	}
 
 	/**
-	* Returns an ordered range of all the configs where companyId = &#63; and config_key = &#63;.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ConfigModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	* </p>
+	* Returns the config where companyId = &#63; and groupId = &#63; and config_key = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	*
 	* @param companyId the company ID
+	* @param groupId the group ID
 	* @param config_key the config_key
-	* @param start the lower bound of the range of configs
-	* @param end the upper bound of the range of configs (not inclusive)
-	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	* @return the ordered range of matching configs
-	*/
-	public static List<Config> findByKeyCompany(long companyId,
-		java.lang.String config_key, int start, int end,
-		OrderByComparator<Config> orderByComparator) {
-		return getPersistence()
-				   .findByKeyCompany(companyId, config_key, start, end,
-			orderByComparator);
-	}
-
-	/**
-	* Returns an ordered range of all the configs where companyId = &#63; and config_key = &#63;.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ConfigModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	* </p>
-	*
-	* @param companyId the company ID
-	* @param config_key the config_key
-	* @param start the lower bound of the range of configs
-	* @param end the upper bound of the range of configs (not inclusive)
-	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @param retrieveFromCache whether to retrieve from the finder cache
-	* @return the ordered range of matching configs
+	* @return the matching config, or <code>null</code> if a matching config could not be found
 	*/
-	public static List<Config> findByKeyCompany(long companyId,
-		java.lang.String config_key, int start, int end,
-		OrderByComparator<Config> orderByComparator, boolean retrieveFromCache) {
+	public static Config fetchByKeyCompanyGroup(long companyId, long groupId,
+		java.lang.String config_key, boolean retrieveFromCache) {
 		return getPersistence()
-				   .findByKeyCompany(companyId, config_key, start, end,
-			orderByComparator, retrieveFromCache);
+				   .fetchByKeyCompanyGroup(companyId, groupId, config_key,
+			retrieveFromCache);
 	}
 
 	/**
-	* Returns the first config in the ordered set where companyId = &#63; and config_key = &#63;.
+	* Removes the config where companyId = &#63; and groupId = &#63; and config_key = &#63; from the database.
 	*
 	* @param companyId the company ID
+	* @param groupId the group ID
 	* @param config_key the config_key
-	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	* @return the first matching config
-	* @throws NoSuchConfigException if a matching config could not be found
+	* @return the config that was removed
 	*/
-	public static Config findByKeyCompany_First(long companyId,
-		java.lang.String config_key, OrderByComparator<Config> orderByComparator)
+	public static Config removeByKeyCompanyGroup(long companyId, long groupId,
+		java.lang.String config_key)
 		throws com.ibtrader.data.exception.NoSuchConfigException {
 		return getPersistence()
-				   .findByKeyCompany_First(companyId, config_key,
-			orderByComparator);
+				   .removeByKeyCompanyGroup(companyId, groupId, config_key);
 	}
 
 	/**
-	* Returns the first config in the ordered set where companyId = &#63; and config_key = &#63;.
+	* Returns the number of configs where companyId = &#63; and groupId = &#63; and config_key = &#63;.
 	*
 	* @param companyId the company ID
-	* @param config_key the config_key
-	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	* @return the first matching config, or <code>null</code> if a matching config could not be found
-	*/
-	public static Config fetchByKeyCompany_First(long companyId,
-		java.lang.String config_key, OrderByComparator<Config> orderByComparator) {
-		return getPersistence()
-				   .fetchByKeyCompany_First(companyId, config_key,
-			orderByComparator);
-	}
-
-	/**
-	* Returns the last config in the ordered set where companyId = &#63; and config_key = &#63;.
-	*
-	* @param companyId the company ID
-	* @param config_key the config_key
-	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	* @return the last matching config
-	* @throws NoSuchConfigException if a matching config could not be found
-	*/
-	public static Config findByKeyCompany_Last(long companyId,
-		java.lang.String config_key, OrderByComparator<Config> orderByComparator)
-		throws com.ibtrader.data.exception.NoSuchConfigException {
-		return getPersistence()
-				   .findByKeyCompany_Last(companyId, config_key,
-			orderByComparator);
-	}
-
-	/**
-	* Returns the last config in the ordered set where companyId = &#63; and config_key = &#63;.
-	*
-	* @param companyId the company ID
-	* @param config_key the config_key
-	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	* @return the last matching config, or <code>null</code> if a matching config could not be found
-	*/
-	public static Config fetchByKeyCompany_Last(long companyId,
-		java.lang.String config_key, OrderByComparator<Config> orderByComparator) {
-		return getPersistence()
-				   .fetchByKeyCompany_Last(companyId, config_key,
-			orderByComparator);
-	}
-
-	/**
-	* Returns the configs before and after the current config in the ordered set where companyId = &#63; and config_key = &#63;.
-	*
-	* @param configId the primary key of the current config
-	* @param companyId the company ID
-	* @param config_key the config_key
-	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	* @return the previous, current, and next config
-	* @throws NoSuchConfigException if a config with the primary key could not be found
-	*/
-	public static Config[] findByKeyCompany_PrevAndNext(long configId,
-		long companyId, java.lang.String config_key,
-		OrderByComparator<Config> orderByComparator)
-		throws com.ibtrader.data.exception.NoSuchConfigException {
-		return getPersistence()
-				   .findByKeyCompany_PrevAndNext(configId, companyId,
-			config_key, orderByComparator);
-	}
-
-	/**
-	* Removes all the configs where companyId = &#63; and config_key = &#63; from the database.
-	*
-	* @param companyId the company ID
-	* @param config_key the config_key
-	*/
-	public static void removeByKeyCompany(long companyId,
-		java.lang.String config_key) {
-		getPersistence().removeByKeyCompany(companyId, config_key);
-	}
-
-	/**
-	* Returns the number of configs where companyId = &#63; and config_key = &#63;.
-	*
-	* @param companyId the company ID
+	* @param groupId the group ID
 	* @param config_key the config_key
 	* @return the number of matching configs
 	*/
-	public static int countByKeyCompany(long companyId,
+	public static int countByKeyCompanyGroup(long companyId, long groupId,
 		java.lang.String config_key) {
-		return getPersistence().countByKeyCompany(companyId, config_key);
+		return getPersistence()
+				   .countByKeyCompanyGroup(companyId, groupId, config_key);
 	}
 
 	/**

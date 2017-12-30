@@ -54,6 +54,9 @@ public interface Strategy extends StrategyModel, PersistedModel {
 			}
 		};
 
+	public boolean validateParams(
+		java.util.Map<java.lang.String, java.lang.String> paramValues);
+
 	public void execute(Share _share, Market _market);
 
 	public boolean verify(Share _share, Market _market);
@@ -91,4 +94,9 @@ public interface Strategy extends StrategyModel, PersistedModel {
 	public int getCLIENT_ID();
 
 	public void setCLIENT_ID(int _CLIENT_ID);
+
+	public java.lang.String getValidateParamsKeysError();
+
+	public void setValidateParamsKeysError(
+		java.lang.String validateParamsKeysError);
 }

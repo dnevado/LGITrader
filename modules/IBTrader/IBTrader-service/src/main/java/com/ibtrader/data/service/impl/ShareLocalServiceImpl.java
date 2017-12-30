@@ -20,11 +20,14 @@ import java.util.List;
 import com.ibtrader.data.exception.NoSuchShareException;
 import com.ibtrader.data.model.Share;
 import com.ibtrader.data.model.Strategy;
+import com.ibtrader.data.service.MarketLocalServiceUtil;
 import com.ibtrader.data.service.base.ShareLocalServiceBaseImpl;
 import com.ibtrader.util.ConfigKeys;
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.model.AssetLinkConstants;
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
+import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.Indexer;
@@ -57,6 +60,24 @@ public class ShareLocalServiceImpl extends ShareLocalServiceBaseImpl {
 	public List<Share> findByActiveMarketGroupCompany(long _marketId, boolean _active, long groupId, long companyId)
 	{
 		return getSharePersistence().findByActiveMarketGroupCompany(groupId, companyId,_active, _marketId);
+	}
+	
+	public List<Share> findByValidatedTraderProviderMarketGroupCompany(long marketId, long groupId, long companyId)
+	{
+		DynamicQuery _DQ = shareLocalService.dynamicQuery();
+		_DQ.add(RestrictionsFactoryUtil.eq("marketId", marketId));
+	//	_DQ.add(RestrictionsFactoryUtil.eq("active", active));
+		_DQ.add(RestrictionsFactoryUtil.eq("companyId", companyId));
+		_DQ.add(RestrictionsFactoryUtil.eq("groupId", groupId));
+		_DQ.add(RestrictionsFactoryUtil.isNull("date_validated_trader_provider"));
+		
+		/*
+		 * al editarlo, 
+		 * share.setDate_contract_verified(null);  // para verificarlo de nuevo
+		    share.setValidated_trader_provider(Boolean.FALSE);
+		*/
+		
+		return shareLocalService.dynamicQuery(_DQ);
 	}
 	
 

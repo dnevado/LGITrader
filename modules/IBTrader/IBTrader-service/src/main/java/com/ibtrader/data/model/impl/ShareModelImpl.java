@@ -87,14 +87,14 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 			{ "expiry_expression", Types.VARCHAR },
 			{ "tick_futures", Types.DOUBLE },
 			{ "multiplier", Types.BIGINT },
-			{ "last_error_data_read", Types.VARCHAR },
-			{ "last_error_data_trade", Types.VARCHAR },
 			{ "security_type", Types.VARCHAR },
 			{ "exchange", Types.VARCHAR },
 			{ "primary_exchange", Types.VARCHAR },
-			{ "date_contract_verified", Types.TIMESTAMP },
 			{ "userCreatedId", Types.BIGINT },
-			{ "marketId", Types.BIGINT }
+			{ "marketId", Types.BIGINT },
+			{ "validated_trader_provider", Types.BOOLEAN },
+			{ "date_validated_trader_provider", Types.TIMESTAMP },
+			{ "last_error_trader_provider", Types.CLOB }
 		};
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP = new HashMap<String, Integer>();
 
@@ -117,17 +117,17 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		TABLE_COLUMNS_MAP.put("expiry_expression", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("tick_futures", Types.DOUBLE);
 		TABLE_COLUMNS_MAP.put("multiplier", Types.BIGINT);
-		TABLE_COLUMNS_MAP.put("last_error_data_read", Types.VARCHAR);
-		TABLE_COLUMNS_MAP.put("last_error_data_trade", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("security_type", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("exchange", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("primary_exchange", Types.VARCHAR);
-		TABLE_COLUMNS_MAP.put("date_contract_verified", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("userCreatedId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("marketId", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("validated_trader_provider", Types.BOOLEAN);
+		TABLE_COLUMNS_MAP.put("date_validated_trader_provider", Types.TIMESTAMP);
+		TABLE_COLUMNS_MAP.put("last_error_trader_provider", Types.CLOB);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table ibtrader_Share (uuid_ VARCHAR(75) null,shareId LONG not null primary key,name VARCHAR(75) null,symbol VARCHAR(75) null,groupId LONG,companyId LONG,createDate DATE null,modifiedDate DATE null,active_ BOOLEAN,numbertopurchase LONG,percentual_limit_buy DOUBLE,percentual_stop_lost DOUBLE,percentual_stop_profit DOUBLE,percentual_stop_profit_position DOUBLE,expiry_date DATE null,expiry_expression VARCHAR(75) null,tick_futures DOUBLE,multiplier LONG,last_error_data_read VARCHAR(75) null,last_error_data_trade VARCHAR(75) null,security_type VARCHAR(75) null,exchange VARCHAR(75) null,primary_exchange VARCHAR(75) null,date_contract_verified DATE null,userCreatedId LONG,marketId LONG)";
+	public static final String TABLE_SQL_CREATE = "create table ibtrader_Share (uuid_ VARCHAR(75) null,shareId LONG not null primary key,name VARCHAR(75) null,symbol VARCHAR(75) null,groupId LONG,companyId LONG,createDate DATE null,modifiedDate DATE null,active_ BOOLEAN,numbertopurchase LONG,percentual_limit_buy DOUBLE,percentual_stop_lost DOUBLE,percentual_stop_profit DOUBLE,percentual_stop_profit_position DOUBLE,expiry_date DATE null,expiry_expression VARCHAR(75) null,tick_futures DOUBLE,multiplier LONG,security_type VARCHAR(75) null,exchange VARCHAR(75) null,primary_exchange VARCHAR(75) null,userCreatedId LONG,marketId LONG,validated_trader_provider BOOLEAN,date_validated_trader_provider DATE null,last_error_trader_provider TEXT null)";
 	public static final String TABLE_SQL_DROP = "drop table ibtrader_Share";
 	public static final String ORDER_BY_JPQL = " ORDER BY share.shareId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY ibtrader_Share.shareId ASC";
@@ -183,14 +183,14 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		model.setExpiry_expression(soapModel.getExpiry_expression());
 		model.setTick_futures(soapModel.getTick_futures());
 		model.setMultiplier(soapModel.getMultiplier());
-		model.setLast_error_data_read(soapModel.getLast_error_data_read());
-		model.setLast_error_data_trade(soapModel.getLast_error_data_trade());
 		model.setSecurity_type(soapModel.getSecurity_type());
 		model.setExchange(soapModel.getExchange());
 		model.setPrimary_exchange(soapModel.getPrimary_exchange());
-		model.setDate_contract_verified(soapModel.getDate_contract_verified());
 		model.setUserCreatedId(soapModel.getUserCreatedId());
 		model.setMarketId(soapModel.getMarketId());
+		model.setValidated_trader_provider(soapModel.getValidated_trader_provider());
+		model.setDate_validated_trader_provider(soapModel.getDate_validated_trader_provider());
+		model.setLast_error_trader_provider(soapModel.getLast_error_trader_provider());
 
 		return model;
 	}
@@ -274,14 +274,17 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		attributes.put("expiry_expression", getExpiry_expression());
 		attributes.put("tick_futures", getTick_futures());
 		attributes.put("multiplier", getMultiplier());
-		attributes.put("last_error_data_read", getLast_error_data_read());
-		attributes.put("last_error_data_trade", getLast_error_data_trade());
 		attributes.put("security_type", getSecurity_type());
 		attributes.put("exchange", getExchange());
 		attributes.put("primary_exchange", getPrimary_exchange());
-		attributes.put("date_contract_verified", getDate_contract_verified());
 		attributes.put("userCreatedId", getUserCreatedId());
 		attributes.put("marketId", getMarketId());
+		attributes.put("validated_trader_provider",
+			getValidated_trader_provider());
+		attributes.put("date_validated_trader_provider",
+			getDate_validated_trader_provider());
+		attributes.put("last_error_trader_provider",
+			getLast_error_trader_provider());
 
 		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
 		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
@@ -403,20 +406,6 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 			setMultiplier(multiplier);
 		}
 
-		String last_error_data_read = (String)attributes.get(
-				"last_error_data_read");
-
-		if (last_error_data_read != null) {
-			setLast_error_data_read(last_error_data_read);
-		}
-
-		String last_error_data_trade = (String)attributes.get(
-				"last_error_data_trade");
-
-		if (last_error_data_trade != null) {
-			setLast_error_data_trade(last_error_data_trade);
-		}
-
 		String security_type = (String)attributes.get("security_type");
 
 		if (security_type != null) {
@@ -435,13 +424,6 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 			setPrimary_exchange(primary_exchange);
 		}
 
-		Date date_contract_verified = (Date)attributes.get(
-				"date_contract_verified");
-
-		if (date_contract_verified != null) {
-			setDate_contract_verified(date_contract_verified);
-		}
-
 		Long userCreatedId = (Long)attributes.get("userCreatedId");
 
 		if (userCreatedId != null) {
@@ -452,6 +434,27 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 
 		if (marketId != null) {
 			setMarketId(marketId);
+		}
+
+		Boolean validated_trader_provider = (Boolean)attributes.get(
+				"validated_trader_provider");
+
+		if (validated_trader_provider != null) {
+			setValidated_trader_provider(validated_trader_provider);
+		}
+
+		Date date_validated_trader_provider = (Date)attributes.get(
+				"date_validated_trader_provider");
+
+		if (date_validated_trader_provider != null) {
+			setDate_validated_trader_provider(date_validated_trader_provider);
+		}
+
+		String last_error_trader_provider = (String)attributes.get(
+				"last_error_trader_provider");
+
+		if (last_error_trader_provider != null) {
+			setLast_error_trader_provider(last_error_trader_provider);
 		}
 	}
 
@@ -752,38 +755,6 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 
 	@JSON
 	@Override
-	public String getLast_error_data_read() {
-		if (_last_error_data_read == null) {
-			return StringPool.BLANK;
-		}
-		else {
-			return _last_error_data_read;
-		}
-	}
-
-	@Override
-	public void setLast_error_data_read(String last_error_data_read) {
-		_last_error_data_read = last_error_data_read;
-	}
-
-	@JSON
-	@Override
-	public String getLast_error_data_trade() {
-		if (_last_error_data_trade == null) {
-			return StringPool.BLANK;
-		}
-		else {
-			return _last_error_data_trade;
-		}
-	}
-
-	@Override
-	public void setLast_error_data_trade(String last_error_data_trade) {
-		_last_error_data_trade = last_error_data_trade;
-	}
-
-	@JSON
-	@Override
 	public String getSecurity_type() {
 		if (_security_type == null) {
 			return StringPool.BLANK;
@@ -832,17 +803,6 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 
 	@JSON
 	@Override
-	public Date getDate_contract_verified() {
-		return _date_contract_verified;
-	}
-
-	@Override
-	public void setDate_contract_verified(Date date_contract_verified) {
-		_date_contract_verified = date_contract_verified;
-	}
-
-	@JSON
-	@Override
 	public long getUserCreatedId() {
 		return _userCreatedId;
 	}
@@ -873,6 +833,51 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 
 	public long getOriginalMarketId() {
 		return _originalMarketId;
+	}
+
+	@JSON
+	@Override
+	public boolean getValidated_trader_provider() {
+		return _validated_trader_provider;
+	}
+
+	@JSON
+	@Override
+	public boolean isValidated_trader_provider() {
+		return _validated_trader_provider;
+	}
+
+	@Override
+	public void setValidated_trader_provider(boolean validated_trader_provider) {
+		_validated_trader_provider = validated_trader_provider;
+	}
+
+	@JSON
+	@Override
+	public Date getDate_validated_trader_provider() {
+		return _date_validated_trader_provider;
+	}
+
+	@Override
+	public void setDate_validated_trader_provider(
+		Date date_validated_trader_provider) {
+		_date_validated_trader_provider = date_validated_trader_provider;
+	}
+
+	@JSON
+	@Override
+	public String getLast_error_trader_provider() {
+		if (_last_error_trader_provider == null) {
+			return StringPool.BLANK;
+		}
+		else {
+			return _last_error_trader_provider;
+		}
+	}
+
+	@Override
+	public void setLast_error_trader_provider(String last_error_trader_provider) {
+		_last_error_trader_provider = last_error_trader_provider;
 	}
 
 	@Override
@@ -930,14 +935,14 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		shareImpl.setExpiry_expression(getExpiry_expression());
 		shareImpl.setTick_futures(getTick_futures());
 		shareImpl.setMultiplier(getMultiplier());
-		shareImpl.setLast_error_data_read(getLast_error_data_read());
-		shareImpl.setLast_error_data_trade(getLast_error_data_trade());
 		shareImpl.setSecurity_type(getSecurity_type());
 		shareImpl.setExchange(getExchange());
 		shareImpl.setPrimary_exchange(getPrimary_exchange());
-		shareImpl.setDate_contract_verified(getDate_contract_verified());
 		shareImpl.setUserCreatedId(getUserCreatedId());
 		shareImpl.setMarketId(getMarketId());
+		shareImpl.setValidated_trader_provider(getValidated_trader_provider());
+		shareImpl.setDate_validated_trader_provider(getDate_validated_trader_provider());
+		shareImpl.setLast_error_trader_provider(getLast_error_trader_provider());
 
 		shareImpl.resetOriginalValues();
 
@@ -1112,24 +1117,6 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 
 		shareCacheModel.multiplier = getMultiplier();
 
-		shareCacheModel.last_error_data_read = getLast_error_data_read();
-
-		String last_error_data_read = shareCacheModel.last_error_data_read;
-
-		if ((last_error_data_read != null) &&
-				(last_error_data_read.length() == 0)) {
-			shareCacheModel.last_error_data_read = null;
-		}
-
-		shareCacheModel.last_error_data_trade = getLast_error_data_trade();
-
-		String last_error_data_trade = shareCacheModel.last_error_data_trade;
-
-		if ((last_error_data_trade != null) &&
-				(last_error_data_trade.length() == 0)) {
-			shareCacheModel.last_error_data_trade = null;
-		}
-
 		shareCacheModel.security_type = getSecurity_type();
 
 		String security_type = shareCacheModel.security_type;
@@ -1154,18 +1141,29 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 			shareCacheModel.primary_exchange = null;
 		}
 
-		Date date_contract_verified = getDate_contract_verified();
-
-		if (date_contract_verified != null) {
-			shareCacheModel.date_contract_verified = date_contract_verified.getTime();
-		}
-		else {
-			shareCacheModel.date_contract_verified = Long.MIN_VALUE;
-		}
-
 		shareCacheModel.userCreatedId = getUserCreatedId();
 
 		shareCacheModel.marketId = getMarketId();
+
+		shareCacheModel.validated_trader_provider = getValidated_trader_provider();
+
+		Date date_validated_trader_provider = getDate_validated_trader_provider();
+
+		if (date_validated_trader_provider != null) {
+			shareCacheModel.date_validated_trader_provider = date_validated_trader_provider.getTime();
+		}
+		else {
+			shareCacheModel.date_validated_trader_provider = Long.MIN_VALUE;
+		}
+
+		shareCacheModel.last_error_trader_provider = getLast_error_trader_provider();
+
+		String last_error_trader_provider = shareCacheModel.last_error_trader_provider;
+
+		if ((last_error_trader_provider != null) &&
+				(last_error_trader_provider.length() == 0)) {
+			shareCacheModel.last_error_trader_provider = null;
+		}
 
 		return shareCacheModel;
 	}
@@ -1210,22 +1208,22 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		sb.append(getTick_futures());
 		sb.append(", multiplier=");
 		sb.append(getMultiplier());
-		sb.append(", last_error_data_read=");
-		sb.append(getLast_error_data_read());
-		sb.append(", last_error_data_trade=");
-		sb.append(getLast_error_data_trade());
 		sb.append(", security_type=");
 		sb.append(getSecurity_type());
 		sb.append(", exchange=");
 		sb.append(getExchange());
 		sb.append(", primary_exchange=");
 		sb.append(getPrimary_exchange());
-		sb.append(", date_contract_verified=");
-		sb.append(getDate_contract_verified());
 		sb.append(", userCreatedId=");
 		sb.append(getUserCreatedId());
 		sb.append(", marketId=");
 		sb.append(getMarketId());
+		sb.append(", validated_trader_provider=");
+		sb.append(getValidated_trader_provider());
+		sb.append(", date_validated_trader_provider=");
+		sb.append(getDate_validated_trader_provider());
+		sb.append(", last_error_trader_provider=");
+		sb.append(getLast_error_trader_provider());
 		sb.append("}");
 
 		return sb.toString();
@@ -1312,14 +1310,6 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		sb.append(getMultiplier());
 		sb.append("]]></column-value></column>");
 		sb.append(
-			"<column><column-name>last_error_data_read</column-name><column-value><![CDATA[");
-		sb.append(getLast_error_data_read());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>last_error_data_trade</column-name><column-value><![CDATA[");
-		sb.append(getLast_error_data_trade());
-		sb.append("]]></column-value></column>");
-		sb.append(
 			"<column><column-name>security_type</column-name><column-value><![CDATA[");
 		sb.append(getSecurity_type());
 		sb.append("]]></column-value></column>");
@@ -1332,16 +1322,24 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		sb.append(getPrimary_exchange());
 		sb.append("]]></column-value></column>");
 		sb.append(
-			"<column><column-name>date_contract_verified</column-name><column-value><![CDATA[");
-		sb.append(getDate_contract_verified());
-		sb.append("]]></column-value></column>");
-		sb.append(
 			"<column><column-name>userCreatedId</column-name><column-value><![CDATA[");
 		sb.append(getUserCreatedId());
 		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>marketId</column-name><column-value><![CDATA[");
 		sb.append(getMarketId());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>validated_trader_provider</column-name><column-value><![CDATA[");
+		sb.append(getValidated_trader_provider());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>date_validated_trader_provider</column-name><column-value><![CDATA[");
+		sb.append(getDate_validated_trader_provider());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>last_error_trader_provider</column-name><column-value><![CDATA[");
+		sb.append(getLast_error_trader_provider());
 		sb.append("]]></column-value></column>");
 
 		sb.append("</model>");
@@ -1381,16 +1379,16 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 	private String _expiry_expression;
 	private double _tick_futures;
 	private long _multiplier;
-	private String _last_error_data_read;
-	private String _last_error_data_trade;
 	private String _security_type;
 	private String _exchange;
 	private String _primary_exchange;
-	private Date _date_contract_verified;
 	private long _userCreatedId;
 	private long _marketId;
 	private long _originalMarketId;
 	private boolean _setOriginalMarketId;
+	private boolean _validated_trader_provider;
+	private Date _date_validated_trader_provider;
+	private String _last_error_trader_provider;
 	private long _columnBitmask;
 	private Share _escapedModel;
 }

@@ -309,6 +309,12 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 	}
 
 	@Override
+	public boolean validateParams(
+		Map<java.lang.String, java.lang.String> paramValues) {
+		return _strategy.validateParams(paramValues);
+	}
+
+	@Override
 	public boolean verify(Share _share, Market _market) {
 		return _strategy.verify(_share, _market);
 	}
@@ -461,6 +467,11 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 	@Override
 	public java.lang.String getUuid() {
 		return _strategy.getUuid();
+	}
+
+	@Override
+	public java.lang.String getValidateParamsKeysError() {
+		return _strategy.getValidateParamsKeysError();
 	}
 
 	@Override
@@ -819,6 +830,12 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 	@Override
 	public void setUuid(java.lang.String uuid) {
 		_strategy.setUuid(uuid);
+	}
+
+	@Override
+	public void setValidateParamsKeysError(
+		java.lang.String validateParamsKeysError) {
+		_strategy.setValidateParamsKeysError(validateParamsKeysError);
 	}
 
 	@Override

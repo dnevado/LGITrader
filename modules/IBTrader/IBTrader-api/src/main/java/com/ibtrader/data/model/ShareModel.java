@@ -337,36 +337,6 @@ public interface ShareModel extends BaseModel<Share>, ShardedModel, StagedModel 
 	public void setMultiplier(long multiplier);
 
 	/**
-	 * Returns the last_error_data_read of this share.
-	 *
-	 * @return the last_error_data_read of this share
-	 */
-	@AutoEscape
-	public String getLast_error_data_read();
-
-	/**
-	 * Sets the last_error_data_read of this share.
-	 *
-	 * @param last_error_data_read the last_error_data_read of this share
-	 */
-	public void setLast_error_data_read(String last_error_data_read);
-
-	/**
-	 * Returns the last_error_data_trade of this share.
-	 *
-	 * @return the last_error_data_trade of this share
-	 */
-	@AutoEscape
-	public String getLast_error_data_trade();
-
-	/**
-	 * Sets the last_error_data_trade of this share.
-	 *
-	 * @param last_error_data_trade the last_error_data_trade of this share
-	 */
-	public void setLast_error_data_trade(String last_error_data_trade);
-
-	/**
 	 * Returns the security_type of this share.
 	 *
 	 * @return the security_type of this share
@@ -412,20 +382,6 @@ public interface ShareModel extends BaseModel<Share>, ShardedModel, StagedModel 
 	public void setPrimary_exchange(String primary_exchange);
 
 	/**
-	 * Returns the date_contract_verified of this share.
-	 *
-	 * @return the date_contract_verified of this share
-	 */
-	public Date getDate_contract_verified();
-
-	/**
-	 * Sets the date_contract_verified of this share.
-	 *
-	 * @param date_contract_verified the date_contract_verified of this share
-	 */
-	public void setDate_contract_verified(Date date_contract_verified);
-
-	/**
 	 * Returns the user created ID of this share.
 	 *
 	 * @return the user created ID of this share
@@ -452,6 +408,57 @@ public interface ShareModel extends BaseModel<Share>, ShardedModel, StagedModel 
 	 * @param marketId the market ID of this share
 	 */
 	public void setMarketId(long marketId);
+
+	/**
+	 * Returns the validated_trader_provider of this share.
+	 *
+	 * @return the validated_trader_provider of this share
+	 */
+	public boolean getValidated_trader_provider();
+
+	/**
+	 * Returns <code>true</code> if this share is validated_trader_provider.
+	 *
+	 * @return <code>true</code> if this share is validated_trader_provider; <code>false</code> otherwise
+	 */
+	public boolean isValidated_trader_provider();
+
+	/**
+	 * Sets whether this share is validated_trader_provider.
+	 *
+	 * @param validated_trader_provider the validated_trader_provider of this share
+	 */
+	public void setValidated_trader_provider(boolean validated_trader_provider);
+
+	/**
+	 * Returns the date_validated_trader_provider of this share.
+	 *
+	 * @return the date_validated_trader_provider of this share
+	 */
+	public Date getDate_validated_trader_provider();
+
+	/**
+	 * Sets the date_validated_trader_provider of this share.
+	 *
+	 * @param date_validated_trader_provider the date_validated_trader_provider of this share
+	 */
+	public void setDate_validated_trader_provider(
+		Date date_validated_trader_provider);
+
+	/**
+	 * Returns the last_error_trader_provider of this share.
+	 *
+	 * @return the last_error_trader_provider of this share
+	 */
+	@AutoEscape
+	public String getLast_error_trader_provider();
+
+	/**
+	 * Sets the last_error_trader_provider of this share.
+	 *
+	 * @param last_error_trader_provider the last_error_trader_provider of this share
+	 */
+	public void setLast_error_trader_provider(String last_error_trader_provider);
 
 	@Override
 	public boolean isNew();

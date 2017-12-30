@@ -53,4 +53,6 @@ public interface Share extends ShareModel, PersistedModel {
 				return Share.class;
 			}
 		};
+
+	public boolean IsTradeable();
 }

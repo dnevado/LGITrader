@@ -113,14 +113,14 @@ create table ibtrader_Share (
 	expiry_expression VARCHAR(75) null,
 	tick_futures DOUBLE,
 	multiplier LONG,
-	last_error_data_read VARCHAR(75) null,
-	last_error_data_trade VARCHAR(75) null,
 	security_type VARCHAR(75) null,
 	exchange VARCHAR(75) null,
 	primary_exchange VARCHAR(75) null,
-	date_contract_verified DATE null,
 	userCreatedId LONG,
-	marketId LONG
+	marketId LONG,
+	validated_trader_provider BOOLEAN,
+	date_validated_trader_provider DATE null,
+	last_error_trader_provider TEXT null
 );
 
 create table ibtrader_Strategy (
@@ -151,5 +151,6 @@ create table ibtrader_StrategyShare (
 	modifiedDate DATE null,
 	strategyId LONG,
 	shareId LONG,
+	active_ BOOLEAN,
 	strategyparamsoverride TEXT null
 );

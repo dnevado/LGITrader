@@ -347,6 +347,26 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 		return new PositionWrapper(_position.toUnescapedModel());
 	}
 
+	@Override
+	public boolean IsClosed() {
+		return _position.IsClosed();
+	}
+
+	@Override
+	public boolean IsOpen() {
+		return _position.IsOpen();
+	}
+
+	@Override
+	public boolean IsPendingIn() {
+		return _position.IsPendingIn();
+	}
+
+	@Override
+	public boolean IsPendingOut() {
+		return _position.IsPendingOut();
+	}
+
 	/**
 	* Returns the simulation_mode of this position.
 	*

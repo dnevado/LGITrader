@@ -85,8 +85,10 @@ public class IBTraderRead  extends BaseSchedulerEntryMessageListener {
 	/* 	 que se dispare en el proximo minuto y el dia +28   
 		schedulerEntryImpl.setTrigger(TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(),
 				calendar.getTime(),cron.toString())); */
-	 
-	     schedulerEntryImpl.setTrigger(TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(),1, TimeUnit.MINUTE));  
+		
+		
+		
+	     schedulerEntryImpl.setTrigger(TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(),10, TimeUnit.SECOND));  
 		
 	     
 		_log.info("Activating CRON..."  + schedulerEntryImpl.getTrigger());

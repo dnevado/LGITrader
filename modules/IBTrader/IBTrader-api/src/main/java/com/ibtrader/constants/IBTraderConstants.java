@@ -5,7 +5,7 @@ public class IBTraderConstants {
 	public static String vACCOUNT_IB_NAME="ACCOUNT_IB_NAME";
 	public static long   vNUM_DAYS_PAST_REALTIME =2;
 	public static double vDEFAULT_TICK_FUTURE =0.25;
-	public static String vTWS_HOST = "127.0.0.1";
+	public static String vTWS_HOST = "(127.0.0.1)";
 	public static long   vTWS_PORT = 7497;
 	public static long   vCRON_READING_STATUS = 0;  // para saber si esta ejecutando o no , ojo a las caidas y exceptiones 
 	public static long   vCRON_TRADING_STATUS = 0;  // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
@@ -19,7 +19,5 @@ public class IBTraderConstants {
 	public static String   keyCRON_READING_STATUS = "CRON_READING_STATUS"; 
 	public static String   keyCRON_TRADING_STATUS = "CRON_TRADING_STATUS";  
 	public static String   keySIMULATION_MODE = "SIMULATION_MODE";  
-	
-	
 	
 }

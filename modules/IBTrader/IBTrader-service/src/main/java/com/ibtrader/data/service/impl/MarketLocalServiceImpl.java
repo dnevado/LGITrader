@@ -16,13 +16,18 @@ package com.ibtrader.data.service.impl;
 
 import java.util.List;
 
+import com.ibtrader.data.exception.NoSuchMarketException;
 import com.ibtrader.data.model.Market;
+import com.ibtrader.data.model.Share;
 import com.ibtrader.data.service.MarketLocalServiceUtil;
 import com.ibtrader.data.service.base.MarketLocalServiceBaseImpl;
+import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.dao.orm.Criterion;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.service.ServiceContext;
 
 /**
  * The implementation of the market local service.
@@ -44,17 +49,34 @@ public class MarketLocalServiceImpl extends MarketLocalServiceBaseImpl {
 	 *
 	 * Never reference this class directly. Always use {@link com.ibtrader.data.service.MarketLocalServiceUtil} to access the market local service.
 	 */ 
-	public List<Market> findByActiveStartEndHour(String _Start,String _End, boolean _Active)
+	public List<Market> findByActiveStartEndHour(String _Start,String _End, boolean active)
 	{
 		DynamicQuery _DQ = MarketLocalServiceUtil.dynamicQuery();
 
-		_DQ.add(RestrictionsFactoryUtil.like("active", _Active));
+		_DQ.add(RestrictionsFactoryUtil.eq("active", active));
 		_DQ.add(RestrictionsFactoryUtil.le("start_hour", _Start));
 		_DQ.add(RestrictionsFactoryUtil.ge("end_hour", _End));
 		
 		//List<Market>  = MarketLocalServiceUtil.dynamicQuery(_DQ);
 		
-		return MarketLocalServiceUtil.dynamicQuery(_DQ);
+		return marketLocalService.dynamicQuery(_DQ);
+				
+							
+	}
+	public List<Market> findByActive(boolean active)
+	{
+	
+		DynamicQuery _DQ = MarketLocalServiceUtil.dynamicQuery();
+		_DQ.add(RestrictionsFactoryUtil.eq("active", active));
+		return marketLocalService.dynamicQuery(_DQ);
+				
+	}				
+		
+			
+	public List<Market> findByCompanyGroup(long companyId, long groupId)
+	{
+	
+			return getMarketPersistence().findByCompanyGroup(companyId, groupId);
 				
 							
 	}
@@ -65,6 +87,76 @@ public class MarketLocalServiceImpl extends MarketLocalServiceBaseImpl {
 				
 							
 	}
+	public Market findByNameMarketCompanyGroup(long companyId, long groupId, String name)
+	{
+			Market market =null;
+			try {
+				market = getMarketPersistence().findByNameCompanyGroup(companyId, groupId, name);
+			} catch (NoSuchMarketException e) {
+				// TODO Auto-generated catch block
+				//e.printStackTrace();
+			}
+			return market;
+				
+							
+	}
+	public Market findByIdentifierCompanyGroup(long companyId, long groupId, String identifier)
+	{
+			Market market =null;	
+			try {
+				market = getMarketPersistence().findByIdentifierCompanyGroup(companyId, groupId, identifier);
+			} catch (NoSuchMarketException e) {
+				// TODO Auto-generated catch block
+				//e.printStackTrace();
+			}
+			return market;	
+							
+	}
+	
+	public Market addMarket(Market market, ServiceContext serviceContext) throws PortalException   {
+        
+		//shareLocalService.get
+
+		/*  VERIFICACIONES,
+		 * QUE NO EXISTA POR NOMBRE
+		 * QUE LOS PARAMETROS ESTEN CORRECTOS NUMEROS
+		 * QUE TODOS LOS PARAMETROS OBLIGATORIOS EXISTAN
+		 */
+		
+		Market _market = marketLocalService.createMarket(CounterLocalServiceUtil.increment(Market.class.getName()));
+		
+		_market.setActive(market.getActive());
+		_market.setName(market.getName());
+		_market.setIdentifier(market.getIdentifier());		
+		_market.setDescription(market.getDescription());
+		_market.setCompanyId(market.getCompanyId());
+		_market.setGroupId(market.getGroupId());		
+		_market.setCurrency(market.getCurrency());
+		_market.setCreateDate(market.getCreateDate());
+		_market.setModifiedDate(market.getModifiedDate());
+		marketLocalService.updateMarket(_market);
+		   
+	   
+	    return _market;
+	}
+	
+	public Market editMarket(Market market, ServiceContext serviceContext) throws PortalException   {
+        
+		//shareLocalService.get
+
+		/*  VERIFICACIONES,
+		 * QUE NO EXISTA POR NOMBRE
+		 * QUE LOS PARAMETROS ESTEN CORRECTOS NUMEROS
+		 * QUE TODOS LOS PARAMETROS OBLIGATORIOS EXISTAN
+		 */
+		
+		marketPersistence.update(market);
+		   
+	   
+	    return market;
+	}
+	
+	
 	
 	
 	

@@ -53,4 +53,12 @@ public interface Position extends PositionModel, PersistedModel {
 				return Position.class;
 			}
 		};
+
+	public boolean IsOpen();
+
+	public boolean IsPendingIn();
+
+	public boolean IsPendingOut();
+
+	public boolean IsClosed();
 }

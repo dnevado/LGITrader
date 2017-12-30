@@ -32,6 +32,7 @@ import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.BaseLocalService;
 import com.liferay.portal.kernel.service.PersistedModelLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
@@ -73,6 +74,9 @@ public interface MarketLocalService extends BaseLocalService,
 	@Indexable(type = IndexableType.REINDEX)
 	public Market addMarket(Market market);
 
+	public Market addMarket(Market market, ServiceContext serviceContext)
+		throws PortalException;
+
 	/**
 	* Creates a new market with the primary key. Does not add the market to the database.
 	*
@@ -100,6 +104,9 @@ public interface MarketLocalService extends BaseLocalService,
 	@Indexable(type = IndexableType.DELETE)
 	public Market deleteMarket(long marketId) throws PortalException;
 
+	public Market editMarket(Market market, ServiceContext serviceContext)
+		throws PortalException;
+
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public Market fetchMarket(long marketId);
 
@@ -113,6 +120,12 @@ public interface MarketLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public Market fetchMarketByUuidAndGroupId(java.lang.String uuid,
 		long groupId);
+
+	public Market findByIdentifierCompanyGroup(long companyId, long groupId,
+		java.lang.String identifier);
+
+	public Market findByNameMarketCompanyGroup(long companyId, long groupId,
+		java.lang.String name);
 
 	/**
 	* Returns the market with the primary key.
@@ -223,11 +236,15 @@ public interface MarketLocalService extends BaseLocalService,
 	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
 		int end, OrderByComparator<T> orderByComparator);
 
+	public List<Market> findByActive(boolean active);
+
 	public List<Market> findByActiveCompanyGroup(long companyId, long groupId,
 		boolean active);
 
 	public List<Market> findByActiveStartEndHour(java.lang.String _Start,
-		java.lang.String _End, boolean _Active);
+		java.lang.String _End, boolean active);
+
+	public List<Market> findByCompanyGroup(long companyId, long groupId);
 
 	/**
 	* Returns a range of all the markets.

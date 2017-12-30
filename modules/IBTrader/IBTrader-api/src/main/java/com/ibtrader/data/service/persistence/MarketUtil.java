@@ -928,6 +928,332 @@ public class MarketUtil {
 	}
 
 	/**
+	* Returns all the markets where companyId = &#63; and groupId = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @return the matching markets
+	*/
+	public static List<Market> findByCompanyGroup(long companyId, long groupId) {
+		return getPersistence().findByCompanyGroup(companyId, groupId);
+	}
+
+	/**
+	* Returns a range of all the markets where companyId = &#63; and groupId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link MarketModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param start the lower bound of the range of markets
+	* @param end the upper bound of the range of markets (not inclusive)
+	* @return the range of matching markets
+	*/
+	public static List<Market> findByCompanyGroup(long companyId, long groupId,
+		int start, int end) {
+		return getPersistence()
+				   .findByCompanyGroup(companyId, groupId, start, end);
+	}
+
+	/**
+	* Returns an ordered range of all the markets where companyId = &#63; and groupId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link MarketModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param start the lower bound of the range of markets
+	* @param end the upper bound of the range of markets (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching markets
+	*/
+	public static List<Market> findByCompanyGroup(long companyId, long groupId,
+		int start, int end, OrderByComparator<Market> orderByComparator) {
+		return getPersistence()
+				   .findByCompanyGroup(companyId, groupId, start, end,
+			orderByComparator);
+	}
+
+	/**
+	* Returns an ordered range of all the markets where companyId = &#63; and groupId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link MarketModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param start the lower bound of the range of markets
+	* @param end the upper bound of the range of markets (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching markets
+	*/
+	public static List<Market> findByCompanyGroup(long companyId, long groupId,
+		int start, int end, OrderByComparator<Market> orderByComparator,
+		boolean retrieveFromCache) {
+		return getPersistence()
+				   .findByCompanyGroup(companyId, groupId, start, end,
+			orderByComparator, retrieveFromCache);
+	}
+
+	/**
+	* Returns the first market in the ordered set where companyId = &#63; and groupId = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching market
+	* @throws NoSuchMarketException if a matching market could not be found
+	*/
+	public static Market findByCompanyGroup_First(long companyId, long groupId,
+		OrderByComparator<Market> orderByComparator)
+		throws com.ibtrader.data.exception.NoSuchMarketException {
+		return getPersistence()
+				   .findByCompanyGroup_First(companyId, groupId,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the first market in the ordered set where companyId = &#63; and groupId = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching market, or <code>null</code> if a matching market could not be found
+	*/
+	public static Market fetchByCompanyGroup_First(long companyId,
+		long groupId, OrderByComparator<Market> orderByComparator) {
+		return getPersistence()
+				   .fetchByCompanyGroup_First(companyId, groupId,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the last market in the ordered set where companyId = &#63; and groupId = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching market
+	* @throws NoSuchMarketException if a matching market could not be found
+	*/
+	public static Market findByCompanyGroup_Last(long companyId, long groupId,
+		OrderByComparator<Market> orderByComparator)
+		throws com.ibtrader.data.exception.NoSuchMarketException {
+		return getPersistence()
+				   .findByCompanyGroup_Last(companyId, groupId,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the last market in the ordered set where companyId = &#63; and groupId = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching market, or <code>null</code> if a matching market could not be found
+	*/
+	public static Market fetchByCompanyGroup_Last(long companyId, long groupId,
+		OrderByComparator<Market> orderByComparator) {
+		return getPersistence()
+				   .fetchByCompanyGroup_Last(companyId, groupId,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the markets before and after the current market in the ordered set where companyId = &#63; and groupId = &#63;.
+	*
+	* @param marketId the primary key of the current market
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next market
+	* @throws NoSuchMarketException if a market with the primary key could not be found
+	*/
+	public static Market[] findByCompanyGroup_PrevAndNext(long marketId,
+		long companyId, long groupId,
+		OrderByComparator<Market> orderByComparator)
+		throws com.ibtrader.data.exception.NoSuchMarketException {
+		return getPersistence()
+				   .findByCompanyGroup_PrevAndNext(marketId, companyId,
+			groupId, orderByComparator);
+	}
+
+	/**
+	* Removes all the markets where companyId = &#63; and groupId = &#63; from the database.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	*/
+	public static void removeByCompanyGroup(long companyId, long groupId) {
+		getPersistence().removeByCompanyGroup(companyId, groupId);
+	}
+
+	/**
+	* Returns the number of markets where companyId = &#63; and groupId = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @return the number of matching markets
+	*/
+	public static int countByCompanyGroup(long companyId, long groupId) {
+		return getPersistence().countByCompanyGroup(companyId, groupId);
+	}
+
+	/**
+	* Returns the market where companyId = &#63; and groupId = &#63; and name = &#63; or throws a {@link NoSuchMarketException} if it could not be found.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param name the name
+	* @return the matching market
+	* @throws NoSuchMarketException if a matching market could not be found
+	*/
+	public static Market findByNameCompanyGroup(long companyId, long groupId,
+		java.lang.String name)
+		throws com.ibtrader.data.exception.NoSuchMarketException {
+		return getPersistence().findByNameCompanyGroup(companyId, groupId, name);
+	}
+
+	/**
+	* Returns the market where companyId = &#63; and groupId = &#63; and name = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param name the name
+	* @return the matching market, or <code>null</code> if a matching market could not be found
+	*/
+	public static Market fetchByNameCompanyGroup(long companyId, long groupId,
+		java.lang.String name) {
+		return getPersistence().fetchByNameCompanyGroup(companyId, groupId, name);
+	}
+
+	/**
+	* Returns the market where companyId = &#63; and groupId = &#63; and name = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param name the name
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the matching market, or <code>null</code> if a matching market could not be found
+	*/
+	public static Market fetchByNameCompanyGroup(long companyId, long groupId,
+		java.lang.String name, boolean retrieveFromCache) {
+		return getPersistence()
+				   .fetchByNameCompanyGroup(companyId, groupId, name,
+			retrieveFromCache);
+	}
+
+	/**
+	* Removes the market where companyId = &#63; and groupId = &#63; and name = &#63; from the database.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param name the name
+	* @return the market that was removed
+	*/
+	public static Market removeByNameCompanyGroup(long companyId, long groupId,
+		java.lang.String name)
+		throws com.ibtrader.data.exception.NoSuchMarketException {
+		return getPersistence()
+				   .removeByNameCompanyGroup(companyId, groupId, name);
+	}
+
+	/**
+	* Returns the number of markets where companyId = &#63; and groupId = &#63; and name = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param name the name
+	* @return the number of matching markets
+	*/
+	public static int countByNameCompanyGroup(long companyId, long groupId,
+		java.lang.String name) {
+		return getPersistence().countByNameCompanyGroup(companyId, groupId, name);
+	}
+
+	/**
+	* Returns the market where companyId = &#63; and groupId = &#63; and identifier = &#63; or throws a {@link NoSuchMarketException} if it could not be found.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param identifier the identifier
+	* @return the matching market
+	* @throws NoSuchMarketException if a matching market could not be found
+	*/
+	public static Market findByIdentifierCompanyGroup(long companyId,
+		long groupId, java.lang.String identifier)
+		throws com.ibtrader.data.exception.NoSuchMarketException {
+		return getPersistence()
+				   .findByIdentifierCompanyGroup(companyId, groupId, identifier);
+	}
+
+	/**
+	* Returns the market where companyId = &#63; and groupId = &#63; and identifier = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param identifier the identifier
+	* @return the matching market, or <code>null</code> if a matching market could not be found
+	*/
+	public static Market fetchByIdentifierCompanyGroup(long companyId,
+		long groupId, java.lang.String identifier) {
+		return getPersistence()
+				   .fetchByIdentifierCompanyGroup(companyId, groupId, identifier);
+	}
+
+	/**
+	* Returns the market where companyId = &#63; and groupId = &#63; and identifier = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param identifier the identifier
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the matching market, or <code>null</code> if a matching market could not be found
+	*/
+	public static Market fetchByIdentifierCompanyGroup(long companyId,
+		long groupId, java.lang.String identifier, boolean retrieveFromCache) {
+		return getPersistence()
+				   .fetchByIdentifierCompanyGroup(companyId, groupId,
+			identifier, retrieveFromCache);
+	}
+
+	/**
+	* Removes the market where companyId = &#63; and groupId = &#63; and identifier = &#63; from the database.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param identifier the identifier
+	* @return the market that was removed
+	*/
+	public static Market removeByIdentifierCompanyGroup(long companyId,
+		long groupId, java.lang.String identifier)
+		throws com.ibtrader.data.exception.NoSuchMarketException {
+		return getPersistence()
+				   .removeByIdentifierCompanyGroup(companyId, groupId,
+			identifier);
+	}
+
+	/**
+	* Returns the number of markets where companyId = &#63; and groupId = &#63; and identifier = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param identifier the identifier
+	* @return the number of matching markets
+	*/
+	public static int countByIdentifierCompanyGroup(long companyId,
+		long groupId, java.lang.String identifier) {
+		return getPersistence()
+				   .countByIdentifierCompanyGroup(companyId, groupId, identifier);
+	}
+
+	/**
 	* Caches the market in the entity cache if it is enabled.
 	*
 	* @param market the market

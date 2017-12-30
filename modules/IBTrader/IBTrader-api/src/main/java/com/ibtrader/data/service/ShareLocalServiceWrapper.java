@@ -302,6 +302,13 @@ public class ShareLocalServiceWrapper implements ShareLocalService,
 	}
 
 	@Override
+	public java.util.List<com.ibtrader.data.model.Share> findByValidatedTraderProviderMarketGroupCompany(
+		long marketId, long groupId, long companyId) {
+		return _shareLocalService.findByValidatedTraderProviderMarketGroupCompany(marketId,
+			groupId, companyId);
+	}
+
+	@Override
 	public java.util.List<com.ibtrader.data.model.Share> findCompanyGroup(
 		long companyId, long groupId) {
 		return _shareLocalService.findCompanyGroup(companyId, groupId);

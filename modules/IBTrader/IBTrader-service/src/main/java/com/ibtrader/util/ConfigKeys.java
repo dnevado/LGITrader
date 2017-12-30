@@ -15,6 +15,7 @@ public class ConfigKeys {
     
     public static int  _TICKTYPE_CLOSE = 9;
     public static int _TICKTYPE_LAST  =4;
+    public static int _TICKTYPE_DELAYED_LAST  =68;
     		
     
     public static final Long RULE_TRADE_TIME_PERIOD = new Long(1);
@@ -36,6 +37,11 @@ public class ConfigKeys {
     
     
     public static final String ERROR_CODE_PACING_VIOLATION = "162";
+    
+    //http://interactivebrokers.github.io/tws-api/market_data_type.html#gsc.tab=0
+    public static final int MARKET_DATA_TYPE_DELAYED_LIVE = 3;
+    
+
     
     public enum IDENTITY_VALUE_TYPE {
 	    MAX ("Maximo"),

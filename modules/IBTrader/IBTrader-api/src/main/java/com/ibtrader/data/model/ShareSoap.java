@@ -52,14 +52,14 @@ public class ShareSoap implements Serializable {
 		soapModel.setExpiry_expression(model.getExpiry_expression());
 		soapModel.setTick_futures(model.getTick_futures());
 		soapModel.setMultiplier(model.getMultiplier());
-		soapModel.setLast_error_data_read(model.getLast_error_data_read());
-		soapModel.setLast_error_data_trade(model.getLast_error_data_trade());
 		soapModel.setSecurity_type(model.getSecurity_type());
 		soapModel.setExchange(model.getExchange());
 		soapModel.setPrimary_exchange(model.getPrimary_exchange());
-		soapModel.setDate_contract_verified(model.getDate_contract_verified());
 		soapModel.setUserCreatedId(model.getUserCreatedId());
 		soapModel.setMarketId(model.getMarketId());
+		soapModel.setValidated_trader_provider(model.getValidated_trader_provider());
+		soapModel.setDate_validated_trader_provider(model.getDate_validated_trader_provider());
+		soapModel.setLast_error_trader_provider(model.getLast_error_trader_provider());
 
 		return soapModel;
 	}
@@ -261,22 +261,6 @@ public class ShareSoap implements Serializable {
 		_multiplier = multiplier;
 	}
 
-	public String getLast_error_data_read() {
-		return _last_error_data_read;
-	}
-
-	public void setLast_error_data_read(String last_error_data_read) {
-		_last_error_data_read = last_error_data_read;
-	}
-
-	public String getLast_error_data_trade() {
-		return _last_error_data_trade;
-	}
-
-	public void setLast_error_data_trade(String last_error_data_trade) {
-		_last_error_data_trade = last_error_data_trade;
-	}
-
 	public String getSecurity_type() {
 		return _security_type;
 	}
@@ -301,14 +285,6 @@ public class ShareSoap implements Serializable {
 		_primary_exchange = primary_exchange;
 	}
 
-	public Date getDate_contract_verified() {
-		return _date_contract_verified;
-	}
-
-	public void setDate_contract_verified(Date date_contract_verified) {
-		_date_contract_verified = date_contract_verified;
-	}
-
 	public long getUserCreatedId() {
 		return _userCreatedId;
 	}
@@ -323,6 +299,35 @@ public class ShareSoap implements Serializable {
 
 	public void setMarketId(long marketId) {
 		_marketId = marketId;
+	}
+
+	public boolean getValidated_trader_provider() {
+		return _validated_trader_provider;
+	}
+
+	public boolean isValidated_trader_provider() {
+		return _validated_trader_provider;
+	}
+
+	public void setValidated_trader_provider(boolean validated_trader_provider) {
+		_validated_trader_provider = validated_trader_provider;
+	}
+
+	public Date getDate_validated_trader_provider() {
+		return _date_validated_trader_provider;
+	}
+
+	public void setDate_validated_trader_provider(
+		Date date_validated_trader_provider) {
+		_date_validated_trader_provider = date_validated_trader_provider;
+	}
+
+	public String getLast_error_trader_provider() {
+		return _last_error_trader_provider;
+	}
+
+	public void setLast_error_trader_provider(String last_error_trader_provider) {
+		_last_error_trader_provider = last_error_trader_provider;
 	}
 
 	private String _uuid;
@@ -343,12 +348,12 @@ public class ShareSoap implements Serializable {
 	private String _expiry_expression;
 	private double _tick_futures;
 	private long _multiplier;
-	private String _last_error_data_read;
-	private String _last_error_data_trade;
 	private String _security_type;
 	private String _exchange;
 	private String _primary_exchange;
-	private Date _date_contract_verified;
 	private long _userCreatedId;
 	private long _marketId;
+	private boolean _validated_trader_provider;
+	private Date _date_validated_trader_provider;
+	private String _last_error_trader_provider;
 }

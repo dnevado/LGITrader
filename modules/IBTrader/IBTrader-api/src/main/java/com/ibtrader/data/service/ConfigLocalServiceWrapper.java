@@ -98,6 +98,12 @@ public class ConfigLocalServiceWrapper implements ConfigLocalService,
 		return _configLocalService.fetchConfigByUuidAndGroupId(uuid, groupId);
 	}
 
+	@Override
+	public com.ibtrader.data.model.Config findByKeyCompanyGroup(
+		java.lang.String _key, long _company, long _group) {
+		return _configLocalService.findByKeyCompanyGroup(_key, _company, _group);
+	}
+
 	/**
 	* Returns the config with the primary key.
 	*
@@ -250,12 +256,6 @@ public class ConfigLocalServiceWrapper implements ConfigLocalService,
 	}
 
 	@Override
-	public java.util.List<com.ibtrader.data.model.Config> findByKeyCompany(
-		java.lang.String _key, long _company) {
-		return _configLocalService.findByKeyCompany(_key, _company);
-	}
-
-	@Override
 	public java.util.List<com.ibtrader.data.model.Config> findByKeyGlobalDefault(
 		java.lang.String _key, boolean _global) {
 		return _configLocalService.findByKeyGlobalDefault(_key, _global);
@@ -333,6 +333,17 @@ public class ConfigLocalServiceWrapper implements ConfigLocalService,
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
 		com.liferay.portal.kernel.dao.orm.Projection projection) {
 		return _configLocalService.dynamicQueryCount(dynamicQuery, projection);
+	}
+
+	@Override
+	public void addConfigurationValuesCompanyGroup(long _company, long _group) {
+		_configLocalService.addConfigurationValuesCompanyGroup(_company, _group);
+	}
+
+	@Override
+	public void removeConfigurationValuesCompanyGroup(long _company, long _group) {
+		_configLocalService.removeConfigurationValuesCompanyGroup(_company,
+			_group);
 	}
 
 	@Override

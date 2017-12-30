@@ -4,6 +4,7 @@
 
 <portlet:actionURL name="addStrategy" var="addStrategyURL" />
 
+<div class="container-fluid-1280">
 <aui:form action="${addStrategyURL}" name="<portlet:namespace />fm" method="POST">
     <aui:fieldset>
         <aui:input  name="nombre" value="${Strg.name}">
@@ -40,3 +41,4 @@
         <aui:button type="cancel" onClick="${viewURL.toString()}"></aui:button>
     </aui:button-row>
 </aui:form>
+</div>

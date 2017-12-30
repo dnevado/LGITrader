@@ -2831,6 +2831,7 @@ public class StrategySharePersistenceImpl extends BasePersistenceImpl<StrategySh
 		strategyShareImpl.setModifiedDate(strategyShare.getModifiedDate());
 		strategyShareImpl.setStrategyId(strategyShare.getStrategyId());
 		strategyShareImpl.setShareId(strategyShare.getShareId());
+		strategyShareImpl.setActive(strategyShare.isActive());
 		strategyShareImpl.setStrategyparamsoverride(strategyShare.getStrategyparamsoverride());
 
 		return strategyShareImpl;
@@ -3256,6 +3257,6 @@ public class StrategySharePersistenceImpl extends BasePersistenceImpl<StrategySh
 	private static final String _NO_SUCH_ENTITY_WITH_KEY = "No StrategyShare exists with the key {";
 	private static final Log _log = LogFactoryUtil.getLog(StrategySharePersistenceImpl.class);
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(new String[] {
-				"uuid"
+				"uuid", "active"
 			});
 }

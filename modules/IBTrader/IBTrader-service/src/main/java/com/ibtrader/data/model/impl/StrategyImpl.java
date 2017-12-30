@@ -15,6 +15,7 @@
 package com.ibtrader.data.model.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import com.ibtrader.data.model.Market;
 import com.ibtrader.data.model.Share;
@@ -56,7 +57,11 @@ public class StrategyImpl extends StrategyBaseImpl {
 	private float _valueLimitOut;
 	/* PRECIOS DE ENTRADA SALIDA  */
 	
+	/* nos sirve para devolver los session errors de la funciona validatParams*/
+	private String validateParamsKeysError = "";
 
+	/* COMPORTAMIENTO DE LOS PARAMETROS DE ENTRADA EN CUANTO A TIPOS */
+	public boolean validateParams(Map<String, String> paramValues) {return Boolean.TRUE;}
 	
 	public void execute(Share _share, Market _market) {}
 	
@@ -135,5 +140,13 @@ public class StrategyImpl extends StrategyBaseImpl {
 
 	public void setCLIENT_ID(int _CLIENT_ID) {
 		this._CLIENT_ID = _CLIENT_ID;
+	}
+
+	public String getValidateParamsKeysError() {
+		return validateParamsKeysError;
+	}
+
+	public void setValidateParamsKeysError(String validateParamsKeysError) {
+		this.validateParamsKeysError = validateParamsKeysError;
 	}
 }

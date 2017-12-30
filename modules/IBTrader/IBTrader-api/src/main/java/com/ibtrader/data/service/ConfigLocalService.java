@@ -114,6 +114,9 @@ public interface ConfigLocalService extends BaseLocalService,
 	public Config fetchConfigByUuidAndGroupId(java.lang.String uuid,
 		long groupId);
 
+	public Config findByKeyCompanyGroup(java.lang.String _key, long _company,
+		long _group);
+
 	/**
 	* Returns the config with the primary key.
 	*
@@ -223,8 +226,6 @@ public interface ConfigLocalService extends BaseLocalService,
 	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
 		int end, OrderByComparator<T> orderByComparator);
 
-	public List<Config> findByKeyCompany(java.lang.String _key, long _company);
-
 	public List<Config> findByKeyGlobalDefault(java.lang.String _key,
 		boolean _global);
 
@@ -285,4 +286,8 @@ public interface ConfigLocalService extends BaseLocalService,
 	*/
 	public long dynamicQueryCount(DynamicQuery dynamicQuery,
 		Projection projection);
+
+	public void addConfigurationValuesCompanyGroup(long _company, long _group);
+
+	public void removeConfigurationValuesCompanyGroup(long _company, long _group);
 }

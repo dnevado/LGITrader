@@ -34,4 +34,7 @@ public class ShareImpl extends ShareBaseImpl {
 	 */
 	public ShareImpl() {
 	}
+	public boolean IsTradeable() {
+		return this.isActive() && this.isValidated_trader_provider();
+	}
 }

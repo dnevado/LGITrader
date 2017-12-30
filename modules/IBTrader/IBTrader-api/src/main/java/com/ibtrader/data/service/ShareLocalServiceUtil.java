@@ -284,6 +284,13 @@ public class ShareLocalServiceUtil {
 			companyId);
 	}
 
+	public static java.util.List<com.ibtrader.data.model.Share> findByValidatedTraderProviderMarketGroupCompany(
+		long marketId, long groupId, long companyId) {
+		return getService()
+				   .findByValidatedTraderProviderMarketGroupCompany(marketId,
+			groupId, companyId);
+	}
+
 	public static java.util.List<com.ibtrader.data.model.Share> findCompanyGroup(
 		long companyId, long groupId) {
 		return getService().findCompanyGroup(companyId, groupId);

@@ -1,4 +1,5 @@
 create index IX_7C9D33FE on ibtrader_Config (companyId, config_key[$COLUMN_LENGTH:75$]);
+create index IX_A132C258 on ibtrader_Config (companyId, groupId, config_key[$COLUMN_LENGTH:75$]);
 create index IX_279C27D8 on ibtrader_Config (config_key[$COLUMN_LENGTH:75$], globaldefault);
 create index IX_33B037F4 on ibtrader_Config (uuid_[$COLUMN_LENGTH:75$], companyId);
 create unique index IX_380E2B76 on ibtrader_Config (uuid_[$COLUMN_LENGTH:75$], groupId);
@@ -7,6 +8,8 @@ create index IX_273F8717 on ibtrader_IBOrder (uuid_[$COLUMN_LENGTH:75$], company
 create unique index IX_45CE759 on ibtrader_IBOrder (uuid_[$COLUMN_LENGTH:75$], groupId);
 
 create index IX_87CDBD8D on ibtrader_Market (companyId, groupId, active_);
+create index IX_1A1ACBD9 on ibtrader_Market (companyId, groupId, identifier[$COLUMN_LENGTH:75$]);
+create index IX_7EDE2FBB on ibtrader_Market (companyId, groupId, name[$COLUMN_LENGTH:75$]);
 create index IX_46891320 on ibtrader_Market (groupId, companyId, start_hour[$COLUMN_LENGTH:75$], end_hour[$COLUMN_LENGTH:75$], active_);
 create index IX_F83507EE on ibtrader_Market (uuid_[$COLUMN_LENGTH:75$], companyId);
 create unique index IX_2D9AB1F0 on ibtrader_Market (uuid_[$COLUMN_LENGTH:75$], groupId);

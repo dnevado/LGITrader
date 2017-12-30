@@ -68,6 +68,7 @@ public class StrategyShareWrapper implements StrategyShare,
 		attributes.put("modifiedDate", getModifiedDate());
 		attributes.put("strategyId", getStrategyId());
 		attributes.put("shareId", getShareId());
+		attributes.put("active", getActive());
 		attributes.put("strategyparamsoverride", getStrategyparamsoverride());
 
 		return attributes;
@@ -123,6 +124,12 @@ public class StrategyShareWrapper implements StrategyShare,
 			setShareId(shareId);
 		}
 
+		Boolean active = (Boolean)attributes.get("active");
+
+		if (active != null) {
+			setActive(active);
+		}
+
 		String strategyparamsoverride = (String)attributes.get(
 				"strategyparamsoverride");
 
@@ -139,6 +146,26 @@ public class StrategyShareWrapper implements StrategyShare,
 	@Override
 	public StrategyShare toUnescapedModel() {
 		return new StrategyShareWrapper(_strategyShare.toUnescapedModel());
+	}
+
+	/**
+	* Returns the active of this strategy share.
+	*
+	* @return the active of this strategy share
+	*/
+	@Override
+	public boolean getActive() {
+		return _strategyShare.getActive();
+	}
+
+	/**
+	* Returns <code>true</code> if this strategy share is active.
+	*
+	* @return <code>true</code> if this strategy share is active; <code>false</code> otherwise
+	*/
+	@Override
+	public boolean isActive() {
+		return _strategyShare.isActive();
 	}
 
 	@Override
@@ -299,6 +326,16 @@ public class StrategyShareWrapper implements StrategyShare,
 	@Override
 	public void persist() {
 		_strategyShare.persist();
+	}
+
+	/**
+	* Sets whether this strategy share is active.
+	*
+	* @param active the active of this strategy share
+	*/
+	@Override
+	public void setActive(boolean active) {
+		_strategyShare.setActive(active);
 	}
 
 	@Override

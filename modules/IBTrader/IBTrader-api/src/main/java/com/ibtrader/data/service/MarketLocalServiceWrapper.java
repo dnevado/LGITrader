@@ -44,6 +44,14 @@ public class MarketLocalServiceWrapper implements MarketLocalService,
 		return _marketLocalService.addMarket(market);
 	}
 
+	@Override
+	public com.ibtrader.data.model.Market addMarket(
+		com.ibtrader.data.model.Market market,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _marketLocalService.addMarket(market, serviceContext);
+	}
+
 	/**
 	* Creates a new market with the primary key. Does not add the market to the database.
 	*
@@ -81,6 +89,14 @@ public class MarketLocalServiceWrapper implements MarketLocalService,
 	}
 
 	@Override
+	public com.ibtrader.data.model.Market editMarket(
+		com.ibtrader.data.model.Market market,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _marketLocalService.editMarket(market, serviceContext);
+	}
+
+	@Override
 	public com.ibtrader.data.model.Market fetchMarket(long marketId) {
 		return _marketLocalService.fetchMarket(marketId);
 	}
@@ -96,6 +112,20 @@ public class MarketLocalServiceWrapper implements MarketLocalService,
 	public com.ibtrader.data.model.Market fetchMarketByUuidAndGroupId(
 		java.lang.String uuid, long groupId) {
 		return _marketLocalService.fetchMarketByUuidAndGroupId(uuid, groupId);
+	}
+
+	@Override
+	public com.ibtrader.data.model.Market findByIdentifierCompanyGroup(
+		long companyId, long groupId, java.lang.String identifier) {
+		return _marketLocalService.findByIdentifierCompanyGroup(companyId,
+			groupId, identifier);
+	}
+
+	@Override
+	public com.ibtrader.data.model.Market findByNameMarketCompanyGroup(
+		long companyId, long groupId, java.lang.String name) {
+		return _marketLocalService.findByNameMarketCompanyGroup(companyId,
+			groupId, name);
 	}
 
 	/**
@@ -250,6 +280,12 @@ public class MarketLocalServiceWrapper implements MarketLocalService,
 	}
 
 	@Override
+	public java.util.List<com.ibtrader.data.model.Market> findByActive(
+		boolean active) {
+		return _marketLocalService.findByActive(active);
+	}
+
+	@Override
 	public java.util.List<com.ibtrader.data.model.Market> findByActiveCompanyGroup(
 		long companyId, long groupId, boolean active) {
 		return _marketLocalService.findByActiveCompanyGroup(companyId, groupId,
@@ -258,9 +294,14 @@ public class MarketLocalServiceWrapper implements MarketLocalService,
 
 	@Override
 	public java.util.List<com.ibtrader.data.model.Market> findByActiveStartEndHour(
-		java.lang.String _Start, java.lang.String _End, boolean _Active) {
-		return _marketLocalService.findByActiveStartEndHour(_Start, _End,
-			_Active);
+		java.lang.String _Start, java.lang.String _End, boolean active) {
+		return _marketLocalService.findByActiveStartEndHour(_Start, _End, active);
+	}
+
+	@Override
+	public java.util.List<com.ibtrader.data.model.Market> findByCompanyGroup(
+		long companyId, long groupId) {
+		return _marketLocalService.findByCompanyGroup(companyId, groupId);
 	}
 
 	/**

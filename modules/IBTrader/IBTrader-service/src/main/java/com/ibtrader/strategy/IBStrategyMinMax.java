@@ -38,6 +38,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.Validator;
 import com.ibtrader.util.ConfigKeys;
 import com.ibtrader.util.PositionStates;
 import com.ibtrader.util.Utilities;
@@ -66,20 +67,14 @@ public class IBStrategyMinMax extends StrategyImpl {
         {
 			
 			_log.info("UserAccount: detectada posible entrada de " + _share.getName() +  "Tick:" + _share.getSymbol() + ",PrecioCompra:" + this.getValueIn());
-			
-			
-			
 			// hace falta???????? ..creo que si, para tener control sobre la operacion de compra /venta 
 			SimpleDateFormat sdf = new SimpleDateFormat (Utilities._IBTRADER_FUTURE_SHORT_DATE);
-			
 			boolean bIsFutureStock = _share.getSecurity_type().equals(ConfigKeys.SECURITY_TYPE_FUTUROS)  && _share.getExpiry_date()!=null;
-			
-
-			String _Expiration = "";
-  		    if (bIsFutureStock)
+						String _Expiration = "";
+		    if (bIsFutureStock)
 				_Expiration = sdf.format(_share.getExpiry_date());
-  		    
-  		    Contract oContrat = null;
+		    
+		    Contract oContrat = null;
   		    
   		  if (_share.getSecurity_type().equals(ConfigKeys.SECURITY_TYPE_FUTUROS))
   		  {
@@ -107,7 +102,7 @@ public class IBStrategyMinMax extends StrategyImpl {
 			// colocamos operacion de compra			
 			Order BuyPositionTWS = new Order();
 			
-			BuyPositionTWS.account(Utilities.getConfigurationValue(IBTraderConstants.keyACCOUNT_IB_NAME, _share.getCompanyId()));
+			BuyPositionTWS.account(Utilities.getConfigurationValue(IBTraderConstants.keyACCOUNT_IB_NAME, _share.getCompanyId(), _share.getGroupId()));
 			
 			BuyPositionTWS.totalQuantity(new Long(_share.getNumbertopurchase()).intValue());
 			BuyPositionTWS.orderType(PositionStates.ordertypes.LMT.toString());		    
@@ -180,7 +175,7 @@ public class IBStrategyMinMax extends StrategyImpl {
 			BuyPositionSystem.setShare_number_to_trade(_share.getNumbertopurchase()); 
 			
 			
-			BuyPositionSystem.setSimulation_mode(Utilities.IsSimulationMode(_share.getCompanyId()));
+			BuyPositionSystem.setSimulation_mode(Utilities.IsSimulationMode(_share.getCompanyId(),_share.getGroupId()));
 			
 			PositionLocalServiceUtil.updatePosition(BuyPositionSystem);
 			/* Posicion en MYSQL de CONTROL */
@@ -307,10 +302,7 @@ public class IBStrategyMinMax extends StrategyImpl {
 		// CREAMOS LOS EXPANDOS NECESARIOS 
 		
 	Parameters.put(_EXPANDO_OFFSET1_FROM_OPENMARKET, Long.valueOf(ExpandoColumnConstants.LONG));
-	Parameters.put(_EXPANDO_OFFSET2_FROM_OPENMARKET,  Long.valueOf(ExpandoColumnConstants.LONG));
-	
-	
-	
+	Parameters.put(_EXPANDO_OFFSET2_FROM_OPENMARKET,  Long.valueOf(ExpandoColumnConstants.LONG));	
 	ExpandoTable expandoTable;
 	try {
 		expandoTable = ExpandoTableLocalServiceUtil.addDefaultTable(companyId, IBStrategyMinMax.class.getName());
@@ -353,5 +345,42 @@ public class IBStrategyMinMax extends StrategyImpl {
 	}
 		
 }
+
+	/* CUSTOM VALIDATOR OF EXPANDO FIELDS 
+	 * strategyshare.strategyminmax.errorparams  =  El formato de los parámetros es err
+	// strategyshare.strategyminmax.errorparams2  = El desplazamiento desde inicio de mercado debe ser menor que el fin.
+	 * 
+	 * */
+	@Override
+	public boolean validateParams(Map<String, String> paramValues) {
+		// TODO Auto-generated method stub
+		//return super.validateParams(paramValues);
+		this.setValidateParamsKeysError("");
+		boolean bOK = Boolean.TRUE;
+		for (Map.Entry<String, String> parameter : paramValues.entrySet()) {
+			String _paramName = parameter.getKey();
+			String _paramValue = parameter.getValue();
+			
+			if (!Validator.isDigit(_paramValue))
+			{
+				bOK=Boolean.FALSE;
+				this.setValidateParamsKeysError("strategyshare.strategyminmax.errorparams");
+				break;
+					
+			}	
+			
+		}
+		long OffSet1 = Long.valueOf(paramValues.get(_EXPANDO_OFFSET1_FROM_OPENMARKET));
+		long OffSet2 = Long.valueOf(paramValues.get(_EXPANDO_OFFSET2_FROM_OPENMARKET));
+		/* PRIMERO MENOR QUE EL SEGUNDO */
+		if (OffSet1>OffSet2)
+		{
+			bOK=Boolean.FALSE;
+			this.setValidateParamsKeysError("strategyshare.strategyminmax.errorparams2");
+		}
+		
+		return bOK;	
+		
+	}
 	
 }

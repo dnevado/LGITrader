@@ -122,9 +122,11 @@ public class MarketModelImpl extends BaseModelImpl<Market>
 	public static final long COMPANYID_COLUMN_BITMASK = 2L;
 	public static final long END_HOUR_COLUMN_BITMASK = 4L;
 	public static final long GROUPID_COLUMN_BITMASK = 8L;
-	public static final long START_HOUR_COLUMN_BITMASK = 16L;
-	public static final long UUID_COLUMN_BITMASK = 32L;
-	public static final long MARKETID_COLUMN_BITMASK = 64L;
+	public static final long IDENTIFIER_COLUMN_BITMASK = 16L;
+	public static final long NAME_COLUMN_BITMASK = 32L;
+	public static final long START_HOUR_COLUMN_BITMASK = 64L;
+	public static final long UUID_COLUMN_BITMASK = 128L;
+	public static final long MARKETID_COLUMN_BITMASK = 256L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -520,7 +522,17 @@ public class MarketModelImpl extends BaseModelImpl<Market>
 
 	@Override
 	public void setIdentifier(String identifier) {
+		_columnBitmask |= IDENTIFIER_COLUMN_BITMASK;
+
+		if (_originalIdentifier == null) {
+			_originalIdentifier = _identifier;
+		}
+
 		_identifier = identifier;
+	}
+
+	public String getOriginalIdentifier() {
+		return GetterUtil.getString(_originalIdentifier);
 	}
 
 	@JSON
@@ -552,7 +564,17 @@ public class MarketModelImpl extends BaseModelImpl<Market>
 
 	@Override
 	public void setName(String name) {
+		_columnBitmask |= NAME_COLUMN_BITMASK;
+
+		if (_originalName == null) {
+			_originalName = _name;
+		}
+
 		_name = name;
+	}
+
+	public String getOriginalName() {
+		return GetterUtil.getString(_originalName);
 	}
 
 	@JSON
@@ -702,6 +724,10 @@ public class MarketModelImpl extends BaseModelImpl<Market>
 		marketModelImpl._originalStart_hour = marketModelImpl._start_hour;
 
 		marketModelImpl._originalEnd_hour = marketModelImpl._end_hour;
+
+		marketModelImpl._originalIdentifier = marketModelImpl._identifier;
+
+		marketModelImpl._originalName = marketModelImpl._name;
 
 		marketModelImpl._columnBitmask = 0;
 	}
@@ -920,8 +946,10 @@ public class MarketModelImpl extends BaseModelImpl<Market>
 	private String _end_hour;
 	private String _originalEnd_hour;
 	private String _identifier;
+	private String _originalIdentifier;
 	private String _currency;
 	private String _name;
+	private String _originalName;
 	private String _description;
 	private long _columnBitmask;
 	private Market _escapedModel;

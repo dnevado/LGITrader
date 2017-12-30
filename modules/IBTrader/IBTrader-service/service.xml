@@ -63,6 +63,9 @@
 		
 		<column name="strategyId"   type="long" />
 		<column name="shareId" 	   type="long" />
+		
+		<column name="active" 	   type="boolean" /> <!--  defecto false  -->
+		
 		<!-- References -->
 		<!-- strategyparamsoverride VALOR EN JSON PARA ALMACENAR LOS PARAMETROS SOBREESCRITOS DE LA ESTRATEGIA GENERAL  -->
 		<column name="strategyparamsoverride"  type="String" />
@@ -170,8 +173,9 @@
 		<column name="config_key" type="String" />
 		<column name="description" type="String" />
 		
-		<finder name="KeyCompany" return-type="Collection">
+		<finder name="KeyCompanyGroup" return-type="Config">
 			<finder-column name="companyId" />
+			<finder-column name="groupId" />
 			<finder-column name="config_key" />		
 		</finder>
 		<finder name="KeyGlobalDefault" return-type="Collection">		
@@ -216,6 +220,21 @@
 			<finder-column name="groupId"/>	
 			<finder-column name="active" />				
 		</finder>
+		<finder name="CompanyGroup" return-type="Collection">
+			<finder-column name="companyId"/>		
+			<finder-column name="groupId"/>							
+		</finder>
+		<finder name="NameCompanyGroup" return-type="Market">
+			<finder-column name="companyId"/>		
+			<finder-column name="groupId"/>
+			<finder-column name="name"/>								
+		</finder>
+		<finder name="IdentifierCompanyGroup" return-type="Market">
+			<finder-column name="companyId"/>		
+			<finder-column name="groupId"/>		
+			<finder-column name="identifier"/>							
+		</finder>
+		
 
 
 	</entity>
@@ -256,15 +275,18 @@
 			<column name="expiry_date" type="Date" />
 			<column name="expiry_expression" type="String" />
 			<column name="tick_futures" type="double" />
-			<column name="multiplier" type="long" />			
-			<column name="last_error_data_read" type="String" />
-			<column name="last_error_data_trade" type="String" />
+			<column name="multiplier" type="long" />					
 			<column name="security_type" type="String" />
 			<column name="exchange" type="String" /> 
 			<column name="primary_exchange" type="String" />
-			<column name="date_contract_verified" type="Date" />
+			<!-- <column name="date_contract_verified" type="Date" /> -->
 			<column name="userCreatedId" type="long" />	
 	        <column name="marketId" type="long"></column>
+	        <column name="validated_trader_provider" type="boolean"></column> <!--  si esta validado contra interactive brokers -->
+	        <column name="date_validated_trader_provider" type="Date"></column> <!--  si esta validado contra interactive brokers -->
+	        <column name="last_error_trader_provider" type="String"></column> <!--  si esta validado contra interactive brokers -->
+	        
+	        
     <!--    	<reference package-path="com.ibtrader.data" entity="Market"></reference>-->
         	        
         	<finder name="CompanyGroup" return-type="Collection">	

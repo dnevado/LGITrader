@@ -187,6 +187,27 @@ public interface StrategyShareModel extends BaseModel<StrategyShare>,
 	public void setShareId(long shareId);
 
 	/**
+	 * Returns the active of this strategy share.
+	 *
+	 * @return the active of this strategy share
+	 */
+	public boolean getActive();
+
+	/**
+	 * Returns <code>true</code> if this strategy share is active.
+	 *
+	 * @return <code>true</code> if this strategy share is active; <code>false</code> otherwise
+	 */
+	public boolean isActive();
+
+	/**
+	 * Sets whether this strategy share is active.
+	 *
+	 * @param active the active of this strategy share
+	 */
+	public void setActive(boolean active);
+
+	/**
 	 * Returns the strategyparamsoverride of this strategy share.
 	 *
 	 * @return the strategyparamsoverride of this strategy share

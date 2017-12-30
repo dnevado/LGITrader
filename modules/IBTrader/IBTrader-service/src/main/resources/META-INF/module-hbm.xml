@@ -132,14 +132,14 @@
 		<property name="expiry_expression" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="tick_futures" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
 		<property name="multiplier" type="com.liferay.portal.dao.orm.hibernate.LongType" />
-		<property name="last_error_data_read" type="com.liferay.portal.dao.orm.hibernate.StringType" />
-		<property name="last_error_data_trade" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="security_type" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="exchange" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="primary_exchange" type="com.liferay.portal.dao.orm.hibernate.StringType" />
-		<property name="date_contract_verified" type="org.hibernate.type.TimestampType" />
 		<property name="userCreatedId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 		<property name="marketId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="validated_trader_provider" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />
+		<property name="date_validated_trader_provider" type="org.hibernate.type.TimestampType" />
+		<property name="last_error_trader_provider" type="com.liferay.portal.dao.orm.hibernate.StringClobType" />
 	</class>
 	<class name="com.ibtrader.data.model.impl.StrategyImpl" table="ibtrader_Strategy">
 		<id name="strategyID" type="long">
@@ -172,6 +172,7 @@
 		<property name="modifiedDate" type="org.hibernate.type.TimestampType" />
 		<property name="strategyId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 		<property name="shareId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property column="active_" name="active" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />
 		<property name="strategyparamsoverride" type="com.liferay.portal.dao.orm.hibernate.StringClobType" />
 	</class>
 </hibernate-mapping>

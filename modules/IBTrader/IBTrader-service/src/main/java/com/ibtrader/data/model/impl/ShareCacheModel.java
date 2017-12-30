@@ -103,22 +103,22 @@ public class ShareCacheModel implements CacheModel<Share>, Externalizable {
 		sb.append(tick_futures);
 		sb.append(", multiplier=");
 		sb.append(multiplier);
-		sb.append(", last_error_data_read=");
-		sb.append(last_error_data_read);
-		sb.append(", last_error_data_trade=");
-		sb.append(last_error_data_trade);
 		sb.append(", security_type=");
 		sb.append(security_type);
 		sb.append(", exchange=");
 		sb.append(exchange);
 		sb.append(", primary_exchange=");
 		sb.append(primary_exchange);
-		sb.append(", date_contract_verified=");
-		sb.append(date_contract_verified);
 		sb.append(", userCreatedId=");
 		sb.append(userCreatedId);
 		sb.append(", marketId=");
 		sb.append(marketId);
+		sb.append(", validated_trader_provider=");
+		sb.append(validated_trader_provider);
+		sb.append(", date_validated_trader_provider=");
+		sb.append(date_validated_trader_provider);
+		sb.append(", last_error_trader_provider=");
+		sb.append(last_error_trader_provider);
 		sb.append("}");
 
 		return sb.toString();
@@ -192,20 +192,6 @@ public class ShareCacheModel implements CacheModel<Share>, Externalizable {
 		shareImpl.setTick_futures(tick_futures);
 		shareImpl.setMultiplier(multiplier);
 
-		if (last_error_data_read == null) {
-			shareImpl.setLast_error_data_read(StringPool.BLANK);
-		}
-		else {
-			shareImpl.setLast_error_data_read(last_error_data_read);
-		}
-
-		if (last_error_data_trade == null) {
-			shareImpl.setLast_error_data_trade(StringPool.BLANK);
-		}
-		else {
-			shareImpl.setLast_error_data_trade(last_error_data_trade);
-		}
-
 		if (security_type == null) {
 			shareImpl.setSecurity_type(StringPool.BLANK);
 		}
@@ -227,15 +213,24 @@ public class ShareCacheModel implements CacheModel<Share>, Externalizable {
 			shareImpl.setPrimary_exchange(primary_exchange);
 		}
 
-		if (date_contract_verified == Long.MIN_VALUE) {
-			shareImpl.setDate_contract_verified(null);
-		}
-		else {
-			shareImpl.setDate_contract_verified(new Date(date_contract_verified));
-		}
-
 		shareImpl.setUserCreatedId(userCreatedId);
 		shareImpl.setMarketId(marketId);
+		shareImpl.setValidated_trader_provider(validated_trader_provider);
+
+		if (date_validated_trader_provider == Long.MIN_VALUE) {
+			shareImpl.setDate_validated_trader_provider(null);
+		}
+		else {
+			shareImpl.setDate_validated_trader_provider(new Date(
+					date_validated_trader_provider));
+		}
+
+		if (last_error_trader_provider == null) {
+			shareImpl.setLast_error_trader_provider(StringPool.BLANK);
+		}
+		else {
+			shareImpl.setLast_error_trader_provider(last_error_trader_provider);
+		}
 
 		shareImpl.resetOriginalValues();
 
@@ -273,16 +268,17 @@ public class ShareCacheModel implements CacheModel<Share>, Externalizable {
 		tick_futures = objectInput.readDouble();
 
 		multiplier = objectInput.readLong();
-		last_error_data_read = objectInput.readUTF();
-		last_error_data_trade = objectInput.readUTF();
 		security_type = objectInput.readUTF();
 		exchange = objectInput.readUTF();
 		primary_exchange = objectInput.readUTF();
-		date_contract_verified = objectInput.readLong();
 
 		userCreatedId = objectInput.readLong();
 
 		marketId = objectInput.readLong();
+
+		validated_trader_provider = objectInput.readBoolean();
+		date_validated_trader_provider = objectInput.readLong();
+		last_error_trader_provider = objectInput.readUTF();
 	}
 
 	@Override
@@ -341,20 +337,6 @@ public class ShareCacheModel implements CacheModel<Share>, Externalizable {
 
 		objectOutput.writeLong(multiplier);
 
-		if (last_error_data_read == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
-		}
-		else {
-			objectOutput.writeUTF(last_error_data_read);
-		}
-
-		if (last_error_data_trade == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
-		}
-		else {
-			objectOutput.writeUTF(last_error_data_trade);
-		}
-
 		if (security_type == null) {
 			objectOutput.writeUTF(StringPool.BLANK);
 		}
@@ -376,11 +358,19 @@ public class ShareCacheModel implements CacheModel<Share>, Externalizable {
 			objectOutput.writeUTF(primary_exchange);
 		}
 
-		objectOutput.writeLong(date_contract_verified);
-
 		objectOutput.writeLong(userCreatedId);
 
 		objectOutput.writeLong(marketId);
+
+		objectOutput.writeBoolean(validated_trader_provider);
+		objectOutput.writeLong(date_validated_trader_provider);
+
+		if (last_error_trader_provider == null) {
+			objectOutput.writeUTF(StringPool.BLANK);
+		}
+		else {
+			objectOutput.writeUTF(last_error_trader_provider);
+		}
 	}
 
 	public String uuid;
@@ -401,12 +391,12 @@ public class ShareCacheModel implements CacheModel<Share>, Externalizable {
 	public String expiry_expression;
 	public double tick_futures;
 	public long multiplier;
-	public String last_error_data_read;
-	public String last_error_data_trade;
 	public String security_type;
 	public String exchange;
 	public String primary_exchange;
-	public long date_contract_verified;
 	public long userCreatedId;
 	public long marketId;
+	public boolean validated_trader_provider;
+	public long date_validated_trader_provider;
+	public String last_error_trader_provider;
 }

@@ -13,9 +13,7 @@ Export-Package: \
 	com.ibtrader.data.service.impl,\
 	com.ibtrader.service.data.permission,\	
 	com.ibtrader.data.model.impl,\
-	com.ibtrader.service.data.model		
-Include-Resource:\
-     @tws-api-9.72.05.jar,\	
+	com.ibtrader.service.data.model			
 Import-Package: \
 	com.ibtrader.data.service.persistence,\
 	*

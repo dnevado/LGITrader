@@ -102,6 +102,11 @@ public class ConfigLocalServiceUtil {
 		return getService().fetchConfigByUuidAndGroupId(uuid, groupId);
 	}
 
+	public static com.ibtrader.data.model.Config findByKeyCompanyGroup(
+		java.lang.String _key, long _company, long _group) {
+		return getService().findByKeyCompanyGroup(_key, _company, _group);
+	}
+
 	/**
 	* Returns the config with the primary key.
 	*
@@ -239,11 +244,6 @@ public class ConfigLocalServiceUtil {
 				   .dynamicQuery(dynamicQuery, start, end, orderByComparator);
 	}
 
-	public static java.util.List<com.ibtrader.data.model.Config> findByKeyCompany(
-		java.lang.String _key, long _company) {
-		return getService().findByKeyCompany(_key, _company);
-	}
-
 	public static java.util.List<com.ibtrader.data.model.Config> findByKeyGlobalDefault(
 		java.lang.String _key, boolean _global) {
 		return getService().findByKeyGlobalDefault(_key, _global);
@@ -317,6 +317,16 @@ public class ConfigLocalServiceUtil {
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
 		com.liferay.portal.kernel.dao.orm.Projection projection) {
 		return getService().dynamicQueryCount(dynamicQuery, projection);
+	}
+
+	public static void addConfigurationValuesCompanyGroup(long _company,
+		long _group) {
+		getService().addConfigurationValuesCompanyGroup(_company, _group);
+	}
+
+	public static void removeConfigurationValuesCompanyGroup(long _company,
+		long _group) {
+		getService().removeConfigurationValuesCompanyGroup(_company, _group);
 	}
 
 	public static ConfigLocalService getService() {

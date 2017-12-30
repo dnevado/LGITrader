@@ -42,6 +42,7 @@ public class StrategyShareSoap implements Serializable {
 		soapModel.setModifiedDate(model.getModifiedDate());
 		soapModel.setStrategyId(model.getStrategyId());
 		soapModel.setShareId(model.getShareId());
+		soapModel.setActive(model.getActive());
 		soapModel.setStrategyparamsoverride(model.getStrategyparamsoverride());
 
 		return soapModel;
@@ -159,6 +160,18 @@ public class StrategyShareSoap implements Serializable {
 		_shareId = shareId;
 	}
 
+	public boolean getActive() {
+		return _active;
+	}
+
+	public boolean isActive() {
+		return _active;
+	}
+
+	public void setActive(boolean active) {
+		_active = active;
+	}
+
 	public String getStrategyparamsoverride() {
 		return _strategyparamsoverride;
 	}
@@ -175,5 +188,6 @@ public class StrategyShareSoap implements Serializable {
 	private Date _modifiedDate;
 	private long _strategyId;
 	private long _shareId;
+	private boolean _active;
 	private String _strategyparamsoverride;
 }

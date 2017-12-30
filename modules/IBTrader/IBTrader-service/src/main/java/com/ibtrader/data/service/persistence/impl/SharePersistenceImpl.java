@@ -3772,14 +3772,14 @@ public class SharePersistenceImpl extends BasePersistenceImpl<Share>
 		shareImpl.setExpiry_expression(share.getExpiry_expression());
 		shareImpl.setTick_futures(share.getTick_futures());
 		shareImpl.setMultiplier(share.getMultiplier());
-		shareImpl.setLast_error_data_read(share.getLast_error_data_read());
-		shareImpl.setLast_error_data_trade(share.getLast_error_data_trade());
 		shareImpl.setSecurity_type(share.getSecurity_type());
 		shareImpl.setExchange(share.getExchange());
 		shareImpl.setPrimary_exchange(share.getPrimary_exchange());
-		shareImpl.setDate_contract_verified(share.getDate_contract_verified());
 		shareImpl.setUserCreatedId(share.getUserCreatedId());
 		shareImpl.setMarketId(share.getMarketId());
+		shareImpl.setValidated_trader_provider(share.isValidated_trader_provider());
+		shareImpl.setDate_validated_trader_provider(share.getDate_validated_trader_provider());
+		shareImpl.setLast_error_trader_provider(share.getLast_error_trader_provider());
 
 		return shareImpl;
 	}

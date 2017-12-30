@@ -14,6 +14,9 @@
 
 package com.ibtrader.data.model.impl;
 
+import com.ibtrader.data.model.Position;
+import com.ibtrader.util.PositionStates;
+
 import aQute.bnd.annotation.ProviderType;
 
 /**
@@ -34,4 +37,20 @@ public class PositionImpl extends PositionBaseImpl {
 	 */
 	public PositionImpl() {
 	}
+	/* SI NO ESTA VENDIDA */
+	public boolean IsOpen() {
+		
+		return !this.getState().equals(PositionStates.status.SELL_OK); 
+	}
+	/* PENDIENTE DE ENTRAR, NO ESTA COMPRADA, NI VENDIDA    */
+	public boolean IsPendingIn() {
+		return this.getDate_real_in()==null &&   !this.getState().equals(PositionStates.status.BUY_OK); 
+	}
+	public boolean IsPendingOut() {
+		 return this.getDate_real_out()==null &&   this.getState().equals(PositionStates.status.BUY_OK); 
+	}
+	public boolean IsClosed() {
+		 return this.getState().equals(PositionStates.status.SELL_OK); 	
+  }
+	
 }

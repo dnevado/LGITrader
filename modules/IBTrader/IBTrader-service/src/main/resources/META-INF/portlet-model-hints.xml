@@ -111,14 +111,16 @@
 		<field name="expiry_expression" type="String" />
 		<field name="tick_futures" type="double" />
 		<field name="multiplier" type="long" />
-		<field name="last_error_data_read" type="String" />
-		<field name="last_error_data_trade" type="String" />
 		<field name="security_type" type="String" />
 		<field name="exchange" type="String" />
 		<field name="primary_exchange" type="String" />
-		<field name="date_contract_verified" type="Date" />
 		<field name="userCreatedId" type="long" />
 		<field name="marketId" type="long" />
+		<field name="validated_trader_provider" type="boolean" />
+		<field name="date_validated_trader_provider" type="Date" />
+		<field name="last_error_trader_provider" type="String">
+			<hint-collection name="CLOB" />
+		</field>
 	</model>
 	<model name="com.ibtrader.data.model.Strategy">
 		<field name="uuid" type="String" />
@@ -147,6 +149,7 @@
 		<field name="modifiedDate" type="Date" />
 		<field name="strategyId" type="long" />
 		<field name="shareId" type="long" />
+		<field name="active" type="boolean" />
 		<field name="strategyparamsoverride" type="String">
 			<hint-collection name="CLOB" />
 		</field>

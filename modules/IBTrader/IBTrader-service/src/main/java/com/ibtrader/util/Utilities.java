@@ -17,6 +17,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -73,41 +75,56 @@ public class Utilities {
    
    public final static String _IBTRADER_WEB_FORMAT_DATE="dd-MM-yyyy";
    
+   
    public final static String _IBTRADER_STRATEGY_CUSTOM_FIELDS_="exp_";
    
    
+   private static final String TIME24HOURS_PATTERN ="([01]?[0-9]|2[0-3]):[0-5][0-9]";
+   
+	
    
    
    
-   
-   
-   public static String  getConfigurationValue(String  keyValue, long companyId)
+   public static String  getConfigurationValue(String  keyValue, long companyId, long _groupId)
    {
 	   /* MODO DE SIMULACION */		
 	    String _ConfigValue = "";
-		List<Config> lSimulation = ConfigLocalServiceUtil.findByKeyCompany(keyValue, companyId);
+		Config _conf = ConfigLocalServiceUtil.findByKeyCompanyGroup(keyValue, companyId, _groupId);
 	
-		if (!lSimulation.isEmpty() && lSimulation.size()>0)				
+		if (_conf!=null)				
 		{
-			 _ConfigValue = lSimulation.get(0).getValue();
+			 _ConfigValue = _conf.getValue();
 			
 		}
 		return _ConfigValue;
 	   
    }
    
+   	/**
+	 * Validate time in 24 hours format with regular expression
+	 * @param time time address for validation
+	 * @return true valid time fromat, false invalid time format
+	 */
+	public static boolean validateTime24hours(String time){
+	
+		 Pattern pattern;
+		 Matcher matcher;
+		 pattern = Pattern.compile(TIME24HOURS_PATTERN);
+
+		 matcher = pattern.matcher(time);
+		 return matcher.matches();
+	
+	}
+  
    
-   public static boolean IsSimulationMode(long companyId)
+   
+   public static boolean IsSimulationMode(long companyId, long groupId)
    {
-	   /* MODO DE SIMULACION */			
-		List<Config> lSimulation = ConfigLocalServiceUtil.findByKeyCompany(IBTraderConstants.keySIMULATION_MODE, companyId);
-		boolean bSimulated = false;
-		if (!lSimulation.isEmpty() && lSimulation.size()>0)				
-		{
-			String _value = lSimulation.get(0).getValue();
-			bSimulated = Boolean.parseBoolean(_value);				
-			
-		}
+	   /* MODO DE SIMULACION */
+	   boolean bSimulated = false;
+	    String _value =  getConfigurationValue(IBTraderConstants.keySIMULATION_MODE.toString(), companyId,groupId);
+	    if (!_value.equals(""))
+	    	bSimulated = Boolean.parseBoolean(_value);						
 	   return bSimulated;
 	   
    }
