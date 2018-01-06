@@ -98,6 +98,13 @@ public class IBOrderLocalServiceWrapper implements IBOrderLocalService,
 		return _ibOrderLocalService.fetchIBOrderByUuidAndGroupId(uuid, groupId);
 	}
 
+	@Override
+	public com.ibtrader.data.model.IBOrder findByShareIdCompanyGroup(
+		long shareId, long companyId, long groupId) {
+		return _ibOrderLocalService.findByShareIdCompanyGroup(shareId,
+			companyId, groupId);
+	}
+
 	/**
 	* Returns the i b order with the primary key.
 	*

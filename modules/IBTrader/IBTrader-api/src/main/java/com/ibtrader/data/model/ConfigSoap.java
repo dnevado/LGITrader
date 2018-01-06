@@ -43,6 +43,7 @@ public class ConfigSoap implements Serializable {
 		soapModel.setCreateDate(model.getCreateDate());
 		soapModel.setModifiedDate(model.getModifiedDate());
 		soapModel.setGlobaldefault(model.getGlobaldefault());
+		soapModel.setIscron(model.getIscron());
 		soapModel.setConfig_key(model.getConfig_key());
 		soapModel.setDescription(model.getDescription());
 
@@ -173,6 +174,18 @@ public class ConfigSoap implements Serializable {
 		_globaldefault = globaldefault;
 	}
 
+	public boolean getIscron() {
+		return _iscron;
+	}
+
+	public boolean isIscron() {
+		return _iscron;
+	}
+
+	public void setIscron(boolean iscron) {
+		_iscron = iscron;
+	}
+
 	public String getConfig_key() {
 		return _config_key;
 	}
@@ -198,6 +211,7 @@ public class ConfigSoap implements Serializable {
 	private Date _createDate;
 	private Date _modifiedDate;
 	private boolean _globaldefault;
+	private boolean _iscron;
 	private String _config_key;
 	private String _description;
 }

@@ -14,12 +14,22 @@
 
 package com.ibtrader.data.service.impl;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import com.ibtrader.constants.IBTraderConstants;
 import com.ibtrader.data.exception.NoSuchConfigException;
 import com.ibtrader.data.model.Config;
+import com.ibtrader.data.service.ConfigLocalService;
+import com.ibtrader.data.service.ConfigLocalServiceUtil;
+import com.ibtrader.data.service.MarketLocalServiceUtil;
 import com.ibtrader.data.service.base.ConfigLocalServiceBaseImpl;
+import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.dao.orm.Projection;
+import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 
@@ -51,6 +61,58 @@ public class ConfigLocalServiceImpl extends ConfigLocalServiceBaseImpl {
 	{
 		return getConfigPersistence().findByKeyGlobalDefault(_key, _global);
 	}
+	
+	public Config findByIsCronValue(boolean isCron, String value)
+	{
+
+		Config _config = null;
+		try {
+			_config =  getConfigPersistence().findByIsCronValue(isCron, value);
+		} catch (NoSuchConfigException e) {
+			// TODO Auto-generated catch block
+		//	e.printStackTrace();
+		}
+		return _config;
+	}
+	
+	/* SABER LOS CLIENID  REPETIDOS Y RECONECTAR, NO DEBERIA REPERTIRSE  */
+	public Long findByFreeCronClientId()
+	{
+		 Long _ClientID = null;
+		/* NO PUEDO APLICAR MAX PORQUE SON VALUES COMO STRING */
+		DynamicQuery _DQ = ConfigLocalServiceUtil.dynamicQuery();
+		_DQ.add(RestrictionsFactoryUtil.eq("iscron", Boolean.TRUE));
+		List<Config> lCronConfigClientId = configLocalService.dynamicQuery(_DQ);
+		List<Long> lBusyClientsId = new ArrayList<Long>();
+		List<Long> lFreeClientsId = new ArrayList<Long>();
+		
+		for (Config _conf : lCronConfigClientId)
+		{
+			lBusyClientsId.add(Long.valueOf(_conf.getValue()));
+		}
+		/* COGEMOS EL PRIMER LIBRE DE 0 A 1024 ALEATORIO QUE NO EXISTA 
+		new Random().ints(1024, 0, 1023).forEach(clienid->{
+			if (!lBusyClientsId.contains(Long.valueOf(clienid))) {
+				 Long _lClientID = new Long(clienid);
+				return ;
+			}
+		});*/	
+		for (int i = 0; i < 1023; i++) {
+			lFreeClientsId.add(new Long(i));
+		}
+		Collections.shuffle(lFreeClientsId);
+		for (Long ClientId : lFreeClientsId)
+		{
+			if (!lBusyClientsId.contains(ClientId)) {
+				_ClientID = ClientId;
+				 break;
+			}
+			
+		}
+		
+		return _ClientID;
+	}
+	
 	public Config findByKeyCompanyGroup(String _key, long  _company, long _group)
 	{
 		Config _config = null;
@@ -80,7 +142,8 @@ public class ConfigLocalServiceImpl extends ConfigLocalServiceBaseImpl {
 			 _conf.setValue(IBTraderConstants.vTWS_HOST);
 			 _conf.setName(IBTraderConstants.keyTWS_HOST);
 			 _conf.setDescription(IBTraderConstants.keyTWS_HOST);
-			 _conf.setGlobaldefault(true);					 
+			 _conf.setGlobaldefault(true);		
+			 _conf.setIscron(Boolean.FALSE);
 			 configLocalService.updateConfig(_conf);
 			 							 
 			 
@@ -93,6 +156,7 @@ public class ConfigLocalServiceImpl extends ConfigLocalServiceBaseImpl {
 			 _conf.setName(IBTraderConstants.keyACCOUNT_IB_NAME);
 			 _conf.setDescription(IBTraderConstants.keyACCOUNT_IB_NAME);
 			 _conf.setGlobaldefault(false);
+			 _conf.setIscron(Boolean.FALSE);
 			 configLocalService.updateConfig(_conf);
 			 
 			 /* TWS PORT  */
@@ -104,6 +168,7 @@ public class ConfigLocalServiceImpl extends ConfigLocalServiceBaseImpl {
 			 _conf.setName(IBTraderConstants.keyTWS_PORT);
 			 _conf.setDescription(IBTraderConstants.keyTWS_PORT);
 			 _conf.setGlobaldefault(false);
+			 _conf.setIscron(Boolean.FALSE);
 			 configLocalService.updateConfig(_conf);
 			 /* SIMULATION MODE */   
 			 _conf = configLocalService.createConfig(counterLocalService.increment(Config.class.getName()));
@@ -114,6 +179,7 @@ public class ConfigLocalServiceImpl extends ConfigLocalServiceBaseImpl {
 			 _conf.setName(IBTraderConstants.keySIMULATION_MODE);
 			 _conf.setDescription(IBTraderConstants.keySIMULATION_MODE);
 			 _conf.setGlobaldefault(false);
+			 _conf.setIscron(Boolean.FALSE);
 			 configLocalService.updateConfig(_conf);   	
 		 }
 	}

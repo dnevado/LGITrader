@@ -79,6 +79,7 @@ public class ConfigModelImpl extends BaseModelImpl<Config>
 			{ "createDate", Types.TIMESTAMP },
 			{ "modifiedDate", Types.TIMESTAMP },
 			{ "globaldefault", Types.BOOLEAN },
+			{ "iscron", Types.BOOLEAN },
 			{ "config_key", Types.VARCHAR },
 			{ "description", Types.VARCHAR }
 		};
@@ -94,11 +95,12 @@ public class ConfigModelImpl extends BaseModelImpl<Config>
 		TABLE_COLUMNS_MAP.put("createDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("modifiedDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("globaldefault", Types.BOOLEAN);
+		TABLE_COLUMNS_MAP.put("iscron", Types.BOOLEAN);
 		TABLE_COLUMNS_MAP.put("config_key", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("description", Types.VARCHAR);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table ibtrader_Config (uuid_ VARCHAR(75) null,configId LONG not null primary key,groupId LONG,companyId LONG,name VARCHAR(75) null,value VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,globaldefault BOOLEAN,config_key VARCHAR(75) null,description VARCHAR(75) null)";
+	public static final String TABLE_SQL_CREATE = "create table ibtrader_Config (uuid_ VARCHAR(75) null,configId LONG not null primary key,groupId LONG,companyId LONG,name VARCHAR(75) null,value VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,globaldefault BOOLEAN,iscron BOOLEAN,config_key VARCHAR(75) null,description VARCHAR(75) null)";
 	public static final String TABLE_SQL_DROP = "drop table ibtrader_Config";
 	public static final String ORDER_BY_JPQL = " ORDER BY config.configId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY ibtrader_Config.configId ASC";
@@ -118,8 +120,10 @@ public class ConfigModelImpl extends BaseModelImpl<Config>
 	public static final long CONFIG_KEY_COLUMN_BITMASK = 2L;
 	public static final long GLOBALDEFAULT_COLUMN_BITMASK = 4L;
 	public static final long GROUPID_COLUMN_BITMASK = 8L;
-	public static final long UUID_COLUMN_BITMASK = 16L;
-	public static final long CONFIGID_COLUMN_BITMASK = 32L;
+	public static final long ISCRON_COLUMN_BITMASK = 16L;
+	public static final long UUID_COLUMN_BITMASK = 32L;
+	public static final long VALUE_COLUMN_BITMASK = 64L;
+	public static final long CONFIGID_COLUMN_BITMASK = 128L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -143,6 +147,7 @@ public class ConfigModelImpl extends BaseModelImpl<Config>
 		model.setCreateDate(soapModel.getCreateDate());
 		model.setModifiedDate(soapModel.getModifiedDate());
 		model.setGlobaldefault(soapModel.getGlobaldefault());
+		model.setIscron(soapModel.getIscron());
 		model.setConfig_key(soapModel.getConfig_key());
 		model.setDescription(soapModel.getDescription());
 
@@ -218,6 +223,7 @@ public class ConfigModelImpl extends BaseModelImpl<Config>
 		attributes.put("createDate", getCreateDate());
 		attributes.put("modifiedDate", getModifiedDate());
 		attributes.put("globaldefault", getGlobaldefault());
+		attributes.put("iscron", getIscron());
 		attributes.put("config_key", getConfig_key());
 		attributes.put("description", getDescription());
 
@@ -281,6 +287,12 @@ public class ConfigModelImpl extends BaseModelImpl<Config>
 
 		if (globaldefault != null) {
 			setGlobaldefault(globaldefault);
+		}
+
+		Boolean iscron = (Boolean)attributes.get("iscron");
+
+		if (iscron != null) {
+			setIscron(iscron);
 		}
 
 		String config_key = (String)attributes.get("config_key");
@@ -406,7 +418,17 @@ public class ConfigModelImpl extends BaseModelImpl<Config>
 
 	@Override
 	public void setValue(String value) {
+		_columnBitmask |= VALUE_COLUMN_BITMASK;
+
+		if (_originalValue == null) {
+			_originalValue = _value;
+		}
+
 		_value = value;
+	}
+
+	public String getOriginalValue() {
+		return GetterUtil.getString(_originalValue);
 	}
 
 	@JSON
@@ -464,6 +486,35 @@ public class ConfigModelImpl extends BaseModelImpl<Config>
 
 	public boolean getOriginalGlobaldefault() {
 		return _originalGlobaldefault;
+	}
+
+	@JSON
+	@Override
+	public boolean getIscron() {
+		return _iscron;
+	}
+
+	@JSON
+	@Override
+	public boolean isIscron() {
+		return _iscron;
+	}
+
+	@Override
+	public void setIscron(boolean iscron) {
+		_columnBitmask |= ISCRON_COLUMN_BITMASK;
+
+		if (!_setOriginalIscron) {
+			_setOriginalIscron = true;
+
+			_originalIscron = _iscron;
+		}
+
+		_iscron = iscron;
+	}
+
+	public boolean getOriginalIscron() {
+		return _originalIscron;
 	}
 
 	@JSON
@@ -554,6 +605,7 @@ public class ConfigModelImpl extends BaseModelImpl<Config>
 		configImpl.setCreateDate(getCreateDate());
 		configImpl.setModifiedDate(getModifiedDate());
 		configImpl.setGlobaldefault(getGlobaldefault());
+		configImpl.setIscron(getIscron());
 		configImpl.setConfig_key(getConfig_key());
 		configImpl.setDescription(getDescription());
 
@@ -628,11 +680,17 @@ public class ConfigModelImpl extends BaseModelImpl<Config>
 
 		configModelImpl._setOriginalCompanyId = false;
 
+		configModelImpl._originalValue = configModelImpl._value;
+
 		configModelImpl._setModifiedDate = false;
 
 		configModelImpl._originalGlobaldefault = configModelImpl._globaldefault;
 
 		configModelImpl._setOriginalGlobaldefault = false;
+
+		configModelImpl._originalIscron = configModelImpl._iscron;
+
+		configModelImpl._setOriginalIscron = false;
 
 		configModelImpl._originalConfig_key = configModelImpl._config_key;
 
@@ -693,6 +751,8 @@ public class ConfigModelImpl extends BaseModelImpl<Config>
 
 		configCacheModel.globaldefault = getGlobaldefault();
 
+		configCacheModel.iscron = getIscron();
+
 		configCacheModel.config_key = getConfig_key();
 
 		String config_key = configCacheModel.config_key;
@@ -714,7 +774,7 @@ public class ConfigModelImpl extends BaseModelImpl<Config>
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(23);
+		StringBundler sb = new StringBundler(25);
 
 		sb.append("{uuid=");
 		sb.append(getUuid());
@@ -734,6 +794,8 @@ public class ConfigModelImpl extends BaseModelImpl<Config>
 		sb.append(getModifiedDate());
 		sb.append(", globaldefault=");
 		sb.append(getGlobaldefault());
+		sb.append(", iscron=");
+		sb.append(getIscron());
 		sb.append(", config_key=");
 		sb.append(getConfig_key());
 		sb.append(", description=");
@@ -745,7 +807,7 @@ public class ConfigModelImpl extends BaseModelImpl<Config>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(37);
+		StringBundler sb = new StringBundler(40);
 
 		sb.append("<model><model-name>");
 		sb.append("com.ibtrader.data.model.Config");
@@ -788,6 +850,10 @@ public class ConfigModelImpl extends BaseModelImpl<Config>
 		sb.append(getGlobaldefault());
 		sb.append("]]></column-value></column>");
 		sb.append(
+			"<column><column-name>iscron</column-name><column-value><![CDATA[");
+		sb.append(getIscron());
+		sb.append("]]></column-value></column>");
+		sb.append(
 			"<column><column-name>config_key</column-name><column-value><![CDATA[");
 		sb.append(getConfig_key());
 		sb.append("]]></column-value></column>");
@@ -816,12 +882,16 @@ public class ConfigModelImpl extends BaseModelImpl<Config>
 	private boolean _setOriginalCompanyId;
 	private String _name;
 	private String _value;
+	private String _originalValue;
 	private Date _createDate;
 	private Date _modifiedDate;
 	private boolean _setModifiedDate;
 	private boolean _globaldefault;
 	private boolean _originalGlobaldefault;
 	private boolean _setOriginalGlobaldefault;
+	private boolean _iscron;
+	private boolean _originalIscron;
+	private boolean _setOriginalIscron;
 	private String _config_key;
 	private String _originalConfig_key;
 	private String _description;

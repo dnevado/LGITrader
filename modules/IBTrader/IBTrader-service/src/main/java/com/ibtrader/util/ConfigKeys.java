@@ -41,6 +41,9 @@ public class ConfigKeys {
     //http://interactivebrokers.github.io/tws-api/market_data_type.html#gsc.tab=0
     public static final int MARKET_DATA_TYPE_DELAYED_LIVE = 3;
     
+    public static final int _AUDIT_TIME_CRON_READ_IN_MILLISECONDS = 5000;   // 5 SEGUNDOS SE GRABA EL MODIFIED DATABASE 
+    
+    
 
     
     public enum IDENTITY_VALUE_TYPE {
@@ -59,7 +62,7 @@ public class ConfigKeys {
     
     public static String[] _FUTURES_MONTHS = new String[]{"January","February","March","April","May","June","July","August","September","October","November","December"};
     
-    public static String[] _FUTURES_DAYOFWEEK = new String[]{"Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"};
+    public static String[] _FUTURES_DAYOFWEEK = new String[]{"Sunday", "Monday","Tuesday","Wednesday","Thrusday","Friday","Saturday"};
     
     
     public static final String _SIMULATED_TRADING_MODE = "SIMULATED_T";
@@ -67,6 +70,8 @@ public class ConfigKeys {
     
     public static final String _CONFIG_KEY_ACCOUNT_NAME = "ACCOUNT_IB_NAME";
     public static final String _CONFIG_KEY_SIMULATE_NAME = "SIMULATION_MODE";
+    
+    public static  int TWS_CONNECTION_PORT =7497; 
     
 
     

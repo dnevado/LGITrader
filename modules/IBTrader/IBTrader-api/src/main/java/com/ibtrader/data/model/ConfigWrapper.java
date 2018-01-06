@@ -68,6 +68,7 @@ public class ConfigWrapper implements Config, ModelWrapper<Config> {
 		attributes.put("createDate", getCreateDate());
 		attributes.put("modifiedDate", getModifiedDate());
 		attributes.put("globaldefault", getGlobaldefault());
+		attributes.put("iscron", getIscron());
 		attributes.put("config_key", getConfig_key());
 		attributes.put("description", getDescription());
 
@@ -130,6 +131,12 @@ public class ConfigWrapper implements Config, ModelWrapper<Config> {
 			setGlobaldefault(globaldefault);
 		}
 
+		Boolean iscron = (Boolean)attributes.get("iscron");
+
+		if (iscron != null) {
+			setIscron(iscron);
+		}
+
 		String config_key = (String)attributes.get("config_key");
 
 		if (config_key != null) {
@@ -163,6 +170,16 @@ public class ConfigWrapper implements Config, ModelWrapper<Config> {
 		return _config.getGlobaldefault();
 	}
 
+	/**
+	* Returns the iscron of this config.
+	*
+	* @return the iscron of this config
+	*/
+	@Override
+	public boolean getIscron() {
+		return _config.getIscron();
+	}
+
 	@Override
 	public boolean isCachedModel() {
 		return _config.isCachedModel();
@@ -181,6 +198,16 @@ public class ConfigWrapper implements Config, ModelWrapper<Config> {
 	@Override
 	public boolean isGlobaldefault() {
 		return _config.isGlobaldefault();
+	}
+
+	/**
+	* Returns <code>true</code> if this config is iscron.
+	*
+	* @return <code>true</code> if this config is iscron; <code>false</code> otherwise
+	*/
+	@Override
+	public boolean isIscron() {
+		return _config.isIscron();
 	}
 
 	@Override
@@ -432,6 +459,16 @@ public class ConfigWrapper implements Config, ModelWrapper<Config> {
 	@Override
 	public void setGroupId(long groupId) {
 		_config.setGroupId(groupId);
+	}
+
+	/**
+	* Sets whether this config is iscron.
+	*
+	* @param iscron the iscron of this config
+	*/
+	@Override
+	public void setIscron(boolean iscron) {
+		_config.setIscron(iscron);
 	}
 
 	/**

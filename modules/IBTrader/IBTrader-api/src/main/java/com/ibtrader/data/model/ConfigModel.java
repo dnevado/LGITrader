@@ -209,6 +209,27 @@ public interface ConfigModel extends BaseModel<Config>, ShardedModel, StagedMode
 	public void setGlobaldefault(boolean globaldefault);
 
 	/**
+	 * Returns the iscron of this config.
+	 *
+	 * @return the iscron of this config
+	 */
+	public boolean getIscron();
+
+	/**
+	 * Returns <code>true</code> if this config is iscron.
+	 *
+	 * @return <code>true</code> if this config is iscron; <code>false</code> otherwise
+	 */
+	public boolean isIscron();
+
+	/**
+	 * Sets whether this config is iscron.
+	 *
+	 * @param iscron the iscron of this config
+	 */
+	public void setIscron(boolean iscron);
+
+	/**
 	 * Returns the config_key of this config.
 	 *
 	 * @return the config_key of this config

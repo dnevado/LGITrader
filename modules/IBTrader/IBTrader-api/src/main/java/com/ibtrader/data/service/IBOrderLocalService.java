@@ -111,6 +111,9 @@ public interface IBOrderLocalService extends BaseLocalService,
 	public IBOrder fetchIBOrderByUuidAndGroupId(java.lang.String uuid,
 		long groupId);
 
+	public IBOrder findByShareIdCompanyGroup(long shareId, long companyId,
+		long groupId);
+
 	/**
 	* Returns the i b order with the primary key.
 	*

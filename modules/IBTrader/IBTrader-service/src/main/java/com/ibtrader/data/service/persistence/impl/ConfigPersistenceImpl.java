@@ -2354,6 +2354,268 @@ public class ConfigPersistenceImpl extends BasePersistenceImpl<Config>
 	private static final String _FINDER_COLUMN_KEYGLOBALDEFAULT_CONFIG_KEY_2 = "config.config_key = ? AND ";
 	private static final String _FINDER_COLUMN_KEYGLOBALDEFAULT_CONFIG_KEY_3 = "(config.config_key IS NULL OR config.config_key = '') AND ";
 	private static final String _FINDER_COLUMN_KEYGLOBALDEFAULT_GLOBALDEFAULT_2 = "config.globaldefault = ?";
+	public static final FinderPath FINDER_PATH_FETCH_BY_ISCRONVALUE = new FinderPath(ConfigModelImpl.ENTITY_CACHE_ENABLED,
+			ConfigModelImpl.FINDER_CACHE_ENABLED, ConfigImpl.class,
+			FINDER_CLASS_NAME_ENTITY, "fetchByIsCronValue",
+			new String[] { Boolean.class.getName(), String.class.getName() },
+			ConfigModelImpl.ISCRON_COLUMN_BITMASK |
+			ConfigModelImpl.VALUE_COLUMN_BITMASK);
+	public static final FinderPath FINDER_PATH_COUNT_BY_ISCRONVALUE = new FinderPath(ConfigModelImpl.ENTITY_CACHE_ENABLED,
+			ConfigModelImpl.FINDER_CACHE_ENABLED, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByIsCronValue",
+			new String[] { Boolean.class.getName(), String.class.getName() });
+
+	/**
+	 * Returns the config where iscron = &#63; and value = &#63; or throws a {@link NoSuchConfigException} if it could not be found.
+	 *
+	 * @param iscron the iscron
+	 * @param value the value
+	 * @return the matching config
+	 * @throws NoSuchConfigException if a matching config could not be found
+	 */
+	@Override
+	public Config findByIsCronValue(boolean iscron, String value)
+		throws NoSuchConfigException {
+		Config config = fetchByIsCronValue(iscron, value);
+
+		if (config == null) {
+			StringBundler msg = new StringBundler(6);
+
+			msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+			msg.append("iscron=");
+			msg.append(iscron);
+
+			msg.append(", value=");
+			msg.append(value);
+
+			msg.append(StringPool.CLOSE_CURLY_BRACE);
+
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
+			}
+
+			throw new NoSuchConfigException(msg.toString());
+		}
+
+		return config;
+	}
+
+	/**
+	 * Returns the config where iscron = &#63; and value = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param iscron the iscron
+	 * @param value the value
+	 * @return the matching config, or <code>null</code> if a matching config could not be found
+	 */
+	@Override
+	public Config fetchByIsCronValue(boolean iscron, String value) {
+		return fetchByIsCronValue(iscron, value, true);
+	}
+
+	/**
+	 * Returns the config where iscron = &#63; and value = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	 *
+	 * @param iscron the iscron
+	 * @param value the value
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the matching config, or <code>null</code> if a matching config could not be found
+	 */
+	@Override
+	public Config fetchByIsCronValue(boolean iscron, String value,
+		boolean retrieveFromCache) {
+		Object[] finderArgs = new Object[] { iscron, value };
+
+		Object result = null;
+
+		if (retrieveFromCache) {
+			result = finderCache.getResult(FINDER_PATH_FETCH_BY_ISCRONVALUE,
+					finderArgs, this);
+		}
+
+		if (result instanceof Config) {
+			Config config = (Config)result;
+
+			if ((iscron != config.getIscron()) ||
+					!Objects.equals(value, config.getValue())) {
+				result = null;
+			}
+		}
+
+		if (result == null) {
+			StringBundler query = new StringBundler(4);
+
+			query.append(_SQL_SELECT_CONFIG_WHERE);
+
+			query.append(_FINDER_COLUMN_ISCRONVALUE_ISCRON_2);
+
+			boolean bindValue = false;
+
+			if (value == null) {
+				query.append(_FINDER_COLUMN_ISCRONVALUE_VALUE_1);
+			}
+			else if (value.equals(StringPool.BLANK)) {
+				query.append(_FINDER_COLUMN_ISCRONVALUE_VALUE_3);
+			}
+			else {
+				bindValue = true;
+
+				query.append(_FINDER_COLUMN_ISCRONVALUE_VALUE_2);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(iscron);
+
+				if (bindValue) {
+					qPos.add(value);
+				}
+
+				List<Config> list = q.list();
+
+				if (list.isEmpty()) {
+					finderCache.putResult(FINDER_PATH_FETCH_BY_ISCRONVALUE,
+						finderArgs, list);
+				}
+				else {
+					if ((list.size() > 1) && _log.isWarnEnabled()) {
+						_log.warn(
+							"ConfigPersistenceImpl.fetchByIsCronValue(boolean, String, boolean) with parameters (" +
+							StringUtil.merge(finderArgs) +
+							") yields a result set with more than 1 result. This violates the logical unique restriction. There is no order guarantee on which result is returned by this finder.");
+					}
+
+					Config config = list.get(0);
+
+					result = config;
+
+					cacheResult(config);
+
+					if ((config.getIscron() != iscron) ||
+							(config.getValue() == null) ||
+							!config.getValue().equals(value)) {
+						finderCache.putResult(FINDER_PATH_FETCH_BY_ISCRONVALUE,
+							finderArgs, config);
+					}
+				}
+			}
+			catch (Exception e) {
+				finderCache.removeResult(FINDER_PATH_FETCH_BY_ISCRONVALUE,
+					finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		if (result instanceof List<?>) {
+			return null;
+		}
+		else {
+			return (Config)result;
+		}
+	}
+
+	/**
+	 * Removes the config where iscron = &#63; and value = &#63; from the database.
+	 *
+	 * @param iscron the iscron
+	 * @param value the value
+	 * @return the config that was removed
+	 */
+	@Override
+	public Config removeByIsCronValue(boolean iscron, String value)
+		throws NoSuchConfigException {
+		Config config = findByIsCronValue(iscron, value);
+
+		return remove(config);
+	}
+
+	/**
+	 * Returns the number of configs where iscron = &#63; and value = &#63;.
+	 *
+	 * @param iscron the iscron
+	 * @param value the value
+	 * @return the number of matching configs
+	 */
+	@Override
+	public int countByIsCronValue(boolean iscron, String value) {
+		FinderPath finderPath = FINDER_PATH_COUNT_BY_ISCRONVALUE;
+
+		Object[] finderArgs = new Object[] { iscron, value };
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(3);
+
+			query.append(_SQL_COUNT_CONFIG_WHERE);
+
+			query.append(_FINDER_COLUMN_ISCRONVALUE_ISCRON_2);
+
+			boolean bindValue = false;
+
+			if (value == null) {
+				query.append(_FINDER_COLUMN_ISCRONVALUE_VALUE_1);
+			}
+			else if (value.equals(StringPool.BLANK)) {
+				query.append(_FINDER_COLUMN_ISCRONVALUE_VALUE_3);
+			}
+			else {
+				bindValue = true;
+
+				query.append(_FINDER_COLUMN_ISCRONVALUE_VALUE_2);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(iscron);
+
+				if (bindValue) {
+					qPos.add(value);
+				}
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_ISCRONVALUE_ISCRON_2 = "config.iscron = ? AND ";
+	private static final String _FINDER_COLUMN_ISCRONVALUE_VALUE_1 = "config.value IS NULL";
+	private static final String _FINDER_COLUMN_ISCRONVALUE_VALUE_2 = "config.value = ?";
+	private static final String _FINDER_COLUMN_ISCRONVALUE_VALUE_3 = "(config.value IS NULL OR config.value = '')";
 
 	public ConfigPersistenceImpl() {
 		setModelClass(Config.class);
@@ -2377,6 +2639,9 @@ public class ConfigPersistenceImpl extends BasePersistenceImpl<Config>
 				config.getCompanyId(), config.getGroupId(),
 				config.getConfig_key()
 			}, config);
+
+		finderCache.putResult(FINDER_PATH_FETCH_BY_ISCRONVALUE,
+			new Object[] { config.getIscron(), config.getValue() }, config);
 
 		config.resetOriginalValues();
 	}
@@ -2467,6 +2732,15 @@ public class ConfigPersistenceImpl extends BasePersistenceImpl<Config>
 				Long.valueOf(1));
 			finderCache.putResult(FINDER_PATH_FETCH_BY_KEYCOMPANYGROUP, args,
 				configModelImpl);
+
+			args = new Object[] {
+					configModelImpl.getIscron(), configModelImpl.getValue()
+				};
+
+			finderCache.putResult(FINDER_PATH_COUNT_BY_ISCRONVALUE, args,
+				Long.valueOf(1));
+			finderCache.putResult(FINDER_PATH_FETCH_BY_ISCRONVALUE, args,
+				configModelImpl);
 		}
 		else {
 			if ((configModelImpl.getColumnBitmask() &
@@ -2493,6 +2767,18 @@ public class ConfigPersistenceImpl extends BasePersistenceImpl<Config>
 					args, Long.valueOf(1));
 				finderCache.putResult(FINDER_PATH_FETCH_BY_KEYCOMPANYGROUP,
 					args, configModelImpl);
+			}
+
+			if ((configModelImpl.getColumnBitmask() &
+					FINDER_PATH_FETCH_BY_ISCRONVALUE.getColumnBitmask()) != 0) {
+				Object[] args = new Object[] {
+						configModelImpl.getIscron(), configModelImpl.getValue()
+					};
+
+				finderCache.putResult(FINDER_PATH_COUNT_BY_ISCRONVALUE, args,
+					Long.valueOf(1));
+				finderCache.putResult(FINDER_PATH_FETCH_BY_ISCRONVALUE, args,
+					configModelImpl);
 			}
 		}
 	}
@@ -2534,6 +2820,24 @@ public class ConfigPersistenceImpl extends BasePersistenceImpl<Config>
 
 			finderCache.removeResult(FINDER_PATH_COUNT_BY_KEYCOMPANYGROUP, args);
 			finderCache.removeResult(FINDER_PATH_FETCH_BY_KEYCOMPANYGROUP, args);
+		}
+
+		args = new Object[] {
+				configModelImpl.getIscron(), configModelImpl.getValue()
+			};
+
+		finderCache.removeResult(FINDER_PATH_COUNT_BY_ISCRONVALUE, args);
+		finderCache.removeResult(FINDER_PATH_FETCH_BY_ISCRONVALUE, args);
+
+		if ((configModelImpl.getColumnBitmask() &
+				FINDER_PATH_FETCH_BY_ISCRONVALUE.getColumnBitmask()) != 0) {
+			args = new Object[] {
+					configModelImpl.getOriginalIscron(),
+					configModelImpl.getOriginalValue()
+				};
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_ISCRONVALUE, args);
+			finderCache.removeResult(FINDER_PATH_FETCH_BY_ISCRONVALUE, args);
 		}
 	}
 
@@ -2795,6 +3099,7 @@ public class ConfigPersistenceImpl extends BasePersistenceImpl<Config>
 		configImpl.setCreateDate(config.getCreateDate());
 		configImpl.setModifiedDate(config.getModifiedDate());
 		configImpl.setGlobaldefault(config.isGlobaldefault());
+		configImpl.setIscron(config.isIscron());
 		configImpl.setConfig_key(config.getConfig_key());
 		configImpl.setDescription(config.getDescription());
 

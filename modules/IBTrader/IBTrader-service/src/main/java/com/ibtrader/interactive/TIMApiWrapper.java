@@ -83,7 +83,7 @@ public class TIMApiWrapper implements EWrapper {
 	//! [tickgeneric]
 	@Override
 	public void tickGeneric(int tickerId, int tickType, double value) {
-		System.out.println("Tick Generic. Ticker Id:" + tickerId + ", Field: " + ", Value: " + value);
+		//System.out.println("Tick Generic. Ticker Id:" + tickerId + ", Field: " + ", Value: " + value);
 	}
 	//! [tickgeneric]
 	

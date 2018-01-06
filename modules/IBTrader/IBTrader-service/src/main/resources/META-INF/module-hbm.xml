@@ -22,6 +22,7 @@
 		<property name="createDate" type="org.hibernate.type.TimestampType" />
 		<property name="modifiedDate" type="org.hibernate.type.TimestampType" />
 		<property name="globaldefault" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />
+		<property name="iscron" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />
 		<property name="config_key" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="description" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 	</class>
@@ -129,7 +130,7 @@
 		<property name="percentual_stop_profit" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
 		<property name="percentual_stop_profit_position" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
 		<property name="expiry_date" type="org.hibernate.type.TimestampType" />
-		<property name="expiry_expression" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="expiry_expression" type="com.liferay.portal.dao.orm.hibernate.StringClobType" />
 		<property name="tick_futures" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
 		<property name="multiplier" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 		<property name="security_type" type="com.liferay.portal.dao.orm.hibernate.StringType" />

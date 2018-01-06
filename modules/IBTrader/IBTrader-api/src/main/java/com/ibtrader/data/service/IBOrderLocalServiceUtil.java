@@ -102,6 +102,12 @@ public class IBOrderLocalServiceUtil {
 		return getService().fetchIBOrderByUuidAndGroupId(uuid, groupId);
 	}
 
+	public static com.ibtrader.data.model.IBOrder findByShareIdCompanyGroup(
+		long shareId, long companyId, long groupId) {
+		return getService()
+				   .findByShareIdCompanyGroup(shareId, companyId, groupId);
+	}
+
 	/**
 	* Returns the i b order with the primary key.
 	*

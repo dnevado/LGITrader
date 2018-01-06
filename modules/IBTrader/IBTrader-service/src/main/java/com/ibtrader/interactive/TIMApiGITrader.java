@@ -37,11 +37,13 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.ibtrader.util.ConfigKeys;
 import com.ibtrader.util.PositionStates;
 import com.ibtrader.util.Utilities;
-
+import com.ibtrader.constants.IBTraderConstants;
+import com.ibtrader.data.model.Config;
 import com.ibtrader.data.model.IBOrder;
 import com.ibtrader.data.model.Position;
 import com.ibtrader.data.model.Realtime;
 import com.ibtrader.data.model.Share;
+import com.ibtrader.data.service.ConfigLocalServiceUtil;
 import com.ibtrader.data.service.IBOrderLocalServiceUtil;
 import com.ibtrader.data.service.PositionLocalServiceUtil;
 import com.ibtrader.data.service.RealtimeLocalServiceUtil;
@@ -56,27 +58,16 @@ public class TIMApiGITrader extends TIMApiWrapper {
 	
 	Log _log = LogFactoryUtil.getLog(TIMApiGITrader.class);
 	long guestGroupId=0;
-	SimpleDateFormat sdf = new SimpleDateFormat ("yyyyMM");
-	
+	SimpleDateFormat sdf = new SimpleDateFormat ("yyyyMM");	
 	private String _ConnectionHOST = "127.0.0.1";
-	private int  _ConnectionPORT = 7497;
-	private int _ConnectionCLIENTID = 7;
+	private int    _ConnectionPORT = 7497;
+	private int    _ConnectionCLIENTID = 0;
 	private static String _HISTORICAL_DATA_ERRORS_CODES = "";
-	
-	/* USAMOS PARA ALMACENAR LAS TRAZAS DE RESULTADOS POR BLOQUES Y BUSCAR EL MAXIMO Y MIN DESPUES */
-	
+	/* USAMOS PARA ALMACENAR LAS TRAZAS DE RESULTADOS POR BLOQUES Y BUSCAR EL MAXIMO Y MIN DESPUES */	
 	private String error = "";
-
-	public String GITraderError() {
-		return error;
-	}
-
-	
-	
 	/* ESTE DATO SIRVE PARA ALMACENAR DATOS HISTORICOS DE LA FECHA EN CUESTION 
 	 * LA TWS DEVUELVE DATOS ANTERIORES A UNA FECHA DADA, NO ENTRE FECHAS, CON LO QUE SI PIDES UN DOMINGO TE DARA 
 	 * DEL VIERNES */
-		
 	/* METODOS PERSONALIZADOS QUE NO ESTAN EN EL INTERFACE */
 	public boolean GITradercancelOrder(int RequestID) throws InterruptedException {
 		clientSocket.cancelOrder(RequestID);
@@ -86,32 +77,26 @@ public class TIMApiGITrader extends TIMApiWrapper {
 	/* METODOS PERSONALIZADOS QUE NO ESTAN EN EL INTERFACE */
 	public void GITradergetContractDetails(int RequestID, Contract contract)
 			throws InterruptedException {
-		
-		 _log.info("GITradergetContractDetails");
-		//clientSocket.reqMktData(RequestID, contract,  "", false,false, new ArrayList<TagValue>());
+		 _log.info("GITradergetContractDetails RequestID:" + RequestID);		 	
 		clientSocket.reqContractDetails(RequestID, contract);
-		
+		Thread.sleep(1000);
 		_log.info("Fin GITradergetContractDetails");
-}
-	
+}	
 	public Contract GITraderCreateSTKContract(String symbol) {
-					
 				return  new StkContract(symbol);
-				
 	}
-	
 	public void GITraderOpenOrder(int orderId, Contract contract, Order order) {
-		
-		 
 		 _log.info("Open Order:" + orderId + " Contrato =" + contract.symbol() + " order=" + order.totalQuantity() + " price=" + order.lmtPrice());
-		 
-
 		 clientSocket.placeOrder(orderId, contract, order);
-
 	}
-	
+	public TIMApiGITrader(String _host, int _port, int clientid, boolean debug)  {
+		 super();					
+		_ConnectionHOST = _host;
+		_ConnectionPORT = _port;
+		_ConnectionCLIENTID = clientid;						
+	}	
 	public TIMApiGITrader(String _host, int _port, int clientid)  {
-		//super();			
+		super();			
 		_ConnectionHOST = _host;
 		_ConnectionPORT = _port;
 		_ConnectionCLIENTID = clientid;		
@@ -121,37 +106,17 @@ public class TIMApiGITrader extends TIMApiWrapper {
 		} catch (PortalException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			guestGroupId = -1;
 		}
-		
-		
-	}
-	
-	public TIMApiGITrader() {
-		//clientSocket.eConnect(_ConnectionHOST, _ConnectionPORT, _ConnectionCLIENTID);
-
-	}
-
-
-
-	public void GITrade() {
-		clientSocket.eConnect(_ConnectionHOST, _ConnectionPORT, _ConnectionCLIENTID);
-	}
-
-	public void disconnectFromTWS() {
-		if (clientSocket.isConnected()) {
-			clientSocket.eDisconnect();
-		}
-	}
-	
-	public void GITraderGetRealTimeContract(int RequestID, Contract contract)
-			throws InterruptedException {
-		
-		
+	}	
+	public void GITraderGetRealTimeContract(int RequestID, Contract contract) throws InterruptedException {
 		// http://interactivebrokers.github.io/tws-api/tick_types.html#gsc.tab=0
 		clientSocket.reqMarketDataType(ConfigKeys.MARKET_DATA_TYPE_DELAYED_LIVE);
 		clientSocket.reqMktData(RequestID, contract,  "", false, false, null); // false
-		
-		
+	}
+	public void GITraderCancelRealTimeContract(int RequestID) throws InterruptedException {
+		// http://interactivebrokers.github.io/tws-api/tick_types.html#gsc.tab=0
+		clientSocket.cancelMktData(RequestID);		
 	}
 	@Override
 	public void contractDetailsEnd(int reqId)
@@ -173,41 +138,57 @@ public class TIMApiGITrader extends TIMApiWrapper {
     }
 	@Override
 	public void contractDetails(int reqId, ContractDetails contractDetails) {
+		System.out.println("ContractDetails. ReqId: ["+reqId+"] - ["+contractDetails.contract().symbol()+"], ["+contractDetails.contract().secType()+"], ConId: ["+contractDetails.contract().conid()+"] @ ["+contractDetails.contract().exchange()+"]");
 		 _log.info("contractDetails:" + reqId);
 	}
 	/* 1. LECTURA DE DATOS --> INFORMACION ERROR, INTRODUCIMOS OBSERVACIONES 
 	 * 2. ORDENES , OPEN ORDERS...CLOSE ORDERS 
 	200 -->No security definition has been found for the request.	The specified contract does not match any in IB's database, usually because of an incorrect or missing parameter.
 	 */
+	/* 507 --> CIENT_ID IS INVALIDO */
 	@Override
-	public void error(int one, int two, String str) {
+	public void error(int reqId, int errorCode, String str) {
 	
 		StringBuilder _stbB = new StringBuilder();
-		_stbB.append(one);
+		_stbB.append(reqId);
 		_stbB.append("|");
-		_stbB.append(two);
+		_stbB.append(errorCode);
 		_stbB.append("|");
 		_stbB.append(str);				
 		
-		if (two>=0 && one>=0)  // errores operativa - lectura
+		if (errorCode==507)  // client_id invalidao, buscamos otro 
 		{
-			
-			java.sql.Timestamp FechaError = new Timestamp(Calendar.getInstance().getTimeInMillis());	    			
-			
+			 _log.info("Error :" + errorCode + ",reqId" + reqId + ",txt:" + str + ",clientid:" + _ConnectionCLIENTID) ;
+			/* OBTENEMOS EL CRON USADO DE LA TABLA  CON EL CLIENTID USADO, COMO TENEMOS 3 CRON, 
+			 * CLIENT_ID SERÁ EL CLIENT_ID MAS EL RESTO DEL CONFIGURATIONID DE LA CLAVE PRIMERARIO, AL SER 
+			 * SECUENCIALES LOS 3 CRON, NOS ASEGURAMOS DE SER DISTINTOS, HASTA UN MAXIMO DE 1024 INICIALMENTE    */
+			Config _conf = ConfigLocalServiceUtil.findByIsCronValue(Boolean.TRUE, String.valueOf(_ConnectionCLIENTID));			
+			if (_conf!=null)
+			{
+				Long  NewClientID = ConfigLocalServiceUtil.findByFreeCronClientId();
+				_conf.setValue(String.valueOf(NewClientID));
+				ConfigLocalServiceUtil.updateConfig(_conf);
+			}			
+
+
+		}		
+		if (errorCode>=0 && reqId>=0)  // errores operativa - lectura
+		{
+						
 			SimpleDateFormat sdf2 = new SimpleDateFormat();
 			sdf2.applyPattern("dd-MM-yyyy HH:mm:ss");
 			 
 			Position _ErrorPosition;
 			Share oErrorShare = null;
 			
-			_ErrorPosition = PositionLocalServiceUtil.fetchPosition(one);    			
+			_ErrorPosition = PositionLocalServiceUtil.fetchPosition(reqId);    			
 			
 			if (_ErrorPosition!=null && _ErrorPosition.IsPendingIn())  // error en una posicion dada abierta
 				/* HAY QUE MANDAR CANCEL A TWS */
 			{ 
 				
 				oErrorShare = ShareLocalServiceUtil.fetchShare(_ErrorPosition.getShareId());  
-				_log.info("error operativa : [" + one + "," + two + "," + str + "]");
+				_log.info("error operativa : [" + reqId + "," + errorCode + "," + str + "]");
 				_log.info("error order  : " + oErrorShare.getSymbol());
 				oErrorShare.setActive(Boolean.FALSE);// desactivamos lectura.
 				oErrorShare.setValidated_trader_provider(Boolean.FALSE);
@@ -226,7 +207,7 @@ public class TIMApiGITrader extends TIMApiWrapper {
 			else   // supuestamente error lectura de datos en tiempo real.
 				   // METEMOS EL 25-12-2013 un  job verificador que pide el contract detail con variable de estado asociada.		
 			{			
-				 _log.info("error lectura [HISTORICAL_DATA:  : [" + one + "," + two+ "," + str + "]");
+				 _log.info("error lectura [HISTORICAL_DATA:  : [" + reqId + "," + errorCode+ "," + str + "]");
 				
 				/* SIEMPRE VA A VER _ErrorOrder con errores de tiempo real.
 				 * TENEMOS UN PROBLEMA DE CONECTIVIDAD EN EL TICK --> PASA POR AQUI.
@@ -237,14 +218,14 @@ public class TIMApiGITrader extends TIMApiWrapper {
 				 * 1. JOB DE VERIFICACION PARA ANULAR LOS STOCKS INVALIDOS.
 				 * 2. DESCARGA DE TIEMPO REAL SOLO PARA FUTUROS POR LA RAZON ANTERIOR,. 
 				 * Filtramos los del CONTRACTDETAILS EXCLUSIVAMENTE. ES DECIR, ESTADO A ARRANCADO.
-				 * [Stopped,Requested, Ended, Received, Executing] y SI ES UN FUTURO.
+				 * [Stopped,Requested, Ended, Received, Executing] y SI ES UN FUTURO.z
 				 * _HISTORICAL_DATA_REQUEST "Executing" para controlar los errores  
 				 * 162	Historical market data Service error message.				
 				 * 165	Historical market Data Service query message.
 				 * 
 				 *   */															
-				IBOrder _ErrorOrder = IBOrderLocalServiceUtil.fetchIBOrder(one);
-				if (_ErrorOrder!=null && one!=-1)
+				IBOrder _ErrorOrder = IBOrderLocalServiceUtil.fetchIBOrder(reqId);
+				if (_ErrorOrder!=null && reqId!=-1)
 				{						
 					oErrorShare = ShareLocalServiceUtil.fetchShare(_ErrorOrder.getShareID());  					
 					if (oErrorShare!=null) 						
@@ -262,7 +243,7 @@ public class TIMApiGITrader extends TIMApiWrapper {
 		}
 		else // fin errores operativa - lectura. Conectividad 
 		{
-			error =   str + "[N. Error " + two + "]";
+			error =   str + "[N. Error " + errorCode + "]";
 			
 		}
 	 }
@@ -277,8 +258,9 @@ public class TIMApiGITrader extends TIMApiWrapper {
 		//! [connect]
 		//! [ereader]
 		
+		_log.info("Connecting to TWS with " + _ConnectionCLIENTID  + " clientID");
 		clientSocket.eConnect(_ConnectionHOST, _ConnectionPORT, _ConnectionCLIENTID);
-		
+		Thread.sleep(1000);
 		EReader reader2 = new EReader(clientSocket, readerSignal);   
 		
 		reader2.start();
@@ -296,7 +278,7 @@ public class TIMApiGITrader extends TIMApiWrapper {
 		    }
 		}).start();
 		
-		//TIMApiclientSocket.eConnect(_ConnectionHOST, _ConnectionPORT, _ConnectionCLIENTID);
+		Thread.sleep(1000);
 
 		
 	}
@@ -318,29 +300,32 @@ public class TIMApiGITrader extends TIMApiWrapper {
 	public static void main(String[] args) throws InterruptedException {
 			
 	
-	
-		
-		
-		//TIMApiGITrader oTWS = new TIMApiGITrader("127.0.0.1", 7497, 255);
-		TIMApiGITrader oTWS = new TIMApiGITrader();
-		
-
+		/*  TIMApiGITrader oTWS = new TIMApiGITrader();
 		oTWS.GITraderConnetToTWS();
 		Thread.sleep(1000);
-
+*/
 		Contract  _contractAPI3 =  new StkContract("AAPL");
 		_contractAPI3.symbol("AAPL");
 		_contractAPI3.secType("STK");
 		_contractAPI3.exchange("ISLAND");
 		_contractAPI3.currency("USD");
 		
-		oTWS.GITraderGetRealTimeContract(7000, _contractAPI3);
+	//	oTWS.GITraderGetRealTimeContract(7000, _contractAPI3);
 		
 		
-		Thread.sleep(10000);
+		Thread.sleep(1000);	
+		TIMApiGITrader oTWS = new TIMApiGITrader("127.0.0.1", 7497, 3,true);
 
 		
-		TIMApiWrapper wrapper = new TIMApiWrapper();
+		 if (oTWS.GITraderTWSIsConnected())  oTWS.GITraderDisconnectFromTWS();
+		 oTWS.GITraderConnetToTWS();		
+		Thread.sleep(1000);
+		oTWS.GITradergetContractDetails(10016, _contractAPI3);
+		//oTWS.getClient().reqContractDetails(4545, _contractAPI3);
+		Thread.sleep(1000);
+		oTWS.GITraderDisconnectFromTWS();
+		
+		/* TIMApiWrapper wrapper = new TIMApiWrapper();
 		final EClientSocket m_client = wrapper.getClient();
 		final EReaderSignal m_signal = wrapper.getSignal();
 		//! [connect]
@@ -363,12 +348,16 @@ public class TIMApiGITrader extends TIMApiWrapper {
 		        }
 		    }
 		}).start();
+		
+		
+		m_client.reqContractDetails(4545, _contractAPI3);*/
 		//! [ereader]
 		// A pause to give the application time to establish the connection
 		// In a production application, it would be best to wait for callbacks to confirm the connection is complete
 
-		
-		
+		/* m_client.reqMarketDataType(3);
+		m_client.reqMktData(5004, _contractAPI3,"", false, false,null); //false
+		*/
 		
 	/* 	Contract contract = new Contract();
 		contract.symbol("DAX");
@@ -416,9 +405,7 @@ public class TIMApiGITrader extends TIMApiWrapper {
 	 	_APIGTrader.GITraderGetRealTimeContract(1002, _contractAPI2);
 		_APIGTrader.GITraderGetRealTimeContract(1003, _contractAPI);*/
 		
-		m_client.reqContractDetails(4003, _contractAPI3);
-		m_client.reqMarketDataType(3);
-		m_client.reqMktData(5004, _contractAPI3,"", false, false,null); //false
+		
 		//_APIGTrader.
 		
 		//m_client.reqMktData(18006, _contractAPI5, "", false, false, null);
@@ -442,7 +429,7 @@ public class TIMApiGITrader extends TIMApiWrapper {
 		//continuousFuturesOperations(wrapper.getClient());
 
 		Thread.sleep(100000);
-		m_client.eDisconnect();
+		//m_client.eDisconnect();
 
 		
 /* 
@@ -511,6 +498,13 @@ public class TIMApiGITrader extends TIMApiWrapper {
 			
 			}
 			
+	}
+
+	@Override
+	public void nextValidId(int orderId) {
+		// TODO Auto-generated method stub
+		 _log.debug("GITrader, nextValidId" + orderId);
+		super.nextValidId(orderId);
 	}
 	
 	/* private  void connect(int clientId) {

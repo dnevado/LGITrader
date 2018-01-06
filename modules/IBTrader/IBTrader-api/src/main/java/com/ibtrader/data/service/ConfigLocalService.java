@@ -114,6 +114,8 @@ public interface ConfigLocalService extends BaseLocalService,
 	public Config fetchConfigByUuidAndGroupId(java.lang.String uuid,
 		long groupId);
 
+	public Config findByIsCronValue(boolean isCron, java.lang.String value);
+
 	public Config findByKeyCompanyGroup(java.lang.String _key, long _company,
 		long _group);
 
@@ -179,6 +181,8 @@ public interface ConfigLocalService extends BaseLocalService,
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getConfigsCount();
+
+	public java.lang.Long findByFreeCronClientId();
 
 	/**
 	* Returns the OSGi service identifier.

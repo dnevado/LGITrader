@@ -167,6 +167,7 @@
 		<column name="createDate" type="Date" />
 		<column name="modifiedDate" type="Date" />
 		<column name="globaldefault" type="boolean" />
+		<column name="iscron" type="boolean" />
 
 		<!-- Other fields -->
 
@@ -181,6 +182,10 @@
 		<finder name="KeyGlobalDefault" return-type="Collection">		
 			<finder-column name="config_key" />
 			<finder-column name="globaldefault" />			
+		</finder>
+		<finder name="IsCronValue"  return-type="Config">
+			<finder-column name="iscron" />		
+			<finder-column name="value" />
 		</finder>
 		
 
@@ -253,6 +258,13 @@
 		<column name="orderID" type="long" />
 		<column name="shareID" type="long" />
 		<column name="checked" type="boolean" />
+		
+		<!--  SI HAY MARKET DATA SUSCRITA PREVIA --> 
+		<finder name="ShareIdCompanyGroup" return-type="IBOrder">
+			<finder-column name="shareID"/>		
+			<finder-column name="companyId"/>		
+			<finder-column name="groupId"/>							
+		</finder>
 		
 		<!-- Other fields -->
 	</entity>

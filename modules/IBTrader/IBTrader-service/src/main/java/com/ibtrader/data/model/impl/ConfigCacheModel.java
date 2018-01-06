@@ -65,7 +65,7 @@ public class ConfigCacheModel implements CacheModel<Config>, Externalizable {
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(23);
+		StringBundler sb = new StringBundler(25);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -85,6 +85,8 @@ public class ConfigCacheModel implements CacheModel<Config>, Externalizable {
 		sb.append(modifiedDate);
 		sb.append(", globaldefault=");
 		sb.append(globaldefault);
+		sb.append(", iscron=");
+		sb.append(iscron);
 		sb.append(", config_key=");
 		sb.append(config_key);
 		sb.append(", description=");
@@ -138,6 +140,7 @@ public class ConfigCacheModel implements CacheModel<Config>, Externalizable {
 		}
 
 		configImpl.setGlobaldefault(globaldefault);
+		configImpl.setIscron(iscron);
 
 		if (config_key == null) {
 			configImpl.setConfig_key(StringPool.BLANK);
@@ -173,6 +176,8 @@ public class ConfigCacheModel implements CacheModel<Config>, Externalizable {
 		modifiedDate = objectInput.readLong();
 
 		globaldefault = objectInput.readBoolean();
+
+		iscron = objectInput.readBoolean();
 		config_key = objectInput.readUTF();
 		description = objectInput.readUTF();
 	}
@@ -212,6 +217,8 @@ public class ConfigCacheModel implements CacheModel<Config>, Externalizable {
 
 		objectOutput.writeBoolean(globaldefault);
 
+		objectOutput.writeBoolean(iscron);
+
 		if (config_key == null) {
 			objectOutput.writeUTF(StringPool.BLANK);
 		}
@@ -236,6 +243,7 @@ public class ConfigCacheModel implements CacheModel<Config>, Externalizable {
 	public long createDate;
 	public long modifiedDate;
 	public boolean globaldefault;
+	public boolean iscron;
 	public String config_key;
 	public String description;
 }

@@ -8,6 +8,7 @@ create table ibtrader_Config (
 	createDate DATE null,
 	modifiedDate DATE null,
 	globaldefault BOOLEAN,
+	iscron BOOLEAN,
 	config_key VARCHAR(75) null,
 	description VARCHAR(75) null
 );
@@ -110,7 +111,7 @@ create table ibtrader_Share (
 	percentual_stop_profit DOUBLE,
 	percentual_stop_profit_position DOUBLE,
 	expiry_date DATE null,
-	expiry_expression VARCHAR(75) null,
+	expiry_expression TEXT null,
 	tick_futures DOUBLE,
 	multiplier LONG,
 	security_type VARCHAR(75) null,

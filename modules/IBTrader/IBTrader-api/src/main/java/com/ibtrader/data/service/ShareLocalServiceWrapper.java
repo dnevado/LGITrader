@@ -295,6 +295,12 @@ public class ShareLocalServiceWrapper implements ShareLocalService,
 	}
 
 	@Override
+	public java.util.List<com.ibtrader.data.model.Share> findByActiveFuturesDates(
+		boolean _active) {
+		return _shareLocalService.findByActiveFuturesDates(_active);
+	}
+
+	@Override
 	public java.util.List<com.ibtrader.data.model.Share> findByActiveMarketGroupCompany(
 		long _marketId, boolean _active, long groupId, long companyId) {
 		return _shareLocalService.findByActiveMarketGroupCompany(_marketId,

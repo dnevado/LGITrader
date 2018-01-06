@@ -62,6 +62,28 @@ public class ShareLocalServiceImpl extends ShareLocalServiceBaseImpl {
 		return getSharePersistence().findByActiveMarketGroupCompany(groupId, companyId,_active, _marketId);
 	}
 	
+	public List<Share> findByActiveFuturesDates(boolean _active)
+	{
+		DynamicQuery _DQ = shareLocalService.dynamicQuery();
+		
+		Date _today = new Date();
+		_today.setHours(0);
+		_today.setMinutes(0);
+		_today.setSeconds(0);
+		
+		_DQ.add(RestrictionsFactoryUtil.eq("active", _active));
+		_DQ.add(RestrictionsFactoryUtil.eq("security_type", ConfigKeys.SECURITY_TYPE_FUTUROS));
+		_DQ.add(RestrictionsFactoryUtil.le("expiry_date", _today));
+		
+		/*
+		 * al editarlo, 
+		 * share.setDate_contract_verified(null);  // para verificarlo de nuevo
+		    share.setValidated_trader_provider(Boolean.FALSE);
+		*/
+		
+		return shareLocalService.dynamicQuery(_DQ);
+	}
+	
 	public List<Share> findByValidatedTraderProviderMarketGroupCompany(long marketId, long groupId, long companyId)
 	{
 		DynamicQuery _DQ = shareLocalService.dynamicQuery();
@@ -169,6 +191,7 @@ public class ShareLocalServiceImpl extends ShareLocalServiceBaseImpl {
 		_share.setPercentual_stop_profit(share.getPercentual_stop_profit());
 		_share.setCompanyId(share.getCompanyId());
 		_share.setGroupId(share.getGroupId());
+		_share.setExpiry_expression(share.getExpiry_expression());
 		_share.setExpiry_date(share.getExpiry_date());
 		_share.setMultiplier(share.getMultiplier());
 		_share.setTick_futures(share.getTick_futures());
@@ -184,7 +207,7 @@ public class ShareLocalServiceImpl extends ShareLocalServiceBaseImpl {
 		sharePersistence.update(_share);
 		   
 	   
-	    return share;
+	    return _share;
 	}
 	
 	public Share editShare(Share share, ServiceContext serviceContext) throws PortalException   {

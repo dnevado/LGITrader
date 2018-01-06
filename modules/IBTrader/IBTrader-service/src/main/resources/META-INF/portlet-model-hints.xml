@@ -11,6 +11,7 @@
 		<field name="createDate" type="Date" />
 		<field name="modifiedDate" type="Date" />
 		<field name="globaldefault" type="boolean" />
+		<field name="iscron" type="boolean" />
 		<field name="config_key" type="String" />
 		<field name="description" type="String" />
 	</model>
@@ -108,7 +109,9 @@
 		<field name="percentual_stop_profit" type="double" />
 		<field name="percentual_stop_profit_position" type="double" />
 		<field name="expiry_date" type="Date" />
-		<field name="expiry_expression" type="String" />
+		<field name="expiry_expression" type="String">
+			<hint-collection name="CLOB" />
+		</field>
 		<field name="tick_futures" type="double" />
 		<field name="multiplier" type="long" />
 		<field name="security_type" type="String" />

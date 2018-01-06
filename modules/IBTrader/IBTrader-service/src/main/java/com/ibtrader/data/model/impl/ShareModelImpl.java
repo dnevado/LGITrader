@@ -84,7 +84,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 			{ "percentual_stop_profit", Types.DOUBLE },
 			{ "percentual_stop_profit_position", Types.DOUBLE },
 			{ "expiry_date", Types.TIMESTAMP },
-			{ "expiry_expression", Types.VARCHAR },
+			{ "expiry_expression", Types.CLOB },
 			{ "tick_futures", Types.DOUBLE },
 			{ "multiplier", Types.BIGINT },
 			{ "security_type", Types.VARCHAR },
@@ -114,7 +114,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		TABLE_COLUMNS_MAP.put("percentual_stop_profit", Types.DOUBLE);
 		TABLE_COLUMNS_MAP.put("percentual_stop_profit_position", Types.DOUBLE);
 		TABLE_COLUMNS_MAP.put("expiry_date", Types.TIMESTAMP);
-		TABLE_COLUMNS_MAP.put("expiry_expression", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("expiry_expression", Types.CLOB);
 		TABLE_COLUMNS_MAP.put("tick_futures", Types.DOUBLE);
 		TABLE_COLUMNS_MAP.put("multiplier", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("security_type", Types.VARCHAR);
@@ -127,7 +127,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		TABLE_COLUMNS_MAP.put("last_error_trader_provider", Types.CLOB);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table ibtrader_Share (uuid_ VARCHAR(75) null,shareId LONG not null primary key,name VARCHAR(75) null,symbol VARCHAR(75) null,groupId LONG,companyId LONG,createDate DATE null,modifiedDate DATE null,active_ BOOLEAN,numbertopurchase LONG,percentual_limit_buy DOUBLE,percentual_stop_lost DOUBLE,percentual_stop_profit DOUBLE,percentual_stop_profit_position DOUBLE,expiry_date DATE null,expiry_expression VARCHAR(75) null,tick_futures DOUBLE,multiplier LONG,security_type VARCHAR(75) null,exchange VARCHAR(75) null,primary_exchange VARCHAR(75) null,userCreatedId LONG,marketId LONG,validated_trader_provider BOOLEAN,date_validated_trader_provider DATE null,last_error_trader_provider TEXT null)";
+	public static final String TABLE_SQL_CREATE = "create table ibtrader_Share (uuid_ VARCHAR(75) null,shareId LONG not null primary key,name VARCHAR(75) null,symbol VARCHAR(75) null,groupId LONG,companyId LONG,createDate DATE null,modifiedDate DATE null,active_ BOOLEAN,numbertopurchase LONG,percentual_limit_buy DOUBLE,percentual_stop_lost DOUBLE,percentual_stop_profit DOUBLE,percentual_stop_profit_position DOUBLE,expiry_date DATE null,expiry_expression TEXT null,tick_futures DOUBLE,multiplier LONG,security_type VARCHAR(75) null,exchange VARCHAR(75) null,primary_exchange VARCHAR(75) null,userCreatedId LONG,marketId LONG,validated_trader_provider BOOLEAN,date_validated_trader_provider DATE null,last_error_trader_provider TEXT null)";
 	public static final String TABLE_SQL_DROP = "drop table ibtrader_Share";
 	public static final String ORDER_BY_JPQL = " ORDER BY share.shareId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY ibtrader_Share.shareId ASC";

@@ -107,6 +107,7 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
 		String redirect = ParamUtil.getString(renderRequest, "redirect");
 		HttpServletRequest _hR = PortalUtil.getHttpServletRequest(renderRequest);
 		
+		_log.info("Rendering porltlet MVCCOMMANDNAME...");
 	    String _mvcCommand = "";
 	    
 	    List<Market> _lMarket=null;
@@ -117,12 +118,14 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
         Share share = null;
         List<ExpandoColumn> ExpandoColumns=null;
         JSONObject  jsonStrategyShareParams =null;
+        JSONObject  jsonFutureParams =null;
+        
 		
 	    try {
 	        ServiceContext serviceContext = ServiceContextFactory.getInstance(Share.class.getName(), renderRequest);
 	      
 	        
-
+	        Share  shareTemp= (Share) renderRequest.getAttribute("share");
 	        long shareId = ParamUtil.getLong(renderRequest, "shareId");
 	        long strategyId = ParamUtil.getLong(renderRequest, "strategyId");
 	        long marketId = ParamUtil.getLong(renderRequest, "marketId");
@@ -143,6 +146,8 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
 	        		 _lMarket = _marketLocalService.findByActiveCompanyGroup(themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId(), Boolean.TRUE);
 	        		// share = _shareLocalService.fetchShare(shareId);
 		        	 renderResponse.setTitle((share != null) ? share.getName() :  LanguageUtil.get(_hR, "share.addshare"));
+		        	 if (share!=null &&  share.getExpiry_expression()!=null && !share.getExpiry_expression().equals("")) 
+		        		 jsonFutureParams = JSONFactoryUtil.createJSONObject(share.getExpiry_expression());
 	        }
 	        if (_mvcCommand.equals("/html/view_strategyshare"))	  
 	        {
@@ -168,7 +173,7 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
 				if (strategyId>0 && shareId>0)
 				{
 					StrategyShare _strategyshare = StrategyShareLocalServiceUtil.getByCommpanyShareStrategyId(serviceContext.getScopeGroupId(), serviceContext.getCompanyId(), shareId, strategyId);
-					jsonStrategyShareParams = JSONFactoryUtil.createJSONObject(_strategyshare.getStrategyparamsoverride());					
+					jsonStrategyShareParams = JSONFactoryUtil.createJSONObject(_strategyshare.getStrategyparamsoverride());													
 					/* EXPANDOS PARA PINTAR */
 				}
 			//	ExpandoColumns = _strategyImpl.get
@@ -206,6 +211,7 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
 	        renderRequest.setAttribute("implemented_strategy", _strategyImpl);
 	        renderRequest.setAttribute("tab_selected", tab_selected);	        
 	        renderRequest.setAttribute("jsonStrategyShareParams", jsonStrategyShareParams);
+	        renderRequest.setAttribute("jsonFutureParams", jsonFutureParams);	        
 	        renderRequest.setAttribute("marketId", marketId);
 	        
 	        

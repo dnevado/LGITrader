@@ -572,44 +572,28 @@ public class Utilities {
     {
     	SimpleDateFormat sdfLONG = new SimpleDateFormat();
     	SimpleDateFormat sdfSHORT = new SimpleDateFormat();
-    	
-    	int j=0;
-    	
     	SimpleDateFormat sdfSorted = new SimpleDateFormat();
-    	
     	sdfLONG.applyPattern(_IBTRADER_FUTURE_LONG_DATE);
-    	sdfSHORT.applyPattern(_IBTRADER_FUTURE_SHORT_DATE);
-    	
+    	sdfSHORT.applyPattern(_IBTRADER_FUTURE_SHORT_DATE);    	
     	sdfSorted.applyPattern(_IBTRADER_FUTURE_DATE_SORTED);
-    	
-    	
-       	//_getActiveFutureDate("1, 4, 6","5","3");
-    	
-    	
     	Calendar _Today = Calendar.getInstance();
     	
-    	_Today.setTimeInMillis(_FutureDate.getTimeInMillis());
-    	
-    	
+    	_Today.setTimeInMillis(_FutureDate.getTimeInMillis());    	    
     	int [] _years = {_Today.get(Calendar.YEAR), _Today.get(Calendar.YEAR) +1}; 
-    	
-    	
-    	
     	TreeSet<String> _FutDate = new TreeSet<String>();
     	/* Pregeneramos los intervalos en funcion de los meses que se nos pasa del año actual y del siguiente */
-    	
     	for (int y=0;y<_years.length;y++)
     	{
     		String[] aMonths= Months.split(",");
 	    	for (int k=0;k<aMonths.length;k++)
 	    	{
+	    		
 	    		Calendar _fdate = _Today;
+	    		_fdate.setMinimalDaysInFirstWeek(1);
 	    		_fdate.set(Calendar.YEAR, _years[y]);  // SPAIN MONDAY
 	    		_fdate.set(Calendar.DAY_OF_WEEK, Integer.parseInt(DayOfWeek));  // SPAIN MONDAY
-	    		_fdate.set(Calendar.MONTH, Integer.parseInt(aMonths[k].trim())-1);  // months -1
+	    		_fdate.set(Calendar.MONTH, Integer.parseInt(aMonths[k].trim()));  // months -1
 	    		_fdate.set(Calendar.WEEK_OF_MONTH, Integer.parseInt(WeekMonth));  // months -1	    		
-	    		
-	    		
 	    		_FutDate.add(sdfSorted.format(_fdate.getTime()));
 	    	}
     	
@@ -619,7 +603,7 @@ public class Utilities {
     	if (_DateSortedValue!=null)    		
     	{
     		// from yyyy/mm/dd    		
-    		try {
+    		try {	
 				_DateRetValue = sdfSorted.parse(_DateSortedValue);
 				if (ShortLongFormat.equals("L"))					
 					return sdfLONG.format(_DateRetValue);

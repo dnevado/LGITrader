@@ -99,6 +99,12 @@ public class ConfigLocalServiceWrapper implements ConfigLocalService,
 	}
 
 	@Override
+	public com.ibtrader.data.model.Config findByIsCronValue(boolean isCron,
+		java.lang.String value) {
+		return _configLocalService.findByIsCronValue(isCron, value);
+	}
+
+	@Override
 	public com.ibtrader.data.model.Config findByKeyCompanyGroup(
 		java.lang.String _key, long _company, long _group) {
 		return _configLocalService.findByKeyCompanyGroup(_key, _company, _group);
@@ -190,6 +196,11 @@ public class ConfigLocalServiceWrapper implements ConfigLocalService,
 	@Override
 	public int getConfigsCount() {
 		return _configLocalService.getConfigsCount();
+	}
+
+	@Override
+	public java.lang.Long findByFreeCronClientId() {
+		return _configLocalService.findByFreeCronClientId();
 	}
 
 	/**

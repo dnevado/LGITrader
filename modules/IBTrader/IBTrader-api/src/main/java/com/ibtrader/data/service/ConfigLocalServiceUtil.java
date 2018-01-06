@@ -102,6 +102,11 @@ public class ConfigLocalServiceUtil {
 		return getService().fetchConfigByUuidAndGroupId(uuid, groupId);
 	}
 
+	public static com.ibtrader.data.model.Config findByIsCronValue(
+		boolean isCron, java.lang.String value) {
+		return getService().findByIsCronValue(isCron, value);
+	}
+
 	public static com.ibtrader.data.model.Config findByKeyCompanyGroup(
 		java.lang.String _key, long _company, long _group) {
 		return getService().findByKeyCompanyGroup(_key, _company, _group);
@@ -183,6 +188,10 @@ public class ConfigLocalServiceUtil {
 	*/
 	public static int getConfigsCount() {
 		return getService().getConfigsCount();
+	}
+
+	public static java.lang.Long findByFreeCronClientId() {
+		return getService().findByFreeCronClientId();
 	}
 
 	/**

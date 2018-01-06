@@ -759,6 +759,70 @@ public class ConfigUtil {
 	}
 
 	/**
+	* Returns the config where iscron = &#63; and value = &#63; or throws a {@link NoSuchConfigException} if it could not be found.
+	*
+	* @param iscron the iscron
+	* @param value the value
+	* @return the matching config
+	* @throws NoSuchConfigException if a matching config could not be found
+	*/
+	public static Config findByIsCronValue(boolean iscron,
+		java.lang.String value)
+		throws com.ibtrader.data.exception.NoSuchConfigException {
+		return getPersistence().findByIsCronValue(iscron, value);
+	}
+
+	/**
+	* Returns the config where iscron = &#63; and value = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	*
+	* @param iscron the iscron
+	* @param value the value
+	* @return the matching config, or <code>null</code> if a matching config could not be found
+	*/
+	public static Config fetchByIsCronValue(boolean iscron,
+		java.lang.String value) {
+		return getPersistence().fetchByIsCronValue(iscron, value);
+	}
+
+	/**
+	* Returns the config where iscron = &#63; and value = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	*
+	* @param iscron the iscron
+	* @param value the value
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the matching config, or <code>null</code> if a matching config could not be found
+	*/
+	public static Config fetchByIsCronValue(boolean iscron,
+		java.lang.String value, boolean retrieveFromCache) {
+		return getPersistence()
+				   .fetchByIsCronValue(iscron, value, retrieveFromCache);
+	}
+
+	/**
+	* Removes the config where iscron = &#63; and value = &#63; from the database.
+	*
+	* @param iscron the iscron
+	* @param value the value
+	* @return the config that was removed
+	*/
+	public static Config removeByIsCronValue(boolean iscron,
+		java.lang.String value)
+		throws com.ibtrader.data.exception.NoSuchConfigException {
+		return getPersistence().removeByIsCronValue(iscron, value);
+	}
+
+	/**
+	* Returns the number of configs where iscron = &#63; and value = &#63;.
+	*
+	* @param iscron the iscron
+	* @param value the value
+	* @return the number of matching configs
+	*/
+	public static int countByIsCronValue(boolean iscron, java.lang.String value) {
+		return getPersistence().countByIsCronValue(iscron, value);
+	}
+
+	/**
 	* Caches the config in the entity cache if it is enabled.
 	*
 	* @param config the config

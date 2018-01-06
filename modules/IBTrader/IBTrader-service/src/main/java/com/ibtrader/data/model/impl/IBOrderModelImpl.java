@@ -104,8 +104,9 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 			true);
 	public static final long COMPANYID_COLUMN_BITMASK = 1L;
 	public static final long GROUPID_COLUMN_BITMASK = 2L;
-	public static final long UUID_COLUMN_BITMASK = 4L;
-	public static final long ORDERSID_COLUMN_BITMASK = 8L;
+	public static final long SHAREID_COLUMN_BITMASK = 4L;
+	public static final long UUID_COLUMN_BITMASK = 8L;
+	public static final long ORDERSID_COLUMN_BITMASK = 16L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -350,7 +351,19 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 
 	@Override
 	public void setShareID(long shareID) {
+		_columnBitmask |= SHAREID_COLUMN_BITMASK;
+
+		if (!_setOriginalShareID) {
+			_setOriginalShareID = true;
+
+			_originalShareID = _shareID;
+		}
+
 		_shareID = shareID;
+	}
+
+	public long getOriginalShareID() {
+		return _originalShareID;
 	}
 
 	@JSON
@@ -480,6 +493,10 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 
 		ibOrderModelImpl._setOriginalCompanyId = false;
 
+		ibOrderModelImpl._originalShareID = ibOrderModelImpl._shareID;
+
+		ibOrderModelImpl._setOriginalShareID = false;
+
 		ibOrderModelImpl._columnBitmask = 0;
 	}
 
@@ -590,6 +607,8 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 	private boolean _setOriginalCompanyId;
 	private long _orderID;
 	private long _shareID;
+	private long _originalShareID;
+	private boolean _setOriginalShareID;
 	private boolean _checked;
 	private long _columnBitmask;
 	private IBOrder _escapedModel;

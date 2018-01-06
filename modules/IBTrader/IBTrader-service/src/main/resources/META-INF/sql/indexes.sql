@@ -1,9 +1,11 @@
 create index IX_7C9D33FE on ibtrader_Config (companyId, config_key[$COLUMN_LENGTH:75$]);
 create index IX_A132C258 on ibtrader_Config (companyId, groupId, config_key[$COLUMN_LENGTH:75$]);
 create index IX_279C27D8 on ibtrader_Config (config_key[$COLUMN_LENGTH:75$], globaldefault);
+create index IX_91075835 on ibtrader_Config (iscron, value[$COLUMN_LENGTH:75$]);
 create index IX_33B037F4 on ibtrader_Config (uuid_[$COLUMN_LENGTH:75$], companyId);
 create unique index IX_380E2B76 on ibtrader_Config (uuid_[$COLUMN_LENGTH:75$], groupId);
 
+create index IX_C752A169 on ibtrader_IBOrder (shareID, companyId, groupId);
 create index IX_273F8717 on ibtrader_IBOrder (uuid_[$COLUMN_LENGTH:75$], companyId);
 create unique index IX_45CE759 on ibtrader_IBOrder (uuid_[$COLUMN_LENGTH:75$], groupId);
 

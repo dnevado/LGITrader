@@ -15,6 +15,7 @@ import com.ibtrader.data.service.ShareLocalService;
 import com.ibtrader.data.service.StrategyLocalService;
 import com.ibtrader.data.service.StrategyShareLocalService;
 import com.ibtrader.data.service.StrategyShareLocalServiceUtil;
+import com.ibtrader.util.ConfigKeys;
 import com.ibtrader.util.Utilities;
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
@@ -23,6 +24,8 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
+import com.liferay.portal.kernel.portlet.LiferayPortletURL;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
@@ -30,6 +33,8 @@ import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringPool;
@@ -37,6 +42,7 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -48,6 +54,8 @@ import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.Portlet;
 import javax.portlet.PortletException;
+import javax.portlet.PortletRequest;
+import javax.portlet.PortletResponse;
 import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
@@ -148,9 +156,8 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 		Share editShare=null; 
 		boolean bEditMode=mvcPath.equals("editShare");
 		
-		
-		
-		
+		SimpleDateFormat sdfSHORT = new SimpleDateFormat();
+    	sdfSHORT.applyPattern(Utilities._IBTRADER_FUTURE_LONG_DATE);
 		String name = ParamUtil.getString(actionRequest,"name","");
 		String symbol = ParamUtil.getString(actionRequest,"symbol","");
 		String active = ParamUtil.getString(actionRequest,"active","");			
@@ -167,13 +174,20 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 		String exchange = ParamUtil.getString(actionRequest,"exchange","");
 		long marketId =  ParamUtil.getLong(actionRequest,"marketId",-1);
 		long shareId =  ParamUtil.getLong(actionRequest,"shareId",-1);
+		String[]  _expirationmonth = ParamUtil.getStringValues(actionRequest, "expirationmonth");
 		
-	
+		String expirationweek =  ParamUtil.getString(actionRequest,"expirationweek","");
+		String  expirationdayweek =  ParamUtil.getString(actionRequest,"expirationdayweek","");
+		
+		
+		String  expirationmonth = String.join(",", _expirationmonth);
 		boolean bNameOK = Validator.isAlphanumericName(name)  && name.length()<=75;
 		boolean bSymbolOK = Validator.isAlphanumericName(symbol)  && symbol.length()<=75;
 		boolean bExchangeOK = _shareLocalService.ExistsExchange(exchange);
 		boolean bPrimaryExchangeOK = _shareLocalService.ExistsPrimaryExchange(primary_exchange);		
 		boolean bSecurityOK = _shareLocalService.ExistsSecurityType(security_type);
+		boolean bFutureOK = security_type.equals(ConfigKeys.SECURITY_TYPE_STOCK) || (security_type.equals(ConfigKeys.SECURITY_TYPE_FUTUROS) && !expirationmonth.equals("")
+								&& !expirationweek.equals("") && !expirationdayweek.equals(""));
 		
 
 		try 
@@ -193,62 +207,80 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 				SessionErrors.add(actionRequest, "share.error.formatparameters");
 			}
 			else
-			{
-				/* shareid belongs to company? */				
-				/* exists by name or by simbol */
-				if (bEditMode)
+				if (!bFutureOK)
 				{
-					editShare = _shareLocalService.fetchShare(shareId);
-					
-				}
-				/* let update with no changes */
-				Share ShareFoundByName = _shareLocalService.findByNameMarketCompanyGroup(themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId(), name, marketId);
-				boolean bShareFoundByName =   ShareFoundByName!=null && (editShare==null || (editShare!=null && !name.equals(editShare.getName())));
-				Share ShareFoundBySymbol = _shareLocalService.findBySymbolCompanyGroup(themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId(), symbol);
-				boolean bShareFoundBySymbol =   ShareFoundBySymbol!=null &&  (editShare==null || editShare!=null && !symbol.equals(editShare.getSymbol()));
-				boolean bShareBelongsToCompany =  (editShare==null || (editShare!=null && editShare.getCompanyId()==themeDisplay.getCompanyId()));
-				if (bShareFoundByName  || bShareFoundBySymbol || !bShareBelongsToCompany)
-				{
-					validated=false;
-					SessionErrors.add(actionRequest, "share.error.exists");
+					validated=false;			
+					SessionErrors.add(actionRequest, "share.error.futuresparameters");
 				}
 				else
 				{
-					if (!bEditMode)
-						share = _shareLocalService.createShare(CounterLocalServiceUtil.increment(Share.class.getName()));
-					else
-						share = _shareLocalService.fetchShare(shareId);
-					share.setActive(active.equals("") ? Boolean.FALSE : Boolean.TRUE);
-					share.setName(name);
-					share.setSymbol(symbol);
-					share.setNumbertopurchase(numbertopurchase);
-					share.setPercentual_limit_buy(percentual_limit_buy);
-					share.setPercentual_stop_lost(percentual_stop_lost);
-					share.setPercentual_stop_profit(percentual_stop_profit);
-					share.setCompanyId(themeDisplay.getCompanyId());
-					share.setGroupId(themeDisplay.getScopeGroupId());
-				//	share.setPercentual_stop_profit(percentual_stop_profit);
-					
-					share.setExpiry_date(expiry_date);
-					share.setMultiplier(multiplier);
-					share.setTick_futures(tick_futures);
-					share.setSecurity_type(security_type);					
-					share.setPrimary_exchange(primary_exchange);
-					share.setExchange(exchange);
-					share.setMarketId(marketId);
-					
-					
-					if (!bEditMode)
-						share.setCreateDate(new Date());
+					/* shareid belongs to company? */				
+					/* exists by name or by simbol */
+					if (bEditMode)
+					{
+						editShare = _shareLocalService.fetchShare(shareId);
+						
+					}
+					/* let update with no changes */
+					Share ShareFoundByName = _shareLocalService.findByNameMarketCompanyGroup(themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId(), name, marketId);
+					boolean bShareFoundByName =   ShareFoundByName!=null && (editShare==null || (editShare!=null && !name.equals(editShare.getName())));
+					Share ShareFoundBySymbol = _shareLocalService.findBySymbolCompanyGroup(themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId(), symbol);
+					boolean bShareFoundBySymbol =   ShareFoundBySymbol!=null &&  (editShare==null || editShare!=null && !symbol.equals(editShare.getSymbol()));
+					boolean bShareBelongsToCompany =  (editShare==null || (editShare!=null && editShare.getCompanyId()==themeDisplay.getCompanyId()));
+					if (bShareFoundByName  || bShareFoundBySymbol || !bShareBelongsToCompany)
+					{
+						validated=false;
+						SessionErrors.add(actionRequest, "share.error.exists");
+					}
 					else
 					{
-						share.setDate_validated_trader_provider(null);  // para verificarlo de nuevo
-						share.setValidated_trader_provider(Boolean.FALSE);
+						if (!bEditMode)
+							share = _shareLocalService.createShare(CounterLocalServiceUtil.increment(Share.class.getName()));
+						else
+							share = _shareLocalService.fetchShare(shareId);
+						share.setActive(active.equals("") ? Boolean.FALSE : Boolean.TRUE);
+						share.setName(name);
+						share.setSymbol(symbol);
+						share.setNumbertopurchase(numbertopurchase);
+						share.setPercentual_limit_buy(percentual_limit_buy);
+						share.setPercentual_stop_lost(percentual_stop_lost);
+						share.setPercentual_stop_profit(percentual_stop_profit);
+						share.setCompanyId(themeDisplay.getCompanyId());
+						share.setGroupId(themeDisplay.getScopeGroupId());
+					//	share.setPercentual_stop_profit(percentual_stop_profit);
+						
+						share.setExpiry_date(expiry_date);
+						share.setMultiplier(multiplier);
+						share.setTick_futures(tick_futures);
+						share.setSecurity_type(security_type);					
+						share.setPrimary_exchange(primary_exchange);
+						share.setExchange(exchange);
+						share.setMarketId(marketId);
+						
+						JSONObject  jsonFutureShareParams = JSONFactoryUtil.createJSONObject();
+						if (security_type.equals(ConfigKeys.SECURITY_TYPE_FUTUROS))						
+						{					
+							jsonFutureShareParams.put("expirationmonth", expirationmonth.toString());
+							jsonFutureShareParams.put("expirationweek", expirationweek);	
+							jsonFutureShareParams.put("expirationdayweek", expirationdayweek);
+							share.setExpiry_expression(jsonFutureShareParams.toString());
+							share.setExpiry_date(sdfSHORT.parse(Utilities.getActiveFutureDate(expirationmonth.toString(), expirationdayweek, expirationweek)));
+							
+						}
+						else
+							share.setExpiry_expression(null);
+						/* GENERAMOS EL JSON CON LOS DATOS DEL FUTURO   */					
+						if (!bEditMode)
+							share.setCreateDate(new Date());
+						else
+						{
+							share.setDate_validated_trader_provider(null);  // para verificarlo de nuevo
+							share.setValidated_trader_provider(Boolean.FALSE);
+						}
+						share.setModifiedDate(new Date());
+						share.setUserCreatedId(themeDisplay.getUserId());
 					}
-					share.setModifiedDate(new Date());
-					share.setUserCreatedId(themeDisplay.getUserId());
 				}
-			}
 		}  // end if inicial
 		
 		} // end try 
@@ -601,7 +633,7 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
+		long shareId =  ParamUtil.getLong(actionRequest,"shareId",-1);
 		boolean validated = ValidateDataShare(actionRequest);
 		
 		try 
@@ -618,8 +650,9 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 		}
 		
 		actionResponse.setRenderParameter("mvcRenderCommandName", "/html/add_edit_share");
-		actionResponse.setRenderParameter("shareId", String.valueOf(share.getShareId()));		
+		actionResponse.setRenderParameter("shareId", String.valueOf(shareId));		
 		actionResponse.setRenderParameter("tab", "share.details");
+		
 		
 	}
 	
@@ -628,6 +661,7 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 		// TODO Auto-generated method stub
 		
 		themeDisplay = (ThemeDisplay)actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
+		long _retShareId = -1;
 		
 		ServiceContext serviceContext = null;
 		try {
@@ -638,7 +672,7 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 		}
 
 		boolean validated = ValidateDataShare(actionRequest);
-		
+		 JSONObject  jsonFutureParams =null;
 		
 		try 
 		{
@@ -646,6 +680,9 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 				{
 					share = _shareLocalService.addShare(share,serviceContext );
 					SessionMessages.add(actionRequest, "share.success");
+					_retShareId  = share.getShareId();
+					 if (share.getExpiry_expression()!=null && !share.getExpiry_expression().equals("")) 
+		        		 jsonFutureParams = JSONFactoryUtil.createJSONObject(share.getExpiry_expression());
 				}
 		}				
 		catch (Exception e)
@@ -653,9 +690,33 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 			SessionErrors.add(actionRequest, "share.error.missingparameters");
 		}
 		
-		actionResponse.setRenderParameter("mvcRenderCommandName", "/html/add_edit_share");
-		actionResponse.setRenderParameter("shareId", String.valueOf(share.getShareId()));
-		actionResponse.setRenderParameter("tab", "hare.details");
+		
+		PortalUtil.copyRequestParameters(actionRequest, actionResponse);
+
+		/* actionResponse.setRenderParameter("mvcRenderCommandName", "/html/add_edit_share");
+		actionResponse.setRenderParameter("shareId", String.valueOf(_retShareId));
+		actionResponse.setRenderParameter("tab", "share.details");
+		*/
+		String portletId = IBTraderSharemarketadminWebPortletKeys.IBTraderSharemarketadminWeb;
+         
+        ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
+         
+        PortletResponse portletResponse = (PortletResponse) actionRequest.getAttribute(JavaConstants.JAVAX_PORTLET_RESPONSE);
+        LiferayPortletResponse liferayPortletResponse = PortalUtil.getLiferayPortletResponse(portletResponse);
+ 
+        LiferayPortletURL renderUrl = liferayPortletResponse.createLiferayPortletURL(themeDisplay.getPlid(), portletId, PortletRequest.RENDER_PHASE);
+
+        renderUrl.setCopyCurrentRenderParameters(true);
+        renderUrl.setParameter("mvcRenderCommandName", "/html/add_edit_share");
+        renderUrl.setParameter("shareId", String.valueOf(_retShareId));
+        renderUrl.setParameter("tab", "share.details");
+        actionRequest.setAttribute("share", share);
+
+        try {
+            actionResponse.sendRedirect(renderUrl.toString());
+        } catch (Exception e) {
+            // handle error
+        }
 		
 
 		

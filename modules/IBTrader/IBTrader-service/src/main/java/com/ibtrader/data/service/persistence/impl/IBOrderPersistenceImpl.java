@@ -38,6 +38,7 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.spring.extender.service.ServiceReference;
@@ -1466,6 +1467,264 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	private static final String _FINDER_COLUMN_UUID_C_UUID_2 = "ibOrder.uuid = ? AND ";
 	private static final String _FINDER_COLUMN_UUID_C_UUID_3 = "(ibOrder.uuid IS NULL OR ibOrder.uuid = '') AND ";
 	private static final String _FINDER_COLUMN_UUID_C_COMPANYID_2 = "ibOrder.companyId = ?";
+	public static final FinderPath FINDER_PATH_FETCH_BY_SHAREIDCOMPANYGROUP = new FinderPath(IBOrderModelImpl.ENTITY_CACHE_ENABLED,
+			IBOrderModelImpl.FINDER_CACHE_ENABLED, IBOrderImpl.class,
+			FINDER_CLASS_NAME_ENTITY, "fetchByShareIdCompanyGroup",
+			new String[] {
+				Long.class.getName(), Long.class.getName(), Long.class.getName()
+			},
+			IBOrderModelImpl.SHAREID_COLUMN_BITMASK |
+			IBOrderModelImpl.COMPANYID_COLUMN_BITMASK |
+			IBOrderModelImpl.GROUPID_COLUMN_BITMASK);
+	public static final FinderPath FINDER_PATH_COUNT_BY_SHAREIDCOMPANYGROUP = new FinderPath(IBOrderModelImpl.ENTITY_CACHE_ENABLED,
+			IBOrderModelImpl.FINDER_CACHE_ENABLED, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"countByShareIdCompanyGroup",
+			new String[] {
+				Long.class.getName(), Long.class.getName(), Long.class.getName()
+			});
+
+	/**
+	 * Returns the i b order where shareID = &#63; and companyId = &#63; and groupId = &#63; or throws a {@link NoSuchIBOrderException} if it could not be found.
+	 *
+	 * @param shareID the share i d
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @return the matching i b order
+	 * @throws NoSuchIBOrderException if a matching i b order could not be found
+	 */
+	@Override
+	public IBOrder findByShareIdCompanyGroup(long shareID, long companyId,
+		long groupId) throws NoSuchIBOrderException {
+		IBOrder ibOrder = fetchByShareIdCompanyGroup(shareID, companyId, groupId);
+
+		if (ibOrder == null) {
+			StringBundler msg = new StringBundler(8);
+
+			msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+			msg.append("shareID=");
+			msg.append(shareID);
+
+			msg.append(", companyId=");
+			msg.append(companyId);
+
+			msg.append(", groupId=");
+			msg.append(groupId);
+
+			msg.append(StringPool.CLOSE_CURLY_BRACE);
+
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
+			}
+
+			throw new NoSuchIBOrderException(msg.toString());
+		}
+
+		return ibOrder;
+	}
+
+	/**
+	 * Returns the i b order where shareID = &#63; and companyId = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param shareID the share i d
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @return the matching i b order, or <code>null</code> if a matching i b order could not be found
+	 */
+	@Override
+	public IBOrder fetchByShareIdCompanyGroup(long shareID, long companyId,
+		long groupId) {
+		return fetchByShareIdCompanyGroup(shareID, companyId, groupId, true);
+	}
+
+	/**
+	 * Returns the i b order where shareID = &#63; and companyId = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	 *
+	 * @param shareID the share i d
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the matching i b order, or <code>null</code> if a matching i b order could not be found
+	 */
+	@Override
+	public IBOrder fetchByShareIdCompanyGroup(long shareID, long companyId,
+		long groupId, boolean retrieveFromCache) {
+		Object[] finderArgs = new Object[] { shareID, companyId, groupId };
+
+		Object result = null;
+
+		if (retrieveFromCache) {
+			result = finderCache.getResult(FINDER_PATH_FETCH_BY_SHAREIDCOMPANYGROUP,
+					finderArgs, this);
+		}
+
+		if (result instanceof IBOrder) {
+			IBOrder ibOrder = (IBOrder)result;
+
+			if ((shareID != ibOrder.getShareID()) ||
+					(companyId != ibOrder.getCompanyId()) ||
+					(groupId != ibOrder.getGroupId())) {
+				result = null;
+			}
+		}
+
+		if (result == null) {
+			StringBundler query = new StringBundler(5);
+
+			query.append(_SQL_SELECT_IBORDER_WHERE);
+
+			query.append(_FINDER_COLUMN_SHAREIDCOMPANYGROUP_SHAREID_2);
+
+			query.append(_FINDER_COLUMN_SHAREIDCOMPANYGROUP_COMPANYID_2);
+
+			query.append(_FINDER_COLUMN_SHAREIDCOMPANYGROUP_GROUPID_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(shareID);
+
+				qPos.add(companyId);
+
+				qPos.add(groupId);
+
+				List<IBOrder> list = q.list();
+
+				if (list.isEmpty()) {
+					finderCache.putResult(FINDER_PATH_FETCH_BY_SHAREIDCOMPANYGROUP,
+						finderArgs, list);
+				}
+				else {
+					if ((list.size() > 1) && _log.isWarnEnabled()) {
+						_log.warn(
+							"IBOrderPersistenceImpl.fetchByShareIdCompanyGroup(long, long, long, boolean) with parameters (" +
+							StringUtil.merge(finderArgs) +
+							") yields a result set with more than 1 result. This violates the logical unique restriction. There is no order guarantee on which result is returned by this finder.");
+					}
+
+					IBOrder ibOrder = list.get(0);
+
+					result = ibOrder;
+
+					cacheResult(ibOrder);
+
+					if ((ibOrder.getShareID() != shareID) ||
+							(ibOrder.getCompanyId() != companyId) ||
+							(ibOrder.getGroupId() != groupId)) {
+						finderCache.putResult(FINDER_PATH_FETCH_BY_SHAREIDCOMPANYGROUP,
+							finderArgs, ibOrder);
+					}
+				}
+			}
+			catch (Exception e) {
+				finderCache.removeResult(FINDER_PATH_FETCH_BY_SHAREIDCOMPANYGROUP,
+					finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		if (result instanceof List<?>) {
+			return null;
+		}
+		else {
+			return (IBOrder)result;
+		}
+	}
+
+	/**
+	 * Removes the i b order where shareID = &#63; and companyId = &#63; and groupId = &#63; from the database.
+	 *
+	 * @param shareID the share i d
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @return the i b order that was removed
+	 */
+	@Override
+	public IBOrder removeByShareIdCompanyGroup(long shareID, long companyId,
+		long groupId) throws NoSuchIBOrderException {
+		IBOrder ibOrder = findByShareIdCompanyGroup(shareID, companyId, groupId);
+
+		return remove(ibOrder);
+	}
+
+	/**
+	 * Returns the number of i b orders where shareID = &#63; and companyId = &#63; and groupId = &#63;.
+	 *
+	 * @param shareID the share i d
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @return the number of matching i b orders
+	 */
+	@Override
+	public int countByShareIdCompanyGroup(long shareID, long companyId,
+		long groupId) {
+		FinderPath finderPath = FINDER_PATH_COUNT_BY_SHAREIDCOMPANYGROUP;
+
+		Object[] finderArgs = new Object[] { shareID, companyId, groupId };
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(4);
+
+			query.append(_SQL_COUNT_IBORDER_WHERE);
+
+			query.append(_FINDER_COLUMN_SHAREIDCOMPANYGROUP_SHAREID_2);
+
+			query.append(_FINDER_COLUMN_SHAREIDCOMPANYGROUP_COMPANYID_2);
+
+			query.append(_FINDER_COLUMN_SHAREIDCOMPANYGROUP_GROUPID_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(shareID);
+
+				qPos.add(companyId);
+
+				qPos.add(groupId);
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_SHAREIDCOMPANYGROUP_SHAREID_2 = "ibOrder.shareID = ? AND ";
+	private static final String _FINDER_COLUMN_SHAREIDCOMPANYGROUP_COMPANYID_2 = "ibOrder.companyId = ? AND ";
+	private static final String _FINDER_COLUMN_SHAREIDCOMPANYGROUP_GROUPID_2 = "ibOrder.groupId = ?";
 
 	public IBOrderPersistenceImpl() {
 		setModelClass(IBOrder.class);
@@ -1483,6 +1742,12 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 
 		finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G,
 			new Object[] { ibOrder.getUuid(), ibOrder.getGroupId() }, ibOrder);
+
+		finderCache.putResult(FINDER_PATH_FETCH_BY_SHAREIDCOMPANYGROUP,
+			new Object[] {
+				ibOrder.getShareID(), ibOrder.getCompanyId(),
+				ibOrder.getGroupId()
+			}, ibOrder);
 
 		ibOrder.resetOriginalValues();
 	}
@@ -1563,6 +1828,17 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 				Long.valueOf(1));
 			finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
 				ibOrderModelImpl);
+
+			args = new Object[] {
+					ibOrderModelImpl.getShareID(),
+					ibOrderModelImpl.getCompanyId(),
+					ibOrderModelImpl.getGroupId()
+				};
+
+			finderCache.putResult(FINDER_PATH_COUNT_BY_SHAREIDCOMPANYGROUP,
+				args, Long.valueOf(1));
+			finderCache.putResult(FINDER_PATH_FETCH_BY_SHAREIDCOMPANYGROUP,
+				args, ibOrderModelImpl);
 		}
 		else {
 			if ((ibOrderModelImpl.getColumnBitmask() &
@@ -1576,6 +1852,20 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 					Long.valueOf(1));
 				finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
 					ibOrderModelImpl);
+			}
+
+			if ((ibOrderModelImpl.getColumnBitmask() &
+					FINDER_PATH_FETCH_BY_SHAREIDCOMPANYGROUP.getColumnBitmask()) != 0) {
+				Object[] args = new Object[] {
+						ibOrderModelImpl.getShareID(),
+						ibOrderModelImpl.getCompanyId(),
+						ibOrderModelImpl.getGroupId()
+					};
+
+				finderCache.putResult(FINDER_PATH_COUNT_BY_SHAREIDCOMPANYGROUP,
+					args, Long.valueOf(1));
+				finderCache.putResult(FINDER_PATH_FETCH_BY_SHAREIDCOMPANYGROUP,
+					args, ibOrderModelImpl);
 			}
 		}
 	}
@@ -1597,6 +1887,28 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 
 			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
 			finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
+		}
+
+		args = new Object[] {
+				ibOrderModelImpl.getShareID(), ibOrderModelImpl.getCompanyId(),
+				ibOrderModelImpl.getGroupId()
+			};
+
+		finderCache.removeResult(FINDER_PATH_COUNT_BY_SHAREIDCOMPANYGROUP, args);
+		finderCache.removeResult(FINDER_PATH_FETCH_BY_SHAREIDCOMPANYGROUP, args);
+
+		if ((ibOrderModelImpl.getColumnBitmask() &
+				FINDER_PATH_FETCH_BY_SHAREIDCOMPANYGROUP.getColumnBitmask()) != 0) {
+			args = new Object[] {
+					ibOrderModelImpl.getOriginalShareID(),
+					ibOrderModelImpl.getOriginalCompanyId(),
+					ibOrderModelImpl.getOriginalGroupId()
+				};
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_SHAREIDCOMPANYGROUP,
+				args);
+			finderCache.removeResult(FINDER_PATH_FETCH_BY_SHAREIDCOMPANYGROUP,
+				args);
 		}
 	}
 

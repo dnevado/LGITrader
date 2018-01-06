@@ -368,6 +368,63 @@ public interface IBOrderPersistence extends BasePersistence<IBOrder> {
 	public int countByUuid_C(java.lang.String uuid, long companyId);
 
 	/**
+	* Returns the i b order where shareID = &#63; and companyId = &#63; and groupId = &#63; or throws a {@link NoSuchIBOrderException} if it could not be found.
+	*
+	* @param shareID the share i d
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @return the matching i b order
+	* @throws NoSuchIBOrderException if a matching i b order could not be found
+	*/
+	public IBOrder findByShareIdCompanyGroup(long shareID, long companyId,
+		long groupId) throws NoSuchIBOrderException;
+
+	/**
+	* Returns the i b order where shareID = &#63; and companyId = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	*
+	* @param shareID the share i d
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @return the matching i b order, or <code>null</code> if a matching i b order could not be found
+	*/
+	public IBOrder fetchByShareIdCompanyGroup(long shareID, long companyId,
+		long groupId);
+
+	/**
+	* Returns the i b order where shareID = &#63; and companyId = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	*
+	* @param shareID the share i d
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the matching i b order, or <code>null</code> if a matching i b order could not be found
+	*/
+	public IBOrder fetchByShareIdCompanyGroup(long shareID, long companyId,
+		long groupId, boolean retrieveFromCache);
+
+	/**
+	* Removes the i b order where shareID = &#63; and companyId = &#63; and groupId = &#63; from the database.
+	*
+	* @param shareID the share i d
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @return the i b order that was removed
+	*/
+	public IBOrder removeByShareIdCompanyGroup(long shareID, long companyId,
+		long groupId) throws NoSuchIBOrderException;
+
+	/**
+	* Returns the number of i b orders where shareID = &#63; and companyId = &#63; and groupId = &#63;.
+	*
+	* @param shareID the share i d
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @return the number of matching i b orders
+	*/
+	public int countByShareIdCompanyGroup(long shareID, long companyId,
+		long groupId);
+
+	/**
 	* Caches the i b order in the entity cache if it is enabled.
 	*
 	* @param ibOrder the i b order
