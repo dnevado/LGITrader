@@ -22,9 +22,12 @@ import com.liferay.portal.kernel.bean.AutoEscape;
 import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.model.ShardedModel;
+import com.liferay.portal.kernel.model.StagedModel;
 import com.liferay.portal.kernel.service.ServiceContext;
 
 import java.io.Serializable;
+
+import java.util.Date;
 
 /**
  * The base model interface for the IBOrder service. Represents a row in the &quot;ibtrader_IBOrder&quot; database table, with each column mapped to a property of this class.
@@ -40,7 +43,8 @@ import java.io.Serializable;
  * @generated
  */
 @ProviderType
-public interface IBOrderModel extends BaseModel<IBOrder>, ShardedModel {
+public interface IBOrderModel extends BaseModel<IBOrder>, ShardedModel,
+	StagedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -67,6 +71,7 @@ public interface IBOrderModel extends BaseModel<IBOrder>, ShardedModel {
 	 * @return the uuid of this i b order
 	 */
 	@AutoEscape
+	@Override
 	public String getUuid();
 
 	/**
@@ -74,6 +79,7 @@ public interface IBOrderModel extends BaseModel<IBOrder>, ShardedModel {
 	 *
 	 * @param uuid the uuid of this i b order
 	 */
+	@Override
 	public void setUuid(String uuid);
 
 	/**
@@ -121,20 +127,6 @@ public interface IBOrderModel extends BaseModel<IBOrder>, ShardedModel {
 	public void setCompanyId(long companyId);
 
 	/**
-	 * Returns the order i d of this i b order.
-	 *
-	 * @return the order i d of this i b order
-	 */
-	public long getOrderID();
-
-	/**
-	 * Sets the order i d of this i b order.
-	 *
-	 * @param orderID the order i d of this i b order
-	 */
-	public void setOrderID(long orderID);
-
-	/**
 	 * Returns the share i d of this i b order.
 	 *
 	 * @return the share i d of this i b order
@@ -168,6 +160,38 @@ public interface IBOrderModel extends BaseModel<IBOrder>, ShardedModel {
 	 * @param checked the checked of this i b order
 	 */
 	public void setChecked(boolean checked);
+
+	/**
+	 * Returns the create date of this i b order.
+	 *
+	 * @return the create date of this i b order
+	 */
+	@Override
+	public Date getCreateDate();
+
+	/**
+	 * Sets the create date of this i b order.
+	 *
+	 * @param createDate the create date of this i b order
+	 */
+	@Override
+	public void setCreateDate(Date createDate);
+
+	/**
+	 * Returns the modified date of this i b order.
+	 *
+	 * @return the modified date of this i b order
+	 */
+	@Override
+	public Date getModifiedDate();
+
+	/**
+	 * Sets the modified date of this i b order.
+	 *
+	 * @param modifiedDate the modified date of this i b order
+	 */
+	@Override
+	public void setModifiedDate(Date modifiedDate);
 
 	@Override
 	public boolean isNew();

@@ -18,11 +18,14 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.expando.kernel.model.ExpandoBridge;
 
+import com.liferay.exportimport.kernel.lar.StagedModelType;
+
 import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.service.ServiceContext;
 
 import java.io.Serializable;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -60,9 +63,10 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 		attributes.put("ordersId", getOrdersId());
 		attributes.put("groupId", getGroupId());
 		attributes.put("companyId", getCompanyId());
-		attributes.put("orderID", getOrderID());
 		attributes.put("shareID", getShareID());
 		attributes.put("checked", getChecked());
+		attributes.put("createDate", getCreateDate());
+		attributes.put("modifiedDate", getModifiedDate());
 
 		return attributes;
 	}
@@ -93,12 +97,6 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 			setCompanyId(companyId);
 		}
 
-		Long orderID = (Long)attributes.get("orderID");
-
-		if (orderID != null) {
-			setOrderID(orderID);
-		}
-
 		Long shareID = (Long)attributes.get("shareID");
 
 		if (shareID != null) {
@@ -109,6 +107,18 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 
 		if (checked != null) {
 			setChecked(checked);
+		}
+
+		Date createDate = (Date)attributes.get("createDate");
+
+		if (createDate != null) {
+			setCreateDate(createDate);
+		}
+
+		Date modifiedDate = (Date)attributes.get("modifiedDate");
+
+		if (modifiedDate != null) {
+			setModifiedDate(modifiedDate);
 		}
 	}
 
@@ -208,6 +218,26 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
+	* Returns the create date of this i b order.
+	*
+	* @return the create date of this i b order
+	*/
+	@Override
+	public Date getCreateDate() {
+		return _ibOrder.getCreateDate();
+	}
+
+	/**
+	* Returns the modified date of this i b order.
+	*
+	* @return the modified date of this i b order
+	*/
+	@Override
+	public Date getModifiedDate() {
+		return _ibOrder.getModifiedDate();
+	}
+
+	/**
 	* Returns the company ID of this i b order.
 	*
 	* @return the company ID of this i b order
@@ -225,16 +255,6 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	@Override
 	public long getGroupId() {
 		return _ibOrder.getGroupId();
-	}
-
-	/**
-	* Returns the order i d of this i b order.
-	*
-	* @return the order i d of this i b order
-	*/
-	@Override
-	public long getOrderID() {
-		return _ibOrder.getOrderID();
 	}
 
 	/**
@@ -297,6 +317,16 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 		_ibOrder.setCompanyId(companyId);
 	}
 
+	/**
+	* Sets the create date of this i b order.
+	*
+	* @param createDate the create date of this i b order
+	*/
+	@Override
+	public void setCreateDate(Date createDate) {
+		_ibOrder.setCreateDate(createDate);
+	}
+
 	@Override
 	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
 		_ibOrder.setExpandoBridgeAttributes(expandoBridge);
@@ -323,19 +353,19 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 		_ibOrder.setGroupId(groupId);
 	}
 
+	/**
+	* Sets the modified date of this i b order.
+	*
+	* @param modifiedDate the modified date of this i b order
+	*/
+	@Override
+	public void setModifiedDate(Date modifiedDate) {
+		_ibOrder.setModifiedDate(modifiedDate);
+	}
+
 	@Override
 	public void setNew(boolean n) {
 		_ibOrder.setNew(n);
-	}
-
-	/**
-	* Sets the order i d of this i b order.
-	*
-	* @param orderID the order i d of this i b order
-	*/
-	@Override
-	public void setOrderID(long orderID) {
-		_ibOrder.setOrderID(orderID);
 	}
 
 	/**
@@ -400,6 +430,11 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 		}
 
 		return false;
+	}
+
+	@Override
+	public StagedModelType getStagedModelType() {
+		return _ibOrder.getStagedModelType();
 	}
 
 	@Override

@@ -62,9 +62,11 @@ public class TIMApiGITrader extends TIMApiWrapper {
 	private String _ConnectionHOST = "127.0.0.1";
 	private int    _ConnectionPORT = 7497;
 	private int    _ConnectionCLIENTID = 0;
-	private static String _HISTORICAL_DATA_ERRORS_CODES = "";
+	
+	private boolean _sendDisconnectEvent =false; 
+	
 	/* USAMOS PARA ALMACENAR LAS TRAZAS DE RESULTADOS POR BLOQUES Y BUSCAR EL MAXIMO Y MIN DESPUES */	
-	private String error = "";
+	
 	/* ESTE DATO SIRVE PARA ALMACENAR DATOS HISTORICOS DE LA FECHA EN CUESTION 
 	 * LA TWS DEVUELVE DATOS ANTERIORES A UNA FECHA DADA, NO ENTRE FECHAS, CON LO QUE SI PIDES UN DOMINGO TE DARA 
 	 * DEL VIERNES */
@@ -81,6 +83,12 @@ public class TIMApiGITrader extends TIMApiWrapper {
 		clientSocket.reqContractDetails(RequestID, contract);
 		Thread.sleep(1000);
 		_log.info("Fin GITradergetContractDetails");
+	/* 	try {
+			IBOrderLocalServiceUtil.deleteIBOrder(RequestID);
+		} catch (PortalException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
 }	
 	public Contract GITraderCreateSTKContract(String symbol) {
 				return  new StkContract(symbol);
@@ -90,13 +98,13 @@ public class TIMApiGITrader extends TIMApiWrapper {
 		 clientSocket.placeOrder(orderId, contract, order);
 	}
 	public TIMApiGITrader(String _host, int _port, int clientid, boolean debug)  {
-		 super();					
+		 super(clientid);					
 		_ConnectionHOST = _host;
 		_ConnectionPORT = _port;
 		_ConnectionCLIENTID = clientid;						
 	}	
 	public TIMApiGITrader(String _host, int _port, int clientid)  {
-		super();			
+		super(clientid);			
 		_ConnectionHOST = _host;
 		_ConnectionPORT = _port;
 		_ConnectionCLIENTID = clientid;		
@@ -133,6 +141,8 @@ public class TIMApiGITrader extends TIMApiWrapper {
 			share.setLast_error_trader_provider(null);							
 			/* actualizamos datos error de operativa */
 			ShareLocalServiceUtil.updateShare(share);		
+			
+			
 		}
 		 
     }
@@ -171,81 +181,87 @@ public class TIMApiGITrader extends TIMApiWrapper {
 			}			
 
 
-		}		
-		if (errorCode>=0 && reqId>=0)  // errores operativa - lectura
+		}
+		else
 		{
-						
-			SimpleDateFormat sdf2 = new SimpleDateFormat();
-			sdf2.applyPattern("dd-MM-yyyy HH:mm:ss");
-			 
-			Position _ErrorPosition;
-			Share oErrorShare = null;
-			
-			_ErrorPosition = PositionLocalServiceUtil.fetchPosition(reqId);    			
-			
-			if (_ErrorPosition!=null && _ErrorPosition.IsPendingIn())  // error en una posicion dada abierta
-				/* HAY QUE MANDAR CANCEL A TWS */
-			{ 
-				
-				oErrorShare = ShareLocalServiceUtil.fetchShare(_ErrorPosition.getShareId());  
-				_log.info("error operativa : [" + reqId + "," + errorCode + "," + str + "]");
-				_log.info("error order  : " + oErrorShare.getSymbol());
-				oErrorShare.setActive(Boolean.FALSE);// desactivamos lectura.
-				oErrorShare.setValidated_trader_provider(Boolean.FALSE);
-				oErrorShare.setDate_validated_trader_provider(new Date());
-				oErrorShare.setLast_error_trader_provider(_stbB.toString());							
-				/* actualizamos datos error de operativa */
-				ShareLocalServiceUtil.updateShare(oErrorShare);					
-				try {
-					PositionLocalServiceUtil.deletePosition(_ErrorPosition.getPositionId());
-				} catch (PortalException e) {
-					// TODO Auto-generated catch block
-					_log.info("error operativa PositionLocalServiceUtil.deletePosition : [" + e.getMessage() + "]") ;
-				}							
+			if (errorCode==300)  // An attempt was made to cancel market data for a ticker ID that was not associated with a current subscription. With the DDE API this occurs by clearing the spreadsheet cell.
+			{
+				 _log.info("Error :" + errorCode + ",reqId" + reqId + ",txt:" + str + ",clientid:" + _ConnectionCLIENTID) ;			 		
+	
+			}		
+			else
+			{	
+				if (errorCode>=0 && reqId>=0)  // errores operativa - lectura
+				{
+								
+					SimpleDateFormat sdf2 = new SimpleDateFormat();
+					sdf2.applyPattern("dd-MM-yyyy HH:mm:ss");
+					 
+					Position _ErrorPosition;
+					Share oErrorShare = null;
 					
-			}
-			else   // supuestamente error lectura de datos en tiempo real.
-				   // METEMOS EL 25-12-2013 un  job verificador que pide el contract detail con variable de estado asociada.		
-			{			
-				 _log.info("error lectura [HISTORICAL_DATA:  : [" + reqId + "," + errorCode+ "," + str + "]");
-				
-				/* SIEMPRE VA A VER _ErrorOrder con errores de tiempo real.
-				 * TENEMOS UN PROBLEMA DE CONECTIVIDAD EN EL TICK --> PASA POR AQUI.
-				 * EL JOB DE VERIFICACION COMPRUEBA PARA STOCKS SI EL ACTIVO ES VALIDO, PERO
-				 * PARA UN FUTURO VALIDO PERO CON EL EXPIRATION DATE ERRONEO O PASADO, NO LO VERIFICA,
-				 * LO IMPLEMENTAMOS AQUI.
-				 * AQUI CONTROLAMOS DOS COSAS,
-				 * 1. JOB DE VERIFICACION PARA ANULAR LOS STOCKS INVALIDOS.
-				 * 2. DESCARGA DE TIEMPO REAL SOLO PARA FUTUROS POR LA RAZON ANTERIOR,. 
-				 * Filtramos los del CONTRACTDETAILS EXCLUSIVAMENTE. ES DECIR, ESTADO A ARRANCADO.
-				 * [Stopped,Requested, Ended, Received, Executing] y SI ES UN FUTURO.z
-				 * _HISTORICAL_DATA_REQUEST "Executing" para controlar los errores  
-				 * 162	Historical market data Service error message.				
-				 * 165	Historical market Data Service query message.
-				 * 
-				 *   */															
-				IBOrder _ErrorOrder = IBOrderLocalServiceUtil.fetchIBOrder(reqId);
-				if (_ErrorOrder!=null && reqId!=-1)
-				{						
-					oErrorShare = ShareLocalServiceUtil.fetchShare(_ErrorOrder.getShareID());  					
-					if (oErrorShare!=null) 						
-					{						
+					_ErrorPosition = PositionLocalServiceUtil.fetchPosition(reqId);    			
+					
+					if (_ErrorPosition!=null && _ErrorPosition.IsPendingIn())  // error en una posicion dada abierta
+						/* HAY QUE MANDAR CANCEL A TWS */
+					{ 
+						
+						oErrorShare = ShareLocalServiceUtil.fetchShare(_ErrorPosition.getShareId());  
+						_log.info("error operativa : [" + reqId + "," + errorCode + "," + str + "]");
 						_log.info("error order  : " + oErrorShare.getSymbol());
 						oErrorShare.setActive(Boolean.FALSE);// desactivamos lectura.
 						oErrorShare.setValidated_trader_provider(Boolean.FALSE);
 						oErrorShare.setDate_validated_trader_provider(new Date());
 						oErrorShare.setLast_error_trader_provider(_stbB.toString());							
 						/* actualizamos datos error de operativa */
-						ShareLocalServiceUtil.updateShare(oErrorShare);											
+						ShareLocalServiceUtil.updateShare(oErrorShare);					
+						try {
+							PositionLocalServiceUtil.deletePosition(_ErrorPosition.getPositionId());
+						} catch (PortalException e) {
+							// TODO Auto-generated catch block
+							_log.info("error operativa PositionLocalServiceUtil.deletePosition : [" + e.getMessage() + "]") ;
+						}							
+							
 					}
-				} // fin one <> -1										
+					else   // supuestamente error lectura de datos en tiempo real.
+						   // METEMOS EL 25-12-2013 un  job verificador que pide el contract detail con variable de estado asociada.		
+					{			
+						 _log.info("error lectura [HISTORICAL_DATA:  : [" + reqId + "," + errorCode+ "," + str + "]");
+						
+						/* SIEMPRE VA A VER _ErrorOrder con errores de tiempo real.
+						 * TENEMOS UN PROBLEMA DE CONECTIVIDAD EN EL TICK --> PASA POR AQUI.
+						 * EL JOB DE VERIFICACION COMPRUEBA PARA STOCKS SI EL ACTIVO ES VALIDO, PERO
+						 * PARA UN FUTURO VALIDO PERO CON EL EXPIRATION DATE ERRONEO O PASADO, NO LO VERIFICA,
+						 * LO IMPLEMENTAMOS AQUI.
+						 * AQUI CONTROLAMOS DOS COSAS,
+						 * 1. JOB DE VERIFICACION PARA ANULAR LOS STOCKS INVALIDOS.
+						 * 2. DESCARGA DE TIEMPO REAL SOLO PARA FUTUROS POR LA RAZON ANTERIOR,. 
+						 * Filtramos los del CONTRACTDETAILS EXCLUSIVAMENTE. ES DECIR, ESTADO A ARRANCADO.
+						 * [Stopped,Requested, Ended, Received, Executing] y SI ES UN FUTURO.z
+						 * _HISTORICAL_DATA_REQUEST "Executing" para controlar los errores  
+						 * 162	Historical market data Service error message.				
+						 * 165	Historical market Data Service query message.
+						 * 
+						 *   */															
+						IBOrder _ErrorOrder = IBOrderLocalServiceUtil.fetchIBOrder(reqId);
+						if (_ErrorOrder!=null && reqId!=-1)
+						{						
+							oErrorShare = ShareLocalServiceUtil.fetchShare(_ErrorOrder.getShareID());  					
+							if (oErrorShare!=null) 						
+							{						
+								_log.info("error order  : " + oErrorShare.getSymbol());
+								oErrorShare.setActive(Boolean.FALSE);// desactivamos lectura.
+								oErrorShare.setValidated_trader_provider(Boolean.FALSE);
+								oErrorShare.setDate_validated_trader_provider(new Date());
+								oErrorShare.setLast_error_trader_provider(_stbB.toString());							
+								/* actualizamos datos error de operativa */
+								ShareLocalServiceUtil.updateShare(oErrorShare);											
+							}
+						} // fin one <> -1										
+					}
+				}
 			}
-		}
-		else // fin errores operativa - lectura. Conectividad 
-		{
-			error =   str + "[N. Error " + errorCode + "]";
-			
-		}
+		}		
 	 }
 			
 	public void error(String str) {
@@ -258,6 +274,8 @@ public class TIMApiGITrader extends TIMApiWrapper {
 		//! [connect]
 		//! [ereader]
 		
+		_sendDisconnectEvent = true;
+		
 		_log.info("Connecting to TWS with " + _ConnectionCLIENTID  + " clientID");
 		clientSocket.eConnect(_ConnectionHOST, _ConnectionPORT, _ConnectionCLIENTID);
 		Thread.sleep(1000);
@@ -268,10 +286,12 @@ public class TIMApiGITrader extends TIMApiWrapper {
 		
 		//An additional thread is created in this program design to empty the messaging queue
 		new Thread(() -> {
-		    while (clientSocket.isConnected()) {
+		    while (clientSocket.isConnected()  && !_sendDisconnectEvent) {
 		    	readerSignal.waitForSignal();
 		        try {
+		        //	_log.info("_sendDisconnectEvent : " + _sendDisconnectEvent);
 		            reader2.processMsgs();
+		            
 		        } catch (Exception e) {
 		        	_log.info("Exception connection to TWS: "+e.getMessage());
 		        }
@@ -290,6 +310,10 @@ public class TIMApiGITrader extends TIMApiWrapper {
 	
 	 
 	public void GITraderDisconnectFromTWS() throws InterruptedException {
+		
+		/* lo hacemos para parar el thread de lectura de la cola de mensajes */
+		_sendDisconnectEvent = true;
+		Thread.sleep(1000);	
 		clientSocket.eDisconnect();
 
 	}
@@ -310,48 +334,59 @@ public class TIMApiGITrader extends TIMApiWrapper {
 		_contractAPI3.exchange("ISLAND");
 		_contractAPI3.currency("USD");
 		
+		
+		     TIMApiWrapper wrapper = new TIMApiWrapper(6,false);
+			final EClientSocket m_client = wrapper.getClient();
+			final EReaderSignal m_signal = wrapper.getSignal(); 
+			//! [connect]
+			m_client.eConnect("127.0.0.1", 7497, 6); 
+			//! [connect]
+			//! [ereader]
+			final EReader reader = new EReader(m_client, m_signal);   
+			
+			reader.start();
+			
+			
+			//An additional thread is created in this program design to empty the messaging queue
+			new Thread(() -> {
+			    while (m_client.isConnected()) {
+			        m_signal.waitForSignal();
+			        try {
+			            reader.processMsgs();
+			        } catch (Exception e) {
+			            System.out.println("Exception: "+e.getMessage());
+			        }
+			    }
+			}).start();
+			
+			
+	//	m_client.reqContractDetails(4545, _contractAPI3);
+			m_client.reqMktData(4546, _contractAPI3,"", false, false,null); //false
+		
+		
+	/* 	Contract  _contractAPI4=  new StkContract("ESTX50");
+		_contractAPI3.symbol("ESTX50");
+		_contractAPI3.secType("FUT");
+		_contractAPI3.exchange("ISLAND");
+		_contractAPI3.currency("USD");
+		*/
 	//	oTWS.GITraderGetRealTimeContract(7000, _contractAPI3);
 		
 		
 		Thread.sleep(1000);	
-		TIMApiGITrader oTWS = new TIMApiGITrader("127.0.0.1", 7497, 3,true);
+		TIMApiGITrader oTWS = new TIMApiGITrader("127.0.0.1", 7497, 2015,true); 
 
 		
 		 if (oTWS.GITraderTWSIsConnected())  oTWS.GITraderDisconnectFromTWS();
 		 oTWS.GITraderConnetToTWS();		
 		Thread.sleep(1000);
-		oTWS.GITradergetContractDetails(10016, _contractAPI3);
+		oTWS.GITradergetContractDetails(600, _contractAPI3);
 		//oTWS.getClient().reqContractDetails(4545, _contractAPI3);
 		Thread.sleep(1000);
+		oTWS.GITraderGetRealTimeContract(255557, _contractAPI3); 
 		oTWS.GITraderDisconnectFromTWS();
 		
-		/* TIMApiWrapper wrapper = new TIMApiWrapper();
-		final EClientSocket m_client = wrapper.getClient();
-		final EReaderSignal m_signal = wrapper.getSignal();
-		//! [connect]
-		m_client.eConnect("127.0.0.1", 7497, 256);
-		//! [connect]
-		//! [ereader]
-		final EReader reader = new EReader(m_client, m_signal);   
-		
-		reader.start();
-		
-		
-		//An additional thread is created in this program design to empty the messaging queue
-		new Thread(() -> {
-		    while (m_client.isConnected()) {
-		        m_signal.waitForSignal();
-		        try {
-		            reader.processMsgs();
-		        } catch (Exception e) {
-		            System.out.println("Exception: "+e.getMessage());
-		        }
-		    }
-		}).start();
-		
-		
-		m_client.reqContractDetails(4545, _contractAPI3);*/
-		//! [ereader]
+				//! [ereader]
 		// A pause to give the application time to establish the connection
 		// In a production application, it would be best to wait for callbacks to confirm the connection is complete
 
@@ -472,31 +507,31 @@ public class TIMApiGITrader extends TIMApiWrapper {
 
 	@Override
 	public void tickPrice(int tickerId, int field, double price, TickAttr attrib) {
+    	 //  TODO Auto-generated method stub
+	    _log.debug("Impl tickPrice : + " + tickerId + ",prices:" + price + ",field" + field);
 		// TODO Auto-generated method stub
-		 _log.debug("Impl tickPrice : + " + tickerId + ",prices:" + price + ",field" + field);
-			// TODO Auto-generated method stub
-			IBOrder MyOrder = null;
-			
-			if (field==ConfigKeys._TICKTYPE_LAST || field==ConfigKeys._TICKTYPE_DELAYED_LAST ) {
+		IBOrder MyOrder = null;
+		
+		if (field==ConfigKeys._TICKTYPE_LAST || field==ConfigKeys._TICKTYPE_DELAYED_LAST ) {
 
-				MyOrder =  IBOrderLocalServiceUtil.fetchIBOrder(tickerId);
-				if (MyOrder == null) {
-					
-					_log.info("No se encuentra el ID " + tickerId);
-					return;
-				}
+			MyOrder =  IBOrderLocalServiceUtil.fetchIBOrder(tickerId);
+			if (MyOrder == null) {
 				
-				Realtime  oReal = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));
-				oReal.setGroupId(guestGroupId);
-				oReal.setCompanyId(PortalUtil.getDefaultCompanyId());
-				oReal.setShareId(MyOrder.getShareID());
-				oReal.setValue(price);
-				RealtimeLocalServiceUtil.updateRealtime(oReal);
-				
-				MyOrder.setChecked(true);
-				IBOrderLocalServiceUtil.updateIBOrder(MyOrder);
-			
+				_log.info("No se encuentra el ID " + tickerId);
+				return;
 			}
+			
+			Realtime  oReal = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));
+			oReal.setGroupId(guestGroupId);
+			oReal.setCompanyId(PortalUtil.getDefaultCompanyId());
+			oReal.setShareId(MyOrder.getShareID());
+			oReal.setValue(price);
+			RealtimeLocalServiceUtil.updateRealtime(oReal);
+			
+			MyOrder.setChecked(true);
+			IBOrderLocalServiceUtil.updateIBOrder(MyOrder);
+		
+		}
 			
 	}
 

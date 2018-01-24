@@ -102,12 +102,6 @@ public class IBOrderLocalServiceUtil {
 		return getService().fetchIBOrderByUuidAndGroupId(uuid, groupId);
 	}
 
-	public static com.ibtrader.data.model.IBOrder findByShareIdCompanyGroup(
-		long shareId, long companyId, long groupId) {
-		return getService()
-				   .findByShareIdCompanyGroup(shareId, companyId, groupId);
-	}
-
 	/**
 	* Returns the i b order with the primary key.
 	*
@@ -151,6 +145,11 @@ public class IBOrderLocalServiceUtil {
 
 	public static com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery() {
 		return getService().dynamicQuery();
+	}
+
+	public static com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery getExportActionableDynamicQuery(
+		com.liferay.exportimport.kernel.lar.PortletDataContext portletDataContext) {
+		return getService().getExportActionableDynamicQuery(portletDataContext);
 	}
 
 	public static com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
@@ -238,6 +237,12 @@ public class IBOrderLocalServiceUtil {
 		com.liferay.portal.kernel.util.OrderByComparator<T> orderByComparator) {
 		return getService()
 				   .dynamicQuery(dynamicQuery, start, end, orderByComparator);
+	}
+
+	public static java.util.List<com.ibtrader.data.model.IBOrder> findByShareIdCompanyGroup(
+		long shareId, long companyId, long groupId) {
+		return getService()
+				   .findByShareIdCompanyGroup(shareId, companyId, groupId);
 	}
 
 	/**

@@ -23,12 +23,15 @@ import com.ibtrader.data.model.IBOrderSoap;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
 
+import com.liferay.exportimport.kernel.lar.StagedModelType;
+
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.model.impl.BaseModelImpl;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
@@ -38,6 +41,7 @@ import java.io.Serializable;
 import java.sql.Types;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,9 +74,10 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 			{ "ordersId", Types.BIGINT },
 			{ "groupId", Types.BIGINT },
 			{ "companyId", Types.BIGINT },
-			{ "orderID", Types.BIGINT },
 			{ "shareID", Types.BIGINT },
-			{ "checked", Types.BOOLEAN }
+			{ "checked", Types.BOOLEAN },
+			{ "createDate", Types.TIMESTAMP },
+			{ "modifiedDate", Types.TIMESTAMP }
 		};
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP = new HashMap<String, Integer>();
 
@@ -81,12 +86,13 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 		TABLE_COLUMNS_MAP.put("ordersId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("groupId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("companyId", Types.BIGINT);
-		TABLE_COLUMNS_MAP.put("orderID", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("shareID", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("checked", Types.BOOLEAN);
+		TABLE_COLUMNS_MAP.put("createDate", Types.TIMESTAMP);
+		TABLE_COLUMNS_MAP.put("modifiedDate", Types.TIMESTAMP);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table ibtrader_IBOrder (uuid_ VARCHAR(75) null,ordersId LONG not null primary key,groupId LONG,companyId LONG,orderID LONG,shareID LONG,checked BOOLEAN)";
+	public static final String TABLE_SQL_CREATE = "create table ibtrader_IBOrder (uuid_ VARCHAR(75) null,ordersId LONG not null primary key IDENTITY,groupId LONG,companyId LONG,shareID LONG,checked BOOLEAN,createDate DATE null,modifiedDate DATE null)";
 	public static final String TABLE_SQL_DROP = "drop table ibtrader_IBOrder";
 	public static final String ORDER_BY_JPQL = " ORDER BY ibOrder.ordersId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY ibtrader_IBOrder.ordersId ASC";
@@ -125,9 +131,10 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 		model.setOrdersId(soapModel.getOrdersId());
 		model.setGroupId(soapModel.getGroupId());
 		model.setCompanyId(soapModel.getCompanyId());
-		model.setOrderID(soapModel.getOrderID());
 		model.setShareID(soapModel.getShareID());
 		model.setChecked(soapModel.getChecked());
+		model.setCreateDate(soapModel.getCreateDate());
+		model.setModifiedDate(soapModel.getModifiedDate());
 
 		return model;
 	}
@@ -196,9 +203,10 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 		attributes.put("ordersId", getOrdersId());
 		attributes.put("groupId", getGroupId());
 		attributes.put("companyId", getCompanyId());
-		attributes.put("orderID", getOrderID());
 		attributes.put("shareID", getShareID());
 		attributes.put("checked", getChecked());
+		attributes.put("createDate", getCreateDate());
+		attributes.put("modifiedDate", getModifiedDate());
 
 		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
 		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
@@ -232,12 +240,6 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 			setCompanyId(companyId);
 		}
 
-		Long orderID = (Long)attributes.get("orderID");
-
-		if (orderID != null) {
-			setOrderID(orderID);
-		}
-
 		Long shareID = (Long)attributes.get("shareID");
 
 		if (shareID != null) {
@@ -248,6 +250,18 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 
 		if (checked != null) {
 			setChecked(checked);
+		}
+
+		Date createDate = (Date)attributes.get("createDate");
+
+		if (createDate != null) {
+			setCreateDate(createDate);
+		}
+
+		Date modifiedDate = (Date)attributes.get("modifiedDate");
+
+		if (modifiedDate != null) {
+			setModifiedDate(modifiedDate);
 		}
 	}
 
@@ -334,17 +348,6 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 
 	@JSON
 	@Override
-	public long getOrderID() {
-		return _orderID;
-	}
-
-	@Override
-	public void setOrderID(long orderID) {
-		_orderID = orderID;
-	}
-
-	@JSON
-	@Override
 	public long getShareID() {
 		return _shareID;
 	}
@@ -383,6 +386,40 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 		_checked = checked;
 	}
 
+	@JSON
+	@Override
+	public Date getCreateDate() {
+		return _createDate;
+	}
+
+	@Override
+	public void setCreateDate(Date createDate) {
+		_createDate = createDate;
+	}
+
+	@JSON
+	@Override
+	public Date getModifiedDate() {
+		return _modifiedDate;
+	}
+
+	public boolean hasSetModifiedDate() {
+		return _setModifiedDate;
+	}
+
+	@Override
+	public void setModifiedDate(Date modifiedDate) {
+		_setModifiedDate = true;
+
+		_modifiedDate = modifiedDate;
+	}
+
+	@Override
+	public StagedModelType getStagedModelType() {
+		return new StagedModelType(PortalUtil.getClassNameId(
+				IBOrder.class.getName()));
+	}
+
 	public long getColumnBitmask() {
 		return _columnBitmask;
 	}
@@ -418,9 +455,10 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 		ibOrderImpl.setOrdersId(getOrdersId());
 		ibOrderImpl.setGroupId(getGroupId());
 		ibOrderImpl.setCompanyId(getCompanyId());
-		ibOrderImpl.setOrderID(getOrderID());
 		ibOrderImpl.setShareID(getShareID());
 		ibOrderImpl.setChecked(getChecked());
+		ibOrderImpl.setCreateDate(getCreateDate());
+		ibOrderImpl.setModifiedDate(getModifiedDate());
 
 		ibOrderImpl.resetOriginalValues();
 
@@ -497,6 +535,8 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 
 		ibOrderModelImpl._setOriginalShareID = false;
 
+		ibOrderModelImpl._setModifiedDate = false;
+
 		ibOrderModelImpl._columnBitmask = 0;
 	}
 
@@ -518,18 +558,34 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 
 		ibOrderCacheModel.companyId = getCompanyId();
 
-		ibOrderCacheModel.orderID = getOrderID();
-
 		ibOrderCacheModel.shareID = getShareID();
 
 		ibOrderCacheModel.checked = getChecked();
+
+		Date createDate = getCreateDate();
+
+		if (createDate != null) {
+			ibOrderCacheModel.createDate = createDate.getTime();
+		}
+		else {
+			ibOrderCacheModel.createDate = Long.MIN_VALUE;
+		}
+
+		Date modifiedDate = getModifiedDate();
+
+		if (modifiedDate != null) {
+			ibOrderCacheModel.modifiedDate = modifiedDate.getTime();
+		}
+		else {
+			ibOrderCacheModel.modifiedDate = Long.MIN_VALUE;
+		}
 
 		return ibOrderCacheModel;
 	}
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(15);
+		StringBundler sb = new StringBundler(17);
 
 		sb.append("{uuid=");
 		sb.append(getUuid());
@@ -539,12 +595,14 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 		sb.append(getGroupId());
 		sb.append(", companyId=");
 		sb.append(getCompanyId());
-		sb.append(", orderID=");
-		sb.append(getOrderID());
 		sb.append(", shareID=");
 		sb.append(getShareID());
 		sb.append(", checked=");
 		sb.append(getChecked());
+		sb.append(", createDate=");
+		sb.append(getCreateDate());
+		sb.append(", modifiedDate=");
+		sb.append(getModifiedDate());
 		sb.append("}");
 
 		return sb.toString();
@@ -552,7 +610,7 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(25);
+		StringBundler sb = new StringBundler(28);
 
 		sb.append("<model><model-name>");
 		sb.append("com.ibtrader.data.model.IBOrder");
@@ -575,16 +633,20 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 		sb.append(getCompanyId());
 		sb.append("]]></column-value></column>");
 		sb.append(
-			"<column><column-name>orderID</column-name><column-value><![CDATA[");
-		sb.append(getOrderID());
-		sb.append("]]></column-value></column>");
-		sb.append(
 			"<column><column-name>shareID</column-name><column-value><![CDATA[");
 		sb.append(getShareID());
 		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>checked</column-name><column-value><![CDATA[");
 		sb.append(getChecked());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>createDate</column-name><column-value><![CDATA[");
+		sb.append(getCreateDate());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>modifiedDate</column-name><column-value><![CDATA[");
+		sb.append(getModifiedDate());
 		sb.append("]]></column-value></column>");
 
 		sb.append("</model>");
@@ -605,11 +667,13 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 	private long _companyId;
 	private long _originalCompanyId;
 	private boolean _setOriginalCompanyId;
-	private long _orderID;
 	private long _shareID;
 	private long _originalShareID;
 	private boolean _setOriginalShareID;
 	private boolean _checked;
+	private Date _createDate;
+	private Date _modifiedDate;
+	private boolean _setModifiedDate;
 	private long _columnBitmask;
 	private IBOrder _escapedModel;
 }

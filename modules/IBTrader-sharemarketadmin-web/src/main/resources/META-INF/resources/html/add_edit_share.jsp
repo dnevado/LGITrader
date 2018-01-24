@@ -51,6 +51,9 @@ int startTimeYear = cal.get(Calendar.YEAR);
 String redirect = ParamUtil.getString(request, "redirect");
 portletDisplay.setShowBackIcon(true);
 portletDisplay.setURLBack(redirect);
+String portletId= "_" + portletDisplay.getId();
+
+
 
 %>
 
@@ -62,10 +65,13 @@ portletDisplay.setURLBack(redirect);
 <liferay-ui:error key="share.error.missingparameters" message="share.error.missingparameters"/>
 <liferay-ui:error key="share.error.formatparameters" message="share.error.formatparameters"/>
 <liferay-ui:error key="share.error.futuresparameters" message="share.error.futuresparameters"/>
+<liferay-ui:error key="share.error.positionexistsactive" message="share.error.positionexistsactive"/>
 <portlet:actionURL name="addShare" var="addShareURL" />
 <portlet:actionURL name="editShare" var="editShareURL" />
 
 <% 
+
+
 
 
 String _URL = addShareURL;
@@ -96,35 +102,29 @@ else
                 <aui:validator name="maxLength">75</aui:validator>	
        </aui:input>
     </aui:fieldset>
-	<aui:fieldset>
-		<aui:input label="share.active" name="active" type="toggle-card" checked="${share.active ? 'true':''}"/>       
+	 <aui:fieldset>
+		 <div class="col col-sm-2">	
+			<aui:input label="share.active" name="active" type="toggle-card" checked="${share.active ? 'true':''}"/>
+		 </div>  
+		 <div class="col col-sm-2">	
+			<aui:input label="share.validated" disabled="true"  name="validated_trader_provider" type="toggle-card" checked="${share.validated_trader_provider ? 'true':''}"/>
+		 </div>
+      </aui:fieldset>
+      <aui:fieldset> 
 		<aui:input type="number" label="share.number" name="numbertopurchase"  value="${share.numbertopurchase}">
 			  <aui:validator  name="required"  />	
 			  <aui:validator name="min">1</aui:validator>
-             
 		 </aui:input>
     </aui:fieldset>
-    <aui:fieldset>		
-		<aui:input type="text"  name="percentual_limit_buy" label="share.percentual_limit_buy"  value="${share.percentual_limit_buy}">			  	
-               <aui:validator name="min">0</aui:validator>
-               <aui:validator name="max">100</aui:validator>
-               <aui:validator name="number" />
-		 </aui:input>
+    <aui:fieldset>		         
+        <label class="control-label" for="<%=portletId%>_share.percentual_limit_buy">share.percentual_limit_buy</label><input  id="<%=portletId%>_percentual_limit_buy" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_limit_buy"  value="${share.percentual_limit_buy gt 0 ? share.percentual_limit_buy : ''}"/> 	    		
     </aui:fieldset> 
       <aui:fieldset>		
-		<aui:input label="share.percentual_stop_lost" type="text"  name="percentual_stop_lost"  value="${share.percentual_stop_lost}">			  
-            <aui:validator name="min">0</aui:validator>
-                <aui:validator name="max">100</aui:validator>
-               <aui:validator name="number" />
-              
-		 </aui:input>
+      	<label class="control-label" for="<%=portletId%>_share.percentual_stop_lost">share.percentual_stop_lost</label><input  id="<%=portletId%>_percentual_stop_lost" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_stop_lost"  value="${share.percentual_stop_lost gt 0 ? share.percentual_stop_lost : ''}"/> 	    	      		
     </aui:fieldset> 
     <aui:fieldset>		
-		<aui:input label="share.percentual_stop_profit"  type="text"  name="percentual_stop_profit"  value="${share.percentual_stop_profit}">			  	
-                   <aui:validator name="min">0</aui:validator>
-                 <aui:validator name="max">100</aui:validator>
-               <aui:validator name="number" />
-		 </aui:input>
+    	<label class="control-label" for="<%=portletId%>_share.percentual_stop_profit">share.percentual_stop_profit</label><input  id="<%=portletId%>_percentual_stop_profit" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_stop_profit"  value="${share.percentual_stop_profit gt 0 ? share.percentual_stop_profit : ''}"/> 	    	      	
+    		
     </aui:fieldset> 
      
     
@@ -166,22 +166,14 @@ else
 					     yearParam="startDateYear"
 					     yearValue="<%= startTimeYear %>"/>
   			
-  				 </aui:fieldset>    
-     		   
-			   <aui:input label="share.tickfutures"  type="text"  name="tick_futures"  value="${not empty share.tick_futures ? share.tick_futures : '0.0'}">				
-	                 <aui:validator name="min">0.0</aui:validator>
-                 	 <aui:validator name="max">100</aui:validator>               		
+  				 </aui:fieldset>
+  			   <!--  html5 versus liferay debido a los numbers con dcecimales  -->    
+     		   <label class="control-label" for="<%=portletId%>_tick_futures">share.tickfutures</label><input  id="<%=portletId%>_tick_futures" class="field form-control"  min="0"  type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_tick_futures"  value="${share.tick_futures gt 0 ? share.tick_futures : ''}"/>
+			   <label class="control-label" for="<%=portletId%>_share.multiplier">share.multiplier</label><input  id="<%=portletId%>_multiplier" class="field form-control"  min="0"  type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_multiplier"  value="${share.multiplier gt 0 ? share.multiplier : ''}"/> 	
 	         
-	            </aui:input>
-	              <aui:input label="share.multiplier"  type="text"  name="multiplier"  value="${not empty share.multiplier ? share.multiplier : '0.0'}">
-	           		<aui:validator name="min">0</aui:validator>	           		                  		            
-
-				    	
-	            	  
-	            </aui:input>
     </aui:fieldset>   
 
-     <aui:fieldset collapsible="true" label="share.datamarket" id="datamarket" >
+     <aui:fieldset collapsible="true" label="share.datamarket" id="datamarket" > 
      		  <aui:fieldset>		
      		  
 				   <aui:select label="share.exchange" name="exchange">

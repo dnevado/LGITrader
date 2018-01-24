@@ -7,6 +7,9 @@
 
 <%
 
+
+Market _market = (Market) request.getAttribute("market");
+
 Calendar cal = Calendar.getInstance();
  int startTimeDay = cal.get(Calendar.DAY_OF_MONTH);
  int startTimeMonht = cal.get(Calendar.MONTH);
@@ -20,9 +23,11 @@ Calendar cal = Calendar.getInstance();
  portletDisplay.setURLBack(redirect);
 
 
+ 
 %>
 
 <portlet:actionURL name="addeditMarket" var="addeditMarketURL" />
+
 
 <div class="container-fluid-1280">
 <aui:form action="${addeditMarketURL}" name="<%=paramPortletName%>" method="POST">
@@ -57,13 +62,18 @@ Calendar cal = Calendar.getInstance();
 			<aui:option  value="<%=ConfigKeys.CURRENCY_EURO%>" ><%=ConfigKeys.CURRENCY_EURO%></aui:option>										
 		</aui:select>
     </aui:fieldset>    
+    <% 
+    	int  H1  = _market!=null  && _market.getStart_hour()!=null ? Long.valueOf(_market.getStart_hour().substring(0, 2)).intValue() : 0;
+    	int  M1  = _market!=null  && _market.getStart_hour()!=null ? Long.valueOf(_market.getStart_hour().substring(3, 5)).intValue() : 0;
+    	int  H2  = _market!=null  && _market.getStart_hour()!=null ? Long.valueOf(_market.getEnd_hour().substring(0, 2)).intValue(): 0;
+    	int  M2  = _market!=null  && _market.getEnd_hour()!=null  ? Long.valueOf(_market.getEnd_hour().substring(3, 5)).intValue() :0;
     
+    %>
     <aui:fieldset>
-    	<liferay-ui:message key="starthour"/>
-  		<liferay-ui:input-time name="starthour" minuteParam="00" amPmParam="PM" hourParam="00"></liferay-ui:input-time>
-  			
-  	    <liferay-ui:message key="endhour"/>
-  	    <liferay-ui:input-time name="endhour" minuteParam="00" amPmParam="PM" hourParam="00"></liferay-ui:input-time>
+      <liferay-ui:message key="market.starthour"/>
+  		<liferay-ui:input-time name="starthour" minuteInterval="15" hourValue="<%=H1%>" minuteValue="<%=M1%>"  minuteParam="00" amPmParam="PM" hourParam="00"></liferay-ui:input-time>  		
+  	    <liferay-ui:message key="market.endhour"/>
+  	    <liferay-ui:input-time name="endhour" minuteInterval="15"  hourValue="<%=H2%>" minuteValue="<%=M2%>"  minuteParam="00" amPmParam="PM" hourParam="00"></liferay-ui:input-time>
 
   			
   	 </aui:fieldset>    
@@ -71,7 +81,7 @@ Calendar cal = Calendar.getInstance();
      <aui:input  name="marketId" type="hidden" value="${market.marketId}"/>       
 	 <aui:button-row>
         <aui:button type="submit"></aui:button>
-        <aui:button type="cancel" onClick="${redirect}"></aui:button>
+        <aui:button type="cancel" onClick="<%=redirect%>"></aui:button>
     </aui:button-row>
 </aui:form>
 </div>

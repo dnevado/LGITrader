@@ -1,5 +1,5 @@
 <%@include file="/init.jsp"%>
-
+<%@ page import="com.ibtrader.data.model.Share" %>
 
 	<portlet:renderURL var="statusURL"/>
 	
@@ -16,7 +16,13 @@
     	<portlet:param name="shareId" value="${share.shareId}"></portlet:param>
 	</portlet:renderURL>
 	
-
-	<liferay-ui:tabs names="share.details,share.strategy" param="tab" value="${tab_selected}" 	
-		url0="${detailsShareURL }"
-		url1="${StrategiesShareURL }"/>
+    <% 
+    Share _TabsShare = (Share) request.getAttribute("share");    
+    if (_TabsShare!=null) { %>
+		<liferay-ui:tabs names="share.details,share.strategy" param="tab" value="${tab_selected}" 	
+			url0="${detailsShareURL }"
+			url1="${StrategiesShareURL }"/>
+	<% } else {  %>
+			<liferay-ui:tabs names="share.details" param="tab" value="${tab_selected}" 	
+				url0="${detailsShareURL }"/>
+	<% }  %>

@@ -46,6 +46,8 @@ Share share = (Share) request.getAttribute("share");
 StrategyImpl _StrategyType = (StrategyImpl) request.getAttribute("implemented_strategy");
 JSONObject jsonStrategyShareParams = (JSONObject) request.getAttribute("jsonStrategyShareParams");
 
+String portletId= "_" + portletDisplay.getId();
+
 
 
 %>
@@ -76,35 +78,20 @@ JSONObject jsonStrategyShareParams = (JSONObject) request.getAttribute("jsonStra
 	
     <aui:fieldset collapsed="false" collapsible="true"  label="share.paramdata" id="datashare">
   		
-  		<aui:fieldset>	
-				<aui:input type="number" label="share.number" name="numbertopurchase"  value="${empty strategyshare_numbertopurchase ? share.numbertopurchase : strategyshare_numbertopurchase}">
-				  <aui:validator  name="required"  />		            
-			 </aui:input>
-    	</aui:fieldset>		
-	  	 <aui:fieldset>		
-			<aui:input  type="text" name="percentual_limit_buy" label="share.percentual_limit_buy"   value="${empty strategyshare_percentual_limit_buy ? share.percentual_limit_buy : strategyshare_percentual_limit_buy}">				  	
-	                <aui:validator name="min">0</aui:validator>
-               		<aui:validator name="max">100</aui:validator>
-               		<aui:validator name="number" />
-	              
-			 </aui:input>
+ 		 <aui:input type="number" label="share.number" name="numbertopurchase"  value="${empty strategyshare_numbertopurchase ? share.numbertopurchase : strategyshare_numbertopurchase}">
+		 	 <aui:validator  name="required"  />	
+		  	<aui:validator name="min">1</aui:validator>
+		 </aui:input>
+  		 <aui:fieldset>		         
+	        <label class="control-label" for="<%=portletId%>_share.percentual_limit_buy">share.percentual_limit_buy</label><input  id="<%=portletId%>_percentual_limit_buy" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_limit_buy"  value="${empty strategyshare_percentual_limit_buy ? share.percentual_limit_buy : strategyshare_percentual_limit_buy}"/> 	    		
+	    </aui:fieldset> 
+	      <aui:fieldset>		
+	      	<label class="control-label" for="<%=portletId%>_share.percentual_stop_lost">share.percentual_stop_lost</label><input  id="<%=portletId%>_percentual_stop_lost" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_stop_lost"  value="${empty strategyshare_percentual_stop_lost ? share.percentual_stop_lost : strategyshare_percentual_stop_lost}"/> 	    	      		
 	    </aui:fieldset> 
 	    <aui:fieldset>		
-			<aui:input label="share.percentual_stop_lost" type="text"  name="percentual_stop_lost"   value="${empty strategyshare_percentual_stop_lost ? share.percentual_stop_lost : strategyshare_percentual_stop_lost}">				  	
-	              <aui:validator name="min">0</aui:validator>
-               <aui:validator name="max">100</aui:validator>
-               <aui:validator name="number" />
-	              
-			 </aui:input>
-	    </aui:fieldset> 
-	    <aui:fieldset>		
-			<aui:input label="share.percentual_stop_profit"  type="text"  name="percentual_stop_profit"   value="${empty strategyshare_percentual_stop_profit ? share.percentual_stop_profit : strategyshare_percentual_stop_profit}">				  	
-	            <aui:validator name="min">0</aui:validator>
-               <aui:validator name="max">100</aui:validator>
-               <aui:validator name="number" />
-	              
-			 </aui:input>
-	    </aui:fieldset> 	       
+	    	<label class="control-label" for="<%=portletId%>_share.percentual_stop_profit">share.percentual_stop_profit</label><input  id="<%=portletId%>_percentual_stop_profit" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_stop_profit"  value="${empty strategyshare_percentual_stop_profit ? share.percentual_stop_profit : strategyshare_percentual_stop_profit}"> 	    	      	    		
+        </aui:fieldset>
+  		  		  			     
     </aui:fieldset> 
     <!--  DATOS DE EXPANDOS    -->
     <aui:fieldset collapsed="false" collapsible="true"  label="strategy.paramdata" id="datastrategy">    

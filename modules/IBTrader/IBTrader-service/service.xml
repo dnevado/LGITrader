@@ -249,18 +249,20 @@
 
 		<!-- PK fields -->
 
-		<column name="ordersId" primary="true" type="long" />
+		<column name="ordersId" primary="true" type="long"  id-type="identity"/>
 
 		<!-- Group instance -->
 
 		<column name="groupId" type="long" />
 		<column name="companyId" type="long" />
-		<column name="orderID" type="long" />
+		<!--  <column name="orderID" type="long" /> -->
 		<column name="shareID" type="long" />
 		<column name="checked" type="boolean" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
 		
 		<!--  SI HAY MARKET DATA SUSCRITA PREVIA --> 
-		<finder name="ShareIdCompanyGroup" return-type="IBOrder">
+		<finder name="ShareIdCompanyGroup" return-type="Collection">
 			<finder-column name="shareID"/>		
 			<finder-column name="companyId"/>		
 			<finder-column name="groupId"/>							
@@ -269,7 +271,8 @@
 		<!-- Other fields -->
 	</entity>
 	
-	<entity  cache-enabled="true" local-service="true" name="Share" remote-service="true" uuid="true">
+	<!-- * CACHE ENABLE A FALSE PORQUE EL TRADING READ ME COGIA SHARES ACTIVES A FALSE ESTANDO EN BBDD A TRUE */ -->
+	<entity  cache-enabled="false" local-service="true" name="Share" remote-service="true" uuid="true">
 	
 			<column name="shareId" primary="true" type="long" />
 			<column name="name" type="String" />
@@ -321,6 +324,11 @@
         		<finder-column name="groupId"/>
 				<finder-column name="companyId"/>		
 				<finder-column name="active" />
+				<finder-column name="marketId" />								
+			</finder>
+			<finder name="MarketGroupCompany" return-type="Collection">	
+        		<finder-column name="groupId"/>
+				<finder-column name="companyId"/>						
 				<finder-column name="marketId" />								
 			</finder>
 	
@@ -402,13 +410,23 @@
 			<finder-column name="state" />			
 			<finder-column name="date_out" />
 		</finder>
-			<finder  name="PositionShareDateIn" return-type="Collection">	
+		<finder  name="PositionShareDateIn" return-type="Collection">	
 			<finder-column name="groupId"/>
 			<finder-column name="companyId"/>		
 			<finder-column name="shareId" />					
 			<finder-column name="date_in" />
 		</finder>
-		
+		<finder  name="PositionShareDateOut" return-type="Collection">	
+			<finder-column name="groupId"/>
+			<finder-column name="companyId"/>		
+			<finder-column name="shareId" />					
+			<finder-column name="date_out" />
+		</finder>	
+		<finder  name="CompanyGroupShare" return-type="Collection">	
+			<finder-column name="groupId"/>
+			<finder-column name="companyId"/>		
+			<finder-column name="shareId" />						
+		</finder>
 		<finder name="CompanyGroup" return-type="Collection">		
 				<finder-column name="companyId"/>
 				<finder-column name="groupId"/>					

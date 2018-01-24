@@ -277,6 +277,13 @@ public class PositionLocalServiceWrapper implements PositionLocalService,
 			start_date_in, end_date_in);
 	}
 
+	@Override
+	public java.util.List<com.ibtrader.data.model.Position> findByCompanyGroupShare(
+		long companyId, long groupId, long share) {
+		return _positionLocalService.findByCompanyGroupShare(companyId,
+			groupId, share);
+	}
+
 	/**
 	* Returns a range of all the positions.
 	*

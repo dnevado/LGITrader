@@ -233,6 +233,9 @@ public interface PositionLocalService extends BaseLocalService,
 	public List<Position> findByCompanyGroupDate(long companyId, long groupId,
 		Date start_date_in, Date end_date_in);
 
+	public List<Position> findByCompanyGroupShare(long companyId, long groupId,
+		long share);
+
 	/**
 	* Returns a range of all the positions.
 	*

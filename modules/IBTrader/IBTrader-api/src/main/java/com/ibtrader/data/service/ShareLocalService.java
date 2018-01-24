@@ -245,6 +245,9 @@ public interface ShareLocalService extends BaseLocalService,
 	public List<Share> findByActiveMarketGroupCompany(long _marketId,
 		boolean _active, long groupId, long companyId);
 
+	public List<Share> findByMarketGroupCompany(long _marketId, long groupId,
+		long companyId);
+
 	public List<Share> findByValidatedTraderProviderMarketGroupCompany(
 		long marketId, long groupId, long companyId);
 

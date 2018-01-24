@@ -66,6 +66,13 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 	}
 	
 	
+	public List<Position> findByCompanyGroupShare(long companyId, long groupId, long share)
+	{
+		 
+		List<Position> _lPosition = getPositionPersistence().findByCompanyGroupShare(companyId,groupId,share);	
+		return _lPosition;
+		
+	}
 	
 	public Position findByCompanyGroup(long companyId, long groupId)
 	{
@@ -92,12 +99,12 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 	}
 	/* FECHA DE ENTRADA A NULL */
 	public boolean   ExistsOpenPosition(long groupId, long companyId, long shareId)
-	{
-		Position _rPosition = null; 
-		List<Position> _lPosition = getPositionPersistence().findByPositionShareDateIn(groupId, companyId, shareId, null);
+	{		
+		List<Position> _lPosition = getPositionPersistence().findByPositionShareDateOut(groupId, companyId, shareId, null);
 		return (!_lPosition.isEmpty() && _lPosition.size()>0);
 		
 		
 	}
+
 
 }

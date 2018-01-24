@@ -134,6 +134,9 @@ public class MarketLocalServiceImpl extends MarketLocalServiceBaseImpl {
 		_market.setCurrency(market.getCurrency());
 		_market.setCreateDate(market.getCreateDate());
 		_market.setModifiedDate(market.getModifiedDate());
+		_market.setStart_hour(market.getStart_hour());
+		_market.setEnd_hour(market.getEnd_hour());
+		_market.setModifiedDate(market.getModifiedDate());
 		marketLocalService.updateMarket(_market);
 		   
 	   

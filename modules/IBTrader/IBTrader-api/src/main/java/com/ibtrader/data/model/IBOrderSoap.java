@@ -19,6 +19,7 @@ import aQute.bnd.annotation.ProviderType;
 import java.io.Serializable;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -37,9 +38,10 @@ public class IBOrderSoap implements Serializable {
 		soapModel.setOrdersId(model.getOrdersId());
 		soapModel.setGroupId(model.getGroupId());
 		soapModel.setCompanyId(model.getCompanyId());
-		soapModel.setOrderID(model.getOrderID());
 		soapModel.setShareID(model.getShareID());
 		soapModel.setChecked(model.getChecked());
+		soapModel.setCreateDate(model.getCreateDate());
+		soapModel.setModifiedDate(model.getModifiedDate());
 
 		return soapModel;
 	}
@@ -124,14 +126,6 @@ public class IBOrderSoap implements Serializable {
 		_companyId = companyId;
 	}
 
-	public long getOrderID() {
-		return _orderID;
-	}
-
-	public void setOrderID(long orderID) {
-		_orderID = orderID;
-	}
-
 	public long getShareID() {
 		return _shareID;
 	}
@@ -152,11 +146,28 @@ public class IBOrderSoap implements Serializable {
 		_checked = checked;
 	}
 
+	public Date getCreateDate() {
+		return _createDate;
+	}
+
+	public void setCreateDate(Date createDate) {
+		_createDate = createDate;
+	}
+
+	public Date getModifiedDate() {
+		return _modifiedDate;
+	}
+
+	public void setModifiedDate(Date modifiedDate) {
+		_modifiedDate = modifiedDate;
+	}
+
 	private String _uuid;
 	private long _ordersId;
 	private long _groupId;
 	private long _companyId;
-	private long _orderID;
 	private long _shareID;
 	private boolean _checked;
+	private Date _createDate;
+	private Date _modifiedDate;
 }

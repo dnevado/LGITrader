@@ -265,6 +265,11 @@ public class PositionLocalServiceUtil {
 			end_date_in);
 	}
 
+	public static java.util.List<com.ibtrader.data.model.Position> findByCompanyGroupShare(
+		long companyId, long groupId, long share) {
+		return getService().findByCompanyGroupShare(companyId, groupId, share);
+	}
+
 	/**
 	* Returns a range of all the positions.
 	*

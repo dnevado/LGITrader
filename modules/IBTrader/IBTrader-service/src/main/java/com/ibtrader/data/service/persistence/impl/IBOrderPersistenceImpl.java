@@ -31,6 +31,8 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.persistence.CompanyProvider;
 import com.liferay.portal.kernel.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
@@ -38,7 +40,6 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.spring.extender.service.ServiceReference;
@@ -46,6 +47,7 @@ import com.liferay.portal.spring.extender.service.ServiceReference;
 import java.io.Serializable;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -1467,9 +1469,22 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	private static final String _FINDER_COLUMN_UUID_C_UUID_2 = "ibOrder.uuid = ? AND ";
 	private static final String _FINDER_COLUMN_UUID_C_UUID_3 = "(ibOrder.uuid IS NULL OR ibOrder.uuid = '') AND ";
 	private static final String _FINDER_COLUMN_UUID_C_COMPANYID_2 = "ibOrder.companyId = ?";
-	public static final FinderPath FINDER_PATH_FETCH_BY_SHAREIDCOMPANYGROUP = new FinderPath(IBOrderModelImpl.ENTITY_CACHE_ENABLED,
+	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_SHAREIDCOMPANYGROUP =
+		new FinderPath(IBOrderModelImpl.ENTITY_CACHE_ENABLED,
 			IBOrderModelImpl.FINDER_CACHE_ENABLED, IBOrderImpl.class,
-			FINDER_CLASS_NAME_ENTITY, "fetchByShareIdCompanyGroup",
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+			"findByShareIdCompanyGroup",
+			new String[] {
+				Long.class.getName(), Long.class.getName(), Long.class.getName(),
+				
+			Integer.class.getName(), Integer.class.getName(),
+				OrderByComparator.class.getName()
+			});
+	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_SHAREIDCOMPANYGROUP =
+		new FinderPath(IBOrderModelImpl.ENTITY_CACHE_ENABLED,
+			IBOrderModelImpl.FINDER_CACHE_ENABLED, IBOrderImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"findByShareIdCompanyGroup",
 			new String[] {
 				Long.class.getName(), Long.class.getName(), Long.class.getName()
 			},
@@ -1485,92 +1500,132 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 			});
 
 	/**
-	 * Returns the i b order where shareID = &#63; and companyId = &#63; and groupId = &#63; or throws a {@link NoSuchIBOrderException} if it could not be found.
+	 * Returns all the i b orders where shareID = &#63; and companyId = &#63; and groupId = &#63;.
 	 *
 	 * @param shareID the share i d
 	 * @param companyId the company ID
 	 * @param groupId the group ID
-	 * @return the matching i b order
-	 * @throws NoSuchIBOrderException if a matching i b order could not be found
+	 * @return the matching i b orders
 	 */
 	@Override
-	public IBOrder findByShareIdCompanyGroup(long shareID, long companyId,
-		long groupId) throws NoSuchIBOrderException {
-		IBOrder ibOrder = fetchByShareIdCompanyGroup(shareID, companyId, groupId);
+	public List<IBOrder> findByShareIdCompanyGroup(long shareID,
+		long companyId, long groupId) {
+		return findByShareIdCompanyGroup(shareID, companyId, groupId,
+			QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	}
 
-		if (ibOrder == null) {
-			StringBundler msg = new StringBundler(8);
+	/**
+	 * Returns a range of all the i b orders where shareID = &#63; and companyId = &#63; and groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param shareID the share i d
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of i b orders
+	 * @param end the upper bound of the range of i b orders (not inclusive)
+	 * @return the range of matching i b orders
+	 */
+	@Override
+	public List<IBOrder> findByShareIdCompanyGroup(long shareID,
+		long companyId, long groupId, int start, int end) {
+		return findByShareIdCompanyGroup(shareID, companyId, groupId, start,
+			end, null);
+	}
 
-			msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+	/**
+	 * Returns an ordered range of all the i b orders where shareID = &#63; and companyId = &#63; and groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param shareID the share i d
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of i b orders
+	 * @param end the upper bound of the range of i b orders (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching i b orders
+	 */
+	@Override
+	public List<IBOrder> findByShareIdCompanyGroup(long shareID,
+		long companyId, long groupId, int start, int end,
+		OrderByComparator<IBOrder> orderByComparator) {
+		return findByShareIdCompanyGroup(shareID, companyId, groupId, start,
+			end, orderByComparator, true);
+	}
 
-			msg.append("shareID=");
-			msg.append(shareID);
+	/**
+	 * Returns an ordered range of all the i b orders where shareID = &#63; and companyId = &#63; and groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param shareID the share i d
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of i b orders
+	 * @param end the upper bound of the range of i b orders (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the ordered range of matching i b orders
+	 */
+	@Override
+	public List<IBOrder> findByShareIdCompanyGroup(long shareID,
+		long companyId, long groupId, int start, int end,
+		OrderByComparator<IBOrder> orderByComparator, boolean retrieveFromCache) {
+		boolean pagination = true;
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
 
-			msg.append(", companyId=");
-			msg.append(companyId);
-
-			msg.append(", groupId=");
-			msg.append(groupId);
-
-			msg.append(StringPool.CLOSE_CURLY_BRACE);
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(msg.toString());
-			}
-
-			throw new NoSuchIBOrderException(msg.toString());
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+				(orderByComparator == null)) {
+			pagination = false;
+			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_SHAREIDCOMPANYGROUP;
+			finderArgs = new Object[] { shareID, companyId, groupId };
+		}
+		else {
+			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_SHAREIDCOMPANYGROUP;
+			finderArgs = new Object[] {
+					shareID, companyId, groupId,
+					
+					start, end, orderByComparator
+				};
 		}
 
-		return ibOrder;
-	}
-
-	/**
-	 * Returns the i b order where shareID = &#63; and companyId = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param shareID the share i d
-	 * @param companyId the company ID
-	 * @param groupId the group ID
-	 * @return the matching i b order, or <code>null</code> if a matching i b order could not be found
-	 */
-	@Override
-	public IBOrder fetchByShareIdCompanyGroup(long shareID, long companyId,
-		long groupId) {
-		return fetchByShareIdCompanyGroup(shareID, companyId, groupId, true);
-	}
-
-	/**
-	 * Returns the i b order where shareID = &#63; and companyId = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
-	 *
-	 * @param shareID the share i d
-	 * @param companyId the company ID
-	 * @param groupId the group ID
-	 * @param retrieveFromCache whether to retrieve from the finder cache
-	 * @return the matching i b order, or <code>null</code> if a matching i b order could not be found
-	 */
-	@Override
-	public IBOrder fetchByShareIdCompanyGroup(long shareID, long companyId,
-		long groupId, boolean retrieveFromCache) {
-		Object[] finderArgs = new Object[] { shareID, companyId, groupId };
-
-		Object result = null;
+		List<IBOrder> list = null;
 
 		if (retrieveFromCache) {
-			result = finderCache.getResult(FINDER_PATH_FETCH_BY_SHAREIDCOMPANYGROUP,
-					finderArgs, this);
-		}
+			list = (List<IBOrder>)finderCache.getResult(finderPath, finderArgs,
+					this);
 
-		if (result instanceof IBOrder) {
-			IBOrder ibOrder = (IBOrder)result;
+			if ((list != null) && !list.isEmpty()) {
+				for (IBOrder ibOrder : list) {
+					if ((shareID != ibOrder.getShareID()) ||
+							(companyId != ibOrder.getCompanyId()) ||
+							(groupId != ibOrder.getGroupId())) {
+						list = null;
 
-			if ((shareID != ibOrder.getShareID()) ||
-					(companyId != ibOrder.getCompanyId()) ||
-					(groupId != ibOrder.getGroupId())) {
-				result = null;
+						break;
+					}
+				}
 			}
 		}
 
-		if (result == null) {
-			StringBundler query = new StringBundler(5);
+		if (list == null) {
+			StringBundler query = null;
+
+			if (orderByComparator != null) {
+				query = new StringBundler(5 +
+						(orderByComparator.getOrderByFields().length * 2));
+			}
+			else {
+				query = new StringBundler(5);
+			}
 
 			query.append(_SQL_SELECT_IBORDER_WHERE);
 
@@ -1579,6 +1634,15 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 			query.append(_FINDER_COLUMN_SHAREIDCOMPANYGROUP_COMPANYID_2);
 
 			query.append(_FINDER_COLUMN_SHAREIDCOMPANYGROUP_GROUPID_2);
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
+					orderByComparator);
+			}
+			else
+			 if (pagination) {
+				query.append(IBOrderModelImpl.ORDER_BY_JPQL);
+			}
 
 			String sql = query.toString();
 
@@ -1597,37 +1661,25 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 
 				qPos.add(groupId);
 
-				List<IBOrder> list = q.list();
+				if (!pagination) {
+					list = (List<IBOrder>)QueryUtil.list(q, getDialect(),
+							start, end, false);
 
-				if (list.isEmpty()) {
-					finderCache.putResult(FINDER_PATH_FETCH_BY_SHAREIDCOMPANYGROUP,
-						finderArgs, list);
+					Collections.sort(list);
+
+					list = Collections.unmodifiableList(list);
 				}
 				else {
-					if ((list.size() > 1) && _log.isWarnEnabled()) {
-						_log.warn(
-							"IBOrderPersistenceImpl.fetchByShareIdCompanyGroup(long, long, long, boolean) with parameters (" +
-							StringUtil.merge(finderArgs) +
-							") yields a result set with more than 1 result. This violates the logical unique restriction. There is no order guarantee on which result is returned by this finder.");
-					}
-
-					IBOrder ibOrder = list.get(0);
-
-					result = ibOrder;
-
-					cacheResult(ibOrder);
-
-					if ((ibOrder.getShareID() != shareID) ||
-							(ibOrder.getCompanyId() != companyId) ||
-							(ibOrder.getGroupId() != groupId)) {
-						finderCache.putResult(FINDER_PATH_FETCH_BY_SHAREIDCOMPANYGROUP,
-							finderArgs, ibOrder);
-					}
+					list = (List<IBOrder>)QueryUtil.list(q, getDialect(),
+							start, end);
 				}
+
+				cacheResult(list);
+
+				finderCache.putResult(finderPath, finderArgs, list);
 			}
 			catch (Exception e) {
-				finderCache.removeResult(FINDER_PATH_FETCH_BY_SHAREIDCOMPANYGROUP,
-					finderArgs);
+				finderCache.removeResult(finderPath, finderArgs);
 
 				throw processException(e);
 			}
@@ -1636,28 +1688,311 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 			}
 		}
 
-		if (result instanceof List<?>) {
-			return null;
-		}
-		else {
-			return (IBOrder)result;
-		}
+		return list;
 	}
 
 	/**
-	 * Removes the i b order where shareID = &#63; and companyId = &#63; and groupId = &#63; from the database.
+	 * Returns the first i b order in the ordered set where shareID = &#63; and companyId = &#63; and groupId = &#63;.
 	 *
 	 * @param shareID the share i d
 	 * @param companyId the company ID
 	 * @param groupId the group ID
-	 * @return the i b order that was removed
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching i b order
+	 * @throws NoSuchIBOrderException if a matching i b order could not be found
 	 */
 	@Override
-	public IBOrder removeByShareIdCompanyGroup(long shareID, long companyId,
-		long groupId) throws NoSuchIBOrderException {
-		IBOrder ibOrder = findByShareIdCompanyGroup(shareID, companyId, groupId);
+	public IBOrder findByShareIdCompanyGroup_First(long shareID,
+		long companyId, long groupId,
+		OrderByComparator<IBOrder> orderByComparator)
+		throws NoSuchIBOrderException {
+		IBOrder ibOrder = fetchByShareIdCompanyGroup_First(shareID, companyId,
+				groupId, orderByComparator);
 
-		return remove(ibOrder);
+		if (ibOrder != null) {
+			return ibOrder;
+		}
+
+		StringBundler msg = new StringBundler(8);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("shareID=");
+		msg.append(shareID);
+
+		msg.append(", companyId=");
+		msg.append(companyId);
+
+		msg.append(", groupId=");
+		msg.append(groupId);
+
+		msg.append(StringPool.CLOSE_CURLY_BRACE);
+
+		throw new NoSuchIBOrderException(msg.toString());
+	}
+
+	/**
+	 * Returns the first i b order in the ordered set where shareID = &#63; and companyId = &#63; and groupId = &#63;.
+	 *
+	 * @param shareID the share i d
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching i b order, or <code>null</code> if a matching i b order could not be found
+	 */
+	@Override
+	public IBOrder fetchByShareIdCompanyGroup_First(long shareID,
+		long companyId, long groupId,
+		OrderByComparator<IBOrder> orderByComparator) {
+		List<IBOrder> list = findByShareIdCompanyGroup(shareID, companyId,
+				groupId, 0, 1, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last i b order in the ordered set where shareID = &#63; and companyId = &#63; and groupId = &#63;.
+	 *
+	 * @param shareID the share i d
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching i b order
+	 * @throws NoSuchIBOrderException if a matching i b order could not be found
+	 */
+	@Override
+	public IBOrder findByShareIdCompanyGroup_Last(long shareID, long companyId,
+		long groupId, OrderByComparator<IBOrder> orderByComparator)
+		throws NoSuchIBOrderException {
+		IBOrder ibOrder = fetchByShareIdCompanyGroup_Last(shareID, companyId,
+				groupId, orderByComparator);
+
+		if (ibOrder != null) {
+			return ibOrder;
+		}
+
+		StringBundler msg = new StringBundler(8);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("shareID=");
+		msg.append(shareID);
+
+		msg.append(", companyId=");
+		msg.append(companyId);
+
+		msg.append(", groupId=");
+		msg.append(groupId);
+
+		msg.append(StringPool.CLOSE_CURLY_BRACE);
+
+		throw new NoSuchIBOrderException(msg.toString());
+	}
+
+	/**
+	 * Returns the last i b order in the ordered set where shareID = &#63; and companyId = &#63; and groupId = &#63;.
+	 *
+	 * @param shareID the share i d
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching i b order, or <code>null</code> if a matching i b order could not be found
+	 */
+	@Override
+	public IBOrder fetchByShareIdCompanyGroup_Last(long shareID,
+		long companyId, long groupId,
+		OrderByComparator<IBOrder> orderByComparator) {
+		int count = countByShareIdCompanyGroup(shareID, companyId, groupId);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<IBOrder> list = findByShareIdCompanyGroup(shareID, companyId,
+				groupId, count - 1, count, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the i b orders before and after the current i b order in the ordered set where shareID = &#63; and companyId = &#63; and groupId = &#63;.
+	 *
+	 * @param ordersId the primary key of the current i b order
+	 * @param shareID the share i d
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next i b order
+	 * @throws NoSuchIBOrderException if a i b order with the primary key could not be found
+	 */
+	@Override
+	public IBOrder[] findByShareIdCompanyGroup_PrevAndNext(long ordersId,
+		long shareID, long companyId, long groupId,
+		OrderByComparator<IBOrder> orderByComparator)
+		throws NoSuchIBOrderException {
+		IBOrder ibOrder = findByPrimaryKey(ordersId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			IBOrder[] array = new IBOrderImpl[3];
+
+			array[0] = getByShareIdCompanyGroup_PrevAndNext(session, ibOrder,
+					shareID, companyId, groupId, orderByComparator, true);
+
+			array[1] = ibOrder;
+
+			array[2] = getByShareIdCompanyGroup_PrevAndNext(session, ibOrder,
+					shareID, companyId, groupId, orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected IBOrder getByShareIdCompanyGroup_PrevAndNext(Session session,
+		IBOrder ibOrder, long shareID, long companyId, long groupId,
+		OrderByComparator<IBOrder> orderByComparator, boolean previous) {
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(6 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(5);
+		}
+
+		query.append(_SQL_SELECT_IBORDER_WHERE);
+
+		query.append(_FINDER_COLUMN_SHAREIDCOMPANYGROUP_SHAREID_2);
+
+		query.append(_FINDER_COLUMN_SHAREIDCOMPANYGROUP_COMPANYID_2);
+
+		query.append(_FINDER_COLUMN_SHAREIDCOMPANYGROUP_GROUPID_2);
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			query.append(IBOrderModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = query.toString();
+
+		Query q = session.createQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(shareID);
+
+		qPos.add(companyId);
+
+		qPos.add(groupId);
+
+		if (orderByComparator != null) {
+			Object[] values = orderByComparator.getOrderByConditionValues(ibOrder);
+
+			for (Object value : values) {
+				qPos.add(value);
+			}
+		}
+
+		List<IBOrder> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Removes all the i b orders where shareID = &#63; and companyId = &#63; and groupId = &#63; from the database.
+	 *
+	 * @param shareID the share i d
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 */
+	@Override
+	public void removeByShareIdCompanyGroup(long shareID, long companyId,
+		long groupId) {
+		for (IBOrder ibOrder : findByShareIdCompanyGroup(shareID, companyId,
+				groupId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+			remove(ibOrder);
+		}
 	}
 
 	/**
@@ -1743,12 +2078,6 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 		finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G,
 			new Object[] { ibOrder.getUuid(), ibOrder.getGroupId() }, ibOrder);
 
-		finderCache.putResult(FINDER_PATH_FETCH_BY_SHAREIDCOMPANYGROUP,
-			new Object[] {
-				ibOrder.getShareID(), ibOrder.getCompanyId(),
-				ibOrder.getGroupId()
-			}, ibOrder);
-
 		ibOrder.resetOriginalValues();
 	}
 
@@ -1828,17 +2157,6 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 				Long.valueOf(1));
 			finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
 				ibOrderModelImpl);
-
-			args = new Object[] {
-					ibOrderModelImpl.getShareID(),
-					ibOrderModelImpl.getCompanyId(),
-					ibOrderModelImpl.getGroupId()
-				};
-
-			finderCache.putResult(FINDER_PATH_COUNT_BY_SHAREIDCOMPANYGROUP,
-				args, Long.valueOf(1));
-			finderCache.putResult(FINDER_PATH_FETCH_BY_SHAREIDCOMPANYGROUP,
-				args, ibOrderModelImpl);
 		}
 		else {
 			if ((ibOrderModelImpl.getColumnBitmask() &
@@ -1852,20 +2170,6 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 					Long.valueOf(1));
 				finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
 					ibOrderModelImpl);
-			}
-
-			if ((ibOrderModelImpl.getColumnBitmask() &
-					FINDER_PATH_FETCH_BY_SHAREIDCOMPANYGROUP.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						ibOrderModelImpl.getShareID(),
-						ibOrderModelImpl.getCompanyId(),
-						ibOrderModelImpl.getGroupId()
-					};
-
-				finderCache.putResult(FINDER_PATH_COUNT_BY_SHAREIDCOMPANYGROUP,
-					args, Long.valueOf(1));
-				finderCache.putResult(FINDER_PATH_FETCH_BY_SHAREIDCOMPANYGROUP,
-					args, ibOrderModelImpl);
 			}
 		}
 	}
@@ -1887,28 +2191,6 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 
 			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
 			finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
-		}
-
-		args = new Object[] {
-				ibOrderModelImpl.getShareID(), ibOrderModelImpl.getCompanyId(),
-				ibOrderModelImpl.getGroupId()
-			};
-
-		finderCache.removeResult(FINDER_PATH_COUNT_BY_SHAREIDCOMPANYGROUP, args);
-		finderCache.removeResult(FINDER_PATH_FETCH_BY_SHAREIDCOMPANYGROUP, args);
-
-		if ((ibOrderModelImpl.getColumnBitmask() &
-				FINDER_PATH_FETCH_BY_SHAREIDCOMPANYGROUP.getColumnBitmask()) != 0) {
-			args = new Object[] {
-					ibOrderModelImpl.getOriginalShareID(),
-					ibOrderModelImpl.getOriginalCompanyId(),
-					ibOrderModelImpl.getOriginalGroupId()
-				};
-
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_SHAREIDCOMPANYGROUP,
-				args);
-			finderCache.removeResult(FINDER_PATH_FETCH_BY_SHAREIDCOMPANYGROUP,
-				args);
 		}
 	}
 
@@ -2031,6 +2313,28 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 			ibOrder.setUuid(uuid);
 		}
 
+		ServiceContext serviceContext = ServiceContextThreadLocal.getServiceContext();
+
+		Date now = new Date();
+
+		if (isNew && (ibOrder.getCreateDate() == null)) {
+			if (serviceContext == null) {
+				ibOrder.setCreateDate(now);
+			}
+			else {
+				ibOrder.setCreateDate(serviceContext.getCreateDate(now));
+			}
+		}
+
+		if (!ibOrderModelImpl.hasSetModifiedDate()) {
+			if (serviceContext == null) {
+				ibOrder.setModifiedDate(now);
+			}
+			else {
+				ibOrder.setModifiedDate(serviceContext.getModifiedDate(now));
+			}
+		}
+
 		Session session = null;
 
 		try {
@@ -2094,6 +2398,31 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID_C,
 					args);
 			}
+
+			if ((ibOrderModelImpl.getColumnBitmask() &
+					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_SHAREIDCOMPANYGROUP.getColumnBitmask()) != 0) {
+				Object[] args = new Object[] {
+						ibOrderModelImpl.getOriginalShareID(),
+						ibOrderModelImpl.getOriginalCompanyId(),
+						ibOrderModelImpl.getOriginalGroupId()
+					};
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_SHAREIDCOMPANYGROUP,
+					args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_SHAREIDCOMPANYGROUP,
+					args);
+
+				args = new Object[] {
+						ibOrderModelImpl.getShareID(),
+						ibOrderModelImpl.getCompanyId(),
+						ibOrderModelImpl.getGroupId()
+					};
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_SHAREIDCOMPANYGROUP,
+					args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_SHAREIDCOMPANYGROUP,
+					args);
+			}
 		}
 
 		entityCache.putResult(IBOrderModelImpl.ENTITY_CACHE_ENABLED,
@@ -2121,9 +2450,10 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 		ibOrderImpl.setOrdersId(ibOrder.getOrdersId());
 		ibOrderImpl.setGroupId(ibOrder.getGroupId());
 		ibOrderImpl.setCompanyId(ibOrder.getCompanyId());
-		ibOrderImpl.setOrderID(ibOrder.getOrderID());
 		ibOrderImpl.setShareID(ibOrder.getShareID());
 		ibOrderImpl.setChecked(ibOrder.isChecked());
+		ibOrderImpl.setCreateDate(ibOrder.getCreateDate());
+		ibOrderImpl.setModifiedDate(ibOrder.getModifiedDate());
 
 		return ibOrderImpl;
 	}

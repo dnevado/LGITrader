@@ -86,7 +86,7 @@ public class IBStrategyMinMax extends StrategyImpl {
 			else		    					
 				oContrat = new StkContract( _share.getSymbol());
   		    
-			//oContrat = (Contract) oTIMApiWrapper.createContract(ShareStrategy.getSymbol(), ShareStrategy.getSecurity_type(),ShareStrategy.getExchange(),oMarket.getCurrency(), _Expiration, "", 0);
+			//oContrat = (Contract) oTIMApiWrapper.createContract(ShareStrategy.getSymbol(), ShareStrategy.getSecurity_type(),ShareStrategy.getExchange(),_market.getCurrency(), _Expiration, "", 0);
 			
 	  		long  _INCREMENT_ORDER_ID = CounterLocalServiceUtil.increment(Order.class.getName()) +  this.getCLIENT_ID();
 			
@@ -95,10 +95,11 @@ public class IBStrategyMinMax extends StrategyImpl {
 			_order.setCompanyId(_share.getCompanyId());
 			_order.setGroupId(_share.getGroupId());
 			_order.setShareID(_share.getShareId());
+			_order.setCreateDate(new Date());
+			_order.setModifiedDate(new Date());
 			/* pedimos tiempo real */
 			IBOrderLocalServiceUtil.updateIBOrder(_order);
-  		  
-  		  
+			_INCREMENT_ORDER_ID  = _order.getOrdersId();
 			// colocamos operacion de compra			
 			Order BuyPositionTWS = new Order();
 			
@@ -116,7 +117,7 @@ public class IBStrategyMinMax extends StrategyImpl {
 			
 		/* 	if (bIsFutureStock)
 			{
-				ValueLimit = Utilidades.TickLimit_WithMultiplier(ValueToBuy,ShareStrategy.getTick_Futures(), ValueLimit, bReachedMin);
+				ValueLimit = Utilities.TickLimit_WithMultiplier(ValueToBuy,ShareStrategy.getTick_Futures(), ValueLimit, bReachedMin);
 			}
 			*/
 			
@@ -204,7 +205,6 @@ public class IBStrategyMinMax extends StrategyImpl {
 		boolean verified = false;
 		boolean existsP = false;
 											
-		//LogTWM.log(Priority.INFO, ShareStrategy.getName() );		
 		
 		try
         {
@@ -215,9 +215,9 @@ public class IBStrategyMinMax extends StrategyImpl {
 			
 		/* supongamos cierre mercado a las 2200 */
 		/* HoraDeadLineToClose sera la hora actual mas los minutos de la estrategia 
-		Calendar calFechaActualWithDeadLine = Utilidades.getNewCalendarWithHour(HoraActual);
+		Calendar calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(HoraActual);
 		calFechaActualWithDeadLine.add(Calendar.MINUTE,this.getSell_all_deadline_min_toclose());
-		Calendar calFechaFinMercado = Utilidades.getNewCalendarWithHour(oMarket.getEnd_hour());
+		Calendar calFechaFinMercado = Utilities.getNewCalendarWithHour(_market.getEnd_hour());
 		*/
 		
 		existsP = PositionLocalServiceUtil.ExistsOpenPosition (_share.getGroupId(),_share.getCompanyId(),_share.getShareId());
@@ -243,26 +243,26 @@ public class IBStrategyMinMax extends StrategyImpl {
 			
 
 			// HORA DE FIN DE CALCULO DE MAX Y MINIMOS.
-			/* String HoraInicioLecturaMaxMin = Utilidades.getActualHourFormatPlusMinutes(oMarket.getStart_hour(), ShareStrategy.getOffset1min_read_from_initmarket());
-			String HoraFinLecturaMaxMin = Utilidades.getActualHourFormatPlusMinutes(oMarket.getStart_hour(), ShareStrategy.getOffset2min_read_from_initmarket());
 			
-			 COMPROBAMOS ALGUN TIPO DE ERROR 
+			String HoraInicioLecturaMaxMin = Utilities.getActualHourFormatPlusMinutes(_market.getStart_hour(), Parameters.get(_EXPANDO_OFFSET1_FROM_OPENMARKET).intValue());
+			String HoraFinLecturaMaxMin = Utilities.getActualHourFormatPlusMinutes(_market.getStart_hour(), Parameters.get(_EXPANDO_OFFSET2_FROM_OPENMARKET).intValue());
+			
+			// COMPROBAMOS ALGUN TIPO DE ERROR 
 			if (HoraInicioLecturaMaxMin.contains("-1") || HoraFinLecturaMaxMin.contains("-1"))
 			{
-				LogTWM.log(Priority.ERROR, "[Estrategia:StrategyMinMax]: Errores formateando las horas de Max y Min de la acción. Hora[" + oMarket.getStart_hour()  + "], Offset1[" + ShareStrategy.getOffset1min_read_from_initmarket() + "]");
+				_log.info("[Estrategia:StrategyMinMax]: Errores formateando las horas de Max y Min de la acción. "
+						+ "Hora[" + _market.getStart_hour()  + "], Offset1[" + Parameters.get(_EXPANDO_OFFSET1_FROM_OPENMARKET).intValue()+ "]");
 				return false;
 			}
 				
 			
 			if (HoraActual.compareTo(HoraFinLecturaMaxMin)>0)   // hora actyual ya ha pasado, podemos entrar en la operativa
 			{
-				
 			
-			// ya no obtenemos el maximo y mínimo, sino el correspondiente al tramo que me han dicho
+			// ya no obtenemos el maximo y mínimo, sino el correspondiente al tramo que me han dicho		
+			Calendar DateMinMaxFrom =Utilities.getNewCalendarWithHour(HoraInicioLecturaMaxMin);
+			Calendar DateMinMaxTo =Utilities.getNewCalendarWithHour(HoraFinLecturaMaxMin);
 			
-			Calendar DateMinMaxFrom =Utilidades.getNewCalendarWithHour(HoraInicioLecturaMaxMin);
-			Calendar DateMinMaxTo =Utilidades.getNewCalendarWithHour(HoraFinLecturaMaxMin);
-			*/
 			
 			/* TIEMPOS REALES Y MAXIMOS Y MINIMOS CONSEGUIDOS */
 			
@@ -286,6 +286,7 @@ public class IBStrategyMinMax extends StrategyImpl {
 		//}  fin de verificacion de operacion de compra previa 	
 		
         }
+        }
 		catch (Exception er)
         {
 			_log.info(er.getMessage());
@@ -301,53 +302,53 @@ public class IBStrategyMinMax extends StrategyImpl {
 		// TODO Auto-generated method stub
 		// CREAMOS LOS EXPANDOS NECESARIOS 
 		
-	Parameters.put(_EXPANDO_OFFSET1_FROM_OPENMARKET, Long.valueOf(ExpandoColumnConstants.LONG));
-	Parameters.put(_EXPANDO_OFFSET2_FROM_OPENMARKET,  Long.valueOf(ExpandoColumnConstants.LONG));	
-	ExpandoTable expandoTable;
-	try {
-		expandoTable = ExpandoTableLocalServiceUtil.addDefaultTable(companyId, IBStrategyMinMax.class.getName());
-		long i = 0;
-		for (Map.Entry<String, Long> parameter : Parameters.entrySet()) {
-		
-			String _paramName = parameter.getKey();
-			Long _paramValue = parameter.getValue();
+		Parameters.put(_EXPANDO_OFFSET1_FROM_OPENMARKET, Long.valueOf(ExpandoColumnConstants.LONG));
+		Parameters.put(_EXPANDO_OFFSET2_FROM_OPENMARKET,  Long.valueOf(ExpandoColumnConstants.LONG));	
+		ExpandoTable expandoTable;
+		try {
+			expandoTable = ExpandoTableLocalServiceUtil.addDefaultTable(companyId, IBStrategyMinMax.class.getName());
+			long i = 0;
+			for (Map.Entry<String, Long> parameter : Parameters.entrySet()) {
 			
-			/* EXISTE, SI NO , LO CREAMOS */
-			ExpandoColumn ExistsExpando = ExpandoColumnLocalServiceUtil.getColumn(expandoTable.getTableId(), _paramName);
-			
-			if (ExistsExpando==null)
-			{
-				ExpandoColumn paramColumn = ExpandoColumnLocalServiceUtil.createExpandoColumn(CounterLocalServiceUtil.increment(ExpandoColumn.class.getName()));
-				paramColumn.setName(_paramName);
-				paramColumn.setType(_paramValue.intValue());	
-				paramColumn.setTypeSettings("hidden=0\nindex-type=0\nvisible-with-update-permission=0");
-				paramColumn.setCompanyId(companyId);
-				paramColumn.setTableId(expandoTable.getTableId());
-				ExpandoColumnLocalServiceUtil.updateExpandoColumn(paramColumn);
+				String _paramName = parameter.getKey();
+				Long _paramValue = parameter.getValue();
 				
-				ExpandoColumns.add(paramColumn);
+				/* EXISTE, SI NO , LO CREAMOS */
+				ExpandoColumn ExistsExpando = ExpandoColumnLocalServiceUtil.getColumn(expandoTable.getTableId(), _paramName);
+				
+				if (ExistsExpando==null)
+				{
+					ExpandoColumn paramColumn = ExpandoColumnLocalServiceUtil.createExpandoColumn(CounterLocalServiceUtil.increment(ExpandoColumn.class.getName()));
+					paramColumn.setName(_paramName);
+					paramColumn.setType(_paramValue.intValue());	
+					paramColumn.setTypeSettings("hidden=0\nindex-type=0\nvisible-with-update-permission=0");
+					paramColumn.setCompanyId(companyId);
+					paramColumn.setTableId(expandoTable.getTableId());
+					ExpandoColumnLocalServiceUtil.updateExpandoColumn(paramColumn);
+					
+					ExpandoColumns.add(paramColumn);
+				}
+				else
+				{
+					ExpandoColumns.add(ExistsExpando);	
+				}
+				
+				
+				
+				
 			}
-			else
-			{
-				ExpandoColumns.add(ExistsExpando);	
-			}
+			/* method of the interface */
+			this.setIBStrategyParams(ExpandoColumns);
 			
-			
-			
-			
+		} catch (PortalException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		/* method of the interface */
-		this.setIBStrategyParams(ExpandoColumns);
-		
-	} catch (PortalException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
 		
 }
 
 	/* CUSTOM VALIDATOR OF EXPANDO FIELDS 
-	 * strategyshare.strategyminmax.errorparams  =  El formato de los par�metros es err
+	 * strategyshare.strategyminmax.errorparams  =  El formato de los par�metros es err
 	// strategyshare.strategyminmax.errorparams2  = El desplazamiento desde inicio de mercado debe ser menor que el fin.
 	 * 
 	 * */

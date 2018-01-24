@@ -15,12 +15,13 @@ create table ibtrader_Config (
 
 create table ibtrader_IBOrder (
 	uuid_ VARCHAR(75) null,
-	ordersId LONG not null primary key,
+	ordersId LONG not null primary key IDENTITY,
 	groupId LONG,
 	companyId LONG,
-	orderID LONG,
 	shareID LONG,
-	checked BOOLEAN
+	checked BOOLEAN,
+	createDate DATE null,
+	modifiedDate DATE null
 );
 
 create table ibtrader_Market (

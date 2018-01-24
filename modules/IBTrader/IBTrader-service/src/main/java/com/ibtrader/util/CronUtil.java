@@ -70,11 +70,11 @@ public class CronUtil {
 	/* CONEXIONES POR ORGANIZACION */
 	public static void StartReadingCron(Message _message) throws Exception 	{
 	
-	Config _conf = null;
+	
 	int 	_CLIENT_ID = 1;	  // el dos para leer, el 3 para escribir			
 	String  _HOST = "127.0.0.1";
 	int     _PORT = ConfigKeys.TWS_CONNECTION_PORT;	
-	Config _Conf_CronRunning = null;
+	
 	int _CRON_RUNNING = -1;	  // el dos
 	List<Company> lCompanies = CompanyLocalServiceUtil.getCompanies();
 	Company _company = lCompanies.get(0); // tiene que existir
@@ -92,16 +92,12 @@ public class CronUtil {
 	_CRON_RUNNING = Long.valueOf(Utilities.getConfigurationValue(IBTraderConstants.keyCRON_READING_STATUS, companyId, guestGroupId)).intValue();
 	SimpleDateFormat sdf = new SimpleDateFormat ("yyyyMM");
 	
-	SimpleDateFormat sdfTime = new SimpleDateFormat (Utilities.__IBTRADER_SHORT_HOUR_FORMAT);
-
-	
-
-	
     LocalDateTime  _now =  LocalDateTime .now();  
 	
 	if (_CRON_RUNNING==0)  // no se esta ejecutando --> FALTA CONTROL DE EXCEPTIONES PARA CONTROLAR QUE SE PUEDA VOLVER A EJECUTAR 
 	{
 	// sacamos organizaciones padre 
+	
 	List<Organization> lOrganization = OrganizationLocalServiceUtil.getOrganizations(companyId, OrganizationConstants.DEFAULT_PARENT_ORGANIZATION_ID, 0, OrganizationLocalServiceUtil.getOrganizationsCount()+1);
 	
 		for (Organization _Organization : lOrganization )
@@ -111,7 +107,7 @@ public class CronUtil {
 		 _PORT = Integer.valueOf(Utilities.getConfigurationValue(IBTraderConstants.keyTWS_PORT, _Organization.getCompanyId(), _Organization.getGroupId()));
 		 TIMApiGITrader oTWS = new TIMApiGITrader(_HOST,_PORT, _CLIENT_ID);	
 		 if (oTWS.GITraderTWSIsConnected())  oTWS.GITraderDisconnectFromTWS(); 
-//		 _log.info("StartReadingCron, connecting to TWS for Organization:" + _Organization.getName());
+		 _log.info("StartReadingCron, connecting to TWS for Organization:" + _Organization.getName());
 		 oTWS.GITraderConnetToTWS();
 		 if (oTWS.GITraderTWSIsConnected() )
 	     {
@@ -193,9 +189,9 @@ public class CronUtil {
 					    			long  _INCREMENT_ORDER_ID = CounterLocalServiceUtil.increment(IBOrder.class.getName()) +  _CLIENT_ID;
 					    			/* insertamos control de ordenes de peticion */
 					    			 IBOrder _order = IBOrderLocalServiceUtil.createIBOrder(_INCREMENT_ORDER_ID);
-					    			_order.setCompanyId(oMarket.getMarketId());
+					    			_order.setCompanyId(oMarket.getCompanyId());
 					    			_order.setGroupId(oMarket.getGroupId());
-					    			_order.setShareID(oShare.getShareId());
+					    			_order.setShareID(oShare.getShareId());					    		
 					    			/* pedimos tiempo real */
 					    			IBOrderLocalServiceUtil.updateIBOrder(_order);
 		
@@ -291,6 +287,7 @@ public class CronUtil {
 				 _PORT = Integer.valueOf(Utilities.getConfigurationValue(IBTraderConstants.keyTWS_PORT, _Organization.getCompanyId(), _Organization.getGroupId()));
 				 TIMApiGITrader oTWS = new TIMApiGITrader(_HOST,_PORT, _CLIENT_ID);	
 				 if (oTWS.GITraderTWSIsConnected())  oTWS.GITraderDisconnectFromTWS(); 
+				 _log.info("StartTradingCron, connecting to TWS");
 				 oTWS.GITraderConnetToTWS();
 				 if (oTWS.GITraderTWSIsConnected() )
 			     {
@@ -416,7 +413,7 @@ public class CronUtil {
 				 _PORT = Integer.valueOf(Utilities.getConfigurationValue(IBTraderConstants.keyTWS_PORT, _Organization.getCompanyId(), _Organization.getGroupId()));
 				  oTWS = new TIMApiGITrader(_HOST,_PORT, _CLIENT_ID);	
 				 if (oTWS.GITraderTWSIsConnected())  oTWS.GITraderDisconnectFromTWS();
-				// _log.info("StartVerifyContractsCron, connecting to TWS");
+				 _log.info("StartVerifyContractsCron, connecting to TWS");
 				 oTWS.GITraderConnetToTWS();
 				 if (oTWS.GITraderTWSIsConnected() )
 			     {
@@ -424,7 +421,7 @@ public class CronUtil {
 					List<Market> lActiveMarkets = MarketLocalServiceUtil.findByActive(Boolean.TRUE);
 			    	for (Market oMarket : lActiveMarkets)
 			    	{
-			    		/* TODAS LAS DESACTIVADAS 
+			    	     /* TODAS LAS DESACTIVADAS 
 			    		 * 1 . SE VERIFICAN 
 			    		 * 2. SE CANCELA EL MARKETDATA SI LO TUVIERA  	
 			    		 * */
@@ -444,18 +441,16 @@ public class CronUtil {
 								oContrat = new StkContract( oShare.getSymbol());
 			    			
 			    			
-			    			IBOrder _rkMktData = IBOrderLocalServiceUtil.findByShareIdCompanyGroup(oShare.getShareId(), oShare.getCompanyId(), oShare.getGroupId());
-							if (_rkMktData!=null)  // hay probably rekmktData
-							{
-								oTWS.GITraderCancelRealTimeContract((new Long(_rkMktData.getPrimaryKey()).intValue()));
-							}
-								
-				    			
+			    			/* por si se hubiera colado mas peticiones de realtime que 1, las borramos al arrancar los cron  */
+			    			List<IBOrder> _lrkMktData = IBOrderLocalServiceUtil.findByShareIdCompanyGroup(oShare.getShareId(), oShare.getCompanyId(), oShare.getGroupId());
+			    			for (IBOrder rkMktData  : _lrkMktData)	{	 					
+								oTWS.GITraderCancelRealTimeContract((new Long(rkMktData.getPrimaryKey()).intValue()));
+							}												    		
 			    			_log.info("Verifyng de :" + oShare.getSymbol() + ":" +  oShare.getSecurity_type() + ":" + oShare.getExchange() + ":" + oMarket.getCurrency());    						    		
 			    			long  _INCREMENT_ORDER_ID = CounterLocalServiceUtil.increment(IBOrder.class.getName()) +  _CLIENT_ID;
 			    			/* insertamos control de ordenes de peticion */
 			    			 IBOrder _order = IBOrderLocalServiceUtil.createIBOrder(_INCREMENT_ORDER_ID);
-			    			_order.setCompanyId(oMarket.getMarketId());
+			    			_order.setCompanyId(oMarket.getCompanyId());
 			    			_order.setGroupId(oMarket.getGroupId());
 			    			_order.setShareID(oShare.getShareId());
 			    			/* pedimos tiempo real */

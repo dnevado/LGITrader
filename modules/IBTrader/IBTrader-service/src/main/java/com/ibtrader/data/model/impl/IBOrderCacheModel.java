@@ -28,6 +28,8 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
+import java.util.Date;
+
 /**
  * The cache model class for representing IBOrder in entity cache.
  *
@@ -63,7 +65,7 @@ public class IBOrderCacheModel implements CacheModel<IBOrder>, Externalizable {
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(15);
+		StringBundler sb = new StringBundler(17);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -73,12 +75,14 @@ public class IBOrderCacheModel implements CacheModel<IBOrder>, Externalizable {
 		sb.append(groupId);
 		sb.append(", companyId=");
 		sb.append(companyId);
-		sb.append(", orderID=");
-		sb.append(orderID);
 		sb.append(", shareID=");
 		sb.append(shareID);
 		sb.append(", checked=");
 		sb.append(checked);
+		sb.append(", createDate=");
+		sb.append(createDate);
+		sb.append(", modifiedDate=");
+		sb.append(modifiedDate);
 		sb.append("}");
 
 		return sb.toString();
@@ -98,9 +102,22 @@ public class IBOrderCacheModel implements CacheModel<IBOrder>, Externalizable {
 		ibOrderImpl.setOrdersId(ordersId);
 		ibOrderImpl.setGroupId(groupId);
 		ibOrderImpl.setCompanyId(companyId);
-		ibOrderImpl.setOrderID(orderID);
 		ibOrderImpl.setShareID(shareID);
 		ibOrderImpl.setChecked(checked);
+
+		if (createDate == Long.MIN_VALUE) {
+			ibOrderImpl.setCreateDate(null);
+		}
+		else {
+			ibOrderImpl.setCreateDate(new Date(createDate));
+		}
+
+		if (modifiedDate == Long.MIN_VALUE) {
+			ibOrderImpl.setModifiedDate(null);
+		}
+		else {
+			ibOrderImpl.setModifiedDate(new Date(modifiedDate));
+		}
 
 		ibOrderImpl.resetOriginalValues();
 
@@ -117,11 +134,11 @@ public class IBOrderCacheModel implements CacheModel<IBOrder>, Externalizable {
 
 		companyId = objectInput.readLong();
 
-		orderID = objectInput.readLong();
-
 		shareID = objectInput.readLong();
 
 		checked = objectInput.readBoolean();
+		createDate = objectInput.readLong();
+		modifiedDate = objectInput.readLong();
 	}
 
 	@Override
@@ -140,18 +157,19 @@ public class IBOrderCacheModel implements CacheModel<IBOrder>, Externalizable {
 
 		objectOutput.writeLong(companyId);
 
-		objectOutput.writeLong(orderID);
-
 		objectOutput.writeLong(shareID);
 
 		objectOutput.writeBoolean(checked);
+		objectOutput.writeLong(createDate);
+		objectOutput.writeLong(modifiedDate);
 	}
 
 	public String uuid;
 	public long ordersId;
 	public long groupId;
 	public long companyId;
-	public long orderID;
 	public long shareID;
 	public boolean checked;
+	public long createDate;
+	public long modifiedDate;
 }

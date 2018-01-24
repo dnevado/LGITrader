@@ -1,5 +1,6 @@
 package IBTrader.sharemarketadmin.web.portlet;
 
+import java.util.Enumeration;
 import java.util.List;
 
 import javax.portlet.PortletException;
@@ -107,7 +108,22 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
 		String redirect = ParamUtil.getString(renderRequest, "redirect");
 		HttpServletRequest _hR = PortalUtil.getHttpServletRequest(renderRequest);
 		
+		Enumeration<String> lParams = renderRequest.getParameterNames();
+		Enumeration<String> lAttr = renderRequest.getAttributeNames();	
 		_log.info("Rendering porltlet MVCCOMMANDNAME...");
+		while (lParams.hasMoreElements())
+		{
+			String  p = lParams.nextElement();
+			_log.info("Param:" + p + ":" + renderRequest.getParameter(p));
+		}
+		while (lAttr.hasMoreElements())
+		{
+			String  p2 = lAttr.nextElement();
+			_log.info("Param:" + p2 + ":" + renderRequest.getParameter(p2));
+		}
+		
+		
+		
 	    String _mvcCommand = "";
 	    
 	    List<Market> _lMarket=null;
@@ -125,10 +141,17 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
 	        ServiceContext serviceContext = ServiceContextFactory.getInstance(Share.class.getName(), renderRequest);
 	      
 	        
-	        Share  shareTemp= (Share) renderRequest.getAttribute("share");
+	      
 	        long shareId = ParamUtil.getLong(renderRequest, "shareId");
+	        /* VIENE DEL ACTION ADDSHARE */
+	        long shareAddedId = ParamUtil.getLong(renderRequest, "shareAddedId",-1);
+	        
 	        long strategyId = ParamUtil.getLong(renderRequest, "strategyId");
 	        long marketId = ParamUtil.getLong(renderRequest, "marketId");
+	        
+	        
+	        if (shareAddedId!=-1)
+	        	shareId = shareAddedId;
 	        
 	    	share = _shareLocalService.fetchShare(shareId);
 	    	_mvcCommand = (String) serviceContext.getAttribute("mvcRenderCommandName");
@@ -207,7 +230,7 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
 	        renderRequest.setAttribute("share", share);
 	        renderRequest.setAttribute("strategy", Strategy);
 	        renderRequest.setAttribute("_lMarket", _lMarket);
-	        renderRequest.setAttribute("lMarket", Market);
+	        renderRequest.setAttribute("market", Market);
 	        renderRequest.setAttribute("implemented_strategy", _strategyImpl);
 	        renderRequest.setAttribute("tab_selected", tab_selected);	        
 	        renderRequest.setAttribute("jsonStrategyShareParams", jsonStrategyShareParams);
@@ -220,7 +243,7 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
 	        
 
 	    } catch (Exception e) {
-
+	    	e.printStackTrace();
 	        throw new PortletException(e);
 	    }
 	   	  

@@ -24,5 +24,6 @@
 <%@ taglib prefix="liferay-util" uri="http://liferay.com/tld/util" %>
 <%@ taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %>
 <%@ taglib uri="http://liferay.com/tld/security" prefix="liferay-security" %>
+<%@ taglib prefix = "fn"  uri = "http://java.sun.com/jsp/jstl/functions" %>
 <liferay-theme:defineObjects />
 <portlet:defineObjects />

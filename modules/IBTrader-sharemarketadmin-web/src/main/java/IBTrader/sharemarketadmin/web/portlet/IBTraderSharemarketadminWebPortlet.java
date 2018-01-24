@@ -2,6 +2,12 @@ package IBTrader.sharemarketadmin.web.portlet;
 
 import IBTrader.sharemarketadmin.web.constants.IBTraderSharemarketadminWebPortletKeys;
 
+import com.ib.client.Contract;
+import com.ib.contracts.FutContract;
+import com.ib.contracts.StkContract;
+import com.ibtrader.constants.IBTraderConstants;
+import com.ibtrader.data.model.Config;
+import com.ibtrader.data.model.IBOrder;
 import com.ibtrader.data.model.Market;
 import com.ibtrader.data.model.Position;
 import com.ibtrader.data.model.Share;
@@ -9,12 +15,16 @@ import com.ibtrader.data.model.ShareModel;
 import com.ibtrader.data.model.Strategy;
 import com.ibtrader.data.model.StrategyShare;
 import com.ibtrader.data.model.impl.StrategyImpl;
+import com.ibtrader.data.service.IBOrderLocalServiceUtil;
 import com.ibtrader.data.service.MarketLocalService;
 import com.ibtrader.data.service.MarketLocalServiceUtil;
+import com.ibtrader.data.service.PositionLocalServiceUtil;
 import com.ibtrader.data.service.ShareLocalService;
+import com.ibtrader.data.service.ShareLocalServiceUtil;
 import com.ibtrader.data.service.StrategyLocalService;
 import com.ibtrader.data.service.StrategyShareLocalService;
 import com.ibtrader.data.service.StrategyShareLocalServiceUtil;
+import com.ibtrader.interactive.TIMApiGITrader;
 import com.ibtrader.util.ConfigKeys;
 import com.ibtrader.util.Utilities;
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
@@ -24,9 +34,16 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.model.GroupConstants;
+import com.liferay.portal.kernel.model.Organization;
+import com.liferay.portal.kernel.model.OrganizationConstants;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.LiferayPortletURL;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
+import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
+import com.liferay.portal.kernel.service.OrganizationLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.servlet.SessionErrors;
@@ -38,6 +55,7 @@ import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 
@@ -70,7 +88,7 @@ import org.osgi.service.component.annotations.Reference;
 	immediate = true,
 	property = {
 		"com.liferay.portlet.display-category=ibtrader",
-		"com.liferay.portlet.instanceable=true",
+		"com.liferay.portlet.instanceable=false", 
 		"javax.portlet.display-name=IBTrader-sharemarketadmin-web Portlet",
 		"javax.portlet.init-param.template-path=/",
 		"javax.portlet.init-param.view-template=/html/view.jsp",		
@@ -181,7 +199,7 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 		
 		
 		String  expirationmonth = String.join(",", _expirationmonth);
-		boolean bNameOK = Validator.isAlphanumericName(name)  && name.length()<=75;
+		boolean bNameOK = Validator.isContent(name) && name.length()<=75;
 		boolean bSymbolOK = Validator.isAlphanumericName(symbol)  && symbol.length()<=75;
 		boolean bExchangeOK = _shareLocalService.ExistsExchange(exchange);
 		boolean bPrimaryExchangeOK = _shareLocalService.ExistsPrimaryExchange(primary_exchange);		
@@ -189,9 +207,16 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 		boolean bFutureOK = security_type.equals(ConfigKeys.SECURITY_TYPE_STOCK) || (security_type.equals(ConfigKeys.SECURITY_TYPE_FUTUROS) && !expirationmonth.equals("")
 								&& !expirationweek.equals("") && !expirationdayweek.equals(""));
 		
+		boolean bNumberParamsOK = numbertopurchase>=1 && 
+						percentual_limit_buy>=0 && percentual_limit_buy<=100  && 
+								percentual_stop_lost>=0 && percentual_stop_lost<=100 && 
+										percentual_stop_profit>=0 && percentual_stop_profit<=100 && 
+												tick_futures>=0  && multiplier>=0;
+						
 
 		try 
 		{
+		
 			
 		if (name.equals("") || symbol.equals("") || numbertopurchase==-1 || security_type.equals("") || primary_exchange.equals("") || marketId==-1)
 		{
@@ -201,7 +226,7 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 		}
 		else
 		{
-			if (!bNameOK || !bSymbolOK || !bExchangeOK || !bPrimaryExchangeOK || !bSecurityOK)
+			if (!bNameOK || !bSymbolOK || !bExchangeOK || !bPrimaryExchangeOK || !bSecurityOK || !bNumberParamsOK)
 			{
 				validated=false;			
 				SessionErrors.add(actionRequest, "share.error.formatparameters");
@@ -301,12 +326,6 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 	  		// add / edit
 		String mvcPath = actionRequest.getParameter("javax.portlet.action");
 		Market editMarket=null; 
-		boolean bEditMode=mvcPath.equals("editMarket");
-		
-		
-		
-		
-		
 		String name = ParamUtil.getString(actionRequest,"name","");
 		String identifier = ParamUtil.getString(actionRequest,"identifier","");
 		String description = ParamUtil.getString(actionRequest,"description","");
@@ -316,9 +335,10 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 		String currency = ParamUtil.getString(actionRequest,"currency","");
 		
 		long marketId =  ParamUtil.getLong(actionRequest,"marketId",0);
-		boolean bNameOK = Validator.isAlphanumericName(name)  && name.length()<=75;
-		boolean bIdentifierOK = Validator.isAlphanumericName(identifier)  && identifier.length()<=75;
-		boolean bDescriptionOK = Validator.isAlphanumericName(description)  && description.length()<=150;		
+		boolean bEditMode=	(marketId !=0);
+		boolean bNameOK = Validator.isContent(name)  && name.length()<=75;
+		boolean bIdentifierOK = Validator.isContent(identifier)  && identifier.length()<=75;
+		boolean bDescriptionOK = Validator.isContent(description)  && description.length()<=150;		
 		
 		boolean bStartHourOK = Utilities.validateTime24hours(starthour);
 		boolean bEndHourOK =  Utilities.validateTime24hours(endhour);
@@ -357,7 +377,7 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 				Market MarketFoundByIdentifier = _marketLocalService.findByIdentifierCompanyGroup(themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId(), identifier);
 				boolean bMarketFoundByIdentifier =   MarketFoundByIdentifier!=null &&  (editMarket==null || editMarket!=null && !identifier.equals(editMarket.getIdentifier()));
 				boolean bMarketBelongsToCompany =  (editMarket==null || (editMarket!=null && editMarket.getCompanyId()==themeDisplay.getCompanyId()));
-				if (bMarketFoundByName  || bMarketFoundByIdentifier || !bMarketBelongsToCompany)
+				if (!bEditMode && (bMarketFoundByName  || bMarketFoundByIdentifier || !bMarketBelongsToCompany))
 				{
 					validated=false;
 					SessionErrors.add(actionRequest, "market.error.exists");
@@ -415,7 +435,7 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 			e1.printStackTrace();
 		}
 		
-		boolean validated =Boolean.TRUE;//= ValidateDataShare(actionRequest);		
+		boolean validated = Boolean.TRUE;//= ValidateDataShare(actionRequest);		
 		long numbertopurchase =  ParamUtil.getLong(actionRequest,"numbertopurchase",-1);
 		double percentual_limit_buy=  ParamUtil.getDouble(actionRequest,"percentual_limit_buy",0d);
 		double percentual_stop_lost=  ParamUtil.getDouble(actionRequest,"percentual_stop_lost",0d);
@@ -423,6 +443,12 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 		long shareId =  ParamUtil.getLong(actionRequest,"shareId",-1);
 		long strategyId =  ParamUtil.getLong(actionRequest,"strategyId",-1);		
 		boolean bExists = false;
+		
+		 validated = numbertopurchase>=1 && 
+				percentual_limit_buy>=0 && percentual_limit_buy<=100  && 
+						percentual_stop_lost>=0 && percentual_stop_lost<=100 && 
+								percentual_stop_profit>=0 && percentual_stop_profit<=100;
+		
 		
 		/*  BUSCAMOS EN LA REQUEST TODOS LOS PARAMETROS QUE EMPIECEN CON EL PREFIJO Utilities.IBTRADER_PREFIX...*/
 		Enumeration enumeration = actionRequest.getParameterNames();
@@ -446,9 +472,7 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-	  
-		
-		/* Verificamos que est�n correctos  con la llamada al metodo */
+	  /* Verificamos que est�n correctos  con la llamada al metodo */
  	    if (_strategyImpl==null)
  	    	validated = false;
  	    else
@@ -584,7 +608,7 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 		
 		ServiceContext serviceContext = null;
 		try {
-			serviceContext = ServiceContextFactory.getInstance(Share.class.getName(), actionRequest);
+			serviceContext = ServiceContextFactory.getInstance(Market.class.getName(), actionRequest);
 		} catch (PortalException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -619,7 +643,112 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 		
 	}
 	
+	private void cancelremoveMktData(Share _share)
+	{
+		List<Config> lConfig=null;
+		int 	_CLIENT_ID = 9;	  // el dos para leer, el 3 para escribir			
+		String  _HOST = "127.0.0.1";
+		int     _PORT = ConfigKeys.TWS_CONNECTION_PORT;	
+		TIMApiGITrader  oTWS = null;
+		_CLIENT_ID = Long.valueOf(Utilities.getConfigurationValue(IBTraderConstants.keyCRON_CONTRACTCHECKER_CLIENT_INITIAL, _share.getCompanyId(), _share.getGroupId())).intValue();	  // el dos para leer, el 3 para escribir
+
+	   _HOST = Utilities.getConfigurationValue(IBTraderConstants.keyTWS_HOST, _share.getCompanyId(), _share.getGroupId());		 
+	   _PORT = Integer.valueOf(Utilities.getConfigurationValue(IBTraderConstants.keyTWS_PORT, _share.getCompanyId(), _share.getGroupId()));
+	    oTWS = new TIMApiGITrader(_HOST,_PORT, _CLIENT_ID);	
+	    /* por si se hubiera colado mas peticiones de realtime que 1, las borramos al arrancar los cron  */
+		List<IBOrder> _lrkMktData = IBOrderLocalServiceUtil.findByShareIdCompanyGroup(_share.getShareId(), _share.getCompanyId(), _share.getGroupId());
+		if (!_lrkMktData.isEmpty())
+		{
+			try
+			{
+				if (oTWS.GITraderTWSIsConnected())  oTWS.GITraderDisconnectFromTWS();
+				// _log.info("StartVerifyContractsCron, connecting to TWS");
+				oTWS.GITraderConnetToTWS();
+				for (IBOrder rkMktData  : _lrkMktData)	{			
+						oTWS.GITraderCancelRealTimeContract((new Long(rkMktData.getPrimaryKey()).intValue()));
+				}	// end for 				
+				if (oTWS.GITraderTWSIsConnected()) oTWS.GITraderDisconnectFromTWS();	
+			}
+			catch (InterruptedException e)
+			{ 
+				e.printStackTrace();							
+			//	if (oTWS.GITraderTWSIsConnected()) oTWS.GITraderDisconnectFromTWS();
+			}
+		}
+	}
 	
+	public void RemoveMarket(ActionRequest actionRequest, ActionResponse actionResponse)
+	{
+		
+		themeDisplay = (ThemeDisplay)actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
+		
+		ServiceContext serviceContext = null;
+		try {
+			serviceContext = ServiceContextFactory.getInstance(Market.class.getName(), actionRequest);
+		} catch (PortalException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		long marketId =  ParamUtil.getLong(actionRequest,"marketId",-1);		
+		List<Share> lShare =  _shareLocalService.findByMarketGroupCompany(marketId, serviceContext.getScopeGroupId(), serviceContext.getCompanyId());
+		if (!lShare.isEmpty())
+			SessionErrors.add(actionRequest, "market.error.shareexists");
+		else
+		{
+			try
+			{								
+				_marketLocalService.deleteMarket(marketId);								
+				SessionMessages.add(actionRequest, "market.delete.success");				
+			}				
+			catch (Exception e)
+			{
+				SessionErrors.add(actionRequest, "market.error.shareexists");
+			}		
+		}
+			
+		
+	}
+	
+	
+	
+	
+	public void removeShare(ActionRequest actionRequest, ActionResponse actionResponse)
+	{
+		
+		themeDisplay = (ThemeDisplay)actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
+		
+		ServiceContext serviceContext = null;
+		try {
+			serviceContext = ServiceContextFactory.getInstance(Share.class.getName(), actionRequest);
+		} catch (PortalException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		long shareId =  ParamUtil.getLong(actionRequest,"shareId",-1);
+		Share share =  _shareLocalService.fetchShare(shareId);
+		
+		
+		List<Position> lPositions =  PositionLocalServiceUtil.findByCompanyGroupShare(themeDisplay.getScopeGroupId(), themeDisplay.getCompanyId(), shareId);
+		if (!lPositions.isEmpty())
+			SessionErrors.add(actionRequest, "share.error.positionexists");
+		else
+		{
+			try
+			{	
+				if (share.IsTradeable())  // si esataba activa para operar????
+					cancelremoveMktData(share);				
+				ShareLocalServiceUtil.deleteShare(shareId);
+				/* CANCELAMOS MKTDATA SI ESTUVIERA */
+				SessionMessages.add(actionRequest, "share.delete.success");				
+			}				
+			catch (Exception e)
+			{
+				SessionErrors.add(actionRequest, "share.delete.error");
+			}		
+		}
+			
+		
+	}
 	
 	public void editShare(ActionRequest actionRequest, ActionResponse actionResponse)
 	{
@@ -634,14 +763,19 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 			e1.printStackTrace();
 		}
 		long shareId =  ParamUtil.getLong(actionRequest,"shareId",-1);
-		boolean validated = ValidateDataShare(actionRequest);
-		
+		boolean  validated = ValidateDataShare(actionRequest);
+		boolean _bOpenPosition =  PositionLocalServiceUtil.ExistsOpenPosition(themeDisplay.getScopeGroupId(), themeDisplay.getCompanyId(), shareId);
 		try 
 		{		
 				if (validated)
 				{
-					share = _shareLocalService.editShare(share,serviceContext );
-					SessionMessages.add(actionRequest, "share.success");
+					if (!_bOpenPosition)
+					{
+						share = _shareLocalService.editShare(share,serviceContext );
+						SessionMessages.add(actionRequest, "share.success");
+					}
+					else
+						SessionErrors.add(actionRequest, "share.error.positionexistsactive");	
 				}
 		}				
 		catch (Exception e)
@@ -690,35 +824,52 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 			SessionErrors.add(actionRequest, "share.error.missingparameters");
 		}
 		
-		
+		 
 		PortalUtil.copyRequestParameters(actionRequest, actionResponse);
-
-		/* actionResponse.setRenderParameter("mvcRenderCommandName", "/html/add_edit_share");
+		actionResponse.setRenderParameter("mvcRenderCommandName", "/html/add_edit_share");
+		actionResponse.setRenderParameter("shareAddedId", String.valueOf(_retShareId));	
+		actionResponse.setRenderParameter("tab", "share.details");
+		/*
+		 actionResponse.setRenderParameter("mvcRenderCommandName", "/html/add_edit_share");
 		actionResponse.setRenderParameter("shareId", String.valueOf(_retShareId));
 		actionResponse.setRenderParameter("tab", "share.details");
-		*/
-		String portletId = IBTraderSharemarketadminWebPortletKeys.IBTraderSharemarketadminWeb;
-         
-        ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
-         
-        PortletResponse portletResponse = (PortletResponse) actionRequest.getAttribute(JavaConstants.JAVAX_PORTLET_RESPONSE);
-        LiferayPortletResponse liferayPortletResponse = PortalUtil.getLiferayPortletResponse(portletResponse);
- 
-        LiferayPortletURL renderUrl = liferayPortletResponse.createLiferayPortletURL(themeDisplay.getPlid(), portletId, PortletRequest.RENDER_PHASE);
-
-        renderUrl.setCopyCurrentRenderParameters(true);
-        renderUrl.setParameter("mvcRenderCommandName", "/html/add_edit_share");
-        renderUrl.setParameter("shareId", String.valueOf(_retShareId));
-        renderUrl.setParameter("tab", "share.details");
-        actionRequest.setAttribute("share", share);
-
-        try {
-            actionResponse.sendRedirect(renderUrl.toString());
-        } catch (Exception e) {
-            // handle error
-        }
 		
-
+		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
+        String portletId =  themeDisplay.getPortletDisplay().getId();
+        String InstaceId =  themeDisplay.getPortletDisplay().getInstanceId();
+        PortletResponse portletResponse = (PortletResponse) actionRequest.getAttribute(JavaConstants.JAVAX_PORTLET_RESPONSE);
+        LiferayPortletResponse liferayPortletResponse = PortalUtil.getLiferayPortletResponse(portletResponse); 
+        LiferayPortletURL renderUrl = liferayPortletResponse.createLiferayPortletURL(themeDisplay.getPlid(), portletId, PortletRequest.RENDER_PHASE);
+		
+	    if (_retShareId!=-1) // OK, redirect con nuevos parametros 	    	
+	    {*/
+	    	
+	    	
+			
+			/*
+	        try {     
+	        	 _log.info("portletId:"  + portletId);
+	        	_log.info("InstaceId:"  + InstaceId);
+	        	_log.info("mvcRenderCommandName: /html/add_edit_share");        	
+	        	_log.info("Redirecting to:"  + renderUrl.toString());
+	           // actionResponse.sendRedirect(renderUrl.toString());
+	        } catch (Exception e) {
+	            // handle error
+	        } 
+	    }*/
+	    Enumeration<String> lParams = actionRequest.getParameterNames();
+		Enumeration<String> lAttr = actionRequest.getAttributeNames();	
+		while (lParams.hasMoreElements())
+		{
+			String  p = lParams.nextElement();
+			_log.info("Action Portlet AddShare Param:" + p + ":" + actionRequest.getParameter(p));
+		}
+		while (lAttr.hasMoreElements())
+		{
+			String  p2 = lAttr.nextElement();
+			_log.info("Action Portlet AddShare:" + p2 + ":" + actionRequest.getParameter(p2));
+		}
+	    
 		
 	}
 	

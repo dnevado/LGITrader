@@ -16,6 +16,8 @@ package com.ibtrader.data.service.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import java.util.List;
+
 import com.ibtrader.data.exception.NoSuchIBOrderException;
 import com.ibtrader.data.model.IBOrder;
 import com.ibtrader.data.service.base.IBOrderLocalServiceBaseImpl;
@@ -42,15 +44,12 @@ public class IBOrderLocalServiceImpl extends IBOrderLocalServiceBaseImpl {
 	 *
 	 * Never reference this class directly. Always use {@link com.ibtrader.data.service.IBOrderLocalServiceUtil} to access the i b order local service.
 	 */
-	public IBOrder findByShareIdCompanyGroup(long shareId, long companyId, long groupId)
+	
+	/* DEBERIAMOS COGER EL ULTIMO */
+	public 	List<IBOrder> findByShareIdCompanyGroup(long shareId, long companyId, long groupId)
 	{
-		IBOrder _order = null;
-		try {
-			_order = getIBOrderPersistence().findByShareIdCompanyGroup(shareId, companyId, groupId);
-		} catch (NoSuchIBOrderException e) {
-			// TODO Auto-generated catch block
-			//e.printStackTrace();
-		}
+		List<IBOrder> _order = null;
+		_order = getIBOrderPersistence().findByShareIdCompanyGroup(shareId, companyId, groupId);
 		return _order;
 	}
 }

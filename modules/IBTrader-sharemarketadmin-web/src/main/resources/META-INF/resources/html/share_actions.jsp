@@ -14,20 +14,19 @@ long ShareId = share.getShareId();
 
 %>
 
+<portlet:actionURL name="removeShare" var="removeShareURL" >
+<portlet:param name="shareId" value="<%= String.valueOf(ShareId) %>"/>    
+</portlet:actionURL>
 
-
-<portlet:renderURL   var="RemoveShareURL">
- 	<portlet:param name="mvcRenderCommandName" value="/html/add_edit_share"/>
-    <portlet:param name="shareId" value="<%= String.valueOf(ShareId) %>"/>   
-</portlet:renderURL>
 
 <portlet:renderURL   var="EditShareURL">
 	<portlet:param name="mvcRenderCommandName" value="/html/add_edit_share"/>
+	<portlet:param name="redirect" value="<%=themeDisplay.getURLCurrent()%>"/>
     <portlet:param name="shareId" value="<%= String.valueOf(ShareId) %>"/>    
 </portlet:renderURL>  
  
 <liferay-ui:icon-menu>
 <liferay-ui:icon image="edit" message="share.edit" url="${EditShareURL}" />
-<liferay-ui:icon image="delete" message="share.delete" url="${RemoveShareURL}" />
+<liferay-ui:icon image="delete" message="share.delete" url="${removeShareURL}" />
                          
 </liferay-ui:icon-menu>

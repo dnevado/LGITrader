@@ -14,10 +14,12 @@
 
 package com.ibtrader.data.service.impl;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.ibtrader.data.service.base.IBOrderServiceBaseImpl;
 
 /**
- * The implementation of the ib order remote service.
+ * The implementation of the i b order remote service.
  *
  * <p>
  * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link com.ibtrader.data.service.IBOrderService} interface.
@@ -30,10 +32,11 @@ import com.ibtrader.data.service.base.IBOrderServiceBaseImpl;
  * @see IBOrderServiceBaseImpl
  * @see com.ibtrader.data.service.IBOrderServiceUtil
  */
+@ProviderType
 public class IBOrderServiceImpl extends IBOrderServiceBaseImpl {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never reference this class directly. Always use {@link com.ibtrader.data.service.IBOrderServiceUtil} to access the ib order remote service.
+	 * Never reference this class directly. Always use {@link com.ibtrader.data.service.IBOrderServiceUtil} to access the i b order remote service.
 	 */
 }

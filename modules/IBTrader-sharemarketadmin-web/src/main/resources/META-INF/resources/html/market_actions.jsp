@@ -22,11 +22,13 @@ long MarketId = market.getMarketId();
 
 <portlet:renderURL   var="EditMarketURL">
 	<portlet:param name="mvcRenderCommandName" value="/html/add_edit_market"/>
-    <portlet:param name="marketId" value="<%= String.valueOf(MarketId) %>"/>    
+    <portlet:param name="marketId" value="<%= String.valueOf(MarketId) %>"/>
+    <portlet:param name="redirect" value="<%=themeDisplay.getURLCurrent()%>"/>    
 </portlet:renderURL>
 <portlet:renderURL   var="AddShareMarketURL">
 	<portlet:param name="mvcRenderCommandName" value="/html/add_edit_share"/>
-    <portlet:param name="marketId" value="<%= String.valueOf(MarketId) %>"/>    
+    <portlet:param name="marketId" value="<%= String.valueOf(MarketId) %>"/>
+    <portlet:param name="redirect" value="<%=themeDisplay.getURLCurrent()%>"/>    
 </portlet:renderURL>  
  
 <liferay-ui:icon-menu>

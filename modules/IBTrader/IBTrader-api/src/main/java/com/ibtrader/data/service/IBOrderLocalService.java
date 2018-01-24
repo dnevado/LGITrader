@@ -18,8 +18,11 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.ibtrader.data.model.IBOrder;
 
+import com.liferay.exportimport.kernel.lar.PortletDataContext;
+
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Projection;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -111,9 +114,6 @@ public interface IBOrderLocalService extends BaseLocalService,
 	public IBOrder fetchIBOrderByUuidAndGroupId(java.lang.String uuid,
 		long groupId);
 
-	public IBOrder findByShareIdCompanyGroup(long shareId, long companyId,
-		long groupId);
-
 	/**
 	* Returns the i b order with the primary key.
 	*
@@ -149,6 +149,10 @@ public interface IBOrderLocalService extends BaseLocalService,
 	public ActionableDynamicQuery getActionableDynamicQuery();
 
 	public DynamicQuery dynamicQuery();
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public ExportActionableDynamicQuery getExportActionableDynamicQuery(
+		PortletDataContext portletDataContext);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery();
@@ -218,6 +222,9 @@ public interface IBOrderLocalService extends BaseLocalService,
 	*/
 	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
 		int end, OrderByComparator<T> orderByComparator);
+
+	public List<IBOrder> findByShareIdCompanyGroup(long shareId,
+		long companyId, long groupId);
 
 	/**
 	* Returns a range of all the i b orders.

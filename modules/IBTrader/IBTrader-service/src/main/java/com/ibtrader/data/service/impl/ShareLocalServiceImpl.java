@@ -57,6 +57,12 @@ public class ShareLocalServiceImpl extends ShareLocalServiceBaseImpl {
 	 *
 	 * Never reference this class directly. Always use {@link com.ibtrader.data.service.ShareLocalServiceUtil} to access the share local service.
 	 */
+	public List<Share> findByMarketGroupCompany(long _marketId, long groupId, long companyId)
+	{
+		return getSharePersistence().findByMarketGroupCompany(groupId, companyId, _marketId);
+	}
+	
+	
 	public List<Share> findByActiveMarketGroupCompany(long _marketId, boolean _active, long groupId, long companyId)
 	{
 		return getSharePersistence().findByActiveMarketGroupCompany(groupId, companyId,_active, _marketId);

@@ -6,12 +6,17 @@
 <%@page import="com.liferay.portal.kernel.portlet.LiferayPortletMode"%>
 
 
-<%	ThemeDisplay _themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);	%> 
+
+<%	ThemeDisplay _themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
+String redirect = ParamUtil.getString(request, "redirect");
+portletDisplay.setShowBackIcon(true);
+portletDisplay.setURLBack(redirect);%> 
 
 <aui:container cssClass='super-awesome-container'>
 
 <portlet:renderURL var="addMarketURL">
     <portlet:param name="mvcRenderCommandName" value="/html/add_edit_market"></portlet:param>
+    <portlet:param name="redirect" value="<%=themeDisplay.getURLCurrent()%>"/>
     <portlet:param name="marketId" value="0"></portlet:param>
 </portlet:renderURL>
 
@@ -29,7 +34,15 @@
 <liferay-ui:search-container-column-text name="market.currency" value="${Market.currency}"/>
 <liferay-ui:search-container-column-text name="market.start" value="${Market.start_hour}"/>
 <liferay-ui:search-container-column-text name="market.end" value="${Market.end_hour}"/>
-<liferay-ui:search-container-column-text name="market.active">      
+<liferay-ui:search-container-column-text name="market.active">
+<c:choose>
+   <c:when test="${Market.active}">
+		<liferay-ui:message key="share.activeYES"/>
+   </c:when>
+    <c:otherwise>
+    	<liferay-ui:message key="share.activeNO"/>
+    </c:otherwise>
+</c:choose>      
 </liferay-ui:search-container-column-text>
 <liferay-ui:search-container-column-jsp  path="/html/market_actions.jsp"/>
 </liferay-ui:search-container-row>    
