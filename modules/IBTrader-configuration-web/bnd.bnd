@@ -1,0 +1,4 @@
+Bundle-Name: IBTrader-configuration-web
+Bundle-SymbolicName: IBTrader.configuration.web
+Bundle-Version: 1.0.0
+Export-Package: IBTrader.configuration.web.constants
