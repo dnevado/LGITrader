@@ -181,6 +181,71 @@ public class ConfigLocalServiceImpl extends ConfigLocalServiceBaseImpl {
 			 _conf.setGlobaldefault(false);
 			 _conf.setIscron(Boolean.FALSE);
 			 configLocalService.updateConfig(_conf);   	
+			 /* SIMULATION MODE 
+			  * 
+			  * public static long   vENABLE_MAIL_NOTIFICATIONS = 10;  // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
+			public static long   vSIMULATION_MODE = 0;  // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
+			public static String   vPATH_TO_CONFIGURATION_FILE = "C:\\ibcontroller\\IBController.ini";  // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
+			  * */   
+			 _conf = configLocalService.createConfig(counterLocalService.increment(Config.class.getName()));
+			 _conf.setGroupId(_group);
+			 _conf.setCompanyId(_company);
+			 _conf.setConfig_key(IBTraderConstants.keyENABLE_MAIL_NOTIFICATIONS);
+			 _conf.setValue(String.valueOf(IBTraderConstants.vENABLE_MAIL_NOTIFICATIONS));
+			 _conf.setName(IBTraderConstants.keyENABLE_MAIL_NOTIFICATIONS);
+			 _conf.setDescription(IBTraderConstants.keyENABLE_MAIL_NOTIFICATIONS);
+			 _conf.setGlobaldefault(false);
+			 _conf.setIscron(Boolean.FALSE);
+			 configLocalService.updateConfig(_conf);
+			 
+			     
+			 _conf = configLocalService.createConfig(counterLocalService.increment(Config.class.getName()));
+			 _conf.setGroupId(_group);
+			 _conf.setCompanyId(_company);
+			 _conf.setConfig_key(IBTraderConstants.keyENABLE_DESKTOP_NOTIFICATIONS);
+			 _conf.setValue(String.valueOf(IBTraderConstants.vENABLE_DESKTOP_NOTIFICATIONS));
+			 _conf.setName(IBTraderConstants.keyENABLE_DESKTOP_NOTIFICATIONS);
+			 _conf.setDescription(IBTraderConstants.keyENABLE_DESKTOP_NOTIFICATIONS);
+			 _conf.setGlobaldefault(false);
+			 _conf.setIscron(Boolean.FALSE);
+			 configLocalService.updateConfig(_conf);   	
+				 
+				   
+			 _conf = configLocalService.createConfig(counterLocalService.increment(Config.class.getName()));
+			 _conf.setGroupId(_group);
+			 _conf.setCompanyId(_company);
+			 _conf.setConfig_key(IBTraderConstants.keyPATH_TO_CONFIGURATION_FILE);
+			 _conf.setValue(String.valueOf(IBTraderConstants.vPATH_TO_CONFIGURATION_FILE));
+			 _conf.setName(IBTraderConstants.keyPATH_TO_CONFIGURATION_FILE);
+			 _conf.setDescription(IBTraderConstants.keyPATH_TO_CONFIGURATION_FILE);
+			 _conf.setGlobaldefault(false);
+			 _conf.setIscron(Boolean.FALSE);
+			 configLocalService.updateConfig(_conf);
+			 
+			 _conf = configLocalService.createConfig(counterLocalService.increment(Config.class.getName()));
+			 _conf.setGroupId(_group);
+			 _conf.setCompanyId(_company);
+			 _conf.setConfig_key(IBTraderConstants.keyUSER_TWS);
+			 _conf.setValue(String.valueOf(IBTraderConstants.vUSER_TWS));
+			 _conf.setName(IBTraderConstants.keyUSER_TWS);
+			 _conf.setDescription(IBTraderConstants.keyUSER_TWS);
+			 _conf.setGlobaldefault(false);
+			 _conf.setIscron(Boolean.FALSE);
+			 configLocalService.updateConfig(_conf);   	
+			 
+			 
+			 _conf = configLocalService.createConfig(counterLocalService.increment(Config.class.getName()));
+			 _conf.setGroupId(_group);
+			 _conf.setCompanyId(_company);
+			 _conf.setConfig_key(IBTraderConstants.keyUSER_PWD);
+			 _conf.setValue(String.valueOf(IBTraderConstants.vUSER_PWD));
+			 _conf.setName(IBTraderConstants.keyUSER_PWD);
+			 _conf.setDescription(IBTraderConstants.keyUSER_PWD);
+			 _conf.setGlobaldefault(false);
+			 _conf.setIscron(Boolean.FALSE);
+			 configLocalService.updateConfig(_conf);   	
+				 
+			 
 		 }
 	}
 	public void removeConfigurationValuesCompanyGroup(long  _company, long _group)
@@ -201,7 +266,19 @@ public class ConfigLocalServiceImpl extends ConfigLocalServiceBaseImpl {
 		 
 		 _conf = configLocalService.findByKeyCompanyGroup(IBTraderConstants.keySIMULATION_MODE, _company, _group);
 		 _TotalConfigs = (_conf!=null ? 1 : 0 );
-		 if (_TotalConfigs==1)  configLocalService.deleteConfig(_conf);		 
+		 if (_TotalConfigs==1)  configLocalService.deleteConfig(_conf);
+		 
+		 _conf = configLocalService.findByKeyCompanyGroup(IBTraderConstants.keyENABLE_MAIL_NOTIFICATIONS, _company, _group);
+		 _TotalConfigs = (_conf!=null ? 1 : 0 );
+		 if (_TotalConfigs==1)  configLocalService.deleteConfig(_conf);		
+		 
+		 _conf = configLocalService.findByKeyCompanyGroup(IBTraderConstants.keyENABLE_DESKTOP_NOTIFICATIONS, _company, _group);
+		 _TotalConfigs = (_conf!=null ? 1 : 0 );
+		 if (_TotalConfigs==1)  configLocalService.deleteConfig(_conf);		
+		 
+		 _conf = configLocalService.findByKeyCompanyGroup(IBTraderConstants.keyPATH_TO_CONFIGURATION_FILE, _company, _group);
+		 _TotalConfigs = (_conf!=null ? 1 : 0 );
+		 if (_TotalConfigs==1)  configLocalService.deleteConfig(_conf);		
 	}
 	
 }

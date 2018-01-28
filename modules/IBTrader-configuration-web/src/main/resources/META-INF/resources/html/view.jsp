@@ -35,6 +35,10 @@
              <aui:validator  name="required" />
 			 <aui:validator name="range">[1,65536]</aui:validator>
        </aui:input>
+       <aui:input type="text" placeholder="C:\ibcontroller\IBController.ini"  label="interactive.tws.ibcontroller"  name="ibcontrollerpath" value="${_PATH_TO_CONFIGURATION_FILE}">
+                <aui:validator  name="required" />	
+                <aui:validator name="maxLength">150</aui:validator>
+        </aui:input>
      </aui:fieldset>       
      <aui:fieldset collapsed="false" collapsible="false"  label="interactive.tws.credentials" id="interactive.tws.credentials">
 	       <aui:input type="text"  label="interactive.tws.user"  name="user" value="${_USER_TWS}">
@@ -47,8 +51,9 @@
 	       </aui:input>  
        </aui:fieldset>       
        <aui:fieldset collapsed="false" collapsible="false"  label="interactive.tws.notifications" id="interactive.tws.notifications">            
-        	<aui:input label="desktop_notifications" name="desktop_notifications" type="toggle-card" checked="${_DESTOP_NOTIFICATION eq 'S' ? 'true':''}"/>       
-        	<aui:input label="email_notifications" name="email_notifications"   type="toggle-card" checked="${_MAIL_NOTIFICATION eq 'S' ? 'true':''}"/>                     
+        	<aui:input label="desktop_notifications" name="desktop_notifications" type="toggle-card" checked="${_DESTOP_NOTIFICATION ? 'true':''}"/>       
+        	<aui:input label="email_notifications" name="email_notifications"   type="toggle-card" checked="${_MAIL_NOTIFICATION ? 'true':''}"/>                     
+        	<aui:input label="simulation_mode" name="simulation_mode"   type="toggle-card" checked="${_SIMULATION_MODE ? 'true':''}"/>
        </aui:fieldset>       
 	 <aui:button-row>
         <aui:button type="submit"></aui:button>

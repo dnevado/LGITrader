@@ -39,7 +39,7 @@ public class IBTraderOrganizationListener extends BaseModelListener<Group> {
 		if (model.isOrganization() &  model.isRoot())
 		{
 			// añadimos parametros 
-			_configLocalService.addConfigurationValuesCompanyGroup(model.getOrganizationId(), model.getGroupId());
+			_configLocalService.addConfigurationValuesCompanyGroup(model.getCompanyId(), model.getGroupId());
 			_log.info("Adding default values for Organization:" + model.getName());
 			
 		}
@@ -52,7 +52,7 @@ public class IBTraderOrganizationListener extends BaseModelListener<Group> {
 		if (model.isOrganization() &  model.isRoot())
 		{
 			// añadimos parametros 
-			_configLocalService.removeConfigurationValuesCompanyGroup(model.getOrganizationId(), model.getGroupId());
+			_configLocalService.removeConfigurationValuesCompanyGroup(model.getCompanyId(), model.getGroupId());
 			_log.info("onAfterRemove default values for Organization:" + model.getName());
 			
 		}	

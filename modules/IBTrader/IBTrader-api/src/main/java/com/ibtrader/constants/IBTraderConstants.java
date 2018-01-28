@@ -1,6 +1,17 @@
 package com.ibtrader.constants;
 
 public class IBTraderConstants {
+	
+	/* valores INI IBCONTROLLER */
+	public static String IBCONTROLLER_PASSWORDENCRYPTED ="PasswordEncrypted"; // YES / NO
+	public static String IBCONTROLLER_PASSWORD ="Password";
+	public static String IBCONTROLLER_PAPER ="Paper";
+	public static String IBCONTROLLER_LIVE ="live";
+	public static String IBCONTROLLER_IBAUTOCLOSEDOWN ="IbAutoClosedown"; // no
+	
+
+	
+	
 	/* valores */
 	public static String vACCOUNT_IB_NAME="ACCOUNT_IB_NAME";
 	public static long   vNUM_DAYS_PAST_REALTIME =2;
@@ -15,8 +26,9 @@ public class IBTraderConstants {
 	public static String   vUSER_TWS = "edemo";  // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
 	public static String   vUSER_PWD = "demouser";   // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
 	public static long   vENABLE_DESKTOP_NOTIFICATIONS = 1;  // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
-	public static long   vENABLE_MAIL_NOTIFICATIONS = 10;  // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
+	public static long   vENABLE_MAIL_NOTIFICATIONS = 1;  // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
 	public static long   vSIMULATION_MODE = 0;  // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
+	public static String   vPATH_TO_CONFIGURATION_FILE = "C:\\ibcontroller\\IBController.ini";  // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
 
 	
 	/* keys */
@@ -39,5 +51,7 @@ public class IBTraderConstants {
 	public static String   keyENABLE_MAIL_NOTIFICATIONS = "ENABLE_MAIL_NOTIFICATIONS";
 	
 	public static String   keySIMULATION_MODE = "SIMULATION_MODE";  
+	public static String   keyPATH_TO_CONFIGURATION_FILE = "PATH_TO_CONFIGURATION_FILE";  
+
 	
 }
