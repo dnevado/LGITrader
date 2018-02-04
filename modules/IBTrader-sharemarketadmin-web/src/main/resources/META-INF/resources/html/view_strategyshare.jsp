@@ -10,7 +10,7 @@
 <%	ThemeDisplay _themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);	%> 
 
 
-
+<div class="container-fluid-1280">
 <aui:container cssClass='super-awesome-container'>
 
 <portlet:renderURL var="addShareURL">
@@ -76,4 +76,4 @@ function <portlet:namespace/>switchStrategyShare(StrategyShare)
 <liferay-ui:search-iterator markupView="lexicon"/>
 </liferay-ui:search-container>
 </aui:container>
-
+</div>

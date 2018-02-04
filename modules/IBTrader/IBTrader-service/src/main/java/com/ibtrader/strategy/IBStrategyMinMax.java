@@ -55,6 +55,7 @@ public class IBStrategyMinMax extends StrategyImpl {
 	
 	private static String _EXPANDO_OFFSET1_FROM_OPENMARKET = "OffSet1FromOpenMarket";
 	private static String _EXPANDO_OFFSET2_FROM_OPENMARKET = "OffSet2FromOpenMarket";
+	private static String _EXPANDO_TRADE_OFFSET_TO_CLOSEMARKET = "TradeUntilOffSetCloseMarket";
 	
 	
 	/*Parameters.put("OffSet1FromOpenMarket", Long.valueOf(ExpandoColumnConstants.LONG));
@@ -200,27 +201,27 @@ public class IBStrategyMinMax extends StrategyImpl {
 	
 	@Override
 	public boolean verify(Share _share, Market _market) {
-			
-			
 		boolean verified = false;
-		boolean existsP = false;
-											
-		
+		boolean existsPosition = false;
 		try
         {
-		
-		User _IBUser = UserLocalServiceUtil.getUser(_share.getUserCreatedId());
 			
+		User _IBUser = UserLocalServiceUtil.getUser(_share.getUserCreatedId());
 		String HoraActual = Utilities.getHourNowFormat(_IBUser);
 			
 		/* supongamos cierre mercado a las 2200 */
 		/* HoraDeadLineToClose sera la hora actual mas los minutos de la estrategia 
-		Calendar calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(HoraActual);
+		
 		calFechaActualWithDeadLine.add(Calendar.MINUTE,this.getSell_all_deadline_min_toclose());
 		Calendar calFechaFinMercado = Utilities.getNewCalendarWithHour(_market.getEnd_hour());
 		*/
+		Calendar calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(HoraActual);
+		calFechaActualWithDeadLine.add(Calendar.MINUTE,Parameters.get(_EXPANDO_TRADE_OFFSET_TO_CLOSEMARKET).intValue());
+		Calendar calFechaFinMercado = Utilities.getNewCalendarWithHour(_market.getEnd_hour());
+
+
 		
-		existsP = PositionLocalServiceUtil.ExistsOpenPosition (_share.getGroupId(),_share.getCompanyId(),_share.getShareId());
+		existsPosition = PositionLocalServiceUtil.ExistsOpenPosition (_share.getGroupId(),_share.getCompanyId(),_share.getShareId());
 		
 			
 		/*  CONTROLAMOS EL DEADLINE PARA COMPRAR */ 
@@ -233,7 +234,7 @@ public class IBStrategyMinMax extends StrategyImpl {
 		// verificamos si ha pasado el tiempo necesario con los offset de lectura 
 		
 		// 00
-		if (!existsP && HoraActual.compareTo(_market.getStart_hour())>=0  && HoraActual.compareTo(_market.getEnd_hour())<=0)		
+		if (!existsPosition &&  !calFechaActualWithDeadLine.after(calFechaFinMercado))		
 		{	
 			
 			
@@ -259,10 +260,16 @@ public class IBStrategyMinMax extends StrategyImpl {
 			if (HoraActual.compareTo(HoraFinLecturaMaxMin)>0)   // hora actyual ya ha pasado, podemos entrar en la operativa
 			{
 			
-			// ya no obtenemos el maximo y mínimo, sino el correspondiente al tramo que me han dicho		
+			// ya no obtenemos el maximo y minimo, sino el correspondiente al tramo que me han dicho		
 			Calendar DateMinMaxFrom =Utilities.getNewCalendarWithHour(HoraInicioLecturaMaxMin);
 			Calendar DateMinMaxTo =Utilities.getNewCalendarWithHour(HoraFinLecturaMaxMin);
 			
+			 String SQL = "select min(value) min_value, max(value) max_value, shareId  from ";
+             if (!Simulation)                
+             	SQL += "realtime_shares";                
+             else
+             	SQL += "historical_realtime_shares";
+             SQL += " where shareId=? and dateAdded>=? and dateAdded<=?  group by shareId ";
 			
 			/* TIEMPOS REALES Y MAXIMOS Y MINIMOS CONSEGUIDOS */
 			
@@ -304,6 +311,7 @@ public class IBStrategyMinMax extends StrategyImpl {
 		
 		Parameters.put(_EXPANDO_OFFSET1_FROM_OPENMARKET, Long.valueOf(ExpandoColumnConstants.LONG));
 		Parameters.put(_EXPANDO_OFFSET2_FROM_OPENMARKET,  Long.valueOf(ExpandoColumnConstants.LONG));	
+		Parameters.put(_EXPANDO_TRADE_OFFSET_TO_CLOSEMARKET,  Long.valueOf(ExpandoColumnConstants.LONG));		
 		ExpandoTable expandoTable;
 		try {
 			expandoTable = ExpandoTableLocalServiceUtil.addDefaultTable(companyId, IBStrategyMinMax.class.getName());
@@ -332,9 +340,6 @@ public class IBStrategyMinMax extends StrategyImpl {
 				{
 					ExpandoColumns.add(ExistsExpando);	
 				}
-				
-				
-				
 				
 			}
 			/* method of the interface */
@@ -372,7 +377,7 @@ public class IBStrategyMinMax extends StrategyImpl {
 			
 		}
 		long OffSet1 = Long.valueOf(paramValues.get(_EXPANDO_OFFSET1_FROM_OPENMARKET));
-		long OffSet2 = Long.valueOf(paramValues.get(_EXPANDO_OFFSET2_FROM_OPENMARKET));
+		long OffSet2 = Long.valueOf(paramValues.get(_EXPANDO_OFFSET2_FROM_OPENMARKET));		
 		/* PRIMERO MENOR QUE EL SEGUNDO */
 		if (OffSet1>OffSet2)
 		{

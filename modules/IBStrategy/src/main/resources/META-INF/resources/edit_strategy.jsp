@@ -2,6 +2,8 @@
 <liferay-ui:asset-categories-error />
 <liferay-ui:asset-tags-error />
 
+<div class="container-fluid-1280">
+
 <portlet:actionURL name="addStrategy" var="addStrategyURL" />
 
 <aui:form action="${addStrategyURL}" name="<portlet:namespace />fm" method="POST">
@@ -36,7 +38,9 @@
     
 	</aui:fieldset-group>
     <aui:button-row>
-        <aui:button type="submit"></aui:button>
-        <aui:button type="cancel" onClick="${viewURL.toString()}"></aui:button>
+        <aui:button type="submit" cssClass="btn-lg"></aui:button>
+        <aui:button type="cancel" cssClass="btn-lg"  onClick="${viewURL.toString()}"></aui:button>
     </aui:button-row>
 </aui:form>
+
+</div>

@@ -1760,6 +1760,550 @@ public class ConfigPersistenceImpl extends BasePersistenceImpl<Config>
 	private static final String _FINDER_COLUMN_KEYCOMPANYGROUP_CONFIG_KEY_1 = "config.config_key IS NULL";
 	private static final String _FINDER_COLUMN_KEYCOMPANYGROUP_CONFIG_KEY_2 = "config.config_key = ?";
 	private static final String _FINDER_COLUMN_KEYCOMPANYGROUP_CONFIG_KEY_3 = "(config.config_key IS NULL OR config.config_key = '')";
+	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_COMPANYGROUP =
+		new FinderPath(ConfigModelImpl.ENTITY_CACHE_ENABLED,
+			ConfigModelImpl.FINDER_CACHE_ENABLED, ConfigImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByCompanyGroup",
+			new String[] {
+				Long.class.getName(), Long.class.getName(),
+				
+			Integer.class.getName(), Integer.class.getName(),
+				OrderByComparator.class.getName()
+			});
+	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_COMPANYGROUP =
+		new FinderPath(ConfigModelImpl.ENTITY_CACHE_ENABLED,
+			ConfigModelImpl.FINDER_CACHE_ENABLED, ConfigImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByCompanyGroup",
+			new String[] { Long.class.getName(), Long.class.getName() },
+			ConfigModelImpl.COMPANYID_COLUMN_BITMASK |
+			ConfigModelImpl.GROUPID_COLUMN_BITMASK);
+	public static final FinderPath FINDER_PATH_COUNT_BY_COMPANYGROUP = new FinderPath(ConfigModelImpl.ENTITY_CACHE_ENABLED,
+			ConfigModelImpl.FINDER_CACHE_ENABLED, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByCompanyGroup",
+			new String[] { Long.class.getName(), Long.class.getName() });
+
+	/**
+	 * Returns all the configs where companyId = &#63; and groupId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @return the matching configs
+	 */
+	@Override
+	public List<Config> findByCompanyGroup(long companyId, long groupId) {
+		return findByCompanyGroup(companyId, groupId, QueryUtil.ALL_POS,
+			QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the configs where companyId = &#63; and groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ConfigModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of configs
+	 * @param end the upper bound of the range of configs (not inclusive)
+	 * @return the range of matching configs
+	 */
+	@Override
+	public List<Config> findByCompanyGroup(long companyId, long groupId,
+		int start, int end) {
+		return findByCompanyGroup(companyId, groupId, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the configs where companyId = &#63; and groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ConfigModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of configs
+	 * @param end the upper bound of the range of configs (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching configs
+	 */
+	@Override
+	public List<Config> findByCompanyGroup(long companyId, long groupId,
+		int start, int end, OrderByComparator<Config> orderByComparator) {
+		return findByCompanyGroup(companyId, groupId, start, end,
+			orderByComparator, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the configs where companyId = &#63; and groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ConfigModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of configs
+	 * @param end the upper bound of the range of configs (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the ordered range of matching configs
+	 */
+	@Override
+	public List<Config> findByCompanyGroup(long companyId, long groupId,
+		int start, int end, OrderByComparator<Config> orderByComparator,
+		boolean retrieveFromCache) {
+		boolean pagination = true;
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+				(orderByComparator == null)) {
+			pagination = false;
+			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_COMPANYGROUP;
+			finderArgs = new Object[] { companyId, groupId };
+		}
+		else {
+			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_COMPANYGROUP;
+			finderArgs = new Object[] {
+					companyId, groupId,
+					
+					start, end, orderByComparator
+				};
+		}
+
+		List<Config> list = null;
+
+		if (retrieveFromCache) {
+			list = (List<Config>)finderCache.getResult(finderPath, finderArgs,
+					this);
+
+			if ((list != null) && !list.isEmpty()) {
+				for (Config config : list) {
+					if ((companyId != config.getCompanyId()) ||
+							(groupId != config.getGroupId())) {
+						list = null;
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler query = null;
+
+			if (orderByComparator != null) {
+				query = new StringBundler(4 +
+						(orderByComparator.getOrderByFields().length * 2));
+			}
+			else {
+				query = new StringBundler(4);
+			}
+
+			query.append(_SQL_SELECT_CONFIG_WHERE);
+
+			query.append(_FINDER_COLUMN_COMPANYGROUP_COMPANYID_2);
+
+			query.append(_FINDER_COLUMN_COMPANYGROUP_GROUPID_2);
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
+					orderByComparator);
+			}
+			else
+			 if (pagination) {
+				query.append(ConfigModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(companyId);
+
+				qPos.add(groupId);
+
+				if (!pagination) {
+					list = (List<Config>)QueryUtil.list(q, getDialect(), start,
+							end, false);
+
+					Collections.sort(list);
+
+					list = Collections.unmodifiableList(list);
+				}
+				else {
+					list = (List<Config>)QueryUtil.list(q, getDialect(), start,
+							end);
+				}
+
+				cacheResult(list);
+
+				finderCache.putResult(finderPath, finderArgs, list);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Returns the first config in the ordered set where companyId = &#63; and groupId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching config
+	 * @throws NoSuchConfigException if a matching config could not be found
+	 */
+	@Override
+	public Config findByCompanyGroup_First(long companyId, long groupId,
+		OrderByComparator<Config> orderByComparator)
+		throws NoSuchConfigException {
+		Config config = fetchByCompanyGroup_First(companyId, groupId,
+				orderByComparator);
+
+		if (config != null) {
+			return config;
+		}
+
+		StringBundler msg = new StringBundler(6);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("companyId=");
+		msg.append(companyId);
+
+		msg.append(", groupId=");
+		msg.append(groupId);
+
+		msg.append(StringPool.CLOSE_CURLY_BRACE);
+
+		throw new NoSuchConfigException(msg.toString());
+	}
+
+	/**
+	 * Returns the first config in the ordered set where companyId = &#63; and groupId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching config, or <code>null</code> if a matching config could not be found
+	 */
+	@Override
+	public Config fetchByCompanyGroup_First(long companyId, long groupId,
+		OrderByComparator<Config> orderByComparator) {
+		List<Config> list = findByCompanyGroup(companyId, groupId, 0, 1,
+				orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last config in the ordered set where companyId = &#63; and groupId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching config
+	 * @throws NoSuchConfigException if a matching config could not be found
+	 */
+	@Override
+	public Config findByCompanyGroup_Last(long companyId, long groupId,
+		OrderByComparator<Config> orderByComparator)
+		throws NoSuchConfigException {
+		Config config = fetchByCompanyGroup_Last(companyId, groupId,
+				orderByComparator);
+
+		if (config != null) {
+			return config;
+		}
+
+		StringBundler msg = new StringBundler(6);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("companyId=");
+		msg.append(companyId);
+
+		msg.append(", groupId=");
+		msg.append(groupId);
+
+		msg.append(StringPool.CLOSE_CURLY_BRACE);
+
+		throw new NoSuchConfigException(msg.toString());
+	}
+
+	/**
+	 * Returns the last config in the ordered set where companyId = &#63; and groupId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching config, or <code>null</code> if a matching config could not be found
+	 */
+	@Override
+	public Config fetchByCompanyGroup_Last(long companyId, long groupId,
+		OrderByComparator<Config> orderByComparator) {
+		int count = countByCompanyGroup(companyId, groupId);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<Config> list = findByCompanyGroup(companyId, groupId, count - 1,
+				count, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the configs before and after the current config in the ordered set where companyId = &#63; and groupId = &#63;.
+	 *
+	 * @param configId the primary key of the current config
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next config
+	 * @throws NoSuchConfigException if a config with the primary key could not be found
+	 */
+	@Override
+	public Config[] findByCompanyGroup_PrevAndNext(long configId,
+		long companyId, long groupId,
+		OrderByComparator<Config> orderByComparator)
+		throws NoSuchConfigException {
+		Config config = findByPrimaryKey(configId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			Config[] array = new ConfigImpl[3];
+
+			array[0] = getByCompanyGroup_PrevAndNext(session, config,
+					companyId, groupId, orderByComparator, true);
+
+			array[1] = config;
+
+			array[2] = getByCompanyGroup_PrevAndNext(session, config,
+					companyId, groupId, orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected Config getByCompanyGroup_PrevAndNext(Session session,
+		Config config, long companyId, long groupId,
+		OrderByComparator<Config> orderByComparator, boolean previous) {
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(5 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(4);
+		}
+
+		query.append(_SQL_SELECT_CONFIG_WHERE);
+
+		query.append(_FINDER_COLUMN_COMPANYGROUP_COMPANYID_2);
+
+		query.append(_FINDER_COLUMN_COMPANYGROUP_GROUPID_2);
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			query.append(ConfigModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = query.toString();
+
+		Query q = session.createQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(companyId);
+
+		qPos.add(groupId);
+
+		if (orderByComparator != null) {
+			Object[] values = orderByComparator.getOrderByConditionValues(config);
+
+			for (Object value : values) {
+				qPos.add(value);
+			}
+		}
+
+		List<Config> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Removes all the configs where companyId = &#63; and groupId = &#63; from the database.
+	 *
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 */
+	@Override
+	public void removeByCompanyGroup(long companyId, long groupId) {
+		for (Config config : findByCompanyGroup(companyId, groupId,
+				QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+			remove(config);
+		}
+	}
+
+	/**
+	 * Returns the number of configs where companyId = &#63; and groupId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @return the number of matching configs
+	 */
+	@Override
+	public int countByCompanyGroup(long companyId, long groupId) {
+		FinderPath finderPath = FINDER_PATH_COUNT_BY_COMPANYGROUP;
+
+		Object[] finderArgs = new Object[] { companyId, groupId };
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(3);
+
+			query.append(_SQL_COUNT_CONFIG_WHERE);
+
+			query.append(_FINDER_COLUMN_COMPANYGROUP_COMPANYID_2);
+
+			query.append(_FINDER_COLUMN_COMPANYGROUP_GROUPID_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(companyId);
+
+				qPos.add(groupId);
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_COMPANYGROUP_COMPANYID_2 = "config.companyId = ? AND ";
+	private static final String _FINDER_COLUMN_COMPANYGROUP_GROUPID_2 = "config.groupId = ?";
 	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_KEYGLOBALDEFAULT =
 		new FinderPath(ConfigModelImpl.ENTITY_CACHE_ENABLED,
 			ConfigModelImpl.FINDER_CACHE_ENABLED, ConfigImpl.class,
@@ -3042,6 +3586,27 @@ public class ConfigPersistenceImpl extends BasePersistenceImpl<Config>
 
 				finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_C, args);
 				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID_C,
+					args);
+			}
+
+			if ((configModelImpl.getColumnBitmask() &
+					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_COMPANYGROUP.getColumnBitmask()) != 0) {
+				Object[] args = new Object[] {
+						configModelImpl.getOriginalCompanyId(),
+						configModelImpl.getOriginalGroupId()
+					};
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_COMPANYGROUP, args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_COMPANYGROUP,
+					args);
+
+				args = new Object[] {
+						configModelImpl.getCompanyId(),
+						configModelImpl.getGroupId()
+					};
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_COMPANYGROUP, args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_COMPANYGROUP,
 					args);
 			}
 

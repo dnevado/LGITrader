@@ -37,8 +37,8 @@
     
 	</aui:fieldset-group>
     <aui:button-row>
-        <aui:button type="submit"></aui:button>
-        <aui:button type="cancel" onClick="${viewURL.toString()}"></aui:button>
+        <aui:button cssClass="btn-lg" type="submit"></aui:button>
+        <aui:button type="cancel" cssClass="btn-lg" onClick="${viewURL.toString()}"></aui:button>
     </aui:button-row>
 </aui:form>
 </div>

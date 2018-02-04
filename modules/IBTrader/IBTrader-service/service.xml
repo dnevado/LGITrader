@@ -9,7 +9,6 @@
 		<!-- PK fields -->
 
 		<column name="realtimeId" primary="true" type="long" />
-
 		<!-- Group instance -->
 
 		<column name="groupId" type="long" />
@@ -178,6 +177,10 @@
 			<finder-column name="companyId" />
 			<finder-column name="groupId" />
 			<finder-column name="config_key" />		
+		</finder>
+		<finder name="CompanyGroup" return-type="Collection">
+			<finder-column name="companyId" />
+			<finder-column name="groupId" />				
 		</finder>
 		<finder name="KeyGlobalDefault" return-type="Collection">		
 			<finder-column name="config_key" />

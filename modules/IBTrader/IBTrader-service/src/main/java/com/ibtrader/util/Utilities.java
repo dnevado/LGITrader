@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -82,9 +83,26 @@ public class Utilities {
    private static final String TIME24HOURS_PATTERN ="([01]?[0-9]|2[0-3]):[0-5][0-9]";
    
 	
+   public enum OSType {
+	    Windows, MacOS, Linux, Other
+	  };
+
    
-   
-   
+  public static OSType getOperatingSystemType() {
+	  OSType detectedOS;
+      String OS = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
+      if ((OS.indexOf("mac") >= 0) || (OS.indexOf("darwin") >= 0)) {
+        detectedOS = OSType.MacOS;
+      } else if (OS.indexOf("win") >= 0) {
+        detectedOS = OSType.Windows;
+      } else if (OS.indexOf("nux") >= 0) {
+        detectedOS = OSType.Linux;
+      } else {
+        detectedOS = OSType.Other;
+      }
+      return detectedOS;
+    }
+	 
    public static String  getConfigurationValue(String  keyValue, long companyId, long _groupId)
    {
 	   /* MODO DE SIMULACION */		

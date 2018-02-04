@@ -5,7 +5,7 @@
 <%@page import="com.liferay.portal.kernel.portlet.LiferayWindowState"%>
 <%@page import="com.liferay.portal.kernel.portlet.LiferayPortletMode"%>
 
-
+<div class="container-fluid-1280">
 
 <%	ThemeDisplay _themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
 String redirect = ParamUtil.getString(request, "redirect");
@@ -50,3 +50,4 @@ portletDisplay.setURLBack(redirect);%>
 </liferay-ui:search-container>
 </aui:container>
 
+</div>

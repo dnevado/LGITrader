@@ -4,7 +4,7 @@
 
 <%@ page import="java.util.List" %>
 
-
+<div class="container-fluid-1280">
 
 <aui:container cssClass='super-awesome-container'>
 
@@ -30,3 +30,5 @@
 <liferay-ui:search-iterator/>
 </liferay-ui:search-container>
 </aui:container>
+
+</div>

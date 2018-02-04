@@ -80,8 +80,8 @@ Calendar cal = Calendar.getInstance();
     
      <aui:input  name="marketId" type="hidden" value="${market.marketId}"/>       
 	 <aui:button-row>
-        <aui:button type="submit"></aui:button>
-        <aui:button type="cancel" onClick="<%=redirect%>"></aui:button>
+        <aui:button type="submit" cssClass="btn-lg"></aui:button>
+        <aui:button type="cancel" cssClass="btn-lg" onClick="<%=redirect%>"></aui:button>
     </aui:button-row>
 </aui:form>
 </div>

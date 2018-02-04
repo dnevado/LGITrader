@@ -121,35 +121,25 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
 			String  p2 = lAttr.nextElement();
 			_log.info("Param:" + p2 + ":" + renderRequest.getParameter(p2));
 		}
-		
-		
-		
+				
 	    String _mvcCommand = "";
-	    
-	    List<Market> _lMarket=null;
-	    Market Market=null;	    
-        List<Strategy> _lStrategies=null; 
-        Strategy Strategy=null;
-        StrategyImpl _strategyImpl=null;
+	    List<Market> _lMarket = null;
+	    Market Market = null;	    
+        List<Strategy> _lStrategies = null; 
+        Strategy Strategy = null;
+        StrategyImpl _strategyImpl = null;
         Share share = null;
-        List<ExpandoColumn> ExpandoColumns=null;
-        JSONObject  jsonStrategyShareParams =null;
-        JSONObject  jsonFutureParams =null;
+        JSONObject  jsonStrategyShareParams = null;
+        JSONObject  jsonFutureParams = null;
         
 		
 	    try {
 	        ServiceContext serviceContext = ServiceContextFactory.getInstance(Share.class.getName(), renderRequest);
-	      
-	        
-	      
 	        long shareId = ParamUtil.getLong(renderRequest, "shareId");
 	        /* VIENE DEL ACTION ADDSHARE */
 	        long shareAddedId = ParamUtil.getLong(renderRequest, "shareAddedId",-1);
-	        
 	        long strategyId = ParamUtil.getLong(renderRequest, "strategyId");
 	        long marketId = ParamUtil.getLong(renderRequest, "marketId");
-	        
-	        
 	        if (shareAddedId!=-1)
 	        	shareId = shareAddedId;
 	        

@@ -26,6 +26,8 @@ import com.ibtrader.data.service.ConfigLocalService;
 import com.ibtrader.data.service.ConfigLocalServiceUtil;
 import com.ibtrader.data.service.MarketLocalServiceUtil;
 import com.ibtrader.data.service.base.ConfigLocalServiceBaseImpl;
+import com.ibtrader.util.Utilities;
+import com.ibtrader.util.Utilities.OSType;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Projection;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
@@ -133,6 +135,29 @@ public class ConfigLocalServiceImpl extends ConfigLocalServiceBaseImpl {
 		 _log.info("Adding missing Config Table Values .." );		
 		 Config _conf = configLocalService.findByKeyCompanyGroup(IBTraderConstants.keyTWS_HOST, _company, _group);
 		 int _TotalConfigs = (_conf!=null ? 1 : 0 );
+		 
+		 boolean bLinux = false;
+		 
+		 OSType ostype= Utilities.getOperatingSystemType();
+		 
+		 switch (ostype) {
+		     case Windows: break;
+		     case MacOS: break;
+		     case Linux:
+		    	 bLinux = true;
+		    	 break;
+		     case Other: break;
+		 }
+		 
+		 String _PrefixPath = IBTraderConstants.IBCONTROLLER_WINDOWS_PATH;
+		 String _SuffixPath = ".bat";
+		 
+		 if (bLinux)
+		 {
+			 _PrefixPath = IBTraderConstants.IBCONTROLLER_UNIX_PATH;
+			 _SuffixPath = ".sh";
+		 }
+		 
 		 if (_TotalConfigs==0)
 		 {
 			 _conf = configLocalService.createConfig(counterLocalService.increment(Config.class.getName()));
@@ -215,7 +240,7 @@ public class ConfigLocalServiceImpl extends ConfigLocalServiceBaseImpl {
 			 _conf.setGroupId(_group);
 			 _conf.setCompanyId(_company);
 			 _conf.setConfig_key(IBTraderConstants.keyPATH_TO_CONFIGURATION_FILE);
-			 _conf.setValue(String.valueOf(IBTraderConstants.vPATH_TO_CONFIGURATION_FILE));
+			 _conf.setValue(String.valueOf(IBTraderConstants.vPATH_TO_CONFIGURATION_FILE.replace("{PLATFORM_PATH}",_PrefixPath)));
 			 _conf.setName(IBTraderConstants.keyPATH_TO_CONFIGURATION_FILE);
 			 _conf.setDescription(IBTraderConstants.keyPATH_TO_CONFIGURATION_FILE);
 			 _conf.setGlobaldefault(false);
@@ -244,41 +269,100 @@ public class ConfigLocalServiceImpl extends ConfigLocalServiceBaseImpl {
 			 _conf.setGlobaldefault(false);
 			 _conf.setIscron(Boolean.FALSE);
 			 configLocalService.updateConfig(_conf);   	
-				 
 			 
+			 _conf = configLocalService.createConfig(counterLocalService.increment(Config.class.getName()));
+			 _conf.setGroupId(_group);
+			 _conf.setCompanyId(_company);
+			 _conf.setConfig_key(IBTraderConstants.keyPATH_TO_EXECUTABLE_FILE);
+			 _conf.setValue(String.valueOf(IBTraderConstants.vPATH_TO_EXECUTABLE_FILE.replace("{PLATFORM_PATH}",_PrefixPath).concat(_SuffixPath)));
+			 _conf.setName(IBTraderConstants.keyPATH_TO_EXECUTABLE_FILE);
+			 _conf.setDescription(IBTraderConstants.keyPATH_TO_EXECUTABLE_FILE);
+			 _conf.setGlobaldefault(false);
+			 _conf.setIscron(Boolean.FALSE);
+			 configLocalService.updateConfig(_conf);   	
+			 
+			 /* DUPLICAMOS LOS DATOS PARA LOS CASOS QUE TENEMOS DE SIMULACIONES, CON DOS TWS CORRIENDO A LA VEZ  */
+			 _conf = configLocalService.createConfig(counterLocalService.increment(Config.class.getName()));
+			 _conf.setGroupId(_group);
+			 _conf.setCompanyId(_company);
+			 _conf.setConfig_key(IBTraderConstants.keyPAPER_USER_TWS);
+			 _conf.setValue(String.valueOf(IBTraderConstants.vPAPER_USER_TWS));
+			 _conf.setName(IBTraderConstants.keyPAPER_USER_TWS);
+			 _conf.setDescription(IBTraderConstants.keyPAPER_USER_TWS);
+			 _conf.setGlobaldefault(false);
+			 _conf.setIscron(Boolean.FALSE);
+			 configLocalService.updateConfig(_conf);   	
+			 
+			 _conf = configLocalService.createConfig(counterLocalService.increment(Config.class.getName()));
+			 _conf.setGroupId(_group);
+			 _conf.setCompanyId(_company);
+			 _conf.setConfig_key(IBTraderConstants.keyPAPER_USER_PWD);
+			 _conf.setValue(String.valueOf(IBTraderConstants.vPAPER_USER_PWD));
+			 _conf.setName(IBTraderConstants.keyPAPER_USER_PWD);
+			 _conf.setDescription(IBTraderConstants.keyPAPER_USER_PWD);
+			 _conf.setGlobaldefault(false);
+			 _conf.setIscron(Boolean.FALSE);
+			 configLocalService.updateConfig(_conf);   	
+			 
+			 _conf = configLocalService.createConfig(counterLocalService.increment(Config.class.getName()));
+			 _conf.setGroupId(_group);
+			 _conf.setCompanyId(_company);
+			 _conf.setConfig_key(IBTraderConstants.keyPAPER_TWS_HOST);
+			 _conf.setValue(String.valueOf(IBTraderConstants.vPAPER_TWS_HOST));
+			 _conf.setName(IBTraderConstants.keyPAPER_TWS_HOST);
+			 _conf.setDescription(IBTraderConstants.keyPAPER_TWS_HOST);
+			 _conf.setGlobaldefault(false);
+			 _conf.setIscron(Boolean.FALSE);
+			 configLocalService.updateConfig(_conf);   	
+			 
+			 _conf = configLocalService.createConfig(counterLocalService.increment(Config.class.getName()));
+			 _conf.setGroupId(_group);
+			 _conf.setCompanyId(_company);
+			 _conf.setConfig_key(IBTraderConstants.keyPAPER_TWS_PORT);
+			 _conf.setValue(String.valueOf(IBTraderConstants.vPAPER_TWS_PORT));
+			 _conf.setName(IBTraderConstants.keyPAPER_TWS_PORT);
+			 _conf.setDescription(IBTraderConstants.keyPAPER_TWS_PORT);
+			 _conf.setGlobaldefault(false);
+			 _conf.setIscron(Boolean.FALSE);
+			 configLocalService.updateConfig(_conf);   	
+			 
+			 _conf = configLocalService.createConfig(counterLocalService.increment(Config.class.getName()));
+			 _conf.setGroupId(_group);
+			 _conf.setCompanyId(_company);
+			 _conf.setConfig_key(IBTraderConstants.keyPAPER_PATH_TO_CONFIGURATION_FILE);
+			 _conf.setValue(String.valueOf(IBTraderConstants.vPAPER_PATH_TO_CONFIGURATION_FILE.replace("{PLATFORM_PATH}",_PrefixPath)));
+			 _conf.setName(IBTraderConstants.keyPAPER_PATH_TO_CONFIGURATION_FILE);
+			 _conf.setDescription(IBTraderConstants.keyPAPER_PATH_TO_CONFIGURATION_FILE);
+			 _conf.setGlobaldefault(false);
+			 _conf.setIscron(Boolean.FALSE);
+			 configLocalService.updateConfig(_conf);   	
+			 
+			 _conf = configLocalService.createConfig(counterLocalService.increment(Config.class.getName()));
+			 _conf.setGroupId(_group);
+			 _conf.setCompanyId(_company);
+			 _conf.setConfig_key(IBTraderConstants.keyPAPER_PATH_TO_EXECUTABLE_FILE);
+			 _conf.setValue(String.valueOf(IBTraderConstants.vPAPER_PATH_TO_EXECUTABLE_FILE.replace("{PLATFORM_PATH}",_PrefixPath).concat(_SuffixPath)));
+			 _conf.setName(IBTraderConstants.keyPAPER_PATH_TO_EXECUTABLE_FILE);
+			 _conf.setDescription(IBTraderConstants.keyPAPER_PATH_TO_EXECUTABLE_FILE);
+			 _conf.setGlobaldefault(false);
+			 _conf.setIscron(Boolean.FALSE);
+			 configLocalService.updateConfig(_conf);   	
+			
+			  
 		 }
 	}
 	public void removeConfigurationValuesCompanyGroup(long  _company, long _group)
 	{
 		  /* TWS HOST */
-		 _log.info("Removing  Config Table Values .." );		
-		 Config _conf = configLocalService.findByKeyCompanyGroup(IBTraderConstants.keyTWS_HOST, _company, _group);
-		 int _TotalConfigs = (_conf!=null ? 1 : 0 );
-		 if (_TotalConfigs==1)  configLocalService.deleteConfig(_conf);
+		 _log.info("Removing  Config Table Values for .." + _group);
 		 
-		 _conf = configLocalService.findByKeyCompanyGroup(IBTraderConstants.keyACCOUNT_IB_NAME, _company, _group);
-		 _TotalConfigs = (_conf!=null ? 1 : 0 );
-		 if (_TotalConfigs==1)  configLocalService.deleteConfig(_conf);
+		 List<Config> _configurations  = configPersistence.findByCompanyGroup(_company, _group);
+		 for (Config removeConfig : _configurations )
+		 {
+			 configLocalService.deleteConfig(removeConfig);
+		 }
 		 
-		 _conf = configLocalService.findByKeyCompanyGroup(IBTraderConstants.keyTWS_PORT, _company, _group);
-		 _TotalConfigs = (_conf!=null ? 1 : 0 );
-		 if (_TotalConfigs==1)  configLocalService.deleteConfig(_conf);
-		 
-		 _conf = configLocalService.findByKeyCompanyGroup(IBTraderConstants.keySIMULATION_MODE, _company, _group);
-		 _TotalConfigs = (_conf!=null ? 1 : 0 );
-		 if (_TotalConfigs==1)  configLocalService.deleteConfig(_conf);
-		 
-		 _conf = configLocalService.findByKeyCompanyGroup(IBTraderConstants.keyENABLE_MAIL_NOTIFICATIONS, _company, _group);
-		 _TotalConfigs = (_conf!=null ? 1 : 0 );
-		 if (_TotalConfigs==1)  configLocalService.deleteConfig(_conf);		
-		 
-		 _conf = configLocalService.findByKeyCompanyGroup(IBTraderConstants.keyENABLE_DESKTOP_NOTIFICATIONS, _company, _group);
-		 _TotalConfigs = (_conf!=null ? 1 : 0 );
-		 if (_TotalConfigs==1)  configLocalService.deleteConfig(_conf);		
-		 
-		 _conf = configLocalService.findByKeyCompanyGroup(IBTraderConstants.keyPATH_TO_CONFIGURATION_FILE, _company, _group);
-		 _TotalConfigs = (_conf!=null ? 1 : 0 );
-		 if (_TotalConfigs==1)  configLocalService.deleteConfig(_conf);		
+
 	}
 	
 }

@@ -69,6 +69,8 @@ String portletId= "_" + portletDisplay.getId();
 <portlet:actionURL name="addShare" var="addShareURL" />
 <portlet:actionURL name="editShare" var="editShareURL" />
 
+<div class="container-fluid-1280">
+
 <% 
 
 
@@ -128,8 +130,8 @@ else
     </aui:fieldset> 
      
     
-  <aui:fieldset collapsed="true" collapsible="true"  label="share.datafutures" id="datafutures">
-				
+   <liferay-ui:panel-container accordion="true" extended="true" id="datafutures">
+		<liferay-ui:panel title="share.datafutures" markupView="lexicon">
 			    <aui:fieldset>	  				
   				<aui:select multiple="true"  label="data.expirationmonth" name="expirationmonth">
 				    <% int monthCounter=0;				    				    
@@ -171,10 +173,11 @@ else
      		   <label class="control-label" for="<%=portletId%>_tick_futures">share.tickfutures</label><input  id="<%=portletId%>_tick_futures" class="field form-control"  min="0"  type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_tick_futures"  value="${share.tick_futures gt 0 ? share.tick_futures : ''}"/>
 			   <label class="control-label" for="<%=portletId%>_share.multiplier">share.multiplier</label><input  id="<%=portletId%>_multiplier" class="field form-control"  min="0"  type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_multiplier"  value="${share.multiplier gt 0 ? share.multiplier : ''}"/> 	
 	         
-    </aui:fieldset>   
-
-     <aui:fieldset collapsible="true" label="share.datamarket" id="datamarket" > 
-     		  <aui:fieldset>		
+         </liferay-ui:panel>
+	</liferay-ui:panel-container>
+	<liferay-ui:panel-container accordion="true" extended="true" id="datamarket">
+		<liferay-ui:panel title="share.datamarket" markupView="lexicon">
+     		 <aui:fieldset>		
      		  
 				   <aui:select label="share.exchange" name="exchange">
 				    <% for (String s: ConfigKeys._MARKET_EXCHANGES)  {%>        				    	
@@ -210,11 +213,15 @@ else
 			  	</aui:select>													
 		     </aui:fieldset>
 		     <aui:input type="hidden"  name="shareId"  value="${share.shareId}"/>
-  	</aui:fieldset>
+  	   </liferay-ui:panel>
+	</liferay-ui:panel-container>
    
     <aui:button-row>
-        <aui:button type="submit"></aui:button>
-        <aui:button type="cancel" onClick="<%=redirect%>"></aui:button>
+        <aui:button type="submit" cssClass="btn-lg"></aui:button>
+        <aui:button type="cancel" cssClass="btn-lg" onClick="<%=redirect%>"></aui:button>
     </aui:button-row>
     </aui:fieldset-group>
 </aui:form>
+
+
+</div>
