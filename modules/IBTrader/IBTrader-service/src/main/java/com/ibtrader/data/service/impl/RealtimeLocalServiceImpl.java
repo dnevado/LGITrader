@@ -16,6 +16,7 @@ package com.ibtrader.data.service.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import java.util.Date;
 import java.util.List;
 
 import com.ibtrader.data.model.Realtime;
@@ -46,12 +47,17 @@ public class RealtimeLocalServiceImpl extends RealtimeLocalServiceBaseImpl {
 	 *
 	 * Never reference this class directly. Always use {@link com.ibtrader.data.service.RealtimeLocalServiceUtil} to access the realtime local service.
 	 */
-	/* public Realtime findLastCompanyShare(long companyId, long shareId)
+	
+	/* OBTIENE EL MIN Y MAX DE UN  ACTIVO */	
+	public Realtime findMinMaxRealTime(Date from, Date to, long shareId, long companyId, long groupId)
 	{
-		List<Realtime> lRealTime = getRealtimePersistence().findByCompanyShare(companyId, shareId);
-		return lRealTime.get(0);
+		return realtimeFinder.findMinMaxRealTime(from, to, shareId, companyId,  groupId);	
 	}
-	*/
+	public Realtime findLastRealTime(long shareId, long companyId, long groupId)
+	{
+		return realtimeFinder.findLastRealTime(shareId, companyId,  groupId);	
+	}
+	
 	
 	 public Realtime findLastCompanyShare(long companyId, long shareId)
 	{

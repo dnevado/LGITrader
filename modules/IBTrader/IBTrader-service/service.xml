@@ -24,7 +24,7 @@
 		<!-- Other fields -->
 
 		<column name="max_value" type="double" />
-		<column name="min_value" type="boolean" />
+		<column name="min_value" type="double" />
 		<column name="volume" type="int" />
 		<column name="avg_volume" type="int" />
 
@@ -289,7 +289,8 @@
 			<column name="percentual_limit_buy" type="double" />
 			<column name="percentual_stop_lost" type="double" />
 			<column name="percentual_stop_profit" type="double" />
-			<column name="percentual_stop_profit_position" type="double" />			
+			<column name="percentual_stop_profit_position" type="double" />
+			<column name="trailing_stop_lost" type="double" />					
 			<column name="expiry_date" type="Date" />
 			<column name="expiry_expression" type="String" />
 			<column name="tick_futures" type="double" />

@@ -3057,7 +3057,7 @@ public class RealtimePersistenceImpl extends BasePersistenceImpl<Realtime>
 		realtimeImpl.setCreateDate(realtime.getCreateDate());
 		realtimeImpl.setModifiedDate(realtime.getModifiedDate());
 		realtimeImpl.setMax_value(realtime.getMax_value());
-		realtimeImpl.setMin_value(realtime.isMin_value());
+		realtimeImpl.setMin_value(realtime.getMin_value());
 		realtimeImpl.setVolume(realtime.getVolume());
 		realtimeImpl.setAvg_volume(realtime.getAvg_volume());
 

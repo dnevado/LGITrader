@@ -155,7 +155,7 @@ public class RealtimeCacheModel implements CacheModel<Realtime>, Externalizable 
 
 		max_value = objectInput.readDouble();
 
-		min_value = objectInput.readBoolean();
+		min_value = objectInput.readDouble();
 
 		volume = objectInput.readInt();
 
@@ -186,7 +186,7 @@ public class RealtimeCacheModel implements CacheModel<Realtime>, Externalizable 
 
 		objectOutput.writeDouble(max_value);
 
-		objectOutput.writeBoolean(min_value);
+		objectOutput.writeDouble(min_value);
 
 		objectOutput.writeInt(volume);
 
@@ -202,7 +202,7 @@ public class RealtimeCacheModel implements CacheModel<Realtime>, Externalizable 
 	public long createDate;
 	public long modifiedDate;
 	public double max_value;
-	public boolean min_value;
+	public double min_value;
 	public int volume;
 	public int avg_volume;
 }

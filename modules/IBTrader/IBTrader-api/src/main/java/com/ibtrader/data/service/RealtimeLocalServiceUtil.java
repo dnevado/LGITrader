@@ -110,6 +110,18 @@ public class RealtimeLocalServiceUtil {
 		return getService().findLastCompanyShare(companyId, shareId);
 	}
 
+	public static com.ibtrader.data.model.Realtime findLastRealTime(
+		long shareId, long companyId, long groupId) {
+		return getService().findLastRealTime(shareId, companyId, groupId);
+	}
+
+	public static com.ibtrader.data.model.Realtime findMinMaxRealTime(
+		java.util.Date from, java.util.Date to, long shareId, long companyId,
+		long groupId) {
+		return getService()
+				   .findMinMaxRealTime(from, to, shareId, companyId, groupId);
+	}
+
 	/**
 	* Returns the realtime with the primary key.
 	*

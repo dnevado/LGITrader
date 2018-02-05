@@ -205,21 +205,14 @@ public interface RealtimeModel extends BaseModel<Realtime>, ShardedModel,
 	 *
 	 * @return the min_value of this realtime
 	 */
-	public boolean getMin_value();
+	public double getMin_value();
 
 	/**
-	 * Returns <code>true</code> if this realtime is min_value.
-	 *
-	 * @return <code>true</code> if this realtime is min_value; <code>false</code> otherwise
-	 */
-	public boolean isMin_value();
-
-	/**
-	 * Sets whether this realtime is min_value.
+	 * Sets the min_value of this realtime.
 	 *
 	 * @param min_value the min_value of this realtime
 	 */
-	public void setMin_value(boolean min_value);
+	public void setMin_value(double min_value);
 
 	/**
 	 * Returns the volume of this realtime.

@@ -20,6 +20,7 @@ import com.ibtrader.data.service.persistence.ConfigPersistence;
 import com.ibtrader.data.service.persistence.IBOrderPersistence;
 import com.ibtrader.data.service.persistence.MarketPersistence;
 import com.ibtrader.data.service.persistence.PositionPersistence;
+import com.ibtrader.data.service.persistence.RealtimeFinder;
 import com.ibtrader.data.service.persistence.RealtimePersistence;
 import com.ibtrader.data.service.persistence.SharePersistence;
 import com.ibtrader.data.service.persistence.StrategyPersistence;
@@ -337,6 +338,24 @@ public abstract class MarketServiceBaseImpl extends BaseServiceImpl
 	 */
 	public void setRealtimePersistence(RealtimePersistence realtimePersistence) {
 		this.realtimePersistence = realtimePersistence;
+	}
+
+	/**
+	 * Returns the realtime finder.
+	 *
+	 * @return the realtime finder
+	 */
+	public RealtimeFinder getRealtimeFinder() {
+		return realtimeFinder;
+	}
+
+	/**
+	 * Sets the realtime finder.
+	 *
+	 * @param realtimeFinder the realtime finder
+	 */
+	public void setRealtimeFinder(RealtimeFinder realtimeFinder) {
+		this.realtimeFinder = realtimeFinder;
 	}
 
 	/**
@@ -737,6 +756,8 @@ public abstract class MarketServiceBaseImpl extends BaseServiceImpl
 	protected com.ibtrader.data.service.RealtimeService realtimeService;
 	@BeanReference(type = RealtimePersistence.class)
 	protected RealtimePersistence realtimePersistence;
+	@BeanReference(type = RealtimeFinder.class)
+	protected RealtimeFinder realtimeFinder;
 	@BeanReference(type = com.ibtrader.data.service.ShareLocalService.class)
 	protected com.ibtrader.data.service.ShareLocalService shareLocalService;
 	@BeanReference(type = com.ibtrader.data.service.ShareService.class)

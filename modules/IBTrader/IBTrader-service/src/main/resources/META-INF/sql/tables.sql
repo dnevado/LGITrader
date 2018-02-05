@@ -91,7 +91,7 @@ create table ibtrader_Realtime (
 	createDate DATE null,
 	modifiedDate DATE null,
 	max_value DOUBLE,
-	min_value BOOLEAN,
+	min_value DOUBLE,
 	volume INTEGER,
 	avg_volume INTEGER
 );
@@ -111,6 +111,7 @@ create table ibtrader_Share (
 	percentual_stop_lost DOUBLE,
 	percentual_stop_profit DOUBLE,
 	percentual_stop_profit_position DOUBLE,
+	trailing_stop_lost DOUBLE,
 	expiry_date DATE null,
 	expiry_expression TEXT null,
 	tick_futures DOUBLE,

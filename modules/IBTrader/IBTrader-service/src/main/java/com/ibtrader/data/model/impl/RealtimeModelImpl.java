@@ -79,7 +79,7 @@ public class RealtimeModelImpl extends BaseModelImpl<Realtime>
 			{ "createDate", Types.TIMESTAMP },
 			{ "modifiedDate", Types.TIMESTAMP },
 			{ "max_value", Types.DOUBLE },
-			{ "min_value", Types.BOOLEAN },
+			{ "min_value", Types.DOUBLE },
 			{ "volume", Types.INTEGER },
 			{ "avg_volume", Types.INTEGER }
 		};
@@ -95,12 +95,12 @@ public class RealtimeModelImpl extends BaseModelImpl<Realtime>
 		TABLE_COLUMNS_MAP.put("createDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("modifiedDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("max_value", Types.DOUBLE);
-		TABLE_COLUMNS_MAP.put("min_value", Types.BOOLEAN);
+		TABLE_COLUMNS_MAP.put("min_value", Types.DOUBLE);
 		TABLE_COLUMNS_MAP.put("volume", Types.INTEGER);
 		TABLE_COLUMNS_MAP.put("avg_volume", Types.INTEGER);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table ibtrader_Realtime (uuid_ VARCHAR(75) null,realtimeId LONG not null primary key,groupId LONG,companyId LONG,shareId LONG,value DOUBLE,createDate DATE null,modifiedDate DATE null,max_value DOUBLE,min_value BOOLEAN,volume INTEGER,avg_volume INTEGER)";
+	public static final String TABLE_SQL_CREATE = "create table ibtrader_Realtime (uuid_ VARCHAR(75) null,realtimeId LONG not null primary key,groupId LONG,companyId LONG,shareId LONG,value DOUBLE,createDate DATE null,modifiedDate DATE null,max_value DOUBLE,min_value DOUBLE,volume INTEGER,avg_volume INTEGER)";
 	public static final String TABLE_SQL_DROP = "drop table ibtrader_Realtime";
 	public static final String ORDER_BY_JPQL = " ORDER BY realtime.shareId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY ibtrader_Realtime.shareId ASC";
@@ -286,7 +286,7 @@ public class RealtimeModelImpl extends BaseModelImpl<Realtime>
 			setMax_value(max_value);
 		}
 
-		Boolean min_value = (Boolean)attributes.get("min_value");
+		Double min_value = (Double)attributes.get("min_value");
 
 		if (min_value != null) {
 			setMin_value(min_value);
@@ -471,18 +471,12 @@ public class RealtimeModelImpl extends BaseModelImpl<Realtime>
 
 	@JSON
 	@Override
-	public boolean getMin_value() {
-		return _min_value;
-	}
-
-	@JSON
-	@Override
-	public boolean isMin_value() {
+	public double getMin_value() {
 		return _min_value;
 	}
 
 	@Override
-	public void setMin_value(boolean min_value) {
+	public void setMin_value(double min_value) {
 		_min_value = min_value;
 	}
 
@@ -814,7 +808,7 @@ public class RealtimeModelImpl extends BaseModelImpl<Realtime>
 	private Date _modifiedDate;
 	private boolean _setModifiedDate;
 	private double _max_value;
-	private boolean _min_value;
+	private double _min_value;
 	private int _volume;
 	private int _avg_volume;
 	private long _columnBitmask;

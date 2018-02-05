@@ -58,11 +58,22 @@ public interface Strategy extends StrategyModel, PersistedModel {
 		java.util.Map<java.lang.String, java.lang.String> paramValues);
 
 	public void execute(Share _share, Market _market);
-
 	public boolean verify(Share _share, Market _market);
-
 	public void init(long companyId);
 
+	
+	public double getValueIn();
+	public void setValueIn(double _valueIn);
+
+	public double getValueLimitIn();
+	public void setValueLimitIn(double _valueLimitIn);
+
+	public double getValueOut();
+	public void setValueOut(double _valueOut);
+
+	public double getValueLimitOut();
+	public void setValueLimitOut(double _valueLimitOut);
+	
 	public boolean activated();
 
 	public java.util.List<com.liferay.expando.kernel.model.ExpandoColumn> getIBStrategyParams();
@@ -74,22 +85,6 @@ public interface Strategy extends StrategyModel, PersistedModel {
 
 	public void setIBStrategyAssetEntry(
 		com.liferay.asset.kernel.model.AssetEntry _IBStrategyAssetEntry);
-
-	public float getValueIn();
-
-	public void setValueIn(float _valueIn);
-
-	public float getValueLimitIn();
-
-	public void setValueLimitIn(float _valueLimitIn);
-
-	public float getValueOut();
-
-	public void setValueOut(float _valueOut);
-
-	public float getValueLimitOut();
-
-	public void setValueLimitOut(float _valueLimitOut);
 
 	public int getCLIENT_ID();
 

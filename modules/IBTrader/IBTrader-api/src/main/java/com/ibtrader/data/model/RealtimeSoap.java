@@ -170,15 +170,11 @@ public class RealtimeSoap implements Serializable {
 		_max_value = max_value;
 	}
 
-	public boolean getMin_value() {
+	public double getMin_value() {
 		return _min_value;
 	}
 
-	public boolean isMin_value() {
-		return _min_value;
-	}
-
-	public void setMin_value(boolean min_value) {
+	public void setMin_value(double min_value) {
 		_min_value = min_value;
 	}
 
@@ -207,7 +203,7 @@ public class RealtimeSoap implements Serializable {
 	private Date _createDate;
 	private Date _modifiedDate;
 	private double _max_value;
-	private boolean _min_value;
+	private double _min_value;
 	private int _volume;
 	private int _avg_volume;
 }

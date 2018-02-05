@@ -16,6 +16,7 @@
 	<bean class="com.ibtrader.data.service.impl.RealtimeLocalServiceImpl" id="com.ibtrader.data.service.RealtimeLocalService" />
 	<bean class="com.ibtrader.data.service.impl.RealtimeServiceImpl" id="com.ibtrader.data.service.RealtimeService" />
 	<bean class="com.ibtrader.data.service.persistence.impl.RealtimePersistenceImpl" id="com.ibtrader.data.service.persistence.RealtimePersistence" parent="basePersistence" />
+	<bean class="com.ibtrader.data.service.persistence.impl.RealtimeFinderImpl" id="com.ibtrader.data.service.persistence.RealtimeFinder" parent="basePersistence" />
 	<bean class="com.ibtrader.data.service.impl.ShareLocalServiceImpl" id="com.ibtrader.data.service.ShareLocalService" />
 	<bean class="com.ibtrader.data.service.impl.ShareServiceImpl" id="com.ibtrader.data.service.ShareService" />
 	<bean class="com.ibtrader.data.service.persistence.impl.SharePersistenceImpl" id="com.ibtrader.data.service.persistence.SharePersistence" parent="basePersistence" />

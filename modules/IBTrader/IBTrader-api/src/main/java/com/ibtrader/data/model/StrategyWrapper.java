@@ -335,26 +335,6 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 	}
 
 	@Override
-	public float getValueIn() {
-		return _strategy.getValueIn();
-	}
-
-	@Override
-	public float getValueLimitIn() {
-		return _strategy.getValueLimitIn();
-	}
-
-	@Override
-	public float getValueLimitOut() {
-		return _strategy.getValueLimitOut();
-	}
-
-	@Override
-	public float getValueOut() {
-		return _strategy.getValueOut();
-	}
-
-	@Override
 	public int compareTo(Strategy strategy) {
 		return _strategy.compareTo(strategy);
 	}
@@ -836,26 +816,6 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 	public void setValidateParamsKeysError(
 		java.lang.String validateParamsKeysError) {
 		_strategy.setValidateParamsKeysError(validateParamsKeysError);
-	}
-
-	@Override
-	public void setValueIn(float _valueIn) {
-		_strategy.setValueIn(_valueIn);
-	}
-
-	@Override
-	public void setValueLimitIn(float _valueLimitIn) {
-		_strategy.setValueLimitIn(_valueLimitIn);
-	}
-
-	@Override
-	public void setValueLimitOut(float _valueLimitOut) {
-		_strategy.setValueLimitOut(_valueLimitOut);
-	}
-
-	@Override
-	public void setValueOut(float _valueOut) {
-		_strategy.setValueOut(_valueOut);
 	}
 
 	@Override

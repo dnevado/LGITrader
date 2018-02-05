@@ -131,7 +131,7 @@ public class RealtimeWrapper implements Realtime, ModelWrapper<Realtime> {
 			setMax_value(max_value);
 		}
 
-		Boolean min_value = (Boolean)attributes.get("min_value");
+		Double min_value = (Double)attributes.get("min_value");
 
 		if (min_value != null) {
 			setMin_value(min_value);
@@ -160,16 +160,6 @@ public class RealtimeWrapper implements Realtime, ModelWrapper<Realtime> {
 		return new RealtimeWrapper(_realtime.toUnescapedModel());
 	}
 
-	/**
-	* Returns the min_value of this realtime.
-	*
-	* @return the min_value of this realtime
-	*/
-	@Override
-	public boolean getMin_value() {
-		return _realtime.getMin_value();
-	}
-
 	@Override
 	public boolean isCachedModel() {
 		return _realtime.isCachedModel();
@@ -178,16 +168,6 @@ public class RealtimeWrapper implements Realtime, ModelWrapper<Realtime> {
 	@Override
 	public boolean isEscapedModel() {
 		return _realtime.isEscapedModel();
-	}
-
-	/**
-	* Returns <code>true</code> if this realtime is min_value.
-	*
-	* @return <code>true</code> if this realtime is min_value; <code>false</code> otherwise
-	*/
-	@Override
-	public boolean isMin_value() {
-		return _realtime.isMin_value();
 	}
 
 	@Override
@@ -213,6 +193,16 @@ public class RealtimeWrapper implements Realtime, ModelWrapper<Realtime> {
 	@Override
 	public double getMax_value() {
 		return _realtime.getMax_value();
+	}
+
+	/**
+	* Returns the min_value of this realtime.
+	*
+	* @return the min_value of this realtime
+	*/
+	@Override
+	public double getMin_value() {
+		return _realtime.getMin_value();
 	}
 
 	/**
@@ -432,12 +422,12 @@ public class RealtimeWrapper implements Realtime, ModelWrapper<Realtime> {
 	}
 
 	/**
-	* Sets whether this realtime is min_value.
+	* Sets the min_value of this realtime.
 	*
 	* @param min_value the min_value of this realtime
 	*/
 	@Override
-	public void setMin_value(boolean min_value) {
+	public void setMin_value(double min_value) {
 		_realtime.setMin_value(min_value);
 	}
 

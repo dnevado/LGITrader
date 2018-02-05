@@ -109,7 +109,7 @@
 		<property name="createDate" type="org.hibernate.type.TimestampType" />
 		<property name="modifiedDate" type="org.hibernate.type.TimestampType" />
 		<property name="max_value" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
-		<property name="min_value" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />
+		<property name="min_value" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
 		<property name="volume" type="com.liferay.portal.dao.orm.hibernate.IntegerType" />
 		<property name="avg_volume" type="com.liferay.portal.dao.orm.hibernate.IntegerType" />
 	</class>
@@ -130,6 +130,7 @@
 		<property name="percentual_stop_lost" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
 		<property name="percentual_stop_profit" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
 		<property name="percentual_stop_profit_position" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
+		<property name="trailing_stop_lost" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
 		<property name="expiry_date" type="org.hibernate.type.TimestampType" />
 		<property name="expiry_expression" type="com.liferay.portal.dao.orm.hibernate.StringClobType" />
 		<property name="tick_futures" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />

@@ -43,6 +43,10 @@ public class StrategyImpl extends StrategyBaseImpl {
 	 * Never reference this class directly. All methods that expect a strategy model instance should use the {@link com.ibtrader.data.model.Strategy} interface instead.
 	 */
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	/* DATOS GENERALES DE LA ESTRATEGIA DEL SERVICIO */
 	private Strategy _IBStrategy;
 	/* LISTA DE PARAMETROS EXPANDOS  */
@@ -51,10 +55,14 @@ public class StrategyImpl extends StrategyBaseImpl {
 	//private TIMApiGITrader  _timApiGITrader;
 	private int _CLIENT_ID = 7;	  //  TIMApiWrapper data 		
 	/* PRECIOS DE ENTRADA SALIDA  */
-	private float _valueIn; 
-	private float _valueLimitIn;
-	private float _valueOut; 
-	private float _valueLimitOut;
+	private double valueIn; 
+	private double valueLimitIn;
+	private double valueOut; 
+	private double valueLimitOut;	
+
+	
+	private boolean verified = false;
+	
 	/* PRECIOS DE ENTRADA SALIDA  */
 	
 	/* nos sirve para devolver los session errors de la funciona validatParams*/
@@ -62,14 +70,10 @@ public class StrategyImpl extends StrategyBaseImpl {
 
 	/* COMPORTAMIENTO DE LOS PARAMETROS DE ENTRADA EN CUANTO A TIPOS */
 	public boolean validateParams(Map<String, String> paramValues) {return Boolean.TRUE;}
-	
 	public void execute(Share _share, Market _market) {}
-	
 	public boolean verify(Share _share, Market _market) {return Boolean.TRUE;}
-	
 	/* CREATE THE REQUERIMENT EXPANDOS PARAMETERS */
 	public void init(long companyId) {}
-	
 	public boolean activated() {return Boolean.TRUE;}
 	
 	/* GET LIST EXPANDOS FIELDS */
@@ -92,40 +96,7 @@ public class StrategyImpl extends StrategyBaseImpl {
 	public void setIBStrategyAssetEntry(AssetEntry _IBStrategyAssetEntry) {
 		this._IBStrategyAssetEntry = _IBStrategyAssetEntry;
 	}
-
-		
-	public float getValueIn() {
-		return _valueIn;
-	}
-
-	public void setValueIn(float _valueIn) {
-		this._valueIn = _valueIn;
-	}
-
-	public float getValueLimitIn() {
-		return _valueLimitIn;
-	}
-
-	public void setValueLimitIn(float _valueLimitIn) {
-		this._valueLimitIn = _valueLimitIn;
-	}
-
-	public float getValueOut() {
-		return _valueOut;
-	}
-
-	public void setValueOut(float _valueOut) {
-		this._valueOut = _valueOut;
-	}
-
-	public float getValueLimitOut() {
-		return _valueLimitOut;
-	}
-
-	public void setValueLimitOut(float _valueLimitOut) {
-		this._valueLimitOut = _valueLimitOut;
-	}
-
+			
 	/* public TIMApiGITrader getTimAPIW() {
 		return _timApiGITrader;
 	}
@@ -149,4 +120,60 @@ public class StrategyImpl extends StrategyBaseImpl {
 	public void setValidateParamsKeysError(String validateParamsKeysError) {
 		this.validateParamsKeysError = validateParamsKeysError;
 	}
+
+	@Override
+	public double getValueIn() {
+		// TODO Auto-generated method stub
+		return valueIn;
+	}
+
+	@Override
+	public void setValueIn(double _valueIn) {
+		// TODO Auto-generated method stub
+		valueIn = _valueIn;
+	}
+
+	@Override
+	public double getValueLimitIn() {
+		// TODO Auto-generated method stub
+		return valueLimitIn;
+	}
+
+	@Override
+	public void setValueLimitIn(double _valueLimitIn) {
+		// TODO Auto-generated method stub
+		valueLimitIn = _valueLimitIn;
+	}
+
+	@Override
+	public double getValueOut() {
+		// TODO Auto-generated method stub
+		return valueOut;
+	}
+
+	@Override
+	public void setValueOut(double _valueOut) {
+		// TODO Auto-generated method stub
+		valueOut = _valueOut;
+	}
+
+	@Override
+	public double getValueLimitOut() {
+		// TODO Auto-generated method stub
+		return valueLimitOut;
+	}
+
+	@Override
+	public void setValueLimitOut(double _valueLimitOut) {
+		// TODO Auto-generated method stub
+		valueLimitOut = _valueLimitOut;
+	}
+	public boolean isVerified() {
+		return verified;
+	}
+	public void setVerified(boolean verified) {
+		this.verified = verified;
+	}
+
+		
 }

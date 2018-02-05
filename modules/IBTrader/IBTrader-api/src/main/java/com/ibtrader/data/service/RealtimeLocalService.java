@@ -39,6 +39,7 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 
 import java.io.Serializable;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -115,6 +116,11 @@ public interface RealtimeLocalService extends BaseLocalService,
 		long groupId);
 
 	public Realtime findLastCompanyShare(long companyId, long shareId);
+
+	public Realtime findLastRealTime(long shareId, long companyId, long groupId);
+
+	public Realtime findMinMaxRealTime(Date from, Date to, long shareId,
+		long companyId, long groupId);
 
 	/**
 	* Returns the realtime with the primary key.

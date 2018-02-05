@@ -90,7 +90,7 @@
 		<field name="createDate" type="Date" />
 		<field name="modifiedDate" type="Date" />
 		<field name="max_value" type="double" />
-		<field name="min_value" type="boolean" />
+		<field name="min_value" type="double" />
 		<field name="volume" type="int" />
 		<field name="avg_volume" type="int" />
 	</model>
@@ -109,6 +109,7 @@
 		<field name="percentual_stop_lost" type="double" />
 		<field name="percentual_stop_profit" type="double" />
 		<field name="percentual_stop_profit_position" type="double" />
+		<field name="trailing_stop_lost" type="double" />
 		<field name="expiry_date" type="Date" />
 		<field name="expiry_expression" type="String">
 			<hint-collection name="CLOB" />

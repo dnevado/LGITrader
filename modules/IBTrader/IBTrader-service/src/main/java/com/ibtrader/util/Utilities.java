@@ -230,7 +230,7 @@ public class Utilities {
      * 2546.50 --> 2546.75 -->
      bReachedMin : Min o Max para saber si es corto o largo.
      */
-    public static double TickLimit_WithMultiplier(Double OrderValue, Float Multiplier, Double ValueLimit, boolean bReachedMin)
+    public static double TickLimit_WithMultiplier(double OrderValue, double Multiplier, double ValueLimit, boolean bReachedMin)
     {
         // Generamos un array con multiplicadores desde el value de compra hasta el limite  +1 para saber el mas cercano
     	int _Steps = 0;
@@ -246,7 +246,7 @@ public class Utilities {
         }
         
         	
-        return findNearestValue(aTicks, ValueLimit.doubleValue());
+        return findNearestValue(aTicks, ValueLimit);
     	
     }
     /* 
@@ -406,6 +406,27 @@ public class Utilities {
 	    
 	}
 	
+	/* HOUR HHMM */
+	public static  Date setDateWithHour(Date _oDate, String HourMinutes)
+	{
+		Calendar Hoy = Calendar.getInstance();
+		
+		Hoy.setTimeInMillis(_oDate.getTime());
+	    
+	    int hour = Integer.parseInt(HourMinutes.substring(0, 2));
+	    int minute = Integer.parseInt(HourMinutes.substring(2,4));
+	    
+	    
+	    Hoy.set(Calendar.HOUR_OF_DAY, hour);
+	    Hoy.set(Calendar.MINUTE, minute);
+	    Hoy.set(Calendar.SECOND, 0);
+	    Hoy.set(Calendar.MILLISECOND, 0);
+		
+	    
+	    return Hoy.getTime();
+	    
+	}
+	
     
 	/* public static  String getActualHourFormat()
 	{
@@ -425,7 +446,7 @@ public class Utilities {
 	}
 		
 	
-	public static double RedondeaPrice(double num) {
+	public static double RoundPrice(double num) {
 		double result = num * 100;
 		result = Math.round(result);
 		result = result / 100;
