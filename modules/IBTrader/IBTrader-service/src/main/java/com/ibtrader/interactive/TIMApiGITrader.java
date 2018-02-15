@@ -335,7 +335,41 @@ public class TIMApiGITrader extends TIMApiWrapper {
 		_contractAPI3.currency("USD");
 		
 		
-		     TIMApiWrapper wrapper = new TIMApiWrapper(6,false);
+		 TIMApiWrapper wrapper = new TIMApiWrapper(5665,false);
+		
+		/* final EClientSocket m_client = wrapper.getClient();
+		 final EReaderSignal m_signal = wrapper.getSignal(); 
+ 		 //! [connect]
+		 m_client.eConnect("127.0.0.1", 7497, 5665); 
+		 m_client.isConnected();
+		 
+		 
+		final EReader reader = new EReader(m_client, m_signal);   
+		
+		reader.start();
+		
+		
+		//An additional thread is created in this program design to empty the messaging queue
+		new Thread(() -> {
+		    while (m_client.isConnected()) {
+		        m_signal.waitForSignal();
+		        try {
+		            reader.processMsgs();
+		        } catch (Exception e) {
+		            System.out.println("Exception: "+e.getMessage());
+		        }
+		    }
+		}).start();
+		m_client.reqContractDetails(58722, _contractAPI3);
+*/
+		
+		 wrapper.connect("127.0.0.1", 7497, 2566); 
+		 wrapper.reqNextId(); 
+		 wrapper.getRealTime(54888, _contractAPI3);
+
+		
+		
+		 /*    TIMApiWrapper wrapper = new TIMApiWrapper(6,false);
 			final EClientSocket m_client = wrapper.getClient();
 			final EReaderSignal m_signal = wrapper.getSignal(); 
 			//! [connect]
@@ -359,9 +393,9 @@ public class TIMApiGITrader extends TIMApiWrapper {
 			    }
 			}).start();
 			
-			
+			*/
 	//	m_client.reqContractDetails(4545, _contractAPI3);
-			m_client.reqMktData(4546, _contractAPI3,"", false, false,null); //false
+		//	m_client.reqMktData(98989, _contractAPI3,"", false, false,null); //false
 		
 		
 	/* 	Contract  _contractAPI4=  new StkContract("ESTX50");
@@ -373,7 +407,7 @@ public class TIMApiGITrader extends TIMApiWrapper {
 	//	oTWS.GITraderGetRealTimeContract(7000, _contractAPI3);
 		
 		
-		Thread.sleep(1000);	
+	/* 	Thread.sleep(1000);	
 		TIMApiGITrader oTWS = new TIMApiGITrader("127.0.0.1", 7497, 2015,true); 
 
 		
@@ -386,7 +420,7 @@ public class TIMApiGITrader extends TIMApiWrapper {
 		oTWS.GITraderGetRealTimeContract(255557, _contractAPI3); 
 		oTWS.GITraderDisconnectFromTWS();
 		
-				//! [ereader]
+		*/		//! [ereader]
 		// A pause to give the application time to establish the connection
 		// In a production application, it would be best to wait for callbacks to confirm the connection is complete
 
@@ -411,7 +445,7 @@ public class TIMApiGITrader extends TIMApiWrapper {
 		_contractAPI5.exchange("DTB");
 		_contractAPI5.currency("EUR");
 		_contractAPI5.lastTradeDateOrContractMonth("201709");
-		*/
+		
 		
 		//! [reqHeadTimeStamp]
 
@@ -423,7 +457,7 @@ public class TIMApiGITrader extends TIMApiWrapper {
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.MONTH, -6);
 		SimpleDateFormat form = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
-		String formatted = form.format(cal.getTime());
+		String formatted = form.format(cal.getTime());*/
 		/* m_client.reqHistoricalData(4001, _contractAPI3, formatted, "1 M", "1 day", "MIDPOINT", 1, 1, false, null);
 		m_client.reqHistoricalData(4002, _contractAPI3, formatted, "10 D", "1 min", "TRADES", 1, 1, false, null); */
 		/*** Canceling historical data requests 

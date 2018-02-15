@@ -17,18 +17,20 @@ import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 public class RealtimeFinderImpl extends RealtimeFinderBaseImpl  implements RealtimeFinder {
 	
 	@SuppressWarnings("unchecked")
-	public Realtime findMinMaxRealTime(Date from, Date to, long shareId, long companyId, long groupId)
+	public List<Double[]> findMinMaxRealTime(Date from, Date to, long shareId, long companyId, long groupId)
 	{
-	 List<Realtime> lRealtime = null;
+	 List<Double[]> lRealtime = null;
 	 Session session = null;
-	    try {
+	  try {
 	        session = openSession();
 
 	        String sql = CustomSQLUtil.get(getClass(),FIND_MINMAX_REALTIME);
 
 	        SQLQuery q = session.createSQLQuery(sql);
 	        q.setCacheable(false);
-	        q.addEntity("IBTrader_Realtime", RealtimeImpl.class);
+	        q.addScalar("min(value)", com.liferay.portal.kernel.dao.orm.Type.DOUBLE);
+	        q.addScalar("max(value)", com.liferay.portal.kernel.dao.orm.Type.DOUBLE);	        
+	        //q.addEntity("IBTrader_Realtime", RealtimeImpl.class);
 
 	        QueryPos qPos = QueryPos.getInstance(q);
 	        qPos.add(from);
@@ -37,9 +39,9 @@ public class RealtimeFinderImpl extends RealtimeFinderBaseImpl  implements Realt
 	        qPos.add(companyId);
 	        qPos.add(groupId);
 
-	        lRealtime = (List<Realtime>) QueryUtil.list(q, getDialect(), 1, 1);
+	        lRealtime = (List<Double[]>) QueryUtil.list(q, getDialect(), 0, 10);
 	        if (!lRealtime.isEmpty())
-	        		return lRealtime.get(0);
+	        		return lRealtime;
 	        else
 	        		return null;
 	        
@@ -81,7 +83,7 @@ public class RealtimeFinderImpl extends RealtimeFinderBaseImpl  implements Realt
 	        qPos.add(companyId);
 	        qPos.add(groupId);
 
-	        lRealtime = (List<Realtime>) QueryUtil.list(q, getDialect(), 1, 1);
+	        lRealtime = (List<Realtime>) QueryUtil.list(q, getDialect(), 0, 10);
 	        if (!lRealtime.isEmpty())
 	        		return lRealtime.get(0);
 	        else
@@ -102,7 +104,7 @@ public class RealtimeFinderImpl extends RealtimeFinderBaseImpl  implements Realt
 
 		return null;
 		}
-
+	 
 		public static final String FIND_MINMAX_REALTIME = RealtimeFinder.class.getName() + ".findMinMaxRealTime";
 		public static final String FIND_LAST_REALTIME = RealtimeFinder.class.getName() + ".findLastRealTime";
 		

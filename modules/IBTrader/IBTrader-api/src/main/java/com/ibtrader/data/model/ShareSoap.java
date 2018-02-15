@@ -48,7 +48,7 @@ public class ShareSoap implements Serializable {
 		soapModel.setPercentual_stop_lost(model.getPercentual_stop_lost());
 		soapModel.setPercentual_stop_profit(model.getPercentual_stop_profit());
 		soapModel.setPercentual_stop_profit_position(model.getPercentual_stop_profit_position());
-		soapModel.setTrailing_stop_lost(model.getTrailing_stop_lost());
+		soapModel.setTrailling_stop_lost(model.getTrailling_stop_lost());
 		soapModel.setExpiry_date(model.getExpiry_date());
 		soapModel.setExpiry_expression(model.getExpiry_expression());
 		soapModel.setTick_futures(model.getTick_futures());
@@ -230,12 +230,12 @@ public class ShareSoap implements Serializable {
 		_percentual_stop_profit_position = percentual_stop_profit_position;
 	}
 
-	public double getTrailing_stop_lost() {
-		return _trailing_stop_lost;
+	public double getTrailling_stop_lost() {
+		return _trailling_stop_lost;
 	}
 
-	public void setTrailing_stop_lost(double trailing_stop_lost) {
-		_trailing_stop_lost = trailing_stop_lost;
+	public void setTrailling_stop_lost(double trailling_stop_lost) {
+		_trailling_stop_lost = trailling_stop_lost;
 	}
 
 	public Date getExpiry_date() {
@@ -353,7 +353,7 @@ public class ShareSoap implements Serializable {
 	private double _percentual_stop_lost;
 	private double _percentual_stop_profit;
 	private double _percentual_stop_profit_position;
-	private double _trailing_stop_lost;
+	private double _trailling_stop_lost;
 	private Date _expiry_date;
 	private String _expiry_expression;
 	private double _tick_futures;

@@ -74,7 +74,7 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 		attributes.put("percentual_stop_profit", getPercentual_stop_profit());
 		attributes.put("percentual_stop_profit_position",
 			getPercentual_stop_profit_position());
-		attributes.put("trailing_stop_lost", getTrailing_stop_lost());
+		attributes.put("trailling_stop_lost", getTrailling_stop_lost());
 		attributes.put("expiry_date", getExpiry_date());
 		attributes.put("expiry_expression", getExpiry_expression());
 		attributes.put("tick_futures", getTick_futures());
@@ -184,10 +184,11 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 			setPercentual_stop_profit_position(percentual_stop_profit_position);
 		}
 
-		Double trailing_stop_lost = (Double)attributes.get("trailing_stop_lost");
+		Double trailling_stop_lost = (Double)attributes.get(
+				"trailling_stop_lost");
 
-		if (trailing_stop_lost != null) {
-			setTrailing_stop_lost(trailing_stop_lost);
+		if (trailling_stop_lost != null) {
+			setTrailling_stop_lost(trailling_stop_lost);
 		}
 
 		Date expiry_date = (Date)attributes.get("expiry_date");
@@ -397,13 +398,13 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 	}
 
 	/**
-	* Returns the trailing_stop_lost of this share.
+	* Returns the trailling_stop_lost of this share.
 	*
-	* @return the trailing_stop_lost of this share
+	* @return the trailling_stop_lost of this share
 	*/
 	@Override
-	public double getTrailing_stop_lost() {
-		return _share.getTrailing_stop_lost();
+	public double getTrailling_stop_lost() {
+		return _share.getTrailling_stop_lost();
 	}
 
 	@Override
@@ -916,13 +917,13 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 	}
 
 	/**
-	* Sets the trailing_stop_lost of this share.
+	* Sets the trailling_stop_lost of this share.
 	*
-	* @param trailing_stop_lost the trailing_stop_lost of this share
+	* @param trailling_stop_lost the trailling_stop_lost of this share
 	*/
 	@Override
-	public void setTrailing_stop_lost(double trailing_stop_lost) {
-		_share.setTrailing_stop_lost(trailing_stop_lost);
+	public void setTrailling_stop_lost(double trailling_stop_lost) {
+		_share.setTrailling_stop_lost(trailling_stop_lost);
 	}
 
 	/**

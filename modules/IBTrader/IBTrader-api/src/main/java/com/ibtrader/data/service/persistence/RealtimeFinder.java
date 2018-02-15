@@ -22,7 +22,7 @@ import aQute.bnd.annotation.ProviderType;
  */
 @ProviderType
 public interface RealtimeFinder {
-	public com.ibtrader.data.model.Realtime findMinMaxRealTime(
+	public java.util.List<java.lang.Double[]> findMinMaxRealTime(
 		java.util.Date from, java.util.Date to, long shareId, long companyId,
 		long groupId);
 

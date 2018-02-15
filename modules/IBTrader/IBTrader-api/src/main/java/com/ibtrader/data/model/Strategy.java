@@ -57,23 +57,11 @@ public interface Strategy extends StrategyModel, PersistedModel {
 	public boolean validateParams(
 		java.util.Map<java.lang.String, java.lang.String> paramValues);
 
-	public void execute(Share _share, Market _market);
-	public boolean verify(Share _share, Market _market);
+	public boolean verify(Share _share, Market _market,
+		StrategyShare _strategyImpl);
+
 	public void init(long companyId);
 
-	
-	public double getValueIn();
-	public void setValueIn(double _valueIn);
-
-	public double getValueLimitIn();
-	public void setValueLimitIn(double _valueLimitIn);
-
-	public double getValueOut();
-	public void setValueOut(double _valueOut);
-
-	public double getValueLimitOut();
-	public void setValueLimitOut(double _valueLimitOut);
-	
 	public boolean activated();
 
 	public java.util.List<com.liferay.expando.kernel.model.ExpandoColumn> getIBStrategyParams();
@@ -94,4 +82,31 @@ public interface Strategy extends StrategyModel, PersistedModel {
 
 	public void setValidateParamsKeysError(
 		java.lang.String validateParamsKeysError);
+
+	public double getValueIn();
+
+	public void setValueIn(double _valueIn);
+
+	public double getValueLimitIn();
+
+	public void setValueLimitIn(double _valueLimitIn);
+
+	public double getValueOut();
+
+	public void setValueOut(double _valueOut);
+
+	public double getValueLimitOut();
+
+	public void setValueLimitOut(double _valueLimitOut);
+
+	public boolean isVerified();
+
+	public void setVerified(boolean verified);
+
+	public com.liferay.portal.kernel.json.JSONObject getJsonStrategyShareParams();
+
+	public void setJsonStrategyShareParams(
+		com.liferay.portal.kernel.json.JSONObject _jsonStrategyShareParams);
+
+	public void execute(Share _share, Market _market);
 }

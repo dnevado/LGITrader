@@ -1463,6 +1463,436 @@ public class SharePersistenceImpl extends BasePersistenceImpl<Share>
 	private static final String _FINDER_COLUMN_UUID_C_UUID_2 = "share.uuid = ? AND ";
 	private static final String _FINDER_COLUMN_UUID_C_UUID_3 = "(share.uuid IS NULL OR share.uuid = '') AND ";
 	private static final String _FINDER_COLUMN_UUID_C_COMPANYID_2 = "share.companyId = ?";
+	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_COMPANYGROUPSHARE =
+		new FinderPath(ShareModelImpl.ENTITY_CACHE_ENABLED,
+			ShareModelImpl.FINDER_CACHE_ENABLED, ShareImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByCompanyGroupShare",
+			new String[] {
+				Long.class.getName(), Long.class.getName(), Long.class.getName(),
+				
+			Integer.class.getName(), Integer.class.getName(),
+				OrderByComparator.class.getName()
+			});
+	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_COMPANYGROUPSHARE =
+		new FinderPath(ShareModelImpl.ENTITY_CACHE_ENABLED,
+			ShareModelImpl.FINDER_CACHE_ENABLED, ShareImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"findByCompanyGroupShare",
+			new String[] {
+				Long.class.getName(), Long.class.getName(), Long.class.getName()
+			},
+			ShareModelImpl.COMPANYID_COLUMN_BITMASK |
+			ShareModelImpl.GROUPID_COLUMN_BITMASK |
+			ShareModelImpl.SHAREID_COLUMN_BITMASK);
+	public static final FinderPath FINDER_PATH_COUNT_BY_COMPANYGROUPSHARE = new FinderPath(ShareModelImpl.ENTITY_CACHE_ENABLED,
+			ShareModelImpl.FINDER_CACHE_ENABLED, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"countByCompanyGroupShare",
+			new String[] {
+				Long.class.getName(), Long.class.getName(), Long.class.getName()
+			});
+
+	/**
+	 * Returns all the shares where companyId = &#63; and groupId = &#63; and shareId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param shareId the share ID
+	 * @return the matching shares
+	 */
+	@Override
+	public List<Share> findByCompanyGroupShare(long companyId, long groupId,
+		long shareId) {
+		return findByCompanyGroupShare(companyId, groupId, shareId,
+			QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the shares where companyId = &#63; and groupId = &#63; and shareId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ShareModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param shareId the share ID
+	 * @param start the lower bound of the range of shares
+	 * @param end the upper bound of the range of shares (not inclusive)
+	 * @return the range of matching shares
+	 */
+	@Override
+	public List<Share> findByCompanyGroupShare(long companyId, long groupId,
+		long shareId, int start, int end) {
+		return findByCompanyGroupShare(companyId, groupId, shareId, start, end,
+			null);
+	}
+
+	/**
+	 * Returns an ordered range of all the shares where companyId = &#63; and groupId = &#63; and shareId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ShareModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param shareId the share ID
+	 * @param start the lower bound of the range of shares
+	 * @param end the upper bound of the range of shares (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching shares
+	 */
+	@Override
+	public List<Share> findByCompanyGroupShare(long companyId, long groupId,
+		long shareId, int start, int end,
+		OrderByComparator<Share> orderByComparator) {
+		return findByCompanyGroupShare(companyId, groupId, shareId, start, end,
+			orderByComparator, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the shares where companyId = &#63; and groupId = &#63; and shareId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ShareModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param shareId the share ID
+	 * @param start the lower bound of the range of shares
+	 * @param end the upper bound of the range of shares (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the ordered range of matching shares
+	 */
+	@Override
+	public List<Share> findByCompanyGroupShare(long companyId, long groupId,
+		long shareId, int start, int end,
+		OrderByComparator<Share> orderByComparator, boolean retrieveFromCache) {
+		boolean pagination = true;
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+				(orderByComparator == null)) {
+			pagination = false;
+			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_COMPANYGROUPSHARE;
+			finderArgs = new Object[] { companyId, groupId, shareId };
+		}
+		else {
+			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_COMPANYGROUPSHARE;
+			finderArgs = new Object[] {
+					companyId, groupId, shareId,
+					
+					start, end, orderByComparator
+				};
+		}
+
+		List<Share> list = null;
+
+		if (retrieveFromCache) {
+			list = (List<Share>)finderCache.getResult(finderPath, finderArgs,
+					this);
+
+			if ((list != null) && !list.isEmpty()) {
+				for (Share share : list) {
+					if ((companyId != share.getCompanyId()) ||
+							(groupId != share.getGroupId()) ||
+							(shareId != share.getShareId())) {
+						list = null;
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler query = null;
+
+			if (orderByComparator != null) {
+				query = new StringBundler(5 +
+						(orderByComparator.getOrderByFields().length * 2));
+			}
+			else {
+				query = new StringBundler(5);
+			}
+
+			query.append(_SQL_SELECT_SHARE_WHERE);
+
+			query.append(_FINDER_COLUMN_COMPANYGROUPSHARE_COMPANYID_2);
+
+			query.append(_FINDER_COLUMN_COMPANYGROUPSHARE_GROUPID_2);
+
+			query.append(_FINDER_COLUMN_COMPANYGROUPSHARE_SHAREID_2);
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
+					orderByComparator);
+			}
+			else
+			 if (pagination) {
+				query.append(ShareModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(companyId);
+
+				qPos.add(groupId);
+
+				qPos.add(shareId);
+
+				if (!pagination) {
+					list = (List<Share>)QueryUtil.list(q, getDialect(), start,
+							end, false);
+
+					Collections.sort(list);
+
+					list = Collections.unmodifiableList(list);
+				}
+				else {
+					list = (List<Share>)QueryUtil.list(q, getDialect(), start,
+							end);
+				}
+
+				cacheResult(list);
+
+				finderCache.putResult(finderPath, finderArgs, list);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Returns the first share in the ordered set where companyId = &#63; and groupId = &#63; and shareId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param shareId the share ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching share
+	 * @throws NoSuchShareException if a matching share could not be found
+	 */
+	@Override
+	public Share findByCompanyGroupShare_First(long companyId, long groupId,
+		long shareId, OrderByComparator<Share> orderByComparator)
+		throws NoSuchShareException {
+		Share share = fetchByCompanyGroupShare_First(companyId, groupId,
+				shareId, orderByComparator);
+
+		if (share != null) {
+			return share;
+		}
+
+		StringBundler msg = new StringBundler(8);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("companyId=");
+		msg.append(companyId);
+
+		msg.append(", groupId=");
+		msg.append(groupId);
+
+		msg.append(", shareId=");
+		msg.append(shareId);
+
+		msg.append(StringPool.CLOSE_CURLY_BRACE);
+
+		throw new NoSuchShareException(msg.toString());
+	}
+
+	/**
+	 * Returns the first share in the ordered set where companyId = &#63; and groupId = &#63; and shareId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param shareId the share ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching share, or <code>null</code> if a matching share could not be found
+	 */
+	@Override
+	public Share fetchByCompanyGroupShare_First(long companyId, long groupId,
+		long shareId, OrderByComparator<Share> orderByComparator) {
+		List<Share> list = findByCompanyGroupShare(companyId, groupId, shareId,
+				0, 1, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last share in the ordered set where companyId = &#63; and groupId = &#63; and shareId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param shareId the share ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching share
+	 * @throws NoSuchShareException if a matching share could not be found
+	 */
+	@Override
+	public Share findByCompanyGroupShare_Last(long companyId, long groupId,
+		long shareId, OrderByComparator<Share> orderByComparator)
+		throws NoSuchShareException {
+		Share share = fetchByCompanyGroupShare_Last(companyId, groupId,
+				shareId, orderByComparator);
+
+		if (share != null) {
+			return share;
+		}
+
+		StringBundler msg = new StringBundler(8);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("companyId=");
+		msg.append(companyId);
+
+		msg.append(", groupId=");
+		msg.append(groupId);
+
+		msg.append(", shareId=");
+		msg.append(shareId);
+
+		msg.append(StringPool.CLOSE_CURLY_BRACE);
+
+		throw new NoSuchShareException(msg.toString());
+	}
+
+	/**
+	 * Returns the last share in the ordered set where companyId = &#63; and groupId = &#63; and shareId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param shareId the share ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching share, or <code>null</code> if a matching share could not be found
+	 */
+	@Override
+	public Share fetchByCompanyGroupShare_Last(long companyId, long groupId,
+		long shareId, OrderByComparator<Share> orderByComparator) {
+		int count = countByCompanyGroupShare(companyId, groupId, shareId);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<Share> list = findByCompanyGroupShare(companyId, groupId, shareId,
+				count - 1, count, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Removes all the shares where companyId = &#63; and groupId = &#63; and shareId = &#63; from the database.
+	 *
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param shareId the share ID
+	 */
+	@Override
+	public void removeByCompanyGroupShare(long companyId, long groupId,
+		long shareId) {
+		for (Share share : findByCompanyGroupShare(companyId, groupId, shareId,
+				QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+			remove(share);
+		}
+	}
+
+	/**
+	 * Returns the number of shares where companyId = &#63; and groupId = &#63; and shareId = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param shareId the share ID
+	 * @return the number of matching shares
+	 */
+	@Override
+	public int countByCompanyGroupShare(long companyId, long groupId,
+		long shareId) {
+		FinderPath finderPath = FINDER_PATH_COUNT_BY_COMPANYGROUPSHARE;
+
+		Object[] finderArgs = new Object[] { companyId, groupId, shareId };
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(4);
+
+			query.append(_SQL_COUNT_SHARE_WHERE);
+
+			query.append(_FINDER_COLUMN_COMPANYGROUPSHARE_COMPANYID_2);
+
+			query.append(_FINDER_COLUMN_COMPANYGROUPSHARE_GROUPID_2);
+
+			query.append(_FINDER_COLUMN_COMPANYGROUPSHARE_SHAREID_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(companyId);
+
+				qPos.add(groupId);
+
+				qPos.add(shareId);
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_COMPANYGROUPSHARE_COMPANYID_2 = "share.companyId = ? AND ";
+	private static final String _FINDER_COLUMN_COMPANYGROUPSHARE_GROUPID_2 = "share.groupId = ? AND ";
+	private static final String _FINDER_COLUMN_COMPANYGROUPSHARE_SHAREID_2 = "share.shareId = ?";
 	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_COMPANYGROUP =
 		new FinderPath(ShareModelImpl.ENTITY_CACHE_ENABLED,
 			ShareModelImpl.FINDER_CACHE_ENABLED, ShareImpl.class,
@@ -4272,6 +4702,30 @@ public class SharePersistenceImpl extends BasePersistenceImpl<Share>
 			}
 
 			if ((shareModelImpl.getColumnBitmask() &
+					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_COMPANYGROUPSHARE.getColumnBitmask()) != 0) {
+				Object[] args = new Object[] {
+						shareModelImpl.getOriginalCompanyId(),
+						shareModelImpl.getOriginalGroupId(),
+						shareModelImpl.getOriginalShareId()
+					};
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_COMPANYGROUPSHARE,
+					args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_COMPANYGROUPSHARE,
+					args);
+
+				args = new Object[] {
+						shareModelImpl.getCompanyId(),
+						shareModelImpl.getGroupId(), shareModelImpl.getShareId()
+					};
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_COMPANYGROUPSHARE,
+					args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_COMPANYGROUPSHARE,
+					args);
+			}
+
+			if ((shareModelImpl.getColumnBitmask() &
 					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_COMPANYGROUP.getColumnBitmask()) != 0) {
 				Object[] args = new Object[] {
 						shareModelImpl.getOriginalCompanyId(),
@@ -4379,7 +4833,7 @@ public class SharePersistenceImpl extends BasePersistenceImpl<Share>
 		shareImpl.setPercentual_stop_lost(share.getPercentual_stop_lost());
 		shareImpl.setPercentual_stop_profit(share.getPercentual_stop_profit());
 		shareImpl.setPercentual_stop_profit_position(share.getPercentual_stop_profit_position());
-		shareImpl.setTrailing_stop_lost(share.getTrailing_stop_lost());
+		shareImpl.setTrailling_stop_lost(share.getTrailling_stop_lost());
 		shareImpl.setExpiry_date(share.getExpiry_date());
 		shareImpl.setExpiry_expression(share.getExpiry_expression());
 		shareImpl.setTick_futures(share.getTick_futures());

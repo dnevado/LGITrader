@@ -367,6 +367,151 @@ public interface SharePersistence extends BasePersistence<Share> {
 	public int countByUuid_C(java.lang.String uuid, long companyId);
 
 	/**
+	* Returns all the shares where companyId = &#63; and groupId = &#63; and shareId = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param shareId the share ID
+	* @return the matching shares
+	*/
+	public java.util.List<Share> findByCompanyGroupShare(long companyId,
+		long groupId, long shareId);
+
+	/**
+	* Returns a range of all the shares where companyId = &#63; and groupId = &#63; and shareId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ShareModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param shareId the share ID
+	* @param start the lower bound of the range of shares
+	* @param end the upper bound of the range of shares (not inclusive)
+	* @return the range of matching shares
+	*/
+	public java.util.List<Share> findByCompanyGroupShare(long companyId,
+		long groupId, long shareId, int start, int end);
+
+	/**
+	* Returns an ordered range of all the shares where companyId = &#63; and groupId = &#63; and shareId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ShareModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param shareId the share ID
+	* @param start the lower bound of the range of shares
+	* @param end the upper bound of the range of shares (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching shares
+	*/
+	public java.util.List<Share> findByCompanyGroupShare(long companyId,
+		long groupId, long shareId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<Share> orderByComparator);
+
+	/**
+	* Returns an ordered range of all the shares where companyId = &#63; and groupId = &#63; and shareId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ShareModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param shareId the share ID
+	* @param start the lower bound of the range of shares
+	* @param end the upper bound of the range of shares (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching shares
+	*/
+	public java.util.List<Share> findByCompanyGroupShare(long companyId,
+		long groupId, long shareId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<Share> orderByComparator,
+		boolean retrieveFromCache);
+
+	/**
+	* Returns the first share in the ordered set where companyId = &#63; and groupId = &#63; and shareId = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param shareId the share ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching share
+	* @throws NoSuchShareException if a matching share could not be found
+	*/
+	public Share findByCompanyGroupShare_First(long companyId, long groupId,
+		long shareId,
+		com.liferay.portal.kernel.util.OrderByComparator<Share> orderByComparator)
+		throws NoSuchShareException;
+
+	/**
+	* Returns the first share in the ordered set where companyId = &#63; and groupId = &#63; and shareId = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param shareId the share ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching share, or <code>null</code> if a matching share could not be found
+	*/
+	public Share fetchByCompanyGroupShare_First(long companyId, long groupId,
+		long shareId,
+		com.liferay.portal.kernel.util.OrderByComparator<Share> orderByComparator);
+
+	/**
+	* Returns the last share in the ordered set where companyId = &#63; and groupId = &#63; and shareId = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param shareId the share ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching share
+	* @throws NoSuchShareException if a matching share could not be found
+	*/
+	public Share findByCompanyGroupShare_Last(long companyId, long groupId,
+		long shareId,
+		com.liferay.portal.kernel.util.OrderByComparator<Share> orderByComparator)
+		throws NoSuchShareException;
+
+	/**
+	* Returns the last share in the ordered set where companyId = &#63; and groupId = &#63; and shareId = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param shareId the share ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching share, or <code>null</code> if a matching share could not be found
+	*/
+	public Share fetchByCompanyGroupShare_Last(long companyId, long groupId,
+		long shareId,
+		com.liferay.portal.kernel.util.OrderByComparator<Share> orderByComparator);
+
+	/**
+	* Removes all the shares where companyId = &#63; and groupId = &#63; and shareId = &#63; from the database.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param shareId the share ID
+	*/
+	public void removeByCompanyGroupShare(long companyId, long groupId,
+		long shareId);
+
+	/**
+	* Returns the number of shares where companyId = &#63; and groupId = &#63; and shareId = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param shareId the share ID
+	* @return the number of matching shares
+	*/
+	public int countByCompanyGroupShare(long companyId, long groupId,
+		long shareId);
+
+	/**
 	* Returns all the shares where companyId = &#63; and groupId = &#63;.
 	*
 	* @param companyId the company ID

@@ -309,14 +309,20 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 	}
 
 	@Override
+	public boolean isVerified() {
+		return _strategy.isVerified();
+	}
+
+	@Override
 	public boolean validateParams(
 		Map<java.lang.String, java.lang.String> paramValues) {
 		return _strategy.validateParams(paramValues);
 	}
 
 	@Override
-	public boolean verify(Share _share, Market _market) {
-		return _strategy.verify(_share, _market);
+	public boolean verify(Share _share, Market _market,
+		StrategyShare _strategyImpl) {
+		return _strategy.verify(_share, _market, _strategyImpl);
 	}
 
 	@Override
@@ -330,8 +336,33 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 	}
 
 	@Override
+	public com.liferay.portal.kernel.json.JSONObject getJsonStrategyShareParams() {
+		return _strategy.getJsonStrategyShareParams();
+	}
+
+	@Override
 	public com.liferay.portal.kernel.model.CacheModel<Strategy> toCacheModel() {
 		return _strategy.toCacheModel();
+	}
+
+	@Override
+	public double getValueIn() {
+		return _strategy.getValueIn();
+	}
+
+	@Override
+	public double getValueLimitIn() {
+		return _strategy.getValueLimitIn();
+	}
+
+	@Override
+	public double getValueLimitOut() {
+		return _strategy.getValueLimitOut();
+	}
+
+	@Override
+	public double getValueOut() {
+		return _strategy.getValueOut();
 	}
 
 	@Override
@@ -672,6 +703,12 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 		_strategy.setIBStrategyParams(_IBStrategyParams);
 	}
 
+	@Override
+	public void setJsonStrategyShareParams(
+		com.liferay.portal.kernel.json.JSONObject _jsonStrategyShareParams) {
+		_strategy.setJsonStrategyShareParams(_jsonStrategyShareParams);
+	}
+
 	/**
 	* Sets the modified date of this strategy.
 	*
@@ -816,6 +853,31 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 	public void setValidateParamsKeysError(
 		java.lang.String validateParamsKeysError) {
 		_strategy.setValidateParamsKeysError(validateParamsKeysError);
+	}
+
+	@Override
+	public void setValueIn(double _valueIn) {
+		_strategy.setValueIn(_valueIn);
+	}
+
+	@Override
+	public void setValueLimitIn(double _valueLimitIn) {
+		_strategy.setValueLimitIn(_valueLimitIn);
+	}
+
+	@Override
+	public void setValueLimitOut(double _valueLimitOut) {
+		_strategy.setValueLimitOut(_valueLimitOut);
+	}
+
+	@Override
+	public void setValueOut(double _valueOut) {
+		_strategy.setValueOut(_valueOut);
+	}
+
+	@Override
+	public void setVerified(boolean verified) {
+		_strategy.setVerified(verified);
 	}
 
 	@Override

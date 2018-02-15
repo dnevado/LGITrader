@@ -332,6 +332,13 @@ public class IBOrderLocalServiceWrapper implements IBOrderLocalService,
 	}
 
 	@Override
+	public void deleteByOrderCompanyGroup(long iborderId, long companyId,
+		long groupId) {
+		_ibOrderLocalService.deleteByOrderCompanyGroup(iborderId, companyId,
+			groupId);
+	}
+
+	@Override
 	public IBOrderLocalService getWrappedService() {
 		return _ibOrderLocalService;
 	}

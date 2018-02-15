@@ -315,6 +315,11 @@ public class IBOrderLocalServiceUtil {
 		return getService().dynamicQueryCount(dynamicQuery, projection);
 	}
 
+	public static void deleteByOrderCompanyGroup(long iborderId,
+		long companyId, long groupId) {
+		getService().deleteByOrderCompanyGroup(iborderId, companyId, groupId);
+	}
+
 	public static IBOrderLocalService getService() {
 		return _serviceTracker.getService();
 	}

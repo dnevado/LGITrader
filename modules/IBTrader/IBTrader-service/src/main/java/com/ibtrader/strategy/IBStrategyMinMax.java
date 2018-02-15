@@ -21,11 +21,15 @@ import com.ibtrader.data.model.Position;
 import com.ibtrader.data.model.Realtime;
 import com.ibtrader.data.model.Share;
 import com.ibtrader.data.model.Strategy;
+import com.ibtrader.data.model.StrategyShare;
 import com.ibtrader.data.model.impl.StrategyImpl;
 import com.ibtrader.data.service.ConfigLocalServiceUtil;
 import com.ibtrader.data.service.IBOrderLocalServiceUtil;
 import com.ibtrader.data.service.PositionLocalServiceUtil;
 import com.ibtrader.data.service.RealtimeLocalServiceUtil;
+import com.ibtrader.data.service.StrategyShareLocalServiceUtil;
+import com.ibtrader.interactive.TIMApiGITrader;
+import com.ibtrader.interactive.TIMApiWrapper;
 import com.liferay.counter.kernel.service.CounterLocalService;
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.expando.kernel.model.ExpandoColumn;
@@ -34,6 +38,7 @@ import com.liferay.expando.kernel.model.ExpandoTable;
 import com.liferay.expando.kernel.service.ExpandoColumnLocalServiceUtil;
 import com.liferay.expando.kernel.service.ExpandoTableLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
@@ -62,8 +67,14 @@ public class IBStrategyMinMax extends StrategyImpl {
 	private static String _EXPANDO_TRADE_OFFSET_TO_CLOSEMARKET = "TradeUntilOffSetCloseMarket"; // operar hasta minutos antes de cierre mercado
 	private static String _EXPANDO_PERCENTUAL_GAP = "PercentualGapFromMinMax";   // porcentaje de subida o baja hasta que se puede comprar, dentro de los limites 
 	
+    /* 
+	public setApiWrapper(TIMApiWrapper wrapper)
+	{
+		
+	}
+	*/
 	@Override
-	public void execute(Share _share, Market _market) {
+	public void execute(Share _share, Market _market, TIMApiWrapper wrapper) {
 		// TODO Auto-generated method stub
 		try
         {
@@ -86,17 +97,16 @@ public class IBStrategyMinMax extends StrategyImpl {
 		   else		    					
 				oContrat = new StkContract( _share.getSymbol());
   		    
-	  		long  _INCREMENT_ORDER_ID = CounterLocalServiceUtil.increment(Order.class.getName()) +  this.getCLIENT_ID();
-			/* insertamos control de ordenes de peticion */
-			 IBOrder _order = IBOrderLocalServiceUtil.createIBOrder(_INCREMENT_ORDER_ID);
+  			 long  _INCREMENT_ORDER_ID = wrapper.getCurrentOrderId();
+			 IBOrder _order = IBOrderLocalServiceUtil.createIBOrder(_INCREMENT_ORDER_ID);			/* insertamos control de ordenes de peticion */
 			_order.setCompanyId(_share.getCompanyId());
 			_order.setGroupId(_share.getGroupId());
 			_order.setShareID(_share.getShareId());
 			_order.setCreateDate(new Date());
 			_order.setModifiedDate(new Date());			
 			IBOrderLocalServiceUtil.updateIBOrder(_order);
-			_INCREMENT_ORDER_ID  = _order.getOrdersId();
-			// colocamos operacion de compra			
+			// colocamos operacion de compra
+			
 			Order BuyPositionTWS = new Order();
 			BuyPositionTWS.account(Utilities.getConfigurationValue(IBTraderConstants.keyUSER_TWS, _share.getCompanyId(), _share.getGroupId()));			
 			BuyPositionTWS.totalQuantity(new Long(_share.getNumbertopurchase()).intValue());
@@ -111,10 +121,10 @@ public class IBStrategyMinMax extends StrategyImpl {
 			
 			 ValueLimit =0.0;
 			// largo 
-			ValueLimit = this.getValueIn() + (this.getValueIn()  * Parameters.get(_EXPANDO_PERCENTUAL_GAP).doubleValue());			
+			ValueLimit = this.getValueIn() + (this.getValueIn()  * this.getJsonStrategyShareParams().getDouble(_EXPANDO_PERCENTUAL_GAP));			
 			if (bReachedMin) // corto
 			{
-				ValueLimit = this.getValueIn()  - (this.getValueIn()   * Parameters.get(_EXPANDO_PERCENTUAL_GAP).doubleValue());				
+				ValueLimit = this.getValueIn()  - (this.getValueIn()   * this.getJsonStrategyShareParams().getDouble(_EXPANDO_PERCENTUAL_GAP));				
 			}
 			
 			if (bIsFutureStock)
@@ -132,8 +142,10 @@ public class IBStrategyMinMax extends StrategyImpl {
 				BuyPositionTWS.action(PositionStates.statusTWSFire.SELL.toString());
 			}
 			
-			_INCREMENT_ORDER_ID = CounterLocalServiceUtil.increment(Order.class.getName()) +  this.getCLIENT_ID();
-			long  LastPositionID = Utilities.LastPositionIDTws(_share.getCompanyId(),_share.getGroupId());
+			wrapper.openOrder(new Long(_INCREMENT_ORDER_ID).intValue(), oContrat, BuyPositionTWS,null);
+			
+		//	_INCREMENT_ORDER_ID = CounterLocalServiceUtil.increment(Order.class.getName()) +  this.getCLIENT_ID();
+			//long  LastPositionID = Utilities.LastPositionIDTws(_share.getCompanyId(),_share.getGroupId());
 		
 			/* Posicion en MYSQL de CONTROL. OJO...ANTES SIEMPRE PARA DESPUES CONTROLARLA EN CASO DE ERROR. */
 			Position BuyPositionSystem = PositionLocalServiceUtil.createPosition(CounterLocalServiceUtil.increment(Position.class.getName()));
@@ -200,7 +212,7 @@ public class IBStrategyMinMax extends StrategyImpl {
 	}
 	
 	@Override
-	public boolean verify(Share _share, Market _market) {
+	public boolean verify(Share _share, Market _market,StrategyShare _strategyImpl) {
 		boolean verified = false;
 		boolean existsPosition = false;
 		try
@@ -208,7 +220,7 @@ public class IBStrategyMinMax extends StrategyImpl {
 			
 		User _IBUser = UserLocalServiceUtil.getUser(_share.getUserCreatedId());
 		String HoraActual = Utilities.getHourNowFormat(_IBUser);
-			
+		
 		/* supongamos cierre mercado a las 2200 */
 		/* HoraDeadLineToClose sera la hora actual mas los minutos de la estrategia 
 		
@@ -216,7 +228,12 @@ public class IBStrategyMinMax extends StrategyImpl {
 		Calendar calFechaFinMercado = Utilities.getNewCalendarWithHour(_market.getEnd_hour());
 		*/
 		Calendar calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(HoraActual);
-		calFechaActualWithDeadLine.add(Calendar.MINUTE,Parameters.get(_EXPANDO_TRADE_OFFSET_TO_CLOSEMARKET).intValue());
+		
+	//	StrategyShare _strategyshare = StrategyShareLocalServiceUtil.getByCommpanyShareStrategyId(_share.getGroupId(),_share.getCompanyId(),_share.getShareId(),_strategyImpl.getStrategyId());
+		this.setJsonStrategyShareParams(JSONFactoryUtil.createJSONObject(_strategyImpl.getStrategyparamsoverride()));					
+		
+				
+		calFechaActualWithDeadLine.add(Calendar.MINUTE, this.getJsonStrategyShareParams().getInt(_EXPANDO_TRADE_OFFSET_TO_CLOSEMARKET));
 		Calendar calFechaFinMercado = Utilities.getNewCalendarWithHour(_market.getEnd_hour());
 		existsPosition = PositionLocalServiceUtil.ExistsOpenPosition (_share.getGroupId(),_share.getCompanyId(),_share.getShareId());
 		/*  CONTROLAMOS EL DEADLINE PARA COMPRAR */ 
@@ -233,14 +250,14 @@ public class IBStrategyMinMax extends StrategyImpl {
 			// HHMM
 			// HORA DE FIN DE CALCULO DE MAX Y MINIMOS.
 			
-			String HoraInicioLecturaMaxMin = Utilities.getActualHourFormatPlusMinutes(_market.getStart_hour(), Parameters.get(_EXPANDO_OFFSET1_FROM_OPENMARKET).intValue());
-			String HoraFinLecturaMaxMin = Utilities.getActualHourFormatPlusMinutes(_market.getStart_hour(), Parameters.get(_EXPANDO_OFFSET2_FROM_OPENMARKET).intValue());
+			String HoraInicioLecturaMaxMin = Utilities.getActualHourFormatPlusMinutes(_market.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_OFFSET1_FROM_OPENMARKET));
+			String HoraFinLecturaMaxMin = Utilities.getActualHourFormatPlusMinutes(_market.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_OFFSET2_FROM_OPENMARKET));
 			
 			// COMPROBAMOS ALGUN TIPO DE ERROR 
 			if (HoraInicioLecturaMaxMin.contains("-1") || HoraFinLecturaMaxMin.contains("-1"))
 			{
 				_log.info("[Estrategia:StrategyMinMax]: Errores formateando las horas de Max y Min de la acción. "
-						+ "Hora[" + _market.getStart_hour()  + "], Offset1[" + Parameters.get(_EXPANDO_OFFSET1_FROM_OPENMARKET).intValue()+ "]");
+						+ "Hora[" + _market.getStart_hour()  + "], Offset1[" + this.getJsonStrategyShareParams().getInt(_EXPANDO_OFFSET1_FROM_OPENMARKET)+ "]");
 				return false;
 			}
 				
@@ -251,44 +268,53 @@ public class IBStrategyMinMax extends StrategyImpl {
 			// ya no obtenemos el maximo y minimo, sino el correspondiente al tramo que me han dicho
 			/* TIMEZONE AJUSTADO */
 			Date _FromNow = Utilities.getDate(_IBUser);
-			Date _ToNow = Utilities.getDate(_IBUser);
+			Date _ToNow   = Utilities.getDate(_IBUser);
 			
 			_FromNow = Utilities.setDateWithHour(_FromNow,HoraInicioLecturaMaxMin);
-			_ToNow = Utilities.setDateWithHour(_ToNow,HoraFinLecturaMaxMin);
+			_ToNow   = Utilities.setDateWithHour(_ToNow,HoraFinLecturaMaxMin);
 			
 			/* TIEMPOS REALES Y MAXIMOS Y MINIMOS CONSEGUIDOS */			
-			Realtime oRTimeEnTramo = (Realtime)  RealtimeLocalServiceUtil.findMinMaxRealTime(_FromNow, _ToNow, _share.getShareId(), _share.getCompanyId(), _share.getGroupId());  			
+			List<Double[]>  lMinMaxRealTime = (List<Double[]>)     RealtimeLocalServiceUtil.findMinMaxRealTime(_FromNow, _ToNow, _share.getShareId(), _share.getCompanyId(), _share.getGroupId());  			
 			Realtime oShareLastRTime = (Realtime)  RealtimeLocalServiceUtil.findLastRealTime(_share.getShareId(), _share.getCompanyId(), _share.getGroupId());
 			
-			if (oRTimeEnTramo!=null && oShareLastRTime!=null && oShareLastRTime.getValue()>0)
+			/* TIENE QUE HABER UNA LISTA DE MINIMO Y MAXIMO */
+			if (lMinMaxRealTime!=null && oShareLastRTime!=null && oShareLastRTime.getValue()>0 && lMinMaxRealTime.size()==1)
 			{	
 				/* double ValueToBuy =0.0; */
 				/* estos son los dos limites que debe rotar la accion para comprar */
-				double MaxValueWithGap = (oRTimeEnTramo.getMax_value() * Parameters.get(_EXPANDO_PERCENTUAL_GAP).doubleValue()) +  oRTimeEnTramo.getMax_value();
-				double MinValueWithGap = oRTimeEnTramo.getMin_value() - (oRTimeEnTramo.getMin_value() * Parameters.get(_EXPANDO_PERCENTUAL_GAP).doubleValue() ) ;
 				
-				double MaxValueWithGapAndLimit = MaxValueWithGap  + (MaxValueWithGap * _share.getPercentual_limit_buy());
-				double MinValueWithGapAndLimit = MinValueWithGap - (MinValueWithGap * _share.getPercentual_limit_buy());
-				/* SE ALCANZA EL MAXIMO O MINIMO 
-				 * CAMBIO 1.4.2013
-				 *  EL REALTIME O CAMBIO DE TICK DEBE ESTAR ENTRE EL MAX O MIN Y EL BORDE SUPERIOR.
-				 *  HASTA AHORA, VERIFICABAMOS QUE ESTUVIESE POR ENCIMA. NOS ASEGURAMOS CON EL PRECIO LIMITADO.
-				 * */
-				boolean bMaxReached = ((oShareLastRTime.getValue() > MaxValueWithGap) &&  (oShareLastRTime.getValue() < MaxValueWithGapAndLimit));
-				boolean bMinReached = ((oShareLastRTime.getValue()  < MinValueWithGap)  &&  (oShareLastRTime.getValue()> MinValueWithGapAndLimit));
+				Object[] aMinMax = (Object[]) lMinMaxRealTime.get(0);
+				if (aMinMax[1]!=null && aMinMax[0]!=null)
+				{					
 				
-				if (bMaxReached || bMinReached)					
-				{
+					double MaxValue =  Double.valueOf(String.valueOf(aMinMax[1])).doubleValue();
+					double MinValue = Double.valueOf(String.valueOf(aMinMax[0])).doubleValue();
+							
+					double MaxValueWithGap = (MaxValue * this.getJsonStrategyShareParams().getDouble(_EXPANDO_PERCENTUAL_GAP) / 100) +  MaxValue ;
+					double MinValueWithGap = MinValue  - (MinValue  * this.getJsonStrategyShareParams().getDouble(_EXPANDO_PERCENTUAL_GAP) / 100) ;
 					
-				    this.setValueIn(oShareLastRTime.getValue());
-					this.setValueLimitIn(MaxValueWithGapAndLimit);									
-					this.setVerified(Boolean.TRUE);				
-					bReachedMax = bMaxReached;
-					bReachedMin = bMinReached;										
-					verified = true;
-					
-					
-				}
+					double MaxValueWithGapAndLimit = MaxValueWithGap  + (MaxValueWithGap * _share.getPercentual_limit_buy() / 100 );
+					double MinValueWithGapAndLimit = MinValueWithGap - (MinValueWithGap * _share.getPercentual_limit_buy() / 100);
+					/* SE ALCANZA EL MAXIMO O MINIMO 
+					 * CAMBIO 1.4.2013
+					 *  EL REALTIME O CAMBIO DE TICK DEBE ESTAR ENTRE EL MAX O MIN Y EL BORDE SUPERIOR.
+					 *  HASTA AHORA, VERIFICABAMOS QUE ESTUVIESE POR ENCIMA. NOS ASEGURAMOS CON EL PRECIO LIMITADO.
+					 * */
+					bReachedMax = ((oShareLastRTime.getValue() > MaxValueWithGap) &&  (oShareLastRTime.getValue() < MaxValueWithGapAndLimit));
+					bReachedMin = ((oShareLastRTime.getValue()  < MinValueWithGap)  &&  (oShareLastRTime.getValue()> MinValueWithGapAndLimit));
+				
+			
+					if (bReachedMax || bReachedMin)					
+					{
+						
+					    this.setValueIn(oShareLastRTime.getValue());
+						this.setValueLimitIn(MaxValueWithGapAndLimit);									
+						this.setVerified(Boolean.TRUE);												
+						verified = true;
+						
+						
+					}
+				}		//	if (aMinMax[1]!=null && aMinMax[0]!=null)		
 				
 			 } // 			if (oRTimeEnTramo!=null && oShareLastRTime!=null && oShareLastRTime.getValue()>0)
 
@@ -333,7 +359,7 @@ public class IBStrategyMinMax extends StrategyImpl {
 					paramColumn.setName(_paramName);
 					paramColumn.setType(_paramValue.intValue());	
 					paramColumn.setTypeSettings("hidden=0\nindex-type=0\nvisible-with-update-permission=0");
-					paramColumn.setCompanyId(companyId);
+					paramColumn.setCompanyId(companyId);					
 					paramColumn.setTableId(expandoTable.getTableId());
 					ExpandoColumnLocalServiceUtil.updateExpandoColumn(paramColumn);
 					
@@ -347,6 +373,7 @@ public class IBStrategyMinMax extends StrategyImpl {
 			}
 			/* method of the interface */
 			this.setIBStrategyParams(ExpandoColumns);
+			
 			
 		} catch (PortalException e) {
 			// TODO Auto-generated catch block
@@ -390,5 +417,7 @@ public class IBStrategyMinMax extends StrategyImpl {
 		return bOK;	
 		
 	}
+
+	
 	
 }

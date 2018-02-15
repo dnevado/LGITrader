@@ -112,14 +112,6 @@ public class RealtimeLocalServiceWrapper implements RealtimeLocalService,
 			groupId);
 	}
 
-	@Override
-	public com.ibtrader.data.model.Realtime findMinMaxRealTime(
-		java.util.Date from, java.util.Date to, long shareId, long companyId,
-		long groupId) {
-		return _realtimeLocalService.findMinMaxRealTime(from, to, shareId,
-			companyId, groupId);
-	}
-
 	/**
 	* Returns the realtime with the primary key.
 	*
@@ -269,6 +261,14 @@ public class RealtimeLocalServiceWrapper implements RealtimeLocalService,
 		com.liferay.portal.kernel.util.OrderByComparator<T> orderByComparator) {
 		return _realtimeLocalService.dynamicQuery(dynamicQuery, start, end,
 			orderByComparator);
+	}
+
+	@Override
+	public java.util.List<java.lang.Double[]> findMinMaxRealTime(
+		java.util.Date from, java.util.Date to, long shareId, long companyId,
+		long groupId) {
+		return _realtimeLocalService.findMinMaxRealTime(from, to, shareId,
+			companyId, groupId);
 	}
 
 	/**

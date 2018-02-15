@@ -49,7 +49,7 @@ public class RealtimeLocalServiceImpl extends RealtimeLocalServiceBaseImpl {
 	 */
 	
 	/* OBTIENE EL MIN Y MAX DE UN  ACTIVO */	
-	public Realtime findMinMaxRealTime(Date from, Date to, long shareId, long companyId, long groupId)
+	public List<Double[]> findMinMaxRealTime(Date from, Date to, long shareId, long companyId, long groupId)
 	{
 		return realtimeFinder.findMinMaxRealTime(from, to, shareId, companyId,  groupId);	
 	}

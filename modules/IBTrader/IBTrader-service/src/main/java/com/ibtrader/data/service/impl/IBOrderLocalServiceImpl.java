@@ -20,7 +20,10 @@ import java.util.List;
 
 import com.ibtrader.data.exception.NoSuchIBOrderException;
 import com.ibtrader.data.model.IBOrder;
+import com.ibtrader.data.service.MarketLocalServiceUtil;
 import com.ibtrader.data.service.base.IBOrderLocalServiceBaseImpl;
+import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 
 
 /**
@@ -51,5 +54,18 @@ public class IBOrderLocalServiceImpl extends IBOrderLocalServiceBaseImpl {
 		List<IBOrder> _order = null;
 		_order = getIBOrderPersistence().findByShareIdCompanyGroup(shareId, companyId, groupId);
 		return _order;
+	}
+	/* al usar el ID VALIDO DE LA TWS, BORRAMOS PARA EVITAR DUPLUICADOS AL INTERNATR CONECTARNOS 
+	 *  
+	 */
+	public 	void deleteByOrderCompanyGroup(long iborderId, long companyId, long groupId)
+	{		
+		DynamicQuery _DQ = ibOrderLocalService.dynamicQuery();
+
+		_DQ.add(RestrictionsFactoryUtil.gt("ordersId", iborderId));
+		_DQ.add(RestrictionsFactoryUtil.le("companyId", companyId));
+		_DQ.add(RestrictionsFactoryUtil.ge("groupId", groupId));
+		
+		
 	}
 }

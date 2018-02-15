@@ -6,6 +6,7 @@ create index IX_33B037F4 on ibtrader_Config (uuid_[$COLUMN_LENGTH:75$], companyI
 create unique index IX_380E2B76 on ibtrader_Config (uuid_[$COLUMN_LENGTH:75$], groupId);
 
 create index IX_C752A169 on ibtrader_IBOrder (shareID, companyId, groupId);
+create index IX_5EA94F5 on ibtrader_IBOrder (shareID, companyId, ordersId);
 create index IX_273F8717 on ibtrader_IBOrder (uuid_[$COLUMN_LENGTH:75$], companyId);
 create unique index IX_45CE759 on ibtrader_IBOrder (uuid_[$COLUMN_LENGTH:75$], groupId);
 
@@ -36,6 +37,7 @@ create unique index IX_72277F5F on ibtrader_Realtime (uuid_[$COLUMN_LENGTH:75$],
 
 create index IX_294BE4E7 on ibtrader_Share (active_, marketId);
 create index IX_CA9D3D19 on ibtrader_Share (companyId, groupId, name[$COLUMN_LENGTH:75$], marketId);
+create index IX_E81EB47B on ibtrader_Share (companyId, groupId, shareId);
 create index IX_12016A7B on ibtrader_Share (companyId, groupId, symbol[$COLUMN_LENGTH:75$]);
 create index IX_70261769 on ibtrader_Share (groupId, companyId, active_, marketId);
 create index IX_8788D816 on ibtrader_Share (groupId, companyId, marketId);

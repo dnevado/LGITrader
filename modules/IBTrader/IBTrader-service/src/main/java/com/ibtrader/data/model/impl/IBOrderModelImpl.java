@@ -92,7 +92,7 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 		TABLE_COLUMNS_MAP.put("modifiedDate", Types.TIMESTAMP);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table ibtrader_IBOrder (uuid_ VARCHAR(75) null,ordersId LONG not null primary key IDENTITY,groupId LONG,companyId LONG,shareID LONG,checked BOOLEAN,createDate DATE null,modifiedDate DATE null)";
+	public static final String TABLE_SQL_CREATE = "create table ibtrader_IBOrder (uuid_ VARCHAR(75) null,ordersId LONG not null primary key,groupId LONG,companyId LONG,shareID LONG,checked BOOLEAN,createDate DATE null,modifiedDate DATE null)";
 	public static final String TABLE_SQL_DROP = "drop table ibtrader_IBOrder";
 	public static final String ORDER_BY_JPQL = " ORDER BY ibOrder.ordersId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY ibtrader_IBOrder.ordersId ASC";
@@ -110,9 +110,9 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 			true);
 	public static final long COMPANYID_COLUMN_BITMASK = 1L;
 	public static final long GROUPID_COLUMN_BITMASK = 2L;
-	public static final long SHAREID_COLUMN_BITMASK = 4L;
-	public static final long UUID_COLUMN_BITMASK = 8L;
-	public static final long ORDERSID_COLUMN_BITMASK = 16L;
+	public static final long ORDERSID_COLUMN_BITMASK = 4L;
+	public static final long SHAREID_COLUMN_BITMASK = 8L;
+	public static final long UUID_COLUMN_BITMASK = 16L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -297,7 +297,19 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 
 	@Override
 	public void setOrdersId(long ordersId) {
+		_columnBitmask |= ORDERSID_COLUMN_BITMASK;
+
+		if (!_setOriginalOrdersId) {
+			_setOriginalOrdersId = true;
+
+			_originalOrdersId = _ordersId;
+		}
+
 		_ordersId = ordersId;
+	}
+
+	public long getOriginalOrdersId() {
+		return _originalOrdersId;
 	}
 
 	@JSON
@@ -523,6 +535,10 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 
 		ibOrderModelImpl._originalUuid = ibOrderModelImpl._uuid;
 
+		ibOrderModelImpl._originalOrdersId = ibOrderModelImpl._ordersId;
+
+		ibOrderModelImpl._setOriginalOrdersId = false;
+
 		ibOrderModelImpl._originalGroupId = ibOrderModelImpl._groupId;
 
 		ibOrderModelImpl._setOriginalGroupId = false;
@@ -661,6 +677,8 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 	private String _uuid;
 	private String _originalUuid;
 	private long _ordersId;
+	private long _originalOrdersId;
+	private boolean _setOriginalOrdersId;
 	private long _groupId;
 	private long _originalGroupId;
 	private boolean _setOriginalGroupId;

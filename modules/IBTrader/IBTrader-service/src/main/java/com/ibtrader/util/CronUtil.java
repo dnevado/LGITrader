@@ -69,8 +69,7 @@ public class CronUtil {
 	/* CONEXIONES POR ORGANIZACION */
 	public static void StartReadingCron(Message _message) throws Exception 	{
 	
-	
-	int 	_CLIENT_ID = 1;	  // el dos para leer, el 3 para escribir			
+		int 	_CLIENT_ID = 1;	  // el dos para leer, el 3 para escribir			
 	String  _HOST = "127.0.0.1";
 	int     _PORT = ConfigKeys.TWS_CONNECTION_PORT;	
 	
@@ -114,7 +113,7 @@ public class CronUtil {
 			if (bSIMULATED_TRADING)
 			{
 				_keyHOST  = IBTraderConstants.keyPAPER_TWS_HOST;
-				 _keyPORT  = IBTraderConstants.keyPAPER_TWS_PORT;
+				_keyPORT  = IBTraderConstants.keyPAPER_TWS_PORT;
 			}
 		
 		
@@ -124,9 +123,11 @@ public class CronUtil {
 		 if (oTWS.GITraderTWSIsConnected())  oTWS.GITraderDisconnectFromTWS(); */ 
 		 _log.info("StartReadingCron, connecting to TWS for Organization:" + _Organization.getName());
 		 //oTWS.GITraderConnetToTWS();
-	     TIMApiWrapper wrapper = new TIMApiWrapper(_CLIENT_ID,false);				
+	     TIMApiWrapper wrapper = new TIMApiWrapper(_CLIENT_ID);				
 		 if (wrapper.isConnected()) wrapper.disconnect();
 		 wrapper.connect(_HOST, _PORT,_CLIENT_ID); 	 	
+		 wrapper.reqNextId(); 
+
 		// if (oTWS.GITraderTWSIsConnected() )
 		if (wrapper.isConnected())
 	    {
@@ -204,15 +205,16 @@ public class CronUtil {
 				    				else		    					
 				    					oContrat = new StkContract( oShare.getSymbol());
 				    				_log.info("TradingRead de :" + oShare.getSymbol() + ":" +  oShare.getSecurity_type() + ":" + oShare.getExchange() + ":" + oMarket.getCurrency());
-					    			long  _INCREMENT_ORDER_ID = CounterLocalServiceUtil.increment(IBOrder.class.getName()) +  _CLIENT_ID;
-					    			/* insertamos control de ordenes de peticion */
+					    			//long  _INCREMENT_ORDER_ID = CounterLocalServiceUtil.increment(IBOrder.class.getName()) +  _CLIENT_ID;
+					    			/* insertamos control de ordenes de peticion */			
+					    			long  _INCREMENT_ORDER_ID = wrapper.getCurrentOrderId();
 					    			 IBOrder _order = IBOrderLocalServiceUtil.createIBOrder(_INCREMENT_ORDER_ID);
 					    			_order.setCompanyId(oMarket.getCompanyId());
 					    			_order.setGroupId(oMarket.getGroupId());
 					    			_order.setShareID(oShare.getShareId());					    		
+					    		//	_order.setIborderID(_INCREMENT_ORDER_ID);
 					    			/* pedimos tiempo real */
 					    			IBOrderLocalServiceUtil.updateIBOrder(_order);
-					    			_INCREMENT_ORDER_ID = _order.getOrdersId();
 					    			wrapper.getRealTime(new Long(_INCREMENT_ORDER_ID).intValue(), oContrat);			    			
 									//oTWS.GITraderGetRealTimeContract(new Long(_INCREMENT_ORDER_ID).intValue(),oContrat);
 					    		} // btoRequest
@@ -299,7 +301,8 @@ public class CronUtil {
 				  
 				/* CUERNTA PAPER */
 				String simulated = Utilities.getConfigurationValue(IBTraderConstants.keySIMULATION_MODE, companyId, guestGroupId);
-				boolean bSIMULATED_TRADING = simulated.equals("1");  		String _keyHOST  = IBTraderConstants.keyTWS_HOST;
+				boolean bSIMULATED_TRADING = simulated.equals("1");  		
+				String _keyHOST  = IBTraderConstants.keyTWS_HOST;
 				String _keyPORT  = IBTraderConstants.keyTWS_PORT;
 				if (bSIMULATED_TRADING)
 				{
@@ -310,10 +313,12 @@ public class CronUtil {
 				 _HOST = Utilities.getConfigurationValue(_keyHOST, _Organization.getCompanyId(), _Organization.getGroupId());		 
 				 _PORT = Integer.valueOf(Utilities.getConfigurationValue(_keyPORT, _Organization.getCompanyId(), _Organization.getGroupId()));
 				 
-				 TIMApiWrapper wrapper = new TIMApiWrapper(_CLIENT_ID,false);	
+				 TIMApiWrapper wrapper = new TIMApiWrapper(_CLIENT_ID);	
 				 _log.info("StartTradingCron, connecting to TWS");
 				 if (wrapper.isConnected()) wrapper.disconnect();
 				 wrapper.connect(_HOST, _PORT,_CLIENT_ID); 	 	
+				 wrapper.reqNextId(); 
+				 IBOrderLocalServiceUtil.deleteByOrderCompanyGroup(wrapper.getCurrentOrderId(), _Organization.getCompanyId(), _Organization.getGroupId());
 				if (wrapper.isConnected())
 			    {
 					 while (true)
@@ -334,7 +339,7 @@ public class CronUtil {
 					    }
 					 	String _HORACTUAL = Utilities.getActualHourFormatPlusMinutes(Utilities.getGlobalIBDateNowFormat(),10); 				   	 
 				   	 	List<Market> lActiveMarkets = MarketLocalServiceUtil.findByActiveStartEndHour(_HORACTUAL, _HORACTUAL,true);				   	 	
-				   	   _log.info("Starting Trading Cron  Process..");		
+				   	  
 				   	    try
 				   	    {
 							
@@ -358,13 +363,14 @@ public class CronUtil {
 						    			for (Strategy oStrategy :_lStrategies)
 						    			{
 						    				
-						    				if (Utilities.fn_IsStrategyInShareStrategies(oStrategy.getStrategyID(),_lStrategiesOfShare))
-						    				{		    					
-						    							    					
+						    				for (StrategyShare oStrategyShare :_lStrategiesOfShare)
+							    			{
+						    									
+						    					
 						    					StrategyImpl _strategyImpl= (StrategyImpl) Utilities.getContextClassLoader().loadClass(oStrategy.getClassName()).newInstance();
 						    					_strategyImpl.init(oShare.getCompanyId());   // verify if custom fields are created and filled 	    						    				
-						    					if (_strategyImpl.verify(oShare, oMarket))
-						    							_strategyImpl.execute(oShare, oMarket);	
+						    					if (_strategyImpl.verify(oShare, oMarket,oStrategyShare))
+						    							_strategyImpl.execute(oShare, oMarket,wrapper);	
 						    					
 						    				}
 						    			}  // for (Strategy oStrategy :_lStrategies)
@@ -455,10 +461,10 @@ public class CronUtil {
 				 if (oTWS.GITraderTWSIsConnected() )
 			     {*/
 				 //oTWS.GITraderConnetToTWS();
-			     TIMApiWrapper wrapper = new TIMApiWrapper(_CLIENT_ID,false);				
+			     TIMApiWrapper wrapper = new TIMApiWrapper(_CLIENT_ID);				
 				 if (wrapper.isConnected()) wrapper.disconnect();
 				 wrapper.connect(_HOST, _PORT,_CLIENT_ID); 	 	
-				// if (oTWS.GITraderTWSIsConnected() )
+				 wrapper.reqNextId(); 
 				if (wrapper.isConnected())
 			    {
 					 
@@ -492,16 +498,13 @@ public class CronUtil {
 			    				m_client.cancelMktData(new Long(rkMktData.getPrimaryKey()).intValue());
 							}												    		*/
 			    			_log.info("Verifyng de :" + oShare.getSymbol() + ":" +  oShare.getSecurity_type() + ":" + oShare.getExchange() + ":" + oMarket.getCurrency());    						    		
-			    			long  _INCREMENT_ORDER_ID = CounterLocalServiceUtil.increment(IBOrder.class.getName()) +  _CLIENT_ID;
-			    			/* insertamos control de ordenes de peticion */
-			    			
+			    			long  _INCREMENT_ORDER_ID = wrapper.getCurrentOrderId();
 			    			 IBOrder _order = IBOrderLocalServiceUtil.createIBOrder(_INCREMENT_ORDER_ID);
 			    			_order.setCompanyId(oMarket.getCompanyId());
 			    			_order.setGroupId(oMarket.getGroupId());
-			    			_order.setShareID(oShare.getShareId());
+			    			_order.setShareID(oShare.getShareId());				
 			    			/* pedimos tiempo real */
 			    			IBOrderLocalServiceUtil.updateIBOrder(_order);
-			    			_INCREMENT_ORDER_ID = _order.getOrdersId();
 			    			try {
 			    				wrapper.getContractDetails(new Long(_INCREMENT_ORDER_ID).intValue(),oContrat);			
 			    				Thread.sleep(1000);

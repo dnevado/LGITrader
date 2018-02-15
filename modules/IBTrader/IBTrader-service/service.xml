@@ -252,13 +252,12 @@
 
 		<!-- PK fields -->
 
-		<column name="ordersId" primary="true" type="long"  id-type="identity"/>
+		<column name="ordersId" primary="true" type="long"  /> <!-- id-type="identity" -->
 
 		<!-- Group instance -->
 
 		<column name="groupId" type="long" />
-		<column name="companyId" type="long" />
-		<!--  <column name="orderID" type="long" /> -->
+		<column name="companyId" type="long"/>		
 		<column name="shareID" type="long" />
 		<column name="checked" type="boolean" />
 		<column name="createDate" type="Date" />
@@ -270,6 +269,11 @@
 			<finder-column name="companyId"/>		
 			<finder-column name="groupId"/>							
 		</finder>
+		<finder name="OrderGroupCompany" return-type="Collection">
+			<finder-column name="shareID"/>		
+			<finder-column name="companyId"/>		
+			<finder-column name="ordersId"/>							
+		</finder>
 		
 		<!-- Other fields -->
 	</entity>
@@ -280,8 +284,8 @@
 			<column name="shareId" primary="true" type="long" />
 			<column name="name" type="String" />
 			<column name="symbol"  type="String" />
-			<column name="groupId" type="long" />
-			<column name="companyId" type="long" />
+			<column name="groupId"   type="long" />
+			<column name="companyId"  type="long" />
 			<column name="createDate" type="Date" />
 			<column name="modifiedDate" type="Date" />
 			<column name="active" type="boolean" />
@@ -290,7 +294,7 @@
 			<column name="percentual_stop_lost" type="double" />
 			<column name="percentual_stop_profit" type="double" />
 			<column name="percentual_stop_profit_position" type="double" />
-			<column name="trailing_stop_lost" type="double" />					
+			<column name="trailling_stop_lost" type="double" />					
 			<column name="expiry_date" type="Date" />
 			<column name="expiry_expression" type="String" />
 			<column name="tick_futures" type="double" />
@@ -307,7 +311,14 @@
 	        
 	        
     <!--    	<reference package-path="com.ibtrader.data" entity="Market"></reference>-->
-        	        
+        	     
+        	 <finder name="CompanyGroupShare" return-type="Collection">	
+        		<finder-column name="companyId"/>	
+        		<finder-column name="groupId"/>
+        		<finder-column name="shareId"/>											
+        													
+			</finder>
+			   
         	<finder name="CompanyGroup" return-type="Collection">	
         		<finder-column name="companyId"/>	
         		<finder-column name="groupId"/>											
@@ -348,7 +359,7 @@
 		<column name="groupId" type="long" />
 
 		<!-- Audit fields -->
-		<column name="companyId" type="long" />
+		<column name="companyId"  type="long" />
 		<column name="shareId" type="long" />
 		<!-- <column name="value" type="double" /> -->
 		<column name="createDate" type="Date" />

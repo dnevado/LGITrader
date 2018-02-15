@@ -20,9 +20,12 @@ import java.util.Map;
 import com.ibtrader.data.model.Market;
 import com.ibtrader.data.model.Share;
 import com.ibtrader.data.model.Strategy;
+import com.ibtrader.data.model.StrategyShare;
 import com.ibtrader.interactive.TIMApiGITrader;
+import com.ibtrader.interactive.TIMApiWrapper;
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.expando.kernel.model.ExpandoColumn;
+import com.liferay.portal.kernel.json.JSONObject;
 
 import aQute.bnd.annotation.ProviderType;
 
@@ -59,7 +62,8 @@ public class StrategyImpl extends StrategyBaseImpl {
 	private double valueLimitIn;
 	private double valueOut; 
 	private double valueLimitOut;	
-
+	
+	private JSONObject jsonStrategyShareParams;
 	
 	private boolean verified = false;
 	
@@ -70,8 +74,8 @@ public class StrategyImpl extends StrategyBaseImpl {
 
 	/* COMPORTAMIENTO DE LOS PARAMETROS DE ENTRADA EN CUANTO A TIPOS */
 	public boolean validateParams(Map<String, String> paramValues) {return Boolean.TRUE;}
-	public void execute(Share _share, Market _market) {}
-	public boolean verify(Share _share, Market _market) {return Boolean.TRUE;}
+	//public void execute(Share _share, Market _market) {}
+	public boolean verify(Share _share, Market _market,StrategyShare _strategyImpl) {return Boolean.TRUE;}  // share general, market y datos de la estrategoa con los valores parametrizados 
 	/* CREATE THE REQUERIMENT EXPANDOS PARAMETERS */
 	public void init(long companyId) {}
 	public boolean activated() {return Boolean.TRUE;}
@@ -174,6 +178,22 @@ public class StrategyImpl extends StrategyBaseImpl {
 	public void setVerified(boolean verified) {
 		this.verified = verified;
 	}
+	public JSONObject getJsonStrategyShareParams() {
+		return jsonStrategyShareParams;
+	}
+	public void setJsonStrategyShareParams(JSONObject _jsonStrategyShareParams) {
+		this.jsonStrategyShareParams = _jsonStrategyShareParams;
+	}
+	@Override
+	public void execute(Share _share, Market _market) {
+		// TODO Auto-generated method stub
+		
+	}
+	/* ESTO NO ES UNA IMPLEMENTACION YA QUE EN DENERIA METER EL TIMApiWrapper EN LA API Y ES COSTOSO */
+	/*public void execute(Share _share, Market _market, com.ibtrader.interactive.TIMApiWrapper wrapper) {
+		// TODO Auto-generated method stub
+		
+	}*/
 
 		
 }

@@ -287,7 +287,7 @@ public class Utilities {
 	{
 		    Date _dNow = getGlobalIBDate();
 		    Calendar _cNow = Calendar.getInstance();
-		    _dNow.setTime(_dNow.getTime());
+		    _cNow.setTimeInMillis(_dNow.getTime());
 			return getActualHourFormatPlusMinutes(_cNow,HourMinutes,Minutes);
 			
 			
@@ -299,7 +299,8 @@ public class Utilities {
 		try 
 		
 		{
-			
+			if (HourMinutes.contains(":"))
+				HourMinutes = HourMinutes.replaceAll(":", "");
 			Calendar Hoy = Calendar.getInstance();
 			
 			Hoy.setTimeInMillis(_Date.getTimeInMillis());
@@ -341,7 +342,8 @@ public class Utilities {
 		try 
 		
 		{
-		
+			if (HourMinutes.contains(":"))
+				HourMinutes = HourMinutes.replaceAll(":", "");
 			Calendar Hoy = null;
 			if (Minutes!=null)
 			{
@@ -379,8 +381,13 @@ public class Utilities {
 	/* HOUR HHMM */
 	public static  Calendar getNewCalendarWithHour(String HourMinutes)
 	{
+		
+		
 		Calendar Hoy = Calendar.getInstance();
 	    
+		// 23:59 -_> erroneo 
+		if (HourMinutes.contains(":"))
+			HourMinutes = HourMinutes.replaceAll(":", "");
 		return getNewCalendarWithHour(Hoy, HourMinutes);
 	    
 	}

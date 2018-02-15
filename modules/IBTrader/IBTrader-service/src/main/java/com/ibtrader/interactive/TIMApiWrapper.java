@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+
 import java.util.Set;
 
 import com.ib.client.Bar;
@@ -51,6 +53,7 @@ import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 
 
+
 //! [ewrapperimpl]
 public class TIMApiWrapper implements EWrapper {
 	//! [ewrapperimpl]
@@ -65,7 +68,8 @@ public class TIMApiWrapper implements EWrapper {
 	protected int _clientId = 0; 
 	protected long  guestGroupId=0;
 	
-	private boolean _sendDisconnectEvent =false; 
+	private boolean _sendDisconnectEvent = false; 
+	
 
 	
 	//! [socket_declare]
@@ -94,13 +98,21 @@ public class TIMApiWrapper implements EWrapper {
 		clientSocket.reqContractDetails(requestId, contract);
 	}
 	
-	public void getRealTime(int requestId, Contract contract){
+	public void getRealTime(int requestId, Contract contract) throws InterruptedException{
+		Thread.sleep(1000);	
 		clientSocket.reqMarketDataType(ConfigKeys.MARKET_DATA_TYPE_DELAYED_LIVE);
 		clientSocket.reqMktData(requestId, contract,  "", false, false, null); // false
 	}
 	public boolean isConnected() {
 		 //! [connect]
 		return clientSocket.isConnected(); 
+	}
+	public void  reqNextId() throws InterruptedException {
+		 //! [connect]
+		
+		clientSocket.reqIds(-1);
+		Thread.sleep(1000);	
+ 
 	}
 	
 	public void disconnect() throws InterruptedException {
@@ -115,11 +127,12 @@ public class TIMApiWrapper implements EWrapper {
 		clientSocket.eConnect(_HOST, _PORT,_CLIENT_ID); 
 		 //! [connect]
 		 //! [ereader]
-		_sendDisconnectEvent = true;
+		_sendDisconnectEvent = false;
 		Thread.sleep(1000);
 		 final EReader reader = new EReader(clientSocket, readerSignal);   		
 		 reader.start();
 		//An additional thread is created in this program design to empty the messaging queue
+		 //
 		new Thread(() -> {
 		    while (clientSocket.isConnected() && !_sendDisconnectEvent) {
 		    	readerSignal.waitForSignal();
@@ -142,7 +155,7 @@ public class TIMApiWrapper implements EWrapper {
 	}
 	
 	public int getCurrentOrderId() {
-		return currentOrderId;
+		return currentOrderId++;
 	}
 	
 	 //! [tickprice]
@@ -155,7 +168,6 @@ public class TIMApiWrapper implements EWrapper {
 		//System.out.println("Tick Size. Ticker Id:" + tickerId + ", Field: " + field + ", Size: " + size);
 	}
 	//! [ticksize]
-	
 	//! [tickoptioncomputation]
 	@Override
 	public void tickOptionComputation(int tickerId, int field,
@@ -196,9 +208,13 @@ public class TIMApiWrapper implements EWrapper {
 	@Override
 	public void openOrder(int orderId, Contract contract, Order order,
 			OrderState orderState) {
-		System.out.println("OpenOrder. ID: "+orderId+", "+contract.symbol()+", "+contract.secType()+" @ "+contract.exchange()+": "+
+		 _log.info("OpenOrder. ID: "+orderId+", "+contract.symbol()+", "+contract.secType()+" @ "+contract.exchange()+": "+
 			order.action()+", "+order.orderType()+" "+order.totalQuantity()+", "+orderState.status());
-	}
+		
+		clientSocket.placeOrder(orderId, contract, order);
+
+		}
+			
 	//! [openorder]
 	
 	//! [openorderend]

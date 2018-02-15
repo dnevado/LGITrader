@@ -71,7 +71,7 @@ public class IBTraderHistoricalpositionsWebPortlet extends MVCPortlet {
 		 Date DateEND = Utilities.getDate(themeDisplay.getUser());;
 		 
 		 /* OPERACIONES DEL DIA ANTERIOR, SUPUESTAMENTE FINALIZADAS,
-		  * PONEMOS UN AÑO DE 2017*/
+		  * PONEMOS UN Aï¿½O DE 2017*/
 		 Calendar _cINI = Calendar.getInstance();
 		 DateINI.setHours(0);
 		 DateINI.setMinutes(0);
