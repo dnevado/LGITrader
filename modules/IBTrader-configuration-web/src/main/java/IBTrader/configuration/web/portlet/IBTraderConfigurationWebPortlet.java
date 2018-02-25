@@ -93,7 +93,7 @@ public class IBTraderConfigurationWebPortlet extends MVCPortlet {
 			String redirect = ParamUtil.getString(renderRequest, "redirect");
 			HttpServletRequest _hR = PortalUtil.getHttpServletRequest(renderRequest);
 			String _mvcCommand = "";
-		    _log.info("render..configuration");
+		   // _log.info("render..configuration");
 		    try {
 		        ServiceContext serviceContext = ServiceContextFactory.getInstance(Share.class.getName(), renderRequest);
 		      
@@ -106,22 +106,18 @@ public class IBTraderConfigurationWebPortlet extends MVCPortlet {
 		    	String  _USER_TWS = Utilities.getConfigurationValue(IBTraderConstants.keyUSER_TWS, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
 		    	String  _PWD_TWS = Utilities.getConfigurationValue(IBTraderConstants.keyUSER_PWD, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
 		    	String  _DESTOP_NOTIFICATION= Utilities.getConfigurationValue(IBTraderConstants.keyENABLE_DESKTOP_NOTIFICATIONS, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
-		    	String  _MAIL_NOTIFICATION = Utilities.getConfigurationValue(IBTraderConstants.keyENABLE_MAIL_NOTIFICATIONS, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
-		    	
+		    	String  _MAIL_NOTIFICATION = Utilities.getConfigurationValue(IBTraderConstants.keyENABLE_MAIL_NOTIFICATIONS, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());		    	
 		    	String  _SIMULATION_MODE = Utilities.getConfigurationValue(IBTraderConstants.keySIMULATION_MODE, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
 		    	String  _PATH_TO_CONFIGURATION_FILE = Utilities.getConfigurationValue(IBTraderConstants.keyPATH_TO_CONFIGURATION_FILE, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
 		    	String  _PATH_TO_EXECUTABLE_FILE = Utilities.getConfigurationValue(IBTraderConstants.keyPATH_TO_EXECUTABLE_FILE, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
-
-
-
-		    	
+		    	/* CUENTA SIMULADA O PAPER */
 		    	String  _PAPER_USER_TWS = Utilities.getConfigurationValue(IBTraderConstants.keyPAPER_USER_TWS, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
 		    	String  _PAPER_USER_PWD = Utilities.getConfigurationValue(IBTraderConstants.keyPAPER_USER_PWD, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId()); 
 		    	String  _PAPER_TWS_HOST = Utilities.getConfigurationValue(IBTraderConstants.keyPAPER_TWS_HOST, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
 		    	String  _PAPER_TWS_PORT = Utilities.getConfigurationValue(IBTraderConstants.keyPAPER_TWS_PORT, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
 		    	String  _PAPER_PATH_TO_CONFIGURATION_FILE = Utilities.getConfigurationValue(IBTraderConstants.keyPAPER_PATH_TO_CONFIGURATION_FILE, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
 		    	String  _PAPER_PATH_TO_EXECUTABLE_FILE = Utilities.getConfigurationValue(IBTraderConstants.keyPAPER_PATH_TO_EXECUTABLE_FILE, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
-		    	
+		    	/* CUENTA SIMULADA O PAPER */
 		        renderRequest.setAttribute("isOmniadmin", themeDisplay.getPermissionChecker().isOmniadmin());
 		        renderRequest.setAttribute("_USER_TWS", _USER_TWS);
 		        renderRequest.setAttribute("_PWD_TWS", _PWD_TWS);

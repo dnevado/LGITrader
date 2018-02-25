@@ -66,6 +66,9 @@ public interface PositionLocalService extends BaseLocalService,
 	 */
 	public boolean ExistsOpenPosition(long groupId, long companyId, long shareId);
 
+	public boolean ExistsPositionToExit(long groupId, long companyId,
+		long shareId);
+
 	/**
 	* Adds the position to the database. Also notifies the appropriate model listeners.
 	*
@@ -118,8 +121,14 @@ public interface PositionLocalService extends BaseLocalService,
 
 	public Position findByCompanyGroup(long companyId, long groupId);
 
+	public Position findByPositionID_In_TWS(long groupId, long companyId,
+		long _PositionIDTWS);
+
 	public Position findByPositionID_Out_TWS(long groupId, long companyId,
 		long _PositionIDTWS);
+
+	public Position findPositionToExit(long groupId, long companyId,
+		long shareId);
 
 	/**
 	* Returns the position with the primary key.

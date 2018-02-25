@@ -394,17 +394,17 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	/**
 	 * Returns the i b orders before and after the current i b order in the ordered set where uuid = &#63;.
 	 *
-	 * @param ordersId the primary key of the current i b order
+	 * @param orderIdPk the primary key of the current i b order
 	 * @param uuid the uuid
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next i b order
 	 * @throws NoSuchIBOrderException if a i b order with the primary key could not be found
 	 */
 	@Override
-	public IBOrder[] findByUuid_PrevAndNext(long ordersId, String uuid,
+	public IBOrder[] findByUuid_PrevAndNext(long orderIdPk, String uuid,
 		OrderByComparator<IBOrder> orderByComparator)
 		throws NoSuchIBOrderException {
-		IBOrder ibOrder = findByPrimaryKey(ordersId);
+		IBOrder ibOrder = findByPrimaryKey(orderIdPk);
 
 		Session session = null;
 
@@ -1219,7 +1219,7 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	/**
 	 * Returns the i b orders before and after the current i b order in the ordered set where uuid = &#63; and companyId = &#63;.
 	 *
-	 * @param ordersId the primary key of the current i b order
+	 * @param orderIdPk the primary key of the current i b order
 	 * @param uuid the uuid
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
@@ -1227,10 +1227,10 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	 * @throws NoSuchIBOrderException if a i b order with the primary key could not be found
 	 */
 	@Override
-	public IBOrder[] findByUuid_C_PrevAndNext(long ordersId, String uuid,
+	public IBOrder[] findByUuid_C_PrevAndNext(long orderIdPk, String uuid,
 		long companyId, OrderByComparator<IBOrder> orderByComparator)
 		throws NoSuchIBOrderException {
-		IBOrder ibOrder = findByPrimaryKey(ordersId);
+		IBOrder ibOrder = findByPrimaryKey(orderIdPk);
 
 		Session session = null;
 
@@ -1825,7 +1825,7 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	/**
 	 * Returns the i b orders before and after the current i b order in the ordered set where shareID = &#63; and companyId = &#63; and groupId = &#63;.
 	 *
-	 * @param ordersId the primary key of the current i b order
+	 * @param orderIdPk the primary key of the current i b order
 	 * @param shareID the share i d
 	 * @param companyId the company ID
 	 * @param groupId the group ID
@@ -1834,11 +1834,11 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	 * @throws NoSuchIBOrderException if a i b order with the primary key could not be found
 	 */
 	@Override
-	public IBOrder[] findByShareIdCompanyGroup_PrevAndNext(long ordersId,
+	public IBOrder[] findByShareIdCompanyGroup_PrevAndNext(long orderIdPk,
 		long shareID, long companyId, long groupId,
 		OrderByComparator<IBOrder> orderByComparator)
 		throws NoSuchIBOrderException {
-		IBOrder ibOrder = findByPrimaryKey(ordersId);
+		IBOrder ibOrder = findByPrimaryKey(orderIdPk);
 
 		Session session = null;
 
@@ -2410,6 +2410,163 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
+	 * Returns the i b orders before and after the current i b order in the ordered set where shareID = &#63; and companyId = &#63; and ordersId = &#63;.
+	 *
+	 * @param orderIdPk the primary key of the current i b order
+	 * @param shareID the share i d
+	 * @param companyId the company ID
+	 * @param ordersId the orders ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next i b order
+	 * @throws NoSuchIBOrderException if a i b order with the primary key could not be found
+	 */
+	@Override
+	public IBOrder[] findByOrderGroupCompany_PrevAndNext(long orderIdPk,
+		long shareID, long companyId, long ordersId,
+		OrderByComparator<IBOrder> orderByComparator)
+		throws NoSuchIBOrderException {
+		IBOrder ibOrder = findByPrimaryKey(orderIdPk);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			IBOrder[] array = new IBOrderImpl[3];
+
+			array[0] = getByOrderGroupCompany_PrevAndNext(session, ibOrder,
+					shareID, companyId, ordersId, orderByComparator, true);
+
+			array[1] = ibOrder;
+
+			array[2] = getByOrderGroupCompany_PrevAndNext(session, ibOrder,
+					shareID, companyId, ordersId, orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected IBOrder getByOrderGroupCompany_PrevAndNext(Session session,
+		IBOrder ibOrder, long shareID, long companyId, long ordersId,
+		OrderByComparator<IBOrder> orderByComparator, boolean previous) {
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(6 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(5);
+		}
+
+		query.append(_SQL_SELECT_IBORDER_WHERE);
+
+		query.append(_FINDER_COLUMN_ORDERGROUPCOMPANY_SHAREID_2);
+
+		query.append(_FINDER_COLUMN_ORDERGROUPCOMPANY_COMPANYID_2);
+
+		query.append(_FINDER_COLUMN_ORDERGROUPCOMPANY_ORDERSID_2);
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			query.append(IBOrderModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = query.toString();
+
+		Query q = session.createQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(shareID);
+
+		qPos.add(companyId);
+
+		qPos.add(ordersId);
+
+		if (orderByComparator != null) {
+			Object[] values = orderByComparator.getOrderByConditionValues(ibOrder);
+
+			for (Object value : values) {
+				qPos.add(value);
+			}
+		}
+
+		List<IBOrder> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
 	 * Removes all the i b orders where shareID = &#63; and companyId = &#63; and ordersId = &#63; from the database.
 	 *
 	 * @param shareID the share i d
@@ -2490,6 +2647,1188 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	private static final String _FINDER_COLUMN_ORDERGROUPCOMPANY_SHAREID_2 = "ibOrder.shareID = ? AND ";
 	private static final String _FINDER_COLUMN_ORDERGROUPCOMPANY_COMPANYID_2 = "ibOrder.companyId = ? AND ";
 	private static final String _FINDER_COLUMN_ORDERGROUPCOMPANY_ORDERSID_2 = "ibOrder.ordersId = ?";
+	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_ORDERCLIENTGROUPCOMPANY =
+		new FinderPath(IBOrderModelImpl.ENTITY_CACHE_ENABLED,
+			IBOrderModelImpl.FINDER_CACHE_ENABLED, IBOrderImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+			"findByOrderClientGroupCompany",
+			new String[] {
+				Long.class.getName(), Long.class.getName(), Long.class.getName(),
+				Long.class.getName(),
+				
+			Integer.class.getName(), Integer.class.getName(),
+				OrderByComparator.class.getName()
+			});
+	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ORDERCLIENTGROUPCOMPANY =
+		new FinderPath(IBOrderModelImpl.ENTITY_CACHE_ENABLED,
+			IBOrderModelImpl.FINDER_CACHE_ENABLED, IBOrderImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"findByOrderClientGroupCompany",
+			new String[] {
+				Long.class.getName(), Long.class.getName(), Long.class.getName(),
+				Long.class.getName()
+			},
+			IBOrderModelImpl.ORDERSID_COLUMN_BITMASK |
+			IBOrderModelImpl.COMPANYID_COLUMN_BITMASK |
+			IBOrderModelImpl.GROUPID_COLUMN_BITMASK |
+			IBOrderModelImpl.IBCLIENTID_COLUMN_BITMASK);
+	public static final FinderPath FINDER_PATH_COUNT_BY_ORDERCLIENTGROUPCOMPANY = new FinderPath(IBOrderModelImpl.ENTITY_CACHE_ENABLED,
+			IBOrderModelImpl.FINDER_CACHE_ENABLED, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"countByOrderClientGroupCompany",
+			new String[] {
+				Long.class.getName(), Long.class.getName(), Long.class.getName(),
+				Long.class.getName()
+			});
+
+	/**
+	 * Returns all the i b orders where ordersId = &#63; and companyId = &#63; and groupId = &#63; and ibclientId = &#63;.
+	 *
+	 * @param ordersId the orders ID
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param ibclientId the ibclient ID
+	 * @return the matching i b orders
+	 */
+	@Override
+	public List<IBOrder> findByOrderClientGroupCompany(long ordersId,
+		long companyId, long groupId, long ibclientId) {
+		return findByOrderClientGroupCompany(ordersId, companyId, groupId,
+			ibclientId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the i b orders where ordersId = &#63; and companyId = &#63; and groupId = &#63; and ibclientId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param ordersId the orders ID
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param ibclientId the ibclient ID
+	 * @param start the lower bound of the range of i b orders
+	 * @param end the upper bound of the range of i b orders (not inclusive)
+	 * @return the range of matching i b orders
+	 */
+	@Override
+	public List<IBOrder> findByOrderClientGroupCompany(long ordersId,
+		long companyId, long groupId, long ibclientId, int start, int end) {
+		return findByOrderClientGroupCompany(ordersId, companyId, groupId,
+			ibclientId, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the i b orders where ordersId = &#63; and companyId = &#63; and groupId = &#63; and ibclientId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param ordersId the orders ID
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param ibclientId the ibclient ID
+	 * @param start the lower bound of the range of i b orders
+	 * @param end the upper bound of the range of i b orders (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching i b orders
+	 */
+	@Override
+	public List<IBOrder> findByOrderClientGroupCompany(long ordersId,
+		long companyId, long groupId, long ibclientId, int start, int end,
+		OrderByComparator<IBOrder> orderByComparator) {
+		return findByOrderClientGroupCompany(ordersId, companyId, groupId,
+			ibclientId, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the i b orders where ordersId = &#63; and companyId = &#63; and groupId = &#63; and ibclientId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param ordersId the orders ID
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param ibclientId the ibclient ID
+	 * @param start the lower bound of the range of i b orders
+	 * @param end the upper bound of the range of i b orders (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the ordered range of matching i b orders
+	 */
+	@Override
+	public List<IBOrder> findByOrderClientGroupCompany(long ordersId,
+		long companyId, long groupId, long ibclientId, int start, int end,
+		OrderByComparator<IBOrder> orderByComparator, boolean retrieveFromCache) {
+		boolean pagination = true;
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+				(orderByComparator == null)) {
+			pagination = false;
+			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ORDERCLIENTGROUPCOMPANY;
+			finderArgs = new Object[] { ordersId, companyId, groupId, ibclientId };
+		}
+		else {
+			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_ORDERCLIENTGROUPCOMPANY;
+			finderArgs = new Object[] {
+					ordersId, companyId, groupId, ibclientId,
+					
+					start, end, orderByComparator
+				};
+		}
+
+		List<IBOrder> list = null;
+
+		if (retrieveFromCache) {
+			list = (List<IBOrder>)finderCache.getResult(finderPath, finderArgs,
+					this);
+
+			if ((list != null) && !list.isEmpty()) {
+				for (IBOrder ibOrder : list) {
+					if ((ordersId != ibOrder.getOrdersId()) ||
+							(companyId != ibOrder.getCompanyId()) ||
+							(groupId != ibOrder.getGroupId()) ||
+							(ibclientId != ibOrder.getIbclientId())) {
+						list = null;
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler query = null;
+
+			if (orderByComparator != null) {
+				query = new StringBundler(6 +
+						(orderByComparator.getOrderByFields().length * 2));
+			}
+			else {
+				query = new StringBundler(6);
+			}
+
+			query.append(_SQL_SELECT_IBORDER_WHERE);
+
+			query.append(_FINDER_COLUMN_ORDERCLIENTGROUPCOMPANY_ORDERSID_2);
+
+			query.append(_FINDER_COLUMN_ORDERCLIENTGROUPCOMPANY_COMPANYID_2);
+
+			query.append(_FINDER_COLUMN_ORDERCLIENTGROUPCOMPANY_GROUPID_2);
+
+			query.append(_FINDER_COLUMN_ORDERCLIENTGROUPCOMPANY_IBCLIENTID_2);
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
+					orderByComparator);
+			}
+			else
+			 if (pagination) {
+				query.append(IBOrderModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(ordersId);
+
+				qPos.add(companyId);
+
+				qPos.add(groupId);
+
+				qPos.add(ibclientId);
+
+				if (!pagination) {
+					list = (List<IBOrder>)QueryUtil.list(q, getDialect(),
+							start, end, false);
+
+					Collections.sort(list);
+
+					list = Collections.unmodifiableList(list);
+				}
+				else {
+					list = (List<IBOrder>)QueryUtil.list(q, getDialect(),
+							start, end);
+				}
+
+				cacheResult(list);
+
+				finderCache.putResult(finderPath, finderArgs, list);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Returns the first i b order in the ordered set where ordersId = &#63; and companyId = &#63; and groupId = &#63; and ibclientId = &#63;.
+	 *
+	 * @param ordersId the orders ID
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param ibclientId the ibclient ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching i b order
+	 * @throws NoSuchIBOrderException if a matching i b order could not be found
+	 */
+	@Override
+	public IBOrder findByOrderClientGroupCompany_First(long ordersId,
+		long companyId, long groupId, long ibclientId,
+		OrderByComparator<IBOrder> orderByComparator)
+		throws NoSuchIBOrderException {
+		IBOrder ibOrder = fetchByOrderClientGroupCompany_First(ordersId,
+				companyId, groupId, ibclientId, orderByComparator);
+
+		if (ibOrder != null) {
+			return ibOrder;
+		}
+
+		StringBundler msg = new StringBundler(10);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("ordersId=");
+		msg.append(ordersId);
+
+		msg.append(", companyId=");
+		msg.append(companyId);
+
+		msg.append(", groupId=");
+		msg.append(groupId);
+
+		msg.append(", ibclientId=");
+		msg.append(ibclientId);
+
+		msg.append(StringPool.CLOSE_CURLY_BRACE);
+
+		throw new NoSuchIBOrderException(msg.toString());
+	}
+
+	/**
+	 * Returns the first i b order in the ordered set where ordersId = &#63; and companyId = &#63; and groupId = &#63; and ibclientId = &#63;.
+	 *
+	 * @param ordersId the orders ID
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param ibclientId the ibclient ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching i b order, or <code>null</code> if a matching i b order could not be found
+	 */
+	@Override
+	public IBOrder fetchByOrderClientGroupCompany_First(long ordersId,
+		long companyId, long groupId, long ibclientId,
+		OrderByComparator<IBOrder> orderByComparator) {
+		List<IBOrder> list = findByOrderClientGroupCompany(ordersId, companyId,
+				groupId, ibclientId, 0, 1, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last i b order in the ordered set where ordersId = &#63; and companyId = &#63; and groupId = &#63; and ibclientId = &#63;.
+	 *
+	 * @param ordersId the orders ID
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param ibclientId the ibclient ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching i b order
+	 * @throws NoSuchIBOrderException if a matching i b order could not be found
+	 */
+	@Override
+	public IBOrder findByOrderClientGroupCompany_Last(long ordersId,
+		long companyId, long groupId, long ibclientId,
+		OrderByComparator<IBOrder> orderByComparator)
+		throws NoSuchIBOrderException {
+		IBOrder ibOrder = fetchByOrderClientGroupCompany_Last(ordersId,
+				companyId, groupId, ibclientId, orderByComparator);
+
+		if (ibOrder != null) {
+			return ibOrder;
+		}
+
+		StringBundler msg = new StringBundler(10);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("ordersId=");
+		msg.append(ordersId);
+
+		msg.append(", companyId=");
+		msg.append(companyId);
+
+		msg.append(", groupId=");
+		msg.append(groupId);
+
+		msg.append(", ibclientId=");
+		msg.append(ibclientId);
+
+		msg.append(StringPool.CLOSE_CURLY_BRACE);
+
+		throw new NoSuchIBOrderException(msg.toString());
+	}
+
+	/**
+	 * Returns the last i b order in the ordered set where ordersId = &#63; and companyId = &#63; and groupId = &#63; and ibclientId = &#63;.
+	 *
+	 * @param ordersId the orders ID
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param ibclientId the ibclient ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching i b order, or <code>null</code> if a matching i b order could not be found
+	 */
+	@Override
+	public IBOrder fetchByOrderClientGroupCompany_Last(long ordersId,
+		long companyId, long groupId, long ibclientId,
+		OrderByComparator<IBOrder> orderByComparator) {
+		int count = countByOrderClientGroupCompany(ordersId, companyId,
+				groupId, ibclientId);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<IBOrder> list = findByOrderClientGroupCompany(ordersId, companyId,
+				groupId, ibclientId, count - 1, count, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the i b orders before and after the current i b order in the ordered set where ordersId = &#63; and companyId = &#63; and groupId = &#63; and ibclientId = &#63;.
+	 *
+	 * @param orderIdPk the primary key of the current i b order
+	 * @param ordersId the orders ID
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param ibclientId the ibclient ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next i b order
+	 * @throws NoSuchIBOrderException if a i b order with the primary key could not be found
+	 */
+	@Override
+	public IBOrder[] findByOrderClientGroupCompany_PrevAndNext(long orderIdPk,
+		long ordersId, long companyId, long groupId, long ibclientId,
+		OrderByComparator<IBOrder> orderByComparator)
+		throws NoSuchIBOrderException {
+		IBOrder ibOrder = findByPrimaryKey(orderIdPk);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			IBOrder[] array = new IBOrderImpl[3];
+
+			array[0] = getByOrderClientGroupCompany_PrevAndNext(session,
+					ibOrder, ordersId, companyId, groupId, ibclientId,
+					orderByComparator, true);
+
+			array[1] = ibOrder;
+
+			array[2] = getByOrderClientGroupCompany_PrevAndNext(session,
+					ibOrder, ordersId, companyId, groupId, ibclientId,
+					orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected IBOrder getByOrderClientGroupCompany_PrevAndNext(
+		Session session, IBOrder ibOrder, long ordersId, long companyId,
+		long groupId, long ibclientId,
+		OrderByComparator<IBOrder> orderByComparator, boolean previous) {
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(7 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(6);
+		}
+
+		query.append(_SQL_SELECT_IBORDER_WHERE);
+
+		query.append(_FINDER_COLUMN_ORDERCLIENTGROUPCOMPANY_ORDERSID_2);
+
+		query.append(_FINDER_COLUMN_ORDERCLIENTGROUPCOMPANY_COMPANYID_2);
+
+		query.append(_FINDER_COLUMN_ORDERCLIENTGROUPCOMPANY_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_ORDERCLIENTGROUPCOMPANY_IBCLIENTID_2);
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			query.append(IBOrderModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = query.toString();
+
+		Query q = session.createQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(ordersId);
+
+		qPos.add(companyId);
+
+		qPos.add(groupId);
+
+		qPos.add(ibclientId);
+
+		if (orderByComparator != null) {
+			Object[] values = orderByComparator.getOrderByConditionValues(ibOrder);
+
+			for (Object value : values) {
+				qPos.add(value);
+			}
+		}
+
+		List<IBOrder> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Removes all the i b orders where ordersId = &#63; and companyId = &#63; and groupId = &#63; and ibclientId = &#63; from the database.
+	 *
+	 * @param ordersId the orders ID
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param ibclientId the ibclient ID
+	 */
+	@Override
+	public void removeByOrderClientGroupCompany(long ordersId, long companyId,
+		long groupId, long ibclientId) {
+		for (IBOrder ibOrder : findByOrderClientGroupCompany(ordersId,
+				companyId, groupId, ibclientId, QueryUtil.ALL_POS,
+				QueryUtil.ALL_POS, null)) {
+			remove(ibOrder);
+		}
+	}
+
+	/**
+	 * Returns the number of i b orders where ordersId = &#63; and companyId = &#63; and groupId = &#63; and ibclientId = &#63;.
+	 *
+	 * @param ordersId the orders ID
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param ibclientId the ibclient ID
+	 * @return the number of matching i b orders
+	 */
+	@Override
+	public int countByOrderClientGroupCompany(long ordersId, long companyId,
+		long groupId, long ibclientId) {
+		FinderPath finderPath = FINDER_PATH_COUNT_BY_ORDERCLIENTGROUPCOMPANY;
+
+		Object[] finderArgs = new Object[] {
+				ordersId, companyId, groupId, ibclientId
+			};
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(5);
+
+			query.append(_SQL_COUNT_IBORDER_WHERE);
+
+			query.append(_FINDER_COLUMN_ORDERCLIENTGROUPCOMPANY_ORDERSID_2);
+
+			query.append(_FINDER_COLUMN_ORDERCLIENTGROUPCOMPANY_COMPANYID_2);
+
+			query.append(_FINDER_COLUMN_ORDERCLIENTGROUPCOMPANY_GROUPID_2);
+
+			query.append(_FINDER_COLUMN_ORDERCLIENTGROUPCOMPANY_IBCLIENTID_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(ordersId);
+
+				qPos.add(companyId);
+
+				qPos.add(groupId);
+
+				qPos.add(ibclientId);
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_ORDERCLIENTGROUPCOMPANY_ORDERSID_2 =
+		"ibOrder.ordersId = ? AND ";
+	private static final String _FINDER_COLUMN_ORDERCLIENTGROUPCOMPANY_COMPANYID_2 =
+		"ibOrder.companyId = ? AND ";
+	private static final String _FINDER_COLUMN_ORDERCLIENTGROUPCOMPANY_GROUPID_2 =
+		"ibOrder.groupId = ? AND ";
+	private static final String _FINDER_COLUMN_ORDERCLIENTGROUPCOMPANY_IBCLIENTID_2 =
+		"ibOrder.ibclientId = ?";
+	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_ORDERCLIENT =
+		new FinderPath(IBOrderModelImpl.ENTITY_CACHE_ENABLED,
+			IBOrderModelImpl.FINDER_CACHE_ENABLED, IBOrderImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByOrderClient",
+			new String[] {
+				Long.class.getName(), Long.class.getName(),
+				
+			Integer.class.getName(), Integer.class.getName(),
+				OrderByComparator.class.getName()
+			});
+	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ORDERCLIENT =
+		new FinderPath(IBOrderModelImpl.ENTITY_CACHE_ENABLED,
+			IBOrderModelImpl.FINDER_CACHE_ENABLED, IBOrderImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByOrderClient",
+			new String[] { Long.class.getName(), Long.class.getName() },
+			IBOrderModelImpl.ORDERSID_COLUMN_BITMASK |
+			IBOrderModelImpl.IBCLIENTID_COLUMN_BITMASK);
+	public static final FinderPath FINDER_PATH_COUNT_BY_ORDERCLIENT = new FinderPath(IBOrderModelImpl.ENTITY_CACHE_ENABLED,
+			IBOrderModelImpl.FINDER_CACHE_ENABLED, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByOrderClient",
+			new String[] { Long.class.getName(), Long.class.getName() });
+
+	/**
+	 * Returns all the i b orders where ordersId = &#63; and ibclientId = &#63;.
+	 *
+	 * @param ordersId the orders ID
+	 * @param ibclientId the ibclient ID
+	 * @return the matching i b orders
+	 */
+	@Override
+	public List<IBOrder> findByOrderClient(long ordersId, long ibclientId) {
+		return findByOrderClient(ordersId, ibclientId, QueryUtil.ALL_POS,
+			QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the i b orders where ordersId = &#63; and ibclientId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param ordersId the orders ID
+	 * @param ibclientId the ibclient ID
+	 * @param start the lower bound of the range of i b orders
+	 * @param end the upper bound of the range of i b orders (not inclusive)
+	 * @return the range of matching i b orders
+	 */
+	@Override
+	public List<IBOrder> findByOrderClient(long ordersId, long ibclientId,
+		int start, int end) {
+		return findByOrderClient(ordersId, ibclientId, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the i b orders where ordersId = &#63; and ibclientId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param ordersId the orders ID
+	 * @param ibclientId the ibclient ID
+	 * @param start the lower bound of the range of i b orders
+	 * @param end the upper bound of the range of i b orders (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching i b orders
+	 */
+	@Override
+	public List<IBOrder> findByOrderClient(long ordersId, long ibclientId,
+		int start, int end, OrderByComparator<IBOrder> orderByComparator) {
+		return findByOrderClient(ordersId, ibclientId, start, end,
+			orderByComparator, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the i b orders where ordersId = &#63; and ibclientId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param ordersId the orders ID
+	 * @param ibclientId the ibclient ID
+	 * @param start the lower bound of the range of i b orders
+	 * @param end the upper bound of the range of i b orders (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the ordered range of matching i b orders
+	 */
+	@Override
+	public List<IBOrder> findByOrderClient(long ordersId, long ibclientId,
+		int start, int end, OrderByComparator<IBOrder> orderByComparator,
+		boolean retrieveFromCache) {
+		boolean pagination = true;
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+				(orderByComparator == null)) {
+			pagination = false;
+			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ORDERCLIENT;
+			finderArgs = new Object[] { ordersId, ibclientId };
+		}
+		else {
+			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_ORDERCLIENT;
+			finderArgs = new Object[] {
+					ordersId, ibclientId,
+					
+					start, end, orderByComparator
+				};
+		}
+
+		List<IBOrder> list = null;
+
+		if (retrieveFromCache) {
+			list = (List<IBOrder>)finderCache.getResult(finderPath, finderArgs,
+					this);
+
+			if ((list != null) && !list.isEmpty()) {
+				for (IBOrder ibOrder : list) {
+					if ((ordersId != ibOrder.getOrdersId()) ||
+							(ibclientId != ibOrder.getIbclientId())) {
+						list = null;
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler query = null;
+
+			if (orderByComparator != null) {
+				query = new StringBundler(4 +
+						(orderByComparator.getOrderByFields().length * 2));
+			}
+			else {
+				query = new StringBundler(4);
+			}
+
+			query.append(_SQL_SELECT_IBORDER_WHERE);
+
+			query.append(_FINDER_COLUMN_ORDERCLIENT_ORDERSID_2);
+
+			query.append(_FINDER_COLUMN_ORDERCLIENT_IBCLIENTID_2);
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
+					orderByComparator);
+			}
+			else
+			 if (pagination) {
+				query.append(IBOrderModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(ordersId);
+
+				qPos.add(ibclientId);
+
+				if (!pagination) {
+					list = (List<IBOrder>)QueryUtil.list(q, getDialect(),
+							start, end, false);
+
+					Collections.sort(list);
+
+					list = Collections.unmodifiableList(list);
+				}
+				else {
+					list = (List<IBOrder>)QueryUtil.list(q, getDialect(),
+							start, end);
+				}
+
+				cacheResult(list);
+
+				finderCache.putResult(finderPath, finderArgs, list);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Returns the first i b order in the ordered set where ordersId = &#63; and ibclientId = &#63;.
+	 *
+	 * @param ordersId the orders ID
+	 * @param ibclientId the ibclient ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching i b order
+	 * @throws NoSuchIBOrderException if a matching i b order could not be found
+	 */
+	@Override
+	public IBOrder findByOrderClient_First(long ordersId, long ibclientId,
+		OrderByComparator<IBOrder> orderByComparator)
+		throws NoSuchIBOrderException {
+		IBOrder ibOrder = fetchByOrderClient_First(ordersId, ibclientId,
+				orderByComparator);
+
+		if (ibOrder != null) {
+			return ibOrder;
+		}
+
+		StringBundler msg = new StringBundler(6);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("ordersId=");
+		msg.append(ordersId);
+
+		msg.append(", ibclientId=");
+		msg.append(ibclientId);
+
+		msg.append(StringPool.CLOSE_CURLY_BRACE);
+
+		throw new NoSuchIBOrderException(msg.toString());
+	}
+
+	/**
+	 * Returns the first i b order in the ordered set where ordersId = &#63; and ibclientId = &#63;.
+	 *
+	 * @param ordersId the orders ID
+	 * @param ibclientId the ibclient ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching i b order, or <code>null</code> if a matching i b order could not be found
+	 */
+	@Override
+	public IBOrder fetchByOrderClient_First(long ordersId, long ibclientId,
+		OrderByComparator<IBOrder> orderByComparator) {
+		List<IBOrder> list = findByOrderClient(ordersId, ibclientId, 0, 1,
+				orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last i b order in the ordered set where ordersId = &#63; and ibclientId = &#63;.
+	 *
+	 * @param ordersId the orders ID
+	 * @param ibclientId the ibclient ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching i b order
+	 * @throws NoSuchIBOrderException if a matching i b order could not be found
+	 */
+	@Override
+	public IBOrder findByOrderClient_Last(long ordersId, long ibclientId,
+		OrderByComparator<IBOrder> orderByComparator)
+		throws NoSuchIBOrderException {
+		IBOrder ibOrder = fetchByOrderClient_Last(ordersId, ibclientId,
+				orderByComparator);
+
+		if (ibOrder != null) {
+			return ibOrder;
+		}
+
+		StringBundler msg = new StringBundler(6);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("ordersId=");
+		msg.append(ordersId);
+
+		msg.append(", ibclientId=");
+		msg.append(ibclientId);
+
+		msg.append(StringPool.CLOSE_CURLY_BRACE);
+
+		throw new NoSuchIBOrderException(msg.toString());
+	}
+
+	/**
+	 * Returns the last i b order in the ordered set where ordersId = &#63; and ibclientId = &#63;.
+	 *
+	 * @param ordersId the orders ID
+	 * @param ibclientId the ibclient ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching i b order, or <code>null</code> if a matching i b order could not be found
+	 */
+	@Override
+	public IBOrder fetchByOrderClient_Last(long ordersId, long ibclientId,
+		OrderByComparator<IBOrder> orderByComparator) {
+		int count = countByOrderClient(ordersId, ibclientId);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<IBOrder> list = findByOrderClient(ordersId, ibclientId, count - 1,
+				count, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the i b orders before and after the current i b order in the ordered set where ordersId = &#63; and ibclientId = &#63;.
+	 *
+	 * @param orderIdPk the primary key of the current i b order
+	 * @param ordersId the orders ID
+	 * @param ibclientId the ibclient ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next i b order
+	 * @throws NoSuchIBOrderException if a i b order with the primary key could not be found
+	 */
+	@Override
+	public IBOrder[] findByOrderClient_PrevAndNext(long orderIdPk,
+		long ordersId, long ibclientId,
+		OrderByComparator<IBOrder> orderByComparator)
+		throws NoSuchIBOrderException {
+		IBOrder ibOrder = findByPrimaryKey(orderIdPk);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			IBOrder[] array = new IBOrderImpl[3];
+
+			array[0] = getByOrderClient_PrevAndNext(session, ibOrder, ordersId,
+					ibclientId, orderByComparator, true);
+
+			array[1] = ibOrder;
+
+			array[2] = getByOrderClient_PrevAndNext(session, ibOrder, ordersId,
+					ibclientId, orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected IBOrder getByOrderClient_PrevAndNext(Session session,
+		IBOrder ibOrder, long ordersId, long ibclientId,
+		OrderByComparator<IBOrder> orderByComparator, boolean previous) {
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(5 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(4);
+		}
+
+		query.append(_SQL_SELECT_IBORDER_WHERE);
+
+		query.append(_FINDER_COLUMN_ORDERCLIENT_ORDERSID_2);
+
+		query.append(_FINDER_COLUMN_ORDERCLIENT_IBCLIENTID_2);
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			query.append(IBOrderModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = query.toString();
+
+		Query q = session.createQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(ordersId);
+
+		qPos.add(ibclientId);
+
+		if (orderByComparator != null) {
+			Object[] values = orderByComparator.getOrderByConditionValues(ibOrder);
+
+			for (Object value : values) {
+				qPos.add(value);
+			}
+		}
+
+		List<IBOrder> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Removes all the i b orders where ordersId = &#63; and ibclientId = &#63; from the database.
+	 *
+	 * @param ordersId the orders ID
+	 * @param ibclientId the ibclient ID
+	 */
+	@Override
+	public void removeByOrderClient(long ordersId, long ibclientId) {
+		for (IBOrder ibOrder : findByOrderClient(ordersId, ibclientId,
+				QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+			remove(ibOrder);
+		}
+	}
+
+	/**
+	 * Returns the number of i b orders where ordersId = &#63; and ibclientId = &#63;.
+	 *
+	 * @param ordersId the orders ID
+	 * @param ibclientId the ibclient ID
+	 * @return the number of matching i b orders
+	 */
+	@Override
+	public int countByOrderClient(long ordersId, long ibclientId) {
+		FinderPath finderPath = FINDER_PATH_COUNT_BY_ORDERCLIENT;
+
+		Object[] finderArgs = new Object[] { ordersId, ibclientId };
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(3);
+
+			query.append(_SQL_COUNT_IBORDER_WHERE);
+
+			query.append(_FINDER_COLUMN_ORDERCLIENT_ORDERSID_2);
+
+			query.append(_FINDER_COLUMN_ORDERCLIENT_IBCLIENTID_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(ordersId);
+
+				qPos.add(ibclientId);
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_ORDERCLIENT_ORDERSID_2 = "ibOrder.ordersId = ? AND ";
+	private static final String _FINDER_COLUMN_ORDERCLIENT_IBCLIENTID_2 = "ibOrder.ibclientId = ?";
 
 	public IBOrderPersistenceImpl() {
 		setModelClass(IBOrder.class);
@@ -2627,15 +3966,15 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	/**
 	 * Creates a new i b order with the primary key. Does not add the i b order to the database.
 	 *
-	 * @param ordersId the primary key for the new i b order
+	 * @param orderIdPk the primary key for the new i b order
 	 * @return the new i b order
 	 */
 	@Override
-	public IBOrder create(long ordersId) {
+	public IBOrder create(long orderIdPk) {
 		IBOrder ibOrder = new IBOrderImpl();
 
 		ibOrder.setNew(true);
-		ibOrder.setPrimaryKey(ordersId);
+		ibOrder.setPrimaryKey(orderIdPk);
 
 		String uuid = PortalUUIDUtil.generate();
 
@@ -2649,13 +3988,13 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	/**
 	 * Removes the i b order with the primary key from the database. Also notifies the appropriate model listeners.
 	 *
-	 * @param ordersId the primary key of the i b order
+	 * @param orderIdPk the primary key of the i b order
 	 * @return the i b order that was removed
 	 * @throws NoSuchIBOrderException if a i b order with the primary key could not be found
 	 */
 	@Override
-	public IBOrder remove(long ordersId) throws NoSuchIBOrderException {
-		return remove((Serializable)ordersId);
+	public IBOrder remove(long orderIdPk) throws NoSuchIBOrderException {
+		return remove((Serializable)orderIdPk);
 	}
 
 	/**
@@ -2878,6 +4217,54 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ORDERGROUPCOMPANY,
 					args);
 			}
+
+			if ((ibOrderModelImpl.getColumnBitmask() &
+					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ORDERCLIENTGROUPCOMPANY.getColumnBitmask()) != 0) {
+				Object[] args = new Object[] {
+						ibOrderModelImpl.getOriginalOrdersId(),
+						ibOrderModelImpl.getOriginalCompanyId(),
+						ibOrderModelImpl.getOriginalGroupId(),
+						ibOrderModelImpl.getOriginalIbclientId()
+					};
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_ORDERCLIENTGROUPCOMPANY,
+					args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ORDERCLIENTGROUPCOMPANY,
+					args);
+
+				args = new Object[] {
+						ibOrderModelImpl.getOrdersId(),
+						ibOrderModelImpl.getCompanyId(),
+						ibOrderModelImpl.getGroupId(),
+						ibOrderModelImpl.getIbclientId()
+					};
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_ORDERCLIENTGROUPCOMPANY,
+					args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ORDERCLIENTGROUPCOMPANY,
+					args);
+			}
+
+			if ((ibOrderModelImpl.getColumnBitmask() &
+					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ORDERCLIENT.getColumnBitmask()) != 0) {
+				Object[] args = new Object[] {
+						ibOrderModelImpl.getOriginalOrdersId(),
+						ibOrderModelImpl.getOriginalIbclientId()
+					};
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_ORDERCLIENT, args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ORDERCLIENT,
+					args);
+
+				args = new Object[] {
+						ibOrderModelImpl.getOrdersId(),
+						ibOrderModelImpl.getIbclientId()
+					};
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_ORDERCLIENT, args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ORDERCLIENT,
+					args);
+			}
 		}
 
 		entityCache.putResult(IBOrderModelImpl.ENTITY_CACHE_ENABLED,
@@ -2902,6 +4289,7 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 		ibOrderImpl.setPrimaryKey(ibOrder.getPrimaryKey());
 
 		ibOrderImpl.setUuid(ibOrder.getUuid());
+		ibOrderImpl.setOrderIdPk(ibOrder.getOrderIdPk());
 		ibOrderImpl.setOrdersId(ibOrder.getOrdersId());
 		ibOrderImpl.setGroupId(ibOrder.getGroupId());
 		ibOrderImpl.setCompanyId(ibOrder.getCompanyId());
@@ -2909,6 +4297,7 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 		ibOrderImpl.setChecked(ibOrder.isChecked());
 		ibOrderImpl.setCreateDate(ibOrder.getCreateDate());
 		ibOrderImpl.setModifiedDate(ibOrder.getModifiedDate());
+		ibOrderImpl.setIbclientId(ibOrder.getIbclientId());
 
 		return ibOrderImpl;
 	}
@@ -2940,14 +4329,14 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	/**
 	 * Returns the i b order with the primary key or throws a {@link NoSuchIBOrderException} if it could not be found.
 	 *
-	 * @param ordersId the primary key of the i b order
+	 * @param orderIdPk the primary key of the i b order
 	 * @return the i b order
 	 * @throws NoSuchIBOrderException if a i b order with the primary key could not be found
 	 */
 	@Override
-	public IBOrder findByPrimaryKey(long ordersId)
+	public IBOrder findByPrimaryKey(long orderIdPk)
 		throws NoSuchIBOrderException {
-		return findByPrimaryKey((Serializable)ordersId);
+		return findByPrimaryKey((Serializable)orderIdPk);
 	}
 
 	/**
@@ -3000,12 +4389,12 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	/**
 	 * Returns the i b order with the primary key or returns <code>null</code> if it could not be found.
 	 *
-	 * @param ordersId the primary key of the i b order
+	 * @param orderIdPk the primary key of the i b order
 	 * @return the i b order, or <code>null</code> if a i b order with the primary key could not be found
 	 */
 	@Override
-	public IBOrder fetchByPrimaryKey(long ordersId) {
-		return fetchByPrimaryKey((Serializable)ordersId);
+	public IBOrder fetchByPrimaryKey(long orderIdPk) {
+		return fetchByPrimaryKey((Serializable)orderIdPk);
 	}
 
 	@Override
@@ -3322,7 +4711,7 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	@ServiceReference(type = FinderCache.class)
 	protected FinderCache finderCache;
 	private static final String _SQL_SELECT_IBORDER = "SELECT ibOrder FROM IBOrder ibOrder";
-	private static final String _SQL_SELECT_IBORDER_WHERE_PKS_IN = "SELECT ibOrder FROM IBOrder ibOrder WHERE ordersId IN (";
+	private static final String _SQL_SELECT_IBORDER_WHERE_PKS_IN = "SELECT ibOrder FROM IBOrder ibOrder WHERE orderIdPk IN (";
 	private static final String _SQL_SELECT_IBORDER_WHERE = "SELECT ibOrder FROM IBOrder ibOrder WHERE ";
 	private static final String _SQL_COUNT_IBORDER = "SELECT COUNT(ibOrder) FROM IBOrder ibOrder";
 	private static final String _SQL_COUNT_IBORDER_WHERE = "SELECT COUNT(ibOrder) FROM IBOrder ibOrder WHERE ";

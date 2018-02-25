@@ -183,7 +183,7 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 		double percentual_limit_buy =  ParamUtil.getDouble(actionRequest,"percentual_limit_buy",0);
 		double percentual_stop_lost =  ParamUtil.getDouble(actionRequest,"percentual_stop_lost",0);
 		double percentual_stop_profit =  ParamUtil.getDouble(actionRequest,"percentual_stop_profit",0);
-		double trailling_stop_lost =  ParamUtil.getDouble(actionRequest,"trailling_stop_lost",0);
+		double percentual_trailling_stop_lost =  ParamUtil.getDouble(actionRequest,"trailling_stop_lost",0);
 		
 		
 		Date expiry_date = ParamUtil.getDate(actionRequest,"expiry_date",null, null);
@@ -213,7 +213,7 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 						percentual_limit_buy>=0 && percentual_limit_buy<=100  && 
 								percentual_stop_lost>=0 && percentual_stop_lost<=100 && 
 										percentual_stop_profit>=0 && percentual_stop_profit<=100 && 
-												trailling_stop_lost>=0 && trailling_stop_lost<=100 &&												
+												percentual_trailling_stop_lost>=0 && percentual_trailling_stop_lost<=100 &&												
 														tick_futures>=0  && multiplier>=0;
 						
 
@@ -273,7 +273,7 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 						share.setPercentual_limit_buy(percentual_limit_buy);
 						share.setPercentual_stop_lost(percentual_stop_lost);
 						share.setPercentual_stop_profit(percentual_stop_profit);
-						share.setTrailling_stop_lost(trailling_stop_lost);						
+						share.setPercentual_trailling_stop_lost(percentual_trailling_stop_lost);						
 						share.setCompanyId(themeDisplay.getCompanyId());
 						share.setGroupId(themeDisplay.getScopeGroupId());
 					//	share.setPercentual_stop_profit(percentual_stop_profit);
@@ -403,8 +403,8 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 					market.setIdentifier(identifier);				
 					market.setCompanyId(themeDisplay.getCompanyId());
 					market.setGroupId(themeDisplay.getScopeGroupId());
-					market.setStart_hour(starthour);
-					market.setEnd_hour(endhour);
+					market.setStart_hour(starthour.replace(":", ""));
+					market.setEnd_hour(endhour.replace(":", ""));
 					market.setCurrency(currency);						
 					if (!bEditMode)
 						market.setCreateDate(new Date());
@@ -440,11 +440,11 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 		}
 		
 		boolean validated = Boolean.TRUE;//= ValidateDataShare(actionRequest);		
-		long numbertopurchase =  ParamUtil.getLong(actionRequest,"numbertopurchase",-1);
+		long numbertopurchase =  ParamUtil.getLong(actionRequest,ConfigKeys._FIELD_NUMBER_TO_PURCHASE,-1);
 		double percentual_limit_buy=  ParamUtil.getDouble(actionRequest,"percentual_limit_buy",0d);
 		double percentual_stop_lost=  ParamUtil.getDouble(actionRequest,"percentual_stop_lost",0d);
 		double percentual_stop_profit=  ParamUtil.getDouble(actionRequest,"percentual_stop_profit",0d);		
-		double trailling_stop_lost =  ParamUtil.getDouble(actionRequest,"trailling_stop_lost",0);
+		double trailling_stop_lost =  ParamUtil.getDouble(actionRequest,ConfigKeys._FIELD_TRAILLING_STOP_LOST,0);
 		long shareId =  ParamUtil.getLong(actionRequest,"shareId",-1);
 		long strategyId =  ParamUtil.getLong(actionRequest,"strategyId",-1);		
 		boolean bExists = false;
@@ -525,12 +525,11 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 					
 					/* GENERAMOS EL JSON CON LOS DATOS DEL ACTIVO  + LOS EXPANDOS  */					
 					JSONObject  jsonStrategyShareParams = JSONFactoryUtil.createJSONObject();
-					jsonStrategyShareParams.put("numbertopurchase", numbertopurchase);
+					jsonStrategyShareParams.put(ConfigKeys._FIELD_NUMBER_TO_PURCHASE, numbertopurchase);
 					jsonStrategyShareParams.put("percentual_limit_buy", percentual_limit_buy);
 					jsonStrategyShareParams.put("percentual_stop_lost", percentual_stop_lost);
-					jsonStrategyShareParams.put("numbertopurchase", numbertopurchase);
 					jsonStrategyShareParams.put("percentual_stop_profit", percentual_stop_profit);
-					jsonStrategyShareParams.put("trailling_stop_lost", trailling_stop_lost);					
+					jsonStrategyShareParams.put(ConfigKeys._FIELD_TRAILLING_STOP_LOST, trailling_stop_lost);					
 					
 					/*  BUSCAMOS EN LA REQUEST TODOS LOS PARAMETROS QUE EMPIECEN CON EL PREFIJO Utilities.IBTRADER_PREFIX...*/				
 				    //while (enumeration.hasMoreElements()) {

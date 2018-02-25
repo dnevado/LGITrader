@@ -77,8 +77,7 @@ public class TIMApiGITrader extends TIMApiWrapper {
 	}
 	
 	/* METODOS PERSONALIZADOS QUE NO ESTAN EN EL INTERFACE */
-	public void GITradergetContractDetails(int RequestID, Contract contract)
-			throws InterruptedException {
+	public void GITradergetContractDetails(int RequestID, Contract contract) throws InterruptedException {
 		 _log.info("GITradergetContractDetails RequestID:" + RequestID);		 	
 		clientSocket.reqContractDetails(RequestID, contract);
 		Thread.sleep(1000);
@@ -336,7 +335,16 @@ public class TIMApiGITrader extends TIMApiWrapper {
 		
 		
 		 TIMApiWrapper wrapper = new TIMApiWrapper(5665,false);
+		 TIMApiWrapper wrapper2 = new TIMApiWrapper(5666,false);
 		
+		 wrapper.connect("127.0.0.1", 7498, 5665); 
+		 wrapper.reqNextId(); 
+		 wrapper2.connect("127.0.0.1", 7498, 5666);
+		 wrapper2.reqNextId();
+		 System.out.println(wrapper2.getCurrentOrderId());
+		 
+
+		 
 		/* final EClientSocket m_client = wrapper.getClient();
 		 final EReaderSignal m_signal = wrapper.getSignal(); 
  		 //! [connect]
@@ -363,10 +371,7 @@ public class TIMApiGITrader extends TIMApiWrapper {
 		m_client.reqContractDetails(58722, _contractAPI3);
 */
 		
-		 wrapper.connect("127.0.0.1", 7497, 2566); 
-		 wrapper.reqNextId(); 
-		 wrapper.getRealTime(54888, _contractAPI3);
-
+		
 		
 		
 		 /*    TIMApiWrapper wrapper = new TIMApiWrapper(6,false);
@@ -497,7 +502,7 @@ public class TIMApiGITrader extends TIMApiWrapper {
 		//pnlSingle(wrapper.getClient());
 		//continuousFuturesOperations(wrapper.getClient());
 
-		Thread.sleep(100000);
+	//	Thread.sleep(100000);
 		//m_client.eDisconnect();
 
 		

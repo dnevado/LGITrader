@@ -74,7 +74,8 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 		attributes.put("percentual_stop_profit", getPercentual_stop_profit());
 		attributes.put("percentual_stop_profit_position",
 			getPercentual_stop_profit_position());
-		attributes.put("trailling_stop_lost", getTrailling_stop_lost());
+		attributes.put("percentual_trailling_stop_lost",
+			getPercentual_trailling_stop_lost());
 		attributes.put("expiry_date", getExpiry_date());
 		attributes.put("expiry_expression", getExpiry_expression());
 		attributes.put("tick_futures", getTick_futures());
@@ -184,11 +185,11 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 			setPercentual_stop_profit_position(percentual_stop_profit_position);
 		}
 
-		Double trailling_stop_lost = (Double)attributes.get(
-				"trailling_stop_lost");
+		Double percentual_trailling_stop_lost = (Double)attributes.get(
+				"percentual_trailling_stop_lost");
 
-		if (trailling_stop_lost != null) {
-			setTrailling_stop_lost(trailling_stop_lost);
+		if (percentual_trailling_stop_lost != null) {
+			setPercentual_trailling_stop_lost(percentual_trailling_stop_lost);
 		}
 
 		Date expiry_date = (Date)attributes.get("expiry_date");
@@ -388,6 +389,16 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 	}
 
 	/**
+	* Returns the percentual_trailling_stop_lost of this share.
+	*
+	* @return the percentual_trailling_stop_lost of this share
+	*/
+	@Override
+	public double getPercentual_trailling_stop_lost() {
+		return _share.getPercentual_trailling_stop_lost();
+	}
+
+	/**
 	* Returns the tick_futures of this share.
 	*
 	* @return the tick_futures of this share
@@ -395,16 +406,6 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 	@Override
 	public double getTick_futures() {
 		return _share.getTick_futures();
-	}
-
-	/**
-	* Returns the trailling_stop_lost of this share.
-	*
-	* @return the trailling_stop_lost of this share
-	*/
-	@Override
-	public double getTrailling_stop_lost() {
-		return _share.getTrailling_stop_lost();
 	}
 
 	@Override
@@ -852,6 +853,17 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 	}
 
 	/**
+	* Sets the percentual_trailling_stop_lost of this share.
+	*
+	* @param percentual_trailling_stop_lost the percentual_trailling_stop_lost of this share
+	*/
+	@Override
+	public void setPercentual_trailling_stop_lost(
+		double percentual_trailling_stop_lost) {
+		_share.setPercentual_trailling_stop_lost(percentual_trailling_stop_lost);
+	}
+
+	/**
 	* Sets the primary key of this share.
 	*
 	* @param primaryKey the primary key of this share
@@ -914,16 +926,6 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 	@Override
 	public void setTick_futures(double tick_futures) {
 		_share.setTick_futures(tick_futures);
-	}
-
-	/**
-	* Sets the trailling_stop_lost of this share.
-	*
-	* @param trailling_stop_lost the trailling_stop_lost of this share
-	*/
-	@Override
-	public void setTrailling_stop_lost(double trailling_stop_lost) {
-		_share.setTrailling_stop_lost(trailling_stop_lost);
 	}
 
 	/**

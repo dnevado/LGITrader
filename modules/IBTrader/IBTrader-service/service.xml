@@ -251,17 +251,17 @@
 	<entity local-service="true" name="IBOrder" remote-service="true" uuid="true">
 
 		<!-- PK fields -->
-
-		<column name="ordersId" primary="true" type="long"  /> <!-- id-type="identity" -->
+	    <column name="orderIdPk" type="long" id-type="identity" primary="true" /> <!-- id-primary="true" -->
+		<column name="ordersId"  type="long"  /> <!-- id-type="identity"  -->
 
 		<!-- Group instance -->
-
 		<column name="groupId" type="long" />
 		<column name="companyId" type="long"/>		
 		<column name="shareID" type="long" />
 		<column name="checked" type="boolean" />
 		<column name="createDate" type="Date" />
 		<column name="modifiedDate" type="Date" />
+		<column name="ibclientId" type="long" /><!--  TWS CLIENTID  -->
 		
 		<!--  SI HAY MARKET DATA SUSCRITA PREVIA --> 
 		<finder name="ShareIdCompanyGroup" return-type="Collection">
@@ -273,6 +273,16 @@
 			<finder-column name="shareID"/>		
 			<finder-column name="companyId"/>		
 			<finder-column name="ordersId"/>							
+		</finder>
+		<finder name="OrderClientGroupCompany" return-type="Collection">
+			<finder-column name="ordersId"/>		
+			<finder-column name="companyId"/>		
+			<finder-column name="groupId"/>
+			<finder-column name="ibclientId"/>									
+		</finder>
+		<finder name="OrderClient" return-type="Collection">				
+			<finder-column name="ordersId"/>
+			<finder-column name="ibclientId"/>									
 		</finder>
 		
 		<!-- Other fields -->
@@ -294,7 +304,7 @@
 			<column name="percentual_stop_lost" type="double" />
 			<column name="percentual_stop_profit" type="double" />
 			<column name="percentual_stop_profit_position" type="double" />
-			<column name="trailling_stop_lost" type="double" />					
+			<column name="percentual_trailling_stop_lost" type="double" />					
 			<column name="expiry_date" type="Date" />
 			<column name="expiry_expression" type="String" />
 			<column name="tick_futures" type="double" />
@@ -471,14 +481,16 @@
 			<finder-column name="groupId"/>
 			<finder-column name="date_out"/>	
 			<finder-column name="state_out"/>												
-		</finder>
-			
-	
-		
-		<finder name="PositionID_Out_TWS" return-type="Collection">		
+		</finder>		
+		<finder name="PositionOutGroupCompany" return-type="Position">		
 				<finder-column name="groupId"/>
 				<finder-column name="companyId"/>		
 				<finder-column name="positionId_tws_out" />					
+		</finder>
+		<finder name="PositionInGroupCompany" return-type="Position">		
+				<finder-column name="groupId"/>
+				<finder-column name="companyId"/>		
+				<finder-column name="positionId_tws_in" />					
 		</finder>
 		
 		<!-- Order -->

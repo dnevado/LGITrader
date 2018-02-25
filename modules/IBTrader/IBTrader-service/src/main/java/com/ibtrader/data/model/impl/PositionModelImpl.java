@@ -174,13 +174,13 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 	public static final long DATE_REAL_IN_COLUMN_BITMASK = 8L;
 	public static final long DATE_REAL_OUT_COLUMN_BITMASK = 16L;
 	public static final long GROUPID_COLUMN_BITMASK = 32L;
-	public static final long POSITIONID_TWS_OUT_COLUMN_BITMASK = 64L;
-	public static final long SHAREID_COLUMN_BITMASK = 128L;
-	public static final long STATE_COLUMN_BITMASK = 256L;
-	public static final long STATE_IN_COLUMN_BITMASK = 512L;
-	public static final long STATE_OUT_COLUMN_BITMASK = 1024L;
-	public static final long UUID_COLUMN_BITMASK = 2048L;
-	public static final long POSITIONID_TWS_IN_COLUMN_BITMASK = 4096L;
+	public static final long POSITIONID_TWS_IN_COLUMN_BITMASK = 64L;
+	public static final long POSITIONID_TWS_OUT_COLUMN_BITMASK = 128L;
+	public static final long SHAREID_COLUMN_BITMASK = 256L;
+	public static final long STATE_COLUMN_BITMASK = 512L;
+	public static final long STATE_IN_COLUMN_BITMASK = 1024L;
+	public static final long STATE_OUT_COLUMN_BITMASK = 2048L;
+	public static final long UUID_COLUMN_BITMASK = 4096L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -889,7 +889,17 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 	public void setPositionId_tws_in(long positionId_tws_in) {
 		_columnBitmask = -1L;
 
+		if (!_setOriginalPositionId_tws_in) {
+			_setOriginalPositionId_tws_in = true;
+
+			_originalPositionId_tws_in = _positionId_tws_in;
+		}
+
 		_positionId_tws_in = positionId_tws_in;
+	}
+
+	public long getOriginalPositionId_tws_in() {
+		return _originalPositionId_tws_in;
 	}
 
 	@JSON
@@ -1351,6 +1361,10 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		positionModelImpl._originalDate_in = positionModelImpl._date_in;
 
 		positionModelImpl._originalDate_real_in = positionModelImpl._date_real_in;
+
+		positionModelImpl._originalPositionId_tws_in = positionModelImpl._positionId_tws_in;
+
+		positionModelImpl._setOriginalPositionId_tws_in = false;
 
 		positionModelImpl._originalPositionId_tws_out = positionModelImpl._positionId_tws_out;
 
@@ -1828,6 +1842,8 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 	private Date _date_real_in;
 	private Date _originalDate_real_in;
 	private long _positionId_tws_in;
+	private long _originalPositionId_tws_in;
+	private boolean _setOriginalPositionId_tws_in;
 	private long _positionId_tws_out;
 	private long _originalPositionId_tws_out;
 	private boolean _setOriginalPositionId_tws_out;

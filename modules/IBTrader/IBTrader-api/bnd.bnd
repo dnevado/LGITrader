@@ -3,6 +3,9 @@ Bundle-SymbolicName: com.ibtrader.data.api
 Bundle-Version: 1.0.0
 Export-Package: \
 	com.ibtrader.constants,\
+	com.ib.client,\
+	com.ib.contracts,\
+	com.ib.controller,\
 	com.ibtrader.data.exception,\
 	com.ibtrader.data.model,\
 	com.ibtrader.data.service,\

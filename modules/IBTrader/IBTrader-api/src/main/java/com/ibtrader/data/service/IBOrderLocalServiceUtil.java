@@ -56,11 +56,11 @@ public class IBOrderLocalServiceUtil {
 	/**
 	* Creates a new i b order with the primary key. Does not add the i b order to the database.
 	*
-	* @param ordersId the primary key for the new i b order
+	* @param orderIdPk the primary key for the new i b order
 	* @return the new i b order
 	*/
-	public static com.ibtrader.data.model.IBOrder createIBOrder(long ordersId) {
-		return getService().createIBOrder(ordersId);
+	public static com.ibtrader.data.model.IBOrder createIBOrder(long orderIdPk) {
+		return getService().createIBOrder(orderIdPk);
 	}
 
 	/**
@@ -77,17 +77,17 @@ public class IBOrderLocalServiceUtil {
 	/**
 	* Deletes the i b order with the primary key from the database. Also notifies the appropriate model listeners.
 	*
-	* @param ordersId the primary key of the i b order
+	* @param orderIdPk the primary key of the i b order
 	* @return the i b order that was removed
 	* @throws PortalException if a i b order with the primary key could not be found
 	*/
-	public static com.ibtrader.data.model.IBOrder deleteIBOrder(long ordersId)
+	public static com.ibtrader.data.model.IBOrder deleteIBOrder(long orderIdPk)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().deleteIBOrder(ordersId);
+		return getService().deleteIBOrder(orderIdPk);
 	}
 
-	public static com.ibtrader.data.model.IBOrder fetchIBOrder(long ordersId) {
-		return getService().fetchIBOrder(ordersId);
+	public static com.ibtrader.data.model.IBOrder fetchIBOrder(long orderIdPk) {
+		return getService().fetchIBOrder(orderIdPk);
 	}
 
 	/**
@@ -102,16 +102,23 @@ public class IBOrderLocalServiceUtil {
 		return getService().fetchIBOrderByUuidAndGroupId(uuid, groupId);
 	}
 
+	public static com.ibtrader.data.model.IBOrder findByOrderClientGroupCompany(
+		long iborderId, long clientId, long companyId, long groupId) {
+		return getService()
+				   .findByOrderClientGroupCompany(iborderId, clientId,
+			companyId, groupId);
+	}
+
 	/**
 	* Returns the i b order with the primary key.
 	*
-	* @param ordersId the primary key of the i b order
+	* @param orderIdPk the primary key of the i b order
 	* @return the i b order
 	* @throws PortalException if a i b order with the primary key could not be found
 	*/
-	public static com.ibtrader.data.model.IBOrder getIBOrder(long ordersId)
+	public static com.ibtrader.data.model.IBOrder getIBOrder(long orderIdPk)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getIBOrder(ordersId);
+		return getService().getIBOrder(orderIdPk);
 	}
 
 	/**
@@ -316,8 +323,10 @@ public class IBOrderLocalServiceUtil {
 	}
 
 	public static void deleteByOrderCompanyGroup(long iborderId,
-		long companyId, long groupId) {
-		getService().deleteByOrderCompanyGroup(iborderId, companyId, groupId);
+		long companyId, long groupId, long ibclientId, long shareId) {
+		getService()
+			.deleteByOrderCompanyGroup(iborderId, companyId, groupId,
+			ibclientId, shareId);
 	}
 
 	public static IBOrderLocalService getService() {

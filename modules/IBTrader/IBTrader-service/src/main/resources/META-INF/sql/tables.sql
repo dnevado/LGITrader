@@ -15,13 +15,15 @@ create table ibtrader_Config (
 
 create table ibtrader_IBOrder (
 	uuid_ VARCHAR(75) null,
-	ordersId LONG not null primary key,
+	orderIdPk LONG not null primary key IDENTITY,
+	ordersId LONG,
 	groupId LONG,
 	companyId LONG,
 	shareID LONG,
 	checked BOOLEAN,
 	createDate DATE null,
-	modifiedDate DATE null
+	modifiedDate DATE null,
+	ibclientId LONG
 );
 
 create table ibtrader_Market (
@@ -111,7 +113,7 @@ create table ibtrader_Share (
 	percentual_stop_lost DOUBLE,
 	percentual_stop_profit DOUBLE,
 	percentual_stop_profit_position DOUBLE,
-	trailling_stop_lost DOUBLE,
+	percentual_trailling_stop_lost DOUBLE,
 	expiry_date DATE null,
 	expiry_expression TEXT null,
 	tick_futures DOUBLE,

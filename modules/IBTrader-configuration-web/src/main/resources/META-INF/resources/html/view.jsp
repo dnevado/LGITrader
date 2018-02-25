@@ -107,10 +107,12 @@
       	 </liferay-ui:panel>
 	 </liferay-ui:panel-container>     
        <aui:fieldset  label="interactive.tws.notifications" id="interactive.tws.notifications">            
-        	<aui:input label="desktop_notifications" name="desktop_notifications" type="toggle-card" checked="${_DESTOP_NOTIFICATION ? 'true':''}"/>       
-        	<aui:input label="email_notifications" name="email_notifications"   type="toggle-card" checked="${_MAIL_NOTIFICATION ? 'true':''}"/>                     
-        	<aui:input label="simulation_mode" name="simulation_mode"   type="toggle-card" checked="${_SIMULATION_MODE ? 'true':''}"/>        	
+        	<aui:input label="desktop_notifications" name="desktop_notifications" type="toggle-card" checked="${_DESTOP_NOTIFICATION eq '1' ? 'true':''}"/>       
+        	<aui:input label="email_notifications" name="email_notifications"   type="toggle-card" checked="${_MAIL_NOTIFICATION  eq '1' ? 'true':''}"/>                     
+        	<aui:input label="simulation_mode" name="simulation_mode"   type="toggle-card" checked="${_SIMULATION_MODE eq '1' ? 'true':''}"/>        	
       </aui:fieldset>
+      
+        
       
       <!--
        <div class="alert alert-danger" role="alert">

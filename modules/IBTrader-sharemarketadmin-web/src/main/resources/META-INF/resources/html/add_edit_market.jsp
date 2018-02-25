@@ -64,9 +64,9 @@ Calendar cal = Calendar.getInstance();
     </aui:fieldset>    
     <% 
     	int  H1  = _market!=null  && _market.getStart_hour()!=null ? Long.valueOf(_market.getStart_hour().substring(0, 2)).intValue() : 0;
-    	int  M1  = _market!=null  && _market.getStart_hour()!=null ? Long.valueOf(_market.getStart_hour().substring(3, 5)).intValue() : 0;
+    	int  M1  = _market!=null  && _market.getStart_hour()!=null ? Long.valueOf(_market.getStart_hour().substring(2, 4)).intValue() : 0;
     	int  H2  = _market!=null  && _market.getStart_hour()!=null ? Long.valueOf(_market.getEnd_hour().substring(0, 2)).intValue(): 0;
-    	int  M2  = _market!=null  && _market.getEnd_hour()!=null  ? Long.valueOf(_market.getEnd_hour().substring(3, 5)).intValue() :0;
+    	int  M2  = _market!=null  && _market.getEnd_hour()!=null  ? Long.valueOf(_market.getEnd_hour().substring(2, 4)).intValue() :0;
     
     %>
     <aui:fieldset>

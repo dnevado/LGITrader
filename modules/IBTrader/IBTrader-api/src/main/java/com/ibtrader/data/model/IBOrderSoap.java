@@ -35,6 +35,7 @@ public class IBOrderSoap implements Serializable {
 		IBOrderSoap soapModel = new IBOrderSoap();
 
 		soapModel.setUuid(model.getUuid());
+		soapModel.setOrderIdPk(model.getOrderIdPk());
 		soapModel.setOrdersId(model.getOrdersId());
 		soapModel.setGroupId(model.getGroupId());
 		soapModel.setCompanyId(model.getCompanyId());
@@ -42,6 +43,7 @@ public class IBOrderSoap implements Serializable {
 		soapModel.setChecked(model.getChecked());
 		soapModel.setCreateDate(model.getCreateDate());
 		soapModel.setModifiedDate(model.getModifiedDate());
+		soapModel.setIbclientId(model.getIbclientId());
 
 		return soapModel;
 	}
@@ -87,11 +89,11 @@ public class IBOrderSoap implements Serializable {
 	}
 
 	public long getPrimaryKey() {
-		return _ordersId;
+		return _orderIdPk;
 	}
 
 	public void setPrimaryKey(long pk) {
-		setOrdersId(pk);
+		setOrderIdPk(pk);
 	}
 
 	public String getUuid() {
@@ -100,6 +102,14 @@ public class IBOrderSoap implements Serializable {
 
 	public void setUuid(String uuid) {
 		_uuid = uuid;
+	}
+
+	public long getOrderIdPk() {
+		return _orderIdPk;
+	}
+
+	public void setOrderIdPk(long orderIdPk) {
+		_orderIdPk = orderIdPk;
 	}
 
 	public long getOrdersId() {
@@ -162,7 +172,16 @@ public class IBOrderSoap implements Serializable {
 		_modifiedDate = modifiedDate;
 	}
 
+	public long getIbclientId() {
+		return _ibclientId;
+	}
+
+	public void setIbclientId(long ibclientId) {
+		_ibclientId = ibclientId;
+	}
+
 	private String _uuid;
+	private long _orderIdPk;
 	private long _ordersId;
 	private long _groupId;
 	private long _companyId;
@@ -170,4 +189,5 @@ public class IBOrderSoap implements Serializable {
 	private boolean _checked;
 	private Date _createDate;
 	private Date _modifiedDate;
+	private long _ibclientId;
 }

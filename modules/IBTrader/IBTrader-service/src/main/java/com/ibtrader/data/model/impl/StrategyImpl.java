@@ -17,6 +17,8 @@ package com.ibtrader.data.model.impl;
 import java.util.List;
 import java.util.Map;
 
+import com.ib.client.Contract;
+import com.ib.client.Order;
 import com.ibtrader.data.model.Market;
 import com.ibtrader.data.model.Share;
 import com.ibtrader.data.model.Strategy;
@@ -63,13 +65,14 @@ public class StrategyImpl extends StrategyBaseImpl {
 	private double valueOut; 
 	private double valueLimitOut;	
 	
-	private JSONObject jsonStrategyShareParams;
+	private Order _targetOrder; // esta es la orden que se rellena en el metodo execute para que el cron la trate y la ordene, la parte transaccional
+								// en BBDD se hace en el metodo execute	
+	private Contract _targetContract;
 	
-	private boolean verified = false;
-	
-	/* PRECIOS DE ENTRADA SALIDA  */
-	
-	/* nos sirve para devolver los session errors de la funciona validatParams*/
+	private JSONObject jsonStrategyShareParams;	
+	private boolean verified = false;	
+	/* PRECIOS DE ENTRADA SALIDA  */	
+	/* nos sirve para devolver los session errors de la funciona validatPara	ms*/
 	private String validateParamsKeysError = "";
 
 	/* COMPORTAMIENTO DE LOS PARAMETROS DE ENTRADA EN CUANTO A TIPOS */
@@ -100,15 +103,7 @@ public class StrategyImpl extends StrategyBaseImpl {
 	public void setIBStrategyAssetEntry(AssetEntry _IBStrategyAssetEntry) {
 		this._IBStrategyAssetEntry = _IBStrategyAssetEntry;
 	}
-			
-	/* public TIMApiGITrader getTimAPIW() {
-		return _timApiGITrader;
-	}
-
-	public void setTimAPIW(TIMApiGITrader _timAPIW) {
-		this._timApiGITrader = _timAPIW;
-	}*/
-
+	
 	public int getCLIENT_ID() {
 		return _CLIENT_ID;
 	}
@@ -185,8 +180,9 @@ public class StrategyImpl extends StrategyBaseImpl {
 		this.jsonStrategyShareParams = _jsonStrategyShareParams;
 	}
 	@Override
-	public void execute(Share _share, Market _market) {
+	public long execute(Share _share, Market _market) {
 		// TODO Auto-generated method stub
+		return 0;
 		
 	}
 	/* ESTO NO ES UNA IMPLEMENTACION YA QUE EN DENERIA METER EL TIMApiWrapper EN LA API Y ES COSTOSO */
@@ -194,6 +190,18 @@ public class StrategyImpl extends StrategyBaseImpl {
 		// TODO Auto-generated method stub
 		
 	}*/
+	public Order getTargetOrder() {
+		return _targetOrder;
+	}
+	public void setTargetOrder(Order targetOrder) {
+		this._targetOrder = targetOrder;
+	}
+	public Contract getTargetContract() {
+		return _targetContract;
+	}
+	public void setTargetContract(Contract _targetContract) {
+		this._targetContract = _targetContract;
+	}
 
 		
 }

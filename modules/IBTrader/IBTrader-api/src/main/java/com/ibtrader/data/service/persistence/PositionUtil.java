@@ -2658,191 +2658,67 @@ public class PositionUtil {
 	}
 
 	/**
-	* Returns all the positions where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63;.
+	* Returns the position where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63; or throws a {@link NoSuchPositionException} if it could not be found.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param positionId_tws_out the position id_tws_out
-	* @return the matching positions
+	* @return the matching position
+	* @throws NoSuchPositionException if a matching position could not be found
 	*/
-	public static List<Position> findByPositionID_Out_TWS(long groupId,
-		long companyId, long positionId_tws_out) {
+	public static Position findByPositionOutGroupCompany(long groupId,
+		long companyId, long positionId_tws_out)
+		throws com.ibtrader.data.exception.NoSuchPositionException {
 		return getPersistence()
-				   .findByPositionID_Out_TWS(groupId, companyId,
+				   .findByPositionOutGroupCompany(groupId, companyId,
 			positionId_tws_out);
 	}
 
 	/**
-	* Returns a range of all the positions where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63;.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	* </p>
+	* Returns the position where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param positionId_tws_out the position id_tws_out
-	* @param start the lower bound of the range of positions
-	* @param end the upper bound of the range of positions (not inclusive)
-	* @return the range of matching positions
+	* @return the matching position, or <code>null</code> if a matching position could not be found
 	*/
-	public static List<Position> findByPositionID_Out_TWS(long groupId,
-		long companyId, long positionId_tws_out, int start, int end) {
+	public static Position fetchByPositionOutGroupCompany(long groupId,
+		long companyId, long positionId_tws_out) {
 		return getPersistence()
-				   .findByPositionID_Out_TWS(groupId, companyId,
-			positionId_tws_out, start, end);
+				   .fetchByPositionOutGroupCompany(groupId, companyId,
+			positionId_tws_out);
 	}
 
 	/**
-	* Returns an ordered range of all the positions where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63;.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	* </p>
+	* Returns the position where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param positionId_tws_out the position id_tws_out
-	* @param start the lower bound of the range of positions
-	* @param end the upper bound of the range of positions (not inclusive)
-	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	* @return the ordered range of matching positions
-	*/
-	public static List<Position> findByPositionID_Out_TWS(long groupId,
-		long companyId, long positionId_tws_out, int start, int end,
-		OrderByComparator<Position> orderByComparator) {
-		return getPersistence()
-				   .findByPositionID_Out_TWS(groupId, companyId,
-			positionId_tws_out, start, end, orderByComparator);
-	}
-
-	/**
-	* Returns an ordered range of all the positions where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63;.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	* </p>
-	*
-	* @param groupId the group ID
-	* @param companyId the company ID
-	* @param positionId_tws_out the position id_tws_out
-	* @param start the lower bound of the range of positions
-	* @param end the upper bound of the range of positions (not inclusive)
-	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @param retrieveFromCache whether to retrieve from the finder cache
-	* @return the ordered range of matching positions
+	* @return the matching position, or <code>null</code> if a matching position could not be found
 	*/
-	public static List<Position> findByPositionID_Out_TWS(long groupId,
-		long companyId, long positionId_tws_out, int start, int end,
-		OrderByComparator<Position> orderByComparator, boolean retrieveFromCache) {
+	public static Position fetchByPositionOutGroupCompany(long groupId,
+		long companyId, long positionId_tws_out, boolean retrieveFromCache) {
 		return getPersistence()
-				   .findByPositionID_Out_TWS(groupId, companyId,
-			positionId_tws_out, start, end, orderByComparator, retrieveFromCache);
+				   .fetchByPositionOutGroupCompany(groupId, companyId,
+			positionId_tws_out, retrieveFromCache);
 	}
 
 	/**
-	* Returns the first position in the ordered set where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63;.
+	* Removes the position where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63; from the database.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param positionId_tws_out the position id_tws_out
-	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	* @return the first matching position
-	* @throws NoSuchPositionException if a matching position could not be found
+	* @return the position that was removed
 	*/
-	public static Position findByPositionID_Out_TWS_First(long groupId,
-		long companyId, long positionId_tws_out,
-		OrderByComparator<Position> orderByComparator)
+	public static Position removeByPositionOutGroupCompany(long groupId,
+		long companyId, long positionId_tws_out)
 		throws com.ibtrader.data.exception.NoSuchPositionException {
 		return getPersistence()
-				   .findByPositionID_Out_TWS_First(groupId, companyId,
-			positionId_tws_out, orderByComparator);
-	}
-
-	/**
-	* Returns the first position in the ordered set where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63;.
-	*
-	* @param groupId the group ID
-	* @param companyId the company ID
-	* @param positionId_tws_out the position id_tws_out
-	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	* @return the first matching position, or <code>null</code> if a matching position could not be found
-	*/
-	public static Position fetchByPositionID_Out_TWS_First(long groupId,
-		long companyId, long positionId_tws_out,
-		OrderByComparator<Position> orderByComparator) {
-		return getPersistence()
-				   .fetchByPositionID_Out_TWS_First(groupId, companyId,
-			positionId_tws_out, orderByComparator);
-	}
-
-	/**
-	* Returns the last position in the ordered set where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63;.
-	*
-	* @param groupId the group ID
-	* @param companyId the company ID
-	* @param positionId_tws_out the position id_tws_out
-	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	* @return the last matching position
-	* @throws NoSuchPositionException if a matching position could not be found
-	*/
-	public static Position findByPositionID_Out_TWS_Last(long groupId,
-		long companyId, long positionId_tws_out,
-		OrderByComparator<Position> orderByComparator)
-		throws com.ibtrader.data.exception.NoSuchPositionException {
-		return getPersistence()
-				   .findByPositionID_Out_TWS_Last(groupId, companyId,
-			positionId_tws_out, orderByComparator);
-	}
-
-	/**
-	* Returns the last position in the ordered set where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63;.
-	*
-	* @param groupId the group ID
-	* @param companyId the company ID
-	* @param positionId_tws_out the position id_tws_out
-	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	* @return the last matching position, or <code>null</code> if a matching position could not be found
-	*/
-	public static Position fetchByPositionID_Out_TWS_Last(long groupId,
-		long companyId, long positionId_tws_out,
-		OrderByComparator<Position> orderByComparator) {
-		return getPersistence()
-				   .fetchByPositionID_Out_TWS_Last(groupId, companyId,
-			positionId_tws_out, orderByComparator);
-	}
-
-	/**
-	* Returns the positions before and after the current position in the ordered set where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63;.
-	*
-	* @param positionId the primary key of the current position
-	* @param groupId the group ID
-	* @param companyId the company ID
-	* @param positionId_tws_out the position id_tws_out
-	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	* @return the previous, current, and next position
-	* @throws NoSuchPositionException if a position with the primary key could not be found
-	*/
-	public static Position[] findByPositionID_Out_TWS_PrevAndNext(
-		long positionId, long groupId, long companyId, long positionId_tws_out,
-		OrderByComparator<Position> orderByComparator)
-		throws com.ibtrader.data.exception.NoSuchPositionException {
-		return getPersistence()
-				   .findByPositionID_Out_TWS_PrevAndNext(positionId, groupId,
-			companyId, positionId_tws_out, orderByComparator);
-	}
-
-	/**
-	* Removes all the positions where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63; from the database.
-	*
-	* @param groupId the group ID
-	* @param companyId the company ID
-	* @param positionId_tws_out the position id_tws_out
-	*/
-	public static void removeByPositionID_Out_TWS(long groupId, long companyId,
-		long positionId_tws_out) {
-		getPersistence()
-			.removeByPositionID_Out_TWS(groupId, companyId, positionId_tws_out);
+				   .removeByPositionOutGroupCompany(groupId, companyId,
+			positionId_tws_out);
 	}
 
 	/**
@@ -2853,11 +2729,90 @@ public class PositionUtil {
 	* @param positionId_tws_out the position id_tws_out
 	* @return the number of matching positions
 	*/
-	public static int countByPositionID_Out_TWS(long groupId, long companyId,
-		long positionId_tws_out) {
+	public static int countByPositionOutGroupCompany(long groupId,
+		long companyId, long positionId_tws_out) {
 		return getPersistence()
-				   .countByPositionID_Out_TWS(groupId, companyId,
+				   .countByPositionOutGroupCompany(groupId, companyId,
 			positionId_tws_out);
+	}
+
+	/**
+	* Returns the position where groupId = &#63; and companyId = &#63; and positionId_tws_in = &#63; or throws a {@link NoSuchPositionException} if it could not be found.
+	*
+	* @param groupId the group ID
+	* @param companyId the company ID
+	* @param positionId_tws_in the position id_tws_in
+	* @return the matching position
+	* @throws NoSuchPositionException if a matching position could not be found
+	*/
+	public static Position findByPositionInGroupCompany(long groupId,
+		long companyId, long positionId_tws_in)
+		throws com.ibtrader.data.exception.NoSuchPositionException {
+		return getPersistence()
+				   .findByPositionInGroupCompany(groupId, companyId,
+			positionId_tws_in);
+	}
+
+	/**
+	* Returns the position where groupId = &#63; and companyId = &#63; and positionId_tws_in = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	*
+	* @param groupId the group ID
+	* @param companyId the company ID
+	* @param positionId_tws_in the position id_tws_in
+	* @return the matching position, or <code>null</code> if a matching position could not be found
+	*/
+	public static Position fetchByPositionInGroupCompany(long groupId,
+		long companyId, long positionId_tws_in) {
+		return getPersistence()
+				   .fetchByPositionInGroupCompany(groupId, companyId,
+			positionId_tws_in);
+	}
+
+	/**
+	* Returns the position where groupId = &#63; and companyId = &#63; and positionId_tws_in = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	*
+	* @param groupId the group ID
+	* @param companyId the company ID
+	* @param positionId_tws_in the position id_tws_in
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the matching position, or <code>null</code> if a matching position could not be found
+	*/
+	public static Position fetchByPositionInGroupCompany(long groupId,
+		long companyId, long positionId_tws_in, boolean retrieveFromCache) {
+		return getPersistence()
+				   .fetchByPositionInGroupCompany(groupId, companyId,
+			positionId_tws_in, retrieveFromCache);
+	}
+
+	/**
+	* Removes the position where groupId = &#63; and companyId = &#63; and positionId_tws_in = &#63; from the database.
+	*
+	* @param groupId the group ID
+	* @param companyId the company ID
+	* @param positionId_tws_in the position id_tws_in
+	* @return the position that was removed
+	*/
+	public static Position removeByPositionInGroupCompany(long groupId,
+		long companyId, long positionId_tws_in)
+		throws com.ibtrader.data.exception.NoSuchPositionException {
+		return getPersistence()
+				   .removeByPositionInGroupCompany(groupId, companyId,
+			positionId_tws_in);
+	}
+
+	/**
+	* Returns the number of positions where groupId = &#63; and companyId = &#63; and positionId_tws_in = &#63;.
+	*
+	* @param groupId the group ID
+	* @param companyId the company ID
+	* @param positionId_tws_in the position id_tws_in
+	* @return the number of matching positions
+	*/
+	public static int countByPositionInGroupCompany(long groupId,
+		long companyId, long positionId_tws_in) {
+		return getPersistence()
+				   .countByPositionInGroupCompany(groupId, companyId,
+			positionId_tws_in);
 	}
 
 	/**

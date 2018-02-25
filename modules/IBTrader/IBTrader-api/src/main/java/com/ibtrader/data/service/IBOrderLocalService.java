@@ -76,10 +76,10 @@ public interface IBOrderLocalService extends BaseLocalService,
 	/**
 	* Creates a new i b order with the primary key. Does not add the i b order to the database.
 	*
-	* @param ordersId the primary key for the new i b order
+	* @param orderIdPk the primary key for the new i b order
 	* @return the new i b order
 	*/
-	public IBOrder createIBOrder(long ordersId);
+	public IBOrder createIBOrder(long orderIdPk);
 
 	/**
 	* Deletes the i b order from the database. Also notifies the appropriate model listeners.
@@ -93,15 +93,15 @@ public interface IBOrderLocalService extends BaseLocalService,
 	/**
 	* Deletes the i b order with the primary key from the database. Also notifies the appropriate model listeners.
 	*
-	* @param ordersId the primary key of the i b order
+	* @param orderIdPk the primary key of the i b order
 	* @return the i b order that was removed
 	* @throws PortalException if a i b order with the primary key could not be found
 	*/
 	@Indexable(type = IndexableType.DELETE)
-	public IBOrder deleteIBOrder(long ordersId) throws PortalException;
+	public IBOrder deleteIBOrder(long orderIdPk) throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public IBOrder fetchIBOrder(long ordersId);
+	public IBOrder fetchIBOrder(long orderIdPk);
 
 	/**
 	* Returns the i b order matching the UUID and group.
@@ -114,15 +114,18 @@ public interface IBOrderLocalService extends BaseLocalService,
 	public IBOrder fetchIBOrderByUuidAndGroupId(java.lang.String uuid,
 		long groupId);
 
+	public IBOrder findByOrderClientGroupCompany(long iborderId, long clientId,
+		long companyId, long groupId);
+
 	/**
 	* Returns the i b order with the primary key.
 	*
-	* @param ordersId the primary key of the i b order
+	* @param orderIdPk the primary key of the i b order
 	* @return the i b order
 	* @throws PortalException if a i b order with the primary key could not be found
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public IBOrder getIBOrder(long ordersId) throws PortalException;
+	public IBOrder getIBOrder(long orderIdPk) throws PortalException;
 
 	/**
 	* Returns the i b order matching the UUID and group.
@@ -285,5 +288,5 @@ public interface IBOrderLocalService extends BaseLocalService,
 		Projection projection);
 
 	public void deleteByOrderCompanyGroup(long iborderId, long companyId,
-		long groupId);
+		long groupId, long ibclientId, long shareId);
 }

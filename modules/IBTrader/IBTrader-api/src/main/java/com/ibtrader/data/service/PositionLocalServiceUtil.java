@@ -46,6 +46,11 @@ public class PositionLocalServiceUtil {
 		return getService().ExistsOpenPosition(groupId, companyId, shareId);
 	}
 
+	public static boolean ExistsPositionToExit(long groupId, long companyId,
+		long shareId) {
+		return getService().ExistsPositionToExit(groupId, companyId, shareId);
+	}
+
 	/**
 	* Adds the position to the database. Also notifies the appropriate model listeners.
 	*
@@ -114,10 +119,21 @@ public class PositionLocalServiceUtil {
 		return getService().findByCompanyGroup(companyId, groupId);
 	}
 
+	public static com.ibtrader.data.model.Position findByPositionID_In_TWS(
+		long groupId, long companyId, long _PositionIDTWS) {
+		return getService()
+				   .findByPositionID_In_TWS(groupId, companyId, _PositionIDTWS);
+	}
+
 	public static com.ibtrader.data.model.Position findByPositionID_Out_TWS(
 		long groupId, long companyId, long _PositionIDTWS) {
 		return getService()
 				   .findByPositionID_Out_TWS(groupId, companyId, _PositionIDTWS);
+	}
+
+	public static com.ibtrader.data.model.Position findPositionToExit(
+		long groupId, long companyId, long shareId) {
+		return getService().findPositionToExit(groupId, companyId, shareId);
 	}
 
 	/**

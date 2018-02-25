@@ -104,25 +104,25 @@ public abstract class IBOrderLocalServiceBaseImpl extends BaseLocalServiceImpl
 	/**
 	 * Creates a new i b order with the primary key. Does not add the i b order to the database.
 	 *
-	 * @param ordersId the primary key for the new i b order
+	 * @param orderIdPk the primary key for the new i b order
 	 * @return the new i b order
 	 */
 	@Override
-	public IBOrder createIBOrder(long ordersId) {
-		return ibOrderPersistence.create(ordersId);
+	public IBOrder createIBOrder(long orderIdPk) {
+		return ibOrderPersistence.create(orderIdPk);
 	}
 
 	/**
 	 * Deletes the i b order with the primary key from the database. Also notifies the appropriate model listeners.
 	 *
-	 * @param ordersId the primary key of the i b order
+	 * @param orderIdPk the primary key of the i b order
 	 * @return the i b order that was removed
 	 * @throws PortalException if a i b order with the primary key could not be found
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
-	public IBOrder deleteIBOrder(long ordersId) throws PortalException {
-		return ibOrderPersistence.remove(ordersId);
+	public IBOrder deleteIBOrder(long orderIdPk) throws PortalException {
+		return ibOrderPersistence.remove(orderIdPk);
 	}
 
 	/**
@@ -219,8 +219,8 @@ public abstract class IBOrderLocalServiceBaseImpl extends BaseLocalServiceImpl
 	}
 
 	@Override
-	public IBOrder fetchIBOrder(long ordersId) {
-		return ibOrderPersistence.fetchByPrimaryKey(ordersId);
+	public IBOrder fetchIBOrder(long orderIdPk) {
+		return ibOrderPersistence.fetchByPrimaryKey(orderIdPk);
 	}
 
 	/**
@@ -238,13 +238,13 @@ public abstract class IBOrderLocalServiceBaseImpl extends BaseLocalServiceImpl
 	/**
 	 * Returns the i b order with the primary key.
 	 *
-	 * @param ordersId the primary key of the i b order
+	 * @param orderIdPk the primary key of the i b order
 	 * @return the i b order
 	 * @throws PortalException if a i b order with the primary key could not be found
 	 */
 	@Override
-	public IBOrder getIBOrder(long ordersId) throws PortalException {
-		return ibOrderPersistence.findByPrimaryKey(ordersId);
+	public IBOrder getIBOrder(long orderIdPk) throws PortalException {
+		return ibOrderPersistence.findByPrimaryKey(orderIdPk);
 	}
 
 	@Override
@@ -255,7 +255,7 @@ public abstract class IBOrderLocalServiceBaseImpl extends BaseLocalServiceImpl
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(IBOrder.class);
 
-		actionableDynamicQuery.setPrimaryKeyPropertyName("ordersId");
+		actionableDynamicQuery.setPrimaryKeyPropertyName("orderIdPk");
 
 		return actionableDynamicQuery;
 	}
@@ -268,7 +268,7 @@ public abstract class IBOrderLocalServiceBaseImpl extends BaseLocalServiceImpl
 		indexableActionableDynamicQuery.setClassLoader(getClassLoader());
 		indexableActionableDynamicQuery.setModelClass(IBOrder.class);
 
-		indexableActionableDynamicQuery.setPrimaryKeyPropertyName("ordersId");
+		indexableActionableDynamicQuery.setPrimaryKeyPropertyName("orderIdPk");
 
 		return indexableActionableDynamicQuery;
 	}
@@ -279,7 +279,7 @@ public abstract class IBOrderLocalServiceBaseImpl extends BaseLocalServiceImpl
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(IBOrder.class);
 
-		actionableDynamicQuery.setPrimaryKeyPropertyName("ordersId");
+		actionableDynamicQuery.setPrimaryKeyPropertyName("orderIdPk");
 	}
 
 	@Override

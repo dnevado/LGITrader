@@ -108,5 +108,13 @@ public interface Strategy extends StrategyModel, PersistedModel {
 	public void setJsonStrategyShareParams(
 		com.liferay.portal.kernel.json.JSONObject _jsonStrategyShareParams);
 
-	public void execute(Share _share, Market _market);
+	public long execute(Share _share, Market _market);
+
+	public com.ib.client.Order getTargetOrder();
+
+	public void setTargetOrder(com.ib.client.Order targetOrder);
+
+	public com.ib.client.Contract getTargetContract();
+
+	public void setTargetContract(com.ib.client.Contract _targetContract);
 }

@@ -280,18 +280,19 @@ public interface ShareModel extends BaseModel<Share>, ShardedModel, StagedModel 
 		double percentual_stop_profit_position);
 
 	/**
-	 * Returns the trailling_stop_lost of this share.
+	 * Returns the percentual_trailling_stop_lost of this share.
 	 *
-	 * @return the trailling_stop_lost of this share
+	 * @return the percentual_trailling_stop_lost of this share
 	 */
-	public double getTrailling_stop_lost();
+	public double getPercentual_trailling_stop_lost();
 
 	/**
-	 * Sets the trailling_stop_lost of this share.
+	 * Sets the percentual_trailling_stop_lost of this share.
 	 *
-	 * @param trailling_stop_lost the trailling_stop_lost of this share
+	 * @param percentual_trailling_stop_lost the percentual_trailling_stop_lost of this share
 	 */
-	public void setTrailling_stop_lost(double trailling_stop_lost);
+	public void setPercentual_trailling_stop_lost(
+		double percentual_trailling_stop_lost);
 
 	/**
 	 * Returns the expiry_date of this share.

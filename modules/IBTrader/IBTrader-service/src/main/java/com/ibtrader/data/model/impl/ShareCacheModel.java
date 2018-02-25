@@ -95,8 +95,8 @@ public class ShareCacheModel implements CacheModel<Share>, Externalizable {
 		sb.append(percentual_stop_profit);
 		sb.append(", percentual_stop_profit_position=");
 		sb.append(percentual_stop_profit_position);
-		sb.append(", trailling_stop_lost=");
-		sb.append(trailling_stop_lost);
+		sb.append(", percentual_trailling_stop_lost=");
+		sb.append(percentual_trailling_stop_lost);
 		sb.append(", expiry_date=");
 		sb.append(expiry_date);
 		sb.append(", expiry_expression=");
@@ -176,7 +176,7 @@ public class ShareCacheModel implements CacheModel<Share>, Externalizable {
 		shareImpl.setPercentual_stop_lost(percentual_stop_lost);
 		shareImpl.setPercentual_stop_profit(percentual_stop_profit);
 		shareImpl.setPercentual_stop_profit_position(percentual_stop_profit_position);
-		shareImpl.setTrailling_stop_lost(trailling_stop_lost);
+		shareImpl.setPercentual_trailling_stop_lost(percentual_trailling_stop_lost);
 
 		if (expiry_date == Long.MIN_VALUE) {
 			shareImpl.setExpiry_date(null);
@@ -266,7 +266,7 @@ public class ShareCacheModel implements CacheModel<Share>, Externalizable {
 
 		percentual_stop_profit_position = objectInput.readDouble();
 
-		trailling_stop_lost = objectInput.readDouble();
+		percentual_trailling_stop_lost = objectInput.readDouble();
 		expiry_date = objectInput.readLong();
 		expiry_expression = objectInput.readUTF();
 
@@ -330,7 +330,7 @@ public class ShareCacheModel implements CacheModel<Share>, Externalizable {
 
 		objectOutput.writeDouble(percentual_stop_profit_position);
 
-		objectOutput.writeDouble(trailling_stop_lost);
+		objectOutput.writeDouble(percentual_trailling_stop_lost);
 		objectOutput.writeLong(expiry_date);
 
 		if (expiry_expression == null) {
@@ -394,7 +394,7 @@ public class ShareCacheModel implements CacheModel<Share>, Externalizable {
 	public double percentual_stop_lost;
 	public double percentual_stop_profit;
 	public double percentual_stop_profit_position;
-	public double trailling_stop_lost;
+	public double percentual_trailling_stop_lost;
 	public long expiry_date;
 	public String expiry_expression;
 	public double tick_futures;

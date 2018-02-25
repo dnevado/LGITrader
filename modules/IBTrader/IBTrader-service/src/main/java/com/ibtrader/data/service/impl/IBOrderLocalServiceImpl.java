@@ -55,16 +55,29 @@ public class IBOrderLocalServiceImpl extends IBOrderLocalServiceBaseImpl {
 		_order = getIBOrderPersistence().findByShareIdCompanyGroup(shareId, companyId, groupId);
 		return _order;
 	}
+	public 	IBOrder findByOrderClientGroupCompany(long iborderId, long clientId, long companyId, long groupId)
+	{
+		List<IBOrder> _orders = null;
+		IBOrder order = null; 		
+		_orders = getIBOrderPersistence().findByOrderClientGroupCompany(iborderId,companyId,groupId,clientId);
+		if (_orders!=null && !_orders.isEmpty())
+			order = _orders.get(0); 
+		
+		return order;
+	}
 	/* al usar el ID VALIDO DE LA TWS, BORRAMOS PARA EVITAR DUPLUICADOS AL INTERNATR CONECTARNOS 
 	 *  
 	 */
-	public 	void deleteByOrderCompanyGroup(long iborderId, long companyId, long groupId)
+	public 	void deleteByOrderCompanyGroup(long iborderId, long companyId, long groupId, long ibclientId, long shareId)
 	{		
 		DynamicQuery _DQ = ibOrderLocalService.dynamicQuery();
 
-		_DQ.add(RestrictionsFactoryUtil.gt("ordersId", iborderId));
-		_DQ.add(RestrictionsFactoryUtil.le("companyId", companyId));
-		_DQ.add(RestrictionsFactoryUtil.ge("groupId", groupId));
+		_DQ.add(RestrictionsFactoryUtil.eq("ordersId", iborderId));
+		_DQ.add(RestrictionsFactoryUtil.eq("companyId", companyId));
+		_DQ.add(RestrictionsFactoryUtil.eq("groupId", groupId));
+		_DQ.add(RestrictionsFactoryUtil.eq("ibclientId", groupId));
+		_DQ.add(RestrictionsFactoryUtil.eq("shareId", shareId));
+
 		
 		
 	}

@@ -47,12 +47,12 @@ public class IBOrderLocalServiceWrapper implements IBOrderLocalService,
 	/**
 	* Creates a new i b order with the primary key. Does not add the i b order to the database.
 	*
-	* @param ordersId the primary key for the new i b order
+	* @param orderIdPk the primary key for the new i b order
 	* @return the new i b order
 	*/
 	@Override
-	public com.ibtrader.data.model.IBOrder createIBOrder(long ordersId) {
-		return _ibOrderLocalService.createIBOrder(ordersId);
+	public com.ibtrader.data.model.IBOrder createIBOrder(long orderIdPk) {
+		return _ibOrderLocalService.createIBOrder(orderIdPk);
 	}
 
 	/**
@@ -70,19 +70,19 @@ public class IBOrderLocalServiceWrapper implements IBOrderLocalService,
 	/**
 	* Deletes the i b order with the primary key from the database. Also notifies the appropriate model listeners.
 	*
-	* @param ordersId the primary key of the i b order
+	* @param orderIdPk the primary key of the i b order
 	* @return the i b order that was removed
 	* @throws PortalException if a i b order with the primary key could not be found
 	*/
 	@Override
-	public com.ibtrader.data.model.IBOrder deleteIBOrder(long ordersId)
+	public com.ibtrader.data.model.IBOrder deleteIBOrder(long orderIdPk)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _ibOrderLocalService.deleteIBOrder(ordersId);
+		return _ibOrderLocalService.deleteIBOrder(orderIdPk);
 	}
 
 	@Override
-	public com.ibtrader.data.model.IBOrder fetchIBOrder(long ordersId) {
-		return _ibOrderLocalService.fetchIBOrder(ordersId);
+	public com.ibtrader.data.model.IBOrder fetchIBOrder(long orderIdPk) {
+		return _ibOrderLocalService.fetchIBOrder(orderIdPk);
 	}
 
 	/**
@@ -98,17 +98,24 @@ public class IBOrderLocalServiceWrapper implements IBOrderLocalService,
 		return _ibOrderLocalService.fetchIBOrderByUuidAndGroupId(uuid, groupId);
 	}
 
+	@Override
+	public com.ibtrader.data.model.IBOrder findByOrderClientGroupCompany(
+		long iborderId, long clientId, long companyId, long groupId) {
+		return _ibOrderLocalService.findByOrderClientGroupCompany(iborderId,
+			clientId, companyId, groupId);
+	}
+
 	/**
 	* Returns the i b order with the primary key.
 	*
-	* @param ordersId the primary key of the i b order
+	* @param orderIdPk the primary key of the i b order
 	* @return the i b order
 	* @throws PortalException if a i b order with the primary key could not be found
 	*/
 	@Override
-	public com.ibtrader.data.model.IBOrder getIBOrder(long ordersId)
+	public com.ibtrader.data.model.IBOrder getIBOrder(long orderIdPk)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _ibOrderLocalService.getIBOrder(ordersId);
+		return _ibOrderLocalService.getIBOrder(orderIdPk);
 	}
 
 	/**
@@ -333,9 +340,9 @@ public class IBOrderLocalServiceWrapper implements IBOrderLocalService,
 
 	@Override
 	public void deleteByOrderCompanyGroup(long iborderId, long companyId,
-		long groupId) {
+		long groupId, long ibclientId, long shareId) {
 		_ibOrderLocalService.deleteByOrderCompanyGroup(iborderId, companyId,
-			groupId);
+			groupId, ibclientId, shareId);
 	}
 
 	@Override

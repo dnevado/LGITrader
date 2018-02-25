@@ -4833,7 +4833,7 @@ public class SharePersistenceImpl extends BasePersistenceImpl<Share>
 		shareImpl.setPercentual_stop_lost(share.getPercentual_stop_lost());
 		shareImpl.setPercentual_stop_profit(share.getPercentual_stop_profit());
 		shareImpl.setPercentual_stop_profit_position(share.getPercentual_stop_profit_position());
-		shareImpl.setTrailling_stop_lost(share.getTrailling_stop_lost());
+		shareImpl.setPercentual_trailling_stop_lost(share.getPercentual_trailling_stop_lost());
 		shareImpl.setExpiry_date(share.getExpiry_date());
 		shareImpl.setExpiry_expression(share.getExpiry_expression());
 		shareImpl.setTick_futures(share.getTick_futures());

@@ -71,18 +71,21 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 	public static final String TABLE_NAME = "ibtrader_IBOrder";
 	public static final Object[][] TABLE_COLUMNS = {
 			{ "uuid_", Types.VARCHAR },
+			{ "orderIdPk", Types.BIGINT },
 			{ "ordersId", Types.BIGINT },
 			{ "groupId", Types.BIGINT },
 			{ "companyId", Types.BIGINT },
 			{ "shareID", Types.BIGINT },
 			{ "checked", Types.BOOLEAN },
 			{ "createDate", Types.TIMESTAMP },
-			{ "modifiedDate", Types.TIMESTAMP }
+			{ "modifiedDate", Types.TIMESTAMP },
+			{ "ibclientId", Types.BIGINT }
 		};
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP = new HashMap<String, Integer>();
 
 	static {
 		TABLE_COLUMNS_MAP.put("uuid_", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("orderIdPk", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("ordersId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("groupId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("companyId", Types.BIGINT);
@@ -90,12 +93,13 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 		TABLE_COLUMNS_MAP.put("checked", Types.BOOLEAN);
 		TABLE_COLUMNS_MAP.put("createDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("modifiedDate", Types.TIMESTAMP);
+		TABLE_COLUMNS_MAP.put("ibclientId", Types.BIGINT);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table ibtrader_IBOrder (uuid_ VARCHAR(75) null,ordersId LONG not null primary key,groupId LONG,companyId LONG,shareID LONG,checked BOOLEAN,createDate DATE null,modifiedDate DATE null)";
+	public static final String TABLE_SQL_CREATE = "create table ibtrader_IBOrder (uuid_ VARCHAR(75) null,orderIdPk LONG not null primary key IDENTITY,ordersId LONG,groupId LONG,companyId LONG,shareID LONG,checked BOOLEAN,createDate DATE null,modifiedDate DATE null,ibclientId LONG)";
 	public static final String TABLE_SQL_DROP = "drop table ibtrader_IBOrder";
-	public static final String ORDER_BY_JPQL = " ORDER BY ibOrder.ordersId ASC";
-	public static final String ORDER_BY_SQL = " ORDER BY ibtrader_IBOrder.ordersId ASC";
+	public static final String ORDER_BY_JPQL = " ORDER BY ibOrder.orderIdPk ASC";
+	public static final String ORDER_BY_SQL = " ORDER BY ibtrader_IBOrder.orderIdPk ASC";
 	public static final String DATA_SOURCE = "liferayDataSource";
 	public static final String SESSION_FACTORY = "liferaySessionFactory";
 	public static final String TX_MANAGER = "liferayTransactionManager";
@@ -110,9 +114,11 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 			true);
 	public static final long COMPANYID_COLUMN_BITMASK = 1L;
 	public static final long GROUPID_COLUMN_BITMASK = 2L;
-	public static final long ORDERSID_COLUMN_BITMASK = 4L;
-	public static final long SHAREID_COLUMN_BITMASK = 8L;
-	public static final long UUID_COLUMN_BITMASK = 16L;
+	public static final long IBCLIENTID_COLUMN_BITMASK = 4L;
+	public static final long ORDERSID_COLUMN_BITMASK = 8L;
+	public static final long SHAREID_COLUMN_BITMASK = 16L;
+	public static final long UUID_COLUMN_BITMASK = 32L;
+	public static final long ORDERIDPK_COLUMN_BITMASK = 64L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -128,6 +134,7 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 		IBOrder model = new IBOrderImpl();
 
 		model.setUuid(soapModel.getUuid());
+		model.setOrderIdPk(soapModel.getOrderIdPk());
 		model.setOrdersId(soapModel.getOrdersId());
 		model.setGroupId(soapModel.getGroupId());
 		model.setCompanyId(soapModel.getCompanyId());
@@ -135,6 +142,7 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 		model.setChecked(soapModel.getChecked());
 		model.setCreateDate(soapModel.getCreateDate());
 		model.setModifiedDate(soapModel.getModifiedDate());
+		model.setIbclientId(soapModel.getIbclientId());
 
 		return model;
 	}
@@ -167,17 +175,17 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 
 	@Override
 	public long getPrimaryKey() {
-		return _ordersId;
+		return _orderIdPk;
 	}
 
 	@Override
 	public void setPrimaryKey(long primaryKey) {
-		setOrdersId(primaryKey);
+		setOrderIdPk(primaryKey);
 	}
 
 	@Override
 	public Serializable getPrimaryKeyObj() {
-		return _ordersId;
+		return _orderIdPk;
 	}
 
 	@Override
@@ -200,6 +208,7 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 		Map<String, Object> attributes = new HashMap<String, Object>();
 
 		attributes.put("uuid", getUuid());
+		attributes.put("orderIdPk", getOrderIdPk());
 		attributes.put("ordersId", getOrdersId());
 		attributes.put("groupId", getGroupId());
 		attributes.put("companyId", getCompanyId());
@@ -207,6 +216,7 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 		attributes.put("checked", getChecked());
 		attributes.put("createDate", getCreateDate());
 		attributes.put("modifiedDate", getModifiedDate());
+		attributes.put("ibclientId", getIbclientId());
 
 		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
 		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
@@ -220,6 +230,12 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 
 		if (uuid != null) {
 			setUuid(uuid);
+		}
+
+		Long orderIdPk = (Long)attributes.get("orderIdPk");
+
+		if (orderIdPk != null) {
+			setOrderIdPk(orderIdPk);
 		}
 
 		Long ordersId = (Long)attributes.get("ordersId");
@@ -263,6 +279,12 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 		if (modifiedDate != null) {
 			setModifiedDate(modifiedDate);
 		}
+
+		Long ibclientId = (Long)attributes.get("ibclientId");
+
+		if (ibclientId != null) {
+			setIbclientId(ibclientId);
+		}
 	}
 
 	@JSON
@@ -287,6 +309,17 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 
 	public String getOriginalUuid() {
 		return GetterUtil.getString(_originalUuid);
+	}
+
+	@JSON
+	@Override
+	public long getOrderIdPk() {
+		return _orderIdPk;
+	}
+
+	@Override
+	public void setOrderIdPk(long orderIdPk) {
+		_orderIdPk = orderIdPk;
 	}
 
 	@JSON
@@ -426,6 +459,29 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 		_modifiedDate = modifiedDate;
 	}
 
+	@JSON
+	@Override
+	public long getIbclientId() {
+		return _ibclientId;
+	}
+
+	@Override
+	public void setIbclientId(long ibclientId) {
+		_columnBitmask |= IBCLIENTID_COLUMN_BITMASK;
+
+		if (!_setOriginalIbclientId) {
+			_setOriginalIbclientId = true;
+
+			_originalIbclientId = _ibclientId;
+		}
+
+		_ibclientId = ibclientId;
+	}
+
+	public long getOriginalIbclientId() {
+		return _originalIbclientId;
+	}
+
 	@Override
 	public StagedModelType getStagedModelType() {
 		return new StagedModelType(PortalUtil.getClassNameId(
@@ -464,6 +520,7 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 		IBOrderImpl ibOrderImpl = new IBOrderImpl();
 
 		ibOrderImpl.setUuid(getUuid());
+		ibOrderImpl.setOrderIdPk(getOrderIdPk());
 		ibOrderImpl.setOrdersId(getOrdersId());
 		ibOrderImpl.setGroupId(getGroupId());
 		ibOrderImpl.setCompanyId(getCompanyId());
@@ -471,6 +528,7 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 		ibOrderImpl.setChecked(getChecked());
 		ibOrderImpl.setCreateDate(getCreateDate());
 		ibOrderImpl.setModifiedDate(getModifiedDate());
+		ibOrderImpl.setIbclientId(getIbclientId());
 
 		ibOrderImpl.resetOriginalValues();
 
@@ -553,6 +611,10 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 
 		ibOrderModelImpl._setModifiedDate = false;
 
+		ibOrderModelImpl._originalIbclientId = ibOrderModelImpl._ibclientId;
+
+		ibOrderModelImpl._setOriginalIbclientId = false;
+
 		ibOrderModelImpl._columnBitmask = 0;
 	}
 
@@ -567,6 +629,8 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 		if ((uuid != null) && (uuid.length() == 0)) {
 			ibOrderCacheModel.uuid = null;
 		}
+
+		ibOrderCacheModel.orderIdPk = getOrderIdPk();
 
 		ibOrderCacheModel.ordersId = getOrdersId();
 
@@ -596,15 +660,19 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 			ibOrderCacheModel.modifiedDate = Long.MIN_VALUE;
 		}
 
+		ibOrderCacheModel.ibclientId = getIbclientId();
+
 		return ibOrderCacheModel;
 	}
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(17);
+		StringBundler sb = new StringBundler(21);
 
 		sb.append("{uuid=");
 		sb.append(getUuid());
+		sb.append(", orderIdPk=");
+		sb.append(getOrderIdPk());
 		sb.append(", ordersId=");
 		sb.append(getOrdersId());
 		sb.append(", groupId=");
@@ -619,6 +687,8 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 		sb.append(getCreateDate());
 		sb.append(", modifiedDate=");
 		sb.append(getModifiedDate());
+		sb.append(", ibclientId=");
+		sb.append(getIbclientId());
 		sb.append("}");
 
 		return sb.toString();
@@ -626,7 +696,7 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(28);
+		StringBundler sb = new StringBundler(34);
 
 		sb.append("<model><model-name>");
 		sb.append("com.ibtrader.data.model.IBOrder");
@@ -635,6 +705,10 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 		sb.append(
 			"<column><column-name>uuid</column-name><column-value><![CDATA[");
 		sb.append(getUuid());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>orderIdPk</column-name><column-value><![CDATA[");
+		sb.append(getOrderIdPk());
 		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>ordersId</column-name><column-value><![CDATA[");
@@ -664,6 +738,10 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 			"<column><column-name>modifiedDate</column-name><column-value><![CDATA[");
 		sb.append(getModifiedDate());
 		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>ibclientId</column-name><column-value><![CDATA[");
+		sb.append(getIbclientId());
+		sb.append("]]></column-value></column>");
 
 		sb.append("</model>");
 
@@ -676,6 +754,7 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 		};
 	private String _uuid;
 	private String _originalUuid;
+	private long _orderIdPk;
 	private long _ordersId;
 	private long _originalOrdersId;
 	private boolean _setOriginalOrdersId;
@@ -692,6 +771,9 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 	private Date _createDate;
 	private Date _modifiedDate;
 	private boolean _setModifiedDate;
+	private long _ibclientId;
+	private long _originalIbclientId;
+	private boolean _setOriginalIbclientId;
 	private long _columnBitmask;
 	private IBOrder _escapedModel;
 }

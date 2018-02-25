@@ -17,6 +17,7 @@
 	</model>
 	<model name="com.ibtrader.data.model.IBOrder">
 		<field name="uuid" type="String" />
+		<field name="orderIdPk" type="long" />
 		<field name="ordersId" type="long" />
 		<field name="groupId" type="long" />
 		<field name="companyId" type="long" />
@@ -24,6 +25,7 @@
 		<field name="checked" type="boolean" />
 		<field name="createDate" type="Date" />
 		<field name="modifiedDate" type="Date" />
+		<field name="ibclientId" type="long" />
 	</model>
 	<model name="com.ibtrader.data.model.Market">
 		<field name="uuid" type="String" />
@@ -109,7 +111,7 @@
 		<field name="percentual_stop_lost" type="double" />
 		<field name="percentual_stop_profit" type="double" />
 		<field name="percentual_stop_profit_position" type="double" />
-		<field name="trailling_stop_lost" type="double" />
+		<field name="percentual_trailling_stop_lost" type="double" />
 		<field name="expiry_date" type="Date" />
 		<field name="expiry_expression" type="String">
 			<hint-collection name="CLOB" />

@@ -1,6 +1,9 @@
 package com.ibtrader.interactive;
 
+import java.sql.Timestamp;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -44,13 +47,17 @@ import com.ibtrader.data.service.PositionLocalServiceUtil;
 import com.ibtrader.data.service.RealtimeLocalServiceUtil;
 import com.ibtrader.data.service.ShareLocalServiceUtil;
 import com.ibtrader.util.ConfigKeys;
+import com.ibtrader.util.PositionStates;
+import com.ibtrader.util.Utilities;
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.GroupConstants;
+import com.liferay.portal.kernel.model.Organization;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.sun.javafx.webkit.UtilitiesImpl;
 
 
 
@@ -69,6 +76,10 @@ public class TIMApiWrapper implements EWrapper {
 	protected long  guestGroupId=0;
 	
 	private boolean _sendDisconnectEvent = false; 
+	
+	
+	private Share _ibtarget_share= null;
+	private Organization _ibtarget_organization= null;
 	
 
 	
@@ -203,14 +214,47 @@ public class TIMApiWrapper implements EWrapper {
 	}
 	//! [orderstatus]
 	
+	public void openOrder(Contract contract, Order order,OrderState orderState, long positionId) {
+	
+		
+		 /* METEMOS DOBLE VALIDACION POR LOS THREADS EN CASO DE QUE HAYA OPERACION PREVIA YA EN MARCHA 	
+		  * 
+		  * 
+		  */
+		long  _INCREMENT_ORDER_ID = getCurrentOrderId();
+		if (_INCREMENT_ORDER_ID>0) // mecanismo de control, siempre el next valid >=1
+		{
+		
+			IBOrderLocalServiceUtil.deleteByOrderCompanyGroup(_INCREMENT_ORDER_ID, _ibtarget_share.getCompanyId(), _ibtarget_share.getGroupId(),_clientId,_ibtarget_share.getShareId());
+			IBOrder _order = IBOrderLocalServiceUtil.createIBOrder(_INCREMENT_ORDER_ID);			/* insertamos control de ordenes de peticion */
+			_order.setCompanyId(_ibtarget_share.getCompanyId());
+			_order.setGroupId(_ibtarget_share.getGroupId());
+			_order.setShareID(_ibtarget_share.getShareId());
+			_order.setOrdersId(_INCREMENT_ORDER_ID);
+			_order.setCreateDate(new Date());
+			_order.setModifiedDate(new Date());			
+			_order.setIbclientId(_clientId);					
+			IBOrderLocalServiceUtil.updateIBOrder(_order);
+			
+			/* ACTULIAMOS CON LA POSICION DE ENTRADA */
+			Position _position = PositionLocalServiceUtil.fetchPosition(positionId);
+			_position.setPositionId_tws_in(_INCREMENT_ORDER_ID);
+			PositionLocalServiceUtil.updatePosition(_position);		
+			openOrder(new Long(_INCREMENT_ORDER_ID).intValue(),contract,order,orderState);
+		
+		}	
+			
+			
+		//}
+		
+	}
 	
 	//! [openorder]
 	@Override
-	public void openOrder(int orderId, Contract contract, Order order,
-			OrderState orderState) {
+	public void openOrder(int orderId, Contract contract, Order order,OrderState orderState) {
 		 _log.info("OpenOrder. ID: "+orderId+", "+contract.symbol()+", "+contract.secType()+" @ "+contract.exchange()+": "+
-			order.action()+", "+order.orderType()+" "+order.totalQuantity()+", "+orderState.status());
-		
+			order.action()+", "+order.orderType()+" "+order.totalQuantity());		
+		 
 		clientSocket.placeOrder(orderId, contract, order);
 
 		}
@@ -272,7 +316,8 @@ public class TIMApiWrapper implements EWrapper {
     {
 		 _log.info("contractDetailsEnd:" + reqId);
 		 IBOrder _ibOrder;		 	
-		 _ibOrder = IBOrderLocalServiceUtil.fetchIBOrder(reqId); 
+		 //_ibOrder = IBOrderLocalServiceUtil.fetchIBOrder(reqId);
+		 _ibOrder = IBOrderLocalServiceUtil.findByOrderClientGroupCompany(reqId, _clientId, _ibtarget_organization.getCompanyId(),_ibtarget_organization.getGroupId());
 	 	 if (_ibOrder!=null)  // error en una posicion dada abierta		
 		 { 
 	 		 
@@ -293,7 +338,8 @@ public class TIMApiWrapper implements EWrapper {
 	//! [execdetails]
 	@Override
 	public void execDetails(int reqId, Contract contract, Execution execution) {
-		System.out.println("ExecDetails. "+reqId+" - ["+contract.symbol()+"], ["+contract.secType()+"], ["+contract.currency()+"], ["+execution.execId()+"], ["+execution.orderId()+"], ["+execution.shares()+"]");
+		_log.info("ExecDetails. "+reqId+" - ["+contract.symbol()+"], ["+contract.secType()+"], ["+contract.currency()+"], ["+execution.execId()+"], ["+execution.orderId()+"], ["+execution.shares()+"]");
+
 	}
 	//! [execdetails]
 	
@@ -564,7 +610,9 @@ public class TIMApiWrapper implements EWrapper {
 							 * 165	Historical market Data Service query message.
 							 * 
 							 *   */															
-							IBOrder _ErrorOrder = IBOrderLocalServiceUtil.fetchIBOrder(reqId);
+							 
+							//IBOrder _ErrorOrder = IBOrderLocalServiceUtil.fetchIBOrder(reqId);
+							 IBOrder _ErrorOrder  = IBOrderLocalServiceUtil.findByOrderClientGroupCompany(reqId, _clientId, _ibtarget_organization.getCompanyId(),_ibtarget_organization.getGroupId());
 							if (_ErrorOrder!=null && reqId!=-1)
 							{						
 								oErrorShare = ShareLocalServiceUtil.fetchShare(_ErrorOrder.getShareID());  					
@@ -606,9 +654,10 @@ public class TIMApiWrapper implements EWrapper {
 		// TODO Auto-generated method stub
 		IBOrder MyOrder = null;
 		
-		if (field==ConfigKeys._TICKTYPE_LAST || field==ConfigKeys._TICKTYPE_DELAYED_LAST ) {
+		if (price>0 && (field==ConfigKeys._TICKTYPE_LAST || field==ConfigKeys._TICKTYPE_DELAYED_LAST)) {
 
-			MyOrder =  IBOrderLocalServiceUtil.fetchIBOrder(tickerId);
+			//MyOrder =  IBOrderLocalServiceUtil.fetchIBOrder(tickerId);
+			MyOrder =  IBOrderLocalServiceUtil.findByOrderClientGroupCompany(tickerId, _clientId, _ibtarget_organization.getCompanyId(),_ibtarget_organization.getGroupId());
 			if (MyOrder == null) {
 				
 				_log.info("No se encuentra el ID " + tickerId);
@@ -616,8 +665,8 @@ public class TIMApiWrapper implements EWrapper {
 			}
 			
 			Realtime  oReal = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));
-			oReal.setGroupId(guestGroupId);
-			oReal.setCompanyId(PortalUtil.getDefaultCompanyId());
+			oReal.setGroupId(MyOrder.getGroupId());
+			oReal.setCompanyId(MyOrder.getCompanyId());
 			oReal.setShareId(MyOrder.getShareID());
 			oReal.setValue(price);
 			RealtimeLocalServiceUtil.updateRealtime(oReal);
@@ -631,7 +680,196 @@ public class TIMApiWrapper implements EWrapper {
 	@Override
 	public void orderStatus(int orderId, String status, double filled, double remaining, double avgFillPrice,
 			int permId, int parentId, double lastFillPrice, int clientId, String whyHeld, double mktCapPrice) {
-		// TODO Auto-generated method stub
+
+			
+		double priceStopLost = 0;
+		double priceStopProfit = 0;
+		double priceTraillingStopLost = 0;
+		boolean bIsSellOperation = false;  //ENTRADA O SALIDA, TERMINO ERRONEO
+		boolean isDelete = false;   // cuando sea compra cancelada, nos la cargamos.
+			
+		Position _oPosition = PositionLocalServiceUtil.findByPositionID_In_TWS(_ibtarget_organization.getGroupId(), _ibtarget_organization.getCompanyId(),orderId);
+		// SI ES NULL, QUIERE DECIR QUE PUEDE VENIR UNA OPERACION DE VENTA...LA BUSCAMOS.		
+		if (_oPosition==null)
+		{
+			_oPosition = PositionLocalServiceUtil.findByPositionID_Out_TWS(_ibtarget_organization.getGroupId(), _ibtarget_organization.getCompanyId(),orderId);
+			if (_oPosition!=null)
+			{
+				_log.info("Error Execution Details order not found for Order Key:" + orderId);
+				return;
+			}
+			else
+				bIsSellOperation = true;
+			
+		}
+		/* SUPOEMOS UNA POSICION */
+		Share sharePosition = ShareLocalServiceUtil.fetchShare(_oPosition.getShareId());
+		/* DETECTAMOS SI ES UNA ORDER DE COMPRA O DE VENTA. VERIFICAMOS SI HA CAMBIADO . VERIFICAR SI HAY UNA ORDEN DE COMPRA PREVIA. */
+		boolean changed = false;
+		if (!bIsSellOperation)   //ENTRADA OPERATION
+		{	
+			if (_oPosition.getState_in() ==null || (_oPosition.getState_in()!=null && !_oPosition.getState_in().toLowerCase().equals(status.toLowerCase())))			
+					changed = true;
+		}
+		else  // SALIDA OPERATION
+		{
+			if (_oPosition.getState_out()==null || (_oPosition.getState_out()!=null && !_oPosition.getState_out().toLowerCase().equals(status.toLowerCase())))
+    			changed = true;
+		}
+		if (changed)
+		{	    			
+			// controlamos todas las canceladas			
+			if (!bIsSellOperation)   // ENTRADA OPERATION ... CANCELLED? --> LA BORRAMOS PARA QUE NO CONSTE
+			{
+				_oPosition.setState_in(status);
+				/* cancelada compra  */
+				/* 21.09.2013 QUITO EL OR DE INACTIVE PARA CONTROLARLO EN LA RUTINA DE ERRORES*/
+				if (PositionStates.statusTWSCallBack.Cancelled.toString().equals(status))
+	    		{			    						    		
+					// procedemos a borrarla y desactivar
+					/* FUTURO VENCIDO D-1 DEL VENCIMIENTO */
+					//Actualizamos campos de errores.
+					sharePosition.setActive(Boolean.FALSE);					
+				//	sharePosition.setLast_error_trader_provider(sdf2.format(FechaError));  // desactivamos trading.
+					ShareLocalServiceUtil.updateShare(sharePosition);
+					PositionLocalServiceUtil.deletePosition(_oPosition);
+					isDelete = true;
+	    			
+	    		}
+				
+				/* OJO, PUEDEN SER VENTAS/COMPRAS  PARCIALES..ENTRADA...SOLO OPERACIONES TOTALES */
+				if (PositionStates.statusTWSCallBack.Filled.toString().equals(status))
+	    		{
+	    			_oPosition.setDate_real_in(new Date());			    			
+	    			_oPosition.setPrice_real_in(avgFillPrice);  // cogemos el avg que nos manda el TWS	    			
+	    			// ACTUALIZAMOS EL PRECIO DE SALIDA CON EL PORCENTAJE PORQUE ES EL VALOR QUE TRATAMOS
+	    			// vemos el tipo de operacion
+	    			if (_oPosition.getType().equals(PositionStates.statusTWSFire.SELL.toString()))  	{ //short	    		
+	    				priceStopLost = avgFillPrice +  (avgFillPrice *  _oPosition.getPercentualstoplost_out());
+		    			priceStopProfit = avgFillPrice  - (avgFillPrice *  _oPosition.getPercentualstopprofit_out()); }
+	    			else {  //long
+	    				priceStopLost    = avgFillPrice  - (avgFillPrice *  _oPosition.getPercentualstoplost_out());
+		    			priceStopProfit = avgFillPrice  + (avgFillPrice *  _oPosition.getPercentualstopprofit_out()); }	    				 	    		
+	    			_oPosition.setPricestoplost_out(Utilities.RoundPrice(priceStopLost));
+	    			_oPosition.setPricestopprofit_out(Utilities.RoundPrice(priceStopProfit));
+	    			_oPosition.setState(PositionStates.status.BUY_OK.toString());
+	    		}	    				
+			}
+			else  // SALIDA OPERATION..  OJO, PUEDEN SER VENTAS/COMPRAS  PARCIALES.. */
+			{
+				/* if (PositionStates.statusTWSCallBack.Cancelled.toString().equals(status))
+	    		{			    						    		
+					 _oPosition.setState_out(null?;
+					_oPosition.setDate_sell(null);
+					_oPosition.setDate_real_sell(null);
+					_oPosition.setLimit_price_sell(null);
+					_oPosition.setPositionID_tws_sell(null);
+					_oPosition.setPrice_real_sell(null);
+					_oPosition.setPrice_sell(null);
+					_oPosition.setRealtimeID_sell_alert(null);
+					_oPosition.setStrategyID_sell(null);
+					_oPosition.setState_sell(status);	 
+					/*_oPosition.setSell_price_stop_lost(null);
+					_oPosition.setSell_price_stop_lost(sell_price_stop_lost);					
+					// es una venta cancelada, restauramos los valores para seguir vendiendo.	    					
+	    			//_oPosition.setState(PositionStates.status.CANCEL_BUY.toString());	    			
+	    		}*/
+				
+				
+				/* PUEDE RETORNAR FILLED MAS DE UNA VEZ*/
+				/* EN LAS OPERACIONES PARCIALES, DESPUES DE FILLED, PONGO EL STATESELL A NULL
+				 * PARA PODER SEGUIR VENDIENDO. 
+				 * PASARIA POR AQUI Y ACTUALIZARIA DOS VECES ERROREO EL CAMPO OPERATIONS.
+				 */
+				if (PositionStates.statusTWSCallBack.Filled.toString().equals(status) && _oPosition.getState_out()!=null)
+	    		{
+					
+	    			/* acumulo las acciones vendidas y a vender en la operativa */
+	    			long _RemaingShares = _oPosition.getShare_number_to_trade() +_oPosition.getShare_number_traded();
+	    			long _TotalShares = _oPosition.getShare_number();
+	    			
+	    			_oPosition.setShare_number_traded(_RemaingShares);
+	    			_oPosition.setShare_number_to_trade(_oPosition.getShare_number() - _oPosition.getShare_number_traded());
+	    			
+	    			/* NO ES EL SELL OK y PRECIOS REALES NO SE GUARDAN EN LOS CAMPOS hasta que el numero de acciones vendidas quede cerrado*/
+	    			if (_RemaingShares ==_TotalShares)   // ya no hay =
+	    			{	
+	    				_oPosition.setState_out(status);	 
+	    				_oPosition.setDate_out(new Date()) ; // OJO TIMESTAMP.
+	    				_oPosition.setDate_real_out(new Date());			    			
+		    			_oPosition.setPrice_real_out(avgFillPrice);  // cogemos el avg que nos manda el TWS
+	    				_oPosition.setState(PositionStates.status.SELL_OK.toString());
+	    			}
+	    			else   //  hay acciones pendientes para salir..actualizo el stop de beneficio para no dispararse
+	    			{
+	    				// SE PUEDEN DAR DOS COSAS,
+	    				// 1. QUE EL STOP PROFIT SALTO POR DEBAJO DEL INICIAL--> DEJAMOS EL INICIAL
+	    				// 2. QUE EL STOP PROFIT SALTO POR ENCIMA DEL INICIAL --> SIGUE EN TENDENCIA, LOS MULTIPLICAMOS POR UN 50%	    				
+	    				_oPosition.setState_out(null);	
+	    				
+	    				double priceStopProfitAperturaPosicion = 0;
+	    				double priceNewStopProfit = 0;
+	    				
+	    				
+	    				if (_oPosition.getType().equals(PositionStates.statusTWSFire.SELL.toString()))  //short
+		    			{
+	    					// cojo el original
+	    					priceStopProfitAperturaPosicion = _oPosition.getPrice_real_in() - (_oPosition.getPrice_real_in() *  sharePosition.getPercentual_stop_profit());
+	    					// si el original es mayor...subio la accion mucho, la tendencia es seguir, le subo un 50% para que no salte el resto de la posicion 
+	    					if (priceStopProfitAperturaPosicion > _oPosition.getPricestopprofit_out())
+	    					{
+	    						priceNewStopProfit = _oPosition.getPricestopprofit_out() - (_oPosition.getPricestopprofit_out()*0.5);
+	    						priceNewStopProfit  = priceNewStopProfit /100;
+	    						//_oPosition.setSell_percentual_stop_profit(Utilidades.RedondeaPrice(priceNewStopProfit));	    						
+	    					}
+	    					else  // restauramos el original
+	    					{
+	    						priceNewStopProfit = priceStopProfitAperturaPosicion;
+	    									    						
+	    					}
+		    			}
+		    			else  //long position
+		    			{		
+		    				// cojo el original
+	    					priceStopProfitAperturaPosicion = _oPosition.getPrice_real_in()  + (_oPosition.getPrice_real_in() *  sharePosition.getPercentual_stop_profit());
+	    					// si el original es menor...subio la accion mucho, la tendencia es seguir, le subo un 50% para que no salte el resto 
+	    					if (priceStopProfitAperturaPosicion < _oPosition.getPricestopprofit_out())
+	    					{
+	    						priceNewStopProfit = _oPosition.getPricestopprofit_out() + (_oPosition.getPricestopprofit_out() *0.5);
+	    						priceNewStopProfit  = priceNewStopProfit / 100;
+	    						//_oPosition.setSell_percentual_stop_profit(Utilidades.RedondeaPrice(priceNewStopProfit));
+	    						
+	    					}
+	    					else  // restauramos el original
+	    					{
+	    						priceNewStopProfit = priceStopProfitAperturaPosicion;
+	    									    						
+	    					}
+	    				}
+	    				
+	    				_oPosition.setPricestopprofit_out(Utilities.RoundPrice(priceNewStopProfit));
+	    				
+	    				//LogTWM.log(Priority.INFO,"New Profit Stop.. " + Utilidades.RedondeaPrice(priceNewStopProfit));
+	    				
+	    			}
+	    			
+	    			// ACTUALIZAMOS EL PRECIO DE SALIDA CON EL PORCENTAJE.
+	    			/*priceStopLost = avgFillPrice  + (avgFillPrice *  _oPosition.getSell_percentual_stop_lost());
+	    			priceStopProfit = avgFillPrice  - (avgFillPrice *  _oPosition.getSell_percentual_stop_profit());*/
+	    			/* DOS DECIMALES PRECIOS DE SALIDA LOST Y PROFIT */
+	    			/*_oPosition.setSell_price_stop_lost(Utilidades.RedondeaPrice(priceStopLost));
+	    			_oPosition.setSell_price_stop_profit(Utilidades.RedondeaPrice(priceStopProfit));*/
+	    			
+	    			
+	    		}	    
+				
+			}
+			if (!isDelete)  // compras canceladas se borran.
+			{	
+				PositionLocalServiceUtil.updatePosition(_oPosition);
+			}
+		}	
+		
 		
 	}
 	@Override
@@ -798,6 +1036,24 @@ public class TIMApiWrapper implements EWrapper {
 	public void historicalTicksLast(int reqId, List<HistoricalTickLast> ticks, boolean done) {
 		// TODO Auto-generated method stub
 		
+	}
+
+
+
+	public Share get_ibtarget_share() {
+		return _ibtarget_share;
+	}
+
+	public void set_ibtarget_share(Share _ibtarget_share) {
+		this._ibtarget_share = _ibtarget_share;
+	}
+
+	public Organization get_ibtarget_organization() {
+		return _ibtarget_organization;
+	}
+
+	public void set_ibtarget_organization(Organization _ibtarget_organization) {
+		this._ibtarget_organization = _ibtarget_organization;
 	}
 	
 	

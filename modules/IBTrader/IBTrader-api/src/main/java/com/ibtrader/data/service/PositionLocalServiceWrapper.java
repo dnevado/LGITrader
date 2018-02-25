@@ -39,6 +39,13 @@ public class PositionLocalServiceWrapper implements PositionLocalService,
 			shareId);
 	}
 
+	@Override
+	public boolean ExistsPositionToExit(long groupId, long companyId,
+		long shareId) {
+		return _positionLocalService.ExistsPositionToExit(groupId, companyId,
+			shareId);
+	}
+
 	/**
 	* Adds the position to the database. Also notifies the appropriate model listeners.
 	*
@@ -112,10 +119,24 @@ public class PositionLocalServiceWrapper implements PositionLocalService,
 	}
 
 	@Override
+	public com.ibtrader.data.model.Position findByPositionID_In_TWS(
+		long groupId, long companyId, long _PositionIDTWS) {
+		return _positionLocalService.findByPositionID_In_TWS(groupId,
+			companyId, _PositionIDTWS);
+	}
+
+	@Override
 	public com.ibtrader.data.model.Position findByPositionID_Out_TWS(
 		long groupId, long companyId, long _PositionIDTWS) {
 		return _positionLocalService.findByPositionID_Out_TWS(groupId,
 			companyId, _PositionIDTWS);
+	}
+
+	@Override
+	public com.ibtrader.data.model.Position findPositionToExit(long groupId,
+		long companyId, long shareId) {
+		return _positionLocalService.findPositionToExit(groupId, companyId,
+			shareId);
 	}
 
 	/**

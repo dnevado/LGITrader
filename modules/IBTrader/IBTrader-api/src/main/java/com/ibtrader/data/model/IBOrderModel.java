@@ -83,6 +83,20 @@ public interface IBOrderModel extends BaseModel<IBOrder>, ShardedModel,
 	public void setUuid(String uuid);
 
 	/**
+	 * Returns the order ID pk of this i b order.
+	 *
+	 * @return the order ID pk of this i b order
+	 */
+	public long getOrderIdPk();
+
+	/**
+	 * Sets the order ID pk of this i b order.
+	 *
+	 * @param orderIdPk the order ID pk of this i b order
+	 */
+	public void setOrderIdPk(long orderIdPk);
+
+	/**
 	 * Returns the orders ID of this i b order.
 	 *
 	 * @return the orders ID of this i b order
@@ -192,6 +206,20 @@ public interface IBOrderModel extends BaseModel<IBOrder>, ShardedModel,
 	 */
 	@Override
 	public void setModifiedDate(Date modifiedDate);
+
+	/**
+	 * Returns the ibclient ID of this i b order.
+	 *
+	 * @return the ibclient ID of this i b order
+	 */
+	public long getIbclientId();
+
+	/**
+	 * Sets the ibclient ID of this i b order.
+	 *
+	 * @param ibclientId the ibclient ID of this i b order
+	 */
+	public void setIbclientId(long ibclientId);
 
 	@Override
 	public boolean isNew();

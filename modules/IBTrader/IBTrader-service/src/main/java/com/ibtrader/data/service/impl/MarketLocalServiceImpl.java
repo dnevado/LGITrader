@@ -53,6 +53,7 @@ public class MarketLocalServiceImpl extends MarketLocalServiceBaseImpl {
 	{
 		DynamicQuery _DQ = MarketLocalServiceUtil.dynamicQuery();
 
+		/* LAS HORAS HAY QUE SACARLAS CON LA HORA LOCAL DEL USUARIO */
 		_DQ.add(RestrictionsFactoryUtil.eq("active", active));
 		_DQ.add(RestrictionsFactoryUtil.le("start_hour", _Start));
 		_DQ.add(RestrictionsFactoryUtil.ge("end_hour", _End));

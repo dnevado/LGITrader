@@ -60,6 +60,7 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 
 		attributes.put("uuid", getUuid());
+		attributes.put("orderIdPk", getOrderIdPk());
 		attributes.put("ordersId", getOrdersId());
 		attributes.put("groupId", getGroupId());
 		attributes.put("companyId", getCompanyId());
@@ -67,6 +68,7 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 		attributes.put("checked", getChecked());
 		attributes.put("createDate", getCreateDate());
 		attributes.put("modifiedDate", getModifiedDate());
+		attributes.put("ibclientId", getIbclientId());
 
 		return attributes;
 	}
@@ -77,6 +79,12 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 
 		if (uuid != null) {
 			setUuid(uuid);
+		}
+
+		Long orderIdPk = (Long)attributes.get("orderIdPk");
+
+		if (orderIdPk != null) {
+			setOrderIdPk(orderIdPk);
 		}
 
 		Long ordersId = (Long)attributes.get("ordersId");
@@ -119,6 +127,12 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 
 		if (modifiedDate != null) {
 			setModifiedDate(modifiedDate);
+		}
+
+		Long ibclientId = (Long)attributes.get("ibclientId");
+
+		if (ibclientId != null) {
+			setIbclientId(ibclientId);
 		}
 	}
 
@@ -258,6 +272,26 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
+	* Returns the ibclient ID of this i b order.
+	*
+	* @return the ibclient ID of this i b order
+	*/
+	@Override
+	public long getIbclientId() {
+		return _ibOrder.getIbclientId();
+	}
+
+	/**
+	* Returns the order ID pk of this i b order.
+	*
+	* @return the order ID pk of this i b order
+	*/
+	@Override
+	public long getOrderIdPk() {
+		return _ibOrder.getOrderIdPk();
+	}
+
+	/**
 	* Returns the orders ID of this i b order.
 	*
 	* @return the orders ID of this i b order
@@ -354,6 +388,16 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
+	* Sets the ibclient ID of this i b order.
+	*
+	* @param ibclientId the ibclient ID of this i b order
+	*/
+	@Override
+	public void setIbclientId(long ibclientId) {
+		_ibOrder.setIbclientId(ibclientId);
+	}
+
+	/**
 	* Sets the modified date of this i b order.
 	*
 	* @param modifiedDate the modified date of this i b order
@@ -366,6 +410,16 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	@Override
 	public void setNew(boolean n) {
 		_ibOrder.setNew(n);
+	}
+
+	/**
+	* Sets the order ID pk of this i b order.
+	*
+	* @param orderIdPk the order ID pk of this i b order
+	*/
+	@Override
+	public void setOrderIdPk(long orderIdPk) {
+		_ibOrder.setOrderIdPk(orderIdPk);
 	}
 
 	/**

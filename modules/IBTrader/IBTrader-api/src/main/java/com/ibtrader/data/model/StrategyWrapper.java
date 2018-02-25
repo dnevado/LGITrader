@@ -326,6 +326,16 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 	}
 
 	@Override
+	public com.ib.client.Contract getTargetContract() {
+		return _strategy.getTargetContract();
+	}
+
+	@Override
+	public com.ib.client.Order getTargetOrder() {
+		return _strategy.getTargetOrder();
+	}
+
+	@Override
 	public com.liferay.asset.kernel.model.AssetEntry getIBStrategyAssetEntry() {
 		return _strategy.getIBStrategyAssetEntry();
 	}
@@ -530,6 +540,11 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 		return _strategy.getIBStrategyParams();
 	}
 
+	@Override
+	public long execute(Share _share, Market _market) {
+		return _strategy.execute(_share, _market);
+	}
+
 	/**
 	* Returns the company ID of this strategy.
 	*
@@ -588,11 +603,6 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 	@Override
 	public long getUserId() {
 		return _strategy.getUserId();
-	}
-
-	@Override
-	public void execute(Share _share, Market _market) {
-		_strategy.execute(_share, _market);
 	}
 
 	@Override
@@ -807,6 +817,16 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 	@Override
 	public void setStrategyID(long strategyID) {
 		_strategy.setStrategyID(strategyID);
+	}
+
+	@Override
+	public void setTargetContract(com.ib.client.Contract _targetContract) {
+		_strategy.setTargetContract(_targetContract);
+	}
+
+	@Override
+	public void setTargetOrder(com.ib.client.Order targetOrder) {
+		_strategy.setTargetOrder(targetOrder);
 	}
 
 	/**

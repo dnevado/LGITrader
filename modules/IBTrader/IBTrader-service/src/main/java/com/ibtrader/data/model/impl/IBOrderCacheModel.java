@@ -51,7 +51,7 @@ public class IBOrderCacheModel implements CacheModel<IBOrder>, Externalizable {
 
 		IBOrderCacheModel ibOrderCacheModel = (IBOrderCacheModel)obj;
 
-		if (ordersId == ibOrderCacheModel.ordersId) {
+		if (orderIdPk == ibOrderCacheModel.orderIdPk) {
 			return true;
 		}
 
@@ -60,15 +60,17 @@ public class IBOrderCacheModel implements CacheModel<IBOrder>, Externalizable {
 
 	@Override
 	public int hashCode() {
-		return HashUtil.hash(0, ordersId);
+		return HashUtil.hash(0, orderIdPk);
 	}
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(17);
+		StringBundler sb = new StringBundler(21);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
+		sb.append(", orderIdPk=");
+		sb.append(orderIdPk);
 		sb.append(", ordersId=");
 		sb.append(ordersId);
 		sb.append(", groupId=");
@@ -83,6 +85,8 @@ public class IBOrderCacheModel implements CacheModel<IBOrder>, Externalizable {
 		sb.append(createDate);
 		sb.append(", modifiedDate=");
 		sb.append(modifiedDate);
+		sb.append(", ibclientId=");
+		sb.append(ibclientId);
 		sb.append("}");
 
 		return sb.toString();
@@ -99,6 +103,7 @@ public class IBOrderCacheModel implements CacheModel<IBOrder>, Externalizable {
 			ibOrderImpl.setUuid(uuid);
 		}
 
+		ibOrderImpl.setOrderIdPk(orderIdPk);
 		ibOrderImpl.setOrdersId(ordersId);
 		ibOrderImpl.setGroupId(groupId);
 		ibOrderImpl.setCompanyId(companyId);
@@ -119,6 +124,8 @@ public class IBOrderCacheModel implements CacheModel<IBOrder>, Externalizable {
 			ibOrderImpl.setModifiedDate(new Date(modifiedDate));
 		}
 
+		ibOrderImpl.setIbclientId(ibclientId);
+
 		ibOrderImpl.resetOriginalValues();
 
 		return ibOrderImpl;
@@ -127,6 +134,8 @@ public class IBOrderCacheModel implements CacheModel<IBOrder>, Externalizable {
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
 		uuid = objectInput.readUTF();
+
+		orderIdPk = objectInput.readLong();
 
 		ordersId = objectInput.readLong();
 
@@ -139,6 +148,8 @@ public class IBOrderCacheModel implements CacheModel<IBOrder>, Externalizable {
 		checked = objectInput.readBoolean();
 		createDate = objectInput.readLong();
 		modifiedDate = objectInput.readLong();
+
+		ibclientId = objectInput.readLong();
 	}
 
 	@Override
@@ -151,6 +162,8 @@ public class IBOrderCacheModel implements CacheModel<IBOrder>, Externalizable {
 			objectOutput.writeUTF(uuid);
 		}
 
+		objectOutput.writeLong(orderIdPk);
+
 		objectOutput.writeLong(ordersId);
 
 		objectOutput.writeLong(groupId);
@@ -162,9 +175,12 @@ public class IBOrderCacheModel implements CacheModel<IBOrder>, Externalizable {
 		objectOutput.writeBoolean(checked);
 		objectOutput.writeLong(createDate);
 		objectOutput.writeLong(modifiedDate);
+
+		objectOutput.writeLong(ibclientId);
 	}
 
 	public String uuid;
+	public long orderIdPk;
 	public long ordersId;
 	public long groupId;
 	public long companyId;
@@ -172,4 +188,5 @@ public class IBOrderCacheModel implements CacheModel<IBOrder>, Externalizable {
 	public boolean checked;
 	public long createDate;
 	public long modifiedDate;
+	public long ibclientId;
 }

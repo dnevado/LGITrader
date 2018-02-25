@@ -37,10 +37,10 @@ public interface IBOrder extends IBOrderModel, PersistedModel {
 	 *
 	 * Never modify this interface directly. Add methods to {@link com.ibtrader.data.model.impl.IBOrderImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	public static final Accessor<IBOrder, Long> ORDERS_ID_ACCESSOR = new Accessor<IBOrder, Long>() {
+	public static final Accessor<IBOrder, Long> ORDER_ID_PK_ACCESSOR = new Accessor<IBOrder, Long>() {
 			@Override
 			public Long get(IBOrder ibOrder) {
-				return ibOrder.getOrdersId();
+				return ibOrder.getOrderIdPk();
 			}
 
 			@Override

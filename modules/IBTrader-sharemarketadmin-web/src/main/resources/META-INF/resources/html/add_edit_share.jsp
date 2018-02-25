@@ -128,7 +128,7 @@ else
     	<label class="control-label" for="<%=portletId%>_share.percentual_stop_profit">share.percentual_stop_profit</label><input  id="<%=portletId%>_percentual_stop_profit" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_stop_profit"  value="${share.percentual_stop_profit gt 0 ? share.percentual_stop_profit : ''}"/> 	    	      	    		
     </aui:fieldset> 
     <aui:fieldset>		
-    	<label class="control-label" for="<%=portletId%>_share.trailling_stop_lost">share.trailling_stop_lost</label><input  id="<%=portletId%>_trailling_stop_lost" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_trailling_stop_lost"  value="${share.trailling_stop_lost gt 0 ? share.trailling_stop_lost : ''}"/> 	    	      	    		
+    	<label class="control-label" for="<%=portletId%>_share.trailling_stop_lost">share.percentual_trailling_stop_lost</label><input  id="<%=portletId%>_trailling_stop_lost" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_trailling_stop_lost"  value="${share.percentual_trailling_stop_lost gt 0 ? share.percentual_trailling_stop_lost : ''}"/> 	    	      	    		
     </aui:fieldset>
      
     

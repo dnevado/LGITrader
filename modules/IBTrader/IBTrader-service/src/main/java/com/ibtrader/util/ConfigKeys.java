@@ -43,6 +43,11 @@ public class ConfigKeys {
     
     public static final int _AUDIT_TIME_CRON_READ_IN_MILLISECONDS = 5000;   // 5 SEGUNDOS SE GRABA EL MODIFIED DATABASE 
     
+    public static final String  _FIELD_NUMBER_TO_PURCHASE = "numbertopurchase";   // 5 SEGUNDOS SE GRABA EL MODIFIED DATABASE
+    public static final String _FIELD_TRAILLING_STOP_LOST = "trailling_stop_lost";   // 5 SEGUNDOS SE GRABA EL MODIFIED DATABASE
+    public static final String _FIELD_STOP_LOST = "percentual_stop_lost";   // 5 SEGUNDOS SE GRABA EL MODIFIED DATABASE
+    public static final String _FIELD_STOP_PROFIT = "percentual_stop_profit";   // 5 SEGUNDOS SE GRABA EL MODIFIED DATABASE
+    
     
 
     

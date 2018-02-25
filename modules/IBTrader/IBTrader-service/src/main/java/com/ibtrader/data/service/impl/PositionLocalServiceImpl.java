@@ -17,14 +17,17 @@ package com.ibtrader.data.service.impl;
 import java.util.Date;
 import java.util.List;
 
+import com.ibtrader.data.exception.NoSuchPositionException;
 import com.ibtrader.data.model.Position;
 import com.ibtrader.data.service.MarketLocalServiceUtil;
 import com.ibtrader.data.service.PositionLocalServiceUtil;
 import com.ibtrader.data.service.base.PositionLocalServiceBaseImpl;
 import com.ibtrader.data.service.persistence.PositionPersistence;
+import com.ibtrader.util.ConfigKeys;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.OrderFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
+
 
 /**
  * The implementation of the position local service.
@@ -88,23 +91,55 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 	
 	public Position findByPositionID_Out_TWS(long groupId, long companyId, long _PositionIDTWS)
 	{
+		 
+		Position _rPosition = null;
+		try {
+			_rPosition = getPositionPersistence().findByPositionOutGroupCompany(groupId,companyId, _PositionIDTWS);
+		} catch (NoSuchPositionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+		return _rPosition;
+		
+	}
+	public Position findByPositionID_In_TWS(long groupId, long companyId, long _PositionIDTWS)
+	{
+		Position _rPosition = null;
+		try {
+			_rPosition =  getPositionPersistence().findByPositionInGroupCompany(groupId,companyId, _PositionIDTWS);
+		} 
+		catch (NoSuchPositionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+		return _rPosition;
+		
+	}
+	
+	/* FECHA DE ENTRADA A NULL */
+	public boolean  ExistsOpenPosition(long groupId, long companyId, long shareId)
+	{		
+		List<Position> _lPosition = getPositionPersistence().findByPositionShareDateOut(groupId, companyId, shareId, null);
+		return (!_lPosition.isEmpty() && _lPosition.size()>0);
+	}
+	/* BUY_OK  y no fecha de salida */
+	public boolean  ExistsPositionToExit(long groupId, long companyId, long shareId)
+	{		
+		int total = getPositionPersistence().countByPositionShareStateDateOut(groupId, companyId, shareId, com.ibtrader.util.PositionStates.status.BUY_OK.toString(),null);
+		return (total>0);
+	}
+	/* BUY_OK  y no fecha de salida */
+	public Position  findPositionToExit(long groupId, long companyId, long shareId)
+	{	
 		Position _rPosition = null; 
-		List<Position> _lPosition = getPositionPersistence().findByPositionID_Out_TWS(groupId,companyId, _PositionIDTWS);
-		if (!_lPosition.isEmpty())
+		List<Position> _lPosition =getPositionPersistence().findByPositionShareStateDateOut(groupId, companyId, shareId, com.ibtrader.util.PositionStates.status.BUY_OK.toString(),null);		
+		if (!_lPosition.isEmpty() && _lPosition.size()>0)
 		{
 			_rPosition = _lPosition.get(0);
 		}
 		return _rPosition;
-		
 	}
-	/* FECHA DE ENTRADA A NULL */
-	public boolean   ExistsOpenPosition(long groupId, long companyId, long shareId)
-	{		
-		List<Position> _lPosition = getPositionPersistence().findByPositionShareDateOut(groupId, companyId, shareId, null);
-		return (!_lPosition.isEmpty() && _lPosition.size()>0);
-		
-		
-	}
+	
 
 
 }
