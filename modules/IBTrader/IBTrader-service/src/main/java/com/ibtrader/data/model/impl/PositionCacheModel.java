@@ -65,7 +65,7 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(77);
+		StringBundler sb = new StringBundler(73);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -131,12 +131,8 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 		sb.append(strategy_out);
 		sb.append(", percentualstoplost_out=");
 		sb.append(percentualstoplost_out);
-		sb.append(", pricestoplost_out=");
-		sb.append(pricestoplost_out);
 		sb.append(", percentualstopprofit_out=");
 		sb.append(percentualstopprofit_out);
-		sb.append(", pricestopprofit_out=");
-		sb.append(pricestopprofit_out);
 		sb.append(", pendingcancelled=");
 		sb.append(pendingcancelled);
 		sb.append(", trading_data_operations=");
@@ -273,9 +269,7 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 		}
 
 		positionImpl.setPercentualstoplost_out(percentualstoplost_out);
-		positionImpl.setPricestoplost_out(pricestoplost_out);
 		positionImpl.setPercentualstopprofit_out(percentualstopprofit_out);
-		positionImpl.setPricestopprofit_out(pricestopprofit_out);
 		positionImpl.setPendingcancelled(pendingcancelled);
 
 		if (trading_data_operations == null) {
@@ -345,11 +339,7 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 
 		percentualstoplost_out = objectInput.readDouble();
 
-		pricestoplost_out = objectInput.readDouble();
-
 		percentualstopprofit_out = objectInput.readDouble();
-
-		pricestopprofit_out = objectInput.readDouble();
 
 		pendingcancelled = objectInput.readLong();
 		trading_data_operations = objectInput.readUTF();
@@ -458,11 +448,7 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 
 		objectOutput.writeDouble(percentualstoplost_out);
 
-		objectOutput.writeDouble(pricestoplost_out);
-
 		objectOutput.writeDouble(percentualstopprofit_out);
-
-		objectOutput.writeDouble(pricestopprofit_out);
 
 		objectOutput.writeLong(pendingcancelled);
 
@@ -508,9 +494,7 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 	public String strategy_in;
 	public String strategy_out;
 	public double percentualstoplost_out;
-	public double pricestoplost_out;
 	public double percentualstopprofit_out;
-	public double pricestopprofit_out;
 	public long pendingcancelled;
 	public String trading_data_operations;
 	public boolean simulation_mode;

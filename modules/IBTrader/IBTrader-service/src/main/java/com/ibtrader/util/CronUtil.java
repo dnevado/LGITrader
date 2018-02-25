@@ -120,6 +120,11 @@ public class CronUtil {
 				wrapper.reqNextId();
 				wrapper.set_ibtarget_organization(_Organization);
 				
+				if (wrapper.getCurrentOrderId()==-1)
+				{
+					wrapper.disconnect();
+					return;
+				}
 				_log.info("Connected, StartReadingCron, connecting to TWS,currentOrderId:" + wrapper.getCurrentOrderId());
 			 
 			 	ArrayList<String> lShareRequested = new ArrayList<String>();
@@ -326,7 +331,11 @@ public class CronUtil {
 					
  					wrapper.reqNextId();
  					wrapper.set_ibtarget_organization(_Organization);
-
+ 					if (wrapper.getCurrentOrderId()==-1)
+ 					{
+ 						wrapper.disconnect();
+ 						return;
+ 					}
 					_log.info("Connected, StartTradingCron, connecting to TWS,currentOrderId:" + wrapper.getCurrentOrderId());
 					
 					while (true)
@@ -387,6 +396,9 @@ public class CronUtil {
 						    							//	wrapper.setStrategyshare(oStrategyShare);
 						    							// 2. ABRIMOS OPERACION CON EL ORDER ESPECIFICAADO EN EL METHOD execute 
 						    								wrapper.openOrder(_strategyImpl.getTargetContract(), _strategyImpl.getTargetOrder(),null,positionId);
+						    								/* LA RAZON ES QUE ES QUE METE DOS O TRES OPERACIONES A LA VEZ A PESAR DE TENER LAS VALIDACIONES 
+						    								 * SEGUNDO PARO */
+						    							//	Thread.sleep(1000);
 						    							}
 						    							
 						    							
@@ -496,6 +508,13 @@ public class CronUtil {
 
 					wrapper.reqNextId(); 
 					wrapper.set_ibtarget_organization(_Organization);
+					
+					if (wrapper.getCurrentOrderId()==-1)
+					{
+						wrapper.disconnect();
+						return;
+					}
+					
 					_log.info("Connected, StartVerifyContractsCron, connecting to TWS,currentOrderId:" + wrapper.getCurrentOrderId());
 
 					 

@@ -75,9 +75,7 @@ create table ibtrader_Position (
 	strategy_in VARCHAR(75) null,
 	strategy_out VARCHAR(75) null,
 	percentualstoplost_out DOUBLE,
-	pricestoplost_out DOUBLE,
 	percentualstopprofit_out DOUBLE,
-	pricestopprofit_out DOUBLE,
 	pendingcancelled LONG,
 	trading_data_operations VARCHAR(75) null,
 	simulation_mode BOOLEAN

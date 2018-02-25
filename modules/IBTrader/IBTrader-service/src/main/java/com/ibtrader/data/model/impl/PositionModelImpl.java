@@ -102,9 +102,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 			{ "strategy_in", Types.VARCHAR },
 			{ "strategy_out", Types.VARCHAR },
 			{ "percentualstoplost_out", Types.DOUBLE },
-			{ "pricestoplost_out", Types.DOUBLE },
 			{ "percentualstopprofit_out", Types.DOUBLE },
-			{ "pricestopprofit_out", Types.DOUBLE },
 			{ "pendingcancelled", Types.BIGINT },
 			{ "trading_data_operations", Types.VARCHAR },
 			{ "simulation_mode", Types.BOOLEAN }
@@ -144,15 +142,13 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		TABLE_COLUMNS_MAP.put("strategy_in", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("strategy_out", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("percentualstoplost_out", Types.DOUBLE);
-		TABLE_COLUMNS_MAP.put("pricestoplost_out", Types.DOUBLE);
 		TABLE_COLUMNS_MAP.put("percentualstopprofit_out", Types.DOUBLE);
-		TABLE_COLUMNS_MAP.put("pricestopprofit_out", Types.DOUBLE);
 		TABLE_COLUMNS_MAP.put("pendingcancelled", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("trading_data_operations", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("simulation_mode", Types.BOOLEAN);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table ibtrader_Position (uuid_ VARCHAR(75) null,positionId LONG not null primary key,groupId LONG,companyId LONG,shareId LONG,createDate DATE null,modifiedDate DATE null,state_ VARCHAR(75) null,state_in VARCHAR(75) null,state_out VARCHAR(75) null,description VARCHAR(75) null,price_in DOUBLE,price_real_in DOUBLE,limit_price_in DOUBLE,date_in DATE null,date_real_in DATE null,positionId_tws_in LONG,positionId_tws_out LONG,type_ VARCHAR(75) null,price_out DOUBLE,price_real_out DOUBLE,limit_price_out DOUBLE,date_out DATE null,date_real_out DATE null,share_number LONG,share_number_to_trade LONG,share_number_traded LONG,realtimeId_in LONG,realtimeId_out LONG,strategy_in VARCHAR(75) null,strategy_out VARCHAR(75) null,percentualstoplost_out DOUBLE,pricestoplost_out DOUBLE,percentualstopprofit_out DOUBLE,pricestopprofit_out DOUBLE,pendingcancelled LONG,trading_data_operations VARCHAR(75) null,simulation_mode BOOLEAN)";
+	public static final String TABLE_SQL_CREATE = "create table ibtrader_Position (uuid_ VARCHAR(75) null,positionId LONG not null primary key,groupId LONG,companyId LONG,shareId LONG,createDate DATE null,modifiedDate DATE null,state_ VARCHAR(75) null,state_in VARCHAR(75) null,state_out VARCHAR(75) null,description VARCHAR(75) null,price_in DOUBLE,price_real_in DOUBLE,limit_price_in DOUBLE,date_in DATE null,date_real_in DATE null,positionId_tws_in LONG,positionId_tws_out LONG,type_ VARCHAR(75) null,price_out DOUBLE,price_real_out DOUBLE,limit_price_out DOUBLE,date_out DATE null,date_real_out DATE null,share_number LONG,share_number_to_trade LONG,share_number_traded LONG,realtimeId_in LONG,realtimeId_out LONG,strategy_in VARCHAR(75) null,strategy_out VARCHAR(75) null,percentualstoplost_out DOUBLE,percentualstopprofit_out DOUBLE,pendingcancelled LONG,trading_data_operations VARCHAR(75) null,simulation_mode BOOLEAN)";
 	public static final String TABLE_SQL_DROP = "drop table ibtrader_Position";
 	public static final String ORDER_BY_JPQL = " ORDER BY position.positionId_tws_in DESC";
 	public static final String ORDER_BY_SQL = " ORDER BY ibtrader_Position.positionId_tws_in DESC";
@@ -227,9 +223,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		model.setStrategy_in(soapModel.getStrategy_in());
 		model.setStrategy_out(soapModel.getStrategy_out());
 		model.setPercentualstoplost_out(soapModel.getPercentualstoplost_out());
-		model.setPricestoplost_out(soapModel.getPricestoplost_out());
 		model.setPercentualstopprofit_out(soapModel.getPercentualstopprofit_out());
-		model.setPricestopprofit_out(soapModel.getPricestopprofit_out());
 		model.setPendingcancelled(soapModel.getPendingcancelled());
 		model.setTrading_data_operations(soapModel.getTrading_data_operations());
 		model.setSimulation_mode(soapModel.getSimulation_mode());
@@ -329,9 +323,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		attributes.put("strategy_in", getStrategy_in());
 		attributes.put("strategy_out", getStrategy_out());
 		attributes.put("percentualstoplost_out", getPercentualstoplost_out());
-		attributes.put("pricestoplost_out", getPricestoplost_out());
 		attributes.put("percentualstopprofit_out", getPercentualstopprofit_out());
-		attributes.put("pricestopprofit_out", getPricestopprofit_out());
 		attributes.put("pendingcancelled", getPendingcancelled());
 		attributes.put("trading_data_operations", getTrading_data_operations());
 		attributes.put("simulation_mode", getSimulation_mode());
@@ -538,24 +530,11 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 			setPercentualstoplost_out(percentualstoplost_out);
 		}
 
-		Double pricestoplost_out = (Double)attributes.get("pricestoplost_out");
-
-		if (pricestoplost_out != null) {
-			setPricestoplost_out(pricestoplost_out);
-		}
-
 		Double percentualstopprofit_out = (Double)attributes.get(
 				"percentualstopprofit_out");
 
 		if (percentualstopprofit_out != null) {
 			setPercentualstopprofit_out(percentualstopprofit_out);
-		}
-
-		Double pricestopprofit_out = (Double)attributes.get(
-				"pricestopprofit_out");
-
-		if (pricestopprofit_out != null) {
-			setPricestopprofit_out(pricestopprofit_out);
 		}
 
 		Long pendingcancelled = (Long)attributes.get("pendingcancelled");
@@ -1116,17 +1095,6 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 	@JSON
 	@Override
-	public double getPricestoplost_out() {
-		return _pricestoplost_out;
-	}
-
-	@Override
-	public void setPricestoplost_out(double pricestoplost_out) {
-		_pricestoplost_out = pricestoplost_out;
-	}
-
-	@JSON
-	@Override
 	public double getPercentualstopprofit_out() {
 		return _percentualstopprofit_out;
 	}
@@ -1134,17 +1102,6 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 	@Override
 	public void setPercentualstopprofit_out(double percentualstopprofit_out) {
 		_percentualstopprofit_out = percentualstopprofit_out;
-	}
-
-	@JSON
-	@Override
-	public double getPricestopprofit_out() {
-		return _pricestopprofit_out;
-	}
-
-	@Override
-	public void setPricestopprofit_out(double pricestopprofit_out) {
-		_pricestopprofit_out = pricestopprofit_out;
 	}
 
 	@JSON
@@ -1260,9 +1217,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		positionImpl.setStrategy_in(getStrategy_in());
 		positionImpl.setStrategy_out(getStrategy_out());
 		positionImpl.setPercentualstoplost_out(getPercentualstoplost_out());
-		positionImpl.setPricestoplost_out(getPricestoplost_out());
 		positionImpl.setPercentualstopprofit_out(getPercentualstopprofit_out());
-		positionImpl.setPricestopprofit_out(getPricestopprofit_out());
 		positionImpl.setPendingcancelled(getPendingcancelled());
 		positionImpl.setTrading_data_operations(getTrading_data_operations());
 		positionImpl.setSimulation_mode(getSimulation_mode());
@@ -1535,11 +1490,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 		positionCacheModel.percentualstoplost_out = getPercentualstoplost_out();
 
-		positionCacheModel.pricestoplost_out = getPricestoplost_out();
-
 		positionCacheModel.percentualstopprofit_out = getPercentualstopprofit_out();
-
-		positionCacheModel.pricestopprofit_out = getPricestopprofit_out();
 
 		positionCacheModel.pendingcancelled = getPendingcancelled();
 
@@ -1559,7 +1510,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(77);
+		StringBundler sb = new StringBundler(73);
 
 		sb.append("{uuid=");
 		sb.append(getUuid());
@@ -1625,12 +1576,8 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		sb.append(getStrategy_out());
 		sb.append(", percentualstoplost_out=");
 		sb.append(getPercentualstoplost_out());
-		sb.append(", pricestoplost_out=");
-		sb.append(getPricestoplost_out());
 		sb.append(", percentualstopprofit_out=");
 		sb.append(getPercentualstopprofit_out());
-		sb.append(", pricestopprofit_out=");
-		sb.append(getPricestopprofit_out());
 		sb.append(", pendingcancelled=");
 		sb.append(getPendingcancelled());
 		sb.append(", trading_data_operations=");
@@ -1644,7 +1591,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(118);
+		StringBundler sb = new StringBundler(112);
 
 		sb.append("<model><model-name>");
 		sb.append("com.ibtrader.data.model.Position");
@@ -1779,16 +1726,8 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		sb.append(getPercentualstoplost_out());
 		sb.append("]]></column-value></column>");
 		sb.append(
-			"<column><column-name>pricestoplost_out</column-name><column-value><![CDATA[");
-		sb.append(getPricestoplost_out());
-		sb.append("]]></column-value></column>");
-		sb.append(
 			"<column><column-name>percentualstopprofit_out</column-name><column-value><![CDATA[");
 		sb.append(getPercentualstopprofit_out());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>pricestopprofit_out</column-name><column-value><![CDATA[");
-		sb.append(getPricestopprofit_out());
 		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>pendingcancelled</column-name><column-value><![CDATA[");
@@ -1863,9 +1802,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 	private String _strategy_in;
 	private String _strategy_out;
 	private double _percentualstoplost_out;
-	private double _pricestoplost_out;
 	private double _percentualstopprofit_out;
-	private double _pricestopprofit_out;
 	private long _pendingcancelled;
 	private String _trading_data_operations;
 	private boolean _simulation_mode;

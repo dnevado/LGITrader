@@ -530,20 +530,6 @@ public interface PositionModel extends BaseModel<Position>, ShardedModel,
 	public void setPercentualstoplost_out(double percentualstoplost_out);
 
 	/**
-	 * Returns the pricestoplost_out of this position.
-	 *
-	 * @return the pricestoplost_out of this position
-	 */
-	public double getPricestoplost_out();
-
-	/**
-	 * Sets the pricestoplost_out of this position.
-	 *
-	 * @param pricestoplost_out the pricestoplost_out of this position
-	 */
-	public void setPricestoplost_out(double pricestoplost_out);
-
-	/**
 	 * Returns the percentualstopprofit_out of this position.
 	 *
 	 * @return the percentualstopprofit_out of this position
@@ -556,20 +542,6 @@ public interface PositionModel extends BaseModel<Position>, ShardedModel,
 	 * @param percentualstopprofit_out the percentualstopprofit_out of this position
 	 */
 	public void setPercentualstopprofit_out(double percentualstopprofit_out);
-
-	/**
-	 * Returns the pricestopprofit_out of this position.
-	 *
-	 * @return the pricestopprofit_out of this position
-	 */
-	public double getPricestopprofit_out();
-
-	/**
-	 * Sets the pricestopprofit_out of this position.
-	 *
-	 * @param pricestopprofit_out the pricestopprofit_out of this position
-	 */
-	public void setPricestopprofit_out(double pricestopprofit_out);
 
 	/**
 	 * Returns the pendingcancelled of this position.

@@ -405,10 +405,8 @@
 		<column name="strategy_out" type="String" />					
 		
 		<column name="percentualstoplost_out" type="double" />
-		<column name="pricestoplost_out" type="double" />
-		
 		<column name="percentualstopprofit_out" type="double" />
-		<column name="pricestopprofit_out" type="double" />
+		
 		
 		<column name="pendingcancelled" type="long" />
 		<column name="trading_data_operations" type="String" />

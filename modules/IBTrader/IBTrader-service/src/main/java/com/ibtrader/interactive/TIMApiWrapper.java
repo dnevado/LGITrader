@@ -222,8 +222,8 @@ public class TIMApiWrapper implements EWrapper {
 		  * 
 		  */
 		long  _INCREMENT_ORDER_ID = getCurrentOrderId();
-		if (_INCREMENT_ORDER_ID>0) // mecanismo de control, siempre el next valid >=1
-		{
+		/* if (_INCREMENT_ORDER_ID>0) // mecanismo de control, siempre el next valid >=1
+		{*/
 		
 			IBOrderLocalServiceUtil.deleteByOrderCompanyGroup(_INCREMENT_ORDER_ID, _ibtarget_share.getCompanyId(), _ibtarget_share.getGroupId(),_clientId,_ibtarget_share.getShareId());
 			IBOrder _order = IBOrderLocalServiceUtil.createIBOrder(_INCREMENT_ORDER_ID);			/* insertamos control de ordenes de peticion */
@@ -239,10 +239,14 @@ public class TIMApiWrapper implements EWrapper {
 			/* ACTULIAMOS CON LA POSICION DE ENTRADA */
 			Position _position = PositionLocalServiceUtil.fetchPosition(positionId);
 			_position.setPositionId_tws_in(_INCREMENT_ORDER_ID);
-			PositionLocalServiceUtil.updatePosition(_position);		
-			openOrder(new Long(_INCREMENT_ORDER_ID).intValue(),contract,order,orderState);
+			PositionLocalServiceUtil.updatePosition(_position);
+		//	_log.info("1. openOrder...." +  positionId + "," + _INCREMENT_ORDER_ID);
+			//openOrder(new Long(_INCREMENT_ORDER_ID).intValue(),contract,order,orderState);
+			clientSocket.placeOrder(new Long(_INCREMENT_ORDER_ID).intValue(), contract, order);
+		//	_log.info("2. opened...." +  positionId + "," + _INCREMENT_ORDER_ID);
+			
 		
-		}	
+		/* } */	
 			
 			
 		//}
@@ -253,10 +257,7 @@ public class TIMApiWrapper implements EWrapper {
 	@Override
 	public void openOrder(int orderId, Contract contract, Order order,OrderState orderState) {
 		 _log.info("OpenOrder. ID: "+orderId+", "+contract.symbol()+", "+contract.secType()+" @ "+contract.exchange()+": "+
-			order.action()+", "+order.orderType()+" "+order.totalQuantity());		
-		 
-		clientSocket.placeOrder(orderId, contract, order);
-
+			order.action()+", "+order.orderType()+" "+order.totalQuantity());				 
 		}
 			
 	//! [openorder]
@@ -267,6 +268,7 @@ public class TIMApiWrapper implements EWrapper {
 		System.out.println("OpenOrderEnd");
 	}
 	//! [openorderend]
+	
 	
 	//! [updateaccountvalue]
 	@Override

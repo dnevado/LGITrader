@@ -9686,9 +9686,7 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 		positionImpl.setStrategy_in(position.getStrategy_in());
 		positionImpl.setStrategy_out(position.getStrategy_out());
 		positionImpl.setPercentualstoplost_out(position.getPercentualstoplost_out());
-		positionImpl.setPricestoplost_out(position.getPricestoplost_out());
 		positionImpl.setPercentualstopprofit_out(position.getPercentualstopprofit_out());
-		positionImpl.setPricestopprofit_out(position.getPricestopprofit_out());
 		positionImpl.setPendingcancelled(position.getPendingcancelled());
 		positionImpl.setTrading_data_operations(position.getTrading_data_operations());
 		positionImpl.setSimulation_mode(position.isSimulation_mode());
