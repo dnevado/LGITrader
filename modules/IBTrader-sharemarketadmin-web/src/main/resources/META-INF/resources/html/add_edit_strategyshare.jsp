@@ -51,10 +51,10 @@ String portletId= "_" + portletDisplay.getId();
 
 
 %>
-<c:set  var="strategyshare_numbertopurchase" value="<%=jsonStrategyShareParams.getLong("numbertopurchase") %>"/> 
+<c:set  var="strategyshare_numbertopurchase" value="<%=jsonStrategyShareParams.getLong(ConfigKeys._FIELD_NUMBER_TO_PURCHASE) %>"/> 
 <c:set  var="strategyshare_percentual_limit_buy" value="<%=jsonStrategyShareParams.getDouble("percentual_limit_buy") %>"/>
-<c:set  var="strategyshare_percentual_stop_lost" value="<%=jsonStrategyShareParams.getDouble("percentual_stop_lost") %>"/>
-<c:set  var="strategyshare_percentual_stop_profit" value="<%=jsonStrategyShareParams.getDouble("percentual_stop_profit") %>"/>
+<c:set  var="strategyshare_percentual_stop_lost" value="<%=jsonStrategyShareParams.getDouble(ConfigKeys._FIELD_STOP_LOST) %>"/>
+<c:set  var="strategyshare_percentual_stop_profit" value="<%=jsonStrategyShareParams.getDouble(ConfigKeys._FIELD_STOP_PROFIT) %>"/>
 
 
 <portlet:actionURL name="editStrategyShareParams" var="editStrategyShareParamsURL" />
@@ -75,30 +75,36 @@ String portletId= "_" + portletDisplay.getId();
 		<aui:input  readonly="readonly" type="text" label="strategy.name" name="strategy.name"  value="${strategy.name}">
 		</aui:input>
 	</aui:fieldset>
-	
+	<c:if test="${strategy.can_override_params=='1}">
+
     <aui:fieldset collapsed="false" collapsible="true"  label="share.paramdata" id="datashare">
   		
- 		 <aui:input type="number" label="share.number" name="numbertopurchase"  value="${empty strategyshare_numbertopurchase ? share.numbertopurchase : strategyshare_numbertopurchase}">
+ 		 <aui:input type="number" label="share.number" name="numbertopurchase"  value="${strategyshare_numbertopurchase>=0  ? share.numbertopurchase : strategyshare_numbertopurchase}">
 		 	 <aui:validator  name="required"  />	
 		  	<aui:validator name="min">1</aui:validator>
 		 </aui:input>
   		 <aui:fieldset>		         
-	        <label class="control-label" for="<%=portletId%>_share.percentual_limit_buy">share.percentual_limit_buy</label><input  id="<%=portletId%>_percentual_limit_buy" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_limit_buy"  value="${empty strategyshare_percentual_limit_buy ? share.percentual_limit_buy : strategyshare_percentual_limit_buy}"/> 	    		
+	        <label class="control-label" for="<%=portletId%>_share.percentual_limit_buy">share.percentual_limit_buy</label><input  id="<%=portletId%>_percentual_limit_buy" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_limit_buy"  value="${strategyshare_percentual_limit_buy<=0 ? share.percentual_limit_buy : strategyshare_percentual_limit_buy}"/> 	    		
 	    </aui:fieldset> 
 	      <aui:fieldset>		
-	      	<label class="control-label" for="<%=portletId%>_share.percentual_stop_lost">share.percentual_stop_lost</label><input  id="<%=portletId%>_percentual_stop_lost" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_stop_lost"  value="${empty strategyshare_percentual_stop_lost ? share.percentual_stop_lost : strategyshare_percentual_stop_lost}"/> 	    	      		
+	      	<label class="control-label" for="<%=portletId%>_share.percentual_stop_lost">share.percentual_stop_lost</label><input  id="<%=portletId%>_percentual_stop_lost" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_stop_lost"  value="${strategyshare_percentual_stop_lost<=0 ? share.percentual_stop_lost : strategyshare_percentual_stop_lost}"/> 	    	      		
 	    </aui:fieldset> 
 	    <aui:fieldset>		
-	    	<label class="control-label" for="<%=portletId%>_share.percentual_stop_profit">share.percentual_stop_profit</label><input  id="<%=portletId%>_percentual_stop_profit" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_stop_profit"  value="${empty strategyshare_percentual_stop_profit ? share.percentual_stop_profit : strategyshare_percentual_stop_profit}"> 	    	      	    		
+	    	<label class="control-label" for="<%=portletId%>_share.percentual_stop_profit">share.percentual_stop_profit</label><input  id="<%=portletId%>_percentual_stop_profit" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_stop_profit"  value="${strategyshare_percentual_stop_profit<=0 ? share.percentual_stop_profit : strategyshare_percentual_stop_profit}"> 	    	      	    		
         </aui:fieldset>
-  		  		  			     
     </aui:fieldset> 
+    </c:if>
     <!--  DATOS DE EXPANDOS    -->
-    <aui:fieldset collapsed="false" collapsible="true"  label="strategy.paramdata" id="datastrategy">    
+        
     
     <%
     
     List<ExpandoColumn> StrategyParams =  _StrategyType.getIBStrategyParams();
+    
+    if (StrategyParams!=null)
+    { %>
+    <aui:fieldset collapsed="false" collapsible="true"  label="strategy.paramdata" id="datastrategy">
+    <%
     for (ExpandoColumn StrategyParameter : StrategyParams)
     {
     	String _type = "text";
@@ -122,9 +128,11 @@ String portletId= "_" + portletDisplay.getId();
 			 </aui:input>
     	</aui:fieldset>		
     	
+    <% } %>
+    </aui:fieldset>
     <% } %>      
 	
-	 </aui:fieldset>
+	 
 	
     <aui:input type="hidden"  name="shareId"  value="${share.shareId}"/>
     <aui:input type="hidden"  name="strategyId"  value="${strategy.strategyID}"/>

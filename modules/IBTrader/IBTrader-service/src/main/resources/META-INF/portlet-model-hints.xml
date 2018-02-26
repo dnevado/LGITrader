@@ -75,7 +75,9 @@
 		<field name="strategy_in" type="String" />
 		<field name="strategy_out" type="String" />
 		<field name="percentualstoplost_out" type="double" />
+		<field name="pricestoplost_out" type="double" />
 		<field name="percentualstopprofit_out" type="double" />
+		<field name="pricestopprofit_out" type="double" />
 		<field name="pendingcancelled" type="long" />
 		<field name="trading_data_operations" type="String" />
 		<field name="simulation_mode" type="boolean" />
@@ -142,6 +144,7 @@
 		<field name="statusByUserName" type="String" />
 		<field name="statusDate" type="Date" />
 		<field name="type" type="String" />
+		<field name="can_override_params" type="boolean" />
 		<field name="className" type="String" />
 		<field name="userId" type="long" />
 	</model>

@@ -307,6 +307,27 @@ public interface StrategyModel extends BaseModel<Strategy>, ShardedModel,
 	public void setType(String type);
 
 	/**
+	 * Returns the can_override_params of this strategy.
+	 *
+	 * @return the can_override_params of this strategy
+	 */
+	public boolean getCan_override_params();
+
+	/**
+	 * Returns <code>true</code> if this strategy is can_override_params.
+	 *
+	 * @return <code>true</code> if this strategy is can_override_params; <code>false</code> otherwise
+	 */
+	public boolean isCan_override_params();
+
+	/**
+	 * Sets whether this strategy is can_override_params.
+	 *
+	 * @param can_override_params the can_override_params of this strategy
+	 */
+	public void setCan_override_params(boolean can_override_params);
+
+	/**
 	 * Returns the class name of this strategy.
 	 *
 	 * @return the class name of this strategy

@@ -68,12 +68,6 @@ public class IBStrategyMinMax extends StrategyImpl {
 	private static String _EXPANDO_TRADE_OFFSET_TO_CLOSEMARKET = "TradeUntilOffSetCloseMarket"; // operar hasta minutos antes de cierre mercado
 	private static String _EXPANDO_PERCENTUAL_GAP = "PercentualGapFromMinMax";   // porcentaje de subida o baja hasta que se puede comprar, dentro de los limites 
 	
-    /* 
-	public setApiWrapper(TIMApiWrapper wrapper)
-	{
-		
-	}
-	*/
 	@Override
 	public long execute(Share _share, Market _market) {
 		// TODO Auto-generated method stub
@@ -162,12 +156,12 @@ public class IBStrategyMinMax extends StrategyImpl {
     		/* EXISTE ALGO SOBREESCRITO */
     		if (this.getJsonStrategyShareParams()!=null && this.getJsonStrategyShareParams().getDouble(ConfigKeys._FIELD_STOP_LOST,0)>0)
     			stoplost =this.getJsonStrategyShareParams().getDouble(ConfigKeys._FIELD_STOP_LOST,0);    			
-    		if (stoplost>0)
-    			
+    		if (stoplost>0)    			
     			BuyPositionSystem.setPercentualstoplost_out(stoplost);
     		else
     			BuyPositionSystem.setPercentualstoplost_out(_defaultstop_percent);
-    		 
+    		
+    		
     		double stopprofit =_share.getPercentual_stop_profit();
     		/* EXISTE ALGO SOBREESCRITO */
     		if (this.getJsonStrategyShareParams()!=null && this.getJsonStrategyShareParams().getDouble(ConfigKeys._FIELD_STOP_PROFIT,0)>0)

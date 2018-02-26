@@ -102,7 +102,8 @@
 		<column name="statusByUserId" type="long" />
 		<column name="statusByUserName" type="String" />
 		<column name="statusDate" type="Date" />
-		<column name="type" type="String" />
+		<column name="type" type="String" /> <!--  BUY / SELL  -->
+		<column name="can_override_params" type="boolean" /> <!--  SI PUEDE SOBREESCRIBIR DATOS, P.E. STOPLOST / PROFIT NO, ACTUAN SOBRE LAS ESTRATEGIAS DE ENTRADA -->
 		<column name="className" type="String" />
 		<column name="userId" type="long" />
 
@@ -405,8 +406,10 @@
 		<column name="strategy_out" type="String" />					
 		
 		<column name="percentualstoplost_out" type="double" />
-		<column name="percentualstopprofit_out" type="double" />
+		<column name="pricestoplost_out" type="double" />
 		
+		<column name="percentualstopprofit_out" type="double" />
+		<column name="pricestopprofit_out" type="double" />
 		
 		<column name="pendingcancelled" type="long" />
 		<column name="trading_data_operations" type="String" />
@@ -431,19 +434,19 @@
 			<finder-column name="companyId"/>		
 			<finder-column name="shareId" />
 			<finder-column name="state" />			
-			<finder-column name="date_out" />
+			<finder-column name="date_real_out" />
 		</finder>
 		<finder  name="PositionShareDateIn" return-type="Collection">	
 			<finder-column name="groupId"/>
 			<finder-column name="companyId"/>		
 			<finder-column name="shareId" />					
-			<finder-column name="date_in" />
+			<finder-column name="date_real_in" />
 		</finder>
 		<finder  name="PositionShareDateOut" return-type="Collection">	
 			<finder-column name="groupId"/>
 			<finder-column name="companyId"/>		
 			<finder-column name="shareId" />					
-			<finder-column name="date_out" />
+			<finder-column name="date_real_out" />
 		</finder>	
 		<finder  name="CompanyGroupShare" return-type="Collection">	
 			<finder-column name="groupId"/>
@@ -457,7 +460,7 @@
 		<finder name="CompanyGroupDate" return-type="Collection">		
 			<finder-column name="companyId"/>
 			<finder-column name="groupId"/>
-			<finder-column name="date_in"/>  <!--  INICIO Y FIN  -->	
+			<finder-column name="date_real_in"/>  <!--  INICIO Y FIN  -->	
 										
 		</finder>	
 		

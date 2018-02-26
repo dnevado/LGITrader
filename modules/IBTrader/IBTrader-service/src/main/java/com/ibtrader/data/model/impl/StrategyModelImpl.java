@@ -88,6 +88,7 @@ public class StrategyModelImpl extends BaseModelImpl<Strategy>
 			{ "statusByUserName", Types.VARCHAR },
 			{ "statusDate", Types.TIMESTAMP },
 			{ "type_", Types.VARCHAR },
+			{ "can_override_params", Types.BOOLEAN },
 			{ "className", Types.VARCHAR },
 			{ "userId", Types.BIGINT }
 		};
@@ -108,11 +109,12 @@ public class StrategyModelImpl extends BaseModelImpl<Strategy>
 		TABLE_COLUMNS_MAP.put("statusByUserName", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("statusDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("type_", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("can_override_params", Types.BOOLEAN);
 		TABLE_COLUMNS_MAP.put("className", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("userId", Types.BIGINT);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table ibtrader_Strategy (uuid_ VARCHAR(75) null,strategyID LONG not null primary key,groupId LONG,companyId LONG,name VARCHAR(75) null,description VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,active_ BOOLEAN,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null,type_ VARCHAR(75) null,className VARCHAR(75) null,userId LONG)";
+	public static final String TABLE_SQL_CREATE = "create table ibtrader_Strategy (uuid_ VARCHAR(75) null,strategyID LONG not null primary key,groupId LONG,companyId LONG,name VARCHAR(75) null,description VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,active_ BOOLEAN,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null,type_ VARCHAR(75) null,can_override_params BOOLEAN,className VARCHAR(75) null,userId LONG)";
 	public static final String TABLE_SQL_DROP = "drop table ibtrader_Strategy";
 	public static final String ORDER_BY_JPQL = " ORDER BY strategy.strategyID ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY ibtrader_Strategy.strategyID ASC";
@@ -162,6 +164,7 @@ public class StrategyModelImpl extends BaseModelImpl<Strategy>
 		model.setStatusByUserName(soapModel.getStatusByUserName());
 		model.setStatusDate(soapModel.getStatusDate());
 		model.setType(soapModel.getType());
+		model.setCan_override_params(soapModel.getCan_override_params());
 		model.setClassName(soapModel.getClassName());
 		model.setUserId(soapModel.getUserId());
 
@@ -242,6 +245,7 @@ public class StrategyModelImpl extends BaseModelImpl<Strategy>
 		attributes.put("statusByUserName", getStatusByUserName());
 		attributes.put("statusDate", getStatusDate());
 		attributes.put("type", getType());
+		attributes.put("can_override_params", getCan_override_params());
 		attributes.put("className", getClassName());
 		attributes.put("userId", getUserId());
 
@@ -335,6 +339,13 @@ public class StrategyModelImpl extends BaseModelImpl<Strategy>
 
 		if (type != null) {
 			setType(type);
+		}
+
+		Boolean can_override_params = (Boolean)attributes.get(
+				"can_override_params");
+
+		if (can_override_params != null) {
+			setCan_override_params(can_override_params);
 		}
 
 		String className = (String)attributes.get("className");
@@ -627,6 +638,23 @@ public class StrategyModelImpl extends BaseModelImpl<Strategy>
 
 	@JSON
 	@Override
+	public boolean getCan_override_params() {
+		return _can_override_params;
+	}
+
+	@JSON
+	@Override
+	public boolean isCan_override_params() {
+		return _can_override_params;
+	}
+
+	@Override
+	public void setCan_override_params(boolean can_override_params) {
+		_can_override_params = can_override_params;
+	}
+
+	@JSON
+	@Override
 	public String getClassName() {
 		if (_className == null) {
 			return StringPool.BLANK;
@@ -799,6 +827,7 @@ public class StrategyModelImpl extends BaseModelImpl<Strategy>
 		strategyImpl.setStatusByUserName(getStatusByUserName());
 		strategyImpl.setStatusDate(getStatusDate());
 		strategyImpl.setType(getType());
+		strategyImpl.setCan_override_params(getCan_override_params());
 		strategyImpl.setClassName(getClassName());
 		strategyImpl.setUserId(getUserId());
 
@@ -973,6 +1002,8 @@ public class StrategyModelImpl extends BaseModelImpl<Strategy>
 			strategyCacheModel.type = null;
 		}
 
+		strategyCacheModel.can_override_params = getCan_override_params();
+
 		strategyCacheModel.className = getClassName();
 
 		String className = strategyCacheModel.className;
@@ -988,7 +1019,7 @@ public class StrategyModelImpl extends BaseModelImpl<Strategy>
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(33);
+		StringBundler sb = new StringBundler(35);
 
 		sb.append("{uuid=");
 		sb.append(getUuid());
@@ -1018,6 +1049,8 @@ public class StrategyModelImpl extends BaseModelImpl<Strategy>
 		sb.append(getStatusDate());
 		sb.append(", type=");
 		sb.append(getType());
+		sb.append(", can_override_params=");
+		sb.append(getCan_override_params());
 		sb.append(", className=");
 		sb.append(getClassName());
 		sb.append(", userId=");
@@ -1029,7 +1062,7 @@ public class StrategyModelImpl extends BaseModelImpl<Strategy>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(52);
+		StringBundler sb = new StringBundler(55);
 
 		sb.append("<model><model-name>");
 		sb.append("com.ibtrader.data.model.Strategy");
@@ -1092,6 +1125,10 @@ public class StrategyModelImpl extends BaseModelImpl<Strategy>
 		sb.append(getType());
 		sb.append("]]></column-value></column>");
 		sb.append(
+			"<column><column-name>can_override_params</column-name><column-value><![CDATA[");
+		sb.append(getCan_override_params());
+		sb.append("]]></column-value></column>");
+		sb.append(
 			"<column><column-name>className</column-name><column-value><![CDATA[");
 		sb.append(getClassName());
 		sb.append("]]></column-value></column>");
@@ -1135,6 +1172,7 @@ public class StrategyModelImpl extends BaseModelImpl<Strategy>
 	private String _statusByUserName;
 	private Date _statusDate;
 	private String _type;
+	private boolean _can_override_params;
 	private String _className;
 	private long _userId;
 	private long _columnBitmask;

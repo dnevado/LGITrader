@@ -97,7 +97,7 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 			_rPosition = getPositionPersistence().findByPositionOutGroupCompany(groupId,companyId, _PositionIDTWS);
 		} catch (NoSuchPositionException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 		}		
 		return _rPosition;
 		
@@ -110,7 +110,7 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 		} 
 		catch (NoSuchPositionException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 		}		
 		return _rPosition;
 		

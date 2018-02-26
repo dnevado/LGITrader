@@ -4933,6 +4933,7 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 		strategyImpl.setStatusByUserName(strategy.getStatusByUserName());
 		strategyImpl.setStatusDate(strategy.getStatusDate());
 		strategyImpl.setType(strategy.getType());
+		strategyImpl.setCan_override_params(strategy.isCan_override_params());
 		strategyImpl.setClassName(strategy.getClassName());
 		strategyImpl.setUserId(strategy.getUserId());
 

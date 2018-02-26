@@ -65,7 +65,7 @@ public class StrategyCacheModel implements CacheModel<Strategy>, Externalizable 
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(33);
+		StringBundler sb = new StringBundler(35);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -95,6 +95,8 @@ public class StrategyCacheModel implements CacheModel<Strategy>, Externalizable 
 		sb.append(statusDate);
 		sb.append(", type=");
 		sb.append(type);
+		sb.append(", can_override_params=");
+		sb.append(can_override_params);
 		sb.append(", className=");
 		sb.append(className);
 		sb.append(", userId=");
@@ -172,6 +174,8 @@ public class StrategyCacheModel implements CacheModel<Strategy>, Externalizable 
 			strategyImpl.setType(type);
 		}
 
+		strategyImpl.setCan_override_params(can_override_params);
+
 		if (className == null) {
 			strategyImpl.setClassName(StringPool.BLANK);
 		}
@@ -208,6 +212,8 @@ public class StrategyCacheModel implements CacheModel<Strategy>, Externalizable 
 		statusByUserName = objectInput.readUTF();
 		statusDate = objectInput.readLong();
 		type = objectInput.readUTF();
+
+		can_override_params = objectInput.readBoolean();
 		className = objectInput.readUTF();
 
 		userId = objectInput.readLong();
@@ -268,6 +274,8 @@ public class StrategyCacheModel implements CacheModel<Strategy>, Externalizable 
 			objectOutput.writeUTF(type);
 		}
 
+		objectOutput.writeBoolean(can_override_params);
+
 		if (className == null) {
 			objectOutput.writeUTF(StringPool.BLANK);
 		}
@@ -292,6 +300,7 @@ public class StrategyCacheModel implements CacheModel<Strategy>, Externalizable 
 	public String statusByUserName;
 	public long statusDate;
 	public String type;
+	public boolean can_override_params;
 	public String className;
 	public long userId;
 }

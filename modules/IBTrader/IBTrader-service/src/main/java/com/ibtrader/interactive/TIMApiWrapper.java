@@ -225,24 +225,26 @@ public class TIMApiWrapper implements EWrapper {
 		/* if (_INCREMENT_ORDER_ID>0) // mecanismo de control, siempre el next valid >=1
 		{*/
 		
-			IBOrderLocalServiceUtil.deleteByOrderCompanyGroup(_INCREMENT_ORDER_ID, _ibtarget_share.getCompanyId(), _ibtarget_share.getGroupId(),_clientId,_ibtarget_share.getShareId());
-			IBOrder _order = IBOrderLocalServiceUtil.createIBOrder(_INCREMENT_ORDER_ID);			/* insertamos control de ordenes de peticion */
-			_order.setCompanyId(_ibtarget_share.getCompanyId());
-			_order.setGroupId(_ibtarget_share.getGroupId());
-			_order.setShareID(_ibtarget_share.getShareId());
-			_order.setOrdersId(_INCREMENT_ORDER_ID);
-			_order.setCreateDate(new Date());
-			_order.setModifiedDate(new Date());			
-			_order.setIbclientId(_clientId);					
-			IBOrderLocalServiceUtil.updateIBOrder(_order);
-			
-			/* ACTULIAMOS CON LA POSICION DE ENTRADA */
-			Position _position = PositionLocalServiceUtil.fetchPosition(positionId);
+		IBOrderLocalServiceUtil.deleteByOrderCompanyGroup(_INCREMENT_ORDER_ID, _ibtarget_share.getCompanyId(), _ibtarget_share.getGroupId(),_clientId,_ibtarget_share.getShareId());
+		IBOrder _order = IBOrderLocalServiceUtil.createIBOrder(_INCREMENT_ORDER_ID);			/* insertamos control de ordenes de peticion */
+		_order.setCompanyId(_ibtarget_share.getCompanyId());
+		_order.setGroupId(_ibtarget_share.getGroupId());
+		_order.setShareID(_ibtarget_share.getShareId());
+		_order.setOrdersId(_INCREMENT_ORDER_ID);
+		_order.setCreateDate(new Date());
+		_order.setModifiedDate(new Date());			
+		_order.setIbclientId(_clientId);					
+		IBOrderLocalServiceUtil.updateIBOrder(_order);
+		Position _position = PositionLocalServiceUtil.fetchPosition(positionId);
+		/* ACTULIAMOS CON LA POSICION DE ENTRADA  SI  ES UNA ENTRADA */
+		if (_position.getDate_real_in()!=null)  // SALIDA DE LA MISMA POSICION 			
+			_position.setPositionId_tws_out(_INCREMENT_ORDER_ID);
+		else
 			_position.setPositionId_tws_in(_INCREMENT_ORDER_ID);
-			PositionLocalServiceUtil.updatePosition(_position);
-		//	_log.info("1. openOrder...." +  positionId + "," + _INCREMENT_ORDER_ID);
-			//openOrder(new Long(_INCREMENT_ORDER_ID).intValue(),contract,order,orderState);
-			clientSocket.placeOrder(new Long(_INCREMENT_ORDER_ID).intValue(), contract, order);
+		PositionLocalServiceUtil.updatePosition(_position);
+	//	_log.info("1. openOrder...." +  positionId + "," + _INCREMENT_ORDER_ID);
+		//openOrder(new Long(_INCREMENT_ORDER_ID).intValue(),contract,order,orderState);
+		clientSocket.placeOrder(new Long(_INCREMENT_ORDER_ID).intValue(), contract, order);
 		//	_log.info("2. opened...." +  positionId + "," + _INCREMENT_ORDER_ID);
 			
 		
@@ -695,7 +697,7 @@ public class TIMApiWrapper implements EWrapper {
 		if (_oPosition==null)
 		{
 			_oPosition = PositionLocalServiceUtil.findByPositionID_Out_TWS(_ibtarget_organization.getGroupId(), _ibtarget_organization.getCompanyId(),orderId);
-			if (_oPosition!=null)
+			if (_oPosition==null) 
 			{
 				_log.info("Error Execution Details order not found for Order Key:" + orderId);
 				return;
@@ -747,11 +749,11 @@ public class TIMApiWrapper implements EWrapper {
 	    			// ACTUALIZAMOS EL PRECIO DE SALIDA CON EL PORCENTAJE PORQUE ES EL VALOR QUE TRATAMOS
 	    			// vemos el tipo de operacion
 	    			if (_oPosition.getType().equals(PositionStates.statusTWSFire.SELL.toString()))  	{ //short	    		
-	    				priceStopLost = avgFillPrice +  (avgFillPrice *  _oPosition.getPercentualstoplost_out());
-		    			priceStopProfit = avgFillPrice  - (avgFillPrice *  _oPosition.getPercentualstopprofit_out()); }
+	    				priceStopLost = avgFillPrice +  (avgFillPrice *  _oPosition.getPercentualstoplost_out() / 100);
+		    			priceStopProfit = avgFillPrice  - (avgFillPrice *  _oPosition.getPercentualstopprofit_out() / 100); }
 	    			else {  //long
-	    				priceStopLost    = avgFillPrice  - (avgFillPrice *  _oPosition.getPercentualstoplost_out());
-		    			priceStopProfit = avgFillPrice  + (avgFillPrice *  _oPosition.getPercentualstopprofit_out()); }	    				 	    		
+	    				priceStopLost    = avgFillPrice  - (avgFillPrice *  _oPosition.getPercentualstoplost_out() / 100);
+		    			priceStopProfit = avgFillPrice  + (avgFillPrice *  _oPosition.getPercentualstopprofit_out() / 100); }	    				 	    		
 	    			_oPosition.setPricestoplost_out(Utilities.RoundPrice(priceStopLost));
 	    			_oPosition.setPricestopprofit_out(Utilities.RoundPrice(priceStopProfit));
 	    			_oPosition.setState(PositionStates.status.BUY_OK.toString());
@@ -759,25 +761,6 @@ public class TIMApiWrapper implements EWrapper {
 			}
 			else  // SALIDA OPERATION..  OJO, PUEDEN SER VENTAS/COMPRAS  PARCIALES.. */
 			{
-				/* if (PositionStates.statusTWSCallBack.Cancelled.toString().equals(status))
-	    		{			    						    		
-					 _oPosition.setState_out(null?;
-					_oPosition.setDate_sell(null);
-					_oPosition.setDate_real_sell(null);
-					_oPosition.setLimit_price_sell(null);
-					_oPosition.setPositionID_tws_sell(null);
-					_oPosition.setPrice_real_sell(null);
-					_oPosition.setPrice_sell(null);
-					_oPosition.setRealtimeID_sell_alert(null);
-					_oPosition.setStrategyID_sell(null);
-					_oPosition.setState_sell(status);	 
-					/*_oPosition.setSell_price_stop_lost(null);
-					_oPosition.setSell_price_stop_lost(sell_price_stop_lost);					
-					// es una venta cancelada, restauramos los valores para seguir vendiendo.	    					
-	    			//_oPosition.setState(PositionStates.status.CANCEL_BUY.toString());	    			
-	    		}*/
-				
-				
 				/* PUEDE RETORNAR FILLED MAS DE UNA VEZ*/
 				/* EN LAS OPERACIONES PARCIALES, DESPUES DE FILLED, PONGO EL STATESELL A NULL
 				 * PARA PODER SEGUIR VENDIENDO. 
@@ -816,7 +799,7 @@ public class TIMApiWrapper implements EWrapper {
 	    				if (_oPosition.getType().equals(PositionStates.statusTWSFire.SELL.toString()))  //short
 		    			{
 	    					// cojo el original
-	    					priceStopProfitAperturaPosicion = _oPosition.getPrice_real_in() - (_oPosition.getPrice_real_in() *  sharePosition.getPercentual_stop_profit());
+	    					priceStopProfitAperturaPosicion = _oPosition.getPrice_real_in() - (_oPosition.getPrice_real_in() *  sharePosition.getPercentual_stop_profit() / 100);
 	    					// si el original es mayor...subio la accion mucho, la tendencia es seguir, le subo un 50% para que no salte el resto de la posicion 
 	    					if (priceStopProfitAperturaPosicion > _oPosition.getPricestopprofit_out())
 	    					{
@@ -833,7 +816,7 @@ public class TIMApiWrapper implements EWrapper {
 		    			else  //long position
 		    			{		
 		    				// cojo el original
-	    					priceStopProfitAperturaPosicion = _oPosition.getPrice_real_in()  + (_oPosition.getPrice_real_in() *  sharePosition.getPercentual_stop_profit());
+	    					priceStopProfitAperturaPosicion = _oPosition.getPrice_real_in()  + (_oPosition.getPrice_real_in() *  sharePosition.getPercentual_stop_profit() / 100);
 	    					// si el original es menor...subio la accion mucho, la tendencia es seguir, le subo un 50% para que no salte el resto 
 	    					if (priceStopProfitAperturaPosicion < _oPosition.getPricestopprofit_out())
 	    					{

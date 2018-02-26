@@ -48,6 +48,7 @@ public class StrategySoap implements Serializable {
 		soapModel.setStatusByUserName(model.getStatusByUserName());
 		soapModel.setStatusDate(model.getStatusDate());
 		soapModel.setType(model.getType());
+		soapModel.setCan_override_params(model.getCan_override_params());
 		soapModel.setClassName(model.getClassName());
 		soapModel.setUserId(model.getUserId());
 
@@ -218,6 +219,18 @@ public class StrategySoap implements Serializable {
 		_type = type;
 	}
 
+	public boolean getCan_override_params() {
+		return _can_override_params;
+	}
+
+	public boolean isCan_override_params() {
+		return _can_override_params;
+	}
+
+	public void setCan_override_params(boolean can_override_params) {
+		_can_override_params = can_override_params;
+	}
+
 	public String getClassName() {
 		return _className;
 	}
@@ -248,6 +261,7 @@ public class StrategySoap implements Serializable {
 	private String _statusByUserName;
 	private Date _statusDate;
 	private String _type;
+	private boolean _can_override_params;
 	private String _className;
 	private long _userId;
 }

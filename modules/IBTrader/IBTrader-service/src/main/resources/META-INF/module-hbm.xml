@@ -92,7 +92,9 @@
 		<property name="strategy_in" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="strategy_out" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="percentualstoplost_out" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
+		<property name="pricestoplost_out" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
 		<property name="percentualstopprofit_out" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
+		<property name="pricestopprofit_out" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
 		<property name="pendingcancelled" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 		<property name="trading_data_operations" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="simulation_mode" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />
@@ -161,6 +163,7 @@
 		<property name="statusByUserName" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="statusDate" type="org.hibernate.type.TimestampType" />
 		<property column="type_" name="type" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="can_override_params" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />
 		<property name="className" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="userId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 	</class>

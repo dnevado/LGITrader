@@ -1,13 +1,7 @@
 package com.ibtrader.strategy;
-
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
 import com.ib.client.Contract;
 import com.ib.client.Order;
 import com.ib.contracts.FutContract;
@@ -19,34 +13,17 @@ import com.ibtrader.data.model.Market;
 import com.ibtrader.data.model.Position;
 import com.ibtrader.data.model.Realtime;
 import com.ibtrader.data.model.Share;
-import com.ibtrader.data.model.Strategy;
 import com.ibtrader.data.model.StrategyShare;
 import com.ibtrader.data.model.impl.StrategyImpl;
-import com.ibtrader.data.service.ConfigLocalServiceUtil;
-import com.ibtrader.data.service.IBOrderLocalServiceUtil;
 import com.ibtrader.data.service.PositionLocalServiceUtil;
 import com.ibtrader.data.service.RealtimeLocalServiceUtil;
-import com.ibtrader.data.service.StrategyShareLocalServiceUtil;
-import com.ibtrader.interactive.TIMApiGITrader;
-import com.ibtrader.interactive.TIMApiWrapper;
-import com.liferay.counter.kernel.service.CounterLocalService;
-import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
-import com.liferay.expando.kernel.model.ExpandoColumn;
-import com.liferay.expando.kernel.model.ExpandoColumnConstants;
-import com.liferay.expando.kernel.model.ExpandoTable;
-import com.liferay.expando.kernel.service.ExpandoColumnLocalServiceUtil;
-import com.liferay.expando.kernel.service.ExpandoTableLocalServiceUtil;
-import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.service.UserLocalServiceUtil;
-import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.Validator;
 import com.ibtrader.util.ConfigKeys;
 import com.ibtrader.util.PositionStates;
 import com.ibtrader.util.Utilities;
+
+
 
 public class IBStrategyStopLost extends StrategyImpl {
 
@@ -107,8 +84,8 @@ public class IBStrategyStopLost extends StrategyImpl {
 		/* si metemos el date sell en las parciales, no entran las siguientes */
 		/* acumulo las acciones vendidas y a vender en la operativa */
 		currentPosition.setDate_out(new Date());
-		currentPosition.setDescription("Venta. Sell Stop Lost.");
-		currentPosition.setStrategy_out(ConfigKeys.STRATEGY_SELL_STOP_LOST.toString());		 		
+		currentPosition.setDescription(this.getClass().getName());
+		currentPosition.setStrategy_out(this.getClass().getName());		 		
 		PositionLocalServiceUtil.updatePosition(currentPosition);
 		/* Posicion en MYSQL de CONTROL */
 		_log.info("Opening order " + currentPosition.getPositionId());
@@ -160,7 +137,7 @@ public class IBStrategyStopLost extends StrategyImpl {
 			if (bExistslost)
 			{
 				
-			    this.setValueIn(current_price);
+			    this.setValueOut(current_price);
 			    this.setValueLimitOut(current_price);	
 				this.setVerified(Boolean.TRUE);												
 				verified = true;

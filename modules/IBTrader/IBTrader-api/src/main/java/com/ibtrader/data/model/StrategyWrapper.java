@@ -73,6 +73,7 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 		attributes.put("statusByUserName", getStatusByUserName());
 		attributes.put("statusDate", getStatusDate());
 		attributes.put("type", getType());
+		attributes.put("can_override_params", getCan_override_params());
 		attributes.put("className", getClassName());
 		attributes.put("userId", getUserId());
 
@@ -165,6 +166,13 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 			setType(type);
 		}
 
+		Boolean can_override_params = (Boolean)attributes.get(
+				"can_override_params");
+
+		if (can_override_params != null) {
+			setCan_override_params(can_override_params);
+		}
+
 		String className = (String)attributes.get("className");
 
 		if (className != null) {
@@ -204,6 +212,16 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 	}
 
 	/**
+	* Returns the can_override_params of this strategy.
+	*
+	* @return the can_override_params of this strategy
+	*/
+	@Override
+	public boolean getCan_override_params() {
+		return _strategy.getCan_override_params();
+	}
+
+	/**
 	* Returns <code>true</code> if this strategy is active.
 	*
 	* @return <code>true</code> if this strategy is active; <code>false</code> otherwise
@@ -226,6 +244,16 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 	@Override
 	public boolean isCachedModel() {
 		return _strategy.isCachedModel();
+	}
+
+	/**
+	* Returns <code>true</code> if this strategy is can_override_params.
+	*
+	* @return <code>true</code> if this strategy is can_override_params; <code>false</code> otherwise
+	*/
+	@Override
+	public boolean isCan_override_params() {
+		return _strategy.isCan_override_params();
 	}
 
 	/**
@@ -633,6 +661,16 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 	@Override
 	public void setCachedModel(boolean cachedModel) {
 		_strategy.setCachedModel(cachedModel);
+	}
+
+	/**
+	* Sets whether this strategy is can_override_params.
+	*
+	* @param can_override_params the can_override_params of this strategy
+	*/
+	@Override
+	public void setCan_override_params(boolean can_override_params) {
+		_strategy.setCan_override_params(can_override_params);
 	}
 
 	/**

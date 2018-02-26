@@ -179,10 +179,10 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 		String name = ParamUtil.getString(actionRequest,"name","");
 		String symbol = ParamUtil.getString(actionRequest,"symbol","");
 		String active = ParamUtil.getString(actionRequest,"active","");			
-		long numbertopurchase =  ParamUtil.getLong(actionRequest,"numbertopurchase",-1);
+		long numbertopurchase =  ParamUtil.getLong(actionRequest,ConfigKeys._FIELD_NUMBER_TO_PURCHASE,-1);
 		double percentual_limit_buy =  ParamUtil.getDouble(actionRequest,"percentual_limit_buy",0);
-		double percentual_stop_lost =  ParamUtil.getDouble(actionRequest,"percentual_stop_lost",0);
-		double percentual_stop_profit =  ParamUtil.getDouble(actionRequest,"percentual_stop_profit",0);
+		double percentual_stop_lost =  ParamUtil.getDouble(actionRequest,ConfigKeys._FIELD_STOP_LOST,0);
+		double percentual_stop_profit =  ParamUtil.getDouble(actionRequest,ConfigKeys._FIELD_STOP_PROFIT,0);
 		double percentual_trailling_stop_lost =  ParamUtil.getDouble(actionRequest,"trailling_stop_lost",0);
 		
 		
@@ -442,9 +442,9 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 		boolean validated = Boolean.TRUE;//= ValidateDataShare(actionRequest);		
 		long numbertopurchase =  ParamUtil.getLong(actionRequest,ConfigKeys._FIELD_NUMBER_TO_PURCHASE,-1);
 		double percentual_limit_buy=  ParamUtil.getDouble(actionRequest,"percentual_limit_buy",0d);
-		double percentual_stop_lost=  ParamUtil.getDouble(actionRequest,"percentual_stop_lost",0d);
-		double percentual_stop_profit=  ParamUtil.getDouble(actionRequest,"percentual_stop_profit",0d);		
-		double trailling_stop_lost =  ParamUtil.getDouble(actionRequest,ConfigKeys._FIELD_TRAILLING_STOP_LOST,0);
+		double percentual_stop_lost=  ParamUtil.getDouble(actionRequest,ConfigKeys._FIELD_STOP_LOST,0d);
+		double percentual_stop_profit=  ParamUtil.getDouble(actionRequest,ConfigKeys._FIELD_STOP_PROFIT,0d);		
+		double trailling_stop_lost =  ParamUtil.getDouble(actionRequest,ConfigKeys._FIELD_TRAILLING_STOP_LOST,0d);
 		long shareId =  ParamUtil.getLong(actionRequest,"shareId",-1);
 		long strategyId =  ParamUtil.getLong(actionRequest,"strategyId",-1);		
 		boolean bExists = false;
@@ -527,8 +527,8 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 					JSONObject  jsonStrategyShareParams = JSONFactoryUtil.createJSONObject();
 					jsonStrategyShareParams.put(ConfigKeys._FIELD_NUMBER_TO_PURCHASE, numbertopurchase);
 					jsonStrategyShareParams.put("percentual_limit_buy", percentual_limit_buy);
-					jsonStrategyShareParams.put("percentual_stop_lost", percentual_stop_lost);
-					jsonStrategyShareParams.put("percentual_stop_profit", percentual_stop_profit);
+					jsonStrategyShareParams.put(ConfigKeys._FIELD_STOP_LOST, percentual_stop_lost);
+					jsonStrategyShareParams.put(ConfigKeys._FIELD_STOP_PROFIT, percentual_stop_profit);
 					jsonStrategyShareParams.put(ConfigKeys._FIELD_TRAILLING_STOP_LOST, trailling_stop_lost);					
 					
 					/*  BUSCAMOS EN LA REQUEST TODOS LOS PARAMETROS QUE EMPIECEN CON EL PREFIJO Utilities.IBTRADER_PREFIX...*/				

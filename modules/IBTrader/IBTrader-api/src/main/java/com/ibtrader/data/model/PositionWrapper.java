@@ -91,7 +91,9 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 		attributes.put("strategy_in", getStrategy_in());
 		attributes.put("strategy_out", getStrategy_out());
 		attributes.put("percentualstoplost_out", getPercentualstoplost_out());
+		attributes.put("pricestoplost_out", getPricestoplost_out());
 		attributes.put("percentualstopprofit_out", getPercentualstopprofit_out());
+		attributes.put("pricestopprofit_out", getPricestopprofit_out());
 		attributes.put("pendingcancelled", getPendingcancelled());
 		attributes.put("trading_data_operations", getTrading_data_operations());
 		attributes.put("simulation_mode", getSimulation_mode());
@@ -295,11 +297,24 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 			setPercentualstoplost_out(percentualstoplost_out);
 		}
 
+		Double pricestoplost_out = (Double)attributes.get("pricestoplost_out");
+
+		if (pricestoplost_out != null) {
+			setPricestoplost_out(pricestoplost_out);
+		}
+
 		Double percentualstopprofit_out = (Double)attributes.get(
 				"percentualstopprofit_out");
 
 		if (percentualstopprofit_out != null) {
 			setPercentualstopprofit_out(percentualstopprofit_out);
+		}
+
+		Double pricestopprofit_out = (Double)attributes.get(
+				"pricestopprofit_out");
+
+		if (pricestopprofit_out != null) {
+			setPricestopprofit_out(pricestopprofit_out);
 		}
 
 		Long pendingcancelled = (Long)attributes.get("pendingcancelled");
@@ -475,6 +490,26 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 	@Override
 	public double getPrice_real_out() {
 		return _position.getPrice_real_out();
+	}
+
+	/**
+	* Returns the pricestoplost_out of this position.
+	*
+	* @return the pricestoplost_out of this position
+	*/
+	@Override
+	public double getPricestoplost_out() {
+		return _position.getPricestoplost_out();
+	}
+
+	/**
+	* Returns the pricestopprofit_out of this position.
+	*
+	* @return the pricestopprofit_out of this position
+	*/
+	@Override
+	public double getPricestopprofit_out() {
+		return _position.getPricestopprofit_out();
 	}
 
 	@Override
@@ -1026,6 +1061,26 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 	@Override
 	public void setPrice_real_out(double price_real_out) {
 		_position.setPrice_real_out(price_real_out);
+	}
+
+	/**
+	* Sets the pricestoplost_out of this position.
+	*
+	* @param pricestoplost_out the pricestoplost_out of this position
+	*/
+	@Override
+	public void setPricestoplost_out(double pricestoplost_out) {
+		_position.setPricestoplost_out(pricestoplost_out);
+	}
+
+	/**
+	* Sets the pricestopprofit_out of this position.
+	*
+	* @param pricestopprofit_out the pricestopprofit_out of this position
+	*/
+	@Override
+	public void setPricestopprofit_out(double pricestopprofit_out) {
+		_position.setPricestopprofit_out(pricestopprofit_out);
 	}
 
 	/**
