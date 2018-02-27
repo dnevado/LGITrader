@@ -140,6 +140,9 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 		return _rPosition;
 	}
 	
+	
+	
+	
 
 
 }

@@ -68,9 +68,6 @@ function <portlet:namespace/>switchStrategyShare(StrategyShare)
 <liferay-ui:search-container-column-text name="strategy.name" value="${Strategy.name}" />
 <liferay-ui:search-container-column-text name="strategy.description" value="${Strategy.description}"/>
 <liferay-ui:search-container-column-text name="strategy.classname" value="${Strategy.className}"/>
-<liferay-ui:search-container-column-text name="strategy.active">
-<aui:input id="strategy_${Strategy.strategyID}" onClick="<%= renderResponse.getNamespace() + \"switchStrategyShare(this)\"%>"   name="" value="true" type="toggle-switch" checked="${Strategy.active ? 'true':''}"/>       
-</liferay-ui:search-container-column-text>
 <liferay-ui:search-container-column-jsp  path="/html/add_edit_strategyshare_actions.jsp"/>
 </liferay-ui:search-container-row>    
 <liferay-ui:search-iterator markupView="lexicon"/>

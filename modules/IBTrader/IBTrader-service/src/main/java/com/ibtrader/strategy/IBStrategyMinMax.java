@@ -63,10 +63,10 @@ public class IBStrategyMinMax extends StrategyImpl {
 	
 	private List<ExpandoColumn> ExpandoColumns = new ArrayList<ExpandoColumn>(); 
 	
-	private static String _EXPANDO_OFFSET1_FROM_OPENMARKET = "OffSet1FromOpenMarket";  // offset desde inicio de mercado en minutos
-	private static String _EXPANDO_OFFSET2_FROM_OPENMARKET = "OffSet2FromOpenMarket";  // offset hasta desde inicio de mercado en minutos
-	private static String _EXPANDO_TRADE_OFFSET_TO_CLOSEMARKET = "TradeUntilOffSetCloseMarket"; // operar hasta minutos antes de cierre mercado
-	private static String _EXPANDO_PERCENTUAL_GAP = "PercentualGapFromMinMax";   // porcentaje de subida o baja hasta que se puede comprar, dentro de los limites 
+	private static String _EXPANDO_OFFSET1_FROM_OPENMARKET = "Initial OffSet From Open Market (Minutes)";  // offset desde inicio de mercado en minutos
+	private static String _EXPANDO_OFFSET2_FROM_OPENMARKET = "Final OffSet From Open Market (Minutes)";  // offset hasta desde inicio de mercado en minutos
+	private static String _EXPANDO_TRADE_OFFSET_TO_CLOSEMARKET = "Trade Until x Minutes From CloseMarket"; // operar hasta minutos antes de cierre mercado
+	private static String _EXPANDO_PERCENTUAL_GAP = "Percentual Gap To Reach From Min/nMax Value Found";   // porcentaje de subida o baja hasta que se puede comprar, dentro de los limites 
 	
 	@Override
 	public long execute(Share _share, Market _market) {
