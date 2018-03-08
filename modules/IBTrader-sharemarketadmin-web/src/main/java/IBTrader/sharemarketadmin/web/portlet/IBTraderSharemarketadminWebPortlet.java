@@ -448,13 +448,17 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 		long shareId =  ParamUtil.getLong(actionRequest,"shareId",-1);
 		long strategyId =  ParamUtil.getLong(actionRequest,"strategyId",-1);		
 		boolean bExists = false;
-		
-		 validated = numbertopurchase>=1 && 
-				percentual_limit_buy>=0 && percentual_limit_buy<=100  && 
+	    Strategy strategy = _strategyLocalService.fetchStrategy(strategyId);
+
+		/* ESTOS DATOS SI LAS ESTRATEGIAS PUEDEN SOBREESCRIBIR LOS DATOS */
+		if (strategy!=null && strategy.getCan_override_params())
+		{
+			validated = numbertopurchase>=1 && 
+					percentual_limit_buy>=0 && percentual_limit_buy<=100  && 
 						percentual_stop_lost>=0 && percentual_stop_lost<=100 && 
 								percentual_stop_profit>=0 && percentual_stop_profit<=100
 										&&  trailling_stop_lost>=0 && trailling_stop_lost<=100;
-		
+		}
 		
 		/*  BUSCAMOS EN LA REQUEST TODOS LOS PARAMETROS QUE EMPIECEN CON EL PREFIJO Utilities.IBTRADER_PREFIX...*/
 		Enumeration enumeration = actionRequest.getParameterNames();
@@ -469,7 +473,6 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 	        	       
 	    }
 	    
-	    Strategy strategy = _strategyLocalService.fetchStrategy(strategyId);
 	    StrategyImpl _strategyImpl = null;
  	    try {
 			 _strategyImpl = (StrategyImpl) Utilities.getContextClassLoader().loadClass(strategy.getClassName()).newInstance();

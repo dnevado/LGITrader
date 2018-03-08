@@ -65,6 +65,7 @@ public class Utilities {
    public final static String __IBTRADER_LONG_HOUR_FORMAT="HHmm";
    
    public final static String __IBTRADER_LONG_DATE_FORMAT="yyyyMMdd"; 
+   public final static String __IBTRADER_SQL_DATE_="yyyy-MM-dd HH:mm"; // PARA EL CUSTOM SQL DE MOBILE AVERAGE 
    
    //public final static String _IBTRADER_DATE_FORMAT="HHmm";
    
@@ -83,6 +84,16 @@ public class Utilities {
    private static final String TIME24HOURS_PATTERN ="([01]?[0-9]|2[0-3]):[0-5][0-9]";
    
 	
+   public static boolean isNumber (String amount){
+	    try {
+	        Double.parseDouble(amount);             
+	    }
+	    catch(NumberFormatException e){
+	        return false;            
+	    }
+	    return true;
+	}
+   
    public enum OSType {
 	    Windows, MacOS, Linux, Other
 	  };

@@ -1,9 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <custom-sql>
+	<sql id="com.ibtrader.data.service.persistence.RealtimeFinder.findLastRealTimeLessThanDate">
+    <![CDATA[ 
+        SELECT 
+        		*
+        FROM 
+        		IBTrader_Realtime      
+        WHERE            
+            (IBTrader_Realtime.shareId=?)
+            AND (IBTrader_Realtime.companyid=?)
+            AND (IBTrader_Realtime.groupid=?)
+         	AND (IBTrader_Realtime.createDate)=  (SELECT  max(IBTrader_Realtime.createDate) FROM 
+					         			IBTrader_Realtime       
+					      	  		WHERE            
+					           			 (IBTrader_Realtime.shareId=?)
+					          		  AND (IBTrader_Realtime.companyid=?)
+					          		  AND (IBTrader_Realtime.groupid=?)
+					          		  AND (IBTrader_Realtime.createDate<?))
+     ]]>
+    </sql>
     <sql id="com.ibtrader.data.service.persistence.RealtimeFinder.findMinMaxRealTime">
     <![CDATA[ 
         SELECT 
-        		min(value), max(value) 
+        		min(value) as min_value , max(value) as max_value 
         FROM 
         		IBTrader_Realtime      
         WHERE
@@ -32,6 +51,48 @@
 					          		  AND (IBTrader_Realtime.groupid=?))
             
             
+     ]]>
+    </sql>
+    <!-- 
+    avg(value) value : media movil
+    count(*) : periodos encontrados
+     -->
+     <sql id="com.ibtrader.data.service.persistence.RealtimeFinder.findSimpleMobileAvgGroupByPeriods">
+    <![CDATA[ 
+    	SELECT 
+    		 IFNULL(avg(IBTrader_Realtime.value),0) as value, count(*) as periodsfound 
+    	FROM (
+	    	SELECT 
+	    		 max(T.createDate) as createDate, barDate,T.shareId,T.companyId,T.groupId
+	    	FROM (
+	        	SELECT 
+	        		IBTrader_Realtime.createDate, DATE_FORMAT(IBTrader_Realtime.createDate, '%Y-%m-%d %H:%i') as barDate, 
+	        		IBTrader_Realtime.shareId,IBTrader_Realtime.companyId,IBTrader_Realtime.groupId         
+	        	FROM 
+	        		IBTrader_Realtime      
+	        	WHERE            
+		        	(IBTrader_Realtime.createDate>=?) AND (IBTrader_Realtime.createDate<?) 
+		        	AND (IBTrader_Realtime.shareId=?)
+	            	AND (IBTrader_Realtime.companyid=?)
+	            	AND (IBTrader_Realtime.groupid=?)         	
+	         		AND  DATE_FORMAT(createDate, '%Y-%m-%d %H:%i') in ([$TIMEBAR_DATES$])
+		        ORDER  BY 	
+	        	 	IBTrader_Realtime.createdate
+	        	 ) as  T
+	       	GROUP BY 
+				barDate,
+				T.shareid,
+				T.companyId,
+				T.groupId             
+            ) as  treal, IBTrader_Realtime 
+		WHERE
+		 	treal.createDate= IBTrader_Realtime.createDate
+	        and  treal.shareId= IBTrader_Realtime.shareid
+	        and  treal.companyId= IBTrader_Realtime.companyId
+	        and  treal.groupId= IBTrader_Realtime.groupId
+	          
+	          
+ 
      ]]>
     </sql>
 </custom-sql>

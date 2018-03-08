@@ -22,10 +22,16 @@ import aQute.bnd.annotation.ProviderType;
  */
 @ProviderType
 public interface RealtimeFinder {
-	public java.util.List<java.lang.Double[]> findMinMaxRealTime(
-		java.util.Date from, java.util.Date to, long shareId, long companyId,
-		long groupId);
+	public java.util.List findMinMaxRealTime(java.util.Date from,
+		java.util.Date to, long shareId, long companyId, long groupId);
 
 	public com.ibtrader.data.model.Realtime findLastRealTime(long shareId,
 		long companyId, long groupId);
+
+	public com.ibtrader.data.model.Realtime findLastRealTimeLessThanDate(
+		long shareId, long companyId, long groupId, java.util.Date To);
+
+	public java.util.List findSimpleMobileAvgGroupByPeriods(long shareId,
+		long companyId, long groupId, java.util.Date from, java.util.Date to,
+		java.util.List<java.lang.String> mobileAvgDates);
 }

@@ -116,6 +116,7 @@ else
 		<aui:input type="number" label="share.number" name="numbertopurchase"  value="${share.numbertopurchase}">
 			  <aui:validator  name="required"  />	
 			  <aui:validator name="min">1</aui:validator>
+			  <aui:validator name="digits"/>
 		 </aui:input>
     </aui:fieldset>
     <aui:fieldset>		         

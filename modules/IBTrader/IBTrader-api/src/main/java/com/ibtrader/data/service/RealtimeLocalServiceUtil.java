@@ -115,6 +115,28 @@ public class RealtimeLocalServiceUtil {
 		return getService().findLastRealTime(shareId, companyId, groupId);
 	}
 
+	public static com.ibtrader.data.model.Realtime findLastRealTimeLessThanDate(
+		long shareId, long companyId, long groupId, java.util.Date _to) {
+		return getService()
+				   .findLastRealTimeLessThanDate(shareId, companyId, groupId,
+			_to);
+	}
+
+	public static com.ibtrader.data.model.Realtime findMinMaxRealTime(
+		java.util.Date from, java.util.Date to, long shareId, long companyId,
+		long groupId) {
+		return getService()
+				   .findMinMaxRealTime(from, to, shareId, companyId, groupId);
+	}
+
+	public static com.ibtrader.data.model.Realtime findSimpleMobileAvgGroupByPeriods(
+		long shareId, long companyId, long groupId, java.util.Date from,
+		java.util.Date to, java.util.List<java.lang.String> mobileAvgDates) {
+		return getService()
+				   .findSimpleMobileAvgGroupByPeriods(shareId, companyId,
+			groupId, from, to, mobileAvgDates);
+	}
+
 	/**
 	* Returns the realtime with the primary key.
 	*
@@ -250,13 +272,6 @@ public class RealtimeLocalServiceUtil {
 		com.liferay.portal.kernel.util.OrderByComparator<T> orderByComparator) {
 		return getService()
 				   .dynamicQuery(dynamicQuery, start, end, orderByComparator);
-	}
-
-	public static java.util.List<java.lang.Double[]> findMinMaxRealTime(
-		java.util.Date from, java.util.Date to, long shareId, long companyId,
-		long groupId) {
-		return getService()
-				   .findMinMaxRealTime(from, to, shareId, companyId, groupId);
 	}
 
 	/**

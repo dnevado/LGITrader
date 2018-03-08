@@ -70,7 +70,7 @@ public class IBTraderTrade  extends BaseSchedulerEntryMessageListener {
 	@Modified
 	protected void activate() {
 		
-	     schedulerEntryImpl.setTrigger(TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(),30, TimeUnit.SECOND));  
+	     schedulerEntryImpl.setTrigger(TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(),5, TimeUnit.SECOND));  
 
 		
 		_log.info("Activating CRON..."  + schedulerEntryImpl.getTrigger());

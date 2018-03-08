@@ -24,8 +24,6 @@ if (request.getAttribute("share")!=null)
 %>
 <c:set  var="showActions" value="<%=showActions %>"/> 
 <c:set  var="StrategyId" value="<%=StrategyId %>"/> 
-
-
 <portlet:renderURL   var="EditStrategyShareURL">
 	<portlet:param name="mvcRenderCommandName" value="/html/add_edit_strategyshare"/>
     <portlet:param name="shareId" value="<%= String.valueOf(shareId) %>"/>
@@ -33,7 +31,7 @@ if (request.getAttribute("share")!=null)
     <portlet:param name="tab" value="share.strategy"></portlet:param>
 </portlet:renderURL>
 
-<aui:input id="strategy_${StrategyId}"  onClick="<%= renderResponse.getNamespace() + \"switchStrategyShare(this)\"%>"  name="" value="true" type="toggle-switch" checked="${showActions ? 'true':''}"/>       
+ <aui:input label="strategyshare.enabledisabled" id="strategy_${StrategyId}"  onClick="<%= renderResponse.getNamespace() + \"switchStrategyShare(this)\"%>"  name="strategy_${StrategyId}" value="1" type="toggle-card" checked="${showActions ? 'true':''}"/>       
  <c:if test="${showActions}">
  	<liferay-ui:icon-menu>
 		<liferay-ui:icon image="edit" message="strategyshare.edit" url="${EditStrategyShareURL}" />

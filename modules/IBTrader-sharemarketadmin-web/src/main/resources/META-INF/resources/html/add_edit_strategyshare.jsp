@@ -75,13 +75,16 @@ String portletId= "_" + portletDisplay.getId();
 		<aui:input  readonly="readonly" type="text" label="strategy.name" name="strategy.name"  value="${strategy.name}">
 		</aui:input>
 	</aui:fieldset>
-	<c:if test="${strategy.can_override_params=='1}">
+	
+	<c:if test="${strategy.can_override_params}">
 
     <aui:fieldset collapsed="false" collapsible="true"  label="share.paramdata" id="datashare">
   		
  		 <aui:input type="number" label="share.number" name="numbertopurchase"  value="${strategyshare_numbertopurchase>=0  ? share.numbertopurchase : strategyshare_numbertopurchase}">
-		 	 <aui:validator  name="required"  />	
+		 	<aui:validator  name="required"  />	
 		  	<aui:validator name="min">1</aui:validator>
+		  	<aui:validator name="digits"/>
+		  	
 		 </aui:input>
   		 <aui:fieldset>		         
 	        <label class="control-label" for="<%=portletId%>_share.percentual_limit_buy">share.percentual_limit_buy</label><input  id="<%=portletId%>_percentual_limit_buy" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_limit_buy"  value="${strategyshare_percentual_limit_buy<=0 ? share.percentual_limit_buy : strategyshare_percentual_limit_buy}"/> 	    		
@@ -108,25 +111,45 @@ String portletId= "_" + portletDisplay.getId();
     for (ExpandoColumn StrategyParameter : StrategyParams)
     {
     	String _type = "text";
+    	String _step = "1";
+    	String _pattern = "";
     	    
     	
     	String _pname = Utilities._IBTRADER_STRATEGY_CUSTOM_FIELDS_.concat(StrategyParameter.getName());
-    	String _pvalue = (jsonStrategyShareParams.get(StrategyParameter.getName())!=null ? jsonStrategyShareParams.get(StrategyParameter.getName()).toString() : ""); 
+    	String _pvalue = (jsonStrategyShareParams.get(StrategyParameter.getName().trim())!=null ? jsonStrategyShareParams.get(StrategyParameter.getName().trim()).toString() : "");
+
     	if (StrategyParameter.getType()==ExpandoColumnConstants.LONG || StrategyParameter.getType()==ExpandoColumnConstants.INTEGER || 
     			StrategyParameter.getType()==ExpandoColumnConstants.FLOAT || StrategyParameter.getType()==ExpandoColumnConstants.DOUBLE)
     	{
-    				_type = "number";    				
+    				_type = "number";    		
+    				if (StrategyParameter.getType()==ExpandoColumnConstants.FLOAT || StrategyParameter.getType()==ExpandoColumnConstants.DOUBLE)
+    				{    					
+    					//_pvalue = (jsonStrategyShareParams.getDouble(StrategyParameter.getName())!=null ? jsonStrategyShareParams.getDouble(StrategyParameter.getName()).toString() : "");
+    					_type = "double";
+    					_pattern = "[0-9]+([,][0-9]+)?";
+    					_step = "0.01";
+    				}
     	}
-    	
-    %>
-    	<aui:fieldset>	
+     	if (_type.equals("double")) // por el tema de los aui number con decimales 
+     	{%>
+     		 <aui:fieldset>		
+ 	    		<label class="control-label" for="<%=portletId%>_<%=_pname%>"><%=StrategyParameter.getDisplayName(themeDisplay.getLocale()) %></label>
+	 	    	<input  required id="<%=portletId%>_<%=_pname%>" class="field form-control"  min="0"  type="number"  step="<%=_step%>"   formnovalidate="formnovalidate"  
+ 	    	 	pattern="<%=_pattern%>" placeholder="0.00" name="<%=portletId%>_<%=_pname%>"  value="<%=_pvalue%>"/> 	    	      	    		
+         	</aui:fieldset>
+     	<%} else
+     	{%>
+    		<aui:fieldset>	
 				<aui:input value="<%=_pvalue%>" 
 						type="<%=_type%>" label="<%=StrategyParameter.getDisplayName(themeDisplay.getLocale()) %>" name="<%=_pname%>">
 				  <aui:validator  name="required"  />	
-	              <aui:validator name="<%=_type%>" />
-	              <aui:validator name="min">0</aui:validator>
+	              <aui:validator name="<%=_type%>" />	              
+	              <aui:validator name="digits"/>
+	              
 			 </aui:input>
     	</aui:fieldset>		
+		 
+    	<% } %>    	
     	
     <% } %>
     </aui:fieldset>

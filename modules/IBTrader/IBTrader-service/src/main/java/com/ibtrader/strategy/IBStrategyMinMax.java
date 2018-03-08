@@ -216,7 +216,6 @@ public class IBStrategyMinMax extends StrategyImpl {
 	Calendar calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(HoraActual);
 	
 //	StrategyShare _strategyshare = StrategyShareLocalServiceUtil.getByCommpanyShareStrategyId(_share.getGroupId(),_share.getCompanyId(),_share.getShareId(),_strategyImpl.getStrategyId());
-	this.setJsonStrategyShareParams(JSONFactoryUtil.createJSONObject(_strategyImpl.getStrategyparamsoverride()));					
 	
 			
 	calFechaActualWithDeadLine.add(Calendar.MINUTE, this.getJsonStrategyShareParams().getInt(_EXPANDO_TRADE_OFFSET_TO_CLOSEMARKET));
@@ -261,47 +260,45 @@ public class IBStrategyMinMax extends StrategyImpl {
 		_ToNow   = Utilities.setDateWithHour(_ToNow,HoraFinLecturaMaxMin);
 		
 		/* TIEMPOS REALES Y MAXIMOS Y MINIMOS CONSEGUIDOS */			
-		List<Double[]>  lMinMaxRealTime = (List<Double[]>)     RealtimeLocalServiceUtil.findMinMaxRealTime(_FromNow, _ToNow, _share.getShareId(), _share.getCompanyId(), _share.getGroupId());  			
+		//List<Double[]>  lMinMaxRealTime = (List<Double[]>)     RealtimeLocalServiceUtil.findMinMaxRealTime(_FromNow, _ToNow, _share.getShareId(), _share.getCompanyId(), _share.getGroupId());  			
+		Realtime MinMaxRealTime =  RealtimeLocalServiceUtil.findMinMaxRealTime(_FromNow, _ToNow, _share.getShareId(), _share.getCompanyId(), _share.getGroupId());
 		Realtime oShareLastRTime = (Realtime)  RealtimeLocalServiceUtil.findLastRealTime(_share.getShareId(), _share.getCompanyId(), _share.getGroupId());
 		
 		/* TIENE QUE HABER UNA LISTA DE MINIMO Y MAXIMO */
-		if (lMinMaxRealTime!=null && oShareLastRTime!=null && oShareLastRTime.getValue()>0 && lMinMaxRealTime.size()==1)
+		if (MinMaxRealTime!=null && oShareLastRTime!=null && oShareLastRTime.getValue()>0 && MinMaxRealTime.getMax_value()>0 && MinMaxRealTime.getMin_value()>0)
 		{	
 			/* double ValueToBuy =0.0; */
 			/* estos son los dos limites que debe rotar la accion para comprar */
 			
-			Object[] aMinMax = (Object[]) lMinMaxRealTime.get(0);
-			if (aMinMax[1]!=null && aMinMax[0]!=null)
-			{					
 			
-				double MaxValue =  Double.valueOf(String.valueOf(aMinMax[1])).doubleValue();
-				double MinValue = Double.valueOf(String.valueOf(aMinMax[0])).doubleValue();
-						
-				double MaxValueWithGap = (MaxValue * this.getJsonStrategyShareParams().getDouble(_EXPANDO_PERCENTUAL_GAP) / 100) +  MaxValue ;
-				double MinValueWithGap = MinValue  - (MinValue  * this.getJsonStrategyShareParams().getDouble(_EXPANDO_PERCENTUAL_GAP) / 100) ;
-				
-				double MaxValueWithGapAndLimit = MaxValueWithGap  + (MaxValueWithGap * _share.getPercentual_limit_buy() / 100 );
-				double MinValueWithGapAndLimit = MinValueWithGap  - (MinValueWithGap * _share.getPercentual_limit_buy() / 100);
-				/* SE ALCANZA EL MAXIMO O MINIMO 
-				 * CAMBIO 1.4.2013
-				 *  EL REALTIME O CAMBIO DE TICK DEBE ESTAR ENTRE EL MAX O MIN Y EL BORDE SUPERIOR.
-				 *  HASTA AHORA, VERIFICABAMOS QUE ESTUVIESE POR ENCIMA. NOS ASEGURAMOS CON EL PRECIO LIMITADO.
-				 * */
-				bReachedMax = ((oShareLastRTime.getValue() > MaxValueWithGap) &&  (oShareLastRTime.getValue() < MaxValueWithGapAndLimit));
-				bReachedMin = ((oShareLastRTime.getValue()  < MinValueWithGap)  &&  (oShareLastRTime.getValue()> MinValueWithGapAndLimit));
 			
+			double MaxValue =  MinMaxRealTime.getMax_value();
+			double MinValue = MinMaxRealTime.getMin_value();
+					
+			double MaxValueWithGap = (MaxValue * this.getJsonStrategyShareParams().getDouble(_EXPANDO_PERCENTUAL_GAP) / 100) +  MaxValue ;
+			double MinValueWithGap = MinValue  - (MinValue  * this.getJsonStrategyShareParams().getDouble(_EXPANDO_PERCENTUAL_GAP) / 100) ;
+			
+			double MaxValueWithGapAndLimit = MaxValueWithGap  + (MaxValueWithGap * _share.getPercentual_limit_buy() / 100 );
+			double MinValueWithGapAndLimit = MinValueWithGap  - (MinValueWithGap * _share.getPercentual_limit_buy() / 100);
+			/* SE ALCANZA EL MAXIMO O MINIMO 
+			 * CAMBIO 1.4.2013
+			 *  EL REALTIME O CAMBIO DE TICK DEBE ESTAR ENTRE EL MAX O MIN Y EL BORDE SUPERIOR.
+			 *  HASTA AHORA, VERIFICABAMOS QUE ESTUVIESE POR ENCIMA. NOS ASEGURAMOS CON EL PRECIO LIMITADO.
+			 * */
+			bReachedMax = ((oShareLastRTime.getValue() > MaxValueWithGap) &&  (oShareLastRTime.getValue() < MaxValueWithGapAndLimit));
+			bReachedMin = ((oShareLastRTime.getValue()  < MinValueWithGap)  &&  (oShareLastRTime.getValue()> MinValueWithGapAndLimit));
 		
-				if (bReachedMax || bReachedMin || true)					
-				{
-					
-				    this.setValueIn(oShareLastRTime.getValue());
-					this.setValueLimitIn(MaxValueWithGapAndLimit);									
-					this.setVerified(Boolean.TRUE);												
-					verified = true;
-					
-					
-				}
-			}		//	if (aMinMax[1]!=null && aMinMax[0]!=null)		
+	
+			if (bReachedMax || bReachedMin || true)					
+			{
+				
+			    this.setValueIn(oShareLastRTime.getValue());
+				this.setValueLimitIn(MaxValueWithGapAndLimit);									
+				this.setVerified(Boolean.TRUE);												
+				verified = true;
+				
+				
+			}				
 			
 		 } // 			if (oRTimeEnTramo!=null && oShareLastRTime!=null && oShareLastRTime.getValue()>0)
 
@@ -324,9 +321,9 @@ public class IBStrategyMinMax extends StrategyImpl {
 		// TODO Auto-generated method stub
 		// CREAMOS LOS EXPANDOS NECESARIOS 
 		
-		Parameters.put(_EXPANDO_OFFSET1_FROM_OPENMARKET, Double.valueOf(ExpandoColumnConstants.DOUBLE));
-		Parameters.put(_EXPANDO_OFFSET2_FROM_OPENMARKET,  Double.valueOf(ExpandoColumnConstants.DOUBLE));	
-		Parameters.put(_EXPANDO_TRADE_OFFSET_TO_CLOSEMARKET,  Double.valueOf(ExpandoColumnConstants.DOUBLE));		
+		Parameters.put(_EXPANDO_OFFSET1_FROM_OPENMARKET, Double.valueOf(ExpandoColumnConstants.INTEGER));
+		Parameters.put(_EXPANDO_OFFSET2_FROM_OPENMARKET,  Double.valueOf(ExpandoColumnConstants.INTEGER));	
+		Parameters.put(_EXPANDO_TRADE_OFFSET_TO_CLOSEMARKET,  Double.valueOf(ExpandoColumnConstants.INTEGER));		
 		Parameters.put(_EXPANDO_PERCENTUAL_GAP,  Double.valueOf(ExpandoColumnConstants.DOUBLE));
 		ExpandoTable expandoTable;
 		try {
@@ -383,7 +380,7 @@ public class IBStrategyMinMax extends StrategyImpl {
 		for (Map.Entry<String, String> parameter : paramValues.entrySet()) {
 			String _paramValue = parameter.getValue();
 			
-			if (!Validator.isDigit(_paramValue))
+			if (!Validator.isDigit(_paramValue) && Double.parseDouble(_paramValue)>=0)
 			{
 				bOK=Boolean.FALSE;
 				this.setValidateParamsKeysError("strategyshare.strategyminmax.errorparams");

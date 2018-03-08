@@ -119,6 +119,16 @@ public interface RealtimeLocalService extends BaseLocalService,
 
 	public Realtime findLastRealTime(long shareId, long companyId, long groupId);
 
+	public Realtime findLastRealTimeLessThanDate(long shareId, long companyId,
+		long groupId, Date _to);
+
+	public Realtime findMinMaxRealTime(Date from, Date to, long shareId,
+		long companyId, long groupId);
+
+	public Realtime findSimpleMobileAvgGroupByPeriods(long shareId,
+		long companyId, long groupId, Date from, Date to,
+		List<java.lang.String> mobileAvgDates);
+
 	/**
 	* Returns the realtime with the primary key.
 	*
@@ -227,9 +237,6 @@ public interface RealtimeLocalService extends BaseLocalService,
 	*/
 	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
 		int end, OrderByComparator<T> orderByComparator);
-
-	public List<java.lang.Double[]> findMinMaxRealTime(Date from, Date to,
-		long shareId, long companyId, long groupId);
 
 	/**
 	* Returns a range of all the realtimes.

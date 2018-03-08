@@ -25,6 +25,9 @@ import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Projection;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
 
 /**
  * The implementation of the realtime local service.
@@ -49,15 +52,63 @@ public class RealtimeLocalServiceImpl extends RealtimeLocalServiceBaseImpl {
 	 */
 	
 	/* OBTIENE EL MIN Y MAX DE UN  ACTIVO */	
-	public List<Double[]> findMinMaxRealTime(Date from, Date to, long shareId, long companyId, long groupId)
+	public Realtime findMinMaxRealTime(Date from, Date to, long shareId, long companyId, long groupId)
 	{
-		return realtimeFinder.findMinMaxRealTime(from, to, shareId, companyId,  groupId);	
+		List lMinMaxRealtime = null;
+		lMinMaxRealtime = realtimeFinder.findMinMaxRealTime(from, to, shareId, companyId,  groupId); 
+		String serilizeString=null;
+		JSONArray minmaxRealtimeJsonArray=null;
+		Realtime MinMaxRealtime = null;
+		for (Object oRealtime : lMinMaxRealtime)
+		{
+			serilizeString=JSONFactoryUtil.serialize(oRealtime);
+			try {
+				minmaxRealtimeJsonArray=JSONFactoryUtil.createJSONArray(serilizeString);
+				MinMaxRealtime = realtimeLocalService.createRealtime(-1); // no persistimos 
+				MinMaxRealtime.setMin_value(minmaxRealtimeJsonArray.getDouble(0));
+				MinMaxRealtime.setMax_value(minmaxRealtimeJsonArray.getDouble(1));
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				//e.printStackTrace();
+			}
+			
+			
+		}
+		return 	MinMaxRealtime;
 	}
 	public Realtime findLastRealTime(long shareId, long companyId, long groupId)
 	{
 		return realtimeFinder.findLastRealTime(shareId, companyId,  groupId);	
 	}
-	
+	public Realtime findLastRealTimeLessThanDate(long shareId, long companyId, long groupId, Date _to)
+	{
+		return realtimeFinder.findLastRealTimeLessThanDate(shareId, companyId, groupId, _to);
+	}
+	public Realtime findSimpleMobileAvgGroupByPeriods( long shareId, long companyId, long groupId,Date from, Date to, List<String> mobileAvgDates)
+	{
+		//return realtimeFinder.findSimpleMobileAvgGroupByPeriods( shareId, companyId,  groupId,from, to, mobileAvgDates);
+		List lSimpleMobileAvgGroupByPeriods = null;
+		lSimpleMobileAvgGroupByPeriods = realtimeFinder.findSimpleMobileAvgGroupByPeriods( shareId, companyId,  groupId,from, to, mobileAvgDates); 
+		String serilizeString=null;
+		JSONArray SimpleMobileAvgGroupByPeriodsJsonArray=null;
+		Realtime SimpleMobileAvgGroupByPeriodsRealtime = null;
+		for (Object oRealtime : lSimpleMobileAvgGroupByPeriods)
+		{
+			serilizeString=JSONFactoryUtil.serialize(oRealtime);
+			try {
+				SimpleMobileAvgGroupByPeriodsJsonArray=JSONFactoryUtil.createJSONArray(serilizeString);
+				SimpleMobileAvgGroupByPeriodsRealtime = realtimeLocalService.createRealtime(-1); // no persistimos 
+				SimpleMobileAvgGroupByPeriodsRealtime.setValue(SimpleMobileAvgGroupByPeriodsJsonArray.getDouble(0));
+				SimpleMobileAvgGroupByPeriodsRealtime.setVolume(SimpleMobileAvgGroupByPeriodsJsonArray.getInt(1));
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				//e.printStackTrace();
+			}
+			
+			
+		}
+		return 	SimpleMobileAvgGroupByPeriodsRealtime;
+	}
 	
 	 public Realtime findLastCompanyShare(long companyId, long shareId)
 	{

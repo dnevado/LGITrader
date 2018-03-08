@@ -382,8 +382,12 @@ public class CronUtil {
 						    				
 						    				for (StrategyShare oStrategyShare :_lStrategiesOfShare)
 							    			{
-						    									
+						    					// salimos si no es la misma 
+						    					if (oStrategyShare.getStrategyId()!=oStrategy.getStrategyID())
+						    						continue;
 						    					
+						    					
+						    					if (!oStrategyShare.isActive()) continue;  // si no esta activa, no se trata 
 						    					StrategyImpl _strategyImpl= (StrategyImpl) Utilities.getContextClassLoader().loadClass(oStrategy.getClassName()).newInstance();
 						    					_strategyImpl.init(oShare.getCompanyId());   // verify if custom fields are created and filled 	    						    				
 						    					if (_strategyImpl.verify(oShare, oMarket,oStrategyShare))
