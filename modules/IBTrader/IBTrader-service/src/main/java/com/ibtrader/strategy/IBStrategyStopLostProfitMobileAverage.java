@@ -22,6 +22,11 @@
 y B/ Además, el precio cierre de la barra será => que el 75% del rango.
 
 2- La particularidad de este caso afecta a la primera sentencia, el cierre de la barra se sitúa en su 100% por encima de la MM, con lo cual debe comprar, el filtro B aquí no afecta.
+
+* Cuando al cierre de una barra el precio rompa por encima de la mediamovil de x períodos 
+		 * y se sitúe por encima en el % del rango de la misma, 
+		 * se genera una orden de compra 
+*
 */
 
 package com.ibtrader.strategy;
@@ -39,6 +44,8 @@ import com.ib.client.Order;
 import com.ib.contracts.FutContract;
 import com.ib.contracts.StkContract;
 import com.ibtrader.constants.IBTraderConstants;
+import com.ibtrader.data.model.Config;
+import com.ibtrader.data.model.IBOrder;
 import com.ibtrader.data.model.Market;
 import com.ibtrader.data.model.Position;
 import com.ibtrader.data.model.Realtime;
@@ -60,17 +67,18 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.ibtrader.util.MobileAvgUtil;
 import com.ibtrader.util.ConfigKeys;
 import com.ibtrader.util.PositionStates;
 import com.ibtrader.util.Utilities;
 
-public class IBStrategySimpleMobileAverage extends StrategyImpl {
+public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
 
 	private static final long serialVersionUID = 1L;
-	private static Log _log = LogFactoryUtil.getLog(IBStrategySimpleMobileAverage.class);
+	private static Log _log = LogFactoryUtil.getLog(IBStrategyStopLostProfitMobileAverage.class);
 	/* PAIR NAME / DATA TYPE PARAMETERES */	
-	private static HashMap<String, String> Parameters = new HashMap<String,String>();
+	private static HashMap<String, Double> Parameters = new HashMap<String,Double>();
 	private List<ExpandoColumn> ExpandoColumns = new ArrayList<ExpandoColumn>(); 
 	
 	private static String _EXPANDO_MOBILE_AVERAGE_PERIODS_NUMBER = "Mobile Average Periods Number";  // offset desde inicio de mercado en minutos
@@ -78,20 +86,20 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 	private static String _EXPANDO_MOBILE_AVERAGE_GAP_SIZE = "Mobile Average Percentual Gap Size"; // operar hasta minutos antes de cierre mercado
 	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_TO_CLOSEMARKET = "Mobile Average Trade Until x Minutes From CloseMarket"; // operar hasta minutos antes de cierre mercado
 	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET = "OffSet From Open Market (Minutes) To Start Trading";  // offset desde inicio de mercado en minutos
-	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OPERATIONS_TYPE = "Operation Type [ALL, BUY, SELL]";  // offset desde inicio de mercado en minutos
 
 
 	long _num_macdP = 8;   // Periodos
 	long  _num_macdT = 5;   // Tiempo de barras
-	double _entryrate=75.0;    // Umbral de superacion, en porcentaje
-	String operationfilter="";    // ALL, BUY, SELL
-	
+	double _entryrate=75.0;    // Umbral de superacion en la barra en porcentaje 
 	
 	boolean bBuyOperation = Boolean.FALSE;									
 	boolean bSellOperation = Boolean.FALSE;
+	private Position currentPosition = null;
+
 	JSONObject _tradeDescription;// // acumular la traza de los valores introducidos
-	
 	SimpleDateFormat TimeFormat = new SimpleDateFormat (Utilities.__IBTRADER_SHORT_HOUR_FORMAT);
+
+
 	
 	@Override
 	public long execute(Share _share, Market _market) {
@@ -126,8 +134,7 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
   		   this.setTargetContract(oContrat);
   		   
   			
-			// colocamos operacion de compra
-			
+			// colocamos operacion de compra			
 			Order BuyPositionTWS = new Order();
 			BuyPositionTWS.account(Utilities.getConfigurationValue(IBTraderConstants.keyACCOUNT_IB_NAME, _share.getCompanyId(), _share.getGroupId()));		
 			
@@ -165,9 +172,9 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 			BuyPositionSystem.setType(BuyPositionTWS.getAction());
 			BuyPositionSystem.setCompanyId(_share.getCompanyId());
 			BuyPositionSystem.setGroupId(_share.getGroupId());
-			BuyPositionSystem.setStrategy_in(this.getClass().getName());
+			BuyPositionSystem.setStrategy_out(this.getClass().getName());
 			BuyPositionSystem.setDescription(_tradeDescription.toString());
-			
+
     		/* BuyPositionSystem.setSell_percentual_stop_lost(ShareStrategy.getSell_percentual_stop_lost());
 			BuyPositionSystem.setSell_percentual_stop_profit(ShareStrategy.getSell_percentual_stop_profit());*/
 			BuyPositionSystem.setShare_number_traded(new Long(0));
@@ -178,6 +185,7 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 			PositionLocalServiceUtil.updatePosition(BuyPositionSystem);
 			/* Posicion en MYSQL de CONTROL */
 			_log.info("Opening order " + BuyPositionSystem.getPositionId());
+			
 			
 			/* RETORNAMOS PORQUE DESPUES HAY QUE METER EN LA POSICION EN NUMERO DE ORDEN DE LA TWS */
 			returnValue =  BuyPositionSystem.getPositionId();
@@ -193,7 +201,7 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 		return returnValue;
 	}
 	
-	public IBStrategySimpleMobileAverage() {
+	public IBStrategyStopLostProfitMobileAverage() {
 		
 		super();
 		// TODO Auto-generated constructor stub
@@ -203,48 +211,47 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 	public boolean verify(Share _share, Market _market,StrategyShare _strategyImpl) {
 	
 	boolean verified = Boolean.FALSE;
-	boolean existsPosition = Boolean.FALSE;
-
+	
+	boolean existsPositionToExit = false;
 	try
     {
 		
-	if (_strategyImpl.getStrategyparamsoverride()==null)
-		return Boolean.FALSE;
+		if (_strategyImpl.getStrategyparamsoverride()==null)
+			return Boolean.FALSE;
 		
-    this.setJsonStrategyShareParams(JSONFactoryUtil.createJSONObject(_strategyImpl.getStrategyparamsoverride()));					
-
+		existsPositionToExit = PositionLocalServiceUtil.ExistsPositionToExit(_share.getGroupId(),_share.getCompanyId(),_share.getShareId());
+		if (existsPositionToExit)	
+		{
+			currentPosition = PositionLocalServiceUtil.findPositionToExit(_share.getGroupId(),_share.getCompanyId(),_share.getShareId());
+	
 		
-	User _IBUser = UserLocalServiceUtil.getUser(_share.getUserCreatedId());
-	String HoraActual = Utilities.getHourNowFormat(_IBUser);
+	    this.setJsonStrategyShareParams(JSONFactoryUtil.createJSONObject(_strategyImpl.getStrategyparamsoverride()));					
 	
-	Calendar calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(HoraActual);
+		User _IBUser = UserLocalServiceUtil.getUser(_share.getUserCreatedId());
+		String HoraActual = Utilities.getHourNowFormat(_IBUser);
+		
+		Calendar calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(HoraActual);
+									
+		calFechaActualWithDeadLine.add(Calendar.MINUTE, this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_TO_CLOSEMARKET));
+		
+		/*  CONTROLAMOS EL DEADLINE PARA COMPRAR */ 
+		// maximos y minimos...ya lo tenemos de la tabla.
+		//RealTime oShareMixMaxRTime = RealTimeDAO.getMinMaxRealTime(ShareStrategy.getShareId().intValue());
 	
-//	StrategyShare _strategyshare = StrategyShareLocalServiceUtil.getByCommpanyShareStrategyId(_share.getGroupId(),_share.getCompanyId(),_share.getShareId(),_strategyImpl.getStrategyId());
-								
-	calFechaActualWithDeadLine.add(Calendar.MINUTE, this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_TO_CLOSEMARKET));
-	Calendar calFechaFinMercado = Utilities.getNewCalendarWithHour(_market.getEnd_hour());
-	existsPosition = PositionLocalServiceUtil.ExistsOpenPosition (_share.getGroupId(),_share.getCompanyId(),_share.getShareId());
-	/*  CONTROLAMOS EL DEADLINE PARA COMPRAR */ 
-	// maximos y minimos...ya lo tenemos de la tabla.
-	//RealTime oShareMixMaxRTime = RealTimeDAO.getMinMaxRealTime(ShareStrategy.getShareId().intValue());
-
-	// verificamos compra previa. No compramos si hay una compra previa y estamos en el margen de tiempo de compra.
-	// verificamos si ha pasado el tiempo necesario con los offset de lectura 		
-	// 00
-	//_log.info("existsPosition:" +  existsPosition);
+		// verificamos compra previa. No compramos si hay una compra previa y estamos en el margen de tiempo de compra.
+		// verificamos si ha pasado el tiempo necesario con los offset de lectura 		
+		// 00
+		//_log.info("existsPosition:" +  existsPosition);
+		
+		_num_macdP = this.getJsonStrategyShareParams().getLong(_EXPANDO_MOBILE_AVERAGE_PERIODS_NUMBER,0);
+		_num_macdT = this.getJsonStrategyShareParams().getLong(_EXPANDO_MOBILE_AVERAGE_CANDLE_SIZE,0);
+		_entryrate = this.getJsonStrategyShareParams().getDouble(_EXPANDO_MOBILE_AVERAGE_GAP_SIZE,0.0f) / 100;
+		
+		/* SOLO PODEMOS ENTRAR EN EL PERIODO MARCADO DE CADA MINUTO, PARA LO CUAL OBTENEMOS EL RESTO */	
+		long _ModMinuteToEntry = calFechaActualWithDeadLine.get(Calendar.MINUTE) % _num_macdT;
+		if (_ModMinuteToEntry!=0)  // NO ESTOY EN EL MINUTO 5,10,15,20..etc (para las barras de 5)
+			return Boolean.FALSE;
 	
-	_num_macdP = this.getJsonStrategyShareParams().getLong(_EXPANDO_MOBILE_AVERAGE_PERIODS_NUMBER,0);
-	_num_macdT = this.getJsonStrategyShareParams().getLong(_EXPANDO_MOBILE_AVERAGE_CANDLE_SIZE,0);
-	_entryrate = this.getJsonStrategyShareParams().getDouble(_EXPANDO_MOBILE_AVERAGE_GAP_SIZE,0.0f) / 100;
-	operationfilter = this.getJsonStrategyShareParams().getString(_EXPANDO_MOBILE_AVERAGE_TRADE_OPERATIONS_TYPE,"ALL").trim();
-	
-	/* SOLO PODEMOS ENTRAR EN EL PERIODO MARCADO DE CADA MINUTO, PARA LO CUAL OBTENEMOS EL RESTO */	
-	long _ModMinuteToEntry = calFechaActualWithDeadLine.get(Calendar.MINUTE) % _num_macdT;
-	if (_ModMinuteToEntry!=0)  // NO ESTOY EN EL MINUTO 5,10,15,20..etc (para las barras de 5)
-		return Boolean.FALSE;
-	
-	if (!existsPosition &&  !calFechaActualWithDeadLine.after(calFechaFinMercado))		
-	{	
 		// supuestamente estamos leyendo...verificamos si con respecto al mercado ya tenemos los max y min
 		// comparamos que la hora de lectura final haya sobrepasado el actual 
 		// HHMM
@@ -261,13 +268,14 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 		if (HoraActual.compareTo(StartHourTrading)>0)   // hora actyual ya ha pasado, podemos entrar en la operativa
 		{
 		
-		// ya no obtenemos el maximo y minimo, sino el correspondiente al tramo que me han dicho
-		/* TIMEZONE AJUSTADO */
-		Date _FromNow = Utilities.getDate(_IBUser);
-		Calendar _calendarFromNow = Calendar.getInstance();
-		_calendarFromNow.setTime(_FromNow);		
+		/* TIMEZONE AJUSTADO */		
+		Calendar _calendarFromNow = Calendar.getInstance(); // fecha de la compra  currentPosition
+		_calendarFromNow.setTime(currentPosition.getDate_real_in());		
 		_calendarFromNow.set(Calendar.SECOND, 0);
-
+		
+		/* NO ES EL SIGUIENTE BLOQUE DE BARRA , PODRIAN SOLAPARSE ENTRADA/SALIDA, IGNORAMOS SEGUNDOS DE LA TABLA DE BBDD */
+		if (!calFechaActualWithDeadLine.after(_calendarFromNow))
+			return Boolean.FALSE;
 		
 		Double _avgMobileSimple = MobileAvgUtil.getSimpleAvgMobile(_calendarFromNow.getTime(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_macdP, Boolean.FALSE);
 		
@@ -298,23 +306,41 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 
 					
 					double _WidthBarRangePercent =  _WidthRangeBar *  _entryrate;
-
+					
+					/* HAY CAMBIO DE TENDENCIA */
+					boolean _MarketTrendChanged = true;
+					if (currentPosition.getType().equals(PositionStates.statusTWSFire.BUY.toString()) && 
+							oRTimeEnTramo.getValue() >_avgMobileSimple.doubleValue())
+					{
+									_MarketTrendChanged = false;
+					}
+					if (currentPosition.getType().equals(PositionStates.statusTWSFire.SELL.toString()) && 
+							oRTimeEnTramo.getValue() <_avgMobileSimple.doubleValue())
+					{
+									_MarketTrendChanged = false;
+					}
+					
+					
 					/* A/ La barra debe cruzar la MM8 y al cierre el 75% de su cuerpo debe ser superior al precio cierre de la MM.
 					y B/ Además, el precio cierre de la barra será => que el 75% del rango.*/
 					
 					/* 2- La particularidad de este caso afecta a la primera sentencia, el cierre de la barra se sitúa en su 100% por encima de la MM, con lo cual debe comprar, el filtro B aquí no afecta.
 					 * */
 					_BuySuccess = MobileAvgUtil._IsBuySignalMM8_5MINBar(_avgMobileSimple, oRTimeWidthRange, _WidthBarRangePercent, oRTimeEnTramo);
+					_BuySuccess =  (_BuySuccess && currentPosition.getType().equals(PositionStates.statusTWSFire.SELL.toString()));
+
 					_SellSuccess = MobileAvgUtil._IsSellSignalMM8_5MINBar(_avgMobileSimple, oRTimeWidthRange, _WidthBarRangePercent, oRTimeEnTramo);
-					/* tipos de operacion */
-					_BuySuccess = _BuySuccess &&  
-							(operationfilter.equals("ALL") || operationfilter.equals(PositionStates.statusTWSFire.BUY.toString())); 
+					_SellSuccess = (_SellSuccess && currentPosition.getType().equals(PositionStates.statusTWSFire.BUY.toString()));
+
+					/*_BuySuccess = _BuySuccess &&  
+							(_OperationFilter.equals("ALL") || _OperationFilter.equals(PositionStates.statusTWSFire.BUY.toString())); 
 
 					
 					_SellSuccess = _SellSuccess  &&  
-							(operationfilter.equals("ALL") || operationfilter.equals(PositionStates.statusTWSFire.SELL.toString()));
-					
-					if (_AvgMovil_InsideBar  && (_BuySuccess || _SellSuccess))
+							(_OperationFilter.equals("ALL") || _OperationFilter.equals(PositionStates.statusTWSFire.SELL.toString()));
+					*/
+					/*  DNM_RAFADIESTRO  2015 06 16. COMENTAMOS LA CLAUSULA DE QUE NO LA CORTE */ 
+					if  ((!_AvgMovil_InsideBar  &&_MarketTrendChanged)  ||  (_AvgMovil_InsideBar && (_SellSuccess || _BuySuccess)))
 					{
 						
 					    this.setValueIn(oRTimeEnTramo.getValue());											
@@ -325,7 +351,6 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 						 */					
 						this.bBuyOperation = _BuySuccess;									
 						this.bSellOperation = _SellSuccess;
-						
 						
 						_tradeDescription = JSONFactoryUtil.createJSONObject();
 						_tradeDescription.put("_WidthBarRangePercent", _WidthBarRangePercent);
@@ -338,18 +363,17 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 						_tradeDescription.put("_num_macdP", _num_macdP);
 //						_tradeDescription.put("_num_macdT", _num_macdT);
 						_tradeDescription.put("_calendarFromNow", TimeFormat.format(_calendarFromNow.getTime()));
-						
-						
-						
 					}
-				}
+				} // 				if (oRTimeWidthRange!=null  && oRTimeWidthRange.getMax_value()>0 && oRTimeWidthRange.getMin_value()>0)
 
-			}
+
+			} // if (oRTimeEnTramo!=null)
 		}
 		   	
-	  }
-    }// NO EXISTE POSICION 
-    }
+	  } //		if (HoraActual.compareTo(StartHourTrading)>0)   // hora actyual ya ha pasado, podemos entrar en la operativa
+
+	} // if (existsPositionToExit)
+    } // en try
 	catch (Exception er)
     {
 		_log.info(er.getMessage());
@@ -364,21 +388,21 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 	// TODO Auto-generated method stub
 	// CREAMOS LOS EXPANDOS NECESARIOS 
 		
-	Parameters.put(_EXPANDO_MOBILE_AVERAGE_PERIODS_NUMBER, String.valueOf(ExpandoColumnConstants.INTEGER));
-	Parameters.put(_EXPANDO_MOBILE_AVERAGE_CANDLE_SIZE,  String.valueOf(ExpandoColumnConstants.INTEGER));	
-	Parameters.put(_EXPANDO_MOBILE_AVERAGE_GAP_SIZE,  String.valueOf(ExpandoColumnConstants.DOUBLE));  // ESTE ES EL UNICO DOUBLE	
-	Parameters.put(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_TO_CLOSEMARKET,  String.valueOf(ExpandoColumnConstants.INTEGER));  // ESTE ES EL UNICO DOUBLE
-	Parameters.put(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET,  String.valueOf(ExpandoColumnConstants.INTEGER));  // ESTE ES EL UNICO DOUBLE
-	Parameters.put(_EXPANDO_MOBILE_AVERAGE_TRADE_OPERATIONS_TYPE,  String.valueOf(ExpandoColumnConstants.STRING_ARRAY));  // ESTE ES EL UNICO DOUBLE
+	Parameters.put(_EXPANDO_MOBILE_AVERAGE_PERIODS_NUMBER, Double.valueOf(ExpandoColumnConstants.INTEGER));
+	Parameters.put(_EXPANDO_MOBILE_AVERAGE_CANDLE_SIZE,  Double.valueOf(ExpandoColumnConstants.INTEGER));	
+	Parameters.put(_EXPANDO_MOBILE_AVERAGE_GAP_SIZE,  Double.valueOf(ExpandoColumnConstants.DOUBLE));  // ESTE ES EL UNICO DOUBLE	
+	Parameters.put(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_TO_CLOSEMARKET,  Double.valueOf(ExpandoColumnConstants.INTEGER));  // ESTE ES EL UNICO DOUBLE
+	Parameters.put(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET,  Double.valueOf(ExpandoColumnConstants.INTEGER));  // ESTE ES EL UNICO DOUBLE
+	
 		
 	ExpandoTable expandoTable;
 	try {
 		expandoTable = ExpandoTableLocalServiceUtil.addDefaultTable(companyId, IBStrategySimpleMobileAverage.class.getName());
 		long i = 0;
-		for (Map.Entry<String, String> parameter : Parameters.entrySet()) {
+		for (Map.Entry<String, Double> parameter : Parameters.entrySet()) {
 		
 			String _paramName = parameter.getKey();
-			String _paramValue = parameter.getValue();
+			Double _paramValue = parameter.getValue();
 			
 			/* EXISTE, SI NO , LO CREAMOS */
 			ExpandoColumn ExistsExpando = ExpandoColumnLocalServiceUtil.getColumn(expandoTable.getTableId(), _paramName);
@@ -387,7 +411,7 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 			{
 				ExpandoColumn paramColumn = ExpandoColumnLocalServiceUtil.createExpandoColumn(CounterLocalServiceUtil.increment(ExpandoColumn.class.getName()));
 				paramColumn.setName(_paramName);
-				paramColumn.setType(Integer.parseInt(_paramValue));	
+				paramColumn.setType(_paramValue.intValue());	
 				paramColumn.setTypeSettings("hidden=0\nindex-type=0\nvisible-with-update-permission=0");
 				paramColumn.setCompanyId(companyId);					
 				paramColumn.setTableId(expandoTable.getTableId());
@@ -426,9 +450,7 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 	for (Map.Entry<String, String> parameter : paramValues.entrySet()) {
 		String _paramValue = parameter.getValue();
 		
-		/* PUEDEN VENIR LISTA DE VALORES EN EL NOMBRE DEL EXPANDO []  */		
-		 boolean bParamList = parameter.getKey().contains("[") && parameter.getKey().contains("]");
-		if (!bParamList && !Utilities.isNumber(_paramValue))
+		if (!Utilities.isNumber(_paramValue))
 		{
 			bOK=Boolean.FALSE;
 			this.setValidateParamsKeysError("strategyshare.strategyminmax.errorparams");

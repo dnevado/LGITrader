@@ -24,7 +24,7 @@
 		<property name="globaldefault" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />
 		<property name="iscron" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />
 		<property name="config_key" type="com.liferay.portal.dao.orm.hibernate.StringType" />
-		<property name="description" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="description" type="com.liferay.portal.dao.orm.hibernate.StringClobType" />
 	</class>
 	<class name="com.ibtrader.data.model.impl.IBOrderImpl" table="ibtrader_IBOrder">
 		<id name="orderIdPk" type="long">
@@ -55,7 +55,7 @@
 		<property name="identifier" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property column="currency_" name="currency" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="name" type="com.liferay.portal.dao.orm.hibernate.StringType" />
-		<property name="description" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="description" type="com.liferay.portal.dao.orm.hibernate.StringClobType" />
 	</class>
 	<class name="com.ibtrader.data.model.impl.PositionImpl" table="ibtrader_Position">
 		<id name="positionId" type="long">
@@ -70,7 +70,7 @@
 		<property column="state_" name="state" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="state_in" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="state_out" type="com.liferay.portal.dao.orm.hibernate.StringType" />
-		<property name="description" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="description" type="com.liferay.portal.dao.orm.hibernate.StringClobType" />
 		<property name="price_in" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
 		<property name="price_real_in" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
 		<property name="limit_price_in" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
@@ -154,7 +154,7 @@
 		<property name="groupId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 		<property name="companyId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 		<property name="name" type="com.liferay.portal.dao.orm.hibernate.StringType" />
-		<property name="description" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="description" type="com.liferay.portal.dao.orm.hibernate.StringClobType" />
 		<property name="createDate" type="org.hibernate.type.TimestampType" />
 		<property name="modifiedDate" type="org.hibernate.type.TimestampType" />
 		<property column="active_" name="active" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />

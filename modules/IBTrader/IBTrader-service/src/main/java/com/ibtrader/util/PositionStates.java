@@ -58,8 +58,9 @@ public class PositionStates {
 	    }
 	}
 	public enum ordertypes {
-	    LMT ("LMT"),
-	    MKT ("MKT");
+	    LMT ("LMT"), // LIMITADA 
+	    MKT ("MKT"),  // MERCADO 
+	    TRAIL ("TRAIL");  // TRAIL , CON PORCENTAJE DE STOP 
 	    
 	    private String nametypes;       
 

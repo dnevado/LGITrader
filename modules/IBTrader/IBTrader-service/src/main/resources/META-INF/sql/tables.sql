@@ -10,7 +10,7 @@ create table ibtrader_Config (
 	globaldefault BOOLEAN,
 	iscron BOOLEAN,
 	config_key VARCHAR(75) null,
-	description VARCHAR(75) null
+	description TEXT null
 );
 
 create table ibtrader_IBOrder (
@@ -39,7 +39,7 @@ create table ibtrader_Market (
 	identifier VARCHAR(75) null,
 	currency_ VARCHAR(75) null,
 	name VARCHAR(75) null,
-	description VARCHAR(75) null
+	description TEXT null
 );
 
 create table ibtrader_Position (
@@ -53,7 +53,7 @@ create table ibtrader_Position (
 	state_ VARCHAR(75) null,
 	state_in VARCHAR(75) null,
 	state_out VARCHAR(75) null,
-	description VARCHAR(75) null,
+	description TEXT null,
 	price_in DOUBLE,
 	price_real_in DOUBLE,
 	limit_price_in DOUBLE,
@@ -134,7 +134,7 @@ create table ibtrader_Strategy (
 	groupId LONG,
 	companyId LONG,
 	name VARCHAR(75) null,
-	description VARCHAR(75) null,
+	description TEXT null,
 	createDate DATE null,
 	modifiedDate DATE null,
 	active_ BOOLEAN,

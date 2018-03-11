@@ -17,7 +17,7 @@ if (request.getAttribute("share")!=null)
 	shareId = share.getShareId();
 	/* EXISTE YA CONFIGURADA */	
 	 strategyshare = StrategyShareLocalServiceUtil.getByCommpanyShareStrategyId(share.getGroupId(), share.getCompanyId(), shareId, StrategyId);
-	 showActions = strategyshare !=null; 
+	 showActions = strategyshare !=null && strategyshare.getActive();  // exista como estratagia de la accion y activada 
 }
 
 

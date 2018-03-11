@@ -82,7 +82,7 @@ public class MarketModelImpl extends BaseModelImpl<Market>
 			{ "identifier", Types.VARCHAR },
 			{ "currency_", Types.VARCHAR },
 			{ "name", Types.VARCHAR },
-			{ "description", Types.VARCHAR }
+			{ "description", Types.CLOB }
 		};
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP = new HashMap<String, Integer>();
 
@@ -99,10 +99,10 @@ public class MarketModelImpl extends BaseModelImpl<Market>
 		TABLE_COLUMNS_MAP.put("identifier", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("currency_", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("name", Types.VARCHAR);
-		TABLE_COLUMNS_MAP.put("description", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("description", Types.CLOB);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table ibtrader_Market (uuid_ VARCHAR(75) null,marketId LONG not null primary key,groupId LONG,companyId LONG,active_ BOOLEAN,createDate DATE null,modifiedDate DATE null,start_hour VARCHAR(75) null,end_hour VARCHAR(75) null,identifier VARCHAR(75) null,currency_ VARCHAR(75) null,name VARCHAR(75) null,description VARCHAR(75) null)";
+	public static final String TABLE_SQL_CREATE = "create table ibtrader_Market (uuid_ VARCHAR(75) null,marketId LONG not null primary key,groupId LONG,companyId LONG,active_ BOOLEAN,createDate DATE null,modifiedDate DATE null,start_hour VARCHAR(75) null,end_hour VARCHAR(75) null,identifier VARCHAR(75) null,currency_ VARCHAR(75) null,name VARCHAR(75) null,description TEXT null)";
 	public static final String TABLE_SQL_DROP = "drop table ibtrader_Market";
 	public static final String ORDER_BY_JPQL = " ORDER BY market.marketId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY ibtrader_Market.marketId ASC";

@@ -13,7 +13,9 @@
 		<field name="globaldefault" type="boolean" />
 		<field name="iscron" type="boolean" />
 		<field name="config_key" type="String" />
-		<field name="description" type="String" />
+		<field name="description" type="String">
+			<hint-collection name="CLOB" />
+		</field>
 	</model>
 	<model name="com.ibtrader.data.model.IBOrder">
 		<field name="uuid" type="String" />
@@ -40,7 +42,9 @@
 		<field name="identifier" type="String" />
 		<field name="currency" type="String" />
 		<field name="name" type="String" />
-		<field name="description" type="String" />
+		<field name="description" type="String">
+			<hint-collection name="CLOB" />
+		</field>
 	</model>
 	<model name="com.ibtrader.data.model.Position">
 		<field name="uuid" type="String" />
@@ -53,7 +57,9 @@
 		<field name="state" type="String" />
 		<field name="state_in" type="String" />
 		<field name="state_out" type="String" />
-		<field name="description" type="String" />
+		<field name="description" type="String">
+			<hint-collection name="CLOB" />
+		</field>
 		<field name="price_in" type="double" />
 		<field name="price_real_in" type="double" />
 		<field name="limit_price_in" type="double" />
@@ -135,7 +141,9 @@
 		<field name="groupId" type="long" />
 		<field name="companyId" type="long" />
 		<field name="name" type="String" />
-		<field name="description" type="String" />
+		<field name="description" type="String">
+			<hint-collection name="CLOB" />
+		</field>
 		<field name="createDate" type="Date" />
 		<field name="modifiedDate" type="Date" />
 		<field name="active" type="boolean" />

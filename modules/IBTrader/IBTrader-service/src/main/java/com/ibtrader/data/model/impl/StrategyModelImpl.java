@@ -79,7 +79,7 @@ public class StrategyModelImpl extends BaseModelImpl<Strategy>
 			{ "groupId", Types.BIGINT },
 			{ "companyId", Types.BIGINT },
 			{ "name", Types.VARCHAR },
-			{ "description", Types.VARCHAR },
+			{ "description", Types.CLOB },
 			{ "createDate", Types.TIMESTAMP },
 			{ "modifiedDate", Types.TIMESTAMP },
 			{ "active_", Types.BOOLEAN },
@@ -100,7 +100,7 @@ public class StrategyModelImpl extends BaseModelImpl<Strategy>
 		TABLE_COLUMNS_MAP.put("groupId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("companyId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("name", Types.VARCHAR);
-		TABLE_COLUMNS_MAP.put("description", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("description", Types.CLOB);
 		TABLE_COLUMNS_MAP.put("createDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("modifiedDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("active_", Types.BOOLEAN);
@@ -114,7 +114,7 @@ public class StrategyModelImpl extends BaseModelImpl<Strategy>
 		TABLE_COLUMNS_MAP.put("userId", Types.BIGINT);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table ibtrader_Strategy (uuid_ VARCHAR(75) null,strategyID LONG not null primary key,groupId LONG,companyId LONG,name VARCHAR(75) null,description VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,active_ BOOLEAN,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null,type_ VARCHAR(75) null,can_override_params BOOLEAN,className VARCHAR(75) null,userId LONG)";
+	public static final String TABLE_SQL_CREATE = "create table ibtrader_Strategy (uuid_ VARCHAR(75) null,strategyID LONG not null primary key,groupId LONG,companyId LONG,name VARCHAR(75) null,description TEXT null,createDate DATE null,modifiedDate DATE null,active_ BOOLEAN,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null,type_ VARCHAR(75) null,can_override_params BOOLEAN,className VARCHAR(75) null,userId LONG)";
 	public static final String TABLE_SQL_DROP = "drop table ibtrader_Strategy";
 	public static final String ORDER_BY_JPQL = " ORDER BY strategy.strategyID ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY ibtrader_Strategy.strategyID ASC";

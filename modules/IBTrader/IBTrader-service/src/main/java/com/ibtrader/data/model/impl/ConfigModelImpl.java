@@ -81,7 +81,7 @@ public class ConfigModelImpl extends BaseModelImpl<Config>
 			{ "globaldefault", Types.BOOLEAN },
 			{ "iscron", Types.BOOLEAN },
 			{ "config_key", Types.VARCHAR },
-			{ "description", Types.VARCHAR }
+			{ "description", Types.CLOB }
 		};
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP = new HashMap<String, Integer>();
 
@@ -97,10 +97,10 @@ public class ConfigModelImpl extends BaseModelImpl<Config>
 		TABLE_COLUMNS_MAP.put("globaldefault", Types.BOOLEAN);
 		TABLE_COLUMNS_MAP.put("iscron", Types.BOOLEAN);
 		TABLE_COLUMNS_MAP.put("config_key", Types.VARCHAR);
-		TABLE_COLUMNS_MAP.put("description", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("description", Types.CLOB);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table ibtrader_Config (uuid_ VARCHAR(75) null,configId LONG not null primary key,groupId LONG,companyId LONG,name VARCHAR(75) null,value VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,globaldefault BOOLEAN,iscron BOOLEAN,config_key VARCHAR(75) null,description VARCHAR(75) null)";
+	public static final String TABLE_SQL_CREATE = "create table ibtrader_Config (uuid_ VARCHAR(75) null,configId LONG not null primary key,groupId LONG,companyId LONG,name VARCHAR(75) null,value VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,globaldefault BOOLEAN,iscron BOOLEAN,config_key VARCHAR(75) null,description TEXT null)";
 	public static final String TABLE_SQL_DROP = "drop table ibtrader_Config";
 	public static final String ORDER_BY_JPQL = " ORDER BY config.configId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY ibtrader_Config.configId ASC";

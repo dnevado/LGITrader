@@ -1,3 +1,4 @@
+
 <%@ include file="/init.jsp" %>
 <%@page import="com.ibtrader.util.Utilities"%>
 <%@page import="com.liferay.expando.kernel.model.ExpandoColumnConstants"%>
@@ -12,7 +13,7 @@
 
 <%@ page import="com.liferay.portal.kernel.json.JSONFactoryUtil" %>
 <%@ page import="com.liferay.portal.kernel.json.JSONObject" %>
-
+<%@ page import="java.util.*" %>
 
 
 <liferay-ui:success key="share.success" message="share.success"/>
@@ -55,6 +56,7 @@ String portletId= "_" + portletDisplay.getId();
 <c:set  var="strategyshare_percentual_limit_buy" value="<%=jsonStrategyShareParams.getDouble("percentual_limit_buy") %>"/>
 <c:set  var="strategyshare_percentual_stop_lost" value="<%=jsonStrategyShareParams.getDouble(ConfigKeys._FIELD_STOP_LOST) %>"/>
 <c:set  var="strategyshare_percentual_stop_profit" value="<%=jsonStrategyShareParams.getDouble(ConfigKeys._FIELD_STOP_PROFIT) %>"/>
+<c:set  var="strategyshare_percentual_trailling_stop_lost" value="<%=jsonStrategyShareParams.getDouble(ConfigKeys._FIELD_TRAILLING_STOP_LOST) %>"/>
 
 
 <portlet:actionURL name="editStrategyShareParams" var="editStrategyShareParamsURL" />
@@ -95,6 +97,9 @@ String portletId= "_" + portletDisplay.getId();
 	    <aui:fieldset>		
 	    	<label class="control-label" for="<%=portletId%>_share.percentual_stop_profit">share.percentual_stop_profit</label><input  id="<%=portletId%>_percentual_stop_profit" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_stop_profit"  value="${strategyshare_percentual_stop_profit<=0 ? share.percentual_stop_profit : strategyshare_percentual_stop_profit}"> 	    	      	    		
         </aui:fieldset>
+          <aui:fieldset>		
+	    	<label class="control-label" for="<%=portletId%>_share.percentual_trailling_stop_lost">share.percentual_trailling_stop_lost</label><input  id="<%=portletId%>_percentual_trailling_stop_lost" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_trailling_stop_lost"  value="${strategyshare_percentual_trailling_stop_lost<=0 ? share.percentual_trailling_stop_lost : strategyshare_percentual_trailling_stop_lost}"> 	    	      	    		
+        </aui:fieldset>
     </aui:fieldset> 
     </c:if>
     <!--  DATOS DE EXPANDOS    -->
@@ -113,7 +118,9 @@ String portletId= "_" + portletDisplay.getId();
     	String _type = "text";
     	String _step = "1";
     	String _pattern = "";
-    	    
+
+    	List<String> _lValues = null;
+
     	
     	String _pname = Utilities._IBTRADER_STRATEGY_CUSTOM_FIELDS_.concat(StrategyParameter.getName());
     	String _pvalue = (jsonStrategyShareParams.get(StrategyParameter.getName().trim())!=null ? jsonStrategyShareParams.get(StrategyParameter.getName().trim()).toString() : "");
@@ -130,6 +137,15 @@ String portletId= "_" + portletDisplay.getId();
     					_step = "0.01";
     				}
     	}
+    	if (StrategyParameter.getType()==ExpandoColumnConstants.STRING_ARRAY)  // para tipos de operaciones 
+		{
+			_type = "select";
+			if (_pname.contains("[") && _pname.contains("]") )
+			{
+			 String _ListValue =_pname.substring(_pname.indexOf("[") + 1, _pname.indexOf("]"));
+			_lValues =  new  ArrayList<String>(Arrays.asList(_ListValue.split(",")));
+			}
+		}
      	if (_type.equals("double")) // por el tema de los aui number con decimales 
      	{%>
      		 <aui:fieldset>		
@@ -137,7 +153,7 @@ String portletId= "_" + portletDisplay.getId();
 	 	    	<input  required id="<%=portletId%>_<%=_pname%>" class="field form-control"  min="0"  type="number"  step="<%=_step%>"   formnovalidate="formnovalidate"  
  	    	 	pattern="<%=_pattern%>" placeholder="0.00" name="<%=portletId%>_<%=_pname%>"  value="<%=_pvalue%>"/> 	    	      	    		
          	</aui:fieldset>
-     	<%} else
+     	<%} if (_type.equals("number"))
      	{%>
     		<aui:fieldset>	
 				<aui:input value="<%=_pvalue%>" 
@@ -149,7 +165,19 @@ String portletId= "_" + portletDisplay.getId();
 			 </aui:input>
     	</aui:fieldset>		
 		 
-    	<% } %>    	
+    	<% } if (_type.equals("select") && _lValues!=null) { /* casos de operaciones, para poder elegir venta, compra o todas*/ %>   
+    			
+    			<aui:fieldset>	
+				<aui:select required="true"  inlineLabel="true"  label="<%=StrategyParameter.getDisplayName(themeDisplay.getLocale()) %>" name="<%=_pname%>">
+				<% for (String selectvalue : _lValues) {
+					boolean selected = _pvalue.equals(selectvalue) ? true : false;%>
+					<aui:option  value="<%=selectvalue.trim()%>" selected="<%=selected %>"><%=selectvalue %></aui:option>
+				<% } %>		
+						  	              
+			   </aui:select>
+    		  </aui:fieldset>	
+    				
+    			<% }%>    	    	
     	
     <% } %>
     </aui:fieldset>

@@ -39,6 +39,7 @@ import com.liferay.expando.kernel.service.ExpandoColumnLocalServiceUtil;
 import com.liferay.expando.kernel.service.ExpandoTableLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
@@ -58,8 +59,9 @@ public class IBStrategyMinMax extends StrategyImpl {
 	
 	private static Log _log = LogFactoryUtil.getLog(IBStrategyMinMax.class);
 	/* PAIR NAME / DATA TYPE PARAMETERES */	
-	private static HashMap<String, Double> Parameters = new HashMap<String,Double>();
+	private static HashMap<String, String> Parameters = new HashMap<String,String>();
 	
+	String operationfilter="";    // ALL, BUY, SELL
 	
 	private List<ExpandoColumn> ExpandoColumns = new ArrayList<ExpandoColumn>(); 
 	
@@ -67,7 +69,10 @@ public class IBStrategyMinMax extends StrategyImpl {
 	private static String _EXPANDO_OFFSET2_FROM_OPENMARKET = "Final OffSet From Open Market (Minutes)";  // offset hasta desde inicio de mercado en minutos
 	private static String _EXPANDO_TRADE_OFFSET_TO_CLOSEMARKET = "Trade Until x Minutes From CloseMarket"; // operar hasta minutos antes de cierre mercado
 	private static String _EXPANDO_PERCENTUAL_GAP = "Percentual Gap To Reach From Min/nMax Value Found";   // porcentaje de subida o baja hasta que se puede comprar, dentro de los limites 
+	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OPERATIONS_TYPE = "Operation Type [ALL, BUY, SELL]";  // offset desde inicio de mercado en minutos
 	
+	JSONObject _tradeDescription;
+
 	@Override
 	public long execute(Share _share, Market _market) {
 		// TODO Auto-generated method stub
@@ -105,14 +110,20 @@ public class IBStrategyMinMax extends StrategyImpl {
 			
 			Order BuyPositionTWS = new Order();
 			BuyPositionTWS.account(Utilities.getConfigurationValue(IBTraderConstants.keyACCOUNT_IB_NAME, _share.getCompanyId(), _share.getGroupId()));		
-			
+			BuyPositionTWS.orderType(PositionStates.ordertypes.LMT.toString());		    
+
 			/* EXISTE ALGO SOBREESCRITO */
 			long number_to_purchase = _share.getNumbertopurchase();
     		if (this.getJsonStrategyShareParams()!=null && this.getJsonStrategyShareParams().getInt(ConfigKeys._FIELD_NUMBER_TO_PURCHASE,0)>0)
     			number_to_purchase =this.getJsonStrategyShareParams().getInt(ConfigKeys._FIELD_NUMBER_TO_PURCHASE,0);    	
 			
+    		/* tralling stop lost */
+    		double traillingstoplost =_share.getPercentual_trailling_stop_lost();
+    		/* EXISTE ALGO SOBREESCRITO */
+    		if (this.getJsonStrategyShareParams()!=null && this.getJsonStrategyShareParams().getDouble(ConfigKeys._FIELD_TRAILLING_STOP_LOST,0)>0)
+    			traillingstoplost =this.getJsonStrategyShareParams().getDouble(ConfigKeys._FIELD_STOP_LOST,0);
+    		
 			BuyPositionTWS.totalQuantity(number_to_purchase);
-			BuyPositionTWS.orderType(PositionStates.ordertypes.LMT.toString());		    
 			// precio del tick más o menos un porcentaje ...normalmente %1
 			// ojo con los FUTUROS..llevan cambios porcentuales
 			BuyPositionTWS.lmtPrice(Utilities.RoundPrice(this.getValueLimitIn()));
@@ -160,6 +171,15 @@ public class IBStrategyMinMax extends StrategyImpl {
     			BuyPositionSystem.setPercentualstoplost_out(stoplost);
     		else
     			BuyPositionSystem.setPercentualstoplost_out(_defaultstop_percent);
+    		
+    		/* trailing stop lost , introducimos el trailing % y stop lost */
+    		if (traillingstoplost>0)    	
+    		{
+    			BuyPositionTWS.trailingPercent(Utilities.RoundPrice(traillingstoplost));
+    			BuyPositionTWS.trailStopPrice(Utilities.RoundPrice(stoplost));
+    			BuyPositionTWS.orderType(PositionStates.ordertypes.TRAIL.toString());		    
+    		
+    		}
     		
     		
     		double stopprofit =_share.getPercentual_stop_profit();
@@ -217,6 +237,12 @@ public class IBStrategyMinMax extends StrategyImpl {
 	
 //	StrategyShare _strategyshare = StrategyShareLocalServiceUtil.getByCommpanyShareStrategyId(_share.getGroupId(),_share.getCompanyId(),_share.getShareId(),_strategyImpl.getStrategyId());
 	
+	if (_strategyImpl.getStrategyparamsoverride()==null)
+		return Boolean.FALSE;
+		
+    this.setJsonStrategyShareParams(JSONFactoryUtil.createJSONObject(_strategyImpl.getStrategyparamsoverride()));					
+	
+		
 			
 	calFechaActualWithDeadLine.add(Calendar.MINUTE, this.getJsonStrategyShareParams().getInt(_EXPANDO_TRADE_OFFSET_TO_CLOSEMARKET));
 	Calendar calFechaFinMercado = Utilities.getNewCalendarWithHour(_market.getEnd_hour());
@@ -285,15 +311,34 @@ public class IBStrategyMinMax extends StrategyImpl {
 			 *  EL REALTIME O CAMBIO DE TICK DEBE ESTAR ENTRE EL MAX O MIN Y EL BORDE SUPERIOR.
 			 *  HASTA AHORA, VERIFICABAMOS QUE ESTUVIESE POR ENCIMA. NOS ASEGURAMOS CON EL PRECIO LIMITADO.
 			 * */
+			
+			operationfilter = this.getJsonStrategyShareParams().getString(_EXPANDO_MOBILE_AVERAGE_TRADE_OPERATIONS_TYPE,"ALL").trim();
+
+			
 			bReachedMax = ((oShareLastRTime.getValue() > MaxValueWithGap) &&  (oShareLastRTime.getValue() < MaxValueWithGapAndLimit));
 			bReachedMin = ((oShareLastRTime.getValue()  < MinValueWithGap)  &&  (oShareLastRTime.getValue()> MinValueWithGapAndLimit));
-		
+			/* filtro por operacion */
+			bReachedMax = bReachedMax &&  
+					(operationfilter.equals("ALL") || operationfilter.equals(PositionStates.statusTWSFire.BUY.toString())); 
 	
-			if (bReachedMax || bReachedMin || true)					
+			bReachedMin = bReachedMin &&  
+					(operationfilter.equals("ALL") || operationfilter.equals(PositionStates.statusTWSFire.SELL.toString())); 
+			
+			if (bReachedMax || bReachedMin )					
 			{
 				
 			    this.setValueIn(oShareLastRTime.getValue());
-				this.setValueLimitIn(MaxValueWithGapAndLimit);									
+				this.setValueLimitIn(MaxValueWithGapAndLimit);
+				
+				_tradeDescription = JSONFactoryUtil.createJSONObject();
+				_tradeDescription.put("bReachedMax", bReachedMax);
+				_tradeDescription.put("bReachedMin", bReachedMin);
+				_tradeDescription.put("MaxValue", MaxValue);
+				_tradeDescription.put("MinValue", MinValue);
+				_tradeDescription.put("MaxValueWithGapAndLimit", MaxValueWithGapAndLimit);
+				_tradeDescription.put("MinValueWithGapAndLimit", MinValueWithGapAndLimit);
+				_tradeDescription.put("oShareLastRTime.getValue()", oShareLastRTime.getValue());
+				
 				this.setVerified(Boolean.TRUE);												
 				verified = true;
 				
@@ -321,18 +366,19 @@ public class IBStrategyMinMax extends StrategyImpl {
 		// TODO Auto-generated method stub
 		// CREAMOS LOS EXPANDOS NECESARIOS 
 		
-		Parameters.put(_EXPANDO_OFFSET1_FROM_OPENMARKET, Double.valueOf(ExpandoColumnConstants.INTEGER));
-		Parameters.put(_EXPANDO_OFFSET2_FROM_OPENMARKET,  Double.valueOf(ExpandoColumnConstants.INTEGER));	
-		Parameters.put(_EXPANDO_TRADE_OFFSET_TO_CLOSEMARKET,  Double.valueOf(ExpandoColumnConstants.INTEGER));		
-		Parameters.put(_EXPANDO_PERCENTUAL_GAP,  Double.valueOf(ExpandoColumnConstants.DOUBLE));
+		Parameters.put(_EXPANDO_OFFSET1_FROM_OPENMARKET, String.valueOf(ExpandoColumnConstants.INTEGER));
+		Parameters.put(_EXPANDO_OFFSET2_FROM_OPENMARKET,  String.valueOf(ExpandoColumnConstants.INTEGER));	
+		Parameters.put(_EXPANDO_TRADE_OFFSET_TO_CLOSEMARKET,  String.valueOf(ExpandoColumnConstants.INTEGER));		
+		Parameters.put(_EXPANDO_PERCENTUAL_GAP,  String.valueOf(ExpandoColumnConstants.DOUBLE));
+		Parameters.put(_EXPANDO_MOBILE_AVERAGE_TRADE_OPERATIONS_TYPE,  String.valueOf(ExpandoColumnConstants.STRING_ARRAY));  // ESTE ES EL UNICO DOUBLE
 		ExpandoTable expandoTable;
 		try {
 			expandoTable = ExpandoTableLocalServiceUtil.addDefaultTable(companyId, IBStrategyMinMax.class.getName());
 			long i = 0;
-			for (Map.Entry<String, Double> parameter : Parameters.entrySet()) {
+			for (Map.Entry<String, String> parameter : Parameters.entrySet()) {
 			
 				String _paramName = parameter.getKey();
-				Double _paramValue = parameter.getValue();
+				String _paramValue = parameter.getValue();
 				
 				/* EXISTE, SI NO , LO CREAMOS */
 				ExpandoColumn ExistsExpando = ExpandoColumnLocalServiceUtil.getColumn(expandoTable.getTableId(), _paramName);
@@ -341,7 +387,7 @@ public class IBStrategyMinMax extends StrategyImpl {
 				{
 					ExpandoColumn paramColumn = ExpandoColumnLocalServiceUtil.createExpandoColumn(CounterLocalServiceUtil.increment(ExpandoColumn.class.getName()));
 					paramColumn.setName(_paramName);
-					paramColumn.setType(_paramValue.intValue());	
+					paramColumn.setType(Integer.parseInt(_paramValue));	
 					paramColumn.setTypeSettings("hidden=0\nindex-type=0\nvisible-with-update-permission=0");
 					paramColumn.setCompanyId(companyId);					
 					paramColumn.setTableId(expandoTable.getTableId());
@@ -380,7 +426,9 @@ public class IBStrategyMinMax extends StrategyImpl {
 		for (Map.Entry<String, String> parameter : paramValues.entrySet()) {
 			String _paramValue = parameter.getValue();
 			
-			if (!Validator.isDigit(_paramValue) && Double.parseDouble(_paramValue)>=0)
+			/* PUEDEN VENIR LISTA DE VALORES EN EL NOMBRE DEL EXPANDO []  */		
+			 boolean bParamList = parameter.getKey().contains("[") && parameter.getKey().contains("]");
+			if (!bParamList && !Validator.isDigit(_paramValue) && Double.parseDouble(_paramValue)>=0)
 			{
 				bOK=Boolean.FALSE;
 				this.setValidateParamsKeysError("strategyshare.strategyminmax.errorparams");

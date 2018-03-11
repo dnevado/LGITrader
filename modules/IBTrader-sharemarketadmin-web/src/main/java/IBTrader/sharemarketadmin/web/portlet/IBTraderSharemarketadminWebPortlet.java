@@ -183,7 +183,7 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 		double percentual_limit_buy =  ParamUtil.getDouble(actionRequest,"percentual_limit_buy",0);
 		double percentual_stop_lost =  ParamUtil.getDouble(actionRequest,ConfigKeys._FIELD_STOP_LOST,0);
 		double percentual_stop_profit =  ParamUtil.getDouble(actionRequest,ConfigKeys._FIELD_STOP_PROFIT,0);
-		double percentual_trailling_stop_lost =  ParamUtil.getDouble(actionRequest,"trailling_stop_lost",0);
+		double percentual_trailling_stop_lost =  ParamUtil.getDouble(actionRequest,ConfigKeys._FIELD_TRAILLING_STOP_LOST,0);
 		
 		
 		Date expiry_date = ParamUtil.getDate(actionRequest,"expiry_date",null, null);
