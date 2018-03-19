@@ -2833,6 +2833,7 @@ public class StrategySharePersistenceImpl extends BasePersistenceImpl<StrategySh
 		strategyShareImpl.setShareId(strategyShare.getShareId());
 		strategyShareImpl.setActive(strategyShare.isActive());
 		strategyShareImpl.setStrategyparamsoverride(strategyShare.getStrategyparamsoverride());
+		strategyShareImpl.setDescription(strategyShare.getDescription());
 
 		return strategyShareImpl;
 	}

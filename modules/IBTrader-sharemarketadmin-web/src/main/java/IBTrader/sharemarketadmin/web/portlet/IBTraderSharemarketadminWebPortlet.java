@@ -24,7 +24,7 @@ import com.ibtrader.data.service.ShareLocalServiceUtil;
 import com.ibtrader.data.service.StrategyLocalService;
 import com.ibtrader.data.service.StrategyShareLocalService;
 import com.ibtrader.data.service.StrategyShareLocalServiceUtil;
-import com.ibtrader.interactive.TIMApiGITrader;
+import com.ibtrader.interactive.TIMApiGITrader_NOVALE;
 import com.ibtrader.util.ConfigKeys;
 import com.ibtrader.util.Utilities;
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
@@ -446,7 +446,9 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 		double percentual_stop_profit=  ParamUtil.getDouble(actionRequest,ConfigKeys._FIELD_STOP_PROFIT,0d);		
 		double trailling_stop_lost =  ParamUtil.getDouble(actionRequest,ConfigKeys._FIELD_TRAILLING_STOP_LOST,0d);
 		long shareId =  ParamUtil.getLong(actionRequest,"shareId",-1);
-		long strategyId =  ParamUtil.getLong(actionRequest,"strategyId",-1);		
+		long strategyId =  ParamUtil.getLong(actionRequest,"strategyId",-1);
+		String strategydescription =  ParamUtil.getString(actionRequest,"strategydescription","");
+		
 		boolean bExists = false;
 	    Strategy strategy = _strategyLocalService.fetchStrategy(strategyId);
 
@@ -523,7 +525,10 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 					strategyshare.setCompanyId(themeDisplay.getCompanyId());
 					strategyshare.setGroupId(themeDisplay.getScopeGroupId());
 					strategyshare.setStrategyId(strategyId);
-					strategyshare.setShareId(shareId);								
+					strategyshare.setShareId(shareId);
+					strategyshare.setDescription(strategydescription);
+				/* 	strategyshare.setS
+					 */
 					
 					
 					/* GENERAMOS EL JSON CON LOS DATOS DEL ACTIVO  + LOS EXPANDOS  */					
@@ -658,12 +663,12 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 		int 	_CLIENT_ID = 9;	  // el dos para leer, el 3 para escribir			
 		String  _HOST = "127.0.0.1";
 		int     _PORT = ConfigKeys.TWS_CONNECTION_PORT;	
-		TIMApiGITrader  oTWS = null;
+		TIMApiGITrader_NOVALE  oTWS = null;
 		_CLIENT_ID = Long.valueOf(Utilities.getConfigurationValue(IBTraderConstants.keyCRON_CONTRACTCHECKER_CLIENT_INITIAL, _share.getCompanyId(), _share.getGroupId())).intValue();	  // el dos para leer, el 3 para escribir
 
 	   _HOST = Utilities.getConfigurationValue(IBTraderConstants.keyTWS_HOST, _share.getCompanyId(), _share.getGroupId());		 
 	   _PORT = Integer.valueOf(Utilities.getConfigurationValue(IBTraderConstants.keyTWS_PORT, _share.getCompanyId(), _share.getGroupId()));
-	    oTWS = new TIMApiGITrader(_HOST,_PORT, _CLIENT_ID);	
+	    oTWS = new TIMApiGITrader_NOVALE(_HOST,_PORT, _CLIENT_ID);	
 	    /* por si se hubiera colado mas peticiones de realtime que 1, las borramos al arrancar los cron  */
 		List<IBOrder> _lrkMktData = IBOrderLocalServiceUtil.findByShareIdCompanyGroup(_share.getShareId(), _share.getCompanyId(), _share.getGroupId());
 		if (!_lrkMktData.isEmpty())

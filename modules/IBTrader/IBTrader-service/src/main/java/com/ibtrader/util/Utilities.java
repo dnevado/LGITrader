@@ -50,7 +50,7 @@ import com.ibtrader.data.model.Position;
 import com.ibtrader.data.model.StrategyShare;
 import com.ibtrader.data.service.ConfigLocalServiceUtil;
 import com.ibtrader.data.service.PositionLocalServiceUtil;
-import com.ibtrader.interactive.TIMApiGITrader;
+import com.ibtrader.interactive.TIMApiGITrader_NOVALE;
 
 
 public class Utilities {
@@ -157,7 +157,7 @@ public class Utilities {
 	   return bSimulated;
 	   
    }
-    public static void closeTWSConnection(TIMApiGITrader oTWS)
+    public static void closeTWSConnection(TIMApiGITrader_NOVALE oTWS)
     {
     try
     {

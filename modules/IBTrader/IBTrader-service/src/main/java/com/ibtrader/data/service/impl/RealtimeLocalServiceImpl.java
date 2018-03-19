@@ -25,6 +25,7 @@ import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Projection;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -51,6 +52,36 @@ public class RealtimeLocalServiceImpl extends RealtimeLocalServiceBaseImpl {
 	 * Never reference this class directly. Always use {@link com.ibtrader.data.service.RealtimeLocalServiceUtil} to access the realtime local service.
 	 */
 	
+	
+	
+	public void removeRealtimeFromToDate(Date from, Date to, long shareId, long companyId, long groupId)
+	{
+		
+		DynamicQuery _DQ = realtimeLocalService.dynamicQuery();
+				
+		_DQ.add(RestrictionsFactoryUtil.eq("companyId", companyId));
+		_DQ.add(RestrictionsFactoryUtil.eq("shareId", shareId));
+		_DQ.add(RestrictionsFactoryUtil.ge("createDate", from));
+		_DQ.add(RestrictionsFactoryUtil.le("createDate", to));
+		_DQ.add(RestrictionsFactoryUtil.eq("groupId", groupId));
+		
+		List<Realtime> dRealTime = realtimeLocalService.dynamicQuery(_DQ);
+		for (Realtime rt : dRealTime)
+		{
+			try {
+				realtimeLocalService.deleteRealtime(rt.getPrimaryKey());
+			} catch (PortalException e) {
+				// TODO Auto-generated catch block
+				//e.printStackTrace();
+			}
+		}
+
+		
+		
+		
+		List<Long> LastRealTime = realtimeLocalService.dynamicQuery(_DQ);
+		
+	}
 	/* OBTIENE EL MIN Y MAX DE UN  ACTIVO */	
 	public Realtime findMinMaxRealTime(Date from, Date to, long shareId, long companyId, long groupId)
 	{

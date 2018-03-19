@@ -3840,7 +3840,7 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 			PositionModelImpl.GROUPID_COLUMN_BITMASK |
 			PositionModelImpl.COMPANYID_COLUMN_BITMASK |
 			PositionModelImpl.SHAREID_COLUMN_BITMASK |
-			PositionModelImpl.DATE_REAL_OUT_COLUMN_BITMASK |
+			PositionModelImpl.DATE_OUT_COLUMN_BITMASK |
 			PositionModelImpl.POSITIONID_TWS_IN_COLUMN_BITMASK);
 	public static final FinderPath FINDER_PATH_COUNT_BY_POSITIONSHAREDATEOUT = new FinderPath(PositionModelImpl.ENTITY_CACHE_ENABLED,
 			PositionModelImpl.FINDER_CACHE_ENABLED, Long.class,
@@ -3852,23 +3852,23 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 			});
 
 	/**
-	 * Returns all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_out = &#63;.
+	 * Returns all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_out = &#63;.
 	 *
 	 * @param groupId the group ID
 	 * @param companyId the company ID
 	 * @param shareId the share ID
-	 * @param date_real_out the date_real_out
+	 * @param date_out the date_out
 	 * @return the matching positions
 	 */
 	@Override
 	public List<Position> findByPositionShareDateOut(long groupId,
-		long companyId, long shareId, Date date_real_out) {
+		long companyId, long shareId, Date date_out) {
 		return findByPositionShareDateOut(groupId, companyId, shareId,
-			date_real_out, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+			date_out, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 	}
 
 	/**
-	 * Returns a range of all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_out = &#63;.
+	 * Returns a range of all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_out = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -3877,20 +3877,20 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 	 * @param groupId the group ID
 	 * @param companyId the company ID
 	 * @param shareId the share ID
-	 * @param date_real_out the date_real_out
+	 * @param date_out the date_out
 	 * @param start the lower bound of the range of positions
 	 * @param end the upper bound of the range of positions (not inclusive)
 	 * @return the range of matching positions
 	 */
 	@Override
 	public List<Position> findByPositionShareDateOut(long groupId,
-		long companyId, long shareId, Date date_real_out, int start, int end) {
+		long companyId, long shareId, Date date_out, int start, int end) {
 		return findByPositionShareDateOut(groupId, companyId, shareId,
-			date_real_out, start, end, null);
+			date_out, start, end, null);
 	}
 
 	/**
-	 * Returns an ordered range of all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_out = &#63;.
+	 * Returns an ordered range of all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_out = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -3899,7 +3899,7 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 	 * @param groupId the group ID
 	 * @param companyId the company ID
 	 * @param shareId the share ID
-	 * @param date_real_out the date_real_out
+	 * @param date_out the date_out
 	 * @param start the lower bound of the range of positions
 	 * @param end the upper bound of the range of positions (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
@@ -3907,14 +3907,14 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 	 */
 	@Override
 	public List<Position> findByPositionShareDateOut(long groupId,
-		long companyId, long shareId, Date date_real_out, int start, int end,
+		long companyId, long shareId, Date date_out, int start, int end,
 		OrderByComparator<Position> orderByComparator) {
 		return findByPositionShareDateOut(groupId, companyId, shareId,
-			date_real_out, start, end, orderByComparator, true);
+			date_out, start, end, orderByComparator, true);
 	}
 
 	/**
-	 * Returns an ordered range of all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_out = &#63;.
+	 * Returns an ordered range of all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_out = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -3923,7 +3923,7 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 	 * @param groupId the group ID
 	 * @param companyId the company ID
 	 * @param shareId the share ID
-	 * @param date_real_out the date_real_out
+	 * @param date_out the date_out
 	 * @param start the lower bound of the range of positions
 	 * @param end the upper bound of the range of positions (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
@@ -3932,7 +3932,7 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 	 */
 	@Override
 	public List<Position> findByPositionShareDateOut(long groupId,
-		long companyId, long shareId, Date date_real_out, int start, int end,
+		long companyId, long shareId, Date date_out, int start, int end,
 		OrderByComparator<Position> orderByComparator, boolean retrieveFromCache) {
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -3942,12 +3942,12 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 				(orderByComparator == null)) {
 			pagination = false;
 			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_POSITIONSHAREDATEOUT;
-			finderArgs = new Object[] { groupId, companyId, shareId, date_real_out };
+			finderArgs = new Object[] { groupId, companyId, shareId, date_out };
 		}
 		else {
 			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_POSITIONSHAREDATEOUT;
 			finderArgs = new Object[] {
-					groupId, companyId, shareId, date_real_out,
+					groupId, companyId, shareId, date_out,
 					
 					start, end, orderByComparator
 				};
@@ -3964,8 +3964,7 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 					if ((groupId != position.getGroupId()) ||
 							(companyId != position.getCompanyId()) ||
 							(shareId != position.getShareId()) ||
-							!Objects.equals(date_real_out,
-								position.getDate_real_out())) {
+							!Objects.equals(date_out, position.getDate_out())) {
 						list = null;
 
 						break;
@@ -3993,15 +3992,15 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 
 			query.append(_FINDER_COLUMN_POSITIONSHAREDATEOUT_SHAREID_2);
 
-			boolean bindDate_real_out = false;
+			boolean bindDate_out = false;
 
-			if (date_real_out == null) {
-				query.append(_FINDER_COLUMN_POSITIONSHAREDATEOUT_DATE_REAL_OUT_1);
+			if (date_out == null) {
+				query.append(_FINDER_COLUMN_POSITIONSHAREDATEOUT_DATE_OUT_1);
 			}
 			else {
-				bindDate_real_out = true;
+				bindDate_out = true;
 
-				query.append(_FINDER_COLUMN_POSITIONSHAREDATEOUT_DATE_REAL_OUT_2);
+				query.append(_FINDER_COLUMN_POSITIONSHAREDATEOUT_DATE_OUT_2);
 			}
 
 			if (orderByComparator != null) {
@@ -4030,8 +4029,8 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 
 				qPos.add(shareId);
 
-				if (bindDate_real_out) {
-					qPos.add(new Timestamp(date_real_out.getTime()));
+				if (bindDate_out) {
+					qPos.add(new Timestamp(date_out.getTime()));
 				}
 
 				if (!pagination) {
@@ -4065,23 +4064,23 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 	}
 
 	/**
-	 * Returns the first position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_out = &#63;.
+	 * Returns the first position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_out = &#63;.
 	 *
 	 * @param groupId the group ID
 	 * @param companyId the company ID
 	 * @param shareId the share ID
-	 * @param date_real_out the date_real_out
+	 * @param date_out the date_out
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching position
 	 * @throws NoSuchPositionException if a matching position could not be found
 	 */
 	@Override
 	public Position findByPositionShareDateOut_First(long groupId,
-		long companyId, long shareId, Date date_real_out,
+		long companyId, long shareId, Date date_out,
 		OrderByComparator<Position> orderByComparator)
 		throws NoSuchPositionException {
 		Position position = fetchByPositionShareDateOut_First(groupId,
-				companyId, shareId, date_real_out, orderByComparator);
+				companyId, shareId, date_out, orderByComparator);
 
 		if (position != null) {
 			return position;
@@ -4100,8 +4099,8 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 		msg.append(", shareId=");
 		msg.append(shareId);
 
-		msg.append(", date_real_out=");
-		msg.append(date_real_out);
+		msg.append(", date_out=");
+		msg.append(date_out);
 
 		msg.append(StringPool.CLOSE_CURLY_BRACE);
 
@@ -4109,21 +4108,21 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 	}
 
 	/**
-	 * Returns the first position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_out = &#63;.
+	 * Returns the first position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_out = &#63;.
 	 *
 	 * @param groupId the group ID
 	 * @param companyId the company ID
 	 * @param shareId the share ID
-	 * @param date_real_out the date_real_out
+	 * @param date_out the date_out
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching position, or <code>null</code> if a matching position could not be found
 	 */
 	@Override
 	public Position fetchByPositionShareDateOut_First(long groupId,
-		long companyId, long shareId, Date date_real_out,
+		long companyId, long shareId, Date date_out,
 		OrderByComparator<Position> orderByComparator) {
 		List<Position> list = findByPositionShareDateOut(groupId, companyId,
-				shareId, date_real_out, 0, 1, orderByComparator);
+				shareId, date_out, 0, 1, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -4133,23 +4132,23 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 	}
 
 	/**
-	 * Returns the last position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_out = &#63;.
+	 * Returns the last position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_out = &#63;.
 	 *
 	 * @param groupId the group ID
 	 * @param companyId the company ID
 	 * @param shareId the share ID
-	 * @param date_real_out the date_real_out
+	 * @param date_out the date_out
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching position
 	 * @throws NoSuchPositionException if a matching position could not be found
 	 */
 	@Override
 	public Position findByPositionShareDateOut_Last(long groupId,
-		long companyId, long shareId, Date date_real_out,
+		long companyId, long shareId, Date date_out,
 		OrderByComparator<Position> orderByComparator)
 		throws NoSuchPositionException {
 		Position position = fetchByPositionShareDateOut_Last(groupId,
-				companyId, shareId, date_real_out, orderByComparator);
+				companyId, shareId, date_out, orderByComparator);
 
 		if (position != null) {
 			return position;
@@ -4168,8 +4167,8 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 		msg.append(", shareId=");
 		msg.append(shareId);
 
-		msg.append(", date_real_out=");
-		msg.append(date_real_out);
+		msg.append(", date_out=");
+		msg.append(date_out);
 
 		msg.append(StringPool.CLOSE_CURLY_BRACE);
 
@@ -4177,28 +4176,28 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 	}
 
 	/**
-	 * Returns the last position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_out = &#63;.
+	 * Returns the last position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_out = &#63;.
 	 *
 	 * @param groupId the group ID
 	 * @param companyId the company ID
 	 * @param shareId the share ID
-	 * @param date_real_out the date_real_out
+	 * @param date_out the date_out
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching position, or <code>null</code> if a matching position could not be found
 	 */
 	@Override
 	public Position fetchByPositionShareDateOut_Last(long groupId,
-		long companyId, long shareId, Date date_real_out,
+		long companyId, long shareId, Date date_out,
 		OrderByComparator<Position> orderByComparator) {
 		int count = countByPositionShareDateOut(groupId, companyId, shareId,
-				date_real_out);
+				date_out);
 
 		if (count == 0) {
 			return null;
 		}
 
 		List<Position> list = findByPositionShareDateOut(groupId, companyId,
-				shareId, date_real_out, count - 1, count, orderByComparator);
+				shareId, date_out, count - 1, count, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -4208,20 +4207,20 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 	}
 
 	/**
-	 * Returns the positions before and after the current position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_out = &#63;.
+	 * Returns the positions before and after the current position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_out = &#63;.
 	 *
 	 * @param positionId the primary key of the current position
 	 * @param groupId the group ID
 	 * @param companyId the company ID
 	 * @param shareId the share ID
-	 * @param date_real_out the date_real_out
+	 * @param date_out the date_out
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next position
 	 * @throws NoSuchPositionException if a position with the primary key could not be found
 	 */
 	@Override
 	public Position[] findByPositionShareDateOut_PrevAndNext(long positionId,
-		long groupId, long companyId, long shareId, Date date_real_out,
+		long groupId, long companyId, long shareId, Date date_out,
 		OrderByComparator<Position> orderByComparator)
 		throws NoSuchPositionException {
 		Position position = findByPrimaryKey(positionId);
@@ -4234,14 +4233,14 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 			Position[] array = new PositionImpl[3];
 
 			array[0] = getByPositionShareDateOut_PrevAndNext(session, position,
-					groupId, companyId, shareId, date_real_out,
-					orderByComparator, true);
+					groupId, companyId, shareId, date_out, orderByComparator,
+					true);
 
 			array[1] = position;
 
 			array[2] = getByPositionShareDateOut_PrevAndNext(session, position,
-					groupId, companyId, shareId, date_real_out,
-					orderByComparator, false);
+					groupId, companyId, shareId, date_out, orderByComparator,
+					false);
 
 			return array;
 		}
@@ -4255,7 +4254,7 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 
 	protected Position getByPositionShareDateOut_PrevAndNext(Session session,
 		Position position, long groupId, long companyId, long shareId,
-		Date date_real_out, OrderByComparator<Position> orderByComparator,
+		Date date_out, OrderByComparator<Position> orderByComparator,
 		boolean previous) {
 		StringBundler query = null;
 
@@ -4276,15 +4275,15 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 
 		query.append(_FINDER_COLUMN_POSITIONSHAREDATEOUT_SHAREID_2);
 
-		boolean bindDate_real_out = false;
+		boolean bindDate_out = false;
 
-		if (date_real_out == null) {
-			query.append(_FINDER_COLUMN_POSITIONSHAREDATEOUT_DATE_REAL_OUT_1);
+		if (date_out == null) {
+			query.append(_FINDER_COLUMN_POSITIONSHAREDATEOUT_DATE_OUT_1);
 		}
 		else {
-			bindDate_real_out = true;
+			bindDate_out = true;
 
-			query.append(_FINDER_COLUMN_POSITIONSHAREDATEOUT_DATE_REAL_OUT_2);
+			query.append(_FINDER_COLUMN_POSITIONSHAREDATEOUT_DATE_OUT_2);
 		}
 
 		if (orderByComparator != null) {
@@ -4361,8 +4360,8 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 
 		qPos.add(shareId);
 
-		if (bindDate_real_out) {
-			qPos.add(new Timestamp(date_real_out.getTime()));
+		if (bindDate_out) {
+			qPos.add(new Timestamp(date_out.getTime()));
 		}
 
 		if (orderByComparator != null) {
@@ -4384,40 +4383,37 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 	}
 
 	/**
-	 * Removes all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_out = &#63; from the database.
+	 * Removes all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_out = &#63; from the database.
 	 *
 	 * @param groupId the group ID
 	 * @param companyId the company ID
 	 * @param shareId the share ID
-	 * @param date_real_out the date_real_out
+	 * @param date_out the date_out
 	 */
 	@Override
 	public void removeByPositionShareDateOut(long groupId, long companyId,
-		long shareId, Date date_real_out) {
+		long shareId, Date date_out) {
 		for (Position position : findByPositionShareDateOut(groupId, companyId,
-				shareId, date_real_out, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-				null)) {
+				shareId, date_out, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
 			remove(position);
 		}
 	}
 
 	/**
-	 * Returns the number of positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_out = &#63;.
+	 * Returns the number of positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_out = &#63;.
 	 *
 	 * @param groupId the group ID
 	 * @param companyId the company ID
 	 * @param shareId the share ID
-	 * @param date_real_out the date_real_out
+	 * @param date_out the date_out
 	 * @return the number of matching positions
 	 */
 	@Override
 	public int countByPositionShareDateOut(long groupId, long companyId,
-		long shareId, Date date_real_out) {
+		long shareId, Date date_out) {
 		FinderPath finderPath = FINDER_PATH_COUNT_BY_POSITIONSHAREDATEOUT;
 
-		Object[] finderArgs = new Object[] {
-				groupId, companyId, shareId, date_real_out
-			};
+		Object[] finderArgs = new Object[] { groupId, companyId, shareId, date_out };
 
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
@@ -4432,15 +4428,15 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 
 			query.append(_FINDER_COLUMN_POSITIONSHAREDATEOUT_SHAREID_2);
 
-			boolean bindDate_real_out = false;
+			boolean bindDate_out = false;
 
-			if (date_real_out == null) {
-				query.append(_FINDER_COLUMN_POSITIONSHAREDATEOUT_DATE_REAL_OUT_1);
+			if (date_out == null) {
+				query.append(_FINDER_COLUMN_POSITIONSHAREDATEOUT_DATE_OUT_1);
 			}
 			else {
-				bindDate_real_out = true;
+				bindDate_out = true;
 
-				query.append(_FINDER_COLUMN_POSITIONSHAREDATEOUT_DATE_REAL_OUT_2);
+				query.append(_FINDER_COLUMN_POSITIONSHAREDATEOUT_DATE_OUT_2);
 			}
 
 			String sql = query.toString();
@@ -4460,8 +4456,8 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 
 				qPos.add(shareId);
 
-				if (bindDate_real_out) {
-					qPos.add(new Timestamp(date_real_out.getTime()));
+				if (bindDate_out) {
+					qPos.add(new Timestamp(date_out.getTime()));
 				}
 
 				count = (Long)q.uniqueResult();
@@ -4484,10 +4480,8 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 	private static final String _FINDER_COLUMN_POSITIONSHAREDATEOUT_GROUPID_2 = "position.groupId = ? AND ";
 	private static final String _FINDER_COLUMN_POSITIONSHAREDATEOUT_COMPANYID_2 = "position.companyId = ? AND ";
 	private static final String _FINDER_COLUMN_POSITIONSHAREDATEOUT_SHAREID_2 = "position.shareId = ? AND ";
-	private static final String _FINDER_COLUMN_POSITIONSHAREDATEOUT_DATE_REAL_OUT_1 =
-		"position.date_real_out IS NULL";
-	private static final String _FINDER_COLUMN_POSITIONSHAREDATEOUT_DATE_REAL_OUT_2 =
-		"position.date_real_out = ?";
+	private static final String _FINDER_COLUMN_POSITIONSHAREDATEOUT_DATE_OUT_1 = "position.date_out IS NULL";
+	private static final String _FINDER_COLUMN_POSITIONSHAREDATEOUT_DATE_OUT_2 = "position.date_out = ?";
 	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_COMPANYGROUPSHARE =
 		new FinderPath(PositionModelImpl.ENTITY_CACHE_ENABLED,
 			PositionModelImpl.FINDER_CACHE_ENABLED, PositionImpl.class,
@@ -9474,7 +9468,7 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 						positionModelImpl.getOriginalGroupId(),
 						positionModelImpl.getOriginalCompanyId(),
 						positionModelImpl.getOriginalShareId(),
-						positionModelImpl.getOriginalDate_real_out()
+						positionModelImpl.getOriginalDate_out()
 					};
 
 				finderCache.removeResult(FINDER_PATH_COUNT_BY_POSITIONSHAREDATEOUT,
@@ -9486,7 +9480,7 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 						positionModelImpl.getGroupId(),
 						positionModelImpl.getCompanyId(),
 						positionModelImpl.getShareId(),
-						positionModelImpl.getDate_real_out()
+						positionModelImpl.getDate_out()
 					};
 
 				finderCache.removeResult(FINDER_PATH_COUNT_BY_POSITIONSHAREDATEOUT,

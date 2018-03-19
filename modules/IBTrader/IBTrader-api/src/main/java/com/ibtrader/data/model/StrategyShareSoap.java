@@ -44,6 +44,7 @@ public class StrategyShareSoap implements Serializable {
 		soapModel.setShareId(model.getShareId());
 		soapModel.setActive(model.getActive());
 		soapModel.setStrategyparamsoverride(model.getStrategyparamsoverride());
+		soapModel.setDescription(model.getDescription());
 
 		return soapModel;
 	}
@@ -180,6 +181,14 @@ public class StrategyShareSoap implements Serializable {
 		_strategyparamsoverride = strategyparamsoverride;
 	}
 
+	public String getDescription() {
+		return _description;
+	}
+
+	public void setDescription(String description) {
+		_description = description;
+	}
+
 	private String _uuid;
 	private long _strategyshareId;
 	private long _groupId;
@@ -190,4 +199,5 @@ public class StrategyShareSoap implements Serializable {
 	private long _shareId;
 	private boolean _active;
 	private String _strategyparamsoverride;
+	private String _description;
 }

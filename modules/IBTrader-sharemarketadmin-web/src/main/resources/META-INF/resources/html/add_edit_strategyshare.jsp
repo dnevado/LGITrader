@@ -24,7 +24,16 @@
 <liferay-ui:error key="strategyshare.strategyminmax.errorparams" message="strategyshare.strategyminmax.errorparams"/>
 
 
+<script>
+function initEditor(){
+	var contentValue;
+	var contentValue="";
+	/* var contentLocale=document.getElementById("contentText").value;
+	Above statement will set the contentValue to the value of HTML input variable named 'contentText'. Useful in scenario where data comes from database/java class from server. */
+	return  contentValue;
+	}
 
+</script>
 
 <%
 
@@ -76,6 +85,20 @@ String portletId= "_" + portletDisplay.getId();
 		</aui:input>
 		<aui:input  readonly="readonly" type="text" label="strategy.name" name="strategy.name"  value="${strategy.name}">
 		</aui:input>
+		
+	 	<aui:field-wrapper label="strategy.description">
+            <liferay-ui:input-editor
+	        contents="${not empty strategyshare.description ? strategyshare.description : strategy.description}"
+	        cssClass="my-alloy-editor"
+	        editorName="alloyeditor"
+	        name="StrategyDescription"
+	        placeholder="Strategy Description"
+	        toolbarSet="liferay" initMethod="initEditor"		        
+	        showSource="true" />
+           <aui:input name="strategydescription" id="strategydescription" type="hidden" />
+         </aui:field-wrapper>
+	   		
+
 	</aui:fieldset>
 	
 	<c:if test="${strategy.can_override_params}">
@@ -125,6 +148,8 @@ String portletId= "_" + portletDisplay.getId();
     	String _pname = Utilities._IBTRADER_STRATEGY_CUSTOM_FIELDS_.concat(StrategyParameter.getName());
     	String _pvalue = (jsonStrategyShareParams.get(StrategyParameter.getName().trim())!=null ? jsonStrategyShareParams.get(StrategyParameter.getName().trim()).toString() : "");
 
+    	_pvalue.trim();
+    	
     	if (StrategyParameter.getType()==ExpandoColumnConstants.LONG || StrategyParameter.getType()==ExpandoColumnConstants.INTEGER || 
     			StrategyParameter.getType()==ExpandoColumnConstants.FLOAT || StrategyParameter.getType()==ExpandoColumnConstants.DOUBLE)
     	{
@@ -170,7 +195,7 @@ String portletId= "_" + portletDisplay.getId();
     			<aui:fieldset>	
 				<aui:select required="true"  inlineLabel="true"  label="<%=StrategyParameter.getDisplayName(themeDisplay.getLocale()) %>" name="<%=_pname%>">
 				<% for (String selectvalue : _lValues) {
-					boolean selected = _pvalue.equals(selectvalue) ? true : false;%>
+					boolean selected = _pvalue.equalsIgnoreCase(selectvalue.trim()) ? true : false;%>
 					<aui:option  value="<%=selectvalue.trim()%>" selected="<%=selected %>"><%=selectvalue %></aui:option>
 				<% } %>		
 						  	              

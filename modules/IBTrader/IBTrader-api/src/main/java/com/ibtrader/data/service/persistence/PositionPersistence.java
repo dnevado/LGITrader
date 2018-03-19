@@ -950,19 +950,19 @@ public interface PositionPersistence extends BasePersistence<Position> {
 		long shareId, Date date_real_in);
 
 	/**
-	* Returns all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_out = &#63;.
+	* Returns all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_out = &#63;.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param shareId the share ID
-	* @param date_real_out the date_real_out
+	* @param date_out the date_out
 	* @return the matching positions
 	*/
 	public java.util.List<Position> findByPositionShareDateOut(long groupId,
-		long companyId, long shareId, Date date_real_out);
+		long companyId, long shareId, Date date_out);
 
 	/**
-	* Returns a range of all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_out = &#63;.
+	* Returns a range of all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_out = &#63;.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -971,16 +971,16 @@ public interface PositionPersistence extends BasePersistence<Position> {
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param shareId the share ID
-	* @param date_real_out the date_real_out
+	* @param date_out the date_out
 	* @param start the lower bound of the range of positions
 	* @param end the upper bound of the range of positions (not inclusive)
 	* @return the range of matching positions
 	*/
 	public java.util.List<Position> findByPositionShareDateOut(long groupId,
-		long companyId, long shareId, Date date_real_out, int start, int end);
+		long companyId, long shareId, Date date_out, int start, int end);
 
 	/**
-	* Returns an ordered range of all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_out = &#63;.
+	* Returns an ordered range of all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_out = &#63;.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -989,18 +989,18 @@ public interface PositionPersistence extends BasePersistence<Position> {
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param shareId the share ID
-	* @param date_real_out the date_real_out
+	* @param date_out the date_out
 	* @param start the lower bound of the range of positions
 	* @param end the upper bound of the range of positions (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching positions
 	*/
 	public java.util.List<Position> findByPositionShareDateOut(long groupId,
-		long companyId, long shareId, Date date_real_out, int start, int end,
+		long companyId, long shareId, Date date_out, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator);
 
 	/**
-	* Returns an ordered range of all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_out = &#63;.
+	* Returns an ordered range of all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_out = &#63;.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -1009,7 +1009,7 @@ public interface PositionPersistence extends BasePersistence<Position> {
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param shareId the share ID
-	* @param date_real_out the date_real_out
+	* @param date_out the date_out
 	* @param start the lower bound of the range of positions
 	* @param end the upper bound of the range of positions (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
@@ -1017,109 +1017,109 @@ public interface PositionPersistence extends BasePersistence<Position> {
 	* @return the ordered range of matching positions
 	*/
 	public java.util.List<Position> findByPositionShareDateOut(long groupId,
-		long companyId, long shareId, Date date_real_out, int start, int end,
+		long companyId, long shareId, Date date_out, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator,
 		boolean retrieveFromCache);
 
 	/**
-	* Returns the first position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_out = &#63;.
+	* Returns the first position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_out = &#63;.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param shareId the share ID
-	* @param date_real_out the date_real_out
+	* @param date_out the date_out
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching position
 	* @throws NoSuchPositionException if a matching position could not be found
 	*/
 	public Position findByPositionShareDateOut_First(long groupId,
-		long companyId, long shareId, Date date_real_out,
+		long companyId, long shareId, Date date_out,
 		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator)
 		throws NoSuchPositionException;
 
 	/**
-	* Returns the first position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_out = &#63;.
+	* Returns the first position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_out = &#63;.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param shareId the share ID
-	* @param date_real_out the date_real_out
+	* @param date_out the date_out
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching position, or <code>null</code> if a matching position could not be found
 	*/
 	public Position fetchByPositionShareDateOut_First(long groupId,
-		long companyId, long shareId, Date date_real_out,
+		long companyId, long shareId, Date date_out,
 		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator);
 
 	/**
-	* Returns the last position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_out = &#63;.
+	* Returns the last position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_out = &#63;.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param shareId the share ID
-	* @param date_real_out the date_real_out
+	* @param date_out the date_out
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching position
 	* @throws NoSuchPositionException if a matching position could not be found
 	*/
 	public Position findByPositionShareDateOut_Last(long groupId,
-		long companyId, long shareId, Date date_real_out,
+		long companyId, long shareId, Date date_out,
 		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator)
 		throws NoSuchPositionException;
 
 	/**
-	* Returns the last position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_out = &#63;.
+	* Returns the last position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_out = &#63;.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param shareId the share ID
-	* @param date_real_out the date_real_out
+	* @param date_out the date_out
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching position, or <code>null</code> if a matching position could not be found
 	*/
 	public Position fetchByPositionShareDateOut_Last(long groupId,
-		long companyId, long shareId, Date date_real_out,
+		long companyId, long shareId, Date date_out,
 		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator);
 
 	/**
-	* Returns the positions before and after the current position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_out = &#63;.
+	* Returns the positions before and after the current position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_out = &#63;.
 	*
 	* @param positionId the primary key of the current position
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param shareId the share ID
-	* @param date_real_out the date_real_out
+	* @param date_out the date_out
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next position
 	* @throws NoSuchPositionException if a position with the primary key could not be found
 	*/
 	public Position[] findByPositionShareDateOut_PrevAndNext(long positionId,
-		long groupId, long companyId, long shareId, Date date_real_out,
+		long groupId, long companyId, long shareId, Date date_out,
 		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator)
 		throws NoSuchPositionException;
 
 	/**
-	* Removes all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_out = &#63; from the database.
+	* Removes all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_out = &#63; from the database.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param shareId the share ID
-	* @param date_real_out the date_real_out
+	* @param date_out the date_out
 	*/
 	public void removeByPositionShareDateOut(long groupId, long companyId,
-		long shareId, Date date_real_out);
+		long shareId, Date date_out);
 
 	/**
-	* Returns the number of positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_out = &#63;.
+	* Returns the number of positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_out = &#63;.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param shareId the share ID
-	* @param date_real_out the date_real_out
+	* @param date_out the date_out
 	* @return the number of matching positions
 	*/
 	public int countByPositionShareDateOut(long groupId, long companyId,
-		long shareId, Date date_real_out);
+		long shareId, Date date_out);
 
 	/**
 	* Returns all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63;.

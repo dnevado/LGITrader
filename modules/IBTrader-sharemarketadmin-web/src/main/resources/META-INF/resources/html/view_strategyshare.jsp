@@ -66,7 +66,6 @@ function <portlet:namespace/>switchStrategyShare(StrategyShare)
 <liferay-ui:search-container-results results="${searchStrategy.getResults()}"/>    
 <liferay-ui:search-container-row  className="com.ibtrader.data.model.Strategy" keyProperty="strategyId" modelVar="Strategy">
 <liferay-ui:search-container-column-text name="strategy.name" value="${Strategy.name}" />
-<liferay-ui:search-container-column-text name="strategy.description" value="${Strategy.description}"/>
 <liferay-ui:search-container-column-text name="strategy.classname" value="${Strategy.className}"/>
 <liferay-ui:search-container-column-jsp  path="/html/add_edit_strategyshare_actions.jsp"/>
 </liferay-ui:search-container-row>    

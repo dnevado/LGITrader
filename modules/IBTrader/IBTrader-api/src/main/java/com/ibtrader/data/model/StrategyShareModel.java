@@ -222,6 +222,21 @@ public interface StrategyShareModel extends BaseModel<StrategyShare>,
 	 */
 	public void setStrategyparamsoverride(String strategyparamsoverride);
 
+	/**
+	 * Returns the description of this strategy share.
+	 *
+	 * @return the description of this strategy share
+	 */
+	@AutoEscape
+	public String getDescription();
+
+	/**
+	 * Sets the description of this strategy share.
+	 *
+	 * @param description the description of this strategy share
+	 */
+	public void setDescription(String description);
+
 	@Override
 	public boolean isNew();
 

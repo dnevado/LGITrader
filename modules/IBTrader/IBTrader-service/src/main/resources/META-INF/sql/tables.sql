@@ -158,5 +158,6 @@ create table ibtrader_StrategyShare (
 	strategyId LONG,
 	shareId LONG,
 	active_ BOOLEAN,
-	strategyparamsoverride TEXT null
+	strategyparamsoverride TEXT null,
+	description TEXT null
 );

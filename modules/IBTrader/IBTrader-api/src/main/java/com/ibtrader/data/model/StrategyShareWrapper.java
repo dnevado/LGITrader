@@ -70,6 +70,7 @@ public class StrategyShareWrapper implements StrategyShare,
 		attributes.put("shareId", getShareId());
 		attributes.put("active", getActive());
 		attributes.put("strategyparamsoverride", getStrategyparamsoverride());
+		attributes.put("description", getDescription());
 
 		return attributes;
 	}
@@ -135,6 +136,12 @@ public class StrategyShareWrapper implements StrategyShare,
 
 		if (strategyparamsoverride != null) {
 			setStrategyparamsoverride(strategyparamsoverride);
+		}
+
+		String description = (String)attributes.get("description");
+
+		if (description != null) {
+			setDescription(description);
 		}
 	}
 
@@ -211,6 +218,16 @@ public class StrategyShareWrapper implements StrategyShare,
 	@Override
 	public java.lang.Object clone() {
 		return new StrategyShareWrapper((StrategyShare)_strategyShare.clone());
+	}
+
+	/**
+	* Returns the description of this strategy share.
+	*
+	* @return the description of this strategy share
+	*/
+	@Override
+	public java.lang.String getDescription() {
+		return _strategyShare.getDescription();
 	}
 
 	/**
@@ -361,6 +378,16 @@ public class StrategyShareWrapper implements StrategyShare,
 	@Override
 	public void setCreateDate(Date createDate) {
 		_strategyShare.setCreateDate(createDate);
+	}
+
+	/**
+	* Sets the description of this strategy share.
+	*
+	* @param description the description of this strategy share
+	*/
+	@Override
+	public void setDescription(java.lang.String description) {
+		_strategyShare.setDescription(description);
 	}
 
 	@Override

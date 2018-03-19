@@ -61,7 +61,10 @@ public class MobileAvgUtil {
 		return (_avgMobileSimple>= (oRTimeWidthRange.getMin_value() + _WidthBarRangePercent) && (oRTimeEnTramoBar.getValue() <= (oRTimeWidthRange.getMax_value() - _WidthBarRangePercent)));
 	}
 	
-	/* DEVUELVE UNA LISTA DE FECHAS CON LOS PERIODOS DE TRAMOS DE BARRAS */
+	/* DEVUELVE UNA LISTA DE FECHAS CON LOS PERIODOS DE TRAMOS DE BARRAS
+	 * COMO SON PRECIOS DE LA NARRA +1, RESTAMOS UNS SEGUNDO PARA QUE ESTE EN EL MINUTO PREVIAMENTE ANTERIOR DE CIERRE DE BARRA 
+	 *  
+	 *  */
 	private static List<String> getPeriodsMinutesMobileAvg(Date to, long PeriodN, long TimeBars)
 	{
 		SimpleDateFormat _sdf = new SimpleDateFormat(Utilities.__IBTRADER_SQL_DATE_);
@@ -71,6 +74,8 @@ public class MobileAvgUtil {
 		for (int j=1;j<=PeriodN;j++)
 		{ 
 			_cPeriodsMinutesMobileAvg.add(Calendar.MINUTE,  (int) - (TimeBars)); /* -5, -10, -15,-20 */
+			/* NO ES EN LA BARRA 00, 05, 10, SON PRECIOS DE CIRRE DE CADA BARRA, RESTAMOS UN SEGUNDO */
+			_cPeriodsMinutesMobileAvg.add(Calendar.SECOND,-1);
 			lAvgMobileDates.add(_sdf.format(_cPeriodsMinutesMobileAvg.getTime()));
 		}
 		return lAvgMobileDates;
@@ -90,14 +95,12 @@ public class MobileAvgUtil {
 		
 		lAvgPeriods = getPeriodsMinutesMobileAvg(_ActualDateBar, PeriodN, TimeBars);
 		
-		/* OJO, TENEMOS QUE VER QUE LAS MEDIAS MOVILES SON DE LAS BARRAS PREVIAS Y NO DE LA ACTUAL 
-		_MM8DateFrom.add(Calendar.MINUTE, - (Periods  * TimeBars));
-		*/ 
-		
 		/* MODIFICACION, MEDIAS MOVILES HASTA EL PERIDO N, N-1, N-2 */
 		_cSimpleAvgMobileDateFrom.add(Calendar.MINUTE,  (int) - (PeriodN * TimeBars));
 		
-	//	System.out.println("getAvgMobileMM8 : Periodo -" + PeriodN + ", _oDateFrom:" + _sdf.format(_MM8DateFrom.getTime()) + ",_oDateTo:" + _sdf.format(_MM8DateTo.getTime()));
+		// le resto un segundo para que coga la primera barra especificada, asi coge el 59:59 
+		_cSimpleAvgMobileDateFrom.add(Calendar.SECOND,-1);
+		
 		
 		Realtime simpleAvgMobile = RealtimeLocalServiceUtil.findSimpleMobileAvgGroupByPeriods(shareId, companyId, groupId, _cSimpleAvgMobileDateFrom.getTime(), _ActualDateBar, lAvgPeriods);
 		/* CUANTOS PERIODOS CALCULADOS ??' */
@@ -125,12 +128,12 @@ public class MobileAvgUtil {
 	{
 		Calendar _TimeBarWidthFrom = Calendar.getInstance(); 
 		_TimeBarWidthFrom.setTimeInMillis(_To.getTimeInMillis());		
-				
+		_TimeBarWidthFrom.add(Calendar.MILLISECOND, 0);
+
 		Calendar _TimeBarWidthTo = Calendar.getInstance();
 		_TimeBarWidthTo.setTimeInMillis(_To.getTimeInMillis());							 
 		_TimeBarWidthFrom.add(Calendar.MINUTE, (int) -((PeriodN+1) * TimeBars));
 		_TimeBarWidthTo.add(Calendar.MINUTE, (int) -(PeriodN * TimeBars));   // 20150228 errores en el concepto ini fin de barra
-		_TimeBarWidthTo.add(Calendar.SECOND, -1);
 
 		Realtime oRTimeWidthRange = RealtimeLocalServiceUtil.findMinMaxRealTime(_TimeBarWidthFrom.getTime(), _TimeBarWidthTo.getTime(), shareId, companyId, groupId);	
 		

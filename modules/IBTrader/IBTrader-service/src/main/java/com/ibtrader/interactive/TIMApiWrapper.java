@@ -321,7 +321,7 @@ public class TIMApiWrapper implements EWrapper {
 		 _log.info("contractDetailsEnd:" + reqId);
 		 IBOrder _ibOrder;		 	
 		 //_ibOrder = IBOrderLocalServiceUtil.fetchIBOrder(reqId);
-		 _ibOrder = IBOrderLocalServiceUtil.findByOrderClientGroupCompany(reqId, _clientId, _ibtarget_organization.getCompanyId(),_ibtarget_organization.getGroupId());
+		 _ibOrder = IBOrderLocalServiceUtil.findByOrderClientGroupCompany(reqId, _clientId, _ibtarget_organization.getCompanyId(),_ibtarget_share.getGroupId());
 	 	 if (_ibOrder!=null)  // error en una posicion dada abierta		
 		 { 
 	 		 
@@ -668,11 +668,18 @@ public class TIMApiWrapper implements EWrapper {
 				return;
 			}
 			
+			Date cNow = new Date();
+			Calendar _calNow = Calendar.getInstance();
+			_calNow.setTime(cNow);
+			_calNow.set(Calendar.MILLISECOND,0);
+			
 			Realtime  oReal = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));
 			oReal.setGroupId(MyOrder.getGroupId());
 			oReal.setCompanyId(MyOrder.getCompanyId());
 			oReal.setShareId(MyOrder.getShareID());
 			oReal.setValue(price);
+			oReal.setCreateDate(_calNow.getTime());
+			oReal.setModifiedDate(_calNow.getTime());
 			RealtimeLocalServiceUtil.updateRealtime(oReal);
 			
 			MyOrder.setChecked(true);
@@ -692,11 +699,11 @@ public class TIMApiWrapper implements EWrapper {
 		boolean bIsSellOperation = false;  //ENTRADA O SALIDA, TERMINO ERRONEO
 		boolean isDelete = false;   // cuando sea compra cancelada, nos la cargamos.
 			
-		Position _oPosition = PositionLocalServiceUtil.findByPositionID_In_TWS(_ibtarget_organization.getGroupId(), _ibtarget_organization.getCompanyId(),orderId);
+		Position _oPosition = PositionLocalServiceUtil.findByPositionID_In_TWS(_ibtarget_share.getGroupId(), _ibtarget_organization.getCompanyId(),orderId);
 		// SI ES NULL, QUIERE DECIR QUE PUEDE VENIR UNA OPERACION DE VENTA...LA BUSCAMOS.		
 		if (_oPosition==null)
 		{
-			_oPosition = PositionLocalServiceUtil.findByPositionID_Out_TWS(_ibtarget_organization.getGroupId(), _ibtarget_organization.getCompanyId(),orderId);
+			_oPosition = PositionLocalServiceUtil.findByPositionID_Out_TWS(_ibtarget_share.getGroupId(), _ibtarget_organization.getCompanyId(),orderId);
 			if (_oPosition==null) 
 			{
 				_log.info("Error Execution Details order not found for Order Key:" + orderId);
@@ -748,12 +755,17 @@ public class TIMApiWrapper implements EWrapper {
 	    			_oPosition.setPrice_real_in(avgFillPrice);  // cogemos el avg que nos manda el TWS	    			
 	    			// ACTUALIZAMOS EL PRECIO DE SALIDA CON EL PORCENTAJE PORQUE ES EL VALOR QUE TRATAMOS
 	    			// vemos el tipo de operacion
-	    			if (_oPosition.getType().equals(PositionStates.statusTWSFire.SELL.toString()))  	{ //short	    		
-	    				priceStopLost = avgFillPrice +  (avgFillPrice *  _oPosition.getPercentualstoplost_out() / 100);
+	    			
+	    			if (_oPosition.getType().equals(PositionStates.statusTWSFire.SELL.toString()))  	{ //short
+	    				if (_oPosition.getPercentualstoplost_out()>0)
+	    					priceStopLost = avgFillPrice +  (avgFillPrice *  _oPosition.getPercentualstoplost_out() / 100);
+	    				if (_oPosition.getPercentualstopprofit_out()>0)
 		    			priceStopProfit = avgFillPrice  - (avgFillPrice *  _oPosition.getPercentualstopprofit_out() / 100); }
 	    			else {  //long
-	    				priceStopLost    = avgFillPrice  - (avgFillPrice *  _oPosition.getPercentualstoplost_out() / 100);
-		    			priceStopProfit = avgFillPrice  + (avgFillPrice *  _oPosition.getPercentualstopprofit_out() / 100); }	    				 	    		
+	    				if (_oPosition.getPercentualstoplost_out()>0)
+	    					priceStopLost    = avgFillPrice  - (avgFillPrice *  _oPosition.getPercentualstoplost_out() / 100);
+	    				if (_oPosition.getPercentualstopprofit_out()>0)
+	    					priceStopProfit = avgFillPrice  + (avgFillPrice *  _oPosition.getPercentualstopprofit_out() / 100); }	    				 	    		
 	    			_oPosition.setPricestoplost_out(Utilities.RoundPrice(priceStopLost));
 	    			_oPosition.setPricestopprofit_out(Utilities.RoundPrice(priceStopProfit));
 	    			_oPosition.setState(PositionStates.status.BUY_OK.toString());

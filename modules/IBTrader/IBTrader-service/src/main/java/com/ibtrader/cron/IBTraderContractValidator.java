@@ -45,7 +45,7 @@ import com.liferay.portal.kernel.scheduler.TriggerState;
 import com.liferay.portal.kernel.scheduler.messaging.SchedulerResponse;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringPool;
-import com.ibtrader.interactive.TIMApiGITrader;
+import com.ibtrader.interactive.TIMApiGITrader_NOVALE;
 import com.ibtrader.util.CronUtil;
 import com.ibtrader.util.Utilities;
 

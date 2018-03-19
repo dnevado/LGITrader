@@ -140,6 +140,13 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 			BuyPositionTWS.orderType(PositionStates.ordertypes.MKT.toString());		    
 			// precio del tick más o menos un porcentaje ...normalmente %1
 			// ojo con los FUTUROS..llevan cambios porcentuales
+			
+			/* ****************************************************************
+			 * ****************************************************************
+			 * SIEMPRE HAY QUE PONERLO AUNQUE VAYA A MERCADO lmtprice & auxprice
+			 * ****************************************************************
+			 * **************************************************************** */
+			
 			BuyPositionTWS.lmtPrice(Utilities.RoundPrice(this.getValueLimitIn()));
 			BuyPositionTWS.auxPrice(Utilities.RoundPrice(this.getValueLimitIn()));					
 			/*  SI ES UNA COMPRA, NOS POSICIONAMOS CORTOS SI BAJA EL MINIMO */		
@@ -161,7 +168,6 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 			BuyPositionSystem.setShareId(_share.getShareId());
 			BuyPositionSystem.setState_in(PositionStates.statusTWSCallBack.PendingSubmit.toString());
 			BuyPositionSystem.setState(PositionStates.status.PENDING_BUY.toString());
-			BuyPositionSystem.setLimit_price_in(BuyPositionTWS.lmtPrice());
 			BuyPositionSystem.setType(BuyPositionTWS.getAction());
 			BuyPositionSystem.setCompanyId(_share.getCompanyId());
 			BuyPositionSystem.setGroupId(_share.getGroupId());
@@ -239,7 +245,15 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 	operationfilter = this.getJsonStrategyShareParams().getString(_EXPANDO_MOBILE_AVERAGE_TRADE_OPERATIONS_TYPE,"ALL").trim();
 	
 	/* SOLO PODEMOS ENTRAR EN EL PERIODO MARCADO DE CADA MINUTO, PARA LO CUAL OBTENEMOS EL RESTO */	
-	long _ModMinuteToEntry = calFechaActualWithDeadLine.get(Calendar.MINUTE) % _num_macdT;
+	
+	/* TIMEZONE AJUSTADO */
+	Date _FromNow = Utilities.getDate(_IBUser);
+	Calendar _calendarFromNow = Calendar.getInstance();
+	_calendarFromNow.setTime(_FromNow);		
+	_calendarFromNow.set(Calendar.SECOND, 0);
+	_calendarFromNow.set(Calendar.MILLISECOND, 0);
+	
+	long _ModMinuteToEntry = _calendarFromNow.get(Calendar.MINUTE) % _num_macdT;
 	if (_ModMinuteToEntry!=0)  // NO ESTOY EN EL MINUTO 5,10,15,20..etc (para las barras de 5)
 		return Boolean.FALSE;
 	
@@ -262,11 +276,7 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 		{
 		
 		// ya no obtenemos el maximo y minimo, sino el correspondiente al tramo que me han dicho
-		/* TIMEZONE AJUSTADO */
-		Date _FromNow = Utilities.getDate(_IBUser);
-		Calendar _calendarFromNow = Calendar.getInstance();
-		_calendarFromNow.setTime(_FromNow);		
-		_calendarFromNow.set(Calendar.SECOND, 0);
+		
 
 		
 		Double _avgMobileSimple = MobileAvgUtil.getSimpleAvgMobile(_calendarFromNow.getTime(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_macdP, Boolean.FALSE);

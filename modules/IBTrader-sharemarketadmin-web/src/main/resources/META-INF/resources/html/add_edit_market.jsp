@@ -70,12 +70,11 @@ Calendar cal = Calendar.getInstance();
     
     %>
     <aui:fieldset>
-      <liferay-ui:message key="market.starthour"/>
+        <liferay-ui:message key="market.starthour"/>
   		<liferay-ui:input-time name="starthour" minuteInterval="15" hourValue="<%=H1%>" minuteValue="<%=M1%>"  minuteParam="00" amPmParam="PM" hourParam="00"></liferay-ui:input-time>  		
   	    <liferay-ui:message key="market.endhour"/>
   	    <liferay-ui:input-time name="endhour" minuteInterval="15"  hourValue="<%=H2%>" minuteValue="<%=M2%>"  minuteParam="00" amPmParam="PM" hourParam="00"></liferay-ui:input-time>
-
-  			
+	
   	 </aui:fieldset>    
     
      <aui:input  name="marketId" type="hidden" value="${market.marketId}"/>       

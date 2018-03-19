@@ -169,5 +169,8 @@
 		<field name="strategyparamsoverride" type="String">
 			<hint-collection name="CLOB" />
 		</field>
+		<field name="description" type="String">
+			<hint-collection name="CLOB" />
+		</field>
 	</model>
 </model-hints>

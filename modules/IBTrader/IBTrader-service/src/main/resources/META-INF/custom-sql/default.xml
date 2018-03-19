@@ -27,7 +27,7 @@
         		IBTrader_Realtime      
         WHERE
             (IBTrader_Realtime.createDate>=?) AND
-            (IBTrader_Realtime.createDate<=?) AND
+            (IBTrader_Realtime.createDate<?) AND
             (IBTrader_Realtime.shareId=?)
             AND (IBTrader_Realtime.companyid=?)
             AND (IBTrader_Realtime.groupid=?)
@@ -60,7 +60,7 @@
      <sql id="com.ibtrader.data.service.persistence.RealtimeFinder.findSimpleMobileAvgGroupByPeriods">
     <![CDATA[ 
     	SELECT 
-    		 IFNULL(avg(IBTrader_Realtime.value),0) as value, count(*) as periodsfound 
+    		 IFNULL(avg(IBTrader_Realtime.value),0) as value, COUNT(distinct treal.createdate)  as periodsfound 
     	FROM (
 	    	SELECT 
 	    		 max(T.createDate) as createDate, barDate,T.shareId,T.companyId,T.groupId

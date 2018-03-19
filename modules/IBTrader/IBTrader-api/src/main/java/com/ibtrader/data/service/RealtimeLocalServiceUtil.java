@@ -344,6 +344,12 @@ public class RealtimeLocalServiceUtil {
 		return getService().dynamicQueryCount(dynamicQuery, projection);
 	}
 
+	public static void removeRealtimeFromToDate(java.util.Date from,
+		java.util.Date to, long shareId, long companyId, long groupId) {
+		getService()
+			.removeRealtimeFromToDate(from, to, shareId, companyId, groupId);
+	}
+
 	public static RealtimeLocalService getService() {
 		return _serviceTracker.getService();
 	}

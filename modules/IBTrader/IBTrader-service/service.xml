@@ -4,7 +4,7 @@
 <service-builder package-path="com.ibtrader.data" auto-namespace-tables="true">
 	<namespace>ibtrader</namespace>
 	<!--<entity data-source="sampleDataSource" local-service="true" name="Foo" remote-service="true" session-factory="sampleSessionFactory" table="foo" tx-manager="sampleTransactionManager uuid="true"">-->
-	<entity local-service="true"   name="Realtime" remote-service="true" uuid="true">
+	<entity local-service="true"  cache-enabled="false"   name="Realtime" remote-service="true" uuid="true">
 
 		<!-- PK fields -->
 
@@ -51,7 +51,7 @@
 	</entity>
 	
 		
-	<entity local-service="true" name="StrategyShare" remote-service="true" uuid="true">
+	<entity cache-enabled="false" local-service="true" name="StrategyShare" remote-service="true" uuid="true">
 		<column name="strategyshareId" primary="true" type="long" />
 		<!-- Group instance -->
 		<column name="groupId" type="long" />
@@ -68,6 +68,7 @@
 		<!-- References -->
 		<!-- strategyparamsoverride VALOR EN JSON PARA ALMACENAR LOS PARAMETROS SOBREESCRITOS DE LA ESTRATEGIA GENERAL  -->
 		<column name="strategyparamsoverride"  type="String" />
+		<column name="description" type="String" />		
 		<!-- References -->
 		<finder name="CommpanyShareId" return-type="Collection">
 			<finder-column name="shareId"/>
@@ -360,7 +361,7 @@
 	
 	</entity>
 	
-	<entity  cache-enabled="true" local-service="true" name="Position" remote-service="true" uuid="true">
+	<entity  cache-enabled="false"  local-service="true" name="Position" remote-service="true" uuid="true">
 
 		<!-- PK fields -->
 
@@ -446,7 +447,7 @@
 			<finder-column name="groupId"/>
 			<finder-column name="companyId"/>		
 			<finder-column name="shareId" />					
-			<finder-column name="date_real_out" />
+			<finder-column name="date_out" /><!--  PONEMOS ESTA EN VEZ DE LA REAL PARA QUE NO ENTREN CONCURRENTES POSICIONES HASTA QUE DE LA REAL -->
 		</finder>	
 		<finder  name="CompanyGroupShare" return-type="Collection">	
 			<finder-column name="groupId"/>

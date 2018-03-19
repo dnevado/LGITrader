@@ -295,4 +295,7 @@ public interface RealtimeLocalService extends BaseLocalService,
 	*/
 	public long dynamicQueryCount(DynamicQuery dynamicQuery,
 		Projection projection);
+
+	public void removeRealtimeFromToDate(Date from, Date to, long shareId,
+		long companyId, long groupId);
 }

@@ -23,7 +23,7 @@ import com.ibtrader.data.model.Market;
 import com.ibtrader.data.model.Share;
 import com.ibtrader.data.model.Strategy;
 import com.ibtrader.data.model.StrategyShare;
-import com.ibtrader.interactive.TIMApiGITrader;
+import com.ibtrader.interactive.TIMApiGITrader_NOVALE;
 import com.ibtrader.interactive.TIMApiWrapper;
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.expando.kernel.model.ExpandoColumn;

@@ -28,7 +28,7 @@ import com.ibtrader.data.service.IBOrderLocalServiceUtil;
 import com.ibtrader.data.service.PositionLocalServiceUtil;
 import com.ibtrader.data.service.RealtimeLocalServiceUtil;
 import com.ibtrader.data.service.StrategyShareLocalServiceUtil;
-import com.ibtrader.interactive.TIMApiGITrader;
+import com.ibtrader.interactive.TIMApiGITrader_NOVALE;
 import com.ibtrader.interactive.TIMApiWrapper;
 import com.liferay.counter.kernel.service.CounterLocalService;
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;

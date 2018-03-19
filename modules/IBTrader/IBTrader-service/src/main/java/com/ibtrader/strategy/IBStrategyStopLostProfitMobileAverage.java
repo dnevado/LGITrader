@@ -109,7 +109,7 @@ public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
         {
 			
 			boolean existsPosition = PositionLocalServiceUtil.ExistsOpenPosition (_share.getGroupId(),_share.getCompanyId(),_share.getShareId());
-			if (existsPosition)
+			if (!existsPosition)
 				return returnValue;
 			_log.info("UserAccount: detectada posible entrada de " + _share.getName() +  "Tick:" + _share.getSymbol() + ",PrecioCompra:" + this.getValueIn());
 			// hace falta???????? ..creo que si, para tener control sobre la operacion de compra /venta 
@@ -133,7 +133,9 @@ public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
   		   /* NECESARIO PRA LANZAR COMPRA DESDE EL CROUTIL */
   		   this.setTargetContract(oContrat);
   		   
-  			
+	  	   String _OperationTYPE = PositionStates.statusTWSFire.BUY.toString(); 
+	 	   if (currentPosition.getType().equals(PositionStates.statusTWSFire.BUY.toString())) // operacion de compra normal..??
+	 			_OperationTYPE = PositionStates.statusTWSFire.SELL.toString();		
 			// colocamos operacion de compra			
 			Order BuyPositionTWS = new Order();
 			BuyPositionTWS.account(Utilities.getConfigurationValue(IBTraderConstants.keyACCOUNT_IB_NAME, _share.getCompanyId(), _share.getGroupId()));		
@@ -147,48 +149,40 @@ public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
 			BuyPositionTWS.orderType(PositionStates.ordertypes.MKT.toString());		    
 			// precio del tick más o menos un porcentaje ...normalmente %1
 			// ojo con los FUTUROS..llevan cambios porcentuales
+			
+			/* ****************************************************************
+			 * ****************************************************************
+			 * SIEMPRE HAY QUE PONERLO AUNQUE VAYA A MERCADO lmtprice & auxprice
+			 * ****************************************************************
+			 * **************************************************************** */
 			BuyPositionTWS.lmtPrice(Utilities.RoundPrice(this.getValueLimitIn()));
 			BuyPositionTWS.auxPrice(Utilities.RoundPrice(this.getValueLimitIn()));					
 			/*  SI ES UNA COMPRA, NOS POSICIONAMOS CORTOS SI BAJA EL MINIMO */		
-			BuyPositionTWS.action(PositionStates.statusTWSFire.BUY.toString());			
-			if (bSellOperation)
-			{
-				BuyPositionTWS.action(PositionStates.statusTWSFire.SELL.toString());
-			}
-			
+			BuyPositionTWS.action(_OperationTYPE);			
+						
 			_log.info("Order" + BuyPositionTWS.action()  +","+  BuyPositionTWS.lmtPrice()  +","+ BuyPositionTWS.auxPrice() +","+ BuyPositionTWS.account() +","+ BuyPositionTWS.totalQuantity() +","+ BuyPositionTWS.orderType());
 			
 			this.setTargetOrder(BuyPositionTWS);			
 			/* Posicion en MYSQL de CONTROL. OJO...ANTES SIEMPRE PARA DESPUES CONTROLARLA EN CASO DE ERROR. */
-			Position BuyPositionSystem = PositionLocalServiceUtil.createPosition(CounterLocalServiceUtil.increment(Position.class.getName()));			
-			BuyPositionSystem.setDescription("");
-			BuyPositionSystem.setPrice_in( this.getValueIn());  // ojo, es estimativo
-			BuyPositionSystem.setDate_in(new Date());// .setDate_buy(new Timestamp(Calendar.getInstance().getTimeInMillis()));
-			BuyPositionSystem.setShare_number(number_to_purchase);
-			BuyPositionSystem.setShareId(_share.getShareId());
-			BuyPositionSystem.setState_in(PositionStates.statusTWSCallBack.PendingSubmit.toString());
-			BuyPositionSystem.setState(PositionStates.status.PENDING_BUY.toString());
-			BuyPositionSystem.setLimit_price_in(BuyPositionTWS.lmtPrice());
-			BuyPositionSystem.setType(BuyPositionTWS.getAction());
-			BuyPositionSystem.setCompanyId(_share.getCompanyId());
-			BuyPositionSystem.setGroupId(_share.getGroupId());
-			BuyPositionSystem.setStrategy_out(this.getClass().getName());
-			BuyPositionSystem.setDescription(_tradeDescription.toString());
-
-    		/* BuyPositionSystem.setSell_percentual_stop_lost(ShareStrategy.getSell_percentual_stop_lost());
-			BuyPositionSystem.setSell_percentual_stop_profit(ShareStrategy.getSell_percentual_stop_profit());*/
-			BuyPositionSystem.setShare_number_traded(new Long(0));
-			BuyPositionSystem.setShare_number_to_trade(number_to_purchase); 			
-			String simulated = Utilities.getConfigurationValue(IBTraderConstants.keySIMULATION_MODE, _share.getCompanyId(), _share.getGroupId());	
-			boolean bSIMULATED_TRADING = simulated.equals("1");  
-			BuyPositionSystem.setSimulation_mode(bSIMULATED_TRADING);			
-			PositionLocalServiceUtil.updatePosition(BuyPositionSystem);
+			currentPosition.setState_out(PositionStates.statusTWSCallBack.PendingSubmit.toString());
+			/* si metemos el date sell en las parciales, no entran las siguientes */
+			/* acumulo las acciones vendidas y a vender en la operativa */
+			currentPosition.setDate_out(new Date());
+			currentPosition.setDescription(this.getClass().getName());
+			currentPosition.setStrategy_out(this.getClass().getName());		 		
+			currentPosition.setDescription(currentPosition.getDescription() + "|" + _tradeDescription.toString());			
+			PositionLocalServiceUtil.updatePosition(currentPosition);
 			/* Posicion en MYSQL de CONTROL */
-			_log.info("Opening order " + BuyPositionSystem.getPositionId());
+			_log.info("Opening order " + currentPosition.getPositionId());
+			
+			/* RETORNAMOS PORQUE DESPUES HAY QUE METER EN LA POSICION EN NUMERO DE ORDEN DE LA TWS */
+			returnValue =  currentPosition.getPositionId();
+			/* Posicion en MYSQL de CONTROL */
+			_log.info("Opening order " + currentPosition.getPositionId());
 			
 			
 			/* RETORNAMOS PORQUE DESPUES HAY QUE METER EN LA POSICION EN NUMERO DE ORDEN DE LA TWS */
-			returnValue =  BuyPositionSystem.getPositionId();
+			returnValue =  currentPosition.getPositionId();
 
 			
         }
@@ -248,7 +242,14 @@ public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
 		_entryrate = this.getJsonStrategyShareParams().getDouble(_EXPANDO_MOBILE_AVERAGE_GAP_SIZE,0.0f) / 100;
 		
 		/* SOLO PODEMOS ENTRAR EN EL PERIODO MARCADO DE CADA MINUTO, PARA LO CUAL OBTENEMOS EL RESTO */	
-		long _ModMinuteToEntry = calFechaActualWithDeadLine.get(Calendar.MINUTE) % _num_macdT;
+		/* TIMEZONE AJUSTADO */
+		Date _FromNow = Utilities.getDate(_IBUser);
+		Calendar _calendarFromNow = Calendar.getInstance();
+		_calendarFromNow.setTime(_FromNow);		
+		_calendarFromNow.set(Calendar.SECOND, 0);
+		_calendarFromNow.set(Calendar.MILLISECOND, 0);
+		
+		long _ModMinuteToEntry = _calendarFromNow.get(Calendar.MINUTE) % _num_macdT;
 		if (_ModMinuteToEntry!=0)  // NO ESTOY EN EL MINUTO 5,10,15,20..etc (para las barras de 5)
 			return Boolean.FALSE;
 	
@@ -269,12 +270,12 @@ public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
 		{
 		
 		/* TIMEZONE AJUSTADO */		
-		Calendar _calendarFromNow = Calendar.getInstance(); // fecha de la compra  currentPosition
-		_calendarFromNow.setTime(currentPosition.getDate_real_in());		
-		_calendarFromNow.set(Calendar.SECOND, 0);
+		Calendar _calendarFromDate_In = Calendar.getInstance(); // fecha de la compra  currentPosition
+		_calendarFromDate_In.setTime(currentPosition.getDate_real_in());		
+		_calendarFromDate_In.set(Calendar.SECOND, 0);
 		
 		/* NO ES EL SIGUIENTE BLOQUE DE BARRA , PODRIAN SOLAPARSE ENTRADA/SALIDA, IGNORAMOS SEGUNDOS DE LA TABLA DE BBDD */
-		if (!calFechaActualWithDeadLine.after(_calendarFromNow))
+		if (!calFechaActualWithDeadLine.after(_calendarFromDate_In))
 			return Boolean.FALSE;
 		
 		Double _avgMobileSimple = MobileAvgUtil.getSimpleAvgMobile(_calendarFromNow.getTime(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_macdP, Boolean.FALSE);

@@ -180,5 +180,6 @@
 		<property name="shareId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 		<property column="active_" name="active" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />
 		<property name="strategyparamsoverride" type="com.liferay.portal.dao.orm.hibernate.StringClobType" />
+		<property name="description" type="com.liferay.portal.dao.orm.hibernate.StringClobType" />
 	</class>
 </hibernate-mapping>

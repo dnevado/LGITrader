@@ -37,7 +37,7 @@ import com.liferay.portal.kernel.model.OrganizationConstants;
 import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.OrganizationLocalServiceUtil;
-import com.ibtrader.interactive.TIMApiGITrader;
+import com.ibtrader.interactive.TIMApiGITrader_NOVALE;
 import com.ibtrader.interactive.TIMApiWrapper;
 
 
@@ -460,7 +460,7 @@ public class CronUtil {
 		Contract oContrat = null;
 		/* VERIFICAMOS MERCADOS ACTIVOS */
 	    java.util.List<Share> lShare = null;
-	    TIMApiGITrader oTWS = null;	   
+	    TIMApiGITrader_NOVALE oTWS = null;	   
 	    SimpleDateFormat sdf = new SimpleDateFormat();
 	    sdf.applyPattern(Utilities._IBTRADER_FUTURE_SHORT_DATE);
 	    
