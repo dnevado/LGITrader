@@ -98,6 +98,7 @@
 		<property name="pendingcancelled" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 		<property name="trading_data_operations" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="simulation_mode" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />
+		<property name="totalcommision" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
 	</class>
 	<class name="com.ibtrader.data.model.impl.RealtimeImpl" table="ibtrader_Realtime">
 		<id name="realtimeId" type="long">
@@ -145,6 +146,7 @@
 		<property name="validated_trader_provider" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />
 		<property name="date_validated_trader_provider" type="org.hibernate.type.TimestampType" />
 		<property name="last_error_trader_provider" type="com.liferay.portal.dao.orm.hibernate.StringClobType" />
+		<property name="simulation_end_date" type="org.hibernate.type.TimestampType" />
 	</class>
 	<class name="com.ibtrader.data.model.impl.StrategyImpl" table="ibtrader_Strategy">
 		<id name="strategyID" type="long">

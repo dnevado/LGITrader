@@ -95,7 +95,8 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 			{ "marketId", Types.BIGINT },
 			{ "validated_trader_provider", Types.BOOLEAN },
 			{ "date_validated_trader_provider", Types.TIMESTAMP },
-			{ "last_error_trader_provider", Types.CLOB }
+			{ "last_error_trader_provider", Types.CLOB },
+			{ "simulation_end_date", Types.TIMESTAMP }
 		};
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP = new HashMap<String, Integer>();
 
@@ -127,9 +128,10 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		TABLE_COLUMNS_MAP.put("validated_trader_provider", Types.BOOLEAN);
 		TABLE_COLUMNS_MAP.put("date_validated_trader_provider", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("last_error_trader_provider", Types.CLOB);
+		TABLE_COLUMNS_MAP.put("simulation_end_date", Types.TIMESTAMP);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table ibtrader_Share (uuid_ VARCHAR(75) null,shareId LONG not null primary key,name VARCHAR(75) null,symbol VARCHAR(75) null,groupId LONG,companyId LONG,createDate DATE null,modifiedDate DATE null,active_ BOOLEAN,numbertopurchase LONG,percentual_limit_buy DOUBLE,percentual_stop_lost DOUBLE,percentual_stop_profit DOUBLE,percentual_stop_profit_position DOUBLE,percentual_trailling_stop_lost DOUBLE,expiry_date DATE null,expiry_expression TEXT null,tick_futures DOUBLE,multiplier LONG,security_type VARCHAR(75) null,exchange VARCHAR(75) null,primary_exchange VARCHAR(75) null,userCreatedId LONG,marketId LONG,validated_trader_provider BOOLEAN,date_validated_trader_provider DATE null,last_error_trader_provider TEXT null)";
+	public static final String TABLE_SQL_CREATE = "create table ibtrader_Share (uuid_ VARCHAR(75) null,shareId LONG not null primary key,name VARCHAR(75) null,symbol VARCHAR(75) null,groupId LONG,companyId LONG,createDate DATE null,modifiedDate DATE null,active_ BOOLEAN,numbertopurchase LONG,percentual_limit_buy DOUBLE,percentual_stop_lost DOUBLE,percentual_stop_profit DOUBLE,percentual_stop_profit_position DOUBLE,percentual_trailling_stop_lost DOUBLE,expiry_date DATE null,expiry_expression TEXT null,tick_futures DOUBLE,multiplier LONG,security_type VARCHAR(75) null,exchange VARCHAR(75) null,primary_exchange VARCHAR(75) null,userCreatedId LONG,marketId LONG,validated_trader_provider BOOLEAN,date_validated_trader_provider DATE null,last_error_trader_provider TEXT null,simulation_end_date DATE null)";
 	public static final String TABLE_SQL_DROP = "drop table ibtrader_Share";
 	public static final String ORDER_BY_JPQL = " ORDER BY share.shareId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY ibtrader_Share.shareId ASC";
@@ -194,6 +196,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		model.setValidated_trader_provider(soapModel.getValidated_trader_provider());
 		model.setDate_validated_trader_provider(soapModel.getDate_validated_trader_provider());
 		model.setLast_error_trader_provider(soapModel.getLast_error_trader_provider());
+		model.setSimulation_end_date(soapModel.getSimulation_end_date());
 
 		return model;
 	}
@@ -290,6 +293,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 			getDate_validated_trader_provider());
 		attributes.put("last_error_trader_provider",
 			getLast_error_trader_provider());
+		attributes.put("simulation_end_date", getSimulation_end_date());
 
 		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
 		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
@@ -467,6 +471,12 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 
 		if (last_error_trader_provider != null) {
 			setLast_error_trader_provider(last_error_trader_provider);
+		}
+
+		Date simulation_end_date = (Date)attributes.get("simulation_end_date");
+
+		if (simulation_end_date != null) {
+			setSimulation_end_date(simulation_end_date);
 		}
 	}
 
@@ -916,6 +926,17 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		_last_error_trader_provider = last_error_trader_provider;
 	}
 
+	@JSON
+	@Override
+	public Date getSimulation_end_date() {
+		return _simulation_end_date;
+	}
+
+	@Override
+	public void setSimulation_end_date(Date simulation_end_date) {
+		_simulation_end_date = simulation_end_date;
+	}
+
 	@Override
 	public StagedModelType getStagedModelType() {
 		return new StagedModelType(PortalUtil.getClassNameId(
@@ -980,6 +1001,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		shareImpl.setValidated_trader_provider(getValidated_trader_provider());
 		shareImpl.setDate_validated_trader_provider(getDate_validated_trader_provider());
 		shareImpl.setLast_error_trader_provider(getLast_error_trader_provider());
+		shareImpl.setSimulation_end_date(getSimulation_end_date());
 
 		shareImpl.resetOriginalValues();
 
@@ -1208,12 +1230,21 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 			shareCacheModel.last_error_trader_provider = null;
 		}
 
+		Date simulation_end_date = getSimulation_end_date();
+
+		if (simulation_end_date != null) {
+			shareCacheModel.simulation_end_date = simulation_end_date.getTime();
+		}
+		else {
+			shareCacheModel.simulation_end_date = Long.MIN_VALUE;
+		}
+
 		return shareCacheModel;
 	}
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(55);
+		StringBundler sb = new StringBundler(57);
 
 		sb.append("{uuid=");
 		sb.append(getUuid());
@@ -1269,6 +1300,8 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		sb.append(getDate_validated_trader_provider());
 		sb.append(", last_error_trader_provider=");
 		sb.append(getLast_error_trader_provider());
+		sb.append(", simulation_end_date=");
+		sb.append(getSimulation_end_date());
 		sb.append("}");
 
 		return sb.toString();
@@ -1276,7 +1309,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(85);
+		StringBundler sb = new StringBundler(88);
 
 		sb.append("<model><model-name>");
 		sb.append("com.ibtrader.data.model.Share");
@@ -1390,6 +1423,10 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 			"<column><column-name>last_error_trader_provider</column-name><column-value><![CDATA[");
 		sb.append(getLast_error_trader_provider());
 		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>simulation_end_date</column-name><column-value><![CDATA[");
+		sb.append(getSimulation_end_date());
+		sb.append("]]></column-value></column>");
 
 		sb.append("</model>");
 
@@ -1441,6 +1478,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 	private boolean _validated_trader_provider;
 	private Date _date_validated_trader_provider;
 	private String _last_error_trader_provider;
+	private Date _simulation_end_date;
 	private long _columnBitmask;
 	private Share _escapedModel;
 }

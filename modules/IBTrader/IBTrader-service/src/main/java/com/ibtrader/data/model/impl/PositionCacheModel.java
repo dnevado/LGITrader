@@ -65,7 +65,7 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(77);
+		StringBundler sb = new StringBundler(79);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -143,6 +143,8 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 		sb.append(trading_data_operations);
 		sb.append(", simulation_mode=");
 		sb.append(simulation_mode);
+		sb.append(", totalcommision=");
+		sb.append(totalcommision);
 		sb.append("}");
 
 		return sb.toString();
@@ -286,6 +288,7 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 		}
 
 		positionImpl.setSimulation_mode(simulation_mode);
+		positionImpl.setTotalcommision(totalcommision);
 
 		positionImpl.resetOriginalValues();
 
@@ -355,6 +358,8 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 		trading_data_operations = objectInput.readUTF();
 
 		simulation_mode = objectInput.readBoolean();
+
+		totalcommision = objectInput.readDouble();
 	}
 
 	@Override
@@ -474,6 +479,8 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 		}
 
 		objectOutput.writeBoolean(simulation_mode);
+
+		objectOutput.writeDouble(totalcommision);
 	}
 
 	public String uuid;
@@ -514,4 +521,5 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 	public long pendingcancelled;
 	public String trading_data_operations;
 	public boolean simulation_mode;
+	public double totalcommision;
 }

@@ -53,7 +53,6 @@ public class StrategyImpl extends StrategyBaseImpl {
 	 */
 	private static final long serialVersionUID = 1L;
 	/* DATOS GENERALES DE LA ESTRATEGIA DEL SERVICIO */
-	private Strategy _IBStrategy;
 	/* LISTA DE PARAMETROS EXPANDOS  */
 	private List<ExpandoColumn> _IBStrategyParams;
 	private AssetEntry _IBStrategyAssetEntry;	
@@ -67,6 +66,8 @@ public class StrategyImpl extends StrategyBaseImpl {
 	
 	private Order _targetOrder; // esta es la orden que se rellena en el metodo execute para que el cron la trate y la ordene, la parte transaccional
 								// en BBDD se hace en el metodo execute	
+	private List<Order> _childsOrder; // ordenes hijas que acompañan a la padre (TRAIL)
+ 	
 	private Contract _targetContract;
 	
 	private JSONObject jsonStrategyShareParams;	
@@ -201,6 +202,12 @@ public class StrategyImpl extends StrategyBaseImpl {
 	}
 	public void setTargetContract(Contract _targetContract) {
 		this._targetContract = _targetContract;
+	}
+	public List<Order> getChildsOrder() {
+		return _childsOrder;
+	}
+	public void setChildsOrder(List<Order> _childsOrder) {
+		this._childsOrder = _childsOrder;
 	}
 
 		

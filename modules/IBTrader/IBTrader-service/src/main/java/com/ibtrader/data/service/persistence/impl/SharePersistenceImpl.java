@@ -4846,6 +4846,7 @@ public class SharePersistenceImpl extends BasePersistenceImpl<Share>
 		shareImpl.setValidated_trader_provider(share.isValidated_trader_provider());
 		shareImpl.setDate_validated_trader_provider(share.getDate_validated_trader_provider());
 		shareImpl.setLast_error_trader_provider(share.getLast_error_trader_provider());
+		shareImpl.setSimulation_end_date(share.getSimulation_end_date());
 
 		return shareImpl;
 	}

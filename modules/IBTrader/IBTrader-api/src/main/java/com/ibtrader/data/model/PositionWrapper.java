@@ -97,6 +97,7 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 		attributes.put("pendingcancelled", getPendingcancelled());
 		attributes.put("trading_data_operations", getTrading_data_operations());
 		attributes.put("simulation_mode", getSimulation_mode());
+		attributes.put("totalcommision", getTotalcommision());
 
 		return attributes;
 	}
@@ -335,6 +336,12 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 		if (simulation_mode != null) {
 			setSimulation_mode(simulation_mode);
 		}
+
+		Double totalcommision = (Double)attributes.get("totalcommision");
+
+		if (totalcommision != null) {
+			setTotalcommision(totalcommision);
+		}
 	}
 
 	@Override
@@ -510,6 +517,16 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 	@Override
 	public double getPricestopprofit_out() {
 		return _position.getPricestopprofit_out();
+	}
+
+	/**
+	* Returns the totalcommision of this position.
+	*
+	* @return the totalcommision of this position
+	*/
+	@Override
+	public double getTotalcommision() {
+		return _position.getTotalcommision();
 	}
 
 	@Override
@@ -1216,6 +1233,16 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 	@Override
 	public void setStrategy_out(java.lang.String strategy_out) {
 		_position.setStrategy_out(strategy_out);
+	}
+
+	/**
+	* Sets the totalcommision of this position.
+	*
+	* @param totalcommision the totalcommision of this position
+	*/
+	@Override
+	public void setTotalcommision(double totalcommision) {
+		_position.setTotalcommision(totalcommision);
 	}
 
 	/**

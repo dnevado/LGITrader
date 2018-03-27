@@ -117,4 +117,8 @@ public interface Strategy extends StrategyModel, PersistedModel {
 	public com.ib.client.Contract getTargetContract();
 
 	public void setTargetContract(com.ib.client.Contract _targetContract);
+
+	public java.util.List<com.ib.client.Order> getChildsOrder();
+
+	public void setChildsOrder(java.util.List<com.ib.client.Order> _childsOrder);
 }

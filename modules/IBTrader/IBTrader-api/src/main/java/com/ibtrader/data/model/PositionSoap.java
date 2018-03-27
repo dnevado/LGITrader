@@ -72,6 +72,7 @@ public class PositionSoap implements Serializable {
 		soapModel.setPendingcancelled(model.getPendingcancelled());
 		soapModel.setTrading_data_operations(model.getTrading_data_operations());
 		soapModel.setSimulation_mode(model.getSimulation_mode());
+		soapModel.setTotalcommision(model.getTotalcommision());
 
 		return soapModel;
 	}
@@ -432,6 +433,14 @@ public class PositionSoap implements Serializable {
 		_simulation_mode = simulation_mode;
 	}
 
+	public double getTotalcommision() {
+		return _totalcommision;
+	}
+
+	public void setTotalcommision(double totalcommision) {
+		_totalcommision = totalcommision;
+	}
+
 	private String _uuid;
 	private long _positionId;
 	private long _groupId;
@@ -470,4 +479,5 @@ public class PositionSoap implements Serializable {
 	private long _pendingcancelled;
 	private String _trading_data_operations;
 	private boolean _simulation_mode;
+	private double _totalcommision;
 }

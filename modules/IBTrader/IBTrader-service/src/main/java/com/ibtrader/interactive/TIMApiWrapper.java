@@ -1,3 +1,22 @@
+/* So the simple fact is that if an order is fully filled while the client application is not connected to TWS, or TWS is not connected to the IB servers, the client will never receive an orderStatus with a status of ‘Filled’.
+
+
+
+To deal with this situation, there are three things that need to be done:
+
+
+
+1.       The client application must save information about orders it has placed. This must be persisted to a file or database for use when the application is restarted.
+
+
+
+2.       When the client application connects to TWS it must call reqExecutions and reqOpenOrders. The combination of the saved order information and the information received via execDetails and openOrder is enough to reconstruct exactly what the current state is. (Note that there is a TWS API configuration option for open orders to be notified automatically when a client connects, but it’s better to call reqOpenOrders as you cannot guarantee that this option will be set.)
+
+
+
+3.       When TWS reconnects to the IB servers, the client receives an 1101 or 1102 message code via the error callback. It must call reqExecutions and reqOpenOrders to get up-to-date information about orders and fills.
+*/
+
 package com.ibtrader.interactive;
 
 import java.sql.Timestamp;
@@ -25,6 +44,7 @@ import com.ib.client.EReader;
 import com.ib.client.EReaderSignal;
 import com.ib.client.EWrapper;
 import com.ib.client.Execution;
+import com.ib.client.ExecutionFilter;
 import com.ib.client.FamilyCode;
 import com.ib.client.HistogramEntry;
 import com.ib.client.HistoricalTick;
@@ -72,7 +92,10 @@ public class TIMApiWrapper implements EWrapper {
 	protected EClientSocket clientSocket;
 	protected int currentOrderId = -1;
 	
-	protected int _clientId = 0; 
+	protected int _clientId = 0;
+	protected String _host = "127.0.0.1";
+	protected int _port = 1;
+	
 	protected long  guestGroupId=0;
 	
 	private boolean _sendDisconnectEvent = false; 
@@ -109,6 +132,13 @@ public class TIMApiWrapper implements EWrapper {
 		clientSocket.reqContractDetails(requestId, contract);
 	}
 	
+	public void getOpenOrders(int requestId) throws InterruptedException{
+		clientSocket.reqOpenOrders();		
+	}
+    public void getExecutionOrders(int requestId) throws InterruptedException{
+    	clientSocket.reqExecutions(requestId,  new ExecutionFilter());
+	}
+	
 	public void getRealTime(int requestId, Contract contract) throws InterruptedException{
 		Thread.sleep(1000);	
 		clientSocket.reqMarketDataType(ConfigKeys.MARKET_DATA_TYPE_DELAYED_LIVE);
@@ -135,6 +165,10 @@ public class TIMApiWrapper implements EWrapper {
 	
 	public void connect(String _HOST, int  _PORT, int _CLIENT_ID) throws InterruptedException {
 		 //! [connect]
+		_clientId = _CLIENT_ID;
+		_host = "127.0.0.1";
+		_port =_PORT;
+		
 		clientSocket.eConnect(_HOST, _PORT,_CLIENT_ID); 
 		 //! [connect]
 		 //! [ereader]
@@ -150,7 +184,7 @@ public class TIMApiWrapper implements EWrapper {
 		        try {
 		            reader.processMsgs();
 		        } catch (Exception e) {
-		            System.out.println("Exception: "+e.getMessage());
+		        	_log.info("Connnect Exception: "+e.getMessage());
 		        }
 		    }
 		 }).start();
@@ -214,14 +248,19 @@ public class TIMApiWrapper implements EWrapper {
 	}
 	//! [orderstatus]
 	
-	public void openOrder(Contract contract, Order order,OrderState orderState, long positionId) {
+	/* lOrders
+	 * LISTA DE ORDENES QUE ACOMPAÑAN A LA ORDEN PADRE, SOLO SE APLICA A ORDENES DE TIPO TRAIL PARA AJUSTAR BENEFICIO 
+	 */
+	
+	public void openOrder(Contract contract, Order parentOrder, List<Order> childsOrders, OrderState orderState, long positionId) {
 	
 		
 		 /* METEMOS DOBLE VALIDACION POR LOS THREADS EN CASO DE QUE HAYA OPERACION PREVIA YA EN MARCHA 	
 		  * 
 		  * 
 		  */
-		long  _INCREMENT_ORDER_ID = getCurrentOrderId();
+		int  _INCREMENT_ORDER_ID = getCurrentOrderId();
+		int  parentOrderId = _INCREMENT_ORDER_ID;
 		/* if (_INCREMENT_ORDER_ID>0) // mecanismo de control, siempre el next valid >=1
 		{*/
 		
@@ -242,14 +281,40 @@ public class TIMApiWrapper implements EWrapper {
 		else
 			_position.setPositionId_tws_in(_INCREMENT_ORDER_ID);
 		PositionLocalServiceUtil.updatePosition(_position);
-	//	_log.info("1. openOrder...." +  positionId + "," + _INCREMENT_ORDER_ID);
-		//openOrder(new Long(_INCREMENT_ORDER_ID).intValue(),contract,order,orderState);
-		clientSocket.placeOrder(new Long(_INCREMENT_ORDER_ID).intValue(), contract, order);
-		//	_log.info("2. opened...." +  positionId + "," + _INCREMENT_ORDER_ID);
-			
+		//	_log.info("1. openOrder...." +  positionId + "," + _INCREMENT_ORDER_ID);
+		// Si hay hijas, aseguramos el transmit correcto,
+		if (childsOrders!=null && !childsOrders.isEmpty())			
+			parentOrder.transmit(false);
 		
-		/* } */	
+	/*	 if (!this.isConnected()) 
+			 this.connect(this., _PORT,_CLIENT_ID); 	 	
+ 
+
+		// if (oTWS.GITraderTWSIsConnected() )
+		if (wrapper.isConnected())
+	    {
 			
+				wrapper.reqNextId();
+		
+		*/
+		clientSocket.placeOrder(new Long(_INCREMENT_ORDER_ID).intValue(), contract, parentOrder);
+		for (Order childOrder : childsOrders)
+		{
+			_INCREMENT_ORDER_ID++;
+			childOrder.parentId(parentOrderId);
+			childOrder.transmit(true);
+			IBOrderLocalServiceUtil.deleteByOrderCompanyGroup(_INCREMENT_ORDER_ID, _ibtarget_share.getCompanyId(), _ibtarget_share.getGroupId(),_clientId,_ibtarget_share.getShareId());
+			 _order = IBOrderLocalServiceUtil.createIBOrder(_INCREMENT_ORDER_ID);			/* insertamos control de ordenes de peticion */
+			_order.setCompanyId(_ibtarget_share.getCompanyId());
+			_order.setGroupId(_ibtarget_share.getGroupId());
+			_order.setShareID(_ibtarget_share.getShareId());
+			_order.setOrdersId(_INCREMENT_ORDER_ID);
+			_order.setCreateDate(new Date());
+			_order.setModifiedDate(new Date());			
+			_order.setIbclientId(_clientId);					
+			IBOrderLocalServiceUtil.updateIBOrder(_order);
+			clientSocket.placeOrder(new Long(_INCREMENT_ORDER_ID).intValue(), contract, childOrder);
+		}
 			
 		//}
 		
@@ -340,9 +405,63 @@ public class TIMApiWrapper implements EWrapper {
 	//! [contractdetailsend]
 	
 	//! [execdetails]
+	
+	/* VERIFICAMOS ORDENES COMPLETEADAS Y NO VERIFICADAS DEBIDO A DESCONEXIONES, 
+	 * 
+	 *  reqId orderId, aqui no aplica 
+	 *  execution.orderId() es el order de position de la tabla 
+	 *  */
 	@Override
 	public void execDetails(int reqId, Contract contract, Execution execution) {
+		
 		_log.info("ExecDetails. "+reqId+" - ["+contract.symbol()+"], ["+contract.secType()+"], ["+contract.currency()+"], ["+execution.execId()+"], ["+execution.orderId()+"], ["+execution.shares()+"]");
+
+		
+		Position _oPosition = PositionLocalServiceUtil.findByPositionID_In_TWS(_ibtarget_organization.getGroupId(), _ibtarget_organization.getCompanyId(),execution.orderId());
+		boolean bChanged = false;
+		// SI ES NULL, QUIERE DECIR QUE PUEDE VENIR UNA OPERACION DE VENTA...LA BUSCAMOS.		
+		if (_oPosition==null)
+		{
+			_oPosition = PositionLocalServiceUtil.findByPositionID_Out_TWS(_ibtarget_organization.getGroupId(), _ibtarget_organization.getCompanyId(),execution.orderId());
+			if (_oPosition==null) 
+			{
+				_log.info("execDetails order not found for Order Key:" + reqId + ",contract:" + contract.symbol() + ",Execution:" + execution.avgPrice());
+				return;
+			}
+			else
+			{
+				/*  SIENDO UNA VENTA, VERIFICAMOS QUE NO ESTE FILLED, CERRRAMOS LA VENTA COMO OK */
+				if (!_oPosition.getState_out().equals(PositionStates.statusTWSCallBack.Filled.toString()))
+				{
+					_oPosition.setState_out(PositionStates.statusTWSCallBack.Filled.toString());
+					_oPosition.setState(PositionStates.status.SELL_OK.toString());
+					_oPosition.setDate_real_out(_oPosition.getDate_out());
+					_oPosition.setPrice_real_out(execution.avgPrice());
+					_oPosition.setShare_number_traded(_oPosition.getShare_number());
+					
+					bChanged = true;
+					
+				}
+
+			}
+		}
+		else
+		{
+			/*  SIENDO UNA COMPRA , VERIFICAMOS QUE NO ESTE FILLED, CERRRAMOS LA COMPRA  COMO OK */
+			if (!_oPosition.getState_in().equals(PositionStates.statusTWSCallBack.Filled.toString()))
+			{				
+				_oPosition.setState(PositionStates.status.BUY_OK.toString());
+				_oPosition.setDate_real_in(_oPosition.getDate_in());
+				_oPosition.setPrice_real_in(execution.avgPrice());
+				_oPosition.setShare_number_traded(_oPosition.getShare_number());
+				
+				bChanged = true;
+				
+			}
+		}
+		/* si hay cambios, actualizamos */
+		if (bChanged)
+				PositionLocalServiceUtil.updatePosition(_oPosition);
 
 	}
 	//! [execdetails]
@@ -515,7 +634,7 @@ public class TIMApiWrapper implements EWrapper {
 	//! [displaygroupupdated]
 	@Override
 	public void error(Exception e) {
-		System.out.println("Exception: "+e.getMessage());
+		_log.info("error Exception: "+e.getMessage());
 	}
 
 	@Override
@@ -671,19 +790,34 @@ public class TIMApiWrapper implements EWrapper {
 			Date cNow = new Date();
 			Calendar _calNow = Calendar.getInstance();
 			_calNow.setTime(cNow);
-			_calNow.set(Calendar.MILLISECOND,0);
+		//	_calNow.set(Calendar.MILLISECOND,0);
 			
-			Realtime  oReal = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));
-			oReal.setGroupId(MyOrder.getGroupId());
-			oReal.setCompanyId(MyOrder.getCompanyId());
-			oReal.setShareId(MyOrder.getShareID());
-			oReal.setValue(price);
-			oReal.setCreateDate(_calNow.getTime());
-			oReal.setModifiedDate(_calNow.getTime());
-			RealtimeLocalServiceUtil.updateRealtime(oReal);
+			// verificamos si esta en modo simulation con precios introducidos a mano 
+			Share share = ShareLocalServiceUtil.fetchShare(MyOrder.getShareID());
 			
-			MyOrder.setChecked(true);
-			IBOrderLocalServiceUtil.updateIBOrder(MyOrder);
+			if (share.getSimulation_end_date()==null)
+			{
+				Realtime  oReal = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));
+				oReal.setGroupId(MyOrder.getGroupId());
+				oReal.setCompanyId(MyOrder.getCompanyId());
+				oReal.setShareId(MyOrder.getShareID());
+				oReal.setValue(price);
+				oReal.setCreateDate(_calNow.getTime());
+				oReal.setModifiedDate(_calNow.getTime());
+				RealtimeLocalServiceUtil.updateRealtime(oReal);
+				
+				/* MyOrder.setChecked(true);
+				IBOrderLocalServiceUtil.updateIBOrder(MyOrder);*/
+			}
+			else
+			{
+				if (cNow.after(share.getSimulation_end_date())) 				 // pasada la simulación?
+				{
+					share.setSimulation_end_date(null);
+					ShareLocalServiceUtil.updateShare(share);
+				}
+				
+			}
 		
 		}
 			
@@ -698,7 +832,11 @@ public class TIMApiWrapper implements EWrapper {
 		double priceTraillingStopLost = 0;
 		boolean bIsSellOperation = false;  //ENTRADA O SALIDA, TERMINO ERRONEO
 		boolean isDelete = false;   // cuando sea compra cancelada, nos la cargamos.
-			
+		
+		if (parentId>0)  // no hacemos nada con las hijas 
+			return;
+		
+		
 		Position _oPosition = PositionLocalServiceUtil.findByPositionID_In_TWS(_ibtarget_share.getGroupId(), _ibtarget_organization.getCompanyId(),orderId);
 		// SI ES NULL, QUIERE DECIR QUE PUEDE VENIR UNA OPERACION DE VENTA...LA BUSCAMOS.		
 		if (_oPosition==null)

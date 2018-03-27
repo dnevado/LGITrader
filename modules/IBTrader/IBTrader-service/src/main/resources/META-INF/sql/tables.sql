@@ -80,7 +80,8 @@ create table ibtrader_Position (
 	pricestopprofit_out DOUBLE,
 	pendingcancelled LONG,
 	trading_data_operations VARCHAR(75) null,
-	simulation_mode BOOLEAN
+	simulation_mode BOOLEAN,
+	totalcommision DOUBLE
 );
 
 create table ibtrader_Realtime (
@@ -125,7 +126,8 @@ create table ibtrader_Share (
 	marketId LONG,
 	validated_trader_provider BOOLEAN,
 	date_validated_trader_provider DATE null,
-	last_error_trader_provider TEXT null
+	last_error_trader_provider TEXT null,
+	simulation_end_date DATE null
 );
 
 create table ibtrader_Strategy (

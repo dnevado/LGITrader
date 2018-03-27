@@ -91,6 +91,7 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 			getDate_validated_trader_provider());
 		attributes.put("last_error_trader_provider",
 			getLast_error_trader_provider());
+		attributes.put("simulation_end_date", getSimulation_end_date());
 
 		return attributes;
 	}
@@ -265,6 +266,12 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 
 		if (last_error_trader_provider != null) {
 			setLast_error_trader_provider(last_error_trader_provider);
+		}
+
+		Date simulation_end_date = (Date)attributes.get("simulation_end_date");
+
+		if (simulation_end_date != null) {
+			setSimulation_end_date(simulation_end_date);
 		}
 	}
 
@@ -556,6 +563,16 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 	@Override
 	public Date getModifiedDate() {
 		return _share.getModifiedDate();
+	}
+
+	/**
+	* Returns the simulation_end_date of this share.
+	*
+	* @return the simulation_end_date of this share
+	*/
+	@Override
+	public Date getSimulation_end_date() {
+		return _share.getSimulation_end_date();
 	}
 
 	/**
@@ -906,6 +923,16 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 	@Override
 	public void setShareId(long shareId) {
 		_share.setShareId(shareId);
+	}
+
+	/**
+	* Sets the simulation_end_date of this share.
+	*
+	* @param simulation_end_date the simulation_end_date of this share
+	*/
+	@Override
+	public void setSimulation_end_date(Date simulation_end_date) {
+		_share.setSimulation_end_date(simulation_end_date);
 	}
 
 	/**

@@ -475,6 +475,20 @@ public interface ShareModel extends BaseModel<Share>, ShardedModel, StagedModel 
 	 */
 	public void setLast_error_trader_provider(String last_error_trader_provider);
 
+	/**
+	 * Returns the simulation_end_date of this share.
+	 *
+	 * @return the simulation_end_date of this share
+	 */
+	public Date getSimulation_end_date();
+
+	/**
+	 * Sets the simulation_end_date of this share.
+	 *
+	 * @param simulation_end_date the simulation_end_date of this share
+	 */
+	public void setSimulation_end_date(Date simulation_end_date);
+
 	@Override
 	public boolean isNew();
 

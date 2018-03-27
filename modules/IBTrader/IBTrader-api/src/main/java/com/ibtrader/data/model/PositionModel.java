@@ -621,6 +621,20 @@ public interface PositionModel extends BaseModel<Position>, ShardedModel,
 	 */
 	public void setSimulation_mode(boolean simulation_mode);
 
+	/**
+	 * Returns the totalcommision of this position.
+	 *
+	 * @return the totalcommision of this position
+	 */
+	public double getTotalcommision();
+
+	/**
+	 * Sets the totalcommision of this position.
+	 *
+	 * @param totalcommision the totalcommision of this position
+	 */
+	public void setTotalcommision(double totalcommision);
+
 	@Override
 	public boolean isNew();
 

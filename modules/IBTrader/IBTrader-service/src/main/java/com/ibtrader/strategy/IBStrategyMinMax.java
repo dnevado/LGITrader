@@ -50,6 +50,7 @@ import com.ibtrader.util.ConfigKeys;
 import com.ibtrader.util.PositionStates;
 import com.ibtrader.util.Utilities;
 
+@SuppressWarnings("serial")
 public class IBStrategyMinMax extends StrategyImpl {
 
 	
@@ -72,7 +73,16 @@ public class IBStrategyMinMax extends StrategyImpl {
 	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OPERATIONS_TYPE = "Operation Type [ALL, BUY, SELL]";  // offset desde inicio de mercado en minutos
 	
 	JSONObject _tradeDescription;
+	
+	private List<Order> childOrders = new ArrayList<Order>(); 
 
+
+	/* trailing stop orders can't be directly attached to MKT orders.
+	 * s  (non-Javadoc)
+	 * @see com.ibtrader.data.model.impl.StrategyImpl#execute(com.ibtrader.data.model.Share, com.ibtrader.data.model.Market)
+	 */
+
+	
 	@Override
 	public long execute(Share _share, Market _market) {
 		// TODO Auto-generated method stub
@@ -106,8 +116,7 @@ public class IBStrategyMinMax extends StrategyImpl {
   		   this.setTargetContract(oContrat);
   		   
   			
-			// colocamos operacion de compra
-			
+			// colocamos operacion de compra			
 			Order BuyPositionTWS = new Order();
 			BuyPositionTWS.account(Utilities.getConfigurationValue(IBTraderConstants.keyACCOUNT_IB_NAME, _share.getCompanyId(), _share.getGroupId()));		
 			BuyPositionTWS.orderType(PositionStates.ordertypes.LMT.toString());		    
@@ -121,7 +130,7 @@ public class IBStrategyMinMax extends StrategyImpl {
     		double traillingstoplost =_share.getPercentual_trailling_stop_lost();
     		/* EXISTE ALGO SOBREESCRITO */
     		if (this.getJsonStrategyShareParams()!=null && this.getJsonStrategyShareParams().getDouble(ConfigKeys._FIELD_TRAILLING_STOP_LOST,0)>0)
-    			traillingstoplost =this.getJsonStrategyShareParams().getDouble(ConfigKeys._FIELD_STOP_LOST,0);
+    			traillingstoplost =this.getJsonStrategyShareParams().getDouble(ConfigKeys._FIELD_TRAILLING_STOP_LOST,0);
     		
 			BuyPositionTWS.totalQuantity(number_to_purchase);
 			// precio del tick más o menos un porcentaje ...normalmente %1
@@ -172,12 +181,18 @@ public class IBStrategyMinMax extends StrategyImpl {
     		else
     			BuyPositionSystem.setPercentualstoplost_out(_defaultstop_percent);
     		
-    		/* trailing stop lost , introducimos el trailing % y stop lost */
+    		/*  trailing stop lost , introducimos el trailing % y stop lost, son ordenes hijas pero sin BBDD */     		
     		if (traillingstoplost>0)    	
     		{
-    			BuyPositionTWS.trailingPercent(Utilities.RoundPrice(traillingstoplost));
-    			BuyPositionTWS.trailStopPrice(Utilities.RoundPrice(stoplost));
-    			BuyPositionTWS.orderType(PositionStates.ordertypes.TRAIL.toString());		    
+    			
+    			Order _childTrailOrder = new Order();
+    			//stopLoss.orderId(parent.orderId() + 2);
+    			_childTrailOrder.action(BuyPositionTWS.equals(PositionStates.statusTWSFire.BUY.toString()) ? PositionStates.statusTWSFire.SELL.toString() : PositionStates.statusTWSFire.BUY.toString());
+    			_childTrailOrder.orderType( PositionStates.ordertypes.TRAIL.toString());
+    			_childTrailOrder.trailingPercent(Utilities.RoundPrice(traillingstoplost));
+    			_childTrailOrder.totalQuantity(BuyPositionTWS.totalQuantity());    
+    			childOrders.add(_childTrailOrder);
+
     		
     		}
     		
@@ -201,7 +216,9 @@ public class IBStrategyMinMax extends StrategyImpl {
 			PositionLocalServiceUtil.updatePosition(BuyPositionSystem);
 			/* Posicion en MYSQL de CONTROL */
 			_log.info("Opening order " + BuyPositionSystem.getPositionId());
-			
+			/* METEMOS LA LISTA DE ORDENES HIJAS */
+			this.setChildsOrder(childOrders);			
+
 			/* RETORNAMOS PORQUE DESPUES HAY QUE METER EN LA POSICION EN NUMERO DE ORDEN DE LA TWS */
 			returnValue =  BuyPositionSystem.getPositionId();
 
@@ -279,16 +296,19 @@ public class IBStrategyMinMax extends StrategyImpl {
 		
 		// ya no obtenemos el maximo y minimo, sino el correspondiente al tramo que me han dicho
 		/* TIMEZONE AJUSTADO */
-		Date _FromNow = Utilities.getDate(_IBUser);
+		Date _FromIniMarket = Utilities.getDate(_IBUser);
+		Date _ToIniMarket   = Utilities.getDate(_IBUser);
 		Date _ToNow   = Utilities.getDate(_IBUser);
+
 		
-		_FromNow = Utilities.setDateWithHour(_FromNow,HoraInicioLecturaMaxMin);
-		_ToNow   = Utilities.setDateWithHour(_ToNow,HoraFinLecturaMaxMin);
+		_FromIniMarket = Utilities.setDateWithHour(_FromIniMarket,HoraInicioLecturaMaxMin);
+		_ToIniMarket   = Utilities.setDateWithHour(_ToIniMarket,HoraFinLecturaMaxMin);
 		
 		/* TIEMPOS REALES Y MAXIMOS Y MINIMOS CONSEGUIDOS */			
 		//List<Double[]>  lMinMaxRealTime = (List<Double[]>)     RealtimeLocalServiceUtil.findMinMaxRealTime(_FromNow, _ToNow, _share.getShareId(), _share.getCompanyId(), _share.getGroupId());  			
-		Realtime MinMaxRealTime =  RealtimeLocalServiceUtil.findMinMaxRealTime(_FromNow, _ToNow, _share.getShareId(), _share.getCompanyId(), _share.getGroupId());
-		Realtime oShareLastRTime = (Realtime)  RealtimeLocalServiceUtil.findLastRealTime(_share.getShareId(), _share.getCompanyId(), _share.getGroupId());
+		Realtime MinMaxRealTime =  RealtimeLocalServiceUtil.findMinMaxRealTime(_FromIniMarket, _ToIniMarket, _share.getShareId(), _share.getCompanyId(), _share.getGroupId());
+		//Realtime oShareLastRTime = (Realtime)  RealtimeLocalServiceUtil.findLastRealTime(_share.getShareId(), _share.getCompanyId(), _share.getGroupId());
+		Realtime oShareLastRTime = (Realtime)  RealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(),_ToNow);
 		
 		/* TIENE QUE HABER UNA LISTA DE MINIMO Y MAXIMO */
 		if (MinMaxRealTime!=null && oShareLastRTime!=null && oShareLastRTime.getValue()>0 && MinMaxRealTime.getMax_value()>0 && MinMaxRealTime.getMin_value()>0)
@@ -304,8 +324,14 @@ public class IBStrategyMinMax extends StrategyImpl {
 			double MaxValueWithGap = (MaxValue * this.getJsonStrategyShareParams().getDouble(_EXPANDO_PERCENTUAL_GAP) / 100) +  MaxValue ;
 			double MinValueWithGap = MinValue  - (MinValue  * this.getJsonStrategyShareParams().getDouble(_EXPANDO_PERCENTUAL_GAP) / 100) ;
 			
-			double MaxValueWithGapAndLimit = MaxValueWithGap  + (MaxValueWithGap * _share.getPercentual_limit_buy() / 100 );
-			double MinValueWithGapAndLimit = MinValueWithGap  - (MinValueWithGap * _share.getPercentual_limit_buy() / 100);
+			double percentual_limit_buy = _share.getPercentual_limit_buy();			
+    		/* EXISTE ALGO SOBREESCRITO */
+    		if (this.getJsonStrategyShareParams()!=null && this.getJsonStrategyShareParams().getDouble(ConfigKeys._FIELD_PERCENTUAL_LIMIT_GAP_IN,0)>0)
+    			percentual_limit_buy =this.getJsonStrategyShareParams().getDouble(ConfigKeys._FIELD_PERCENTUAL_LIMIT_GAP_IN,0);    
+		
+			
+			double MaxValueWithGapAndLimit = MaxValueWithGap  + (MaxValueWithGap * percentual_limit_buy / 100 );
+			double MinValueWithGapAndLimit = MinValueWithGap  - (MinValueWithGap * percentual_limit_buy / 100);
 			/* SE ALCANZA EL MAXIMO O MINIMO 
 			 * CAMBIO 1.4.2013
 			 *  EL REALTIME O CAMBIO DE TICK DEBE ESTAR ENTRE EL MAX O MIN Y EL BORDE SUPERIOR.

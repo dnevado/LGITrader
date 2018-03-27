@@ -564,6 +564,11 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 	}
 
 	@Override
+	public java.util.List<com.ib.client.Order> getChildsOrder() {
+		return _strategy.getChildsOrder();
+	}
+
+	@Override
 	public java.util.List<com.liferay.expando.kernel.model.ExpandoColumn> getIBStrategyParams() {
 		return _strategy.getIBStrategyParams();
 	}
@@ -671,6 +676,11 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 	@Override
 	public void setCan_override_params(boolean can_override_params) {
 		_strategy.setCan_override_params(can_override_params);
+	}
+
+	@Override
+	public void setChildsOrder(java.util.List<com.ib.client.Order> _childsOrder) {
+		_strategy.setChildsOrder(_childsOrder);
 	}
 
 	/**

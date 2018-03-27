@@ -61,6 +61,7 @@ public class ShareSoap implements Serializable {
 		soapModel.setValidated_trader_provider(model.getValidated_trader_provider());
 		soapModel.setDate_validated_trader_provider(model.getDate_validated_trader_provider());
 		soapModel.setLast_error_trader_provider(model.getLast_error_trader_provider());
+		soapModel.setSimulation_end_date(model.getSimulation_end_date());
 
 		return soapModel;
 	}
@@ -340,6 +341,14 @@ public class ShareSoap implements Serializable {
 		_last_error_trader_provider = last_error_trader_provider;
 	}
 
+	public Date getSimulation_end_date() {
+		return _simulation_end_date;
+	}
+
+	public void setSimulation_end_date(Date simulation_end_date) {
+		_simulation_end_date = simulation_end_date;
+	}
+
 	private String _uuid;
 	private long _shareId;
 	private String _name;
@@ -367,4 +376,5 @@ public class ShareSoap implements Serializable {
 	private boolean _validated_trader_provider;
 	private Date _date_validated_trader_provider;
 	private String _last_error_trader_provider;
+	private Date _simulation_end_date;
 }

@@ -320,6 +320,7 @@
 	        <column name="validated_trader_provider" type="boolean"></column> <!--  si esta validado contra interactive brokers -->
 	        <column name="date_validated_trader_provider" type="Date"></column> <!--  si esta validado contra interactive brokers -->
 	        <column name="last_error_trader_provider" type="String"></column> <!--  si esta validado contra interactive brokers -->
+	        <column name="simulation_end_date" type="Date"></column> <!--  durante la simulacion en curso, no almacenamos el realtime para no interferir  -->
 	        
 	        
     <!--    	<reference package-path="com.ibtrader.data" entity="Market"></reference>-->
@@ -415,6 +416,7 @@
 		<column name="pendingcancelled" type="long" />
 		<column name="trading_data_operations" type="String" />
 		<column name="simulation_mode" type="boolean" />
+		<column name="totalcommision" type="double" />
 		
 		<!-- /* PARA SACAR LA ULTIMA POSITION ID */ -->
 		<order>
@@ -435,13 +437,21 @@
 			<finder-column name="companyId"/>		
 			<finder-column name="shareId" />
 			<finder-column name="state" />			
+			<finder-column name="date_out" />
+		</finder>
+		<finder  name="PositionShareStateDatesRealOut" return-type="Collection">	
+			<finder-column name="groupId"/>
+			<finder-column name="companyId"/>		
+			<finder-column name="shareId" />
+			<finder-column name="state" />			
 			<finder-column name="date_real_out" />
+			<finder-column name="date_out" />
 		</finder>
 		<finder  name="PositionShareDateIn" return-type="Collection">	
 			<finder-column name="groupId"/>
 			<finder-column name="companyId"/>		
 			<finder-column name="shareId" />					
-			<finder-column name="date_real_in" />
+			<finder-column name="date_in" />
 		</finder>
 		<finder  name="PositionShareDateOut" return-type="Collection">	
 			<finder-column name="groupId"/>
@@ -461,7 +471,7 @@
 		<finder name="CompanyGroupDate" return-type="Collection">		
 			<finder-column name="companyId"/>
 			<finder-column name="groupId"/>
-			<finder-column name="date_real_in"/>  <!--  INICIO Y FIN  -->	
+			<finder-column name="date_in"/>  <!--  INICIO Y FIN  -->	
 										
 		</finder>	
 		

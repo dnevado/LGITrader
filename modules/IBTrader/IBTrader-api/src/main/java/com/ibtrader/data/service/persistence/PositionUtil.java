@@ -766,24 +766,24 @@ public class PositionUtil {
 	}
 
 	/**
-	* Returns all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63;.
+	* Returns all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_out = &#63;.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param shareId the share ID
 	* @param state the state
-	* @param date_real_out the date_real_out
+	* @param date_out the date_out
 	* @return the matching positions
 	*/
 	public static List<Position> findByPositionShareStateDateOut(long groupId,
-		long companyId, long shareId, java.lang.String state, Date date_real_out) {
+		long companyId, long shareId, java.lang.String state, Date date_out) {
 		return getPersistence()
 				   .findByPositionShareStateDateOut(groupId, companyId,
-			shareId, state, date_real_out);
+			shareId, state, date_out);
 	}
 
 	/**
-	* Returns a range of all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63;.
+	* Returns a range of all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_out = &#63;.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -793,21 +793,21 @@ public class PositionUtil {
 	* @param companyId the company ID
 	* @param shareId the share ID
 	* @param state the state
-	* @param date_real_out the date_real_out
+	* @param date_out the date_out
 	* @param start the lower bound of the range of positions
 	* @param end the upper bound of the range of positions (not inclusive)
 	* @return the range of matching positions
 	*/
 	public static List<Position> findByPositionShareStateDateOut(long groupId,
-		long companyId, long shareId, java.lang.String state,
-		Date date_real_out, int start, int end) {
+		long companyId, long shareId, java.lang.String state, Date date_out,
+		int start, int end) {
 		return getPersistence()
 				   .findByPositionShareStateDateOut(groupId, companyId,
-			shareId, state, date_real_out, start, end);
+			shareId, state, date_out, start, end);
 	}
 
 	/**
-	* Returns an ordered range of all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63;.
+	* Returns an ordered range of all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_out = &#63;.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -817,23 +817,22 @@ public class PositionUtil {
 	* @param companyId the company ID
 	* @param shareId the share ID
 	* @param state the state
-	* @param date_real_out the date_real_out
+	* @param date_out the date_out
 	* @param start the lower bound of the range of positions
 	* @param end the upper bound of the range of positions (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching positions
 	*/
 	public static List<Position> findByPositionShareStateDateOut(long groupId,
-		long companyId, long shareId, java.lang.String state,
-		Date date_real_out, int start, int end,
-		OrderByComparator<Position> orderByComparator) {
+		long companyId, long shareId, java.lang.String state, Date date_out,
+		int start, int end, OrderByComparator<Position> orderByComparator) {
 		return getPersistence()
 				   .findByPositionShareStateDateOut(groupId, companyId,
-			shareId, state, date_real_out, start, end, orderByComparator);
+			shareId, state, date_out, start, end, orderByComparator);
 	}
 
 	/**
-	* Returns an ordered range of all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63;.
+	* Returns an ordered range of all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_out = &#63;.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -843,7 +842,7 @@ public class PositionUtil {
 	* @param companyId the company ID
 	* @param shareId the share ID
 	* @param state the state
-	* @param date_real_out the date_real_out
+	* @param date_out the date_out
 	* @param start the lower bound of the range of positions
 	* @param end the upper bound of the range of positions (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
@@ -851,169 +850,172 @@ public class PositionUtil {
 	* @return the ordered range of matching positions
 	*/
 	public static List<Position> findByPositionShareStateDateOut(long groupId,
-		long companyId, long shareId, java.lang.String state,
-		Date date_real_out, int start, int end,
-		OrderByComparator<Position> orderByComparator, boolean retrieveFromCache) {
+		long companyId, long shareId, java.lang.String state, Date date_out,
+		int start, int end, OrderByComparator<Position> orderByComparator,
+		boolean retrieveFromCache) {
 		return getPersistence()
 				   .findByPositionShareStateDateOut(groupId, companyId,
-			shareId, state, date_real_out, start, end, orderByComparator,
+			shareId, state, date_out, start, end, orderByComparator,
 			retrieveFromCache);
 	}
 
 	/**
-	* Returns the first position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63;.
+	* Returns the first position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_out = &#63;.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param shareId the share ID
 	* @param state the state
-	* @param date_real_out the date_real_out
+	* @param date_out the date_out
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching position
 	* @throws NoSuchPositionException if a matching position could not be found
 	*/
 	public static Position findByPositionShareStateDateOut_First(long groupId,
-		long companyId, long shareId, java.lang.String state,
-		Date date_real_out, OrderByComparator<Position> orderByComparator)
+		long companyId, long shareId, java.lang.String state, Date date_out,
+		OrderByComparator<Position> orderByComparator)
 		throws com.ibtrader.data.exception.NoSuchPositionException {
 		return getPersistence()
 				   .findByPositionShareStateDateOut_First(groupId, companyId,
-			shareId, state, date_real_out, orderByComparator);
+			shareId, state, date_out, orderByComparator);
 	}
 
 	/**
-	* Returns the first position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63;.
+	* Returns the first position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_out = &#63;.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param shareId the share ID
 	* @param state the state
-	* @param date_real_out the date_real_out
+	* @param date_out the date_out
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching position, or <code>null</code> if a matching position could not be found
 	*/
 	public static Position fetchByPositionShareStateDateOut_First(
 		long groupId, long companyId, long shareId, java.lang.String state,
-		Date date_real_out, OrderByComparator<Position> orderByComparator) {
+		Date date_out, OrderByComparator<Position> orderByComparator) {
 		return getPersistence()
 				   .fetchByPositionShareStateDateOut_First(groupId, companyId,
-			shareId, state, date_real_out, orderByComparator);
+			shareId, state, date_out, orderByComparator);
 	}
 
 	/**
-	* Returns the last position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63;.
+	* Returns the last position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_out = &#63;.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param shareId the share ID
 	* @param state the state
-	* @param date_real_out the date_real_out
+	* @param date_out the date_out
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching position
 	* @throws NoSuchPositionException if a matching position could not be found
 	*/
 	public static Position findByPositionShareStateDateOut_Last(long groupId,
-		long companyId, long shareId, java.lang.String state,
-		Date date_real_out, OrderByComparator<Position> orderByComparator)
+		long companyId, long shareId, java.lang.String state, Date date_out,
+		OrderByComparator<Position> orderByComparator)
 		throws com.ibtrader.data.exception.NoSuchPositionException {
 		return getPersistence()
 				   .findByPositionShareStateDateOut_Last(groupId, companyId,
-			shareId, state, date_real_out, orderByComparator);
+			shareId, state, date_out, orderByComparator);
 	}
 
 	/**
-	* Returns the last position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63;.
+	* Returns the last position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_out = &#63;.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param shareId the share ID
 	* @param state the state
-	* @param date_real_out the date_real_out
+	* @param date_out the date_out
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching position, or <code>null</code> if a matching position could not be found
 	*/
 	public static Position fetchByPositionShareStateDateOut_Last(long groupId,
-		long companyId, long shareId, java.lang.String state,
-		Date date_real_out, OrderByComparator<Position> orderByComparator) {
+		long companyId, long shareId, java.lang.String state, Date date_out,
+		OrderByComparator<Position> orderByComparator) {
 		return getPersistence()
 				   .fetchByPositionShareStateDateOut_Last(groupId, companyId,
-			shareId, state, date_real_out, orderByComparator);
+			shareId, state, date_out, orderByComparator);
 	}
 
 	/**
-	* Returns the positions before and after the current position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63;.
+	* Returns the positions before and after the current position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_out = &#63;.
 	*
 	* @param positionId the primary key of the current position
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param shareId the share ID
 	* @param state the state
-	* @param date_real_out the date_real_out
+	* @param date_out the date_out
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next position
 	* @throws NoSuchPositionException if a position with the primary key could not be found
 	*/
 	public static Position[] findByPositionShareStateDateOut_PrevAndNext(
 		long positionId, long groupId, long companyId, long shareId,
-		java.lang.String state, Date date_real_out,
+		java.lang.String state, Date date_out,
 		OrderByComparator<Position> orderByComparator)
 		throws com.ibtrader.data.exception.NoSuchPositionException {
 		return getPersistence()
 				   .findByPositionShareStateDateOut_PrevAndNext(positionId,
-			groupId, companyId, shareId, state, date_real_out, orderByComparator);
+			groupId, companyId, shareId, state, date_out, orderByComparator);
 	}
 
 	/**
-	* Removes all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63; from the database.
+	* Removes all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_out = &#63; from the database.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param shareId the share ID
 	* @param state the state
-	* @param date_real_out the date_real_out
+	* @param date_out the date_out
 	*/
 	public static void removeByPositionShareStateDateOut(long groupId,
-		long companyId, long shareId, java.lang.String state, Date date_real_out) {
+		long companyId, long shareId, java.lang.String state, Date date_out) {
 		getPersistence()
 			.removeByPositionShareStateDateOut(groupId, companyId, shareId,
-			state, date_real_out);
+			state, date_out);
 	}
 
 	/**
-	* Returns the number of positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63;.
+	* Returns the number of positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_out = &#63;.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param shareId the share ID
 	* @param state the state
-	* @param date_real_out the date_real_out
+	* @param date_out the date_out
 	* @return the number of matching positions
 	*/
 	public static int countByPositionShareStateDateOut(long groupId,
-		long companyId, long shareId, java.lang.String state, Date date_real_out) {
+		long companyId, long shareId, java.lang.String state, Date date_out) {
 		return getPersistence()
 				   .countByPositionShareStateDateOut(groupId, companyId,
-			shareId, state, date_real_out);
+			shareId, state, date_out);
 	}
 
 	/**
-	* Returns all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_in = &#63;.
+	* Returns all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63; and date_out = &#63;.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param shareId the share ID
-	* @param date_real_in the date_real_in
+	* @param state the state
+	* @param date_real_out the date_real_out
+	* @param date_out the date_out
 	* @return the matching positions
 	*/
-	public static List<Position> findByPositionShareDateIn(long groupId,
-		long companyId, long shareId, Date date_real_in) {
+	public static List<Position> findByPositionShareStateDatesRealOut(
+		long groupId, long companyId, long shareId, java.lang.String state,
+		Date date_real_out, Date date_out) {
 		return getPersistence()
-				   .findByPositionShareDateIn(groupId, companyId, shareId,
-			date_real_in);
+				   .findByPositionShareStateDatesRealOut(groupId, companyId,
+			shareId, state, date_real_out, date_out);
 	}
 
 	/**
-	* Returns a range of all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_in = &#63;.
+	* Returns a range of all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63; and date_out = &#63;.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -1022,20 +1024,272 @@ public class PositionUtil {
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param shareId the share ID
-	* @param date_real_in the date_real_in
+	* @param state the state
+	* @param date_real_out the date_real_out
+	* @param date_out the date_out
+	* @param start the lower bound of the range of positions
+	* @param end the upper bound of the range of positions (not inclusive)
+	* @return the range of matching positions
+	*/
+	public static List<Position> findByPositionShareStateDatesRealOut(
+		long groupId, long companyId, long shareId, java.lang.String state,
+		Date date_real_out, Date date_out, int start, int end) {
+		return getPersistence()
+				   .findByPositionShareStateDatesRealOut(groupId, companyId,
+			shareId, state, date_real_out, date_out, start, end);
+	}
+
+	/**
+	* Returns an ordered range of all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63; and date_out = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param companyId the company ID
+	* @param shareId the share ID
+	* @param state the state
+	* @param date_real_out the date_real_out
+	* @param date_out the date_out
+	* @param start the lower bound of the range of positions
+	* @param end the upper bound of the range of positions (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching positions
+	*/
+	public static List<Position> findByPositionShareStateDatesRealOut(
+		long groupId, long companyId, long shareId, java.lang.String state,
+		Date date_real_out, Date date_out, int start, int end,
+		OrderByComparator<Position> orderByComparator) {
+		return getPersistence()
+				   .findByPositionShareStateDatesRealOut(groupId, companyId,
+			shareId, state, date_real_out, date_out, start, end,
+			orderByComparator);
+	}
+
+	/**
+	* Returns an ordered range of all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63; and date_out = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param companyId the company ID
+	* @param shareId the share ID
+	* @param state the state
+	* @param date_real_out the date_real_out
+	* @param date_out the date_out
+	* @param start the lower bound of the range of positions
+	* @param end the upper bound of the range of positions (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching positions
+	*/
+	public static List<Position> findByPositionShareStateDatesRealOut(
+		long groupId, long companyId, long shareId, java.lang.String state,
+		Date date_real_out, Date date_out, int start, int end,
+		OrderByComparator<Position> orderByComparator, boolean retrieveFromCache) {
+		return getPersistence()
+				   .findByPositionShareStateDatesRealOut(groupId, companyId,
+			shareId, state, date_real_out, date_out, start, end,
+			orderByComparator, retrieveFromCache);
+	}
+
+	/**
+	* Returns the first position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63; and date_out = &#63;.
+	*
+	* @param groupId the group ID
+	* @param companyId the company ID
+	* @param shareId the share ID
+	* @param state the state
+	* @param date_real_out the date_real_out
+	* @param date_out the date_out
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching position
+	* @throws NoSuchPositionException if a matching position could not be found
+	*/
+	public static Position findByPositionShareStateDatesRealOut_First(
+		long groupId, long companyId, long shareId, java.lang.String state,
+		Date date_real_out, Date date_out,
+		OrderByComparator<Position> orderByComparator)
+		throws com.ibtrader.data.exception.NoSuchPositionException {
+		return getPersistence()
+				   .findByPositionShareStateDatesRealOut_First(groupId,
+			companyId, shareId, state, date_real_out, date_out,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the first position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63; and date_out = &#63;.
+	*
+	* @param groupId the group ID
+	* @param companyId the company ID
+	* @param shareId the share ID
+	* @param state the state
+	* @param date_real_out the date_real_out
+	* @param date_out the date_out
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching position, or <code>null</code> if a matching position could not be found
+	*/
+	public static Position fetchByPositionShareStateDatesRealOut_First(
+		long groupId, long companyId, long shareId, java.lang.String state,
+		Date date_real_out, Date date_out,
+		OrderByComparator<Position> orderByComparator) {
+		return getPersistence()
+				   .fetchByPositionShareStateDatesRealOut_First(groupId,
+			companyId, shareId, state, date_real_out, date_out,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the last position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63; and date_out = &#63;.
+	*
+	* @param groupId the group ID
+	* @param companyId the company ID
+	* @param shareId the share ID
+	* @param state the state
+	* @param date_real_out the date_real_out
+	* @param date_out the date_out
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching position
+	* @throws NoSuchPositionException if a matching position could not be found
+	*/
+	public static Position findByPositionShareStateDatesRealOut_Last(
+		long groupId, long companyId, long shareId, java.lang.String state,
+		Date date_real_out, Date date_out,
+		OrderByComparator<Position> orderByComparator)
+		throws com.ibtrader.data.exception.NoSuchPositionException {
+		return getPersistence()
+				   .findByPositionShareStateDatesRealOut_Last(groupId,
+			companyId, shareId, state, date_real_out, date_out,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the last position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63; and date_out = &#63;.
+	*
+	* @param groupId the group ID
+	* @param companyId the company ID
+	* @param shareId the share ID
+	* @param state the state
+	* @param date_real_out the date_real_out
+	* @param date_out the date_out
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching position, or <code>null</code> if a matching position could not be found
+	*/
+	public static Position fetchByPositionShareStateDatesRealOut_Last(
+		long groupId, long companyId, long shareId, java.lang.String state,
+		Date date_real_out, Date date_out,
+		OrderByComparator<Position> orderByComparator) {
+		return getPersistence()
+				   .fetchByPositionShareStateDatesRealOut_Last(groupId,
+			companyId, shareId, state, date_real_out, date_out,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the positions before and after the current position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63; and date_out = &#63;.
+	*
+	* @param positionId the primary key of the current position
+	* @param groupId the group ID
+	* @param companyId the company ID
+	* @param shareId the share ID
+	* @param state the state
+	* @param date_real_out the date_real_out
+	* @param date_out the date_out
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next position
+	* @throws NoSuchPositionException if a position with the primary key could not be found
+	*/
+	public static Position[] findByPositionShareStateDatesRealOut_PrevAndNext(
+		long positionId, long groupId, long companyId, long shareId,
+		java.lang.String state, Date date_real_out, Date date_out,
+		OrderByComparator<Position> orderByComparator)
+		throws com.ibtrader.data.exception.NoSuchPositionException {
+		return getPersistence()
+				   .findByPositionShareStateDatesRealOut_PrevAndNext(positionId,
+			groupId, companyId, shareId, state, date_real_out, date_out,
+			orderByComparator);
+	}
+
+	/**
+	* Removes all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63; and date_out = &#63; from the database.
+	*
+	* @param groupId the group ID
+	* @param companyId the company ID
+	* @param shareId the share ID
+	* @param state the state
+	* @param date_real_out the date_real_out
+	* @param date_out the date_out
+	*/
+	public static void removeByPositionShareStateDatesRealOut(long groupId,
+		long companyId, long shareId, java.lang.String state,
+		Date date_real_out, Date date_out) {
+		getPersistence()
+			.removeByPositionShareStateDatesRealOut(groupId, companyId,
+			shareId, state, date_real_out, date_out);
+	}
+
+	/**
+	* Returns the number of positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63; and date_out = &#63;.
+	*
+	* @param groupId the group ID
+	* @param companyId the company ID
+	* @param shareId the share ID
+	* @param state the state
+	* @param date_real_out the date_real_out
+	* @param date_out the date_out
+	* @return the number of matching positions
+	*/
+	public static int countByPositionShareStateDatesRealOut(long groupId,
+		long companyId, long shareId, java.lang.String state,
+		Date date_real_out, Date date_out) {
+		return getPersistence()
+				   .countByPositionShareStateDatesRealOut(groupId, companyId,
+			shareId, state, date_real_out, date_out);
+	}
+
+	/**
+	* Returns all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_in = &#63;.
+	*
+	* @param groupId the group ID
+	* @param companyId the company ID
+	* @param shareId the share ID
+	* @param date_in the date_in
+	* @return the matching positions
+	*/
+	public static List<Position> findByPositionShareDateIn(long groupId,
+		long companyId, long shareId, Date date_in) {
+		return getPersistence()
+				   .findByPositionShareDateIn(groupId, companyId, shareId,
+			date_in);
+	}
+
+	/**
+	* Returns a range of all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_in = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param companyId the company ID
+	* @param shareId the share ID
+	* @param date_in the date_in
 	* @param start the lower bound of the range of positions
 	* @param end the upper bound of the range of positions (not inclusive)
 	* @return the range of matching positions
 	*/
 	public static List<Position> findByPositionShareDateIn(long groupId,
-		long companyId, long shareId, Date date_real_in, int start, int end) {
+		long companyId, long shareId, Date date_in, int start, int end) {
 		return getPersistence()
 				   .findByPositionShareDateIn(groupId, companyId, shareId,
-			date_real_in, start, end);
+			date_in, start, end);
 	}
 
 	/**
-	* Returns an ordered range of all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_in = &#63;.
+	* Returns an ordered range of all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_in = &#63;.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -1044,22 +1298,22 @@ public class PositionUtil {
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param shareId the share ID
-	* @param date_real_in the date_real_in
+	* @param date_in the date_in
 	* @param start the lower bound of the range of positions
 	* @param end the upper bound of the range of positions (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching positions
 	*/
 	public static List<Position> findByPositionShareDateIn(long groupId,
-		long companyId, long shareId, Date date_real_in, int start, int end,
+		long companyId, long shareId, Date date_in, int start, int end,
 		OrderByComparator<Position> orderByComparator) {
 		return getPersistence()
 				   .findByPositionShareDateIn(groupId, companyId, shareId,
-			date_real_in, start, end, orderByComparator);
+			date_in, start, end, orderByComparator);
 	}
 
 	/**
-	* Returns an ordered range of all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_in = &#63;.
+	* Returns an ordered range of all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_in = &#63;.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -1068,7 +1322,7 @@ public class PositionUtil {
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param shareId the share ID
-	* @param date_real_in the date_real_in
+	* @param date_in the date_in
 	* @param start the lower bound of the range of positions
 	* @param end the upper bound of the range of positions (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
@@ -1076,139 +1330,138 @@ public class PositionUtil {
 	* @return the ordered range of matching positions
 	*/
 	public static List<Position> findByPositionShareDateIn(long groupId,
-		long companyId, long shareId, Date date_real_in, int start, int end,
+		long companyId, long shareId, Date date_in, int start, int end,
 		OrderByComparator<Position> orderByComparator, boolean retrieveFromCache) {
 		return getPersistence()
 				   .findByPositionShareDateIn(groupId, companyId, shareId,
-			date_real_in, start, end, orderByComparator, retrieveFromCache);
+			date_in, start, end, orderByComparator, retrieveFromCache);
 	}
 
 	/**
-	* Returns the first position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_in = &#63;.
+	* Returns the first position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_in = &#63;.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param shareId the share ID
-	* @param date_real_in the date_real_in
+	* @param date_in the date_in
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching position
 	* @throws NoSuchPositionException if a matching position could not be found
 	*/
 	public static Position findByPositionShareDateIn_First(long groupId,
-		long companyId, long shareId, Date date_real_in,
+		long companyId, long shareId, Date date_in,
 		OrderByComparator<Position> orderByComparator)
 		throws com.ibtrader.data.exception.NoSuchPositionException {
 		return getPersistence()
 				   .findByPositionShareDateIn_First(groupId, companyId,
-			shareId, date_real_in, orderByComparator);
+			shareId, date_in, orderByComparator);
 	}
 
 	/**
-	* Returns the first position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_in = &#63;.
+	* Returns the first position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_in = &#63;.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param shareId the share ID
-	* @param date_real_in the date_real_in
+	* @param date_in the date_in
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching position, or <code>null</code> if a matching position could not be found
 	*/
 	public static Position fetchByPositionShareDateIn_First(long groupId,
-		long companyId, long shareId, Date date_real_in,
+		long companyId, long shareId, Date date_in,
 		OrderByComparator<Position> orderByComparator) {
 		return getPersistence()
 				   .fetchByPositionShareDateIn_First(groupId, companyId,
-			shareId, date_real_in, orderByComparator);
+			shareId, date_in, orderByComparator);
 	}
 
 	/**
-	* Returns the last position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_in = &#63;.
+	* Returns the last position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_in = &#63;.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param shareId the share ID
-	* @param date_real_in the date_real_in
+	* @param date_in the date_in
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching position
 	* @throws NoSuchPositionException if a matching position could not be found
 	*/
 	public static Position findByPositionShareDateIn_Last(long groupId,
-		long companyId, long shareId, Date date_real_in,
+		long companyId, long shareId, Date date_in,
 		OrderByComparator<Position> orderByComparator)
 		throws com.ibtrader.data.exception.NoSuchPositionException {
 		return getPersistence()
 				   .findByPositionShareDateIn_Last(groupId, companyId, shareId,
-			date_real_in, orderByComparator);
+			date_in, orderByComparator);
 	}
 
 	/**
-	* Returns the last position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_in = &#63;.
+	* Returns the last position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_in = &#63;.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param shareId the share ID
-	* @param date_real_in the date_real_in
+	* @param date_in the date_in
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching position, or <code>null</code> if a matching position could not be found
 	*/
 	public static Position fetchByPositionShareDateIn_Last(long groupId,
-		long companyId, long shareId, Date date_real_in,
+		long companyId, long shareId, Date date_in,
 		OrderByComparator<Position> orderByComparator) {
 		return getPersistence()
 				   .fetchByPositionShareDateIn_Last(groupId, companyId,
-			shareId, date_real_in, orderByComparator);
+			shareId, date_in, orderByComparator);
 	}
 
 	/**
-	* Returns the positions before and after the current position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_in = &#63;.
+	* Returns the positions before and after the current position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_in = &#63;.
 	*
 	* @param positionId the primary key of the current position
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param shareId the share ID
-	* @param date_real_in the date_real_in
+	* @param date_in the date_in
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next position
 	* @throws NoSuchPositionException if a position with the primary key could not be found
 	*/
 	public static Position[] findByPositionShareDateIn_PrevAndNext(
 		long positionId, long groupId, long companyId, long shareId,
-		Date date_real_in, OrderByComparator<Position> orderByComparator)
+		Date date_in, OrderByComparator<Position> orderByComparator)
 		throws com.ibtrader.data.exception.NoSuchPositionException {
 		return getPersistence()
 				   .findByPositionShareDateIn_PrevAndNext(positionId, groupId,
-			companyId, shareId, date_real_in, orderByComparator);
+			companyId, shareId, date_in, orderByComparator);
 	}
 
 	/**
-	* Removes all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_in = &#63; from the database.
+	* Removes all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_in = &#63; from the database.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param shareId the share ID
-	* @param date_real_in the date_real_in
+	* @param date_in the date_in
 	*/
 	public static void removeByPositionShareDateIn(long groupId,
-		long companyId, long shareId, Date date_real_in) {
+		long companyId, long shareId, Date date_in) {
 		getPersistence()
-			.removeByPositionShareDateIn(groupId, companyId, shareId,
-			date_real_in);
+			.removeByPositionShareDateIn(groupId, companyId, shareId, date_in);
 	}
 
 	/**
-	* Returns the number of positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_real_in = &#63;.
+	* Returns the number of positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_in = &#63;.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param shareId the share ID
-	* @param date_real_in the date_real_in
+	* @param date_in the date_in
 	* @return the number of matching positions
 	*/
 	public static int countByPositionShareDateIn(long groupId, long companyId,
-		long shareId, Date date_real_in) {
+		long shareId, Date date_in) {
 		return getPersistence()
 				   .countByPositionShareDateIn(groupId, companyId, shareId,
-			date_real_in);
+			date_in);
 	}
 
 	/**
@@ -1805,21 +2058,21 @@ public class PositionUtil {
 	}
 
 	/**
-	* Returns all the positions where companyId = &#63; and groupId = &#63; and date_real_in = &#63;.
+	* Returns all the positions where companyId = &#63; and groupId = &#63; and date_in = &#63;.
 	*
 	* @param companyId the company ID
 	* @param groupId the group ID
-	* @param date_real_in the date_real_in
+	* @param date_in the date_in
 	* @return the matching positions
 	*/
 	public static List<Position> findByCompanyGroupDate(long companyId,
-		long groupId, Date date_real_in) {
+		long groupId, Date date_in) {
 		return getPersistence()
-				   .findByCompanyGroupDate(companyId, groupId, date_real_in);
+				   .findByCompanyGroupDate(companyId, groupId, date_in);
 	}
 
 	/**
-	* Returns a range of all the positions where companyId = &#63; and groupId = &#63; and date_real_in = &#63;.
+	* Returns a range of all the positions where companyId = &#63; and groupId = &#63; and date_in = &#63;.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -1827,20 +2080,20 @@ public class PositionUtil {
 	*
 	* @param companyId the company ID
 	* @param groupId the group ID
-	* @param date_real_in the date_real_in
+	* @param date_in the date_in
 	* @param start the lower bound of the range of positions
 	* @param end the upper bound of the range of positions (not inclusive)
 	* @return the range of matching positions
 	*/
 	public static List<Position> findByCompanyGroupDate(long companyId,
-		long groupId, Date date_real_in, int start, int end) {
+		long groupId, Date date_in, int start, int end) {
 		return getPersistence()
-				   .findByCompanyGroupDate(companyId, groupId, date_real_in,
-			start, end);
+				   .findByCompanyGroupDate(companyId, groupId, date_in, start,
+			end);
 	}
 
 	/**
-	* Returns an ordered range of all the positions where companyId = &#63; and groupId = &#63; and date_real_in = &#63;.
+	* Returns an ordered range of all the positions where companyId = &#63; and groupId = &#63; and date_in = &#63;.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -1848,22 +2101,22 @@ public class PositionUtil {
 	*
 	* @param companyId the company ID
 	* @param groupId the group ID
-	* @param date_real_in the date_real_in
+	* @param date_in the date_in
 	* @param start the lower bound of the range of positions
 	* @param end the upper bound of the range of positions (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching positions
 	*/
 	public static List<Position> findByCompanyGroupDate(long companyId,
-		long groupId, Date date_real_in, int start, int end,
+		long groupId, Date date_in, int start, int end,
 		OrderByComparator<Position> orderByComparator) {
 		return getPersistence()
-				   .findByCompanyGroupDate(companyId, groupId, date_real_in,
-			start, end, orderByComparator);
+				   .findByCompanyGroupDate(companyId, groupId, date_in, start,
+			end, orderByComparator);
 	}
 
 	/**
-	* Returns an ordered range of all the positions where companyId = &#63; and groupId = &#63; and date_real_in = &#63;.
+	* Returns an ordered range of all the positions where companyId = &#63; and groupId = &#63; and date_in = &#63;.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -1871,7 +2124,7 @@ public class PositionUtil {
 	*
 	* @param companyId the company ID
 	* @param groupId the group ID
-	* @param date_real_in the date_real_in
+	* @param date_in the date_in
 	* @param start the lower bound of the range of positions
 	* @param end the upper bound of the range of positions (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
@@ -1879,130 +2132,129 @@ public class PositionUtil {
 	* @return the ordered range of matching positions
 	*/
 	public static List<Position> findByCompanyGroupDate(long companyId,
-		long groupId, Date date_real_in, int start, int end,
+		long groupId, Date date_in, int start, int end,
 		OrderByComparator<Position> orderByComparator, boolean retrieveFromCache) {
 		return getPersistence()
-				   .findByCompanyGroupDate(companyId, groupId, date_real_in,
-			start, end, orderByComparator, retrieveFromCache);
+				   .findByCompanyGroupDate(companyId, groupId, date_in, start,
+			end, orderByComparator, retrieveFromCache);
 	}
 
 	/**
-	* Returns the first position in the ordered set where companyId = &#63; and groupId = &#63; and date_real_in = &#63;.
+	* Returns the first position in the ordered set where companyId = &#63; and groupId = &#63; and date_in = &#63;.
 	*
 	* @param companyId the company ID
 	* @param groupId the group ID
-	* @param date_real_in the date_real_in
+	* @param date_in the date_in
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching position
 	* @throws NoSuchPositionException if a matching position could not be found
 	*/
 	public static Position findByCompanyGroupDate_First(long companyId,
-		long groupId, Date date_real_in,
+		long groupId, Date date_in,
 		OrderByComparator<Position> orderByComparator)
 		throws com.ibtrader.data.exception.NoSuchPositionException {
 		return getPersistence()
-				   .findByCompanyGroupDate_First(companyId, groupId,
-			date_real_in, orderByComparator);
+				   .findByCompanyGroupDate_First(companyId, groupId, date_in,
+			orderByComparator);
 	}
 
 	/**
-	* Returns the first position in the ordered set where companyId = &#63; and groupId = &#63; and date_real_in = &#63;.
+	* Returns the first position in the ordered set where companyId = &#63; and groupId = &#63; and date_in = &#63;.
 	*
 	* @param companyId the company ID
 	* @param groupId the group ID
-	* @param date_real_in the date_real_in
+	* @param date_in the date_in
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching position, or <code>null</code> if a matching position could not be found
 	*/
 	public static Position fetchByCompanyGroupDate_First(long companyId,
-		long groupId, Date date_real_in,
+		long groupId, Date date_in,
 		OrderByComparator<Position> orderByComparator) {
 		return getPersistence()
-				   .fetchByCompanyGroupDate_First(companyId, groupId,
-			date_real_in, orderByComparator);
+				   .fetchByCompanyGroupDate_First(companyId, groupId, date_in,
+			orderByComparator);
 	}
 
 	/**
-	* Returns the last position in the ordered set where companyId = &#63; and groupId = &#63; and date_real_in = &#63;.
+	* Returns the last position in the ordered set where companyId = &#63; and groupId = &#63; and date_in = &#63;.
 	*
 	* @param companyId the company ID
 	* @param groupId the group ID
-	* @param date_real_in the date_real_in
+	* @param date_in the date_in
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching position
 	* @throws NoSuchPositionException if a matching position could not be found
 	*/
 	public static Position findByCompanyGroupDate_Last(long companyId,
-		long groupId, Date date_real_in,
+		long groupId, Date date_in,
 		OrderByComparator<Position> orderByComparator)
 		throws com.ibtrader.data.exception.NoSuchPositionException {
 		return getPersistence()
-				   .findByCompanyGroupDate_Last(companyId, groupId,
-			date_real_in, orderByComparator);
+				   .findByCompanyGroupDate_Last(companyId, groupId, date_in,
+			orderByComparator);
 	}
 
 	/**
-	* Returns the last position in the ordered set where companyId = &#63; and groupId = &#63; and date_real_in = &#63;.
+	* Returns the last position in the ordered set where companyId = &#63; and groupId = &#63; and date_in = &#63;.
 	*
 	* @param companyId the company ID
 	* @param groupId the group ID
-	* @param date_real_in the date_real_in
+	* @param date_in the date_in
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching position, or <code>null</code> if a matching position could not be found
 	*/
 	public static Position fetchByCompanyGroupDate_Last(long companyId,
-		long groupId, Date date_real_in,
+		long groupId, Date date_in,
 		OrderByComparator<Position> orderByComparator) {
 		return getPersistence()
-				   .fetchByCompanyGroupDate_Last(companyId, groupId,
-			date_real_in, orderByComparator);
+				   .fetchByCompanyGroupDate_Last(companyId, groupId, date_in,
+			orderByComparator);
 	}
 
 	/**
-	* Returns the positions before and after the current position in the ordered set where companyId = &#63; and groupId = &#63; and date_real_in = &#63;.
+	* Returns the positions before and after the current position in the ordered set where companyId = &#63; and groupId = &#63; and date_in = &#63;.
 	*
 	* @param positionId the primary key of the current position
 	* @param companyId the company ID
 	* @param groupId the group ID
-	* @param date_real_in the date_real_in
+	* @param date_in the date_in
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next position
 	* @throws NoSuchPositionException if a position with the primary key could not be found
 	*/
 	public static Position[] findByCompanyGroupDate_PrevAndNext(
-		long positionId, long companyId, long groupId, Date date_real_in,
+		long positionId, long companyId, long groupId, Date date_in,
 		OrderByComparator<Position> orderByComparator)
 		throws com.ibtrader.data.exception.NoSuchPositionException {
 		return getPersistence()
 				   .findByCompanyGroupDate_PrevAndNext(positionId, companyId,
-			groupId, date_real_in, orderByComparator);
+			groupId, date_in, orderByComparator);
 	}
 
 	/**
-	* Removes all the positions where companyId = &#63; and groupId = &#63; and date_real_in = &#63; from the database.
+	* Removes all the positions where companyId = &#63; and groupId = &#63; and date_in = &#63; from the database.
 	*
 	* @param companyId the company ID
 	* @param groupId the group ID
-	* @param date_real_in the date_real_in
+	* @param date_in the date_in
 	*/
 	public static void removeByCompanyGroupDate(long companyId, long groupId,
-		Date date_real_in) {
-		getPersistence()
-			.removeByCompanyGroupDate(companyId, groupId, date_real_in);
+		Date date_in) {
+		getPersistence().removeByCompanyGroupDate(companyId, groupId, date_in);
 	}
 
 	/**
-	* Returns the number of positions where companyId = &#63; and groupId = &#63; and date_real_in = &#63;.
+	* Returns the number of positions where companyId = &#63; and groupId = &#63; and date_in = &#63;.
 	*
 	* @param companyId the company ID
 	* @param groupId the group ID
-	* @param date_real_in the date_real_in
+	* @param date_in the date_in
 	* @return the number of matching positions
 	*/
 	public static int countByCompanyGroupDate(long companyId, long groupId,
-		Date date_real_in) {
+		Date date_in) {
 		return getPersistence()
-				   .countByCompanyGroupDate(companyId, groupId, date_real_in);
+				   .countByCompanyGroupDate(companyId, groupId, date_in);
 	}
 
 	/**

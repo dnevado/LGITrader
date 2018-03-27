@@ -51,6 +51,7 @@ import com.ibtrader.data.service.ShareLocalServiceUtil;
 import com.ib.client.EJavaSignal;
 import com.ib.client.EReader;
 import com.ib.client.EReaderSignal;
+import com.ib.client.ExecutionFilter;
 
 
 public class TIMApiGITrader_NOVALE extends TIMApiWrapper {
@@ -326,24 +327,39 @@ public class TIMApiGITrader_NOVALE extends TIMApiWrapper {
 		/*  TIMApiGITrader oTWS = new TIMApiGITrader();
 		oTWS.GITraderConnetToTWS();
 		Thread.sleep(1000);
-*/
+
 		Contract  _contractAPI3 =  new StkContract("AAPL");
 		_contractAPI3.symbol("AAPL");
 		_contractAPI3.secType("STK");
 		_contractAPI3.exchange("ISLAND");
 		_contractAPI3.currency("USD");
+		*/
+		TIMApiWrapper wrapper = new TIMApiWrapper(6,false);
+		final EClientSocket m_client = wrapper.getClient();
+		final EReaderSignal m_signal = wrapper.getSignal(); 
+		//! [connect]
+		m_client.eConnect("127.0.0.1", 7497, 13); 
+		//! [connect]
+		//! [ereader]
+		final EReader reader = new EReader(m_client, m_signal);   
+		
+		reader.start();
 		
 		
-		 TIMApiWrapper wrapper = new TIMApiWrapper(5665,false);
-		 TIMApiWrapper wrapper2 = new TIMApiWrapper(5666,false);
-		
-		 wrapper.connect("127.0.0.1", 7498, 5665); 
-		 wrapper.reqNextId(); 
-		 wrapper2.connect("127.0.0.1", 7498, 5666);
-		 wrapper2.reqNextId();
-		 System.out.println(wrapper2.getCurrentOrderId());
+		//An additional thread is created in this program design to empty the messaging queue
+		new Thread(() -> {
+		    while (m_client.isConnected()) {
+		        m_signal.waitForSignal();
+		        try {
+		            reader.processMsgs();
+		        } catch (Exception e) {
+		            System.out.println("Exception: "+e.getMessage());
+		        }
+		    }
+		}).start();
 		 
-
+		 ExecutionFilter f = new ExecutionFilter();
+		 wrapper.getExecutionOrders(5668);
 		 
 		/* final EClientSocket m_client = wrapper.getClient();
 		 final EReaderSignal m_signal = wrapper.getSignal(); 

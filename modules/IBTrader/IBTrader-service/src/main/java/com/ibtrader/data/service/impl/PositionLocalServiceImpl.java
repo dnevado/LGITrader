@@ -116,23 +116,39 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 		
 	}
 	
-	/* FECHA DE ENTRADA A NULL */
+	/* FECHA  SALIDA   Y REAL DE SALIDA A  NULL , SI PODEMOS LA  REAL  ENTRADA, PUEDE VOLVOER A ENTRAR HASTA QUE NO ESTE FILLED */
 	public boolean  ExistsOpenPosition(long groupId, long companyId, long shareId)
 	{		
-		List<Position> _lPosition = getPositionPersistence().findByPositionShareDateOut(groupId, companyId, shareId, null);
+		
+		
+		List<Position> _lPosition = null;
+
+		
+		DynamicQuery _DQ = PositionLocalServiceUtil.dynamicQuery();
+
+		_DQ.add(RestrictionsFactoryUtil.eq("companyId", companyId));
+		_DQ.add(RestrictionsFactoryUtil.eq("groupId", groupId));
+		_DQ.add(RestrictionsFactoryUtil.eq("shareId", shareId));
+		_DQ.add(RestrictionsFactoryUtil.ne("state", com.ibtrader.util.PositionStates.status.SELL_OK.toString()));
+		
+		_lPosition =  PositionLocalServiceUtil.dynamicQuery(_DQ);
+		
+		/* en el momento que no haya un SELL_OK, consuderans una abierta, no contemplamos fechas */ 
+		
 		return (!_lPosition.isEmpty() && _lPosition.size()>0);
+				
 	}
-	/* BUY_OK  y no fecha de salida */
+	/* BUY_OK  y no fecha de salida real */
 	public boolean  ExistsPositionToExit(long groupId, long companyId, long shareId)
 	{		
-		int total = getPositionPersistence().countByPositionShareStateDateOut(groupId, companyId, shareId, com.ibtrader.util.PositionStates.status.BUY_OK.toString(),null);
+		int total = getPositionPersistence().countByPositionShareStateDatesRealOut(groupId, companyId, shareId, com.ibtrader.util.PositionStates.status.BUY_OK.toString(),null, null);
 		return (total>0);
 	}
 	/* BUY_OK  y no fecha de salida */
 	public Position  findPositionToExit(long groupId, long companyId, long shareId)
 	{	
 		Position _rPosition = null; 
-		List<Position> _lPosition =getPositionPersistence().findByPositionShareStateDateOut(groupId, companyId, shareId, com.ibtrader.util.PositionStates.status.BUY_OK.toString(),null);		
+		List<Position> _lPosition =getPositionPersistence().findByPositionShareStateDatesRealOut(groupId, companyId, shareId, com.ibtrader.util.PositionStates.status.BUY_OK.toString(),null,null);		
 		if (!_lPosition.isEmpty() && _lPosition.size()>0)
 		{
 			_rPosition = _lPosition.get(0);

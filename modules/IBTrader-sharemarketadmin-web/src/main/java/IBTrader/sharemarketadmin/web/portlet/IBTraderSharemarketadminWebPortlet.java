@@ -49,6 +49,7 @@ import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.upload.UploadPortletRequest;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.JavaConstants;
@@ -426,6 +427,8 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 	public void editStrategyShareParams(ActionRequest actionRequest, ActionResponse actionResponse)
 	{
 		
+		UploadPortletRequest req = PortalUtil.getUploadPortletRequest(actionRequest);
+		
 		themeDisplay = (ThemeDisplay)actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
 		
 		/* VALORES DE LOS EXPANDO DE CADA EXTRSATEGIA */
@@ -447,7 +450,7 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 		double trailling_stop_lost =  ParamUtil.getDouble(actionRequest,ConfigKeys._FIELD_TRAILLING_STOP_LOST,0d);
 		long shareId =  ParamUtil.getLong(actionRequest,"shareId",-1);
 		long strategyId =  ParamUtil.getLong(actionRequest,"strategyId",-1);
-		String strategydescription =  ParamUtil.getString(actionRequest,"strategydescription","");
+		String strategydescription =  ParamUtil.get(req,"description",""); // necesario para ckeditor
 		
 		boolean bExists = false;
 	    Strategy strategy = _strategyLocalService.fetchStrategy(strategyId);

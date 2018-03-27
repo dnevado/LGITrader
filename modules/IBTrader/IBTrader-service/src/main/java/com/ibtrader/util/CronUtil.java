@@ -51,6 +51,104 @@ public class CronUtil {
 
 	private final static Log _log = LogFactoryUtil.getLog(CronUtil.class);
 
+	/* VALIDA CONFIRMACIONES DE ORDENES COMPLETADAS Y NO ENVIADAS A LA API POR DESCONEXIONES  */
+	public static void StartOrdersValidator(Message _message) throws Exception 	{
+		
+		List<Config> lConfig=null;
+		int 	_CLIENT_ID = 3;	  // el dos para leer, el 3 para escribir			
+		String  _HOST = "127.0.0.1";
+		int     _PORT = ConfigKeys.TWS_CONNECTION_PORT;	
+		List<Company> lCompanies = CompanyLocalServiceUtil.getCompanies();
+		Company _company = lCompanies.get(0); // tiene que existir
+		long companyId =  _company.getCompanyId();		
+		Contract oContrat = null;
+		/* VERIFICAMOS MERCADOS ACTIVOS */
+	    long guestGroupId = 0;
+		try {
+			guestGroupId = GroupLocalServiceUtil.getGroup(_company.getCompanyId(), GroupConstants.GUEST).getGroupId();
+		} catch (PortalException e) {
+		// TODO Auto-generated catch block
+			e.printStackTrace();			
+		}
+	    
+		_CLIENT_ID = Long.valueOf(Utilities.getConfigurationValue(IBTraderConstants.keyCRON_ORDERSCHECKER_CLIENT_INITIAL, companyId, guestGroupId)).intValue();;	  // el dos para leer, el 3 para escribir
+		TIMApiWrapper wrapper = null; 
+	    List<Organization> lOrganization = OrganizationLocalServiceUtil.getOrganizations(companyId, OrganizationConstants.DEFAULT_PARENT_ORGANIZATION_ID, 0, OrganizationLocalServiceUtil.getOrganizationsCount()+1);
+		try
+		{
+			for (Organization _Organization : lOrganization )
+			{
+				  
+				/* CUERNTA PAPER */
+				String simulated = Utilities.getConfigurationValue(IBTraderConstants.keySIMULATION_MODE, companyId, guestGroupId);
+				boolean bSIMULATED_TRADING = simulated.equals("1");  
+				
+				String _keyHOST  = IBTraderConstants.keyTWS_HOST;
+				String _keyPORT  = IBTraderConstants.keyTWS_PORT;
+				if (bSIMULATED_TRADING)
+				{
+					_keyHOST  = IBTraderConstants.keyPAPER_TWS_HOST;
+					 _keyPORT  = IBTraderConstants.keyPAPER_TWS_PORT;
+				}
+				
+				 _HOST = Utilities.getConfigurationValue(_keyHOST, _Organization.getCompanyId(), _Organization.getGroupId());		 
+				 _PORT = Integer.valueOf(Utilities.getConfigurationValue(_keyPORT, _Organization.getCompanyId(), _Organization.getGroupId()));			
+			     wrapper = new TIMApiWrapper(_CLIENT_ID);				
+				 if (wrapper.isConnected()) wrapper.disconnect();
+				 wrapper.connect(_HOST, _PORT,_CLIENT_ID); 	 	
+				 
+				 if (wrapper.isConnected())
+			     {
+
+					wrapper.reqNextId(); 
+					wrapper.set_ibtarget_organization(_Organization);
+					
+					if (wrapper.getCurrentOrderId()==-1)
+					{
+						wrapper.disconnect();
+						return;
+					}
+					
+					_log.info("Connected, StartOrdersValidator, connecting to TWS,currentOrderId:" + wrapper.getCurrentOrderId());
+	    			long  _INCREMENT_ORDER_ID = wrapper.getCurrentOrderId();
+					IBOrderLocalServiceUtil.deleteByOrderCompanyGroup(_INCREMENT_ORDER_ID, _Organization.getCompanyId(), _Organization.getGroupId(),_CLIENT_ID,-1);
+
+	    			 IBOrder _order = IBOrderLocalServiceUtil.createIBOrder(_INCREMENT_ORDER_ID);
+	    			_order.setCompanyId(_Organization.getCompanyId());
+	    			_order.setGroupId(_Organization.getGroupId());
+	    			_order.setShareID(-1);	// NO HAY SHARE 
+	    			_order.setOrdersId(_INCREMENT_ORDER_ID);
+	    			_order.setIbclientId(_CLIENT_ID);
+	    			/* pedimos tiempo real */
+	    			IBOrderLocalServiceUtil.updateIBOrder(_order);
+	    			try {
+	    				wrapper.getExecutionOrders(new Long(_INCREMENT_ORDER_ID).intValue());
+	    				_INCREMENT_ORDER_ID++;
+	    				wrapper.getOpenOrders(new Long(_INCREMENT_ORDER_ID).intValue());	
+	    				Thread.sleep(1000);
+					//	oTWS.GITradergetContractDetails(new Long(_INCREMENT_ORDER_ID).intValue(),oContrat);							
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();							
+						//if (oTWS.GITraderTWSIsConnected())
+						 if (wrapper.isConnected()) wrapper.disconnect();
+
+					}			    						 
+			     }  // 		 if (oTWS.GITraderTWSIsConnected() )
+				 if (wrapper!=null && wrapper.isConnected()) wrapper.disconnect();
+			}  // 		for (Organization _Organization : lOrganization )
+			//if (m_client.isConnected()) m_client.eDisconnect();
+		
+		}
+		
+		catch (Exception e)
+		{
+			if (wrapper!=null && wrapper.isConnected()) wrapper.disconnect();
+		}
+		
+		
+	}
+	
 	/* CONEXIONES POR ORGANIZACION */
 	public static void StartReadingCron(Message _message) throws Exception 	{
 	
@@ -328,8 +426,7 @@ public class CronUtil {
 				 
 				if (wrapper.isConnected())
 			    {
-					
- 					wrapper.reqNextId();
+									
  					wrapper.set_ibtarget_organization(_Organization);
  					if (wrapper.getCurrentOrderId()==-1)
  					{
@@ -364,7 +461,7 @@ public class CronUtil {
 					    	List<Share> lShare;	    	
 					    	for (Market oMarket : lActiveMarkets)
 					    	{
-					    		 lShare =  ShareLocalServiceUtil.findByActiveMarketGroupCompany(oMarket.getMarketId(),  Boolean.TRUE,oMarket.getGroupId(),oMarket.getCompanyId());
+					    		lShare =  ShareLocalServiceUtil.findByActiveMarketGroupCompany(oMarket.getMarketId(),  Boolean.TRUE,oMarket.getGroupId(),oMarket.getCompanyId());
 					         	
 					    		 for (Share oShare :lShare)
 					    		 {
@@ -399,7 +496,7 @@ public class CronUtil {
 						    								wrapper.set_ibtarget_share(oShare);
 						    							//	wrapper.setStrategyshare(oStrategyShare);
 						    							// 2. ABRIMOS OPERACION CON EL ORDER ESPECIFICAADO EN EL METHOD execute 
-						    								wrapper.openOrder(_strategyImpl.getTargetContract(), _strategyImpl.getTargetOrder(),null,positionId);
+						    								wrapper.openOrder(_strategyImpl.getTargetContract(), _strategyImpl.getTargetOrder(),_strategyImpl.getChildsOrder(),null,positionId);
 						    								/* LA RAZON ES QUE ES QUE METE DOS O TRES OPERACIONES A LA VEZ A PESAR DE TENER LAS VALIDACIONES 
 						    								 * SEGUNDO PARO */
 						    							//	Thread.sleep(1000);
@@ -460,7 +557,6 @@ public class CronUtil {
 		Contract oContrat = null;
 		/* VERIFICAMOS MERCADOS ACTIVOS */
 	    java.util.List<Share> lShare = null;
-	    TIMApiGITrader_NOVALE oTWS = null;	   
 	    SimpleDateFormat sdf = new SimpleDateFormat();
 	    sdf.applyPattern(Utilities._IBTRADER_FUTURE_SHORT_DATE);
 	    
@@ -473,7 +569,8 @@ public class CronUtil {
 		}
 	    
 		_CLIENT_ID = Long.valueOf(Utilities.getConfigurationValue(IBTraderConstants.keyCRON_CONTRACTCHECKER_CLIENT_INITIAL, companyId, guestGroupId)).intValue();;	  // el dos para leer, el 3 para escribir
-
+		
+		TIMApiWrapper wrapper = null;
 		
 	    
 	    List<Organization> lOrganization = OrganizationLocalServiceUtil.getOrganizations(companyId, OrganizationConstants.DEFAULT_PARENT_ORGANIZATION_ID, 0, OrganizationLocalServiceUtil.getOrganizationsCount()+1);
@@ -495,14 +592,8 @@ public class CronUtil {
 				}
 				
 				 _HOST = Utilities.getConfigurationValue(_keyHOST, _Organization.getCompanyId(), _Organization.getGroupId());		 
-				 _PORT = Integer.valueOf(Utilities.getConfigurationValue(_keyPORT, _Organization.getCompanyId(), _Organization.getGroupId()));
-				/*   oTWS = new TIMApiGITrader(_HOST,_PORT, _CLIENT_ID);	
-				 if (oTWS.GITraderTWSIsConnected())  oTWS.GITraderDisconnectFromTWS();
-				 oTWS.GITraderConnetToTWS();
-				 if (oTWS.GITraderTWSIsConnected() )
-			     {*/
-				 //oTWS.GITraderConnetToTWS();
-			     TIMApiWrapper wrapper = new TIMApiWrapper(_CLIENT_ID);				
+				 _PORT = Integer.valueOf(Utilities.getConfigurationValue(_keyPORT, _Organization.getCompanyId(), _Organization.getGroupId()));				
+			     wrapper = new TIMApiWrapper(_CLIENT_ID);				
 				 if (wrapper.isConnected()) wrapper.disconnect();
 				 wrapper.connect(_HOST, _PORT,_CLIENT_ID); 	 	
 				
@@ -552,7 +643,7 @@ public class CronUtil {
 			    				m_client.cancelMktData(new Long(rkMktData.getPrimaryKey()).intValue());
 							}												    		*/
 			    			_log.info("Verifyng de :" + oShare.getSymbol() + ":" +  oShare.getSecurity_type() + ":" + oShare.getExchange() + ":" + oMarket.getCurrency());
-			    			
+			    			wrapper.set_ibtarget_share(oShare);
 							
 			    			long  _INCREMENT_ORDER_ID = wrapper.getCurrentOrderId();
 							IBOrderLocalServiceUtil.deleteByOrderCompanyGroup(_INCREMENT_ORDER_ID, _Organization.getCompanyId(), _Organization.getGroupId(),_CLIENT_ID,oShare.getShareId());
@@ -579,14 +670,15 @@ public class CronUtil {
 			    		} // OVER SHARES 
 				        		
 				    } // OVER MARKETS
+					if (wrapper!=null && wrapper.isConnected()) wrapper.disconnect();
 					 
 			     }  // 		 if (oTWS.GITraderTWSIsConnected() )
 			}  // 		for (Organization _Organization : lOrganization )
-			//if (m_client.isConnected()) m_client.eDisconnect();		 
+			//if (m_client.isConnected()) m_client.eDisconnect();
 		}
 		catch (Exception e)
 		{
-		//if (m_client.isConnected()) m_client.eDisconnect();		 
+			if (wrapper!=null && wrapper.isConnected()) wrapper.disconnect();		 
 		}
 		
 
