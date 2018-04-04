@@ -23,6 +23,10 @@ import com.ibtrader.data.model.IBOrder;
 import com.ibtrader.data.service.MarketLocalServiceUtil;
 import com.ibtrader.data.service.base.IBOrderLocalServiceBaseImpl;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.dao.orm.Projection;
+import com.liferay.portal.kernel.dao.orm.ProjectionFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.ProjectionList;
+import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 
 
@@ -77,8 +81,38 @@ public class IBOrderLocalServiceImpl extends IBOrderLocalServiceBaseImpl {
 		_DQ.add(RestrictionsFactoryUtil.eq("groupId", groupId));
 		_DQ.add(RestrictionsFactoryUtil.eq("ibclientId", groupId));
 		_DQ.add(RestrictionsFactoryUtil.eq("shareId", shareId));
-
+	}
+	/* sacamos el maximo de las ordenes metidas en las posiciones para saber si usar estas o el currentOrderId de la TWS */
+	public long findMaxOrderClientCompanyGroup(long companyId, long groupId, long clientId)
+	{
+		 
 		
+		DynamicQuery _DQ = ibOrderLocalService.dynamicQuery();
+		
+		long maxOrderId = 0;
+		
+		Projection projection_max = PropertyFactoryUtil.forName("ordersId").max();
+		_DQ.add(RestrictionsFactoryUtil.eq("companyId", companyId));
+		_DQ.add(RestrictionsFactoryUtil.le("groupId", groupId));
+		_DQ.add(RestrictionsFactoryUtil.le("ibclientId", clientId));
+		
+		ProjectionList ListMaxValues  = ProjectionFactoryUtil.projectionList();
+		ListMaxValues.add(projection_max);
+		
+		_DQ.setProjection(ListMaxValues);
+	
+		List<Long> ordersMaxId = positionLocalService.dynamicQuery(_DQ);
+		if (ordersMaxId!=null && !ordersMaxId.isEmpty())
+		{
+			for (Long MaxValues : ordersMaxId) {
+				if (MaxValues!=null && MaxValues.longValue()>0)
+					maxOrderId = MaxValues.longValue();
+				
+			}
+		}		
+		return (maxOrderId);
 		
 	}
+	
+	
 }

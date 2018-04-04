@@ -87,8 +87,8 @@
 		<property name="share_number" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 		<property name="share_number_to_trade" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 		<property name="share_number_traded" type="com.liferay.portal.dao.orm.hibernate.LongType" />
-		<property name="realtimeId_in" type="com.liferay.portal.dao.orm.hibernate.LongType" />
-		<property name="realtimeId_out" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="clientId_in" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="clientId_out" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 		<property name="strategy_in" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="strategy_out" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="percentualstoplost_out" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />

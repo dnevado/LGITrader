@@ -76,8 +76,8 @@
 		<field name="share_number" type="long" />
 		<field name="share_number_to_trade" type="long" />
 		<field name="share_number_traded" type="long" />
-		<field name="realtimeId_in" type="long" />
-		<field name="realtimeId_out" type="long" />
+		<field name="clientId_in" type="long" />
+		<field name="clientId_out" type="long" />
 		<field name="strategy_in" type="String" />
 		<field name="strategy_out" type="String" />
 		<field name="percentualstoplost_out" type="double" />

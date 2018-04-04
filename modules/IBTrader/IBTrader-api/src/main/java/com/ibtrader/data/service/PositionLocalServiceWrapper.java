@@ -120,16 +120,16 @@ public class PositionLocalServiceWrapper implements PositionLocalService,
 
 	@Override
 	public com.ibtrader.data.model.Position findByPositionID_In_TWS(
-		long groupId, long companyId, long _PositionIDTWS) {
+		long groupId, long companyId, long _PositionIDTWS, long clientId_in) {
 		return _positionLocalService.findByPositionID_In_TWS(groupId,
-			companyId, _PositionIDTWS);
+			companyId, _PositionIDTWS, clientId_in);
 	}
 
 	@Override
 	public com.ibtrader.data.model.Position findByPositionID_Out_TWS(
-		long groupId, long companyId, long _PositionIDTWS) {
+		long groupId, long companyId, long _PositionIDTWS, long clientId_out) {
 		return _positionLocalService.findByPositionID_Out_TWS(groupId,
-			companyId, _PositionIDTWS);
+			companyId, _PositionIDTWS, clientId_out);
 	}
 
 	@Override
@@ -378,6 +378,13 @@ public class PositionLocalServiceWrapper implements PositionLocalService,
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
 		com.liferay.portal.kernel.dao.orm.Projection projection) {
 		return _positionLocalService.dynamicQueryCount(dynamicQuery, projection);
+	}
+
+	@Override
+	public long findMaxOrderClientCompanyGroup(long companyId, long groupId,
+		long clientId) {
+		return _positionLocalService.findMaxOrderClientCompanyGroup(companyId,
+			groupId, clientId);
 	}
 
 	@Override

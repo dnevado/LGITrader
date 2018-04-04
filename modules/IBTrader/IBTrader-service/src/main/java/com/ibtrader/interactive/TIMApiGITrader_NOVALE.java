@@ -358,8 +358,12 @@ public class TIMApiGITrader_NOVALE extends TIMApiWrapper {
 		    }
 		}).start();
 		 
-		 ExecutionFilter f = new ExecutionFilter();
-		 wrapper.getExecutionOrders(5668);
+		Calendar now = Calendar.getInstance();
+		now.add(Calendar.HOUR_OF_DAY, -1);
+		SimpleDateFormat sdf = new SimpleDateFormat(Utilities.__IBTRADER_ORDERS_EXECUTED__DATE_FORMAT);		
+		
+		ExecutionFilter filter = new ExecutionFilter(5668,"",sdf.format(now.getTime()),"","","","");
+		m_client.reqExecutions(5668,filter);
 		 
 		/* final EClientSocket m_client = wrapper.getClient();
 		 final EReaderSignal m_signal = wrapper.getSignal(); 

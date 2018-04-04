@@ -1622,13 +1622,6 @@ public class ConfigPersistenceImpl extends BasePersistenceImpl<Config>
 						finderArgs, list);
 				}
 				else {
-					if ((list.size() > 1) && _log.isWarnEnabled()) {
-						_log.warn(
-							"ConfigPersistenceImpl.fetchByKeyCompanyGroup(long, long, String, boolean) with parameters (" +
-							StringUtil.merge(finderArgs) +
-							") yields a result set with more than 1 result. This violates the logical unique restriction. There is no order guarantee on which result is returned by this finder.");
-					}
-
 					Config config = list.get(0);
 
 					result = config;

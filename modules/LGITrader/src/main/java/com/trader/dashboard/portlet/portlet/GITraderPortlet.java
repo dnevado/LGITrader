@@ -73,10 +73,24 @@ public class GITraderPortlet extends MVCPortlet {
 			// TODO Auto-generated catch block
 				e.printStackTrace();			
 			}
-			_conf = _configLocalService.findByKeyCompanyGroup(IBTraderConstants.keyCRON_TRADING_STATUS, _Company.getCompanyId(), guestGroupId);
+			_conf = _configLocalService.findByKeyCompanyGroup(IBTraderConstants.keyLAST_POSITIONS_TO_CHECK_IN_HOURS, _Company.getCompanyId(), guestGroupId);
 			int _TotalConfigs = (_conf!=null ? 1 : 0 );
 			if (_TotalConfigs==0)
 			{
+				
+				 /* tiempo en hpras para sincronizar ordenes completadas, el cron se ejecuta cada 10segundos, pondremos una hora hacia atras,
+				  *   */
+				 _conf = _configLocalService.createConfig(CounterLocalServiceUtil.increment(Config.class.getName()));
+				 _conf.setCompanyId(_Company.getCompanyId());
+				 _conf.setGroupId(guestGroupId);
+				 _conf.setConfig_key(IBTraderConstants.keyLAST_POSITIONS_TO_CHECK_IN_HOURS);
+				 _conf.setValue(String.valueOf(IBTraderConstants.vLAST_POSITIONS_TO_CHECK_IN_HOURS));
+				 _conf.setName(IBTraderConstants.keyLAST_POSITIONS_TO_CHECK_IN_HOURS);
+				 _conf.setDescription(IBTraderConstants.keyLAST_POSITIONS_TO_CHECK_IN_HOURS);
+				 _conf.setGlobaldefault(Boolean.TRUE);
+				 _conf.setIscron(Boolean.FALSE);
+				 _configLocalService.updateConfig(_conf);
+				
 				/* TWS tick future  */
 				 _conf = _configLocalService.createConfig(CounterLocalServiceUtil.increment(Config.class.getName()));
 				 _conf.setCompanyId(_Company.getCompanyId());
@@ -136,6 +150,19 @@ public class GITraderPortlet extends MVCPortlet {
 				 _conf.setGlobaldefault(false);
 				 _conf.setIscron(Boolean.TRUE);
 				 _configLocalService.updateConfig(_conf);   
+				 
+				 /* CLIENTS_IDS, INICITAL CONFIGURACION  */
+				 _conf = _configLocalService.createConfig(CounterLocalServiceUtil.increment(Config.class.getName()));
+				 _conf.setCompanyId(_Company.getCompanyId());
+				 _conf.setGroupId(guestGroupId);
+				 _conf.setConfig_key(IBTraderConstants.keyCRON_ORDERSCHECKER_CLIENT_INITIAL);
+				 _conf.setValue(String.valueOf(IBTraderConstants.vCRON_ORDERSCHECKER_CLIENT_INITIAL));
+				 _conf.setName(IBTraderConstants.keyCRON_ORDERSCHECKER_CLIENT_INITIAL);
+				 _conf.setDescription(IBTraderConstants.keyCRON_ORDERSCHECKER_CLIENT_INITIAL);
+				 _conf.setGlobaldefault(false);
+				 _conf.setIscron(Boolean.TRUE);
+				 _configLocalService.updateConfig(_conf);   
+				 
 				 
 				 _conf = _configLocalService.createConfig(CounterLocalServiceUtil.increment(Config.class.getName()));
 				 _conf.setCompanyId(_Company.getCompanyId());

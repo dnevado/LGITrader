@@ -208,7 +208,7 @@ public class IBTraderUnitintegrationTestsWebPortlet extends MVCPortlet {
 				Realtime _realtime = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));
 				_realtime.setCreateDate(cFROMMarket.getTime());
 				_realtime.setModifiedDate(cFROMMarket.getTime());
-				_realtime.setValue(max); // MIN 
+				_realtime.setValue(Utilities.RoundPrice(max)); // MIN 
 				_realtime.setGroupId(serviceContext.getScopeGroupId());
 				_realtime.setCompanyId(serviceContext.getCompanyId());
 				_realtime.setShareId(shareId);
@@ -218,33 +218,37 @@ public class IBTraderUnitintegrationTestsWebPortlet extends MVCPortlet {
 				 _realtime = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));
 				_realtime.setCreateDate(cTOMarket.getTime());
 				_realtime.setModifiedDate(cTOMarket.getTime());
-				_realtime.setValue(min); // MIN 
+				_realtime.setValue(Utilities.RoundPrice(min)); // MIN 
 				_realtime.setGroupId(serviceContext.getScopeGroupId());
 				_realtime.setCompanyId(serviceContext.getCompanyId());
 				_realtime.setShareId(shareId);
 				RealtimeLocalServiceUtil.updateRealtime(_realtime);
 				
-
+				
+				/* 10 times */
 				_calendario.add(Calendar.SECOND, 30);
+				for (int j=0;j<10;j++)
+				{
+					
 				
 				double percent = 0.02;
 				double maxpluspercent_gap = max * (1 + percentual_gap);
 				double maxpluspercent_limit = maxpluspercent_gap * (1 + percentual_limit_buy);
 				
-				double minpluspercent_gap = min * (1 + percentual_gap);
-				double minpluspercent_limit = minpluspercent_gap * (1 + percentual_limit_buy);
+				double minpluspercent_gap = min * (1 - percentual_gap);
+				double minpluspercent_limit = minpluspercent_gap * (1 - percentual_limit_buy);
 				
 				/* bRachedMax = ((oShareLastRTime.getValue() > MaxValueWithGap) &&  (oShareLastRTime.getValue() < MaxValueWithGapAndLimit)); */
 				// sacamos un valor entre medias
 				double maxentryValue = ThreadLocalRandom.current().nextDouble(maxpluspercent_gap, maxpluspercent_limit);
-				double minentryValue = ThreadLocalRandom.current().nextDouble(minpluspercent_gap, minpluspercent_limit);
+				double minentryValue = ThreadLocalRandom.current().nextDouble(minpluspercent_limit,minpluspercent_gap);
 
 				/* PRIMERA SEÑAL LARGO +30 SECONDS   */
 
 				 _realtime = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));
 				_realtime.setCreateDate(_calendario.getTime());
 				_realtime.setModifiedDate(_calendario.getTime());
-				_realtime.setValue(maxentryValue); //   
+				_realtime.setValue(Utilities.RoundPrice(maxentryValue)); //   
 				_realtime.setGroupId(serviceContext.getScopeGroupId());
 				_realtime.setCompanyId(serviceContext.getCompanyId());
 				_realtime.setShareId(shareId);
@@ -256,7 +260,7 @@ public class IBTraderUnitintegrationTestsWebPortlet extends MVCPortlet {
 				 _realtime = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));
 				_realtime.setCreateDate(_calendario.getTime());
 				_realtime.setModifiedDate(_calendario.getTime());
-				_realtime.setValue(maxentryValue  * (1 + percentual_stop_profit)); //  max * (1 + 0.02) + stop profit 
+				_realtime.setValue(Utilities.RoundPrice(maxentryValue  * (1 + percentual_stop_profit))); //  max * (1 + 0.02) + stop profit 
 				_realtime.setGroupId(serviceContext.getScopeGroupId());
 				_realtime.setCompanyId(serviceContext.getCompanyId());
 				_realtime.setShareId(shareId);
@@ -269,7 +273,7 @@ public class IBTraderUnitintegrationTestsWebPortlet extends MVCPortlet {
 				 _realtime = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));
 				_realtime.setCreateDate(_calendario.getTime());
 				_realtime.setModifiedDate(_calendario.getTime());
-				_realtime.setValue(minentryValue); //  
+				_realtime.setValue(Utilities.RoundPrice(minentryValue)); //  
 				_realtime.setGroupId(serviceContext.getScopeGroupId());
 				_realtime.setCompanyId(serviceContext.getCompanyId());
 				_realtime.setShareId(shareId);
@@ -281,7 +285,7 @@ public class IBTraderUnitintegrationTestsWebPortlet extends MVCPortlet {
 				 _realtime = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));
 				_realtime.setCreateDate(_calendario.getTime());
 				_realtime.setModifiedDate(_calendario.getTime());
-				_realtime.setValue(minentryValue  * (1 + percentual_stop_lost)); //  max * (1 + 0.02) + stop profit 
+				_realtime.setValue(Utilities.RoundPrice(minentryValue  * (1 + percentual_stop_lost))); //  max * (1 + 0.02) + stop profit 
 				_realtime.setGroupId(serviceContext.getScopeGroupId());
 				_realtime.setCompanyId(serviceContext.getCompanyId());
 				_realtime.setShareId(shareId);
@@ -294,7 +298,7 @@ public class IBTraderUnitintegrationTestsWebPortlet extends MVCPortlet {
 				 _realtime = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));
 				_realtime.setCreateDate(_calendario.getTime());
 				_realtime.setModifiedDate(_calendario.getTime());
-				_realtime.setValue(maxentryValue); //   		
+				_realtime.setValue(Utilities.RoundPrice(maxentryValue)); //   		
 				_realtime.setGroupId(serviceContext.getScopeGroupId());
 				_realtime.setCompanyId(serviceContext.getCompanyId());
 				_realtime.setShareId(shareId);
@@ -306,13 +310,16 @@ public class IBTraderUnitintegrationTestsWebPortlet extends MVCPortlet {
 				 _realtime = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));
 				_realtime.setCreateDate(_calendario.getTime()); 
 				_realtime.setModifiedDate(_calendario.getTime());
-				_realtime.setValue(maxentryValue * (1+0.05)); //  
+				_realtime.setValue(Utilities.RoundPrice(maxentryValue * (1+0.05))); //  
 				_realtime.setGroupId(serviceContext.getScopeGroupId());
 				_realtime.setCompanyId(serviceContext.getCompanyId());
 				_realtime.setShareId(shareId);
 				RealtimeLocalServiceUtil.updateRealtime(_realtime);
 				
 			
+				_calendario.add(Calendar.SECOND, 30);
+				
+				} // end for
 				/* 1. ACTIVAMOS EL  MODO SIMULACION EN LA ACCION PARA NO CARGAR REALTIME HASTA LA ULTIMA SEÑAL MAS 5 MNUTOS */
 				_calendario.add(Calendar.MINUTE, 60);
 				share.setSimulation_end_date(_calendario.getTime());

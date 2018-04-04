@@ -322,6 +322,12 @@ public class IBOrderLocalServiceUtil {
 		return getService().dynamicQueryCount(dynamicQuery, projection);
 	}
 
+	public static long findMaxOrderClientCompanyGroup(long companyId,
+		long groupId, long clientId) {
+		return getService()
+				   .findMaxOrderClientCompanyGroup(companyId, groupId, clientId);
+	}
+
 	public static void deleteByOrderCompanyGroup(long iborderId,
 		long companyId, long groupId, long ibclientId, long shareId) {
 		getService()

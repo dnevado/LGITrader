@@ -61,8 +61,8 @@ public class PositionSoap implements Serializable {
 		soapModel.setShare_number(model.getShare_number());
 		soapModel.setShare_number_to_trade(model.getShare_number_to_trade());
 		soapModel.setShare_number_traded(model.getShare_number_traded());
-		soapModel.setRealtimeId_in(model.getRealtimeId_in());
-		soapModel.setRealtimeId_out(model.getRealtimeId_out());
+		soapModel.setClientId_in(model.getClientId_in());
+		soapModel.setClientId_out(model.getClientId_out());
 		soapModel.setStrategy_in(model.getStrategy_in());
 		soapModel.setStrategy_out(model.getStrategy_out());
 		soapModel.setPercentualstoplost_out(model.getPercentualstoplost_out());
@@ -341,20 +341,20 @@ public class PositionSoap implements Serializable {
 		_share_number_traded = share_number_traded;
 	}
 
-	public long getRealtimeId_in() {
-		return _realtimeId_in;
+	public long getClientId_in() {
+		return _clientId_in;
 	}
 
-	public void setRealtimeId_in(long realtimeId_in) {
-		_realtimeId_in = realtimeId_in;
+	public void setClientId_in(long clientId_in) {
+		_clientId_in = clientId_in;
 	}
 
-	public long getRealtimeId_out() {
-		return _realtimeId_out;
+	public long getClientId_out() {
+		return _clientId_out;
 	}
 
-	public void setRealtimeId_out(long realtimeId_out) {
-		_realtimeId_out = realtimeId_out;
+	public void setClientId_out(long clientId_out) {
+		_clientId_out = clientId_out;
 	}
 
 	public String getStrategy_in() {
@@ -468,8 +468,8 @@ public class PositionSoap implements Serializable {
 	private long _share_number;
 	private long _share_number_to_trade;
 	private long _share_number_traded;
-	private long _realtimeId_in;
-	private long _realtimeId_out;
+	private long _clientId_in;
+	private long _clientId_out;
 	private String _strategy_in;
 	private String _strategy_out;
 	private double _percentualstoplost_out;

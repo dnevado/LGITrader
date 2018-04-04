@@ -25,7 +25,8 @@ public class IBTraderConstants {
 	/* valores */
 	public static String	vACCOUNT_IB_NAME="ACCOUNT_IB_NAME";
 	public static long   	vNUM_DAYS_PAST_REALTIME =2;
-	public static double 	vDEFAULT_TICK_FUTURE =0.25; 
+	public static double 	vDEFAULT_TICK_FUTURE =0.25;
+	public static long 	    vLAST_POSITIONS_TO_CHECK_IN_HOURS = 1; // ESTO ES POR SI HAY EJECUCIONES EN LA TWS QUE NECESITAN ESTAR EN LA BBDD PORQUE SE CAIGA, ASI SINCRONIZAMOS 
 	public static String 	vTWS_HOST = "127.0.0.1";
 	public static long  	vTWS_PORT = 7497;
 	public static long   	vCRON_READING_STATUS = 0;  // para saber si esta ejecutando o no , ojo a las caidas y exceptiones 
@@ -52,6 +53,7 @@ public class IBTraderConstants {
 	/* keys */
 	
 	public static String    keyNUM_DAYS_PAST_REALTIME ="NUM_DAYS_PAST_REALTIME";
+	public static String    keyLAST_POSITIONS_TO_CHECK_IN_HOURS ="LAST_POSITIONS_TO_CHECK_IN_HOURS";	
 	public static String    keyDEFAULT_TICK_FUTURE ="DEFAULT_TICK_FUTURE";
 	public static String    keyACCOUNT_IB_NAME="ACCOUNT_IB_NAME";
 	public static String    keyTWS_HOST = "TWS_HOST";

@@ -122,10 +122,10 @@ public interface PositionLocalService extends BaseLocalService,
 	public Position findByCompanyGroup(long companyId, long groupId);
 
 	public Position findByPositionID_In_TWS(long groupId, long companyId,
-		long _PositionIDTWS);
+		long _PositionIDTWS, long clientId_in);
 
 	public Position findByPositionID_Out_TWS(long groupId, long companyId,
-		long _PositionIDTWS);
+		long _PositionIDTWS, long clientId_out);
 
 	public Position findPositionToExit(long groupId, long companyId,
 		long shareId);
@@ -302,4 +302,7 @@ public interface PositionLocalService extends BaseLocalService,
 	*/
 	public long dynamicQueryCount(DynamicQuery dynamicQuery,
 		Projection projection);
+
+	public long findMaxOrderClientCompanyGroup(long companyId, long groupId,
+		long clientId);
 }

@@ -287,6 +287,9 @@ public interface IBOrderLocalService extends BaseLocalService,
 	public long dynamicQueryCount(DynamicQuery dynamicQuery,
 		Projection projection);
 
+	public long findMaxOrderClientCompanyGroup(long companyId, long groupId,
+		long clientId);
+
 	public void deleteByOrderCompanyGroup(long iborderId, long companyId,
 		long groupId, long ibclientId, long shareId);
 }

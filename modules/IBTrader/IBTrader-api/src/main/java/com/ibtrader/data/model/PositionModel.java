@@ -458,32 +458,32 @@ public interface PositionModel extends BaseModel<Position>, ShardedModel,
 	public void setShare_number_traded(long share_number_traded);
 
 	/**
-	 * Returns the realtime id_in of this position.
+	 * Returns the client id_in of this position.
 	 *
-	 * @return the realtime id_in of this position
+	 * @return the client id_in of this position
 	 */
-	public long getRealtimeId_in();
+	public long getClientId_in();
 
 	/**
-	 * Sets the realtime id_in of this position.
+	 * Sets the client id_in of this position.
 	 *
-	 * @param realtimeId_in the realtime id_in of this position
+	 * @param clientId_in the client id_in of this position
 	 */
-	public void setRealtimeId_in(long realtimeId_in);
+	public void setClientId_in(long clientId_in);
 
 	/**
-	 * Returns the realtime id_out of this position.
+	 * Returns the client id_out of this position.
 	 *
-	 * @return the realtime id_out of this position
+	 * @return the client id_out of this position
 	 */
-	public long getRealtimeId_out();
+	public long getClientId_out();
 
 	/**
-	 * Sets the realtime id_out of this position.
+	 * Sets the client id_out of this position.
 	 *
-	 * @param realtimeId_out the realtime id_out of this position
+	 * @param clientId_out the client id_out of this position
 	 */
-	public void setRealtimeId_out(long realtimeId_out);
+	public void setClientId_out(long clientId_out);
 
 	/**
 	 * Returns the strategy_in of this position.

@@ -19,6 +19,7 @@ import java.util.List;
 
 import com.ibtrader.data.exception.NoSuchPositionException;
 import com.ibtrader.data.model.Position;
+import com.ibtrader.data.model.Realtime;
 import com.ibtrader.data.service.MarketLocalServiceUtil;
 import com.ibtrader.data.service.PositionLocalServiceUtil;
 import com.ibtrader.data.service.base.PositionLocalServiceBaseImpl;
@@ -26,7 +27,14 @@ import com.ibtrader.data.service.persistence.PositionPersistence;
 import com.ibtrader.util.ConfigKeys;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.OrderFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.Projection;
+import com.liferay.portal.kernel.dao.orm.ProjectionFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.ProjectionList;
+import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
 
 
 /**
@@ -69,6 +77,56 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 	}
 	
 	
+	/* sacamos el maximo de las ordenes metidas en las posiciones para saber si usar estas o el currentOrderId de la TWS */
+	public long findMaxOrderClientCompanyGroup(long companyId, long groupId, long clientId)
+	{
+		 
+		
+		DynamicQuery _DQ = positionLocalService.dynamicQuery();
+		
+		long maxOrderIdPositionsIn = 0;
+		long maxOrderIdPositionsOut = 0;
+		
+		
+		Projection projection_max_in = PropertyFactoryUtil.forName("positionId_tws_in").max();
+		Projection projection_max_out = PropertyFactoryUtil.forName("positionId_tws_out").max();
+				
+		_DQ.add(RestrictionsFactoryUtil.eq("companyId", companyId));
+		_DQ.add(RestrictionsFactoryUtil.le("groupId", groupId));
+		_DQ.add(RestrictionsFactoryUtil.le("clientId_in", groupId));
+		
+		ProjectionList ListMaxValues  = ProjectionFactoryUtil.projectionList();
+		ListMaxValues.add(projection_max_in);
+		ListMaxValues.add(projection_max_out);
+		_DQ.setProjection(ListMaxValues);
+	
+		List<Object[]> ordersMaxId = positionLocalService.dynamicQuery(_DQ);
+		if (ordersMaxId!=null && !ordersMaxId.isEmpty())
+		{
+			
+			for (Object MaxValues : ordersMaxId)
+			{
+				String serilizeString=JSONFactoryUtil.serialize(MaxValues);
+				try {
+					JSONArray MaxValuesJsonArray=JSONFactoryUtil.createJSONArray(serilizeString);
+					if (MaxValuesJsonArray!=null && MaxValuesJsonArray.getLong(0)>0)
+						maxOrderIdPositionsIn  = MaxValuesJsonArray.getLong(0);
+					if (MaxValuesJsonArray!=null && MaxValuesJsonArray.getLong(1)>0)
+						maxOrderIdPositionsOut = MaxValuesJsonArray.getLong(1);					
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					//e.printStackTrace();
+				}
+				
+				
+			}
+		
+		}
+		/* devolvemos el más grande */
+		return (maxOrderIdPositionsIn > maxOrderIdPositionsOut ? maxOrderIdPositionsIn : maxOrderIdPositionsOut);
+		
+	}
+	
 	public List<Position> findByCompanyGroupShare(long companyId, long groupId, long share)
 	{
 		 
@@ -89,12 +147,12 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 		
 	}
 	
-	public Position findByPositionID_Out_TWS(long groupId, long companyId, long _PositionIDTWS)
+	public Position findByPositionID_Out_TWS(long groupId, long companyId, long _PositionIDTWS, long clientId_out)
 	{
 		 
 		Position _rPosition = null;
 		try {
-			_rPosition = getPositionPersistence().findByPositionOutGroupCompany(groupId,companyId, _PositionIDTWS);
+			_rPosition = getPositionPersistence().findByPositionOutGroupCompany(groupId,companyId, _PositionIDTWS,clientId_out);
 		} catch (NoSuchPositionException e) {
 			// TODO Auto-generated catch block
 			//e.printStackTrace();
@@ -102,11 +160,11 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 		return _rPosition;
 		
 	}
-	public Position findByPositionID_In_TWS(long groupId, long companyId, long _PositionIDTWS)
+	public Position findByPositionID_In_TWS(long groupId, long companyId, long _PositionIDTWS, long clientId_in)
 	{
 		Position _rPosition = null;
 		try {
-			_rPosition =  getPositionPersistence().findByPositionInGroupCompany(groupId,companyId, _PositionIDTWS);
+			_rPosition =  getPositionPersistence().findByPositionInGroupCompany(groupId,companyId, _PositionIDTWS,clientId_in);
 		} 
 		catch (NoSuchPositionException e) {
 			// TODO Auto-generated catch block

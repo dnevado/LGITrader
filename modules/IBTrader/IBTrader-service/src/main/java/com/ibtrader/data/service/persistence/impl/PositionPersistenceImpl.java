@@ -9228,36 +9228,41 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 			PositionModelImpl.FINDER_CACHE_ENABLED, PositionImpl.class,
 			FINDER_CLASS_NAME_ENTITY, "fetchByPositionOutGroupCompany",
 			new String[] {
-				Long.class.getName(), Long.class.getName(), Long.class.getName()
+				Long.class.getName(), Long.class.getName(), Long.class.getName(),
+				Long.class.getName()
 			},
 			PositionModelImpl.GROUPID_COLUMN_BITMASK |
 			PositionModelImpl.COMPANYID_COLUMN_BITMASK |
-			PositionModelImpl.POSITIONID_TWS_OUT_COLUMN_BITMASK);
+			PositionModelImpl.POSITIONID_TWS_OUT_COLUMN_BITMASK |
+			PositionModelImpl.CLIENTID_OUT_COLUMN_BITMASK);
 	public static final FinderPath FINDER_PATH_COUNT_BY_POSITIONOUTGROUPCOMPANY = new FinderPath(PositionModelImpl.ENTITY_CACHE_ENABLED,
 			PositionModelImpl.FINDER_CACHE_ENABLED, Long.class,
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
 			"countByPositionOutGroupCompany",
 			new String[] {
-				Long.class.getName(), Long.class.getName(), Long.class.getName()
+				Long.class.getName(), Long.class.getName(), Long.class.getName(),
+				Long.class.getName()
 			});
 
 	/**
-	 * Returns the position where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63; or throws a {@link NoSuchPositionException} if it could not be found.
+	 * Returns the position where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63; and clientId_out = &#63; or throws a {@link NoSuchPositionException} if it could not be found.
 	 *
 	 * @param groupId the group ID
 	 * @param companyId the company ID
 	 * @param positionId_tws_out the position id_tws_out
+	 * @param clientId_out the client id_out
 	 * @return the matching position
 	 * @throws NoSuchPositionException if a matching position could not be found
 	 */
 	@Override
 	public Position findByPositionOutGroupCompany(long groupId, long companyId,
-		long positionId_tws_out) throws NoSuchPositionException {
+		long positionId_tws_out, long clientId_out)
+		throws NoSuchPositionException {
 		Position position = fetchByPositionOutGroupCompany(groupId, companyId,
-				positionId_tws_out);
+				positionId_tws_out, clientId_out);
 
 		if (position == null) {
-			StringBundler msg = new StringBundler(8);
+			StringBundler msg = new StringBundler(10);
 
 			msg.append(_NO_SUCH_ENTITY_WITH_KEY);
 
@@ -9269,6 +9274,9 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 
 			msg.append(", positionId_tws_out=");
 			msg.append(positionId_tws_out);
+
+			msg.append(", clientId_out=");
+			msg.append(clientId_out);
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
@@ -9283,34 +9291,37 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 	}
 
 	/**
-	 * Returns the position where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 * Returns the position where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63; and clientId_out = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
 	 * @param groupId the group ID
 	 * @param companyId the company ID
 	 * @param positionId_tws_out the position id_tws_out
+	 * @param clientId_out the client id_out
 	 * @return the matching position, or <code>null</code> if a matching position could not be found
 	 */
 	@Override
 	public Position fetchByPositionOutGroupCompany(long groupId,
-		long companyId, long positionId_tws_out) {
+		long companyId, long positionId_tws_out, long clientId_out) {
 		return fetchByPositionOutGroupCompany(groupId, companyId,
-			positionId_tws_out, true);
+			positionId_tws_out, clientId_out, true);
 	}
 
 	/**
-	 * Returns the position where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	 * Returns the position where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63; and clientId_out = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param groupId the group ID
 	 * @param companyId the company ID
 	 * @param positionId_tws_out the position id_tws_out
+	 * @param clientId_out the client id_out
 	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the matching position, or <code>null</code> if a matching position could not be found
 	 */
 	@Override
 	public Position fetchByPositionOutGroupCompany(long groupId,
-		long companyId, long positionId_tws_out, boolean retrieveFromCache) {
+		long companyId, long positionId_tws_out, long clientId_out,
+		boolean retrieveFromCache) {
 		Object[] finderArgs = new Object[] {
-				groupId, companyId, positionId_tws_out
+				groupId, companyId, positionId_tws_out, clientId_out
 			};
 
 		Object result = null;
@@ -9325,13 +9336,14 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 
 			if ((groupId != position.getGroupId()) ||
 					(companyId != position.getCompanyId()) ||
-					(positionId_tws_out != position.getPositionId_tws_out())) {
+					(positionId_tws_out != position.getPositionId_tws_out()) ||
+					(clientId_out != position.getClientId_out())) {
 				result = null;
 			}
 		}
 
 		if (result == null) {
-			StringBundler query = new StringBundler(5);
+			StringBundler query = new StringBundler(6);
 
 			query.append(_SQL_SELECT_POSITION_WHERE);
 
@@ -9340,6 +9352,8 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 			query.append(_FINDER_COLUMN_POSITIONOUTGROUPCOMPANY_COMPANYID_2);
 
 			query.append(_FINDER_COLUMN_POSITIONOUTGROUPCOMPANY_POSITIONID_TWS_OUT_2);
+
+			query.append(_FINDER_COLUMN_POSITIONOUTGROUPCOMPANY_CLIENTID_OUT_2);
 
 			String sql = query.toString();
 
@@ -9358,6 +9372,8 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 
 				qPos.add(positionId_tws_out);
 
+				qPos.add(clientId_out);
+
 				List<Position> list = q.list();
 
 				if (list.isEmpty()) {
@@ -9367,7 +9383,7 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 				else {
 					if ((list.size() > 1) && _log.isWarnEnabled()) {
 						_log.warn(
-							"PositionPersistenceImpl.fetchByPositionOutGroupCompany(long, long, long, boolean) with parameters (" +
+							"PositionPersistenceImpl.fetchByPositionOutGroupCompany(long, long, long, long, boolean) with parameters (" +
 							StringUtil.merge(finderArgs) +
 							") yields a result set with more than 1 result. This violates the logical unique restriction. There is no order guarantee on which result is returned by this finder.");
 					}
@@ -9380,7 +9396,8 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 
 					if ((position.getGroupId() != groupId) ||
 							(position.getCompanyId() != companyId) ||
-							(position.getPositionId_tws_out() != positionId_tws_out)) {
+							(position.getPositionId_tws_out() != positionId_tws_out) ||
+							(position.getClientId_out() != clientId_out)) {
 						finderCache.putResult(FINDER_PATH_FETCH_BY_POSITIONOUTGROUPCOMPANY,
 							finderArgs, position);
 					}
@@ -9406,43 +9423,46 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 	}
 
 	/**
-	 * Removes the position where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63; from the database.
+	 * Removes the position where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63; and clientId_out = &#63; from the database.
 	 *
 	 * @param groupId the group ID
 	 * @param companyId the company ID
 	 * @param positionId_tws_out the position id_tws_out
+	 * @param clientId_out the client id_out
 	 * @return the position that was removed
 	 */
 	@Override
 	public Position removeByPositionOutGroupCompany(long groupId,
-		long companyId, long positionId_tws_out) throws NoSuchPositionException {
+		long companyId, long positionId_tws_out, long clientId_out)
+		throws NoSuchPositionException {
 		Position position = findByPositionOutGroupCompany(groupId, companyId,
-				positionId_tws_out);
+				positionId_tws_out, clientId_out);
 
 		return remove(position);
 	}
 
 	/**
-	 * Returns the number of positions where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63;.
+	 * Returns the number of positions where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63; and clientId_out = &#63;.
 	 *
 	 * @param groupId the group ID
 	 * @param companyId the company ID
 	 * @param positionId_tws_out the position id_tws_out
+	 * @param clientId_out the client id_out
 	 * @return the number of matching positions
 	 */
 	@Override
 	public int countByPositionOutGroupCompany(long groupId, long companyId,
-		long positionId_tws_out) {
+		long positionId_tws_out, long clientId_out) {
 		FinderPath finderPath = FINDER_PATH_COUNT_BY_POSITIONOUTGROUPCOMPANY;
 
 		Object[] finderArgs = new Object[] {
-				groupId, companyId, positionId_tws_out
+				groupId, companyId, positionId_tws_out, clientId_out
 			};
 
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
-			StringBundler query = new StringBundler(4);
+			StringBundler query = new StringBundler(5);
 
 			query.append(_SQL_COUNT_POSITION_WHERE);
 
@@ -9451,6 +9471,8 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 			query.append(_FINDER_COLUMN_POSITIONOUTGROUPCOMPANY_COMPANYID_2);
 
 			query.append(_FINDER_COLUMN_POSITIONOUTGROUPCOMPANY_POSITIONID_TWS_OUT_2);
+
+			query.append(_FINDER_COLUMN_POSITIONOUTGROUPCOMPANY_CLIENTID_OUT_2);
 
 			String sql = query.toString();
 
@@ -9468,6 +9490,8 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 				qPos.add(companyId);
 
 				qPos.add(positionId_tws_out);
+
+				qPos.add(clientId_out);
 
 				count = (Long)q.uniqueResult();
 
@@ -9491,41 +9515,48 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 	private static final String _FINDER_COLUMN_POSITIONOUTGROUPCOMPANY_COMPANYID_2 =
 		"position.companyId = ? AND ";
 	private static final String _FINDER_COLUMN_POSITIONOUTGROUPCOMPANY_POSITIONID_TWS_OUT_2 =
-		"position.positionId_tws_out = ?";
+		"position.positionId_tws_out = ? AND ";
+	private static final String _FINDER_COLUMN_POSITIONOUTGROUPCOMPANY_CLIENTID_OUT_2 =
+		"position.clientId_out = ?";
 	public static final FinderPath FINDER_PATH_FETCH_BY_POSITIONINGROUPCOMPANY = new FinderPath(PositionModelImpl.ENTITY_CACHE_ENABLED,
 			PositionModelImpl.FINDER_CACHE_ENABLED, PositionImpl.class,
 			FINDER_CLASS_NAME_ENTITY, "fetchByPositionInGroupCompany",
 			new String[] {
-				Long.class.getName(), Long.class.getName(), Long.class.getName()
+				Long.class.getName(), Long.class.getName(), Long.class.getName(),
+				Long.class.getName()
 			},
 			PositionModelImpl.GROUPID_COLUMN_BITMASK |
 			PositionModelImpl.COMPANYID_COLUMN_BITMASK |
-			PositionModelImpl.POSITIONID_TWS_IN_COLUMN_BITMASK);
+			PositionModelImpl.POSITIONID_TWS_IN_COLUMN_BITMASK |
+			PositionModelImpl.CLIENTID_IN_COLUMN_BITMASK);
 	public static final FinderPath FINDER_PATH_COUNT_BY_POSITIONINGROUPCOMPANY = new FinderPath(PositionModelImpl.ENTITY_CACHE_ENABLED,
 			PositionModelImpl.FINDER_CACHE_ENABLED, Long.class,
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
 			"countByPositionInGroupCompany",
 			new String[] {
-				Long.class.getName(), Long.class.getName(), Long.class.getName()
+				Long.class.getName(), Long.class.getName(), Long.class.getName(),
+				Long.class.getName()
 			});
 
 	/**
-	 * Returns the position where groupId = &#63; and companyId = &#63; and positionId_tws_in = &#63; or throws a {@link NoSuchPositionException} if it could not be found.
+	 * Returns the position where groupId = &#63; and companyId = &#63; and positionId_tws_in = &#63; and clientId_in = &#63; or throws a {@link NoSuchPositionException} if it could not be found.
 	 *
 	 * @param groupId the group ID
 	 * @param companyId the company ID
 	 * @param positionId_tws_in the position id_tws_in
+	 * @param clientId_in the client id_in
 	 * @return the matching position
 	 * @throws NoSuchPositionException if a matching position could not be found
 	 */
 	@Override
 	public Position findByPositionInGroupCompany(long groupId, long companyId,
-		long positionId_tws_in) throws NoSuchPositionException {
+		long positionId_tws_in, long clientId_in)
+		throws NoSuchPositionException {
 		Position position = fetchByPositionInGroupCompany(groupId, companyId,
-				positionId_tws_in);
+				positionId_tws_in, clientId_in);
 
 		if (position == null) {
-			StringBundler msg = new StringBundler(8);
+			StringBundler msg = new StringBundler(10);
 
 			msg.append(_NO_SUCH_ENTITY_WITH_KEY);
 
@@ -9537,6 +9568,9 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 
 			msg.append(", positionId_tws_in=");
 			msg.append(positionId_tws_in);
+
+			msg.append(", clientId_in=");
+			msg.append(clientId_in);
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
@@ -9551,33 +9585,37 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 	}
 
 	/**
-	 * Returns the position where groupId = &#63; and companyId = &#63; and positionId_tws_in = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 * Returns the position where groupId = &#63; and companyId = &#63; and positionId_tws_in = &#63; and clientId_in = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
 	 * @param groupId the group ID
 	 * @param companyId the company ID
 	 * @param positionId_tws_in the position id_tws_in
+	 * @param clientId_in the client id_in
 	 * @return the matching position, or <code>null</code> if a matching position could not be found
 	 */
 	@Override
 	public Position fetchByPositionInGroupCompany(long groupId, long companyId,
-		long positionId_tws_in) {
+		long positionId_tws_in, long clientId_in) {
 		return fetchByPositionInGroupCompany(groupId, companyId,
-			positionId_tws_in, true);
+			positionId_tws_in, clientId_in, true);
 	}
 
 	/**
-	 * Returns the position where groupId = &#63; and companyId = &#63; and positionId_tws_in = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	 * Returns the position where groupId = &#63; and companyId = &#63; and positionId_tws_in = &#63; and clientId_in = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param groupId the group ID
 	 * @param companyId the company ID
 	 * @param positionId_tws_in the position id_tws_in
+	 * @param clientId_in the client id_in
 	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the matching position, or <code>null</code> if a matching position could not be found
 	 */
 	@Override
 	public Position fetchByPositionInGroupCompany(long groupId, long companyId,
-		long positionId_tws_in, boolean retrieveFromCache) {
-		Object[] finderArgs = new Object[] { groupId, companyId, positionId_tws_in };
+		long positionId_tws_in, long clientId_in, boolean retrieveFromCache) {
+		Object[] finderArgs = new Object[] {
+				groupId, companyId, positionId_tws_in, clientId_in
+			};
 
 		Object result = null;
 
@@ -9591,13 +9629,14 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 
 			if ((groupId != position.getGroupId()) ||
 					(companyId != position.getCompanyId()) ||
-					(positionId_tws_in != position.getPositionId_tws_in())) {
+					(positionId_tws_in != position.getPositionId_tws_in()) ||
+					(clientId_in != position.getClientId_in())) {
 				result = null;
 			}
 		}
 
 		if (result == null) {
-			StringBundler query = new StringBundler(5);
+			StringBundler query = new StringBundler(6);
 
 			query.append(_SQL_SELECT_POSITION_WHERE);
 
@@ -9606,6 +9645,8 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 			query.append(_FINDER_COLUMN_POSITIONINGROUPCOMPANY_COMPANYID_2);
 
 			query.append(_FINDER_COLUMN_POSITIONINGROUPCOMPANY_POSITIONID_TWS_IN_2);
+
+			query.append(_FINDER_COLUMN_POSITIONINGROUPCOMPANY_CLIENTID_IN_2);
 
 			String sql = query.toString();
 
@@ -9624,6 +9665,8 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 
 				qPos.add(positionId_tws_in);
 
+				qPos.add(clientId_in);
+
 				List<Position> list = q.list();
 
 				if (list.isEmpty()) {
@@ -9633,7 +9676,7 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 				else {
 					if ((list.size() > 1) && _log.isWarnEnabled()) {
 						_log.warn(
-							"PositionPersistenceImpl.fetchByPositionInGroupCompany(long, long, long, boolean) with parameters (" +
+							"PositionPersistenceImpl.fetchByPositionInGroupCompany(long, long, long, long, boolean) with parameters (" +
 							StringUtil.merge(finderArgs) +
 							") yields a result set with more than 1 result. This violates the logical unique restriction. There is no order guarantee on which result is returned by this finder.");
 					}
@@ -9646,7 +9689,8 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 
 					if ((position.getGroupId() != groupId) ||
 							(position.getCompanyId() != companyId) ||
-							(position.getPositionId_tws_in() != positionId_tws_in)) {
+							(position.getPositionId_tws_in() != positionId_tws_in) ||
+							(position.getClientId_in() != clientId_in)) {
 						finderCache.putResult(FINDER_PATH_FETCH_BY_POSITIONINGROUPCOMPANY,
 							finderArgs, position);
 					}
@@ -9672,41 +9716,46 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 	}
 
 	/**
-	 * Removes the position where groupId = &#63; and companyId = &#63; and positionId_tws_in = &#63; from the database.
+	 * Removes the position where groupId = &#63; and companyId = &#63; and positionId_tws_in = &#63; and clientId_in = &#63; from the database.
 	 *
 	 * @param groupId the group ID
 	 * @param companyId the company ID
 	 * @param positionId_tws_in the position id_tws_in
+	 * @param clientId_in the client id_in
 	 * @return the position that was removed
 	 */
 	@Override
 	public Position removeByPositionInGroupCompany(long groupId,
-		long companyId, long positionId_tws_in) throws NoSuchPositionException {
+		long companyId, long positionId_tws_in, long clientId_in)
+		throws NoSuchPositionException {
 		Position position = findByPositionInGroupCompany(groupId, companyId,
-				positionId_tws_in);
+				positionId_tws_in, clientId_in);
 
 		return remove(position);
 	}
 
 	/**
-	 * Returns the number of positions where groupId = &#63; and companyId = &#63; and positionId_tws_in = &#63;.
+	 * Returns the number of positions where groupId = &#63; and companyId = &#63; and positionId_tws_in = &#63; and clientId_in = &#63;.
 	 *
 	 * @param groupId the group ID
 	 * @param companyId the company ID
 	 * @param positionId_tws_in the position id_tws_in
+	 * @param clientId_in the client id_in
 	 * @return the number of matching positions
 	 */
 	@Override
 	public int countByPositionInGroupCompany(long groupId, long companyId,
-		long positionId_tws_in) {
+		long positionId_tws_in, long clientId_in) {
 		FinderPath finderPath = FINDER_PATH_COUNT_BY_POSITIONINGROUPCOMPANY;
 
-		Object[] finderArgs = new Object[] { groupId, companyId, positionId_tws_in };
+		Object[] finderArgs = new Object[] {
+				groupId, companyId, positionId_tws_in, clientId_in
+			};
 
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
-			StringBundler query = new StringBundler(4);
+			StringBundler query = new StringBundler(5);
 
 			query.append(_SQL_COUNT_POSITION_WHERE);
 
@@ -9715,6 +9764,8 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 			query.append(_FINDER_COLUMN_POSITIONINGROUPCOMPANY_COMPANYID_2);
 
 			query.append(_FINDER_COLUMN_POSITIONINGROUPCOMPANY_POSITIONID_TWS_IN_2);
+
+			query.append(_FINDER_COLUMN_POSITIONINGROUPCOMPANY_CLIENTID_IN_2);
 
 			String sql = query.toString();
 
@@ -9732,6 +9783,8 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 				qPos.add(companyId);
 
 				qPos.add(positionId_tws_in);
+
+				qPos.add(clientId_in);
 
 				count = (Long)q.uniqueResult();
 
@@ -9754,7 +9807,9 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 	private static final String _FINDER_COLUMN_POSITIONINGROUPCOMPANY_COMPANYID_2 =
 		"position.companyId = ? AND ";
 	private static final String _FINDER_COLUMN_POSITIONINGROUPCOMPANY_POSITIONID_TWS_IN_2 =
-		"position.positionId_tws_in = ?";
+		"position.positionId_tws_in = ? AND ";
+	private static final String _FINDER_COLUMN_POSITIONINGROUPCOMPANY_CLIENTID_IN_2 =
+		"position.clientId_in = ?";
 
 	public PositionPersistenceImpl() {
 		setModelClass(Position.class);
@@ -9776,13 +9831,13 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 		finderCache.putResult(FINDER_PATH_FETCH_BY_POSITIONOUTGROUPCOMPANY,
 			new Object[] {
 				position.getGroupId(), position.getCompanyId(),
-				position.getPositionId_tws_out()
+				position.getPositionId_tws_out(), position.getClientId_out()
 			}, position);
 
 		finderCache.putResult(FINDER_PATH_FETCH_BY_POSITIONINGROUPCOMPANY,
 			new Object[] {
 				position.getGroupId(), position.getCompanyId(),
-				position.getPositionId_tws_in()
+				position.getPositionId_tws_in(), position.getClientId_in()
 			}, position);
 
 		position.resetOriginalValues();
@@ -9868,7 +9923,8 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 			args = new Object[] {
 					positionModelImpl.getGroupId(),
 					positionModelImpl.getCompanyId(),
-					positionModelImpl.getPositionId_tws_out()
+					positionModelImpl.getPositionId_tws_out(),
+					positionModelImpl.getClientId_out()
 				};
 
 			finderCache.putResult(FINDER_PATH_COUNT_BY_POSITIONOUTGROUPCOMPANY,
@@ -9879,7 +9935,8 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 			args = new Object[] {
 					positionModelImpl.getGroupId(),
 					positionModelImpl.getCompanyId(),
-					positionModelImpl.getPositionId_tws_in()
+					positionModelImpl.getPositionId_tws_in(),
+					positionModelImpl.getClientId_in()
 				};
 
 			finderCache.putResult(FINDER_PATH_COUNT_BY_POSITIONINGROUPCOMPANY,
@@ -9906,7 +9963,8 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 				Object[] args = new Object[] {
 						positionModelImpl.getGroupId(),
 						positionModelImpl.getCompanyId(),
-						positionModelImpl.getPositionId_tws_out()
+						positionModelImpl.getPositionId_tws_out(),
+						positionModelImpl.getClientId_out()
 					};
 
 				finderCache.putResult(FINDER_PATH_COUNT_BY_POSITIONOUTGROUPCOMPANY,
@@ -9920,7 +9978,8 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 				Object[] args = new Object[] {
 						positionModelImpl.getGroupId(),
 						positionModelImpl.getCompanyId(),
-						positionModelImpl.getPositionId_tws_in()
+						positionModelImpl.getPositionId_tws_in(),
+						positionModelImpl.getClientId_in()
 					};
 
 				finderCache.putResult(FINDER_PATH_COUNT_BY_POSITIONINGROUPCOMPANY,
@@ -9952,7 +10011,8 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 
 		args = new Object[] {
 				positionModelImpl.getGroupId(), positionModelImpl.getCompanyId(),
-				positionModelImpl.getPositionId_tws_out()
+				positionModelImpl.getPositionId_tws_out(),
+				positionModelImpl.getClientId_out()
 			};
 
 		finderCache.removeResult(FINDER_PATH_COUNT_BY_POSITIONOUTGROUPCOMPANY,
@@ -9965,7 +10025,8 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 			args = new Object[] {
 					positionModelImpl.getOriginalGroupId(),
 					positionModelImpl.getOriginalCompanyId(),
-					positionModelImpl.getOriginalPositionId_tws_out()
+					positionModelImpl.getOriginalPositionId_tws_out(),
+					positionModelImpl.getOriginalClientId_out()
 				};
 
 			finderCache.removeResult(FINDER_PATH_COUNT_BY_POSITIONOUTGROUPCOMPANY,
@@ -9976,7 +10037,8 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 
 		args = new Object[] {
 				positionModelImpl.getGroupId(), positionModelImpl.getCompanyId(),
-				positionModelImpl.getPositionId_tws_in()
+				positionModelImpl.getPositionId_tws_in(),
+				positionModelImpl.getClientId_in()
 			};
 
 		finderCache.removeResult(FINDER_PATH_COUNT_BY_POSITIONINGROUPCOMPANY,
@@ -9989,7 +10051,8 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 			args = new Object[] {
 					positionModelImpl.getOriginalGroupId(),
 					positionModelImpl.getOriginalCompanyId(),
-					positionModelImpl.getOriginalPositionId_tws_in()
+					positionModelImpl.getOriginalPositionId_tws_in(),
+					positionModelImpl.getOriginalClientId_in()
 				};
 
 			finderCache.removeResult(FINDER_PATH_COUNT_BY_POSITIONINGROUPCOMPANY,
@@ -10553,8 +10616,8 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 		positionImpl.setShare_number(position.getShare_number());
 		positionImpl.setShare_number_to_trade(position.getShare_number_to_trade());
 		positionImpl.setShare_number_traded(position.getShare_number_traded());
-		positionImpl.setRealtimeId_in(position.getRealtimeId_in());
-		positionImpl.setRealtimeId_out(position.getRealtimeId_out());
+		positionImpl.setClientId_in(position.getClientId_in());
+		positionImpl.setClientId_out(position.getClientId_out());
 		positionImpl.setStrategy_in(position.getStrategy_in());
 		positionImpl.setStrategy_out(position.getStrategy_out());
 		positionImpl.setPercentualstoplost_out(position.getPercentualstoplost_out());

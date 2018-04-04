@@ -66,6 +66,8 @@ public class Utilities {
    
    public final static String __IBTRADER_LONG_DATE_FORMAT="yyyyMMdd"; 
    public final static String __IBTRADER_SQL_DATE_="yyyy-MM-dd HH:mm"; // PARA EL CUSTOM SQL DE MOBILE AVERAGE 
+   public final static String __IBTRADER_ORDERS_EXECUTED__DATE_FORMAT ="yyyymmdd hh:mm:ss"; // PARA EL execution time de ordenes de la tws 
+   
    
    //public final static String _IBTRADER_DATE_FORMAT="HHmm";
    

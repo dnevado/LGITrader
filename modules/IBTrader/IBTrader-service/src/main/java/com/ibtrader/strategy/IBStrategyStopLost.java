@@ -19,6 +19,8 @@ import com.ibtrader.data.service.PositionLocalServiceUtil;
 import com.ibtrader.data.service.RealtimeLocalServiceUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.ibtrader.util.ConfigKeys;
 import com.ibtrader.util.PositionStates;
 import com.ibtrader.util.Utilities;
@@ -40,6 +42,10 @@ public class IBStrategyStopLost extends StrategyImpl {
 	long returnValue=-1;
 	try		
     {
+		boolean existsPositionToExit = PositionLocalServiceUtil.ExistsPositionToExit(_share.getGroupId(),_share.getCompanyId(),_share.getShareId());
+		if (!existsPositionToExit)
+			return -1;
+		
 		_log.info("UserAccount: detectada posible entrada de " + _share.getName() +  "Tick:" + _share.getSymbol() + ",PrecioCompra:" + this.getValueIn());
 		// hace falta???????? ..creo que si, para tener control sobre la operacion de compra /venta 
 		SimpleDateFormat sdf = new SimpleDateFormat (Utilities._IBTRADER_FUTURE_SHORT_DATE);
@@ -119,8 +125,14 @@ public class IBStrategyStopLost extends StrategyImpl {
 	existsPositionToExit = PositionLocalServiceUtil.ExistsPositionToExit(_share.getGroupId(),_share.getCompanyId(),_share.getShareId());
 	if (existsPositionToExit)		
 	{	
-		  			
-		Realtime oShareLastRTime = (Realtime)  RealtimeLocalServiceUtil.findLastRealTime(_share.getShareId(), _share.getCompanyId(), _share.getGroupId());
+		 
+		/* CAMBIAMOS POR EL ULTIMO VALOR MENOR QUE AHORA PARA QUE SE PUEDAN METER VALORES FUTURES COMO CONJUNTO DE PRUEBAS */
+		User _IBUser = UserLocalServiceUtil.getUser(_share.getUserCreatedId());
+		
+		Date _ToNow   = Utilities.getDate(_IBUser);
+		Realtime oShareLastRTime =  RealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _ToNow);
+		
+		//Realtime oShareLastRTime = (Realtime)  RealtimeLocalServiceUtil.findLastRealTime(_share.getShareId(), _share.getCompanyId(), _share.getGroupId());
 		currentPosition = PositionLocalServiceUtil.findPositionToExit(_share.getGroupId(),_share.getCompanyId(),_share.getShareId());
 		
 		if (oShareLastRTime!=null && currentPosition!=null && currentPosition.getPercentualstoplost_out()>0)
@@ -131,9 +143,9 @@ public class IBStrategyStopLost extends StrategyImpl {
 			double current_price = oShareLastRTime.getValue();
 
 			if (currentPosition.getType().equals(PositionStates.statusTWSFire.BUY.toString()))  // operacion de compra normal..??
-				bExistslost = (current_price < (entry_price - (entry_price * percentual_stop_lost)));
+				bExistslost = (current_price < (entry_price - (entry_price * percentual_stop_lost /100)));
 			else
-				bExistslost = (current_price > (entry_price + (entry_price * percentual_stop_lost)));
+				bExistslost = (current_price > (entry_price + (entry_price * percentual_stop_lost/100)));
 			if (bExistslost)
 			{
 				

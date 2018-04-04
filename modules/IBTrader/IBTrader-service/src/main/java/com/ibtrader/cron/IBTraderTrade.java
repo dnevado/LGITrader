@@ -76,7 +76,7 @@ public class IBTraderTrade  extends BaseSchedulerEntryMessageListener {
 	     schedulerEntryImpl.setTrigger(TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(),10, TimeUnit.SECOND));  
 
 		
-		_log.info("Activating CRON..."  + schedulerEntryImpl.getTrigger());
+		_log.info("Activating CRON IBTraderTrade..."  + schedulerEntryImpl.getTrigger());
 		_schedulerEngineHelper.register(this, schedulerEntryImpl, DestinationNames.SCHEDULER_DISPATCH);
 		
 	}

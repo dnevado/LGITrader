@@ -54,14 +54,12 @@ public class CronUtil {
 	/* VALIDA CONFIRMACIONES DE ORDENES COMPLETADAS Y NO ENVIADAS A LA API POR DESCONEXIONES  */
 	public static void StartOrdersValidator(Message _message) throws Exception 	{
 		
-		List<Config> lConfig=null;
 		int 	_CLIENT_ID = 3;	  // el dos para leer, el 3 para escribir			
 		String  _HOST = "127.0.0.1";
 		int     _PORT = ConfigKeys.TWS_CONNECTION_PORT;	
 		List<Company> lCompanies = CompanyLocalServiceUtil.getCompanies();
 		Company _company = lCompanies.get(0); // tiene que existir
 		long companyId =  _company.getCompanyId();		
-		Contract oContrat = null;
 		/* VERIFICAMOS MERCADOS ACTIVOS */
 	    long guestGroupId = 0;
 		try {
@@ -99,7 +97,8 @@ public class CronUtil {
 				 
 				 if (wrapper.isConnected())
 			     {
-
+					
+					 /* VERIFICACION DE LA CONECTIVIDAD, SIEMPRE NECESARIO */
 					wrapper.reqNextId(); 
 					wrapper.set_ibtarget_organization(_Organization);
 					
@@ -108,9 +107,10 @@ public class CronUtil {
 						wrapper.disconnect();
 						return;
 					}
+					wrapper.getCurrentTwsTime();
+					_log.info("Connected, StartOrdersValidator, connecting to TWS,currentOrderId:");
 					
-					_log.info("Connected, StartOrdersValidator, connecting to TWS,currentOrderId:" + wrapper.getCurrentOrderId());
-	    			long  _INCREMENT_ORDER_ID = wrapper.getCurrentOrderId();
+					long  _INCREMENT_ORDER_ID = wrapper.getNextOrderId();
 					IBOrderLocalServiceUtil.deleteByOrderCompanyGroup(_INCREMENT_ORDER_ID, _Organization.getCompanyId(), _Organization.getGroupId(),_CLIENT_ID,-1);
 
 	    			 IBOrder _order = IBOrderLocalServiceUtil.createIBOrder(_INCREMENT_ORDER_ID);
@@ -123,8 +123,8 @@ public class CronUtil {
 	    			IBOrderLocalServiceUtil.updateIBOrder(_order);
 	    			try {
 	    				wrapper.getExecutionOrders(new Long(_INCREMENT_ORDER_ID).intValue());
-	    				_INCREMENT_ORDER_ID++;
-	    				wrapper.getOpenOrders(new Long(_INCREMENT_ORDER_ID).intValue());	
+	    				/* _INCREMENT_ORDER_ID++;
+	    				wrapper.getOpenOrders(new Long(_INCREMENT_ORDER_ID).intValue()); */	
 	    				Thread.sleep(1000);
 					//	oTWS.GITradergetContractDetails(new Long(_INCREMENT_ORDER_ID).intValue(),oContrat);							
 					} catch (InterruptedException e) {
@@ -179,7 +179,7 @@ public class CronUtil {
 	
     LocalDateTime  _now =  LocalDateTime .now();  
 	
-	if (_CRON_RUNNING==0)  // no se esta ejecutando --> FALTA CONTROL DE EXCEPTIONES PARA CONTROLAR QUE SE PUEDA VOLVER A EJECUTAR 
+	if (_CRON_RUNNING<=0)  // no se esta ejecutando --> FALTA CONTROL DE EXCEPTIONES PARA CONTROLAR QUE SE PUEDA VOLVER A EJECUTAR 
 	{
 	// sacamos organizaciones padre 
 	
@@ -215,7 +215,8 @@ public class CronUtil {
 		if (wrapper.isConnected())
 	    {
 			
-				wrapper.reqNextId();
+				/* VERIFICACION DE LA CONECTIVIDAD, SIEMPRE NECESARIO */
+				wrapper.reqNextId(); 
 				wrapper.set_ibtarget_organization(_Organization);
 				
 				if (wrapper.getCurrentOrderId()==-1)
@@ -223,7 +224,7 @@ public class CronUtil {
 					wrapper.disconnect();
 					return;
 				}
-				_log.info("Connected, StartReadingCron, connecting to TWS,currentOrderId:" + wrapper.getCurrentOrderId());
+				_log.info("Connected, StartReadingCron, connecting to TWS");
 			 
 			 	ArrayList<String> lShareRequested = new ArrayList<String>();
 			 	while (true)
@@ -248,8 +249,7 @@ public class CronUtil {
 			    java.util.List<Share> lShare = null;
 			    /* 1. VERIFICAMOS QUE EXISTA UNA PETICION PARA EL HISTORICAL DATA QUE NO HAYA FINALIZADO SIN ERROR */
 			    /* LANZAMOS LA OPERACION DE CONTINUO */ 
-			   
-			    			
+			   	
 				try
 				{			   				    	 
 				    	 // empezamos a contar desde 5 o 10 minutos antes de la apertura para contar precios
@@ -301,8 +301,7 @@ public class CronUtil {
 				    				_log.info("TradingRead de :" + oShare.getSymbol() + ":" +  oShare.getSecurity_type() + ":" + oShare.getExchange() + ":" + oMarket.getCurrency());
 
 					    			/* insertamos control de ordenes de peticion */		
-				    				
-					    			long  _INCREMENT_ORDER_ID = wrapper.getCurrentOrderId();
+				    				long  _INCREMENT_ORDER_ID = wrapper.getNextOrderId();
 				    				IBOrderLocalServiceUtil.deleteByOrderCompanyGroup(_INCREMENT_ORDER_ID, _Organization.getCompanyId(), _Organization.getGroupId(), _CLIENT_ID,oShare.getShareId());
 
 					    			 IBOrder _order = IBOrderLocalServiceUtil.createIBOrder(_INCREMENT_ORDER_ID);
@@ -339,7 +338,7 @@ public class CronUtil {
 				}
 			 }   // while 
 	     } //  end 		 if (oTWS.GITraderTWSIsConnected() )
-		 if (wrapper.isConnected()) wrapper.disconnect();
+		// if (wrapper.isConnected()) wrapper.disconnect();
 		 
 		} //	for (Organization _Organization : lOrganization )	
 	
@@ -390,17 +389,14 @@ public class CronUtil {
 		}
 		
 		
-			 
-		
-		
 		_CLIENT_ID = Long.valueOf(Utilities.getConfigurationValue(IBTraderConstants.keyCRON_TRADING_CLIENT_INITIAL, companyId, guestGroupId)).intValue();;	  // el dos para leer, el 3 para escribir
 		_CRON_RUNNING = Long.valueOf(Utilities.getConfigurationValue(IBTraderConstants.keyCRON_TRADING_STATUS, companyId, guestGroupId)).intValue();		
 	    LocalDateTime  _now =  LocalDateTime .now();  
 
-		if (_CRON_RUNNING==0)  // no se esta ejecutando --> FALTA CONTROL DE EXCEPTIONES PARA CONTROLAR QUE SE PUEDA VOLVER A EJECUTAR 
+		if (_CRON_RUNNING<=0)  // no se esta ejecutando o no exista para client --> FALTA CONTROL DE EXCEPTIONES PARA CONTROLAR QUE SE PUEDA VOLVER A EJECUTAR 
 		{
 			
-		// sacamos organizaciones padre 
+			// sacamos organizaciones padre 
 			List<Organization> lOrganization = OrganizationLocalServiceUtil.getOrganizations(companyId, OrganizationConstants.DEFAULT_PARENT_ORGANIZATION_ID, 0, OrganizationLocalServiceUtil.getOrganizationsCount()+1);
 			for (Organization _Organization : lOrganization )
 			{
@@ -433,7 +429,7 @@ public class CronUtil {
  						wrapper.disconnect();
  						return;
  					}
-					_log.info("Connected, StartTradingCron, connecting to TWS,currentOrderId:" + wrapper.getCurrentOrderId());
+					_log.info("Connected, StartTradingCron, connecting to TWS");
 					
 					while (true)
 					{
@@ -522,7 +518,8 @@ public class CronUtil {
 						}
 					} // end wile true 	
 			     }  //  if (oTWS.GITraderTWSIsConnected() )
-				 if (wrapper.isConnected()) wrapper.disconnect();
+
+			//	if (wrapper.isConnected()) wrapper.disconnect();
 			} // for (Organization _Organization : lOrganization )
 	    
 		} // if (_CRON_RUNNING==0)  // no se esta ejecutando --> FALTA CONTROL DE EXCEPTIONES PARA CONTROLAR QUE SE PUEDA VOLVER A EJECUTAR 
@@ -601,6 +598,7 @@ public class CronUtil {
 				 if (wrapper.isConnected())
 			     {
 
+					 /* VERIFICACION DE LA CONECTIVIDAD, SIEMPRE NECESARIO */
 					wrapper.reqNextId(); 
 					wrapper.set_ibtarget_organization(_Organization);
 					
@@ -610,7 +608,7 @@ public class CronUtil {
 						return;
 					}
 					
-					_log.info("Connected, StartVerifyContractsCron, connecting to TWS,currentOrderId:" + wrapper.getCurrentOrderId());
+					_log.info("Connected, StartVerifyContractsCron, connecting to TWS");
 
 					 
 					List<Market> lActiveMarkets = MarketLocalServiceUtil.findByActive(Boolean.TRUE);
@@ -644,8 +642,9 @@ public class CronUtil {
 							}												    		*/
 			    			_log.info("Verifyng de :" + oShare.getSymbol() + ":" +  oShare.getSecurity_type() + ":" + oShare.getExchange() + ":" + oMarket.getCurrency());
 			    			wrapper.set_ibtarget_share(oShare);
-							
-			    			long  _INCREMENT_ORDER_ID = wrapper.getCurrentOrderId();
+			    			/* insertamos control de ordenes de peticion */		
+		    				long  _INCREMENT_ORDER_ID = wrapper.getNextOrderId();
+			    			
 							IBOrderLocalServiceUtil.deleteByOrderCompanyGroup(_INCREMENT_ORDER_ID, _Organization.getCompanyId(), _Organization.getGroupId(),_CLIENT_ID,oShare.getShareId());
 
 			    			 IBOrder _order = IBOrderLocalServiceUtil.createIBOrder(_INCREMENT_ORDER_ID);

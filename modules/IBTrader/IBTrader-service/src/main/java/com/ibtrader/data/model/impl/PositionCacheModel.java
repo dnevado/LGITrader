@@ -121,10 +121,10 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 		sb.append(share_number_to_trade);
 		sb.append(", share_number_traded=");
 		sb.append(share_number_traded);
-		sb.append(", realtimeId_in=");
-		sb.append(realtimeId_in);
-		sb.append(", realtimeId_out=");
-		sb.append(realtimeId_out);
+		sb.append(", clientId_in=");
+		sb.append(clientId_in);
+		sb.append(", clientId_out=");
+		sb.append(clientId_out);
 		sb.append(", strategy_in=");
 		sb.append(strategy_in);
 		sb.append(", strategy_out=");
@@ -257,8 +257,8 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 		positionImpl.setShare_number(share_number);
 		positionImpl.setShare_number_to_trade(share_number_to_trade);
 		positionImpl.setShare_number_traded(share_number_traded);
-		positionImpl.setRealtimeId_in(realtimeId_in);
-		positionImpl.setRealtimeId_out(realtimeId_out);
+		positionImpl.setClientId_in(clientId_in);
+		positionImpl.setClientId_out(clientId_out);
 
 		if (strategy_in == null) {
 			positionImpl.setStrategy_in(StringPool.BLANK);
@@ -340,9 +340,9 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 
 		share_number_traded = objectInput.readLong();
 
-		realtimeId_in = objectInput.readLong();
+		clientId_in = objectInput.readLong();
 
-		realtimeId_out = objectInput.readLong();
+		clientId_out = objectInput.readLong();
 		strategy_in = objectInput.readUTF();
 		strategy_out = objectInput.readUTF();
 
@@ -443,9 +443,9 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 
 		objectOutput.writeLong(share_number_traded);
 
-		objectOutput.writeLong(realtimeId_in);
+		objectOutput.writeLong(clientId_in);
 
-		objectOutput.writeLong(realtimeId_out);
+		objectOutput.writeLong(clientId_out);
 
 		if (strategy_in == null) {
 			objectOutput.writeUTF(StringPool.BLANK);
@@ -510,8 +510,8 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 	public long share_number;
 	public long share_number_to_trade;
 	public long share_number_traded;
-	public long realtimeId_in;
-	public long realtimeId_out;
+	public long clientId_in;
+	public long clientId_out;
 	public String strategy_in;
 	public String strategy_out;
 	public double percentualstoplost_out;

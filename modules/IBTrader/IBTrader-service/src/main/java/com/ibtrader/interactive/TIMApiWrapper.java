@@ -15,12 +15,17 @@ To deal with this situation, there are three things that need to be done:
 
 
 3.       When TWS reconnects to the IB servers, the client receives an 1101 or 1102 message code via the error callback. It must call reqExecutions and reqOpenOrders to get up-to-date information about orders and fills.
+
+*
+*
+*
+*https://groups.io/g/twsapi/message/2127?p=,,,20,0,0,0::Created,,nextvalidId+clients,20,2,0,4039537
+*https://groups.io/g/twsapi/topic/4039546#2193
+*
 */
 
 package com.ibtrader.interactive;
 
-import java.sql.Timestamp;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -56,6 +61,7 @@ import com.ib.client.OrderState;
 import com.ib.client.PriceIncrement;
 import com.ib.client.SoftDollarTier;
 import com.ib.client.TickAttr;
+import com.ibtrader.constants.IBTraderConstants;
 import com.ibtrader.data.model.Config;
 import com.ibtrader.data.model.IBOrder;
 import com.ibtrader.data.model.Position;
@@ -77,9 +83,6 @@ import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.Organization;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.sun.javafx.webkit.UtilitiesImpl;
-
-
 
 //! [ewrapperimpl]
 public class TIMApiWrapper implements EWrapper {
@@ -103,6 +106,8 @@ public class TIMApiWrapper implements EWrapper {
 	
 	private Share _ibtarget_share= null;
 	private Organization _ibtarget_organization= null;
+	
+	private Date currentTWSDate=null;
 	
 
 	
@@ -132,11 +137,29 @@ public class TIMApiWrapper implements EWrapper {
 		clientSocket.reqContractDetails(requestId, contract);
 	}
 	
+	/* para saber la hora local del servidor y obtener las operaciones previas */
+	public void getCurrentTwsTime() throws InterruptedException{
+		clientSocket.reqCurrentTime();		
+	}
 	public void getOpenOrders(int requestId) throws InterruptedException{
 		clientSocket.reqOpenOrders();		
 	}
     public void getExecutionOrders(int requestId) throws InterruptedException{
-    	clientSocket.reqExecutions(requestId,  new ExecutionFilter());
+
+    	/* DESDE CUANDO */
+    	
+		int  _orders_from_hours = Long.valueOf(Utilities.getConfigurationValue(IBTraderConstants.keyLAST_POSITIONS_TO_CHECK_IN_HOURS, _ibtarget_organization.getCompanyId(), guestGroupId)).intValue();;	  // el dos para leer, el 3 para escribir
+
+		//yyyymmdd hh:mm:ss
+		// ojo entre la hora de la TWS ya la hora UTC 
+		Calendar now = Calendar.getInstance();
+		/*now.setTime(currentTWSDate);		
+		now.add(Calendar.HOUR_OF_DAY, -_orders_from_hours);
+		SimpleDateFormat sdf = new SimpleDateFormat(Utilities.__IBTRADER_ORDERS_EXECUTED__DATE_FORMAT);		
+		ExecutionFilter filter = new ExecutionFilter(this._clientId,"",sdf.format(now.getTime()),"","","","");*/
+		ExecutionFilter filter = new ExecutionFilter();
+		/* NO ME FUNCIONA EL FILTRO POR FECHAS */
+		clientSocket.reqExecutions(requestId,  filter);
 	}
 	
 	public void getRealTime(int requestId, Contract contract) throws InterruptedException{
@@ -187,7 +210,10 @@ public class TIMApiWrapper implements EWrapper {
 		        	_log.info("Connnect Exception: "+e.getMessage());
 		        }
 		    }
+		    _log.info("_sendDisconnectEvent: "+_sendDisconnectEvent);
 		 }).start();
+		Thread.sleep(1000);
+		
 	}
 	
 	//! [socket_init]
@@ -199,6 +225,25 @@ public class TIMApiWrapper implements EWrapper {
 		return readerSignal;
 	}
 	
+	
+	/* SERA EL MAXIMO DE 
+	 * 1. TWS 
+	 * 2. MAX ORDERID DE LA TABLA ORDENES
+	 * 3. MAX DE LA ORDENES DE POSICIONES REALIZAZAD  
+	 */	
+	public int getNextOrderId() {
+		/* POSICIOES */
+		long  _currentMaxPositionsId= PositionLocalServiceUtil.findMaxOrderClientCompanyGroup(_ibtarget_organization.getCompanyId(), _ibtarget_organization.getGroupId(), this._clientId);
+		// ordenes 
+		long   _currentMaxOrderId= IBOrderLocalServiceUtil.findMaxOrderClientCompanyGroup(_ibtarget_organization.getCompanyId(), _ibtarget_organization.getGroupId(), this._clientId);
+		/* maximo de los tres valores */
+		long  _INCREMENT_ORDER_ID   = Math.max(currentOrderId, Math.max(_currentMaxPositionsId, _currentMaxOrderId));
+		
+		/* Entre lo que nos da la tws (se solapan entre clientIds y lo que nos la ultima posicion (hay que guardarlos) , eleigimos el mayor */
+		currentOrderId = (int) _INCREMENT_ORDER_ID;
+		return currentOrderId++;
+	}
+	
 	public int getCurrentOrderId() {
 		return currentOrderId++;
 	}
@@ -208,6 +253,9 @@ public class TIMApiWrapper implements EWrapper {
 	//! [tickprice]
 	
 	//! [ticksize]
+	
+	
+	
 	@Override
 	public void tickSize(int tickerId, int field, int size) {
 		//System.out.println("Tick Size. Ticker Id:" + tickerId + ", Field: " + field + ", Size: " + size);
@@ -252,19 +300,22 @@ public class TIMApiWrapper implements EWrapper {
 	 * LISTA DE ORDENES QUE ACOMPAÑAN A LA ORDEN PADRE, SOLO SE APLICA A ORDENES DE TIPO TRAIL PARA AJUSTAR BENEFICIO 
 	 */
 	
-	public void openOrder(Contract contract, Order parentOrder, List<Order> childsOrders, OrderState orderState, long positionId) {
+	/* thread safe */
+	public  synchronized  void openOrder(Contract contract, Order parentOrder, List<Order> childsOrders, OrderState orderState, long positionId) {
 	
 		
 		 /* METEMOS DOBLE VALIDACION POR LOS THREADS EN CASO DE QUE HAYA OPERACION PREVIA YA EN MARCHA 	
 		  * 
 		  * 
 		  */
-		int  _INCREMENT_ORDER_ID = getCurrentOrderId();
+		/******************************************************************************************************************************
+		 * OJO, LAS ORDENES INCLUIDAS EN LAS POSICIONES NO SE PUEDEN REUTILIZAR PUESTO QUE SE USAN PARA TRATARLAS EN CASO DE DESCONEXION 
+		 *  
+		 */
+		int  _INCREMENT_ORDER_ID = getNextOrderId();
 		int  parentOrderId = _INCREMENT_ORDER_ID;
-		/* if (_INCREMENT_ORDER_ID>0) // mecanismo de control, siempre el next valid >=1
-		{*/
 		
-		IBOrderLocalServiceUtil.deleteByOrderCompanyGroup(_INCREMENT_ORDER_ID, _ibtarget_share.getCompanyId(), _ibtarget_share.getGroupId(),_clientId,_ibtarget_share.getShareId());
+	//	IBOrderLocalServiceUtil.deleteByOrderCompanyGroup(_INCREMENT_ORDER_ID, _ibtarget_share.getCompanyId(), _ibtarget_share.getGroupId(),_clientId,_ibtarget_share.getShareId());
 		IBOrder _order = IBOrderLocalServiceUtil.createIBOrder(_INCREMENT_ORDER_ID);			/* insertamos control de ordenes de peticion */
 		_order.setCompanyId(_ibtarget_share.getCompanyId());
 		_order.setGroupId(_ibtarget_share.getGroupId());
@@ -276,34 +327,29 @@ public class TIMApiWrapper implements EWrapper {
 		IBOrderLocalServiceUtil.updateIBOrder(_order);
 		Position _position = PositionLocalServiceUtil.fetchPosition(positionId);
 		/* ACTULIAMOS CON LA POSICION DE ENTRADA  SI  ES UNA ENTRADA */
-		if (_position.getDate_real_in()!=null)  // SALIDA DE LA MISMA POSICION 			
+		if (_position.getDate_real_in()!=null)  // SALIDA DE LA MISMA POSICION
+		{
 			_position.setPositionId_tws_out(_INCREMENT_ORDER_ID);
+			_position.setClientId_out(this._clientId);
+		}
 		else
+		{
 			_position.setPositionId_tws_in(_INCREMENT_ORDER_ID);
+			_position.setClientId_in(this._clientId);
+		}
 		PositionLocalServiceUtil.updatePosition(_position);
 		//	_log.info("1. openOrder...." +  positionId + "," + _INCREMENT_ORDER_ID);
 		// Si hay hijas, aseguramos el transmit correcto,
 		if (childsOrders!=null && !childsOrders.isEmpty())			
 			parentOrder.transmit(false);
-		
-	/*	 if (!this.isConnected()) 
-			 this.connect(this., _PORT,_CLIENT_ID); 	 	
- 
-
-		// if (oTWS.GITraderTWSIsConnected() )
-		if (wrapper.isConnected())
-	    {
-			
-				wrapper.reqNextId();
-		
-		*/
+	
 		clientSocket.placeOrder(new Long(_INCREMENT_ORDER_ID).intValue(), contract, parentOrder);
 		for (Order childOrder : childsOrders)
 		{
 			_INCREMENT_ORDER_ID++;
 			childOrder.parentId(parentOrderId);
 			childOrder.transmit(true);
-			IBOrderLocalServiceUtil.deleteByOrderCompanyGroup(_INCREMENT_ORDER_ID, _ibtarget_share.getCompanyId(), _ibtarget_share.getGroupId(),_clientId,_ibtarget_share.getShareId());
+		//	IBOrderLocalServiceUtil.deleteByOrderCompanyGroup(_INCREMENT_ORDER_ID, _ibtarget_share.getCompanyId(), _ibtarget_share.getGroupId(),_clientId,_ibtarget_share.getShareId());
 			 _order = IBOrderLocalServiceUtil.createIBOrder(_INCREMENT_ORDER_ID);			/* insertamos control de ordenes de peticion */
 			_order.setCompanyId(_ibtarget_share.getCompanyId());
 			_order.setGroupId(_ibtarget_share.getGroupId());
@@ -314,7 +360,7 @@ public class TIMApiWrapper implements EWrapper {
 			_order.setIbclientId(_clientId);					
 			IBOrderLocalServiceUtil.updateIBOrder(_order);
 			clientSocket.placeOrder(new Long(_INCREMENT_ORDER_ID).intValue(), contract, childOrder);
-		}
+		}		
 			
 		//}
 		
@@ -414,18 +460,18 @@ public class TIMApiWrapper implements EWrapper {
 	@Override
 	public void execDetails(int reqId, Contract contract, Execution execution) {
 		
-		_log.info("ExecDetails. "+reqId+" - ["+contract.symbol()+"], ["+contract.secType()+"], ["+contract.currency()+"], ["+execution.execId()+"], ["+execution.orderId()+"], ["+execution.shares()+"]");
+		//_log.info("ExecDetails. "+reqId+" - ["+contract.symbol()+"], ["+contract.secType()+"], ["+contract.currency()+"], ["+execution.execId()+"], ["+execution.orderId()+"], ["+execution.shares()+"]");
 
 		
-		Position _oPosition = PositionLocalServiceUtil.findByPositionID_In_TWS(_ibtarget_organization.getGroupId(), _ibtarget_organization.getCompanyId(),execution.orderId());
+		Position _oPosition = PositionLocalServiceUtil.findByPositionID_In_TWS(_ibtarget_organization.getGroupId(), _ibtarget_organization.getCompanyId(),execution.orderId(),execution.clientId());
 		boolean bChanged = false;
 		// SI ES NULL, QUIERE DECIR QUE PUEDE VENIR UNA OPERACION DE VENTA...LA BUSCAMOS.		
 		if (_oPosition==null)
 		{
-			_oPosition = PositionLocalServiceUtil.findByPositionID_Out_TWS(_ibtarget_organization.getGroupId(), _ibtarget_organization.getCompanyId(),execution.orderId());
+			_oPosition = PositionLocalServiceUtil.findByPositionID_Out_TWS(_ibtarget_organization.getGroupId(), _ibtarget_organization.getCompanyId(),execution.orderId(),execution.clientId());
 			if (_oPosition==null) 
 			{
-				_log.info("execDetails order not found for Order Key:" + reqId + ",contract:" + contract.symbol() + ",Execution:" + execution.avgPrice());
+				//_log.info("execDetails order not found for Order Key:" + reqId + ",contract:" + contract.symbol() + ",Execution:" + execution.avgPrice());
 				return;
 			}
 			else
@@ -451,6 +497,7 @@ public class TIMApiWrapper implements EWrapper {
 			if (!_oPosition.getState_in().equals(PositionStates.statusTWSCallBack.Filled.toString()))
 			{				
 				_oPosition.setState(PositionStates.status.BUY_OK.toString());
+				_oPosition.setState_in(PositionStates.statusTWSCallBack.Filled.toString());
 				_oPosition.setDate_real_in(_oPosition.getDate_in());
 				_oPosition.setPrice_real_in(execution.avgPrice());
 				_oPosition.setShare_number_traded(_oPosition.getShare_number());
@@ -544,7 +591,7 @@ public class TIMApiWrapper implements EWrapper {
 	//! [realtimebar]
 	@Override
 	public void currentTime(long time) {
-		System.out.println("currentTime");
+		currentTWSDate  =  new Date(time * 1000L);
 	}
 	//! [fundamentaldata]
 	@Override
@@ -684,9 +731,6 @@ public class TIMApiWrapper implements EWrapper {
 					if (errorCode>=0 && reqId>=0)  // errores operativa - lectura
 					{
 									
-						SimpleDateFormat sdf2 = new SimpleDateFormat();
-						sdf2.applyPattern("dd-MM-yyyy HH:mm:ss");
-						 
 						Position _ErrorPosition;
 						Share oErrorShare = null;
 						
@@ -837,11 +881,11 @@ public class TIMApiWrapper implements EWrapper {
 			return;
 		
 		
-		Position _oPosition = PositionLocalServiceUtil.findByPositionID_In_TWS(_ibtarget_share.getGroupId(), _ibtarget_organization.getCompanyId(),orderId);
+		Position _oPosition = PositionLocalServiceUtil.findByPositionID_In_TWS(_ibtarget_share.getGroupId(), _ibtarget_organization.getCompanyId(),orderId,clientId);
 		// SI ES NULL, QUIERE DECIR QUE PUEDE VENIR UNA OPERACION DE VENTA...LA BUSCAMOS.		
 		if (_oPosition==null)
 		{
-			_oPosition = PositionLocalServiceUtil.findByPositionID_Out_TWS(_ibtarget_share.getGroupId(), _ibtarget_organization.getCompanyId(),orderId);
+			_oPosition = PositionLocalServiceUtil.findByPositionID_Out_TWS(_ibtarget_share.getGroupId(), _ibtarget_organization.getCompanyId(),orderId,clientId);
 			if (_oPosition==null) 
 			{
 				_log.info("Error Execution Details order not found for Order Key:" + orderId);

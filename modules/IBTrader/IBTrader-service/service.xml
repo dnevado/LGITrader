@@ -175,7 +175,7 @@
 		<column name="config_key" type="String" />
 		<column name="description" type="String" />
 		
-		<finder name="KeyCompanyGroup" return-type="Config">
+		<finder name="KeyCompanyGroup" return-type="Config" unique="true">
 			<finder-column name="companyId" />
 			<finder-column name="groupId" />
 			<finder-column name="config_key" />		
@@ -401,8 +401,8 @@
 		<column name="share_number_to_trade" type="long" />
 		<column name="share_number_traded" type="long" />
 		
-		<column name="realtimeId_in" type="long" />
-		<column name="realtimeId_out" type="long" />
+		<column name="clientId_in" type="long" />
+		<column name="clientId_out" type="long" />
 		
 		<column name="strategy_in" type="String"/>
 		<column name="strategy_out" type="String" />					
@@ -497,12 +497,15 @@
 		<finder name="PositionOutGroupCompany" return-type="Position">		
 				<finder-column name="groupId"/>
 				<finder-column name="companyId"/>		
-				<finder-column name="positionId_tws_out" />					
+				<finder-column name="positionId_tws_out" />		
+				<finder-column name="clientId_out" />							
+							
 		</finder>
 		<finder name="PositionInGroupCompany" return-type="Position">		
 				<finder-column name="groupId"/>
 				<finder-column name="companyId"/>		
-				<finder-column name="positionId_tws_in" />					
+				<finder-column name="positionId_tws_in" />
+				<finder-column name="clientId_in" />							
 		</finder>
 		
 		<!-- Order -->

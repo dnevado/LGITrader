@@ -86,8 +86,8 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 		attributes.put("share_number", getShare_number());
 		attributes.put("share_number_to_trade", getShare_number_to_trade());
 		attributes.put("share_number_traded", getShare_number_traded());
-		attributes.put("realtimeId_in", getRealtimeId_in());
-		attributes.put("realtimeId_out", getRealtimeId_out());
+		attributes.put("clientId_in", getClientId_in());
+		attributes.put("clientId_out", getClientId_out());
 		attributes.put("strategy_in", getStrategy_in());
 		attributes.put("strategy_out", getStrategy_out());
 		attributes.put("percentualstoplost_out", getPercentualstoplost_out());
@@ -267,16 +267,16 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 			setShare_number_traded(share_number_traded);
 		}
 
-		Long realtimeId_in = (Long)attributes.get("realtimeId_in");
+		Long clientId_in = (Long)attributes.get("clientId_in");
 
-		if (realtimeId_in != null) {
-			setRealtimeId_in(realtimeId_in);
+		if (clientId_in != null) {
+			setClientId_in(clientId_in);
 		}
 
-		Long realtimeId_out = (Long)attributes.get("realtimeId_out");
+		Long clientId_out = (Long)attributes.get("clientId_out");
 
-		if (realtimeId_out != null) {
-			setRealtimeId_out(realtimeId_out);
+		if (clientId_out != null) {
+			setClientId_out(clientId_out);
 		}
 
 		String strategy_in = (String)attributes.get("strategy_in");
@@ -710,6 +710,26 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 	}
 
 	/**
+	* Returns the client id_in of this position.
+	*
+	* @return the client id_in of this position
+	*/
+	@Override
+	public long getClientId_in() {
+		return _position.getClientId_in();
+	}
+
+	/**
+	* Returns the client id_out of this position.
+	*
+	* @return the client id_out of this position
+	*/
+	@Override
+	public long getClientId_out() {
+		return _position.getClientId_out();
+	}
+
+	/**
 	* Returns the company ID of this position.
 	*
 	* @return the company ID of this position
@@ -780,26 +800,6 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 	}
 
 	/**
-	* Returns the realtime id_in of this position.
-	*
-	* @return the realtime id_in of this position
-	*/
-	@Override
-	public long getRealtimeId_in() {
-		return _position.getRealtimeId_in();
-	}
-
-	/**
-	* Returns the realtime id_out of this position.
-	*
-	* @return the realtime id_out of this position
-	*/
-	@Override
-	public long getRealtimeId_out() {
-		return _position.getRealtimeId_out();
-	}
-
-	/**
 	* Returns the share ID of this position.
 	*
 	* @return the share ID of this position
@@ -847,6 +847,26 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 	@Override
 	public void setCachedModel(boolean cachedModel) {
 		_position.setCachedModel(cachedModel);
+	}
+
+	/**
+	* Sets the client id_in of this position.
+	*
+	* @param clientId_in the client id_in of this position
+	*/
+	@Override
+	public void setClientId_in(long clientId_in) {
+		_position.setClientId_in(clientId_in);
+	}
+
+	/**
+	* Sets the client id_out of this position.
+	*
+	* @param clientId_out the client id_out of this position
+	*/
+	@Override
+	public void setClientId_out(long clientId_out) {
+		_position.setClientId_out(clientId_out);
 	}
 
 	/**
@@ -1113,26 +1133,6 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 	@Override
 	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
 		_position.setPrimaryKeyObj(primaryKeyObj);
-	}
-
-	/**
-	* Sets the realtime id_in of this position.
-	*
-	* @param realtimeId_in the realtime id_in of this position
-	*/
-	@Override
-	public void setRealtimeId_in(long realtimeId_in) {
-		_position.setRealtimeId_in(realtimeId_in);
-	}
-
-	/**
-	* Sets the realtime id_out of this position.
-	*
-	* @param realtimeId_out the realtime id_out of this position
-	*/
-	@Override
-	public void setRealtimeId_out(long realtimeId_out) {
-		_position.setRealtimeId_out(realtimeId_out);
 	}
 
 	/**

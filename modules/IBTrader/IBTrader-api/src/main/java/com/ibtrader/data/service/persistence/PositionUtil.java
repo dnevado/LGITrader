@@ -2913,161 +2913,173 @@ public class PositionUtil {
 	}
 
 	/**
-	* Returns the position where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63; or throws a {@link NoSuchPositionException} if it could not be found.
+	* Returns the position where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63; and clientId_out = &#63; or throws a {@link NoSuchPositionException} if it could not be found.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param positionId_tws_out the position id_tws_out
+	* @param clientId_out the client id_out
 	* @return the matching position
 	* @throws NoSuchPositionException if a matching position could not be found
 	*/
 	public static Position findByPositionOutGroupCompany(long groupId,
-		long companyId, long positionId_tws_out)
+		long companyId, long positionId_tws_out, long clientId_out)
 		throws com.ibtrader.data.exception.NoSuchPositionException {
 		return getPersistence()
 				   .findByPositionOutGroupCompany(groupId, companyId,
-			positionId_tws_out);
+			positionId_tws_out, clientId_out);
 	}
 
 	/**
-	* Returns the position where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	* Returns the position where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63; and clientId_out = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param positionId_tws_out the position id_tws_out
+	* @param clientId_out the client id_out
 	* @return the matching position, or <code>null</code> if a matching position could not be found
 	*/
 	public static Position fetchByPositionOutGroupCompany(long groupId,
-		long companyId, long positionId_tws_out) {
+		long companyId, long positionId_tws_out, long clientId_out) {
 		return getPersistence()
 				   .fetchByPositionOutGroupCompany(groupId, companyId,
-			positionId_tws_out);
+			positionId_tws_out, clientId_out);
 	}
 
 	/**
-	* Returns the position where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	* Returns the position where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63; and clientId_out = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param positionId_tws_out the position id_tws_out
+	* @param clientId_out the client id_out
 	* @param retrieveFromCache whether to retrieve from the finder cache
 	* @return the matching position, or <code>null</code> if a matching position could not be found
 	*/
 	public static Position fetchByPositionOutGroupCompany(long groupId,
-		long companyId, long positionId_tws_out, boolean retrieveFromCache) {
+		long companyId, long positionId_tws_out, long clientId_out,
+		boolean retrieveFromCache) {
 		return getPersistence()
 				   .fetchByPositionOutGroupCompany(groupId, companyId,
-			positionId_tws_out, retrieveFromCache);
+			positionId_tws_out, clientId_out, retrieveFromCache);
 	}
 
 	/**
-	* Removes the position where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63; from the database.
+	* Removes the position where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63; and clientId_out = &#63; from the database.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param positionId_tws_out the position id_tws_out
+	* @param clientId_out the client id_out
 	* @return the position that was removed
 	*/
 	public static Position removeByPositionOutGroupCompany(long groupId,
-		long companyId, long positionId_tws_out)
+		long companyId, long positionId_tws_out, long clientId_out)
 		throws com.ibtrader.data.exception.NoSuchPositionException {
 		return getPersistence()
 				   .removeByPositionOutGroupCompany(groupId, companyId,
-			positionId_tws_out);
+			positionId_tws_out, clientId_out);
 	}
 
 	/**
-	* Returns the number of positions where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63;.
+	* Returns the number of positions where groupId = &#63; and companyId = &#63; and positionId_tws_out = &#63; and clientId_out = &#63;.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param positionId_tws_out the position id_tws_out
+	* @param clientId_out the client id_out
 	* @return the number of matching positions
 	*/
 	public static int countByPositionOutGroupCompany(long groupId,
-		long companyId, long positionId_tws_out) {
+		long companyId, long positionId_tws_out, long clientId_out) {
 		return getPersistence()
 				   .countByPositionOutGroupCompany(groupId, companyId,
-			positionId_tws_out);
+			positionId_tws_out, clientId_out);
 	}
 
 	/**
-	* Returns the position where groupId = &#63; and companyId = &#63; and positionId_tws_in = &#63; or throws a {@link NoSuchPositionException} if it could not be found.
+	* Returns the position where groupId = &#63; and companyId = &#63; and positionId_tws_in = &#63; and clientId_in = &#63; or throws a {@link NoSuchPositionException} if it could not be found.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param positionId_tws_in the position id_tws_in
+	* @param clientId_in the client id_in
 	* @return the matching position
 	* @throws NoSuchPositionException if a matching position could not be found
 	*/
 	public static Position findByPositionInGroupCompany(long groupId,
-		long companyId, long positionId_tws_in)
+		long companyId, long positionId_tws_in, long clientId_in)
 		throws com.ibtrader.data.exception.NoSuchPositionException {
 		return getPersistence()
 				   .findByPositionInGroupCompany(groupId, companyId,
-			positionId_tws_in);
+			positionId_tws_in, clientId_in);
 	}
 
 	/**
-	* Returns the position where groupId = &#63; and companyId = &#63; and positionId_tws_in = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	* Returns the position where groupId = &#63; and companyId = &#63; and positionId_tws_in = &#63; and clientId_in = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param positionId_tws_in the position id_tws_in
+	* @param clientId_in the client id_in
 	* @return the matching position, or <code>null</code> if a matching position could not be found
 	*/
 	public static Position fetchByPositionInGroupCompany(long groupId,
-		long companyId, long positionId_tws_in) {
+		long companyId, long positionId_tws_in, long clientId_in) {
 		return getPersistence()
 				   .fetchByPositionInGroupCompany(groupId, companyId,
-			positionId_tws_in);
+			positionId_tws_in, clientId_in);
 	}
 
 	/**
-	* Returns the position where groupId = &#63; and companyId = &#63; and positionId_tws_in = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	* Returns the position where groupId = &#63; and companyId = &#63; and positionId_tws_in = &#63; and clientId_in = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param positionId_tws_in the position id_tws_in
+	* @param clientId_in the client id_in
 	* @param retrieveFromCache whether to retrieve from the finder cache
 	* @return the matching position, or <code>null</code> if a matching position could not be found
 	*/
 	public static Position fetchByPositionInGroupCompany(long groupId,
-		long companyId, long positionId_tws_in, boolean retrieveFromCache) {
+		long companyId, long positionId_tws_in, long clientId_in,
+		boolean retrieveFromCache) {
 		return getPersistence()
 				   .fetchByPositionInGroupCompany(groupId, companyId,
-			positionId_tws_in, retrieveFromCache);
+			positionId_tws_in, clientId_in, retrieveFromCache);
 	}
 
 	/**
-	* Removes the position where groupId = &#63; and companyId = &#63; and positionId_tws_in = &#63; from the database.
+	* Removes the position where groupId = &#63; and companyId = &#63; and positionId_tws_in = &#63; and clientId_in = &#63; from the database.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param positionId_tws_in the position id_tws_in
+	* @param clientId_in the client id_in
 	* @return the position that was removed
 	*/
 	public static Position removeByPositionInGroupCompany(long groupId,
-		long companyId, long positionId_tws_in)
+		long companyId, long positionId_tws_in, long clientId_in)
 		throws com.ibtrader.data.exception.NoSuchPositionException {
 		return getPersistence()
 				   .removeByPositionInGroupCompany(groupId, companyId,
-			positionId_tws_in);
+			positionId_tws_in, clientId_in);
 	}
 
 	/**
-	* Returns the number of positions where groupId = &#63; and companyId = &#63; and positionId_tws_in = &#63;.
+	* Returns the number of positions where groupId = &#63; and companyId = &#63; and positionId_tws_in = &#63; and clientId_in = &#63;.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
 	* @param positionId_tws_in the position id_tws_in
+	* @param clientId_in the client id_in
 	* @return the number of matching positions
 	*/
 	public static int countByPositionInGroupCompany(long groupId,
-		long companyId, long positionId_tws_in) {
+		long companyId, long positionId_tws_in, long clientId_in) {
 		return getPersistence()
 				   .countByPositionInGroupCompany(groupId, companyId,
-			positionId_tws_in);
+			positionId_tws_in, clientId_in);
 	}
 
 	/**

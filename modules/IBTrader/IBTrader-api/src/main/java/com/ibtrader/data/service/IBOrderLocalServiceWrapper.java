@@ -339,6 +339,13 @@ public class IBOrderLocalServiceWrapper implements IBOrderLocalService,
 	}
 
 	@Override
+	public long findMaxOrderClientCompanyGroup(long companyId, long groupId,
+		long clientId) {
+		return _ibOrderLocalService.findMaxOrderClientCompanyGroup(companyId,
+			groupId, clientId);
+	}
+
+	@Override
 	public void deleteByOrderCompanyGroup(long iborderId, long companyId,
 		long groupId, long ibclientId, long shareId) {
 		_ibOrderLocalService.deleteByOrderCompanyGroup(iborderId, companyId,

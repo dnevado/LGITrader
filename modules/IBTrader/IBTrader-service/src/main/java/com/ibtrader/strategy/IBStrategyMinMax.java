@@ -166,12 +166,12 @@ public class IBStrategyMinMax extends StrategyImpl {
     		boolean _IsFuture = (_share.getSecurity_type()!=null && _share.getSecurity_type().equals(ConfigKeys.SECURITY_TYPE_STOCK) ? true : false);
     		if (_IsFuture)
     		{	    			    			
-    			_defaultstop_percent = (5 * 100) / this.getValueIn() /100;   
+    			_defaultstop_percent = (5 * 100) / this.getValueIn();   
     		}
-    		else
+    	   /* else
     		{
     			_defaultstop_percent = 0.05;
-    		}
+    		}*/
     		double stoplost =_share.getPercentual_stop_lost();
     		/* EXISTE ALGO SOBREESCRITO */
     		if (this.getJsonStrategyShareParams()!=null && this.getJsonStrategyShareParams().getDouble(ConfigKeys._FIELD_STOP_LOST,0)>0)

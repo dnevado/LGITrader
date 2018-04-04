@@ -75,11 +75,6 @@ public class RealtimeLocalServiceImpl extends RealtimeLocalServiceBaseImpl {
 				//e.printStackTrace();
 			}
 		}
-
-		
-		
-		
-		List<Long> LastRealTime = realtimeLocalService.dynamicQuery(_DQ);
 		
 	}
 	/* OBTIENE EL MIN Y MAX DE UN  ACTIVO */	
