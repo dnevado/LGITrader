@@ -45,7 +45,10 @@ String portletId= "_" + portletDisplay.getId();
 <c:set  var="strategyshare_percentual_trailling_stop_lost" value="<%=jsonStrategyShareParams.getDouble(ConfigKeys._FIELD_TRAILLING_STOP_LOST) %>"/>
 
 
-<portlet:actionURL name="editStrategyShareParams" var="editStrategyShareParamsURL" />
+<portlet:actionURL name="editStrategyShareParams" var="editStrategyShareParamsURL">
+ <portlet:param name="redirect" value="<%=themeDisplay.getURLCurrent()%>"/>
+ </portlet:actionURL>
+
 
 
 <%@include file="/html/includes/tabs.jsp"%>

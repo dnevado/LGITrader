@@ -17,8 +17,10 @@ long MarketId = market.getMarketId();
 
 
 <portlet:actionURL   var="RemoveMarketURL" name="RemoveMarket"> 	
-    <portlet:param name="marketId" value="<%= String.valueOf(MarketId) %>"/>   
-</portlet:actionURL>
+    <portlet:param name="marketId" value="<%= String.valueOf(MarketId) %>"/> 
+    <portlet:param name="redirect" value="<%=themeDisplay.getURLCurrent()%>"/>
+ </portlet:actionURL>
+
 
 <portlet:renderURL   var="EditMarketURL">
 	<portlet:param name="mvcRenderCommandName" value="/html/add_edit_market"/>

@@ -66,8 +66,14 @@ String portletId= "_" + portletDisplay.getId();
 <liferay-ui:error key="share.error.formatparameters" message="share.error.formatparameters"/>
 <liferay-ui:error key="share.error.futuresparameters" message="share.error.futuresparameters"/>
 <liferay-ui:error key="share.error.positionexistsactive" message="share.error.positionexistsactive"/>
-<portlet:actionURL name="addShare" var="addShareURL" />
-<portlet:actionURL name="editShare" var="editShareURL" />
+<portlet:actionURL name="addShare" var="addShareURL">
+ <portlet:param name="redirect" value="<%=themeDisplay.getURLCurrent()%>"/>
+ </portlet:actionURL>
+
+<portlet:actionURL name="editShare" var="editShareURL"> 
+   <portlet:param name="redirect" value="<%=themeDisplay.getURLCurrent()%>"/>
+ </portlet:actionURL>
+
 
 <div class="container-fluid-1280">
 

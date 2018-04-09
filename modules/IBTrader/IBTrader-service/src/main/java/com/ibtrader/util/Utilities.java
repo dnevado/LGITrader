@@ -77,7 +77,7 @@ public class Utilities {
    public final static String _IBTRADER_FUTURE_LONG_DATE="dd/MM/yyyy";
    
    
-   public final static String _IBTRADER_WEB_FORMAT_DATE="dd-MM-yyyy";
+   public final static String _IBTRADER_WEB_FORMAT_DATE="dd-MM-yyyy HH:mm";
    
    
    public final static String _IBTRADER_STRATEGY_CUSTOM_FIELDS_="exp_";
@@ -172,10 +172,17 @@ public class Utilities {
     }
     
     
-    public static String  getWebFormattedDate(Date _date)
+    public static String  getWebFormattedDate(Date _date, User user)
    	{       	
     	SimpleDateFormat _Format = new SimpleDateFormat(_IBTRADER_WEB_FORMAT_DATE);   	
-    	return  _Format.format(_date);
+    	return  _Format.format(getIBDateByUserDate(user,_date));
+   		
+   	}
+    public static String  getWebFormattedTime(Date _date, User user)
+   	{       	
+    	SimpleDateFormat _Format = new SimpleDateFormat(__IBTRADER_LONG_HOUR_FORMAT);   	
+    	return  _Format.format(getIBDateByUserDate(user,_date));
+
    		
    	}
     
@@ -221,6 +228,15 @@ public class Utilities {
     	    	
    		ZoneId zoneId = ZoneId.of(_user.getTimeZoneId());
    		Date date = new Date();
+   		ZonedDateTime zonedDateTime = date.toInstant().atZone(zoneId);
+   		return Date.from(zonedDateTime.toInstant());
+    	
+    }
+    /* HORA PARA EL USUARIO DEPEDE DE LA HORA DEL SERVIDOR Y SU ZONA UTC */
+    private static  Date getIBDateByUserDate(User _user, Date date)
+    {
+    	    	
+   		ZoneId zoneId = ZoneId.of(_user.getTimeZoneId());
    		ZonedDateTime zonedDateTime = date.toInstant().atZone(zoneId);
    		return Date.from(zonedDateTime.toInstant());
     	

@@ -24,7 +24,10 @@
 <div class="container-fluid-1280">
 
 
- <portlet:actionURL name="addeditConfiguration" var="addeditConfigurationURL" />
+<portlet:actionURL name="addeditConfiguration" var="addeditConfigurationURL" >
+	 <portlet:param name="redirect" value="<%=themeDisplay.getURLCurrent()%>"/>
+<portlet:actionURL>
+ 
 
 <aui:form action="${addeditConfigurationURL}" name='<%=renderResponse.getNamespace() +"f"%>'  id='<%=renderResponse.getNamespace()+"f"%>' method="POST">
 	<liferay-ui:success key="configuration.success" message="configuration.success"/>	

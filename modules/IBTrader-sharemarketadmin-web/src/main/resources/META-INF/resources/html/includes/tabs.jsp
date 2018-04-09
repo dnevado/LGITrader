@@ -15,13 +15,20 @@
     	<portlet:param name="tab" value="share.strategy"></portlet:param>
     	<portlet:param name="shareId" value="${share.shareId}"></portlet:param>
 	</portlet:renderURL>
+
+	<portlet:renderURL var="RulesShareURL">
+    	<portlet:param name="mvcRenderCommandName" value="/html/view_rulesshare"></portlet:param>
+    	<portlet:param name="tab" value="share.rule"></portlet:param>
+    	<portlet:param name="shareId" value="${share.shareId}"></portlet:param>
+	</portlet:renderURL>
 	
     <% 
     Share _TabsShare = (Share) request.getAttribute("share");    
     if (_TabsShare!=null) { %>
-		<liferay-ui:tabs names="share.details,share.strategy" param="tab" value="${tab_selected}" 	
+		<liferay-ui:tabs names="share.details,share.strategy,share.rule" param="tab" value="${tab_selected}" 	
 			url0="${detailsShareURL }"
-			url1="${StrategiesShareURL }"/>
+			url1="${StrategiesShareURL }"
+			url2="${RulesShareURL }"/>
 	<% } else {  %>
 			<liferay-ui:tabs names="share.details" param="tab" value="${tab_selected}" 	
 				url0="${detailsShareURL }"/>

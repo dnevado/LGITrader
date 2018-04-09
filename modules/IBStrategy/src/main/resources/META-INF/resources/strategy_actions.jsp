@@ -34,12 +34,14 @@ catch (Exception e)
 <portlet:actionURL   name="delete" var="deleteURL">
     <portlet:param name="strategyId" value="<%= String.valueOf(strategy.getStrategyID()) %>" />
     <portlet:param name="mvcPath" value="/edit_strategy.jsp" />
+    <portlet:param name="redirect" value="<%=themeDisplay.getURLCurrent()%>"/> 
 </portlet:actionURL>
   
 
 <portlet:renderURL var="editURL">
     <portlet:param name="strategyId" value="<%= String.valueOf(strategy.getStrategyID()) %>" />
     <portlet:param name="mvcPath" value="/edit_strategy.jsp" />
+    <portlet:param name="redirect" value="<%=themeDisplay.getURLCurrent()%>"/>
 </portlet:renderURL>
 <liferay-ui:icon-menu> 
 

@@ -6,8 +6,21 @@
 <%@page import="com.liferay.portal.kernel.util.WebKeys"%>
 
 
+
+
+<% 
+String redirect = ParamUtil.getString(request, "redirect");
+String  paramPortletName = renderResponse.getNamespace() + "f"; 
+
+portletDisplay.setShowBackIcon(true);
+portletDisplay.setURLBack(redirect);
+
+%>
+
+
 <portlet:actionURL   name="delete" var="deleteURL">    
     <portlet:param name="mvcPath" value="/edit_strategy.jsp" />
+     <portlet:param name="redirect" value="<%=themeDisplay.getURLCurrent()%>"/>
 </portlet:actionURL>
 
 <portlet:resourceURL var="PositionListResourceURL">
@@ -86,20 +99,24 @@
 			        			"sSortDescending": ": Activar para ordenar la columna de manera descendente"
 			        		}
 			        	
-			        },
-				 	 "bProcessing": true,
-			        "bServerSide": true, 
+			        },			      
+				 	 "Processing": true,
+			        "ServerSide": true, 
 			        columns: [
 			        	 { data: "symbol" },	
-			        	 { data: "state" },			        	
-			        	 { data: "state_in" },
-			            { data: "date_in" },
-			            { data: "price_in" },
-			            { data: "stop_profit" },
-			            { data: "stop_lost" },
-			            { data: "date_out" },
-			            { data: "price_out" },
-			            { data: "state_out" }
+			        	 { data: "state" },
+			        	 { data: "type" },
+			        	 { data: "date_in" },
+			        	 { data: "number" },
+			        	 { data: "price_in" },
+			             { data: "price_out" },
+			             { data: "roi" },
+			             { data: "stop_lost" },
+			        	 { data: "stop_profit" },			             			             
+			             { data: "date_out" },
+			             { data: "state_in" },
+			             { data: "state_out" },
+			             { data: "modify_link" }			             			             
 			        ],
 			        select: true ,
 			        "ajax": '<%=PositionListResourceURL.toString()%>'
@@ -107,7 +124,7 @@
 			    });
 				<portlet:namespace/>RefreshPosition();
 
-		});
+		}); 
 		
 	}); // end require jquery
 }); // end document ready
@@ -116,24 +133,25 @@
     define.amd = define._amd;
 </script>
 
-
-<table id="positions">
+<div class="container-fluid-1280">
+<table class="table table-striped table-bordered table-hover"  id="positions">
        <thead>
             <tr>
                 <th><liferay-ui:message key="Symbol"/></th>
-                <th><liferay-ui:message key="State"/></th>
-                <th><liferay-ui:message key="State.In"/></th>
+                <th><liferay-ui:message key="State"/></th>                
+                <th><liferay-ui:message key="Type"/></th>
                 <th><liferay-ui:message key="Date.In"/></th>
+                <th><liferay-ui:message key="Number"/></th>
                 <th><liferay-ui:message key="Price.In"/></th>
+                <th><liferay-ui:message key="Price.Out"/></th>
+                <th><liferay-ui:message key="Rendimiento"/></th>
                 <th><liferay-ui:message key="StopLost"/></th>
                 <th><liferay-ui:message key="StopProfit"/></th>
              	<th><liferay-ui:message key="Date.Out"/></th>
-                <th><liferay-ui:message key="Price.Out"/></th>
-                <th><liferay-ui:message key="State.Out"/></th>
-                <th><liferay-ui:message key="ROI"/></th>
-                <th></th>
-                
+             	<th><liferay-ui:message key="State.In"/></th>
+                <th><liferay-ui:message key="State.Out"/></th>               
+                <th></th>                
             </tr>
         </thead>
 </table>
-
+</div>

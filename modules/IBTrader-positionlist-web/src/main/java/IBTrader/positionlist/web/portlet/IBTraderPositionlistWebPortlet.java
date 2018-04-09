@@ -7,13 +7,18 @@ import com.ibtrader.data.model.Realtime;
 import com.ibtrader.data.model.Share;
 import com.ibtrader.data.service.PositionLocalService;
 import com.ibtrader.data.service.RealtimeLocalService;
+
 import com.ibtrader.data.service.ShareLocalService;
+import com.ibtrader.util.ConfigKeys;
+import com.ibtrader.util.PositionStates;
 import com.ibtrader.util.Utilities;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -25,6 +30,7 @@ import java.util.List;
 
 import javax.portlet.Portlet;
 import javax.portlet.PortletException;
+import javax.portlet.PortletURL;
 import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
 
@@ -65,12 +71,14 @@ public class IBTraderPositionlistWebPortlet extends MVCPortlet {
 		// TODO Auto-generated method stub
 	
 		 
-	themeDisplay = (ThemeDisplay)resourceRequest.getAttribute(WebKeys.THEME_DISPLAY); 
+	 themeDisplay = (ThemeDisplay)resourceRequest.getAttribute(WebKeys.THEME_DISPLAY);  
 		
 	 String cmd = ParamUtil.getString(resourceRequest,"cmd");
 	 
 	 Date DateINI = Utilities.getDate(themeDisplay.getUser());
-	 Date DateEND = Utilities.getDate(themeDisplay.getUser());;
+	 Date DateEND = Utilities.getDate(themeDisplay.getUser());
+	 
+	 double price_out=0; // precio de salida o ultimo precio 
 	 
 	 /* OPERACIONES DEL DIA */
 	 DateINI.setHours(0);
@@ -87,11 +95,11 @@ public class IBTraderPositionlistWebPortlet extends MVCPortlet {
      for (Position ibposition : _lPosition)
      { 
         JSONObject ibposJSON = JSONFactoryUtil.createJSONObject();
-        ibposJSON.put("date_in", Utilities.getWebFormattedDate(ibposition.getDate_in()));
-        ibposJSON.put("date_out", (ibposition.getDate_out()!=null ? Utilities.getWebFormattedDate(ibposition.getDate_out()) : ""));        
+        ibposJSON.put("date_in", Utilities.getWebFormattedTime(ibposition.getDate_in(),themeDisplay.getUser()));
+        ibposJSON.put("date_out", (ibposition.getDate_out()!=null ? Utilities.getWebFormattedTime(ibposition.getDate_out(),themeDisplay.getUser()) : ""));        
         ibposJSON.put("type", ibposition.getType());
         ibposJSON.put("sharenumber", ibposition.getShare_number());
-        ibposJSON.put("price_in", ibposition.getPrice_in());        
+        ibposJSON.put("price_in", ibposition.getPrice_real_in());        
         ibposJSON.put("stop_profit", ibposition.getPercentualstopprofit_out());
         ibposJSON.put("stop_lost", ibposition.getPercentualstoplost_out());
         ibposJSON.put("positionid", ibposition.getPositionId());
@@ -99,8 +107,18 @@ public class IBTraderPositionlistWebPortlet extends MVCPortlet {
         ibposJSON.put("state", ibposition.getState());
         ibposJSON.put("state_out", (ibposition.getState_out()!=null ? ibposition.getState_out() : ""));    
         ibposJSON.put("share_id", ibposition.getShareId());
+        ibposJSON.put("type", ibposition.getType());
+        ibposJSON.put("number", ibposition.getShare_number());
         
         
+        /* ENLACE A MODIFICAR POSICION */
+        PortletURL modify = resourceResponse.createRenderURL();
+        modify.setWindowState(LiferayWindowState.POP_UP);
+        modify.setParameter("mvcPath", "/position_detail.jsp");
+        modify.setParameter("positionId", String.valueOf(ibposition.getPositionId()));
+        
+        ibposJSON.put("modify_link", "<button  class=\"btn btn-lg btn-primary btn-default\"  href=\"" + modify + "\">" + LanguageUtil.get(themeDisplay.getLocale(),"position.modify") + "</button>");
+//        ibposJSON.put("exitposition_link", ibposition.getShare_number());
         
         /* DATOS DEL SHARE */ 
         Share _sharePosition = _shareLocalService.fetchShare(ibposition.getShareId());
@@ -116,14 +134,30 @@ public class IBTraderPositionlistWebPortlet extends MVCPortlet {
       //  Share _shareRealTime = RealtimeLocalServiceUtil.get
         if (ibposition.getPrice_out()>0)  // hay salida ya, sacamos el precio de salida, si no, el ultimo en tiempo real
         {
-        	ibposJSON.put("price_out", ibposition.getPrice_out());            
+        	ibposJSON.put("price_out", ibposition.getPrice_real_out());    
+        	price_out = ibposition.getPrice_real_out();
         }
         else
         {
         	Realtime _Realtime = _realtimeLocalService.findLastCompanyShare(_sharePosition.getCompanyId(), _sharePosition.getShareId());
         	if (_Realtime!=null)
-        		ibposJSON.put("price_out", _Realtime.getValue());      
+        	{
+        		ibposJSON.put("price_out", _Realtime.getValue());
+        		price_out = ibposition.getPrice_real_out();
+        	}
         }
+        /* PROFIT O PERDIDA */
+        double profit =   price_out - ibposition.getPrice_real_in();
+        double percentual_profit=0;
+        
+        if (ibposition.getType().equals(PositionStates.statusTWSFire.SELL.toString())) // operacion de compra normal..??
+        	profit =   ibposition.getPrice_real_in() - price_out;
+        percentual_profit = (profit /  ibposition.getPrice_real_in() * 100);
+        percentual_profit = Utilities.RoundPrice(percentual_profit);
+        if (profit>0)     
+        	ibposJSON.put("roi","<span class=\"badge badge-pill badge-success\">+" + percentual_profit + "</span>");
+        else
+        	ibposJSON.put("roi","<span class=\"badge badge-pill badge-danger\">" + percentual_profit + "</span>");        	
      
         posListJson.put(ibposJSON); 
     }

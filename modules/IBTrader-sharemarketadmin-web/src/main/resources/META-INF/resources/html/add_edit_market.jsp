@@ -26,7 +26,9 @@ Calendar cal = Calendar.getInstance();
  
 %>
 
-<portlet:actionURL name="addeditMarket" var="addeditMarketURL" />
+<portlet:actionURL name="addeditMarket" var="addeditMarketURL">
+ <portlet:param name="redirect" value="<%=themeDisplay.getURLCurrent()%>"/>
+ </portlet:actionURL>
 
 
 <div class="container-fluid-1280">

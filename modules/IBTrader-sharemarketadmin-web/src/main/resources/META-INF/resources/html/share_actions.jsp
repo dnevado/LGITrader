@@ -15,7 +15,8 @@ long ShareId = share.getShareId();
 %>
 
 <portlet:actionURL name="removeShare" var="removeShareURL" >
-<portlet:param name="shareId" value="<%= String.valueOf(ShareId) %>"/>    
+<portlet:param name="shareId" value="<%= String.valueOf(ShareId) %>"/> 
+<portlet:param name="redirect" value="<%=themeDisplay.getURLCurrent()%>"/>   
 </portlet:actionURL>
 
 

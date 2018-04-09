@@ -1,6 +1,9 @@
 <%@ include file="/init.jsp" %>
 
 <%
+
+/* MODIFICAR ESTOS LOST  Y SALIR DE LA POSICION */ 
+
 String mvcPath = ParamUtil.getString(request, "mvcPath");
 
 ResultRow row = (ResultRow)request.getAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW);

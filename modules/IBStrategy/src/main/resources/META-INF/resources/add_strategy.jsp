@@ -2,7 +2,9 @@
 <liferay-ui:asset-categories-error />
 <liferay-ui:asset-tags-error />
 
-<portlet:actionURL name="addStrategy" var="addStrategyURL" />
+<portlet:actionURL name="addStrategy" var="addStrategyURL">
+<portlet:param name="redirect" value="<%=themeDisplay.getURLCurrent()%>"/> 
+</portlet:actionURL>
 
 <div class="container-fluid-1280">
 <aui:form action="${addStrategyURL}" name="<portlet:namespace />fm" method="POST">

@@ -9,12 +9,19 @@ import com.ibtrader.data.service.PositionLocalService;
 import com.ibtrader.data.service.ShareLocalService;
 import com.ibtrader.util.Utilities;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextFactory;
+import com.liferay.portal.kernel.servlet.SessionErrors;
+import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.upload.UploadPortletRequest;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -24,6 +31,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.portlet.ActionRequest;
+import javax.portlet.ActionResponse;
 import javax.portlet.Portlet;
 import javax.portlet.PortletException;
 import javax.portlet.PortletURL;
@@ -123,6 +132,57 @@ public class IBTraderHistoricalpositionsWebPortlet extends MVCPortlet {
     protected void setPositionService(PositionLocalService positionLocalService) {
 		_positionLocalService = positionLocalService;
     }
+
+
+	public void editPosition(ActionRequest actionRequest, ActionResponse actionResponse)
+	{
+		UploadPortletRequest req = PortalUtil.getUploadPortletRequest(actionRequest);
+		
+		themeDisplay = (ThemeDisplay)actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
+		ServiceContext serviceContext = null;
+		try {
+			serviceContext = ServiceContextFactory.getInstance(Position.class.getName(), actionRequest);
+		} catch (PortalException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		
+	    String editor = ParamUtil.getString(actionRequest, "editor","");
+	    long positionId = ParamUtil.getLong(actionRequest, "positionId",-1);
+	    String redirect = ParamUtil.getString(actionRequest,"redirect","");
+
+	    Position position = _positionLocalService.fetchPosition(positionId);	    
+	    if (position!=null)
+	    {
+	    	position.setDescription(editor);
+	    	_positionLocalService.updatePosition(position);
+	    	SessionMessages.add(actionRequest, "share.success");
+	    }
+	    else
+	    	SessionErrors.add(actionRequest, "share.error.exist");
+	    
+		actionResponse.setRenderParameter("mvcPath", "/position_detail.jsp");
+		actionResponse.setRenderParameter("positionId", String.valueOf(positionId));
+		actionResponse.setRenderParameter("redirect", String.valueOf(redirect));		
+	    
+	}
+	
+
+	@Override
+	public void render(RenderRequest renderRequest, RenderResponse renderResponse)
+			throws IOException, PortletException {
+		// TODO Auto-generated method stub
+		themeDisplay = (ThemeDisplay)renderRequest.getAttribute(WebKeys.THEME_DISPLAY); 
+		long positionId = ParamUtil.get(renderRequest, "positionId", -1);
+		Position position = null;
+		if (positionId!=-1)
+		{
+			position = _positionLocalService.fetchPosition(positionId);
+		}
+		renderRequest.setAttribute("position", position);
+		super.render(renderRequest, renderResponse);
+	}
 
 	
 }
