@@ -69,6 +69,7 @@ public class PositionSoap implements Serializable {
 		soapModel.setPricestoplost_out(model.getPricestoplost_out());
 		soapModel.setPercentualstopprofit_out(model.getPercentualstopprofit_out());
 		soapModel.setPricestopprofit_out(model.getPricestopprofit_out());
+		soapModel.setPercentual_trailling_stop_lost(model.getPercentual_trailling_stop_lost());
 		soapModel.setPendingcancelled(model.getPendingcancelled());
 		soapModel.setTrading_data_operations(model.getTrading_data_operations());
 		soapModel.setSimulation_mode(model.getSimulation_mode());
@@ -405,6 +406,15 @@ public class PositionSoap implements Serializable {
 		_pricestopprofit_out = pricestopprofit_out;
 	}
 
+	public double getPercentual_trailling_stop_lost() {
+		return _percentual_trailling_stop_lost;
+	}
+
+	public void setPercentual_trailling_stop_lost(
+		double percentual_trailling_stop_lost) {
+		_percentual_trailling_stop_lost = percentual_trailling_stop_lost;
+	}
+
 	public long getPendingcancelled() {
 		return _pendingcancelled;
 	}
@@ -476,6 +486,7 @@ public class PositionSoap implements Serializable {
 	private double _pricestoplost_out;
 	private double _percentualstopprofit_out;
 	private double _pricestopprofit_out;
+	private double _percentual_trailling_stop_lost;
 	private long _pendingcancelled;
 	private String _trading_data_operations;
 	private boolean _simulation_mode;

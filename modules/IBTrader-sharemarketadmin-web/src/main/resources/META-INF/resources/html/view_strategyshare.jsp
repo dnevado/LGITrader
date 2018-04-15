@@ -35,22 +35,26 @@ function <portlet:namespace/>switchStrategyShare(StrategyShare)
 	console.log(StrategyID);
 	console.log (StrategyShare.checked);
 	
-	var actionURL = Liferay.PortletURL.createActionURL();
-	actionURL.setWindowState("<%=LiferayWindowState.NORMAL.toString() %>");
-	actionURL.setPortletMode("<%=LiferayPortletMode.VIEW %>");
-	actionURL.setParameter("strategyId",StrategyID);
-	actionURL.setParameter("shareId", "${share.shareId}");	
-	actionURL.setParameter("active", StrategyShare.checked); // activa o no	
-	actionURL.setParameter("javax.portlet.action","addStrategyShare");
-	actionURL.setPortletId("<%=_themeDisplay.getPortletDisplay().getId() %>");
 	
-	jQuery.ajax({
-	    type: 'POST',
-	    url: actionURL,
-	    success: function(data){
-	    	//alert( data);
-	    }
-	  });
+	AUI().use("liferay-portlet-url", function(a) {
+		var actionURL = Liferay.PortletURL.createActionURL();
+		actionURL.setWindowState("<%=LiferayWindowState.NORMAL.toString() %>");
+		actionURL.setPortletMode("<%=LiferayPortletMode.VIEW %>");
+		actionURL.setParameter("strategyId",StrategyID);
+		actionURL.setParameter("shareId", "${share.shareId}");	
+		actionURL.setParameter("active", StrategyShare.checked); // activa o no	
+		actionURL.setParameter("javax.portlet.action","addStrategyShare");
+		actionURL.setPortletId("<%=_themeDisplay.getPortletDisplay().getId() %>");
+		
+		jQuery.ajax({
+		    type: 'POST',
+		    url: actionURL,
+		    success: function(data){
+		    	//alert( data);
+		    }
+		  });
+	
+	});
 }
 
 </script>
@@ -60,8 +64,6 @@ function <portlet:namespace/>switchStrategyShare(StrategyShare)
     <liferay-frontend:add-menu-item title='<%= LanguageUtil.get(request,"share.addshare") %>' url="<%= addShareURL.toString() %>" />
     <liferay-frontend:add-menu-item title='<%= LanguageUtil.get(request,"share.addmarket") %>' url="<%= addMarketURL.toString() %>" />
 </liferay-frontend:add-menu>
-
-
 <liferay-ui:search-container  searchContainer="${searchStrategy}" iteratorURL="${iteratorURL}"> 
 <liferay-ui:search-container-results results="${searchStrategy.getResults()}"/>    
 <liferay-ui:search-container-row  className="com.ibtrader.data.model.Strategy" keyProperty="strategyId" modelVar="Strategy">

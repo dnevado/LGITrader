@@ -40,17 +40,17 @@ public class PositionImpl extends PositionBaseImpl {
 	/* SI NO ESTA VENDIDA */
 	public boolean IsOpen() {
 		
-		return !this.getState().equals(PositionStates.status.SELL_OK); 
+		return !this.getState().equals(PositionStates.status.SELL_OK.toString()); 
 	}
 	/* PENDIENTE DE ENTRAR, NO ESTA COMPRADA, NI VENDIDA    */
 	public boolean IsPendingIn() {
-		return this.getDate_real_in()==null &&   !this.getState().equals(PositionStates.status.BUY_OK); 
+		return this.getDate_real_in()==null &&   !this.getState().equals(PositionStates.status.BUY_OK.toString()); 
 	}
 	public boolean IsPendingOut() {
-		 return this.getDate_real_out()==null &&   this.getState().equals(PositionStates.status.BUY_OK); 
+		 return this.getDate_real_out()==null &&   this.getState().equals(PositionStates.status.BUY_OK.toString()); 
 	}
 	public boolean IsClosed() {
-		 return this.getState().equals(PositionStates.status.SELL_OK); 	
+		 return this.getState().equals(PositionStates.status.SELL_OK.toString()); 	
   }
 	
 }

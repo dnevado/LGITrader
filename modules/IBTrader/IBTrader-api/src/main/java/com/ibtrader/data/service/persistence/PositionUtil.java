@@ -1879,6 +1879,209 @@ public class PositionUtil {
 	}
 
 	/**
+	* Returns all the positions where companyId = &#63; and groupId = &#63; and pendingcancelled = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param pendingcancelled the pendingcancelled
+	* @return the matching positions
+	*/
+	public static List<Position> findByCancelCompanyGroup(long companyId,
+		long groupId, long pendingcancelled) {
+		return getPersistence()
+				   .findByCancelCompanyGroup(companyId, groupId,
+			pendingcancelled);
+	}
+
+	/**
+	* Returns a range of all the positions where companyId = &#63; and groupId = &#63; and pendingcancelled = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param pendingcancelled the pendingcancelled
+	* @param start the lower bound of the range of positions
+	* @param end the upper bound of the range of positions (not inclusive)
+	* @return the range of matching positions
+	*/
+	public static List<Position> findByCancelCompanyGroup(long companyId,
+		long groupId, long pendingcancelled, int start, int end) {
+		return getPersistence()
+				   .findByCancelCompanyGroup(companyId, groupId,
+			pendingcancelled, start, end);
+	}
+
+	/**
+	* Returns an ordered range of all the positions where companyId = &#63; and groupId = &#63; and pendingcancelled = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param pendingcancelled the pendingcancelled
+	* @param start the lower bound of the range of positions
+	* @param end the upper bound of the range of positions (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching positions
+	*/
+	public static List<Position> findByCancelCompanyGroup(long companyId,
+		long groupId, long pendingcancelled, int start, int end,
+		OrderByComparator<Position> orderByComparator) {
+		return getPersistence()
+				   .findByCancelCompanyGroup(companyId, groupId,
+			pendingcancelled, start, end, orderByComparator);
+	}
+
+	/**
+	* Returns an ordered range of all the positions where companyId = &#63; and groupId = &#63; and pendingcancelled = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param pendingcancelled the pendingcancelled
+	* @param start the lower bound of the range of positions
+	* @param end the upper bound of the range of positions (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching positions
+	*/
+	public static List<Position> findByCancelCompanyGroup(long companyId,
+		long groupId, long pendingcancelled, int start, int end,
+		OrderByComparator<Position> orderByComparator, boolean retrieveFromCache) {
+		return getPersistence()
+				   .findByCancelCompanyGroup(companyId, groupId,
+			pendingcancelled, start, end, orderByComparator, retrieveFromCache);
+	}
+
+	/**
+	* Returns the first position in the ordered set where companyId = &#63; and groupId = &#63; and pendingcancelled = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param pendingcancelled the pendingcancelled
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching position
+	* @throws NoSuchPositionException if a matching position could not be found
+	*/
+	public static Position findByCancelCompanyGroup_First(long companyId,
+		long groupId, long pendingcancelled,
+		OrderByComparator<Position> orderByComparator)
+		throws com.ibtrader.data.exception.NoSuchPositionException {
+		return getPersistence()
+				   .findByCancelCompanyGroup_First(companyId, groupId,
+			pendingcancelled, orderByComparator);
+	}
+
+	/**
+	* Returns the first position in the ordered set where companyId = &#63; and groupId = &#63; and pendingcancelled = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param pendingcancelled the pendingcancelled
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching position, or <code>null</code> if a matching position could not be found
+	*/
+	public static Position fetchByCancelCompanyGroup_First(long companyId,
+		long groupId, long pendingcancelled,
+		OrderByComparator<Position> orderByComparator) {
+		return getPersistence()
+				   .fetchByCancelCompanyGroup_First(companyId, groupId,
+			pendingcancelled, orderByComparator);
+	}
+
+	/**
+	* Returns the last position in the ordered set where companyId = &#63; and groupId = &#63; and pendingcancelled = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param pendingcancelled the pendingcancelled
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching position
+	* @throws NoSuchPositionException if a matching position could not be found
+	*/
+	public static Position findByCancelCompanyGroup_Last(long companyId,
+		long groupId, long pendingcancelled,
+		OrderByComparator<Position> orderByComparator)
+		throws com.ibtrader.data.exception.NoSuchPositionException {
+		return getPersistence()
+				   .findByCancelCompanyGroup_Last(companyId, groupId,
+			pendingcancelled, orderByComparator);
+	}
+
+	/**
+	* Returns the last position in the ordered set where companyId = &#63; and groupId = &#63; and pendingcancelled = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param pendingcancelled the pendingcancelled
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching position, or <code>null</code> if a matching position could not be found
+	*/
+	public static Position fetchByCancelCompanyGroup_Last(long companyId,
+		long groupId, long pendingcancelled,
+		OrderByComparator<Position> orderByComparator) {
+		return getPersistence()
+				   .fetchByCancelCompanyGroup_Last(companyId, groupId,
+			pendingcancelled, orderByComparator);
+	}
+
+	/**
+	* Returns the positions before and after the current position in the ordered set where companyId = &#63; and groupId = &#63; and pendingcancelled = &#63;.
+	*
+	* @param positionId the primary key of the current position
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param pendingcancelled the pendingcancelled
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next position
+	* @throws NoSuchPositionException if a position with the primary key could not be found
+	*/
+	public static Position[] findByCancelCompanyGroup_PrevAndNext(
+		long positionId, long companyId, long groupId, long pendingcancelled,
+		OrderByComparator<Position> orderByComparator)
+		throws com.ibtrader.data.exception.NoSuchPositionException {
+		return getPersistence()
+				   .findByCancelCompanyGroup_PrevAndNext(positionId, companyId,
+			groupId, pendingcancelled, orderByComparator);
+	}
+
+	/**
+	* Removes all the positions where companyId = &#63; and groupId = &#63; and pendingcancelled = &#63; from the database.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param pendingcancelled the pendingcancelled
+	*/
+	public static void removeByCancelCompanyGroup(long companyId, long groupId,
+		long pendingcancelled) {
+		getPersistence()
+			.removeByCancelCompanyGroup(companyId, groupId, pendingcancelled);
+	}
+
+	/**
+	* Returns the number of positions where companyId = &#63; and groupId = &#63; and pendingcancelled = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param pendingcancelled the pendingcancelled
+	* @return the number of matching positions
+	*/
+	public static int countByCancelCompanyGroup(long companyId, long groupId,
+		long pendingcancelled) {
+		return getPersistence()
+				   .countByCancelCompanyGroup(companyId, groupId,
+			pendingcancelled);
+	}
+
+	/**
 	* Returns all the positions where companyId = &#63; and groupId = &#63;.
 	*
 	* @param companyId the company ID

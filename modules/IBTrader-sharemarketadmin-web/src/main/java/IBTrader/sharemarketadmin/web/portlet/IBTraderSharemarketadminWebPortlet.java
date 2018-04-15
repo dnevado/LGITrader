@@ -95,6 +95,7 @@ import org.osgi.service.component.annotations.Reference;
 		"javax.portlet.init-param.view-template=/html/view.jsp",		
 		"javax.portlet.name=" + IBTraderSharemarketadminWebPortletKeys.IBTraderSharemarketadminWeb,
         "com.liferay.portlet.footer-portlet-javascript=/js/main.js",
+        "com.liferay.portlet.header-portlet-css=/css/main.css",
 		"javax.portlet.resource-bundle=content.Language",
 		 "mvc.command.name=/html/add_edit_share",
 		"javax.portlet.security-role-ref=power-user,user"

@@ -291,6 +291,13 @@ public class PositionLocalServiceWrapper implements PositionLocalService,
 	}
 
 	@Override
+	public java.util.List<com.ibtrader.data.model.Position> findByCancelCompanyGroup(
+		long companyId, long groupId, long pendingcancelled) {
+		return _positionLocalService.findByCancelCompanyGroup(companyId,
+			groupId, pendingcancelled);
+	}
+
+	@Override
 	public java.util.List<com.ibtrader.data.model.Position> findByCompanyGroupDate(
 		long companyId, long groupId, java.util.Date start_date_in,
 		java.util.Date end_date_in) {

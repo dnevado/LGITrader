@@ -241,6 +241,10 @@ public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
 		_num_macdT = this.getJsonStrategyShareParams().getLong(_EXPANDO_MOBILE_AVERAGE_CANDLE_SIZE,0);
 		_entryrate = this.getJsonStrategyShareParams().getDouble(_EXPANDO_MOBILE_AVERAGE_GAP_SIZE,0.0f) / 100;
 		
+		
+		if (_num_macdP==0 || _num_macdT==0 || (!(_entryrate>0)))
+			return Boolean.FALSE;
+		
 		/* SOLO PODEMOS ENTRAR EN EL PERIODO MARCADO DE CADA MINUTO, PARA LO CUAL OBTENEMOS EL RESTO */	
 		/* TIMEZONE AJUSTADO */
 		Date _FromNow = Utilities.getDate(_IBUser);

@@ -572,6 +572,21 @@ public interface PositionModel extends BaseModel<Position>, ShardedModel,
 	public void setPricestopprofit_out(double pricestopprofit_out);
 
 	/**
+	 * Returns the percentual_trailling_stop_lost of this position.
+	 *
+	 * @return the percentual_trailling_stop_lost of this position
+	 */
+	public double getPercentual_trailling_stop_lost();
+
+	/**
+	 * Sets the percentual_trailling_stop_lost of this position.
+	 *
+	 * @param percentual_trailling_stop_lost the percentual_trailling_stop_lost of this position
+	 */
+	public void setPercentual_trailling_stop_lost(
+		double percentual_trailling_stop_lost);
+
+	/**
 	 * Returns the pendingcancelled of this position.
 	 *
 	 * @return the pendingcancelled of this position

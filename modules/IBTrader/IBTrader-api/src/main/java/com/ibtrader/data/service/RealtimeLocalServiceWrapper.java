@@ -101,8 +101,9 @@ public class RealtimeLocalServiceWrapper implements RealtimeLocalService,
 
 	@Override
 	public com.ibtrader.data.model.Realtime findLastCompanyShare(
-		long companyId, long shareId) {
-		return _realtimeLocalService.findLastCompanyShare(companyId, shareId);
+		long companyId, long shareId, long groupId) {
+		return _realtimeLocalService.findLastCompanyShare(companyId, shareId,
+			groupId);
 	}
 
 	@Override

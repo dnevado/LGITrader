@@ -125,30 +125,39 @@ else
 			  <aui:validator name="digits"/>
 		 </aui:input>
     </aui:fieldset>
-    <aui:fieldset>		         
-        <label class="control-label" for="<%=portletId%>_share.percentual_limit_buy"><liferay-ui:message key="share.percentual_limit_buy"/></label><input  id="<%=portletId%>_percentual_limit_buy" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_limit_buy"  value="${share.percentual_limit_buy gt 0 ? share.percentual_limit_buy : ''}"/> 	    		
-    </aui:fieldset> 
-      <aui:fieldset>		
-      	<label class="control-label" for="<%=portletId%>_share.percentual_stop_lost"><liferay-ui:message key="share.percentual_stop_lost"/></label><input  id="<%=portletId%>_percentual_stop_lost" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_stop_lost"  value="${share.percentual_stop_lost gt 0 ? share.percentual_stop_lost : ''}"/> 	    	      		
-    </aui:fieldset> 
-    <aui:fieldset>		
-    	<label class="control-label" for="<%=portletId%>_share.percentual_stop_profit"><liferay-ui:message key="share.percentual_stop_profit"/></label><input  id="<%=portletId%>_percentual_stop_profit" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_stop_profit"  value="${share.percentual_stop_profit gt 0 ? share.percentual_stop_profit : ''}"/> 	    	      	    		
-    </aui:fieldset> 
-    <aui:fieldset>		
-    	<label class="control-label" for="<%=portletId%>_share.percentual_trailling_stop_lost"><liferay-ui:message key="share.percentual_trailling_stop_lost"/></label><input  id="<%=portletId%>_percentual_trailling_stop_lost" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_trailling_stop_lost"  value="${share.percentual_trailling_stop_lost gt 0 ? share.percentual_trailling_stop_lost : ''}"/> 	    	      	    		
-    </aui:fieldset>
-     
-    
+    <aui:row>
+    	<aui:col span="6">
+	    	 <aui:fieldset>		         
+	       	 <label class="control-label" for="<%=portletId%>_share.percentual_limit_buy"><liferay-ui:message key="share.percentual_limit_buy"/></label><input  id="<%=portletId%>_percentual_limit_buy" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_limit_buy"  value="${share.percentual_limit_buy gt 0 ? share.percentual_limit_buy : ''}"/> 	    		
+	    	</aui:fieldset> 
+	      	<aui:fieldset>		
+	      	<label class="control-label" for="<%=portletId%>_share.percentual_stop_lost"><liferay-ui:message key="share.percentual_stop_lost"/></label><input  id="<%=portletId%>_percentual_stop_lost" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_stop_lost"  value="${share.percentual_stop_lost gt 0 ? share.percentual_stop_lost : ''}"/> 	    	      		
+	    	</aui:fieldset> 
+       </aui:col>
+       <aui:col span="6">
+	       <aui:fieldset>		
+	    	  <label class="control-label" for="<%=portletId%>_share.percentual_stop_profit"><liferay-ui:message key="share.percentual_stop_profit"/></label><input  id="<%=portletId%>_percentual_stop_profit" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_stop_profit"  value="${share.percentual_stop_profit gt 0 ? share.percentual_stop_profit : ''}"/> 	    	      	    		
+	    	</aui:fieldset> 
+	        <aui:fieldset>		
+	    	  <label class="control-label" for="<%=portletId%>_share.percentual_trailling_stop_lost"><liferay-ui:message key="share.percentual_trailling_stop_lost"/></label><input  id="<%=portletId%>_percentual_trailling_stop_lost" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_trailling_stop_lost"  value="${share.percentual_trailling_stop_lost gt 0 ? share.percentual_trailling_stop_lost : ''}"/> 	    	      	    		
+	    	</aui:fieldset>
+       </aui:col>
+	</aui:row>	         
    <liferay-ui:panel-container accordion="true" extended="true" id="datafutures">
 		<liferay-ui:panel title="share.datafutures" markupView="lexicon">
+		<aui:row>
+    	<aui:col span="6">
 			    <aui:fieldset>	  				
   				<aui:select multiple="true"  label="data.expirationmonth" name="expirationmonth">
 				    <% int monthCounter=0;				    				    
 				    for (String s: ConfigKeys._FUTURES_MONTHS)  { %>	
 				        <aui:option  value="<%=monthCounter%>" selected="<%=(_months.contains(String.valueOf(monthCounter)) ? true :  false)%>"><%=s%></aui:option> 
-				    <% monthCounter+=1;} %>
-				    								
+				    <% monthCounter+=1;} %>				     							
 				</aui:select> 
+				</aui:fieldset>
+	     </aui:col> 
+	     <aui:col span="2">
+	      		<aui:fieldset>	  		
 				<aui:select   label="data.expirationweek" name="expirationweek">		
 				   <aui:option  value="1" selected="<%=("1".equals(expirationweek) ? true :  false)%>">1</aui:option>
 				   <aui:option  value="2" selected="<%=("2".equals(expirationweek) ? true :  false)%>">2</aui:option>
@@ -156,17 +165,18 @@ else
 				   <aui:option  value="4" selected="<%=("4".equals(expirationweek) ? true :  false)%>">4</aui:option>
 				   <aui:option  value="5" selected="<%=("5".equals(expirationweek) ? true :  false)%>">5</aui:option>
 				</aui:select>
+				</aui:fieldset>
+		</aui:col> 
+	     <aui:col span="2">
+	     		<aui:fieldset>	  	
 			    <aui:select label="data.expirationdayweek" name="expirationdayweek">		
 			       <% int dayCounter=1;
 			       	for (String s: ConfigKeys._FUTURES_DAYOFWEEK)  { %>        	    				    	
 				        <aui:option  value="<%=dayCounter%>" selected="<%=(expirationdayweek.equals(String.valueOf(dayCounter)) ? true :  false)%>"><%=s%></aui:option> 
 				    <% dayCounter+=1;} %>		   				    				   		   
 				</aui:select>
-  				 </aui:fieldset>
-  				
+  				 </aui:fieldset>	      			
   				<aui:fieldset>		
-  				  				
-  				
   				<liferay-ui:message key="data.expirationdate"/>
   				<liferay-ui:input-date dayParam="startDateDay"
 					     dayValue="<%= startTimeDay %>"
@@ -178,30 +188,41 @@ else
 					     yearValue="<%= startTimeYear %>"/>
   			
   				 </aui:fieldset>
+  		    </aui:col>  	
+	    	</aui:row>	 
+  			<aui:row>
+    		<aui:col span="6">
   			   <!--  html5 versus liferay debido a los numbers con dcecimales  -->    
-     		   <label class="control-label" for="<%=portletId%>_tick_futures">share.tickfutures</label><input  id="<%=portletId%>_tick_futures" class="field form-control"  min="0"  type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_tick_futures"  value="${share.tick_futures gt 0 ? share.tick_futures : ''}"/>
-			   <label class="control-label" for="<%=portletId%>_share.multiplier">share.multiplier</label><input  id="<%=portletId%>_multiplier" class="field form-control"  min="0"  type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_multiplier"  value="${share.multiplier gt 0 ? share.multiplier : ''}"/> 	
-	         
+     			 <label class="control-label" for="<%=portletId%>_tick_futures">share.tickfutures</label><input  id="<%=portletId%>_tick_futures" class="field form-control"  min="0"  type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_tick_futures"  value="${share.tick_futures gt 0 ? share.tick_futures : ''}"/>			    	
+	        </aui:col>  	
+		     <aui:col span="6">
+			     <label class="control-label" for="<%=portletId%>_share.multiplier">share.multiplier</label><input  id="<%=portletId%>_multiplier" class="field form-control"  min="0"  type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_multiplier"  value="${share.multiplier gt 0 ? share.multiplier : ''}"/>
+			 </aui:col>
+	        </aui:row>	  
          </liferay-ui:panel>
 	</liferay-ui:panel-container>
 	<liferay-ui:panel-container accordion="true" extended="true" id="datamarket">
 		<liferay-ui:panel title="share.datamarket" markupView="lexicon">
-     		 <aui:fieldset>		
-     		  
+			<aui:row>
+    			<aui:col span="3">
+     		 	<aui:fieldset>		     		  
 				   <aui:select label="share.exchange" name="exchange">
 				    <% for (String s: ConfigKeys._MARKET_EXCHANGES)  {%>        				    	
 				        <aui:option  value="<%=s%>" selected="<%=(_share!=null &&  s.equals(_share.getExchange()) ? true :  false)%>"><%=s%></aui:option> 
-				    <% } %>
-				    								
-				</aui:select>
-		     </aui:fieldset>	
-		     <aui:fieldset>		
+				    <% } %>				    							
+				   </aui:select>
+		     	</aui:fieldset>
+		        </aui:col>	
+			     <aui:col span="3">
+			     <aui:fieldset>		
 				   <aui:select label="share.primaryexchange" name="primaryexchange">
 				   <% for (String p: ConfigKeys._PRIMARY_MARKET_EXCHANGES)  {%>				    	        
 				        <aui:option  value="<%=p%>" selected="<%=(_share!=null && p.equals(_share.getPrimary_exchange()) ? true : false)%>"><%=p%></aui:option> 
 				    <% } %>				   		        	  								
-				</aui:select>
-		     </aui:fieldset>
+					</aui:select>
+		    	  </aui:fieldset>
+		     	</aui:col>	
+		     <aui:col span="3">
 		     <aui:fieldset>		
 				   <aui:select onchange="updateAssetType();" label="share.type" name="security_type">
 				   
@@ -213,7 +234,8 @@ else
 					<aui:option cssClass="futures" value="<%=ConfigKeys.SECURITY_TYPE_FUTUROS%>" selected="<%=_selectedFutures %>"><%=ConfigKeys.SECURITY_TYPE_FUTUROS%></aui:option>										
 				</aui:select>
 		    </aui:fieldset>
-		    
+		    </aui:col>
+		    <aui:col span="3">
 		     <aui:fieldset>		
 			  	<aui:select label="share.market" name="marketId">
 			  	 <c:forEach items="${_lMarket}" var="market">
@@ -221,6 +243,8 @@ else
 			    </c:forEach>
 			  	</aui:select>													
 		     </aui:fieldset>
+		     </aui:col>
+		     </aui:row>	  
 		     <aui:input type="hidden"  name="shareId"  value="${share.shareId}"/>
   	   </liferay-ui:panel>
 	</liferay-ui:panel-container>

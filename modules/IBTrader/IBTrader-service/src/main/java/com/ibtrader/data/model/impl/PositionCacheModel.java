@@ -65,7 +65,7 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(79);
+		StringBundler sb = new StringBundler(81);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -137,6 +137,8 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 		sb.append(percentualstopprofit_out);
 		sb.append(", pricestopprofit_out=");
 		sb.append(pricestopprofit_out);
+		sb.append(", percentual_trailling_stop_lost=");
+		sb.append(percentual_trailling_stop_lost);
 		sb.append(", pendingcancelled=");
 		sb.append(pendingcancelled);
 		sb.append(", trading_data_operations=");
@@ -278,6 +280,7 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 		positionImpl.setPricestoplost_out(pricestoplost_out);
 		positionImpl.setPercentualstopprofit_out(percentualstopprofit_out);
 		positionImpl.setPricestopprofit_out(pricestopprofit_out);
+		positionImpl.setPercentual_trailling_stop_lost(percentual_trailling_stop_lost);
 		positionImpl.setPendingcancelled(pendingcancelled);
 
 		if (trading_data_operations == null) {
@@ -353,6 +356,8 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 		percentualstopprofit_out = objectInput.readDouble();
 
 		pricestopprofit_out = objectInput.readDouble();
+
+		percentual_trailling_stop_lost = objectInput.readDouble();
 
 		pendingcancelled = objectInput.readLong();
 		trading_data_operations = objectInput.readUTF();
@@ -469,6 +474,8 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 
 		objectOutput.writeDouble(pricestopprofit_out);
 
+		objectOutput.writeDouble(percentual_trailling_stop_lost);
+
 		objectOutput.writeLong(pendingcancelled);
 
 		if (trading_data_operations == null) {
@@ -518,6 +525,7 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 	public double pricestoplost_out;
 	public double percentualstopprofit_out;
 	public double pricestopprofit_out;
+	public double percentual_trailling_stop_lost;
 	public long pendingcancelled;
 	public String trading_data_operations;
 	public boolean simulation_mode;

@@ -16,6 +16,8 @@
 <%@ page import="java.util.*" %>
 
 
+<div class="container-fluid-1280">
+
 <liferay-ui:success key="share.success" message="share.success"/>
 <liferay-ui:error key="share.error.exists" message="share.error.exists"/>
 <liferay-ui:error key="share.error.missingparameters" message="share.error.missingparameters"/>
@@ -55,42 +57,60 @@ String portletId= "_" + portletDisplay.getId();
 
 
 <aui:form action="<%=editStrategyShareParamsURL%>"  name="fm" method="POST">
-	<aui:fieldset-group markupView="lexicon">
-	
-	
+	<aui:fieldset-group markupView="lexicon">	  
 	 <aui:fieldset collapsed="false" collapsible="true"  label="strategy" id="datastrategyname">
+	  <aui:row>      
+	   <aui:col span="4">   	
 		<aui:input  readonly="readonly" type="text" label="share.name" name="name"  value="${share.name}">
-		</aui:input>
+		</aui:input> 
+	   </aui:col>
+	   <aui:col span="4">   	
 		<aui:input  readonly="readonly" type="text" label="share.symbol" name="symbol"  value="${share.symbol}">
 		</aui:input>
+		</aui:col>
+	   <aui:col span="4">   	
 		<aui:input  readonly="readonly" type="text" label="strategy.name" name="strategy.name"  value="${strategy.name}">
 		</aui:input>
-		<aui:input type="textarea" label="strategy.description"rows="5" cols="30" id="description" name="description" value="${not empty strategyshare.description ? strategyshare.description : strategy.description}" />
-
-	</aui:fieldset>
+	   </aui:col>
+	  </aui:row>     
+	   <aui:row> 
+	    <aui:col span="12">   
+			<aui:input type="textarea" label="strategy.description"rows="5" cols="30" id="description" name="description" value="${not empty strategyshare.description ? strategyshare.description : strategy.description}" />
+	   </aui:col>
+	   </aui:row>     
+	  </aui:fieldset>
+	 
 	
 	<c:if test="${strategy.can_override_params}">
 
     <aui:fieldset collapsed="false" collapsible="true"  label="share.paramdata" id="datashare">
-  		
- 		 <aui:input type="number" label="share.number" name="numbertopurchase"  value="${strategyshare_numbertopurchase>=0  ? share.numbertopurchase : strategyshare_numbertopurchase}">
+  		  <aui:row>      
+	   		<aui:col span="12">   
+ 			 <aui:input type="number" label="share.number" name="numbertopurchase"  value="${strategyshare_numbertopurchase>=0  ? share.numbertopurchase : strategyshare_numbertopurchase}">
 		 	<aui:validator  name="required"  />	
 		  	<aui:validator name="min">1</aui:validator>
 		  	<aui:validator name="digits"/>
-		  	
-		 </aui:input>
-  		 <aui:fieldset>		         
-	        <label class="control-label" for="<%=portletId%>_share.percentual_limit_buy"><liferay-ui:message key="share.percentual_limit_buy"/></label><input  id="<%=portletId%>_percentual_limit_buy" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_limit_buy"  value="${strategyshare_percentual_limit_buy<=0 ? share.percentual_limit_buy : strategyshare_percentual_limit_buy}"/> 	    		
-	    </aui:fieldset> 
-	      <aui:fieldset>		
-	      	<label class="control-label" for="<%=portletId%>_share.percentual_stop_lost"><liferay-ui:message key="share.percentual_stop_lost"/></label><input  id="<%=portletId%>_percentual_stop_lost" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_stop_lost"  value="${strategyshare_percentual_stop_lost<=0 ? share.percentual_stop_lost : strategyshare_percentual_stop_lost}"/> 	    	      		
-	    </aui:fieldset> 
-	    <aui:fieldset>		
-	    	<label class="control-label" for="<%=portletId%>_share.percentual_stop_profit"><liferay-ui:message key="share.percentual_stop_profit"/></label><input  id="<%=portletId%>_percentual_stop_profit" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_stop_profit"  value="${strategyshare_percentual_stop_profit<=0 ? share.percentual_stop_profit : strategyshare_percentual_stop_profit}"/> 	    	      	    		
-        </aui:fieldset>
-          <aui:fieldset>		
-	    	<label class="control-label" for="<%=portletId%>_share.percentual_trailling_stop_lost"><liferay-ui:message key="share.percentual_trailling_stop_lost"/></label><input  id="<%=portletId%>_percentual_trailling_stop_lost" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_trailling_stop_lost"  value="${strategyshare_percentual_trailling_stop_lost<=0 ? share.percentual_trailling_stop_lost : strategyshare_percentual_trailling_stop_lost}"> 	    	      	    		
-        </aui:fieldset>
+		  	</aui:input>
+		  	</aui:col>
+	    </aui:row>     
+		 <aui:row>      
+	   		<aui:col span="6">
+		  		 <aui:fieldset>		         
+			        <label class="control-label" for="<%=portletId%>_share.percentual_limit_buy"><liferay-ui:message key="share.percentual_limit_buy"/></label><input  id="<%=portletId%>_percentual_limit_buy" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_limit_buy"  value="${strategyshare_percentual_limit_buy<=0 ? share.percentual_limit_buy : strategyshare_percentual_limit_buy}"/> 	    		
+			    </aui:fieldset> 
+	         	  <aui:fieldset>		
+			      	<label class="control-label" for="<%=portletId%>_share.percentual_stop_lost"><liferay-ui:message key="share.percentual_stop_lost"/></label><input  id="<%=portletId%>_percentual_stop_lost" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_stop_lost"  value="${strategyshare_percentual_stop_lost<=0 ? share.percentual_stop_lost : strategyshare_percentual_stop_lost}"/> 	    	      		
+			    </aui:fieldset>
+				</aui:col> 	   
+	   		<aui:col span="6">
+			    <aui:fieldset>		
+			    	<label class="control-label" for="<%=portletId%>_share.percentual_stop_profit"><liferay-ui:message key="share.percentual_stop_profit"/></label><input  id="<%=portletId%>_percentual_stop_profit" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_stop_profit"  value="${strategyshare_percentual_stop_profit<=0 ? share.percentual_stop_profit : strategyshare_percentual_stop_profit}"/> 	    	      	    		
+		        </aui:fieldset>		   
+		          <aui:fieldset>		
+			    	<label class="control-label" for="<%=portletId%>_share.percentual_trailling_stop_lost"><liferay-ui:message key="share.percentual_trailling_stop_lost"/></label><input  id="<%=portletId%>_percentual_trailling_stop_lost" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_trailling_stop_lost"  value="${strategyshare_percentual_trailling_stop_lost<=0 ? share.percentual_trailling_stop_lost : strategyshare_percentual_trailling_stop_lost}"> 	    	      	    		
+		        </aui:fieldset>
+		    </aui:col>
+		  </aui:row>  
     </aui:fieldset> 
     </c:if>
     <!--  DATOS DE EXPANDOS    -->
@@ -104,8 +124,14 @@ String portletId= "_" + portletDisplay.getId();
     { %>
     <aui:fieldset collapsed="false" collapsible="true"  label="strategy.paramdata" id="datastrategy">
     <%
+    long counter = 0;
     for (ExpandoColumn StrategyParameter : StrategyParams)
     {
+    
+    	if ( (counter & 1) == 0 ) { out.println("<div class=\"row\""); }%>    	%>
+    	
+    	<aui:col span="6">	
+    	<%
     	String _type = "text";
     	String _step = "1";
     	String _pattern = "";
@@ -171,8 +197,10 @@ String portletId= "_" + portletDisplay.getId();
     		  </aui:fieldset>	
     				
     			<% }%>    	    	
-    	
-    <% } %>
+    		</aui:col>    
+    <% 
+    if ( (counter & 1) == 0 ) { out.println("</div"); }    	   	
+    counter++;} %>
     </aui:fieldset>
     <% } %>      
 	
@@ -188,3 +216,4 @@ String portletId= "_" + portletDisplay.getId();
     </aui:button-row>
     </aui:fieldset-group>
 </aui:form>
+</div>

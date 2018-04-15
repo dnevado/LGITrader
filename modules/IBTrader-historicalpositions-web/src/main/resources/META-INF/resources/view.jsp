@@ -6,7 +6,7 @@
 
 <div class="container-fluid-1280">
 <aui:container cssClass='super-awesome-container'>
-<liferay-ui:search-container  searchContainer="${searchPosition}" iteratorURL="${iteratorURL}"> 
+<liferay-ui:search-container cssClass="table responsive table-striped table-bordered table-hover" searchContainer="${searchPosition}" iteratorURL="${iteratorURL}"> 
 <liferay-ui:search-container-results results="${searchPosition.getResults()}"/>    
 <liferay-ui:search-container-row  className="com.ibtrader.data.model.Position" keyProperty="PositionId" modelVar="Position">
 <liferay-ui:search-container-column-jsp path="/extra_info.jsp"/>
@@ -15,6 +15,9 @@
 <liferay-ui:search-container-column-text name="Price.Out" value="${Position.price_real_out}"/>
 <liferay-ui:search-container-column-text name="Rendimiento">
 <%
+
+String redirect = themeDisplay.getURLCurrent();
+
 double profit =  Position.getPrice_real_out() - Position.getPrice_real_in();
 double percentual_profit=0;
 if (Position.getType().equals(PositionStates.statusTWSFire.SELL.toString())) // operacion de compra normal..??

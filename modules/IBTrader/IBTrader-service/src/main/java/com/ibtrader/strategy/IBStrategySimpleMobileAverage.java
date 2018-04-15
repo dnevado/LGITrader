@@ -43,10 +43,13 @@ import com.ibtrader.data.model.Market;
 import com.ibtrader.data.model.Position;
 import com.ibtrader.data.model.Realtime;
 import com.ibtrader.data.model.Share;
+import com.ibtrader.data.model.Strategy;
 import com.ibtrader.data.model.StrategyShare;
 import com.ibtrader.data.model.impl.StrategyImpl;
 import com.ibtrader.data.service.PositionLocalServiceUtil;
 import com.ibtrader.data.service.RealtimeLocalServiceUtil;
+import com.ibtrader.data.service.StrategyLocalServiceUtil;
+import com.ibtrader.data.service.StrategyShareLocalServiceUtil;
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.expando.kernel.model.ExpandoColumn;
 import com.liferay.expando.kernel.model.ExpandoColumnConstants;
@@ -81,6 +84,8 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OPERATIONS_TYPE = "Operation Type [ALL, BUY, SELL]";  // offset desde inicio de mercado en minutos
 
 
+	
+	
 	long _num_macdP = 8;   // Periodos
 	long  _num_macdT = 5;   // Tiempo de barras
 	double _entryrate=75.0;    // Umbral de superacion, en porcentaje
@@ -243,6 +248,9 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 	_num_macdT = this.getJsonStrategyShareParams().getLong(_EXPANDO_MOBILE_AVERAGE_CANDLE_SIZE,0);
 	_entryrate = this.getJsonStrategyShareParams().getDouble(_EXPANDO_MOBILE_AVERAGE_GAP_SIZE,0.0f) / 100;
 	operationfilter = this.getJsonStrategyShareParams().getString(_EXPANDO_MOBILE_AVERAGE_TRADE_OPERATIONS_TYPE,"ALL").trim();
+	
+	if (_num_macdP==0 || _num_macdT==0 || _entryrate==0)
+		return Boolean.FALSE;
 	
 	/* SOLO PODEMOS ENTRAR EN EL PERIODO MARCADO DE CADA MINUTO, PARA LO CUAL OBTENEMOS EL RESTO */	
 	

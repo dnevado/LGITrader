@@ -35,7 +35,9 @@ public class MobileAvgUtil {
 	public static boolean _IsBuySignalMM8_5MINBar(double _avgMobileSimple ,Realtime oRTimeWidthRange,double _WidthBarRangePercent , Realtime oRTimeEnTramoBar)
 	{
 					
-
+		/* A/ La barra debe cruzar la MM8 y al cierre el 75% de su cuerpo debe ser superior al precio cierre de la MM.
+		y B/ Además, el precio cierre de la barra será => que el 75% del rango.
+		*/
 		if (_avgMobileSimple<= (oRTimeWidthRange.getMax_value() - _WidthBarRangePercent)
 				&& (oRTimeEnTramoBar.getValue() >= (oRTimeWidthRange.getMin_value() + _WidthBarRangePercent)))
 		{

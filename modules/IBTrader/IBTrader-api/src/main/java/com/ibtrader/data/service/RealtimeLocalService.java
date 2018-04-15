@@ -115,7 +115,8 @@ public interface RealtimeLocalService extends BaseLocalService,
 	public Realtime fetchRealtimeByUuidAndGroupId(java.lang.String uuid,
 		long groupId);
 
-	public Realtime findLastCompanyShare(long companyId, long shareId);
+	public Realtime findLastCompanyShare(long companyId, long shareId,
+		long groupId);
 
 	public Realtime findLastRealTime(long shareId, long companyId, long groupId);
 

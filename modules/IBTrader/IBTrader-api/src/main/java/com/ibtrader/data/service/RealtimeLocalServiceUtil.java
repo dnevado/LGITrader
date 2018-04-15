@@ -106,8 +106,8 @@ public class RealtimeLocalServiceUtil {
 	}
 
 	public static com.ibtrader.data.model.Realtime findLastCompanyShare(
-		long companyId, long shareId) {
-		return getService().findLastCompanyShare(companyId, shareId);
+		long companyId, long shareId, long groupId) {
+		return getService().findLastCompanyShare(companyId, shareId, groupId);
 	}
 
 	public static com.ibtrader.data.model.Realtime findLastRealTime(

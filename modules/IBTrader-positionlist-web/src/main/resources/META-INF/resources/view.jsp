@@ -9,12 +9,12 @@
 
 
 <% 
-String redirect = ParamUtil.getString(request, "redirect");
+String redirect = themeDisplay.getURLCurrent();
 String  paramPortletName = renderResponse.getNamespace() + "f"; 
 
-portletDisplay.setShowBackIcon(true);
+/* portletDisplay.setShowBackIcon(true);
 portletDisplay.setURLBack(redirect);
-
+*/
 %>
 
 
@@ -24,6 +24,7 @@ portletDisplay.setURLBack(redirect);
 </portlet:actionURL>
 
 <portlet:resourceURL var="PositionListResourceURL">
+    <portlet:param name="redirect" value="<%=themeDisplay.getURLCurrent()%>"/>
 </portlet:resourceURL>
 
 <%	ThemeDisplay _themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY); %> 
@@ -39,31 +40,46 @@ portletDisplay.setURLBack(redirect);
 
 <script>
 	
+	
+	
+	
+	function callProcessAction(url) {
+	    window.location.href = url;
+	}
+	
 	function <portlet:namespace/>CallBackRefreshPosition() {
 	 
 		/* CREACIOM DE UN RENDER Y UN ICON PARA 
 		1.CERRAR LA POSICION EN UN MOMENTO DADO
 		*/
+		AUI().use("liferay-portlet-url", function(a) {
+			var actionURL = Liferay.PortletURL.createActionURL();
+			actionURL.setWindowState("<%=LiferayWindowState.NORMAL.toString() %>");
+			actionURL.setPortletMode("<%=LiferayPortletMode.VIEW %>");
+			actionURL.setParameter("PositionId", "-1");		
+			actionURL.setParameter("action","DeletePosition");
+			actionURL.setParameter("redirect",'<%=redirect%>');
+			actionURL.setPortletId("<%=_themeDisplay.getPortletDisplay().getId() %>");
+			
+			console.log("do some stuff DOM changes ");
+			console.log(actionURL);
+			
+			});
 
-		var actionURL = Liferay.PortletURL.createActionURL();
-		actionURL.setWindowState("<%=LiferayWindowState.NORMAL.toString() %>");
-		actionURL.setPortletMode("<%=LiferayPortletMode.VIEW %>");
-		actionURL.setParameter("PositionId", "-1");		
-		actionURL.setParameter("action","DeletePosition");
-		actionURL.setPortletId("<%=_themeDisplay.getPortletDisplay().getId() %>");
+	
 		
 		
 		
-		console.log("do some stuff DOM changes ");
-		console.log(actionURL);
+		
 		
 		
 	} 
 
 	function <portlet:namespace/>RefreshPosition() {
-		 
-		console.log("adding setInterval 10 seconds");
-		setInterval( function () {tPositions.ajax.reload(<portlet:namespace/>CallBackRefreshPosition());}, 10000 );
+	
+		$.fn.dataTable.ext.errMode = 'none';	
+		console.log("adding setInterval 4 seconds");
+		setInterval( function () {tPositions.ajax.reload(<portlet:namespace/>CallBackRefreshPosition());}, 4000 );
 	} 
 
 	
@@ -134,7 +150,7 @@ portletDisplay.setURLBack(redirect);
 </script>
 
 <div class="container-fluid-1280">
-<table class="table table-striped table-bordered table-hover"  id="positions">
+<table class="table responsive table-striped table-bordered table-hover"  id="positions">
        <thead>
             <tr>
                 <th><liferay-ui:message key="Symbol"/></th>

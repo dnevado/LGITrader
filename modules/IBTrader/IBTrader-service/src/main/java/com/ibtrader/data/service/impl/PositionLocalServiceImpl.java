@@ -59,6 +59,13 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 	 */
 	
 	
+	public List<Position> findByCancelCompanyGroup(long companyId, long groupId, long pendingcancelled)
+	{	
+		
+		return  getPositionPersistence().findByCancelCompanyGroup(companyId, groupId, pendingcancelled);
+	}
+	
+	
 	public List<Position> findByCompanyGroupDate(long companyId, long groupId, Date start_date_in,Date end_date_in)
 	{	
 		DynamicQuery _DQ = PositionLocalServiceUtil.dynamicQuery();

@@ -94,6 +94,8 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 		attributes.put("pricestoplost_out", getPricestoplost_out());
 		attributes.put("percentualstopprofit_out", getPercentualstopprofit_out());
 		attributes.put("pricestopprofit_out", getPricestopprofit_out());
+		attributes.put("percentual_trailling_stop_lost",
+			getPercentual_trailling_stop_lost());
 		attributes.put("pendingcancelled", getPendingcancelled());
 		attributes.put("trading_data_operations", getTrading_data_operations());
 		attributes.put("simulation_mode", getSimulation_mode());
@@ -318,6 +320,13 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 			setPricestopprofit_out(pricestopprofit_out);
 		}
 
+		Double percentual_trailling_stop_lost = (Double)attributes.get(
+				"percentual_trailling_stop_lost");
+
+		if (percentual_trailling_stop_lost != null) {
+			setPercentual_trailling_stop_lost(percentual_trailling_stop_lost);
+		}
+
 		Long pendingcancelled = (Long)attributes.get("pendingcancelled");
 
 		if (pendingcancelled != null) {
@@ -437,6 +446,16 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 	@Override
 	public double getLimit_price_out() {
 		return _position.getLimit_price_out();
+	}
+
+	/**
+	* Returns the percentual_trailling_stop_lost of this position.
+	*
+	* @return the percentual_trailling_stop_lost of this position
+	*/
+	@Override
+	public double getPercentual_trailling_stop_lost() {
+		return _position.getPercentual_trailling_stop_lost();
 	}
 
 	/**
@@ -1008,6 +1027,17 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 	@Override
 	public void setPendingcancelled(long pendingcancelled) {
 		_position.setPendingcancelled(pendingcancelled);
+	}
+
+	/**
+	* Sets the percentual_trailling_stop_lost of this position.
+	*
+	* @param percentual_trailling_stop_lost the percentual_trailling_stop_lost of this position
+	*/
+	@Override
+	public void setPercentual_trailling_stop_lost(
+		double percentual_trailling_stop_lost) {
+		_position.setPercentual_trailling_stop_lost(percentual_trailling_stop_lost);
 	}
 
 	/**

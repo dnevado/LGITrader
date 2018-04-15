@@ -412,6 +412,8 @@
 		
 		<column name="percentualstopprofit_out" type="double" />
 		<column name="pricestopprofit_out" type="double" />
+		<column name="percentual_trailling_stop_lost" type="double" />
+		
 		
 		<column name="pendingcancelled" type="long" />
 		<column name="trading_data_operations" type="String" />
@@ -463,6 +465,11 @@
 			<finder-column name="groupId"/>
 			<finder-column name="companyId"/>		
 			<finder-column name="shareId" />						
+		</finder>
+		<finder name="CancelCompanyGroup" return-type="Collection">		
+				<finder-column name="companyId"/>
+				<finder-column name="groupId"/>	
+				<finder-column name="pendingcancelled" />								
 		</finder>
 		<finder name="CompanyGroup" return-type="Collection">		
 				<finder-column name="companyId"/>

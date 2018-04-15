@@ -27,6 +27,7 @@ create index IX_FD6177DF on ibtrader_Position (companyId, groupId, date_in, stat
 create index IX_2B00D884 on ibtrader_Position (companyId, groupId, date_in, state_in[$COLUMN_LENGTH:75$]);
 create index IX_30B6CA36 on ibtrader_Position (companyId, groupId, date_out, state_out[$COLUMN_LENGTH:75$]);
 create index IX_419C94F2 on ibtrader_Position (companyId, groupId, date_real_in);
+create index IX_C938CFF7 on ibtrader_Position (companyId, groupId, pendingcancelled);
 create index IX_10F3E90B on ibtrader_Position (companyId, groupId, state_[$COLUMN_LENGTH:75$]);
 create index IX_60FC94D4 on ibtrader_Position (groupId, companyId, positionId_tws_in, clientId_in);
 create index IX_F275EE66 on ibtrader_Position (groupId, companyId, positionId_tws_out, clientId_out);

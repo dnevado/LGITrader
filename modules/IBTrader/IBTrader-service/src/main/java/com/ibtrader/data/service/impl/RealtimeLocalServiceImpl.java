@@ -136,7 +136,7 @@ public class RealtimeLocalServiceImpl extends RealtimeLocalServiceBaseImpl {
 		return 	SimpleMobileAvgGroupByPeriodsRealtime;
 	}
 	
-	 public Realtime findLastCompanyShare(long companyId, long shareId)
+	 public Realtime findLastCompanyShare(long companyId, long shareId, long groupId)
 	{
 		Realtime _returnRT=null;
 		DynamicQuery _DQ = realtimeLocalService.dynamicQuery();
@@ -145,6 +145,7 @@ public class RealtimeLocalServiceImpl extends RealtimeLocalServiceBaseImpl {
 
 		
 		_DQ.add(RestrictionsFactoryUtil.eq("companyId", companyId));
+		_DQ.add(RestrictionsFactoryUtil.eq("groupId", groupId));
 		_DQ.add(RestrictionsFactoryUtil.le("shareId", shareId));
 		_DQ.setProjection(projection_max);
 		

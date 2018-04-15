@@ -193,6 +193,7 @@ public class IBStrategyMinMax extends StrategyImpl {
     			_childTrailOrder.totalQuantity(BuyPositionTWS.totalQuantity());    
     			childOrders.add(_childTrailOrder);
 
+    			BuyPositionSystem.setPercentual_trailling_stop_lost(traillingstoplost);
     		
     		}
     		
@@ -447,14 +448,21 @@ public class IBStrategyMinMax extends StrategyImpl {
 	public boolean validateParams(Map<String, String> paramValues) {
 		// TODO Auto-generated method stub
 		//return super.validateParams(paramValues);
-		this.setValidateParamsKeysError("");
+ 		this.setValidateParamsKeysError("");
 		boolean bOK = Boolean.TRUE;
 		for (Map.Entry<String, String> parameter : paramValues.entrySet()) {
 			String _paramValue = parameter.getValue();
 			
-			/* PUEDEN VENIR LISTA DE VALORES EN EL NOMBRE DEL EXPANDO []  */		
-			 boolean bParamList = parameter.getKey().contains("[") && parameter.getKey().contains("]");
-			if (!bParamList && !Validator.isDigit(_paramValue) && Double.parseDouble(_paramValue)>=0)
+			/* PUEDEN VENIR LISTA DE VALORES EN EL NOMBRE DEL EXPANDO [] --> SUPUESTAMENTE UN NUMERO  */		
+			boolean bParamList = parameter.getKey().contains("[") && parameter.getKey().contains("]");
+			double _paramDouble = -0.1f; // numero negativo 
+			try{
+				_paramDouble = Double.parseDouble(_paramValue);
+			}
+			catch (Exception e) {}
+			 
+			if (!bParamList && _paramDouble<0) // si no lo parsea el double error 
+					
 			{
 				bOK=Boolean.FALSE;
 				this.setValidateParamsKeysError("strategyshare.strategyminmax.errorparams");

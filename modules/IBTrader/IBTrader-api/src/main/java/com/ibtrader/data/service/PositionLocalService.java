@@ -239,6 +239,9 @@ public interface PositionLocalService extends BaseLocalService,
 	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
 		int end, OrderByComparator<T> orderByComparator);
 
+	public List<Position> findByCancelCompanyGroup(long companyId,
+		long groupId, long pendingcancelled);
+
 	public List<Position> findByCompanyGroupDate(long companyId, long groupId,
 		Date start_date_in, Date end_date_in);
 

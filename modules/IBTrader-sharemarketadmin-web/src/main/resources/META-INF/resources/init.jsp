@@ -13,6 +13,8 @@
 <%@ page import="com.ibtrader.data.model.Strategy" %>
 <%@ page import="com.ibtrader.data.model.StrategyShare" %>
 <%@ page import="com.ibtrader.data.service.ShareLocalServiceUtil" %>
+<%@ page import="com.ibtrader.data.service.MarketLocalServiceUtil" %>
+<%@ page import="com.ibtrader.data.service.StrategyLocalServiceUtil" %>
 <%@ page import="com.ibtrader.data.service.StrategyShareLocalServiceUtil" %>
 <%@ page import="com.ibtrader.util.ConfigKeys" %>
 <%@ page import="com.liferay.portal.kernel.dao.search.SearchEntry" %>
@@ -21,6 +23,8 @@
 <%@ page import="com.liferay.portal.kernel.util.ParamUtil"%>
 <%@ page import="com.liferay.portal.kernel.theme.PortletDisplay"%>
 <%@ page import="com.ibtrader.util.Utilities" %>
+<%@ page import="java.util.List" %>
+<%@ page import="com.ibtrader.data.model.Strategy" %>
 <%@ page import="com.liferay.portal.kernel.language.LanguageUtil"%>
 <%@ page import="com.ibtrader.data.model.impl.StrategyImpl"%>
 <%@ taglib prefix="liferay-util" uri="http://liferay.com/tld/util" %>

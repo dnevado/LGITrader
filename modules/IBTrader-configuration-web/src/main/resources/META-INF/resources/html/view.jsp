@@ -8,26 +8,23 @@
 <%@ page import="com.liferay.portal.kernel.util.*" %>
 
 
-
 <%
 
  String redirect = ParamUtil.getString(request, "redirect");
  String  paramPortletName = renderResponse.getNamespace() + "f"; 
- portletDisplay.setShowBackIcon(true);
+ /* portletDisplay.setShowBackIcon(true);
  portletDisplay.setURLBack(redirect);
- 
-// ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
- 
- 
+ */
 %>
 
 <div class="container-fluid-1280">
 
-
 <portlet:actionURL name="addeditConfiguration" var="addeditConfigurationURL" >
-	 <portlet:param name="redirect" value="<%=themeDisplay.getURLCurrent()%>"/>
-<portlet:actionURL>
- 
+ <portlet:param name="redirect" value="<%=themeDisplay.getURLCurrent()%>"/>
+ </portlet:actionURL>
+
+
+
 
 <aui:form action="${addeditConfigurationURL}" name='<%=renderResponse.getNamespace() +"f"%>'  id='<%=renderResponse.getNamespace()+"f"%>' method="POST">
 	<liferay-ui:success key="configuration.success" message="configuration.success"/>	

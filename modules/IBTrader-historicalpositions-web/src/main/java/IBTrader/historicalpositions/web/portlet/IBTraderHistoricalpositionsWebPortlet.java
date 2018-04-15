@@ -100,11 +100,7 @@ public class IBTraderHistoricalpositionsWebPortlet extends MVCPortlet {
 		 DateEND.setTime(_cINI.getTimeInMillis());		 
 		 
 		 List<Position> _lPosition  = _positionLocalService.findByCompanyGroupDate(themeDisplay.getCompanyId(),themeDisplay.getScopeGroupId(), DateINI,DateEND );
-		
-		//List<Strategy> _lStrg = StrategyLocalServiceUtil.findByCompanyId(themeDisplay.getCompanyId()); 
-			
-			
-		//List<Strategy> _lStrg = StrategyLocalServiceUtil.find
+				
 		renderRequest.setAttribute("_lPosition", _lPosition);
 		
 		PortletURL iteratorURL = renderResponse.createRenderURL();
@@ -133,7 +129,12 @@ public class IBTraderHistoricalpositionsWebPortlet extends MVCPortlet {
 		_positionLocalService = positionLocalService;
     }
 
-
+	public void cancelOpenPosition(ActionRequest actionRequest, ActionResponse actionResponse)
+	{
+	
+	}
+	
+	
 	public void editPosition(ActionRequest actionRequest, ActionResponse actionResponse)
 	{
 		UploadPortletRequest req = PortalUtil.getUploadPortletRequest(actionRequest);
