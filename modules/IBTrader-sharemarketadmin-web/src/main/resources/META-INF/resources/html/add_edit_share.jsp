@@ -126,20 +126,21 @@ else
 		 </aui:input>
     </aui:fieldset>
     <aui:row>
+    
     	<aui:col span="6">
 	    	 <aui:fieldset>		         
 	       	 <label class="control-label" for="<%=portletId%>_share.percentual_limit_buy"><liferay-ui:message key="share.percentual_limit_buy"/></label><input  id="<%=portletId%>_percentual_limit_buy" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_limit_buy"  value="${share.percentual_limit_buy gt 0 ? share.percentual_limit_buy : ''}"/> 	    		
 	    	</aui:fieldset> 
 	      	<aui:fieldset>		
-	      	<label class="control-label" for="<%=portletId%>_share.percentual_stop_lost"><liferay-ui:message key="share.percentual_stop_lost"/></label><input  id="<%=portletId%>_percentual_stop_lost" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_stop_lost"  value="${share.percentual_stop_lost gt 0 ? share.percentual_stop_lost : ''}"/> 	    	      		
+	      	<label class="control-label" for="<%=portletId%>_share.percentual_stop_lost"><liferay-ui:message key="share.detail.percentual_stop_lost"/></label><input ${readonlyStopLost}  id="<%=portletId%>_percentual_stop_lost" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_stop_lost"  value="${share.percentual_stop_lost gt 0 ? share.percentual_stop_lost : ''}"/> 	    	      		
 	    	</aui:fieldset> 
        </aui:col>
        <aui:col span="6">
 	       <aui:fieldset>		
-	    	  <label class="control-label" for="<%=portletId%>_share.percentual_stop_profit"><liferay-ui:message key="share.percentual_stop_profit"/></label><input  id="<%=portletId%>_percentual_stop_profit" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_stop_profit"  value="${share.percentual_stop_profit gt 0 ? share.percentual_stop_profit : ''}"/> 	    	      	    		
+	    	  <label class="control-label" for="<%=portletId%>_share.percentual_stop_profit"><liferay-ui:message key="share.detail.percentual_stop_profit"/></label><input ${readonlyStopProfit}  id="<%=portletId%>_percentual_stop_profit" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_stop_profit"  value="${share.percentual_stop_profit gt 0 ? share.percentual_stop_profit : ''}"/> 	    	      	    		
 	    	</aui:fieldset> 
 	        <aui:fieldset>		
-	    	  <label class="control-label" for="<%=portletId%>_share.percentual_trailling_stop_lost"><liferay-ui:message key="share.percentual_trailling_stop_lost"/></label><input  id="<%=portletId%>_percentual_trailling_stop_lost" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_trailling_stop_lost"  value="${share.percentual_trailling_stop_lost gt 0 ? share.percentual_trailling_stop_lost : ''}"/> 	    	      	    		
+	    	  <label class="control-label" for="<%=portletId%>_share.percentual_trailling_stop_lost"><liferay-ui:message key="share.detail.percentual_trailling_stop_lost"/></label><input  ${readonlyTrailingStopLost} id="<%=portletId%>_percentual_trailling_stop_lost"  class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_trailling_stop_lost"  value="${share.percentual_trailling_stop_lost gt 0 ? share.percentual_trailling_stop_lost : ''}"/> 	    	      	    		
 	    	</aui:fieldset>
        </aui:col>
 	</aui:row>	         

@@ -44,6 +44,12 @@
 		    <finder-column name="shareId" />
 		    <finder-column name="createDate" />
 		    
+		</finder>		
+		<finder name="CompanySharegGroupDate" return-type="Collection">
+		    <finder-column name="companyId" />
+		    <finder-column name="shareId" />
+		    <finder-column name="createDate" />
+		    <finder-column name="groupId" />
 		</finder>
 		
 
@@ -137,6 +143,10 @@
 		<finder name="G_G" return-type="Collection">
 			<finder-column name="groupId" />
 			<finder-column name="strategyID" />
+		</finder>
+		<finder name="CompanyClassName" return-type="Strategy">
+			<finder-column name="companyId" />
+			<finder-column name="className" />
 		</finder>
 		
 		
@@ -413,6 +423,8 @@
 		<column name="percentualstopprofit_out" type="double" />
 		<column name="pricestopprofit_out" type="double" />
 		<column name="percentual_trailling_stop_lost" type="double" />
+		<column name="pricetrailling_stop_lost" type="double" />
+		
 		
 		
 		<column name="pendingcancelled" type="long" />

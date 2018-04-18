@@ -79,6 +79,7 @@ create table ibtrader_Position (
 	percentualstopprofit_out DOUBLE,
 	pricestopprofit_out DOUBLE,
 	percentual_trailling_stop_lost DOUBLE,
+	pricetrailling_stop_lost DOUBLE,
 	pendingcancelled LONG,
 	trading_data_operations VARCHAR(75) null,
 	simulation_mode BOOLEAN,

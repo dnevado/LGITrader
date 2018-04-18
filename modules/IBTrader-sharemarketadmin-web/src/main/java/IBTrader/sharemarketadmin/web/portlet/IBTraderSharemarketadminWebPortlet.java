@@ -510,7 +510,7 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 		
 		try 
 		{			
-			if (numbertopurchase==-1  || !validated )
+			if (!validated )
 			{
 				
 				if (!_strategyImpl.getValidateParamsKeysError().equals(""))				
@@ -537,12 +537,14 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 					
 					/* GENERAMOS EL JSON CON LOS DATOS DEL ACTIVO  + LOS EXPANDOS  */					
 					JSONObject  jsonStrategyShareParams = JSONFactoryUtil.createJSONObject();
-					jsonStrategyShareParams.put(ConfigKeys._FIELD_NUMBER_TO_PURCHASE, numbertopurchase);
-					jsonStrategyShareParams.put("percentual_limit_buy", percentual_limit_buy);
-					jsonStrategyShareParams.put(ConfigKeys._FIELD_STOP_LOST, percentual_stop_lost);
-					jsonStrategyShareParams.put(ConfigKeys._FIELD_STOP_PROFIT, percentual_stop_profit);
-					jsonStrategyShareParams.put(ConfigKeys._FIELD_TRAILLING_STOP_LOST, trailling_stop_lost);					
-					
+					if (strategy!=null && strategy.getCan_override_params()) // puede sobrreescribi9r los datos mínimos?
+					{
+						jsonStrategyShareParams.put(ConfigKeys._FIELD_NUMBER_TO_PURCHASE, numbertopurchase);
+						jsonStrategyShareParams.put("percentual_limit_buy", percentual_limit_buy);
+						jsonStrategyShareParams.put(ConfigKeys._FIELD_STOP_LOST, percentual_stop_lost);
+						jsonStrategyShareParams.put(ConfigKeys._FIELD_STOP_PROFIT, percentual_stop_profit);
+						jsonStrategyShareParams.put(ConfigKeys._FIELD_TRAILLING_STOP_LOST, trailling_stop_lost);					
+					}
 					/*  BUSCAMOS EN LA REQUEST TODOS LOS PARAMETROS QUE EMPIECEN CON EL PREFIJO Utilities.IBTRADER_PREFIX...*/				
 				    //while (enumeration.hasMoreElements()) {
 				    for (Map.Entry<String, String> StrategyParam : paramValues.entrySet()) {
@@ -591,7 +593,7 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 		}
 		long shareId = ParamUtil.getLong(actionRequest, "shareId");
 	    long strategyId = ParamUtil.getLong(actionRequest, "strategyId");
-		boolean active = ParamUtil.getBoolean(actionRequest,"active",false);			
+		boolean active = ParamUtil.getBoolean(actionRequest,"active",Boolean.TRUE);			
 
 	    
 	    StrategyShare _strategyshare = StrategyShareLocalServiceUtil.getByCommpanyShareStrategyId(serviceContext.getScopeGroupId(), serviceContext.getCompanyId(), shareId, strategyId);
@@ -599,7 +601,7 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 	    {
 	    	
 	    	StrategyShare strategyshare = _strategyshareLocalService.createStrategyShare(CounterLocalServiceUtil.increment(StrategyShare.class.getName()));
-			strategyshare.setActive(Boolean.FALSE);
+			strategyshare.setActive(active);
 			strategyshare.setGroupId(serviceContext.getScopeGroupId());
 			strategyshare.setCompanyId(serviceContext.getCompanyId());
 			strategyshare.setCreateDate(new Date());

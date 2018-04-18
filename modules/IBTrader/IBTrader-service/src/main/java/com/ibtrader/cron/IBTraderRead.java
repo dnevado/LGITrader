@@ -59,6 +59,10 @@ import com.liferay.portal.kernel.scheduler.SchedulerEngineHelper;
 public class IBTraderRead  extends BaseSchedulerEntryMessageListener {
 
 	Log _log = LogFactoryUtil.getLog(IBTraderRead.class);
+	
+    private static boolean runningJob = false;
+
+	
 	private SchedulerEngineHelper _schedulerEngineHelper;
 
 	
@@ -99,8 +103,21 @@ public class IBTraderRead  extends BaseSchedulerEntryMessageListener {
 	@Override
 	protected void doReceive(Message message) throws Exception {
 		
-		CronUtil.StartReadingCron(message);
-	 	 
+	   if(runningJob)
+	   {
+		   		_log.info("TradingRead already running, not starting again");
+		        return;
+	   }
+		runningJob = true;
+		try
+		{
+			CronUtil.StartReadingCron(message);
+		}
+		catch (Exception e)
+		{
+			runningJob = false;
+		}
+		runningJob = false; 
 			
 } // END RECEIVER
 }// END CLASS

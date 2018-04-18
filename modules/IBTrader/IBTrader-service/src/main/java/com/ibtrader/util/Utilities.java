@@ -42,9 +42,15 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.scheduler.SchedulerEngineHelperUtil;
+import com.liferay.portal.kernel.scheduler.SchedulerException;
+import com.liferay.portal.kernel.scheduler.messaging.SchedulerResponse;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.ibtrader.constants.IBTraderConstants;
+import com.ibtrader.cron.IBTraderTrade;
 import com.ibtrader.data.model.Config;
 import com.ibtrader.data.model.Position;
 import com.ibtrader.data.model.StrategyShare;
@@ -85,7 +91,8 @@ public class Utilities {
    
    private static final String TIME24HOURS_PATTERN ="([01]?[0-9]|2[0-3]):[0-5][0-9]";
    
-	
+	private final static Log _log = LogFactoryUtil.getLog(Utilities.class);
+ 
    public static boolean isNumber (String amount){
 	    try {
 	        Double.parseDouble(amount);             
@@ -101,6 +108,32 @@ public class Utilities {
 	  };
 
    
+   public static int getTotalJobsRunnig(String JobclassName)
+   {
+	   /*  VERIFICAMOS SI NO ESTA EJECUTANDO, SI ME DA  DOS, LO CANCELO , SOLO PERMITIMOS 1 */
+	   int total = 0;
+	    List<SchedulerResponse> jobs = null;
+		try {
+			jobs = SchedulerEngineHelperUtil.getScheduledJobs();
+		} catch (SchedulerException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+		}
+	    if (jobs==null) return 0;
+  	 	for (SchedulerResponse shdR :jobs)
+  	 	{	
+  	 			_log.info("job:" + shdR.getJobName());
+  	 			
+  	 			if (shdR.getJobName().equalsIgnoreCase(JobclassName))
+				{
+  	 				
+					total++;
+				}
+		
+  	 	}
+		return total;
+   }
+	  
   public static OSType getOperatingSystemType() {
 	  OSType detectedOS;
       String OS = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);

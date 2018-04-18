@@ -132,6 +132,10 @@ public interface StrategyLocalService extends BaseLocalService,
 	public Strategy fetchStrategyByUuidAndGroupId(java.lang.String uuid,
 		long groupId);
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public Strategy getCompanyClassName(long companyId,
+		java.lang.String strategyClassName);
+
 	/**
 	* Returns the strategy with the primary key.
 	*

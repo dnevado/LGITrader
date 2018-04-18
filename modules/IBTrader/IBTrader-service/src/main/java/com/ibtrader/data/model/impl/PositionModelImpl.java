@@ -106,6 +106,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 			{ "percentualstopprofit_out", Types.DOUBLE },
 			{ "pricestopprofit_out", Types.DOUBLE },
 			{ "percentual_trailling_stop_lost", Types.DOUBLE },
+			{ "pricetrailling_stop_lost", Types.DOUBLE },
 			{ "pendingcancelled", Types.BIGINT },
 			{ "trading_data_operations", Types.VARCHAR },
 			{ "simulation_mode", Types.BOOLEAN },
@@ -150,13 +151,14 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		TABLE_COLUMNS_MAP.put("percentualstopprofit_out", Types.DOUBLE);
 		TABLE_COLUMNS_MAP.put("pricestopprofit_out", Types.DOUBLE);
 		TABLE_COLUMNS_MAP.put("percentual_trailling_stop_lost", Types.DOUBLE);
+		TABLE_COLUMNS_MAP.put("pricetrailling_stop_lost", Types.DOUBLE);
 		TABLE_COLUMNS_MAP.put("pendingcancelled", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("trading_data_operations", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("simulation_mode", Types.BOOLEAN);
 		TABLE_COLUMNS_MAP.put("totalcommision", Types.DOUBLE);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table ibtrader_Position (uuid_ VARCHAR(75) null,positionId LONG not null primary key,groupId LONG,companyId LONG,shareId LONG,createDate DATE null,modifiedDate DATE null,state_ VARCHAR(75) null,state_in VARCHAR(75) null,state_out VARCHAR(75) null,description TEXT null,price_in DOUBLE,price_real_in DOUBLE,limit_price_in DOUBLE,date_in DATE null,date_real_in DATE null,positionId_tws_in LONG,positionId_tws_out LONG,type_ VARCHAR(75) null,price_out DOUBLE,price_real_out DOUBLE,limit_price_out DOUBLE,date_out DATE null,date_real_out DATE null,share_number LONG,share_number_to_trade LONG,share_number_traded LONG,clientId_in LONG,clientId_out LONG,strategy_in VARCHAR(75) null,strategy_out VARCHAR(75) null,percentualstoplost_out DOUBLE,pricestoplost_out DOUBLE,percentualstopprofit_out DOUBLE,pricestopprofit_out DOUBLE,percentual_trailling_stop_lost DOUBLE,pendingcancelled LONG,trading_data_operations VARCHAR(75) null,simulation_mode BOOLEAN,totalcommision DOUBLE)";
+	public static final String TABLE_SQL_CREATE = "create table ibtrader_Position (uuid_ VARCHAR(75) null,positionId LONG not null primary key,groupId LONG,companyId LONG,shareId LONG,createDate DATE null,modifiedDate DATE null,state_ VARCHAR(75) null,state_in VARCHAR(75) null,state_out VARCHAR(75) null,description TEXT null,price_in DOUBLE,price_real_in DOUBLE,limit_price_in DOUBLE,date_in DATE null,date_real_in DATE null,positionId_tws_in LONG,positionId_tws_out LONG,type_ VARCHAR(75) null,price_out DOUBLE,price_real_out DOUBLE,limit_price_out DOUBLE,date_out DATE null,date_real_out DATE null,share_number LONG,share_number_to_trade LONG,share_number_traded LONG,clientId_in LONG,clientId_out LONG,strategy_in VARCHAR(75) null,strategy_out VARCHAR(75) null,percentualstoplost_out DOUBLE,pricestoplost_out DOUBLE,percentualstopprofit_out DOUBLE,pricestopprofit_out DOUBLE,percentual_trailling_stop_lost DOUBLE,pricetrailling_stop_lost DOUBLE,pendingcancelled LONG,trading_data_operations VARCHAR(75) null,simulation_mode BOOLEAN,totalcommision DOUBLE)";
 	public static final String TABLE_SQL_DROP = "drop table ibtrader_Position";
 	public static final String ORDER_BY_JPQL = " ORDER BY position.positionId_tws_in DESC";
 	public static final String ORDER_BY_SQL = " ORDER BY ibtrader_Position.positionId_tws_in DESC";
@@ -238,6 +240,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		model.setPercentualstopprofit_out(soapModel.getPercentualstopprofit_out());
 		model.setPricestopprofit_out(soapModel.getPricestopprofit_out());
 		model.setPercentual_trailling_stop_lost(soapModel.getPercentual_trailling_stop_lost());
+		model.setPricetrailling_stop_lost(soapModel.getPricetrailling_stop_lost());
 		model.setPendingcancelled(soapModel.getPendingcancelled());
 		model.setTrading_data_operations(soapModel.getTrading_data_operations());
 		model.setSimulation_mode(soapModel.getSimulation_mode());
@@ -343,6 +346,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		attributes.put("pricestopprofit_out", getPricestopprofit_out());
 		attributes.put("percentual_trailling_stop_lost",
 			getPercentual_trailling_stop_lost());
+		attributes.put("pricetrailling_stop_lost", getPricetrailling_stop_lost());
 		attributes.put("pendingcancelled", getPendingcancelled());
 		attributes.put("trading_data_operations", getTrading_data_operations());
 		attributes.put("simulation_mode", getSimulation_mode());
@@ -575,6 +579,13 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 		if (percentual_trailling_stop_lost != null) {
 			setPercentual_trailling_stop_lost(percentual_trailling_stop_lost);
+		}
+
+		Double pricetrailling_stop_lost = (Double)attributes.get(
+				"pricetrailling_stop_lost");
+
+		if (pricetrailling_stop_lost != null) {
+			setPricetrailling_stop_lost(pricetrailling_stop_lost);
 		}
 
 		Long pendingcancelled = (Long)attributes.get("pendingcancelled");
@@ -1210,6 +1221,17 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 	@JSON
 	@Override
+	public double getPricetrailling_stop_lost() {
+		return _pricetrailling_stop_lost;
+	}
+
+	@Override
+	public void setPricetrailling_stop_lost(double pricetrailling_stop_lost) {
+		_pricetrailling_stop_lost = pricetrailling_stop_lost;
+	}
+
+	@JSON
+	@Override
 	public long getPendingcancelled() {
 		return _pendingcancelled;
 	}
@@ -1348,6 +1370,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		positionImpl.setPercentualstopprofit_out(getPercentualstopprofit_out());
 		positionImpl.setPricestopprofit_out(getPricestopprofit_out());
 		positionImpl.setPercentual_trailling_stop_lost(getPercentual_trailling_stop_lost());
+		positionImpl.setPricetrailling_stop_lost(getPricetrailling_stop_lost());
 		positionImpl.setPendingcancelled(getPendingcancelled());
 		positionImpl.setTrading_data_operations(getTrading_data_operations());
 		positionImpl.setSimulation_mode(getSimulation_mode());
@@ -1641,6 +1664,8 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 		positionCacheModel.percentual_trailling_stop_lost = getPercentual_trailling_stop_lost();
 
+		positionCacheModel.pricetrailling_stop_lost = getPricetrailling_stop_lost();
+
 		positionCacheModel.pendingcancelled = getPendingcancelled();
 
 		positionCacheModel.trading_data_operations = getTrading_data_operations();
@@ -1661,7 +1686,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(81);
+		StringBundler sb = new StringBundler(83);
 
 		sb.append("{uuid=");
 		sb.append(getUuid());
@@ -1735,6 +1760,8 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		sb.append(getPricestopprofit_out());
 		sb.append(", percentual_trailling_stop_lost=");
 		sb.append(getPercentual_trailling_stop_lost());
+		sb.append(", pricetrailling_stop_lost=");
+		sb.append(getPricetrailling_stop_lost());
 		sb.append(", pendingcancelled=");
 		sb.append(getPendingcancelled());
 		sb.append(", trading_data_operations=");
@@ -1750,7 +1777,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(124);
+		StringBundler sb = new StringBundler(127);
 
 		sb.append("<model><model-name>");
 		sb.append("com.ibtrader.data.model.Position");
@@ -1901,6 +1928,10 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		sb.append(getPercentual_trailling_stop_lost());
 		sb.append("]]></column-value></column>");
 		sb.append(
+			"<column><column-name>pricetrailling_stop_lost</column-name><column-value><![CDATA[");
+		sb.append(getPricetrailling_stop_lost());
+		sb.append("]]></column-value></column>");
+		sb.append(
 			"<column><column-name>pendingcancelled</column-name><column-value><![CDATA[");
 		sb.append(getPendingcancelled());
 		sb.append("]]></column-value></column>");
@@ -1985,6 +2016,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 	private double _percentualstopprofit_out;
 	private double _pricestopprofit_out;
 	private double _percentual_trailling_stop_lost;
+	private double _pricetrailling_stop_lost;
 	private long _pendingcancelled;
 	private long _originalPendingcancelled;
 	private boolean _setOriginalPendingcancelled;

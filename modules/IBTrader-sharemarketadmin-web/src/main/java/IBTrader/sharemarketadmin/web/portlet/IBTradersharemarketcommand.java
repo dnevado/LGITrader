@@ -22,7 +22,11 @@ import com.ibtrader.data.service.MarketLocalServiceUtil;
 import com.ibtrader.data.service.ShareLocalService;
 import com.ibtrader.data.service.ShareLocalServiceUtil;
 import com.ibtrader.data.service.StrategyLocalService;
+import com.ibtrader.data.service.StrategyShareLocalService;
 import com.ibtrader.data.service.StrategyShareLocalServiceUtil;
+import com.ibtrader.strategy.IBStrategyStopLost;
+import com.ibtrader.strategy.IBStrategyStopProfit;
+import com.ibtrader.strategy.IBStrategyTrailingStopLost;
 import com.ibtrader.util.Utilities;
 import com.liferay.expando.kernel.model.ExpandoColumn;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
@@ -64,6 +68,8 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
     private ShareLocalService _shareLocalService;
     private MarketLocalService _marketLocalService; 
     private StrategyLocalService _strategyLocalService;
+    private StrategyShareLocalService _strategyshareLocalService;
+
 
     private static String _JSP_COMMAND_EDIT_SHARE_DETAIL = "/html/add_edit_share.jsp";
     private static String  _JSP_COMMAND_EDIT_SHARE_STRATEGIES = "/html/add_edit_strategyshare.jsp";
@@ -71,6 +77,11 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
     private static String  _JSP_COMMAND_EDIT_MARKET = "/html/add_edit_market.jsp";
     private static String  _JSP_COMMAND_LIST_MARKETS = "/html/view_market.jsp";
     
+    
+    @Reference(unbind = "-")
+    protected void setStrategyShareService(StrategyShareLocalService strategyshareLocalService) {
+    	_strategyshareLocalService = strategyshareLocalService;
+    }
     
     @Reference(unbind = "-")
     protected void setStrategyService(StrategyLocalService strategyLocalService) {
@@ -144,6 +155,24 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
 	        	shareId = shareAddedId;
 	        
 	    	share = _shareLocalService.fetchShare(shareId);
+	    	
+	    	/* STOPPROFIT, STOPLOST, STOPTRAILING ENABLE?  */
+	    	Strategy _IBSTRATEGY_STOPLOST = _strategyLocalService.getCompanyClassName(themeDisplay.getCompanyId(), IBStrategyStopLost.class.getName());
+	    	Strategy _IBSTRATEGY_TRAILINGSTOPLOST = _strategyLocalService.getCompanyClassName(themeDisplay.getCompanyId(), IBStrategyTrailingStopLost.class.getName());
+	    	Strategy _IBSTRATEGY_STOPROFIT = _strategyLocalService.getCompanyClassName(themeDisplay.getCompanyId(), IBStrategyStopProfit.class.getName());
+	    	
+	    	StrategyShare strategyshare_stoplost = null;
+	    	StrategyShare strategyshare_stopprofit = null;
+	    	StrategyShare strategyshare_traillingstoplost = null;
+	    	
+	    	if (_IBSTRATEGY_STOPLOST!=null)
+	    		 strategyshare_stoplost = _strategyshareLocalService.getByCommpanyShareStrategyId(themeDisplay.getScopeGroupId(), themeDisplay.getCompanyId(), share.getShareId(), _IBSTRATEGY_STOPLOST.getStrategyID());
+	    	if (_IBSTRATEGY_STOPROFIT!=null)
+	    		strategyshare_stopprofit = _strategyshareLocalService.getByCommpanyShareStrategyId(themeDisplay.getScopeGroupId(), themeDisplay.getCompanyId(), share.getShareId(), _IBSTRATEGY_STOPROFIT.getStrategyID());
+	    	if (_IBSTRATEGY_TRAILINGSTOPLOST!=null)
+				strategyshare_traillingstoplost  = _strategyshareLocalService.getByCommpanyShareStrategyId(themeDisplay.getScopeGroupId(), themeDisplay.getCompanyId(), share.getShareId(), _IBSTRATEGY_TRAILINGSTOPLOST.getStrategyID());
+	    	
+	    	
 	    	_mvcCommand = (String) serviceContext.getAttribute("mvcRenderCommandName");
 	        String tab_selected= ParamUtil.getString(renderRequest, "tab", "share.details");
 	        
@@ -163,7 +192,9 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
 		        		 jsonFutureParams = JSONFactoryUtil.createJSONObject(share.getExpiry_expression());
 	        }
 	        if (_mvcCommand.equals("/html/view_strategyshare"))	  
-	        {
+	        {	
+	        	
+
 	        		 _lStrategies = _strategyLocalService.findStrategies(shareId, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
 	        		 PortletURL iteratorURL = renderResponse.createRenderURL();
 
@@ -216,6 +247,13 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
 	        	
 	        	
 	        }
+	        
+	        
+	    	
+	        /* se habilitan los parametros si existen las estrategias  y estan activas */
+	        renderRequest.setAttribute("readonlyStopLost", (strategyshare_stoplost==null || (strategyshare_stoplost!=null && !strategyshare_stoplost.isActive()) ? "readonly"  : ""));
+	        renderRequest.setAttribute("readonlyStopProfit",(strategyshare_stopprofit==null || (strategyshare_stopprofit!=null && !strategyshare_stopprofit.isActive()) ? "readonly"  : "")); 
+	        renderRequest.setAttribute("readonlyTrailingStopLost",(strategyshare_traillingstoplost==null || (strategyshare_traillingstoplost!=null && !strategyshare_traillingstoplost.isActive()) ? "readonly"  : ""));
 	        
 	        renderRequest.setAttribute("share", share);
 	        renderRequest.setAttribute("strategy", Strategy);

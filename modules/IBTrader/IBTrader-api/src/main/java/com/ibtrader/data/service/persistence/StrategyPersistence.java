@@ -1177,6 +1177,58 @@ public interface StrategyPersistence extends BasePersistence<Strategy> {
 	public int countByG_G(long groupId, long strategyID);
 
 	/**
+	* Returns the strategy where companyId = &#63; and className = &#63; or throws a {@link NoSuchStrategyException} if it could not be found.
+	*
+	* @param companyId the company ID
+	* @param className the class name
+	* @return the matching strategy
+	* @throws NoSuchStrategyException if a matching strategy could not be found
+	*/
+	public Strategy findByCompanyClassName(long companyId,
+		java.lang.String className) throws NoSuchStrategyException;
+
+	/**
+	* Returns the strategy where companyId = &#63; and className = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	*
+	* @param companyId the company ID
+	* @param className the class name
+	* @return the matching strategy, or <code>null</code> if a matching strategy could not be found
+	*/
+	public Strategy fetchByCompanyClassName(long companyId,
+		java.lang.String className);
+
+	/**
+	* Returns the strategy where companyId = &#63; and className = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	*
+	* @param companyId the company ID
+	* @param className the class name
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the matching strategy, or <code>null</code> if a matching strategy could not be found
+	*/
+	public Strategy fetchByCompanyClassName(long companyId,
+		java.lang.String className, boolean retrieveFromCache);
+
+	/**
+	* Removes the strategy where companyId = &#63; and className = &#63; from the database.
+	*
+	* @param companyId the company ID
+	* @param className the class name
+	* @return the strategy that was removed
+	*/
+	public Strategy removeByCompanyClassName(long companyId,
+		java.lang.String className) throws NoSuchStrategyException;
+
+	/**
+	* Returns the number of strategies where companyId = &#63; and className = &#63;.
+	*
+	* @param companyId the company ID
+	* @param className the class name
+	* @return the number of matching strategies
+	*/
+	public int countByCompanyClassName(long companyId,
+		java.lang.String className);
+
+	/**
 	* Caches the strategy in the entity cache if it is enabled.
 	*
 	* @param strategy the strategy

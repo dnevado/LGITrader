@@ -126,11 +126,8 @@ public class IBStrategyMinMax extends StrategyImpl {
     		if (this.getJsonStrategyShareParams()!=null && this.getJsonStrategyShareParams().getInt(ConfigKeys._FIELD_NUMBER_TO_PURCHASE,0)>0)
     			number_to_purchase =this.getJsonStrategyShareParams().getInt(ConfigKeys._FIELD_NUMBER_TO_PURCHASE,0);    	
 			
-    		/* tralling stop lost */
-    		double traillingstoplost =_share.getPercentual_trailling_stop_lost();
-    		/* EXISTE ALGO SOBREESCRITO */
-    		if (this.getJsonStrategyShareParams()!=null && this.getJsonStrategyShareParams().getDouble(ConfigKeys._FIELD_TRAILLING_STOP_LOST,0)>0)
-    			traillingstoplost =this.getJsonStrategyShareParams().getDouble(ConfigKeys._FIELD_TRAILLING_STOP_LOST,0);
+    		
+    		
     		
 			BuyPositionTWS.totalQuantity(number_to_purchase);
 			// precio del tick más o menos un porcentaje ...normalmente %1
@@ -178,10 +175,32 @@ public class IBStrategyMinMax extends StrategyImpl {
     			stoplost =this.getJsonStrategyShareParams().getDouble(ConfigKeys._FIELD_STOP_LOST,0);    			
     		if (stoplost>0)    			
     			BuyPositionSystem.setPercentualstoplost_out(stoplost);
-    		else
+    		/* else
     			BuyPositionSystem.setPercentualstoplost_out(_defaultstop_percent);
+    		*/
+    		/* tralling stop lost */
+    		double percentualtraillingstoplost =_share.getPercentual_trailling_stop_lost();
+    		double pricetrailingstop;
+    		/* EXISTE ALGO SOBREESCRITO */
+    		if (this.getJsonStrategyShareParams()!=null && this.getJsonStrategyShareParams().getDouble(ConfigKeys._FIELD_TRAILLING_STOP_LOST,0)>0)
+    			percentualtraillingstoplost =this.getJsonStrategyShareParams().getDouble(ConfigKeys._FIELD_TRAILLING_STOP_LOST,0);
     		
-    		/*  trailing stop lost , introducimos el trailing % y stop lost, son ordenes hijas pero sin BBDD */     		
+    		if (percentualtraillingstoplost>0)    			
+    		{	
+    			BuyPositionSystem.setPercentual_trailling_stop_lost(percentualtraillingstoplost);
+    			if (BuyPositionSystem.getType().equals(PositionStates.statusTWSFire.BUY.toString()))  // operacion de compra normal..??
+    				pricetrailingstop = (this.getValueIn() - (this.getValueIn() * percentualtraillingstoplost /100));
+    			else
+    				pricetrailingstop = (this.getValueIn() + (this.getValueIn() * percentualtraillingstoplost /100));
+    			
+    			BuyPositionSystem.setPricetrailling_stop_lost(Utilities.RoundPrice(pricetrailingstop));
+    		}	
+    		/* else
+    			BuyPositionSystem.setPercentual_trailling_stop_lost(_defaultstop_percent); */
+    		
+    		
+    		
+    		/*  trailing stop lost , introducimos el trailing % y stop lost, son ordenes hijas pero sin BBDD     		
     		if (traillingstoplost>0)    	
     		{
     			
@@ -194,8 +213,8 @@ public class IBStrategyMinMax extends StrategyImpl {
     			childOrders.add(_childTrailOrder);
 
     			BuyPositionSystem.setPercentual_trailling_stop_lost(traillingstoplost);
+    		*/ 
     		
-    		}
     		
     		
     		double stopprofit =_share.getPercentual_stop_profit();
@@ -205,8 +224,8 @@ public class IBStrategyMinMax extends StrategyImpl {
     		
     		if (stopprofit>0)
     			BuyPositionSystem.setPercentualstopprofit_out(stopprofit);
-    		else
-    			BuyPositionSystem.setPercentualstopprofit_out(_defaultstop_percent);    		
+    		/* else
+    			BuyPositionSystem.setPercentualstopprofit_out(_defaultstop_percent);*/    		
 			/* BuyPositionSystem.setSell_percentual_stop_lost(ShareStrategy.getSell_percentual_stop_lost());
 			BuyPositionSystem.setSell_percentual_stop_profit(ShareStrategy.getSell_percentual_stop_profit());*/
 			BuyPositionSystem.setShare_number_traded(new Long(0));
@@ -218,7 +237,7 @@ public class IBStrategyMinMax extends StrategyImpl {
 			/* Posicion en MYSQL de CONTROL */
 			_log.info("Opening order " + BuyPositionSystem.getPositionId());
 			/* METEMOS LA LISTA DE ORDENES HIJAS */
-			this.setChildsOrder(childOrders);			
+			//this.setChildsOrder(childOrders);			
 
 			/* RETORNAMOS PORQUE DESPUES HAY QUE METER EN LA POSICION EN NUMERO DE ORDEN DE LA TWS */
 			returnValue =  BuyPositionSystem.getPositionId();

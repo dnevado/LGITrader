@@ -131,11 +131,12 @@ public class StrategyModelImpl extends BaseModelImpl<Strategy>
 				"value.object.column.bitmask.enabled.com.ibtrader.data.model.Strategy"),
 			true);
 	public static final long ACTIVE_COLUMN_BITMASK = 1L;
-	public static final long COMPANYID_COLUMN_BITMASK = 2L;
-	public static final long GROUPID_COLUMN_BITMASK = 4L;
-	public static final long STATUS_COLUMN_BITMASK = 8L;
-	public static final long STRATEGYID_COLUMN_BITMASK = 16L;
-	public static final long UUID_COLUMN_BITMASK = 32L;
+	public static final long CLASSNAME_COLUMN_BITMASK = 2L;
+	public static final long COMPANYID_COLUMN_BITMASK = 4L;
+	public static final long GROUPID_COLUMN_BITMASK = 8L;
+	public static final long STATUS_COLUMN_BITMASK = 16L;
+	public static final long STRATEGYID_COLUMN_BITMASK = 32L;
+	public static final long UUID_COLUMN_BITMASK = 64L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -666,7 +667,17 @@ public class StrategyModelImpl extends BaseModelImpl<Strategy>
 
 	@Override
 	public void setClassName(String className) {
+		_columnBitmask |= CLASSNAME_COLUMN_BITMASK;
+
+		if (_originalClassName == null) {
+			_originalClassName = _className;
+		}
+
 		_className = className;
+	}
+
+	public String getOriginalClassName() {
+		return GetterUtil.getString(_originalClassName);
 	}
 
 	@JSON
@@ -915,6 +926,8 @@ public class StrategyModelImpl extends BaseModelImpl<Strategy>
 		strategyModelImpl._originalStatus = strategyModelImpl._status;
 
 		strategyModelImpl._setOriginalStatus = false;
+
+		strategyModelImpl._originalClassName = strategyModelImpl._className;
 
 		strategyModelImpl._columnBitmask = 0;
 	}
@@ -1174,6 +1187,7 @@ public class StrategyModelImpl extends BaseModelImpl<Strategy>
 	private String _type;
 	private boolean _can_override_params;
 	private String _className;
+	private String _originalClassName;
 	private long _userId;
 	private long _columnBitmask;
 	private Strategy _escapedModel;

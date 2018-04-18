@@ -11,6 +11,7 @@ import com.ib.client.Contract;
 import com.ib.contracts.FutContract;
 import com.ib.contracts.StkContract;
 import com.ibtrader.constants.IBTraderConstants;
+import com.ibtrader.cron.IBTraderTrade;
 import com.ibtrader.data.model.Config;
 import com.ibtrader.data.model.IBOrder;
 import com.ibtrader.data.model.Market;
@@ -34,6 +35,8 @@ import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.Organization;
 import com.liferay.portal.kernel.model.OrganizationConstants;
+import com.liferay.portal.kernel.scheduler.SchedulerEngineHelperUtil;
+import com.liferay.portal.kernel.scheduler.messaging.SchedulerResponse;
 import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.OrganizationLocalServiceUtil;
@@ -54,7 +57,7 @@ public class CronUtil {
 	/* VALIDA CONFIRMACIONES DE ORDENES COMPLETADAS Y NO ENVIADAS A LA API POR DESCONEXIONES  */
 	public static void StartOrdersValidator(Message _message) throws Exception 	{
 		
-		int 	_CLIENT_ID = 3;	  // el dos para leer, el 3 para escribir			
+		int 	_CLIENT_ID = 4;	  // el dos para leer, el 3 para escribir			
 		String  _HOST = "127.0.0.1";
 		int     _PORT = ConfigKeys.TWS_CONNECTION_PORT;	
 		List<Company> lCompanies = CompanyLocalServiceUtil.getCompanies();
@@ -176,9 +179,17 @@ public class CronUtil {
 		 
 	
 	SimpleDateFormat sdf = new SimpleDateFormat ("yyyyMM");
+	LocalDateTime  _now =  LocalDateTime .now();  
 	
-    LocalDateTime  _now =  LocalDateTime .now();  
-	
+    
+	/*    long totalJobs = Utilities.getTotalJobsRunnig(IBTraderTrade.class.getName()); 
+    if (totalJobs>1) // no permitmos mas de 1
+    {
+    	_log.info("TradingRead totalJobs" + totalJobs + "," + _CLIENT_ID);	    
+    	Thread.currentThread().stop();
+    }
+    _log.info("TradingRead totalJobs" + totalJobs + "," + _CLIENT_ID);	   
+	*/
 	if (_CRON_RUNNING<=0)  // no se esta ejecutando --> FALTA CONTROL DE EXCEPTIONES PARA CONTROLAR QUE SE PUEDA VOLVER A EJECUTAR 
 	{
 	// sacamos organizaciones padre 
@@ -229,11 +240,15 @@ public class CronUtil {
 			 	ArrayList<String> lShareRequested = new ArrayList<String>();
 			 	while (true)
 				{
-			 	/* ALMACENIAMOS TIMESTAMP DE CONTROL */			  
+			 	 /* 20180417 con el uso de la variable estatica en cada listemer, parece que no hace falta este control 
+			 	 ALMACENIAMOS TIMESTAMP DE CONTROL 			  
 			    LocalDateTime  _nowAuditTime =  LocalDateTime .now();  			    
 			    Duration Period = Duration.between(_nowAuditTime, _now);
 			    long milsecondsdiff = Math.abs(Period.toMillis());
 			  //  _log.info("Updating AuditDate...?" + milsecondsdiff + ", mayor que " + ConfigKeys._AUDIT_TIME_CRON_READ_IN_MILLISECONDS);
+			    
+			  
+			    
 			    if (milsecondsdiff > ConfigKeys._AUDIT_TIME_CRON_READ_IN_MILLISECONDS)
 			    {			    	
 			    	 Config _confRunning = ConfigLocalServiceUtil.findByKeyCompanyGroup(IBTraderConstants.keyCRON_READING_STATUS, companyId, guestGroupId);
@@ -243,7 +258,7 @@ public class CronUtil {
 			    	 ConfigLocalServiceUtil.updateConfig(_confRunning);
 			    	//  _log.info("Updated AuditDate StartReadingCron");
 			    }
-			    	
+			    */	
 				Contract oContrat = null;
 				/* VERIFICAMOS MERCADOS ACTIVOS */			    
 			    java.util.List<Share> lShare = null;
@@ -343,11 +358,9 @@ public class CronUtil {
 		} //	for (Organization _Organization : lOrganization )	
 	
 	} // Cron runnig
-	else  // verificamos que haya un cambio de modifieddate reciente,  digamos 30 segundos, ya que el cron escribiera cada menos
+	/* else  // verificamos que haya un cambio de modifieddate reciente,  digamos 30 segundos, ya que el cron escribiera cada menos
 	{
-		/* si han pasado mas de 5 segundos sin actualizar y esta el cron running, se pone a 0
-		 * 
-		 */
+		// si han pasado mas de 5 segundos sin actualizar y esta el cron running, se pone a 0
 	   Config _confRunning =ConfigLocalServiceUtil.findByKeyCompanyGroup(IBTraderConstants.keyCRON_READING_STATUS, companyId, guestGroupId);  
 	   Date now = new Date();			
 	   long diffInMillies = Math.abs(now.getTime() - _confRunning.getModifiedDate().getTime() + 2000);	   
@@ -357,9 +370,10 @@ public class CronUtil {
 		    _confRunning.setModifiedDate(new Date());  // or localtime ????
    	 		_confRunning = ConfigLocalServiceUtil.updateConfig(_confRunning);
 	   }
-	}
+	}*/
 	
 	}
+	@SuppressWarnings("deprecation")
 	public static void StartTradingCron(Message _message) throws Exception {
 
 		/* TENEMOS TAREAS CON EL TIEMPO REAL DE CADA ACCION 
@@ -373,7 +387,7 @@ public class CronUtil {
 		 * PENSAR EN LOS BUCLES HACERLOS DENTRO...
 		 * */
 		
-		int 	_CLIENT_ID = 0; 			
+		int 	_CLIENT_ID = 2; 			
 		String  _HOST = "127.0.0.1";
 		int     _PORT = ConfigKeys.TWS_CONNECTION_PORT;			
 		int _CRON_RUNNING = -1;	  // el dos
@@ -392,7 +406,15 @@ public class CronUtil {
 		_CLIENT_ID = Long.valueOf(Utilities.getConfigurationValue(IBTraderConstants.keyCRON_TRADING_CLIENT_INITIAL, companyId, guestGroupId)).intValue();;	  // el dos para leer, el 3 para escribir
 		_CRON_RUNNING = Long.valueOf(Utilities.getConfigurationValue(IBTraderConstants.keyCRON_TRADING_STATUS, companyId, guestGroupId)).intValue();		
 	    LocalDateTime  _now =  LocalDateTime .now();  
-
+	    
+	    /* long totalJobs = Utilities.getTotalJobsRunnig(IBTraderTrade.class.getName()); 
+	   if (totalJobs>1) // no permitmos mas de 1
+	    {
+	    	_log.info("TradingCron totalJobs" + totalJobs + "," + _CLIENT_ID);	    
+	    	Thread.currentThread().stop();
+	    }
+	    _log.info("TradingCron totalJobs" + totalJobs + "," + _CLIENT_ID);
+	    */	    
 		if (_CRON_RUNNING<=0)  // no se esta ejecutando o no exista para client --> FALTA CONTROL DE EXCEPTIONES PARA CONTROLAR QUE SE PUEDA VOLVER A EJECUTAR 
 		{
 			
@@ -429,24 +451,28 @@ public class CronUtil {
  						wrapper.disconnect();
  						return;
  					}
-					_log.info("Connected, StartTradingCron, connecting to TWS");
+					_log.info("Connected, StartTradingCron, connecting to TWS clientID:" +_CLIENT_ID);
 					
 					while (true)
 					{
-						/* ALMACENIAMOS TIMESTAMP DE CONTROL */			  
+						/* ALMACENIAMOS TIMESTAMP DE CONTROL */
+						/* 20180417 con el uso de la variable estatica en cada listemer, parece que no hace falta este control 
 					    LocalDateTime  _nowAuditTime =  LocalDateTime .now();  			    
 					    Duration Period = Duration.between(_nowAuditTime, _now);
 					    long milsecondsdiff = Math.abs(Period.toMillis());
 					    if (milsecondsdiff>ConfigKeys._AUDIT_TIME_CRON_READ_IN_MILLISECONDS)
 					    {
 					    	
+					    	
+					    	
 					    	Config _confRunning =ConfigLocalServiceUtil.findByKeyCompanyGroup(IBTraderConstants.keyCRON_TRADING_STATUS, companyId, guestGroupId);
 					    	 _now =  LocalDateTime.now(); 
 					    	 _confRunning.setModifiedDate(new Date());  // or localtime ????
 					    	 _confRunning.setValue(String.valueOf(1));
 					    	 ConfigLocalServiceUtil.updateConfig(_confRunning);
+					    	_log.info("Updating  TradingCron to database connecting to TWS clientID:" +_CLIENT_ID);
 					    	 
-					    }
+					    } */
 					 	String _HORACTUAL = Utilities.getActualHourFormatPlusMinutes(Utilities.getGlobalIBDateNowFormat(),10); 				   	 
 				   	 	List<Market> lActiveMarkets = MarketLocalServiceUtil.findByActiveStartEndHour(_HORACTUAL, _HORACTUAL,Boolean.TRUE);				   	 	
 				   	  
@@ -523,11 +549,9 @@ public class CronUtil {
 			} // for (Organization _Organization : lOrganization )
 	    
 		} // if (_CRON_RUNNING==0)  // no se esta ejecutando --> FALTA CONTROL DE EXCEPTIONES PARA CONTROLAR QUE SE PUEDA VOLVER A EJECUTAR 
-		else		
+	/* 	else		
 		{
-			/* si han pasado mas de 5 segundos sin actualizar y esta el cron running, se pone a 0
-			 * 
-			 */
+			// si han pasado mas de 5 segundos sin actualizar y esta el cron running, se pone a 0
 			Config _confRunning =ConfigLocalServiceUtil.findByKeyCompanyGroup(IBTraderConstants.keyCRON_TRADING_STATUS, companyId, guestGroupId);  
 			Date now = new Date();
 		   long diffInMillies = Math.abs(now.getTime() - _confRunning.getModifiedDate().getTime() + 2000); 
@@ -537,7 +561,7 @@ public class CronUtil {
 			    _confRunning.setModifiedDate(new Date());  // or localtime ????
 	   	 		_confRunning = ConfigLocalServiceUtil.updateConfig(_confRunning);
 		   }
-		}
+		}*/
 								
 }
 		

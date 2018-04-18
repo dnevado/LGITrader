@@ -40,6 +40,7 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.spring.extender.service.ServiceReference;
@@ -4441,6 +4442,269 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 
 	private static final String _FINDER_COLUMN_G_G_GROUPID_2 = "strategy.groupId = ? AND ";
 	private static final String _FINDER_COLUMN_G_G_STRATEGYID_2 = "strategy.strategyID = ?";
+	public static final FinderPath FINDER_PATH_FETCH_BY_COMPANYCLASSNAME = new FinderPath(StrategyModelImpl.ENTITY_CACHE_ENABLED,
+			StrategyModelImpl.FINDER_CACHE_ENABLED, StrategyImpl.class,
+			FINDER_CLASS_NAME_ENTITY, "fetchByCompanyClassName",
+			new String[] { Long.class.getName(), String.class.getName() },
+			StrategyModelImpl.COMPANYID_COLUMN_BITMASK |
+			StrategyModelImpl.CLASSNAME_COLUMN_BITMASK);
+	public static final FinderPath FINDER_PATH_COUNT_BY_COMPANYCLASSNAME = new FinderPath(StrategyModelImpl.ENTITY_CACHE_ENABLED,
+			StrategyModelImpl.FINDER_CACHE_ENABLED, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"countByCompanyClassName",
+			new String[] { Long.class.getName(), String.class.getName() });
+
+	/**
+	 * Returns the strategy where companyId = &#63; and className = &#63; or throws a {@link NoSuchStrategyException} if it could not be found.
+	 *
+	 * @param companyId the company ID
+	 * @param className the class name
+	 * @return the matching strategy
+	 * @throws NoSuchStrategyException if a matching strategy could not be found
+	 */
+	@Override
+	public Strategy findByCompanyClassName(long companyId, String className)
+		throws NoSuchStrategyException {
+		Strategy strategy = fetchByCompanyClassName(companyId, className);
+
+		if (strategy == null) {
+			StringBundler msg = new StringBundler(6);
+
+			msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+			msg.append("companyId=");
+			msg.append(companyId);
+
+			msg.append(", className=");
+			msg.append(className);
+
+			msg.append(StringPool.CLOSE_CURLY_BRACE);
+
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
+			}
+
+			throw new NoSuchStrategyException(msg.toString());
+		}
+
+		return strategy;
+	}
+
+	/**
+	 * Returns the strategy where companyId = &#63; and className = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param companyId the company ID
+	 * @param className the class name
+	 * @return the matching strategy, or <code>null</code> if a matching strategy could not be found
+	 */
+	@Override
+	public Strategy fetchByCompanyClassName(long companyId, String className) {
+		return fetchByCompanyClassName(companyId, className, true);
+	}
+
+	/**
+	 * Returns the strategy where companyId = &#63; and className = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	 *
+	 * @param companyId the company ID
+	 * @param className the class name
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the matching strategy, or <code>null</code> if a matching strategy could not be found
+	 */
+	@Override
+	public Strategy fetchByCompanyClassName(long companyId, String className,
+		boolean retrieveFromCache) {
+		Object[] finderArgs = new Object[] { companyId, className };
+
+		Object result = null;
+
+		if (retrieveFromCache) {
+			result = finderCache.getResult(FINDER_PATH_FETCH_BY_COMPANYCLASSNAME,
+					finderArgs, this);
+		}
+
+		if (result instanceof Strategy) {
+			Strategy strategy = (Strategy)result;
+
+			if ((companyId != strategy.getCompanyId()) ||
+					!Objects.equals(className, strategy.getClassName())) {
+				result = null;
+			}
+		}
+
+		if (result == null) {
+			StringBundler query = new StringBundler(4);
+
+			query.append(_SQL_SELECT_STRATEGY_WHERE);
+
+			query.append(_FINDER_COLUMN_COMPANYCLASSNAME_COMPANYID_2);
+
+			boolean bindClassName = false;
+
+			if (className == null) {
+				query.append(_FINDER_COLUMN_COMPANYCLASSNAME_CLASSNAME_1);
+			}
+			else if (className.equals(StringPool.BLANK)) {
+				query.append(_FINDER_COLUMN_COMPANYCLASSNAME_CLASSNAME_3);
+			}
+			else {
+				bindClassName = true;
+
+				query.append(_FINDER_COLUMN_COMPANYCLASSNAME_CLASSNAME_2);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(companyId);
+
+				if (bindClassName) {
+					qPos.add(className);
+				}
+
+				List<Strategy> list = q.list();
+
+				if (list.isEmpty()) {
+					finderCache.putResult(FINDER_PATH_FETCH_BY_COMPANYCLASSNAME,
+						finderArgs, list);
+				}
+				else {
+					if ((list.size() > 1) && _log.isWarnEnabled()) {
+						_log.warn(
+							"StrategyPersistenceImpl.fetchByCompanyClassName(long, String, boolean) with parameters (" +
+							StringUtil.merge(finderArgs) +
+							") yields a result set with more than 1 result. This violates the logical unique restriction. There is no order guarantee on which result is returned by this finder.");
+					}
+
+					Strategy strategy = list.get(0);
+
+					result = strategy;
+
+					cacheResult(strategy);
+
+					if ((strategy.getCompanyId() != companyId) ||
+							(strategy.getClassName() == null) ||
+							!strategy.getClassName().equals(className)) {
+						finderCache.putResult(FINDER_PATH_FETCH_BY_COMPANYCLASSNAME,
+							finderArgs, strategy);
+					}
+				}
+			}
+			catch (Exception e) {
+				finderCache.removeResult(FINDER_PATH_FETCH_BY_COMPANYCLASSNAME,
+					finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		if (result instanceof List<?>) {
+			return null;
+		}
+		else {
+			return (Strategy)result;
+		}
+	}
+
+	/**
+	 * Removes the strategy where companyId = &#63; and className = &#63; from the database.
+	 *
+	 * @param companyId the company ID
+	 * @param className the class name
+	 * @return the strategy that was removed
+	 */
+	@Override
+	public Strategy removeByCompanyClassName(long companyId, String className)
+		throws NoSuchStrategyException {
+		Strategy strategy = findByCompanyClassName(companyId, className);
+
+		return remove(strategy);
+	}
+
+	/**
+	 * Returns the number of strategies where companyId = &#63; and className = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param className the class name
+	 * @return the number of matching strategies
+	 */
+	@Override
+	public int countByCompanyClassName(long companyId, String className) {
+		FinderPath finderPath = FINDER_PATH_COUNT_BY_COMPANYCLASSNAME;
+
+		Object[] finderArgs = new Object[] { companyId, className };
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(3);
+
+			query.append(_SQL_COUNT_STRATEGY_WHERE);
+
+			query.append(_FINDER_COLUMN_COMPANYCLASSNAME_COMPANYID_2);
+
+			boolean bindClassName = false;
+
+			if (className == null) {
+				query.append(_FINDER_COLUMN_COMPANYCLASSNAME_CLASSNAME_1);
+			}
+			else if (className.equals(StringPool.BLANK)) {
+				query.append(_FINDER_COLUMN_COMPANYCLASSNAME_CLASSNAME_3);
+			}
+			else {
+				bindClassName = true;
+
+				query.append(_FINDER_COLUMN_COMPANYCLASSNAME_CLASSNAME_2);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(companyId);
+
+				if (bindClassName) {
+					qPos.add(className);
+				}
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_COMPANYCLASSNAME_COMPANYID_2 = "strategy.companyId = ? AND ";
+	private static final String _FINDER_COLUMN_COMPANYCLASSNAME_CLASSNAME_1 = "strategy.className IS NULL";
+	private static final String _FINDER_COLUMN_COMPANYCLASSNAME_CLASSNAME_2 = "strategy.className = ?";
+	private static final String _FINDER_COLUMN_COMPANYCLASSNAME_CLASSNAME_3 = "(strategy.className IS NULL OR strategy.className = '')";
 
 	public StrategyPersistenceImpl() {
 		setModelClass(Strategy.class);
@@ -4458,6 +4722,10 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 
 		finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G,
 			new Object[] { strategy.getUuid(), strategy.getGroupId() }, strategy);
+
+		finderCache.putResult(FINDER_PATH_FETCH_BY_COMPANYCLASSNAME,
+			new Object[] { strategy.getCompanyId(), strategy.getClassName() },
+			strategy);
 
 		strategy.resetOriginalValues();
 	}
@@ -4538,6 +4806,16 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 				Long.valueOf(1));
 			finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
 				strategyModelImpl);
+
+			args = new Object[] {
+					strategyModelImpl.getCompanyId(),
+					strategyModelImpl.getClassName()
+				};
+
+			finderCache.putResult(FINDER_PATH_COUNT_BY_COMPANYCLASSNAME, args,
+				Long.valueOf(1));
+			finderCache.putResult(FINDER_PATH_FETCH_BY_COMPANYCLASSNAME, args,
+				strategyModelImpl);
 		}
 		else {
 			if ((strategyModelImpl.getColumnBitmask() &
@@ -4551,6 +4829,19 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 					Long.valueOf(1));
 				finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
 					strategyModelImpl);
+			}
+
+			if ((strategyModelImpl.getColumnBitmask() &
+					FINDER_PATH_FETCH_BY_COMPANYCLASSNAME.getColumnBitmask()) != 0) {
+				Object[] args = new Object[] {
+						strategyModelImpl.getCompanyId(),
+						strategyModelImpl.getClassName()
+					};
+
+				finderCache.putResult(FINDER_PATH_COUNT_BY_COMPANYCLASSNAME,
+					args, Long.valueOf(1));
+				finderCache.putResult(FINDER_PATH_FETCH_BY_COMPANYCLASSNAME,
+					args, strategyModelImpl);
 			}
 		}
 	}
@@ -4572,6 +4863,25 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 
 			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
 			finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
+		}
+
+		args = new Object[] {
+				strategyModelImpl.getCompanyId(),
+				strategyModelImpl.getClassName()
+			};
+
+		finderCache.removeResult(FINDER_PATH_COUNT_BY_COMPANYCLASSNAME, args);
+		finderCache.removeResult(FINDER_PATH_FETCH_BY_COMPANYCLASSNAME, args);
+
+		if ((strategyModelImpl.getColumnBitmask() &
+				FINDER_PATH_FETCH_BY_COMPANYCLASSNAME.getColumnBitmask()) != 0) {
+			args = new Object[] {
+					strategyModelImpl.getOriginalCompanyId(),
+					strategyModelImpl.getOriginalClassName()
+				};
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_COMPANYCLASSNAME, args);
+			finderCache.removeResult(FINDER_PATH_FETCH_BY_COMPANYCLASSNAME, args);
 		}
 	}
 

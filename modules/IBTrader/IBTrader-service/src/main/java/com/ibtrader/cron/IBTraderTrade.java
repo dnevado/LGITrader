@@ -34,10 +34,12 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.scheduler.SchedulerEngineHelper;
-
+import com.liferay.portal.kernel.scheduler.SchedulerEngineHelperUtil;
+import com.liferay.portal.kernel.scheduler.SchedulerException;
 import com.liferay.portal.kernel.scheduler.TimeUnit;
 import com.liferay.portal.kernel.scheduler.TriggerFactory;
 import com.liferay.portal.kernel.scheduler.TriggerFactoryUtil;
+import com.liferay.portal.kernel.scheduler.messaging.SchedulerResponse;
 import com.ibtrader.util.CronUtil;
 
 
@@ -46,7 +48,10 @@ import com.ibtrader.util.CronUtil;
 @Component(  immediate = true,  service = IBTraderTrade.class)
 public class IBTraderTrade  extends BaseSchedulerEntryMessageListener {
 
+
 	Log _log = LogFactoryUtil.getLog(IBTraderTrade.class);
+	private static boolean runningJob = false;
+	private volatile boolean _initialized;
 	private SchedulerEngineHelper _schedulerEngineHelper;
 
 	
@@ -63,29 +68,64 @@ public class IBTraderTrade  extends BaseSchedulerEntryMessageListener {
 	
 	@Deactivate
 	protected void deactivate() {
-		_schedulerEngineHelper.unregister(this);
-	}
+		
+		// if we previously were initialized
+	    if (_initialized) {
+	      // unschedule the job so it is cleaned up	  
+	        _schedulerEngineHelper.unregister(this);
+	      
+	     }
+
+	    // clear the initialized flag
+	    _initialized = false;
+		}
 	
 	@Activate
 	@Modified
-	protected void activate() {
+	protected void activate() throws SchedulerException {
 		
 		 /* OJO, SI SE NAJA LA FRECUENCIA DE LANZAMIENTO, PUEDEN PRODUCTIRSE HILOS CONCURRENTES, PORQUE LA VERIFICACION DEL CRONRUNNING ESTA CADA 
 		  * 5 SEGUNDOS 
 		  */
+		
+		if (_initialized) {
+	      // first deactivate the current job before we schedule.
+	      deactivate();
+	    }
+
+		
 	     schedulerEntryImpl.setTrigger(TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(),10, TimeUnit.SECOND));  
 
 		
 		_log.info("Activating CRON IBTraderTrade..."  + schedulerEntryImpl.getTrigger());
 		_schedulerEngineHelper.register(this, schedulerEntryImpl, DestinationNames.SCHEDULER_DISPATCH);
 		
+		// set the initialized flag.
+	    _initialized = true;
+	    
+	  
+		
 	}
 	
 	@Override
 	protected void doReceive(Message message) throws Exception {
 		
-		CronUtil.StartTradingCron(message);
-	 	 
+	   if(runningJob)
+	   {
+		   		_log.info("CronTrading already running, not starting again");
+		        return;
+	   }
+		runningJob = true;
+		try
+		{
+			CronUtil.StartTradingCron(message);
+		}
+		catch (Exception e)
+		{
+			runningJob = false;
+		}
+		runningJob = false; 
+		
 			
 } // END RECEIVER
 }// END CLASS

@@ -123,6 +123,13 @@ public class StrategyLocalServiceWrapper implements StrategyLocalService,
 		return _strategyLocalService.fetchStrategyByUuidAndGroupId(uuid, groupId);
 	}
 
+	@Override
+	public com.ibtrader.data.model.Strategy getCompanyClassName(
+		long companyId, java.lang.String strategyClassName) {
+		return _strategyLocalService.getCompanyClassName(companyId,
+			strategyClassName);
+	}
+
 	/**
 	* Returns the strategy with the primary key.
 	*

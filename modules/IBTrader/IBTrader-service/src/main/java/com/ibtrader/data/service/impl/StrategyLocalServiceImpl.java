@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.ibtrader.data.exception.NoSuchShareException;
+import com.ibtrader.data.exception.NoSuchStrategyException;
 import com.ibtrader.data.model.Share;
 import com.ibtrader.data.model.Strategy;
 import com.ibtrader.data.model.StrategyShare;
@@ -106,6 +107,19 @@ public class StrategyLocalServiceImpl extends StrategyLocalServiceBaseImpl {
 
 	    return strategyPersistence.countByGroupId(groupId);
 	}
+	public Strategy getCompanyClassName(long companyId, String strategyClassName) {
+
+		Strategy _strategy = null;
+	    try {
+	    	_strategy =strategyPersistence.findByCompanyClassName(companyId, strategyClassName);
+		} catch (NoSuchStrategyException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+		}
+		return _strategy;
+	}
+	
+	
 	
 	public List<Strategy> findStrategies(long shareId, long companyId, long groupId) {
 		// TODO Auto-generated method stub

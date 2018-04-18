@@ -93,21 +93,21 @@ String portletId= "_" + portletDisplay.getId();
 		  	</aui:input>
 		  	</aui:col>
 	    </aui:row>     
-		 <aui:row>      
+		 <aui:row>  	           
 	   		<aui:col span="6">
 		  		 <aui:fieldset>		         
 			        <label class="control-label" for="<%=portletId%>_share.percentual_limit_buy"><liferay-ui:message key="share.percentual_limit_buy"/></label><input  id="<%=portletId%>_percentual_limit_buy" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_limit_buy"  value="${strategyshare_percentual_limit_buy<=0 ? share.percentual_limit_buy : strategyshare_percentual_limit_buy}"/> 	    		
 			    </aui:fieldset> 
 	         	  <aui:fieldset>		
-			      	<label class="control-label" for="<%=portletId%>_share.percentual_stop_lost"><liferay-ui:message key="share.percentual_stop_lost"/></label><input  id="<%=portletId%>_percentual_stop_lost" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_stop_lost"  value="${strategyshare_percentual_stop_lost<=0 ? share.percentual_stop_lost : strategyshare_percentual_stop_lost}"/> 	    	      		
+			      	<label class="control-label" for="<%=portletId%>_share.percentual_stop_lost"><liferay-ui:message key="share.detail.percentual_stop_lost"/></label><input ${readonlyStopLost} id="<%=portletId%>_percentual_stop_lost" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_stop_lost"  value="${strategyshare_percentual_stop_lost<=0 ? share.percentual_stop_lost : strategyshare_percentual_stop_lost}"/> 	    	      		
 			    </aui:fieldset>
 				</aui:col> 	   
 	   		<aui:col span="6">
 			    <aui:fieldset>		
-			    	<label class="control-label" for="<%=portletId%>_share.percentual_stop_profit"><liferay-ui:message key="share.percentual_stop_profit"/></label><input  id="<%=portletId%>_percentual_stop_profit" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_stop_profit"  value="${strategyshare_percentual_stop_profit<=0 ? share.percentual_stop_profit : strategyshare_percentual_stop_profit}"/> 	    	      	    		
+			    	<label class="control-label" for="<%=portletId%>_share.percentual_stop_profit"><liferay-ui:message key="share.detail.percentual_stop_profit"/></label><input ${readonlyStopProfit}  id="<%=portletId%>_percentual_stop_profit" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_stop_profit"  value="${strategyshare_percentual_stop_profit<=0 ? share.percentual_stop_profit : strategyshare_percentual_stop_profit}"/> 	    	      	    		
 		        </aui:fieldset>		   
 		          <aui:fieldset>		
-			    	<label class="control-label" for="<%=portletId%>_share.percentual_trailling_stop_lost"><liferay-ui:message key="share.percentual_trailling_stop_lost"/></label><input  id="<%=portletId%>_percentual_trailling_stop_lost" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_trailling_stop_lost"  value="${strategyshare_percentual_trailling_stop_lost<=0 ? share.percentual_trailling_stop_lost : strategyshare_percentual_trailling_stop_lost}"> 	    	      	    		
+			    	<label class="control-label" for="<%=portletId%>_share.percentual_trailling_stop_lost"><liferay-ui:message key="share.detail.percentual_trailling_stop_lost"/></label><input ${readonlyTrailingStopLost} id="<%=portletId%>_percentual_trailling_stop_lost" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_trailling_stop_lost"  value="${strategyshare_percentual_trailling_stop_lost<=0 ? share.percentual_trailling_stop_lost : strategyshare_percentual_trailling_stop_lost}"> 	    	      	    		
 		        </aui:fieldset>
 		    </aui:col>
 		  </aui:row>  
@@ -128,7 +128,7 @@ String portletId= "_" + portletDisplay.getId();
     for (ExpandoColumn StrategyParameter : StrategyParams)
     {
     
-    	if ( (counter & 1) == 0 ) { out.println("<div class=\"row\""); }%>    	%>
+    	if ( (counter & 1) == 0 ) { out.println("<div class=\"row\">"); }%> 
     	
     	<aui:col span="6">	
     	<%
@@ -199,7 +199,7 @@ String portletId= "_" + portletDisplay.getId();
     			<% }%>    	    	
     		</aui:col>    
     <% 
-    if ( (counter & 1) == 0 ) { out.println("</div"); }    	   	
+    if ( (counter & 1) == 1 ) { out.println("</div>"); }    	   	
     counter++;} %>
     </aui:fieldset>
     <% } %>      

@@ -85,6 +85,7 @@
 		<field name="percentualstopprofit_out" type="double" />
 		<field name="pricestopprofit_out" type="double" />
 		<field name="percentual_trailling_stop_lost" type="double" />
+		<field name="pricetrailling_stop_lost" type="double" />
 		<field name="pendingcancelled" type="long" />
 		<field name="trading_data_operations" type="String" />
 		<field name="simulation_mode" type="boolean" />

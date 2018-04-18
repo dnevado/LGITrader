@@ -96,6 +96,7 @@
 		<property name="percentualstopprofit_out" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
 		<property name="pricestopprofit_out" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
 		<property name="percentual_trailling_stop_lost" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
+		<property name="pricetrailling_stop_lost" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
 		<property name="pendingcancelled" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 		<property name="trading_data_operations" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="simulation_mode" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />

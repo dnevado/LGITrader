@@ -6,7 +6,7 @@
 
 <div class="container-fluid-1280">
 <aui:container cssClass='super-awesome-container'>
-<liferay-ui:search-container cssClass="table responsive table-striped table-bordered table-hover" searchContainer="${searchPosition}" iteratorURL="${iteratorURL}"> 
+<liferay-ui:search-container cssClass="table  table-striped table-bordered table-hover" searchContainer="${searchPosition}" iteratorURL="${iteratorURL}"> 
 <liferay-ui:search-container-results results="${searchPosition.getResults()}"/>    
 <liferay-ui:search-container-row  className="com.ibtrader.data.model.Position" keyProperty="PositionId" modelVar="Position">
 <liferay-ui:search-container-column-jsp path="/extra_info.jsp"/>
