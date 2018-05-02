@@ -12,7 +12,7 @@ import com.ibtrader.data.service.ConfigLocalServiceUtil;
 import com.ibtrader.data.service.IBOrderLocalServiceUtil;
 import com.ibtrader.data.service.MarketLocalServiceUtil;
 import com.ibtrader.data.service.ShareLocalServiceUtil;
-import com.ibtrader.data.service.persistence.ConfigUtil;
+
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;

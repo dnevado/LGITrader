@@ -90,7 +90,8 @@ public class StrategyModelImpl extends BaseModelImpl<Strategy>
 			{ "type_", Types.VARCHAR },
 			{ "can_override_params", Types.BOOLEAN },
 			{ "className", Types.VARCHAR },
-			{ "userId", Types.BIGINT }
+			{ "userId", Types.BIGINT },
+			{ "visible", Types.BOOLEAN }
 		};
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP = new HashMap<String, Integer>();
 
@@ -112,9 +113,10 @@ public class StrategyModelImpl extends BaseModelImpl<Strategy>
 		TABLE_COLUMNS_MAP.put("can_override_params", Types.BOOLEAN);
 		TABLE_COLUMNS_MAP.put("className", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("userId", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("visible", Types.BOOLEAN);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table ibtrader_Strategy (uuid_ VARCHAR(75) null,strategyID LONG not null primary key,groupId LONG,companyId LONG,name VARCHAR(75) null,description TEXT null,createDate DATE null,modifiedDate DATE null,active_ BOOLEAN,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null,type_ VARCHAR(75) null,can_override_params BOOLEAN,className VARCHAR(75) null,userId LONG)";
+	public static final String TABLE_SQL_CREATE = "create table ibtrader_Strategy (uuid_ VARCHAR(75) null,strategyID LONG not null primary key,groupId LONG,companyId LONG,name VARCHAR(75) null,description TEXT null,createDate DATE null,modifiedDate DATE null,active_ BOOLEAN,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null,type_ VARCHAR(75) null,can_override_params BOOLEAN,className VARCHAR(75) null,userId LONG,visible BOOLEAN)";
 	public static final String TABLE_SQL_DROP = "drop table ibtrader_Strategy";
 	public static final String ORDER_BY_JPQL = " ORDER BY strategy.strategyID ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY ibtrader_Strategy.strategyID ASC";
@@ -168,6 +170,7 @@ public class StrategyModelImpl extends BaseModelImpl<Strategy>
 		model.setCan_override_params(soapModel.getCan_override_params());
 		model.setClassName(soapModel.getClassName());
 		model.setUserId(soapModel.getUserId());
+		model.setVisible(soapModel.getVisible());
 
 		return model;
 	}
@@ -249,6 +252,7 @@ public class StrategyModelImpl extends BaseModelImpl<Strategy>
 		attributes.put("can_override_params", getCan_override_params());
 		attributes.put("className", getClassName());
 		attributes.put("userId", getUserId());
+		attributes.put("visible", getVisible());
 
 		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
 		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
@@ -359,6 +363,12 @@ public class StrategyModelImpl extends BaseModelImpl<Strategy>
 
 		if (userId != null) {
 			setUserId(userId);
+		}
+
+		Boolean visible = (Boolean)attributes.get("visible");
+
+		if (visible != null) {
+			setVisible(visible);
 		}
 	}
 
@@ -707,6 +717,23 @@ public class StrategyModelImpl extends BaseModelImpl<Strategy>
 	public void setUserUuid(String userUuid) {
 	}
 
+	@JSON
+	@Override
+	public boolean getVisible() {
+		return _visible;
+	}
+
+	@JSON
+	@Override
+	public boolean isVisible() {
+		return _visible;
+	}
+
+	@Override
+	public void setVisible(boolean visible) {
+		_visible = visible;
+	}
+
 	@Override
 	public StagedModelType getStagedModelType() {
 		return new StagedModelType(PortalUtil.getClassNameId(
@@ -841,6 +868,7 @@ public class StrategyModelImpl extends BaseModelImpl<Strategy>
 		strategyImpl.setCan_override_params(getCan_override_params());
 		strategyImpl.setClassName(getClassName());
 		strategyImpl.setUserId(getUserId());
+		strategyImpl.setVisible(getVisible());
 
 		strategyImpl.resetOriginalValues();
 
@@ -1027,12 +1055,14 @@ public class StrategyModelImpl extends BaseModelImpl<Strategy>
 
 		strategyCacheModel.userId = getUserId();
 
+		strategyCacheModel.visible = getVisible();
+
 		return strategyCacheModel;
 	}
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(35);
+		StringBundler sb = new StringBundler(37);
 
 		sb.append("{uuid=");
 		sb.append(getUuid());
@@ -1068,6 +1098,8 @@ public class StrategyModelImpl extends BaseModelImpl<Strategy>
 		sb.append(getClassName());
 		sb.append(", userId=");
 		sb.append(getUserId());
+		sb.append(", visible=");
+		sb.append(getVisible());
 		sb.append("}");
 
 		return sb.toString();
@@ -1075,7 +1107,7 @@ public class StrategyModelImpl extends BaseModelImpl<Strategy>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(55);
+		StringBundler sb = new StringBundler(58);
 
 		sb.append("<model><model-name>");
 		sb.append("com.ibtrader.data.model.Strategy");
@@ -1149,6 +1181,10 @@ public class StrategyModelImpl extends BaseModelImpl<Strategy>
 			"<column><column-name>userId</column-name><column-value><![CDATA[");
 		sb.append(getUserId());
 		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>visible</column-name><column-value><![CDATA[");
+		sb.append(getVisible());
+		sb.append("]]></column-value></column>");
 
 		sb.append("</model>");
 
@@ -1189,6 +1225,7 @@ public class StrategyModelImpl extends BaseModelImpl<Strategy>
 	private String _className;
 	private String _originalClassName;
 	private long _userId;
+	private boolean _visible;
 	private long _columnBitmask;
 	private Strategy _escapedModel;
 }

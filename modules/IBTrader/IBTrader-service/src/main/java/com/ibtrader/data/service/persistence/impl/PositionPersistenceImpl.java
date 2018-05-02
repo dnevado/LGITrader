@@ -5904,53 +5904,60 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 	private static final String _FINDER_COLUMN_COMPANYGROUPSHARE_GROUPID_2 = "position.groupId = ? AND ";
 	private static final String _FINDER_COLUMN_COMPANYGROUPSHARE_COMPANYID_2 = "position.companyId = ? AND ";
 	private static final String _FINDER_COLUMN_COMPANYGROUPSHARE_SHAREID_2 = "position.shareId = ?";
-	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_CANCELCOMPANYGROUP =
+	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_CANCELSHARECOMPANYGROUP =
 		new FinderPath(PositionModelImpl.ENTITY_CACHE_ENABLED,
 			PositionModelImpl.FINDER_CACHE_ENABLED, PositionImpl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByCancelCompanyGroup",
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+			"findByCancelShareCompanyGroup",
 			new String[] {
 				Long.class.getName(), Long.class.getName(), Long.class.getName(),
+				Long.class.getName(),
 				
 			Integer.class.getName(), Integer.class.getName(),
 				OrderByComparator.class.getName()
 			});
-	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_CANCELCOMPANYGROUP =
+	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_CANCELSHARECOMPANYGROUP =
 		new FinderPath(PositionModelImpl.ENTITY_CACHE_ENABLED,
 			PositionModelImpl.FINDER_CACHE_ENABLED, PositionImpl.class,
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"findByCancelCompanyGroup",
+			"findByCancelShareCompanyGroup",
 			new String[] {
-				Long.class.getName(), Long.class.getName(), Long.class.getName()
+				Long.class.getName(), Long.class.getName(), Long.class.getName(),
+				Long.class.getName()
 			},
 			PositionModelImpl.COMPANYID_COLUMN_BITMASK |
 			PositionModelImpl.GROUPID_COLUMN_BITMASK |
 			PositionModelImpl.PENDINGCANCELLED_COLUMN_BITMASK |
+			PositionModelImpl.SHAREID_COLUMN_BITMASK |
 			PositionModelImpl.POSITIONID_TWS_IN_COLUMN_BITMASK);
-	public static final FinderPath FINDER_PATH_COUNT_BY_CANCELCOMPANYGROUP = new FinderPath(PositionModelImpl.ENTITY_CACHE_ENABLED,
+	public static final FinderPath FINDER_PATH_COUNT_BY_CANCELSHARECOMPANYGROUP = new FinderPath(PositionModelImpl.ENTITY_CACHE_ENABLED,
 			PositionModelImpl.FINDER_CACHE_ENABLED, Long.class,
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"countByCancelCompanyGroup",
+			"countByCancelShareCompanyGroup",
 			new String[] {
-				Long.class.getName(), Long.class.getName(), Long.class.getName()
+				Long.class.getName(), Long.class.getName(), Long.class.getName(),
+				Long.class.getName()
 			});
 
 	/**
-	 * Returns all the positions where companyId = &#63; and groupId = &#63; and pendingcancelled = &#63;.
+	 * Returns all the positions where companyId = &#63; and groupId = &#63; and pendingcancelled = &#63; and shareId = &#63;.
 	 *
 	 * @param companyId the company ID
 	 * @param groupId the group ID
 	 * @param pendingcancelled the pendingcancelled
+	 * @param shareId the share ID
 	 * @return the matching positions
 	 */
 	@Override
-	public List<Position> findByCancelCompanyGroup(long companyId,
-		long groupId, long pendingcancelled) {
-		return findByCancelCompanyGroup(companyId, groupId, pendingcancelled,
-			QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	public List<Position> findByCancelShareCompanyGroup(long companyId,
+		long groupId, long pendingcancelled, long shareId) {
+		return findByCancelShareCompanyGroup(companyId, groupId,
+			pendingcancelled, shareId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+			null);
 	}
 
 	/**
-	 * Returns a range of all the positions where companyId = &#63; and groupId = &#63; and pendingcancelled = &#63;.
+	 * Returns a range of all the positions where companyId = &#63; and groupId = &#63; and pendingcancelled = &#63; and shareId = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -5959,19 +5966,20 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 	 * @param companyId the company ID
 	 * @param groupId the group ID
 	 * @param pendingcancelled the pendingcancelled
+	 * @param shareId the share ID
 	 * @param start the lower bound of the range of positions
 	 * @param end the upper bound of the range of positions (not inclusive)
 	 * @return the range of matching positions
 	 */
 	@Override
-	public List<Position> findByCancelCompanyGroup(long companyId,
-		long groupId, long pendingcancelled, int start, int end) {
-		return findByCancelCompanyGroup(companyId, groupId, pendingcancelled,
-			start, end, null);
+	public List<Position> findByCancelShareCompanyGroup(long companyId,
+		long groupId, long pendingcancelled, long shareId, int start, int end) {
+		return findByCancelShareCompanyGroup(companyId, groupId,
+			pendingcancelled, shareId, start, end, null);
 	}
 
 	/**
-	 * Returns an ordered range of all the positions where companyId = &#63; and groupId = &#63; and pendingcancelled = &#63;.
+	 * Returns an ordered range of all the positions where companyId = &#63; and groupId = &#63; and pendingcancelled = &#63; and shareId = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -5980,21 +5988,22 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 	 * @param companyId the company ID
 	 * @param groupId the group ID
 	 * @param pendingcancelled the pendingcancelled
+	 * @param shareId the share ID
 	 * @param start the lower bound of the range of positions
 	 * @param end the upper bound of the range of positions (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching positions
 	 */
 	@Override
-	public List<Position> findByCancelCompanyGroup(long companyId,
-		long groupId, long pendingcancelled, int start, int end,
+	public List<Position> findByCancelShareCompanyGroup(long companyId,
+		long groupId, long pendingcancelled, long shareId, int start, int end,
 		OrderByComparator<Position> orderByComparator) {
-		return findByCancelCompanyGroup(companyId, groupId, pendingcancelled,
-			start, end, orderByComparator, true);
+		return findByCancelShareCompanyGroup(companyId, groupId,
+			pendingcancelled, shareId, start, end, orderByComparator, true);
 	}
 
 	/**
-	 * Returns an ordered range of all the positions where companyId = &#63; and groupId = &#63; and pendingcancelled = &#63;.
+	 * Returns an ordered range of all the positions where companyId = &#63; and groupId = &#63; and pendingcancelled = &#63; and shareId = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -6003,6 +6012,7 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 	 * @param companyId the company ID
 	 * @param groupId the group ID
 	 * @param pendingcancelled the pendingcancelled
+	 * @param shareId the share ID
 	 * @param start the lower bound of the range of positions
 	 * @param end the upper bound of the range of positions (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
@@ -6010,8 +6020,8 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 	 * @return the ordered range of matching positions
 	 */
 	@Override
-	public List<Position> findByCancelCompanyGroup(long companyId,
-		long groupId, long pendingcancelled, int start, int end,
+	public List<Position> findByCancelShareCompanyGroup(long companyId,
+		long groupId, long pendingcancelled, long shareId, int start, int end,
 		OrderByComparator<Position> orderByComparator, boolean retrieveFromCache) {
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -6020,13 +6030,15 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
 				(orderByComparator == null)) {
 			pagination = false;
-			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_CANCELCOMPANYGROUP;
-			finderArgs = new Object[] { companyId, groupId, pendingcancelled };
+			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_CANCELSHARECOMPANYGROUP;
+			finderArgs = new Object[] {
+					companyId, groupId, pendingcancelled, shareId
+				};
 		}
 		else {
-			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_CANCELCOMPANYGROUP;
+			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_CANCELSHARECOMPANYGROUP;
 			finderArgs = new Object[] {
-					companyId, groupId, pendingcancelled,
+					companyId, groupId, pendingcancelled, shareId,
 					
 					start, end, orderByComparator
 				};
@@ -6042,7 +6054,8 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 				for (Position position : list) {
 					if ((companyId != position.getCompanyId()) ||
 							(groupId != position.getGroupId()) ||
-							(pendingcancelled != position.getPendingcancelled())) {
+							(pendingcancelled != position.getPendingcancelled()) ||
+							(shareId != position.getShareId())) {
 						list = null;
 
 						break;
@@ -6055,20 +6068,22 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 			StringBundler query = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(5 +
+				query = new StringBundler(6 +
 						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
-				query = new StringBundler(5);
+				query = new StringBundler(6);
 			}
 
 			query.append(_SQL_SELECT_POSITION_WHERE);
 
-			query.append(_FINDER_COLUMN_CANCELCOMPANYGROUP_COMPANYID_2);
+			query.append(_FINDER_COLUMN_CANCELSHARECOMPANYGROUP_COMPANYID_2);
 
-			query.append(_FINDER_COLUMN_CANCELCOMPANYGROUP_GROUPID_2);
+			query.append(_FINDER_COLUMN_CANCELSHARECOMPANYGROUP_GROUPID_2);
 
-			query.append(_FINDER_COLUMN_CANCELCOMPANYGROUP_PENDINGCANCELLED_2);
+			query.append(_FINDER_COLUMN_CANCELSHARECOMPANYGROUP_PENDINGCANCELLED_2);
+
+			query.append(_FINDER_COLUMN_CANCELSHARECOMPANYGROUP_SHAREID_2);
 
 			if (orderByComparator != null) {
 				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
@@ -6095,6 +6110,8 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 				qPos.add(groupId);
 
 				qPos.add(pendingcancelled);
+
+				qPos.add(shareId);
 
 				if (!pagination) {
 					list = (List<Position>)QueryUtil.list(q, getDialect(),
@@ -6127,28 +6144,29 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 	}
 
 	/**
-	 * Returns the first position in the ordered set where companyId = &#63; and groupId = &#63; and pendingcancelled = &#63;.
+	 * Returns the first position in the ordered set where companyId = &#63; and groupId = &#63; and pendingcancelled = &#63; and shareId = &#63;.
 	 *
 	 * @param companyId the company ID
 	 * @param groupId the group ID
 	 * @param pendingcancelled the pendingcancelled
+	 * @param shareId the share ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching position
 	 * @throws NoSuchPositionException if a matching position could not be found
 	 */
 	@Override
-	public Position findByCancelCompanyGroup_First(long companyId,
-		long groupId, long pendingcancelled,
+	public Position findByCancelShareCompanyGroup_First(long companyId,
+		long groupId, long pendingcancelled, long shareId,
 		OrderByComparator<Position> orderByComparator)
 		throws NoSuchPositionException {
-		Position position = fetchByCancelCompanyGroup_First(companyId, groupId,
-				pendingcancelled, orderByComparator);
+		Position position = fetchByCancelShareCompanyGroup_First(companyId,
+				groupId, pendingcancelled, shareId, orderByComparator);
 
 		if (position != null) {
 			return position;
 		}
 
-		StringBundler msg = new StringBundler(8);
+		StringBundler msg = new StringBundler(10);
 
 		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
 
@@ -6161,26 +6179,30 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 		msg.append(", pendingcancelled=");
 		msg.append(pendingcancelled);
 
+		msg.append(", shareId=");
+		msg.append(shareId);
+
 		msg.append(StringPool.CLOSE_CURLY_BRACE);
 
 		throw new NoSuchPositionException(msg.toString());
 	}
 
 	/**
-	 * Returns the first position in the ordered set where companyId = &#63; and groupId = &#63; and pendingcancelled = &#63;.
+	 * Returns the first position in the ordered set where companyId = &#63; and groupId = &#63; and pendingcancelled = &#63; and shareId = &#63;.
 	 *
 	 * @param companyId the company ID
 	 * @param groupId the group ID
 	 * @param pendingcancelled the pendingcancelled
+	 * @param shareId the share ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching position, or <code>null</code> if a matching position could not be found
 	 */
 	@Override
-	public Position fetchByCancelCompanyGroup_First(long companyId,
-		long groupId, long pendingcancelled,
+	public Position fetchByCancelShareCompanyGroup_First(long companyId,
+		long groupId, long pendingcancelled, long shareId,
 		OrderByComparator<Position> orderByComparator) {
-		List<Position> list = findByCancelCompanyGroup(companyId, groupId,
-				pendingcancelled, 0, 1, orderByComparator);
+		List<Position> list = findByCancelShareCompanyGroup(companyId, groupId,
+				pendingcancelled, shareId, 0, 1, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -6190,27 +6212,29 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 	}
 
 	/**
-	 * Returns the last position in the ordered set where companyId = &#63; and groupId = &#63; and pendingcancelled = &#63;.
+	 * Returns the last position in the ordered set where companyId = &#63; and groupId = &#63; and pendingcancelled = &#63; and shareId = &#63;.
 	 *
 	 * @param companyId the company ID
 	 * @param groupId the group ID
 	 * @param pendingcancelled the pendingcancelled
+	 * @param shareId the share ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching position
 	 * @throws NoSuchPositionException if a matching position could not be found
 	 */
 	@Override
-	public Position findByCancelCompanyGroup_Last(long companyId, long groupId,
-		long pendingcancelled, OrderByComparator<Position> orderByComparator)
+	public Position findByCancelShareCompanyGroup_Last(long companyId,
+		long groupId, long pendingcancelled, long shareId,
+		OrderByComparator<Position> orderByComparator)
 		throws NoSuchPositionException {
-		Position position = fetchByCancelCompanyGroup_Last(companyId, groupId,
-				pendingcancelled, orderByComparator);
+		Position position = fetchByCancelShareCompanyGroup_Last(companyId,
+				groupId, pendingcancelled, shareId, orderByComparator);
 
 		if (position != null) {
 			return position;
 		}
 
-		StringBundler msg = new StringBundler(8);
+		StringBundler msg = new StringBundler(10);
 
 		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
 
@@ -6223,33 +6247,37 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 		msg.append(", pendingcancelled=");
 		msg.append(pendingcancelled);
 
+		msg.append(", shareId=");
+		msg.append(shareId);
+
 		msg.append(StringPool.CLOSE_CURLY_BRACE);
 
 		throw new NoSuchPositionException(msg.toString());
 	}
 
 	/**
-	 * Returns the last position in the ordered set where companyId = &#63; and groupId = &#63; and pendingcancelled = &#63;.
+	 * Returns the last position in the ordered set where companyId = &#63; and groupId = &#63; and pendingcancelled = &#63; and shareId = &#63;.
 	 *
 	 * @param companyId the company ID
 	 * @param groupId the group ID
 	 * @param pendingcancelled the pendingcancelled
+	 * @param shareId the share ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching position, or <code>null</code> if a matching position could not be found
 	 */
 	@Override
-	public Position fetchByCancelCompanyGroup_Last(long companyId,
-		long groupId, long pendingcancelled,
+	public Position fetchByCancelShareCompanyGroup_Last(long companyId,
+		long groupId, long pendingcancelled, long shareId,
 		OrderByComparator<Position> orderByComparator) {
-		int count = countByCancelCompanyGroup(companyId, groupId,
-				pendingcancelled);
+		int count = countByCancelShareCompanyGroup(companyId, groupId,
+				pendingcancelled, shareId);
 
 		if (count == 0) {
 			return null;
 		}
 
-		List<Position> list = findByCancelCompanyGroup(companyId, groupId,
-				pendingcancelled, count - 1, count, orderByComparator);
+		List<Position> list = findByCancelShareCompanyGroup(companyId, groupId,
+				pendingcancelled, shareId, count - 1, count, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -6259,20 +6287,21 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 	}
 
 	/**
-	 * Returns the positions before and after the current position in the ordered set where companyId = &#63; and groupId = &#63; and pendingcancelled = &#63;.
+	 * Returns the positions before and after the current position in the ordered set where companyId = &#63; and groupId = &#63; and pendingcancelled = &#63; and shareId = &#63;.
 	 *
 	 * @param positionId the primary key of the current position
 	 * @param companyId the company ID
 	 * @param groupId the group ID
 	 * @param pendingcancelled the pendingcancelled
+	 * @param shareId the share ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next position
 	 * @throws NoSuchPositionException if a position with the primary key could not be found
 	 */
 	@Override
-	public Position[] findByCancelCompanyGroup_PrevAndNext(long positionId,
-		long companyId, long groupId, long pendingcancelled,
-		OrderByComparator<Position> orderByComparator)
+	public Position[] findByCancelShareCompanyGroup_PrevAndNext(
+		long positionId, long companyId, long groupId, long pendingcancelled,
+		long shareId, OrderByComparator<Position> orderByComparator)
 		throws NoSuchPositionException {
 		Position position = findByPrimaryKey(positionId);
 
@@ -6283,15 +6312,15 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 
 			Position[] array = new PositionImpl[3];
 
-			array[0] = getByCancelCompanyGroup_PrevAndNext(session, position,
-					companyId, groupId, pendingcancelled, orderByComparator,
-					true);
+			array[0] = getByCancelShareCompanyGroup_PrevAndNext(session,
+					position, companyId, groupId, pendingcancelled, shareId,
+					orderByComparator, true);
 
 			array[1] = position;
 
-			array[2] = getByCancelCompanyGroup_PrevAndNext(session, position,
-					companyId, groupId, pendingcancelled, orderByComparator,
-					false);
+			array[2] = getByCancelShareCompanyGroup_PrevAndNext(session,
+					position, companyId, groupId, pendingcancelled, shareId,
+					orderByComparator, false);
 
 			return array;
 		}
@@ -6303,27 +6332,30 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 		}
 	}
 
-	protected Position getByCancelCompanyGroup_PrevAndNext(Session session,
-		Position position, long companyId, long groupId, long pendingcancelled,
+	protected Position getByCancelShareCompanyGroup_PrevAndNext(
+		Session session, Position position, long companyId, long groupId,
+		long pendingcancelled, long shareId,
 		OrderByComparator<Position> orderByComparator, boolean previous) {
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
+			query = new StringBundler(7 +
 					(orderByComparator.getOrderByConditionFields().length * 3) +
 					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
-			query = new StringBundler(5);
+			query = new StringBundler(6);
 		}
 
 		query.append(_SQL_SELECT_POSITION_WHERE);
 
-		query.append(_FINDER_COLUMN_CANCELCOMPANYGROUP_COMPANYID_2);
+		query.append(_FINDER_COLUMN_CANCELSHARECOMPANYGROUP_COMPANYID_2);
 
-		query.append(_FINDER_COLUMN_CANCELCOMPANYGROUP_GROUPID_2);
+		query.append(_FINDER_COLUMN_CANCELSHARECOMPANYGROUP_GROUPID_2);
 
-		query.append(_FINDER_COLUMN_CANCELCOMPANYGROUP_PENDINGCANCELLED_2);
+		query.append(_FINDER_COLUMN_CANCELSHARECOMPANYGROUP_PENDINGCANCELLED_2);
+
+		query.append(_FINDER_COLUMN_CANCELSHARECOMPANYGROUP_SHAREID_2);
 
 		if (orderByComparator != null) {
 			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
@@ -6399,6 +6431,8 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 
 		qPos.add(pendingcancelled);
 
+		qPos.add(shareId);
+
 		if (orderByComparator != null) {
 			Object[] values = orderByComparator.getOrderByConditionValues(position);
 
@@ -6418,48 +6452,55 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 	}
 
 	/**
-	 * Removes all the positions where companyId = &#63; and groupId = &#63; and pendingcancelled = &#63; from the database.
+	 * Removes all the positions where companyId = &#63; and groupId = &#63; and pendingcancelled = &#63; and shareId = &#63; from the database.
 	 *
 	 * @param companyId the company ID
 	 * @param groupId the group ID
 	 * @param pendingcancelled the pendingcancelled
+	 * @param shareId the share ID
 	 */
 	@Override
-	public void removeByCancelCompanyGroup(long companyId, long groupId,
-		long pendingcancelled) {
-		for (Position position : findByCancelCompanyGroup(companyId, groupId,
-				pendingcancelled, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+	public void removeByCancelShareCompanyGroup(long companyId, long groupId,
+		long pendingcancelled, long shareId) {
+		for (Position position : findByCancelShareCompanyGroup(companyId,
+				groupId, pendingcancelled, shareId, QueryUtil.ALL_POS,
+				QueryUtil.ALL_POS, null)) {
 			remove(position);
 		}
 	}
 
 	/**
-	 * Returns the number of positions where companyId = &#63; and groupId = &#63; and pendingcancelled = &#63;.
+	 * Returns the number of positions where companyId = &#63; and groupId = &#63; and pendingcancelled = &#63; and shareId = &#63;.
 	 *
 	 * @param companyId the company ID
 	 * @param groupId the group ID
 	 * @param pendingcancelled the pendingcancelled
+	 * @param shareId the share ID
 	 * @return the number of matching positions
 	 */
 	@Override
-	public int countByCancelCompanyGroup(long companyId, long groupId,
-		long pendingcancelled) {
-		FinderPath finderPath = FINDER_PATH_COUNT_BY_CANCELCOMPANYGROUP;
+	public int countByCancelShareCompanyGroup(long companyId, long groupId,
+		long pendingcancelled, long shareId) {
+		FinderPath finderPath = FINDER_PATH_COUNT_BY_CANCELSHARECOMPANYGROUP;
 
-		Object[] finderArgs = new Object[] { companyId, groupId, pendingcancelled };
+		Object[] finderArgs = new Object[] {
+				companyId, groupId, pendingcancelled, shareId
+			};
 
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
-			StringBundler query = new StringBundler(4);
+			StringBundler query = new StringBundler(5);
 
 			query.append(_SQL_COUNT_POSITION_WHERE);
 
-			query.append(_FINDER_COLUMN_CANCELCOMPANYGROUP_COMPANYID_2);
+			query.append(_FINDER_COLUMN_CANCELSHARECOMPANYGROUP_COMPANYID_2);
 
-			query.append(_FINDER_COLUMN_CANCELCOMPANYGROUP_GROUPID_2);
+			query.append(_FINDER_COLUMN_CANCELSHARECOMPANYGROUP_GROUPID_2);
 
-			query.append(_FINDER_COLUMN_CANCELCOMPANYGROUP_PENDINGCANCELLED_2);
+			query.append(_FINDER_COLUMN_CANCELSHARECOMPANYGROUP_PENDINGCANCELLED_2);
+
+			query.append(_FINDER_COLUMN_CANCELSHARECOMPANYGROUP_SHAREID_2);
 
 			String sql = query.toString();
 
@@ -6478,6 +6519,8 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 
 				qPos.add(pendingcancelled);
 
+				qPos.add(shareId);
+
 				count = (Long)q.uniqueResult();
 
 				finderCache.putResult(finderPath, finderArgs, count);
@@ -6495,10 +6538,14 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_CANCELCOMPANYGROUP_COMPANYID_2 = "position.companyId = ? AND ";
-	private static final String _FINDER_COLUMN_CANCELCOMPANYGROUP_GROUPID_2 = "position.groupId = ? AND ";
-	private static final String _FINDER_COLUMN_CANCELCOMPANYGROUP_PENDINGCANCELLED_2 =
-		"position.pendingcancelled = ?";
+	private static final String _FINDER_COLUMN_CANCELSHARECOMPANYGROUP_COMPANYID_2 =
+		"position.companyId = ? AND ";
+	private static final String _FINDER_COLUMN_CANCELSHARECOMPANYGROUP_GROUPID_2 =
+		"position.groupId = ? AND ";
+	private static final String _FINDER_COLUMN_CANCELSHARECOMPANYGROUP_PENDINGCANCELLED_2 =
+		"position.pendingcancelled = ? AND ";
+	private static final String _FINDER_COLUMN_CANCELSHARECOMPANYGROUP_SHAREID_2 =
+		"position.shareId = ?";
 	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_COMPANYGROUP =
 		new FinderPath(PositionModelImpl.ENTITY_CACHE_ENABLED,
 			PositionModelImpl.FINDER_CACHE_ENABLED, PositionImpl.class,
@@ -11036,27 +11083,29 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 			}
 
 			if ((positionModelImpl.getColumnBitmask() &
-					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_CANCELCOMPANYGROUP.getColumnBitmask()) != 0) {
+					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_CANCELSHARECOMPANYGROUP.getColumnBitmask()) != 0) {
 				Object[] args = new Object[] {
 						positionModelImpl.getOriginalCompanyId(),
 						positionModelImpl.getOriginalGroupId(),
-						positionModelImpl.getOriginalPendingcancelled()
+						positionModelImpl.getOriginalPendingcancelled(),
+						positionModelImpl.getOriginalShareId()
 					};
 
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_CANCELCOMPANYGROUP,
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_CANCELSHARECOMPANYGROUP,
 					args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_CANCELCOMPANYGROUP,
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_CANCELSHARECOMPANYGROUP,
 					args);
 
 				args = new Object[] {
 						positionModelImpl.getCompanyId(),
 						positionModelImpl.getGroupId(),
-						positionModelImpl.getPendingcancelled()
+						positionModelImpl.getPendingcancelled(),
+						positionModelImpl.getShareId()
 					};
 
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_CANCELCOMPANYGROUP,
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_CANCELSHARECOMPANYGROUP,
 					args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_CANCELCOMPANYGROUP,
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_CANCELSHARECOMPANYGROUP,
 					args);
 			}
 
@@ -11234,8 +11283,6 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 		positionImpl.setDate_out(position.getDate_out());
 		positionImpl.setDate_real_out(position.getDate_real_out());
 		positionImpl.setShare_number(position.getShare_number());
-		positionImpl.setShare_number_to_trade(position.getShare_number_to_trade());
-		positionImpl.setShare_number_traded(position.getShare_number_traded());
 		positionImpl.setClientId_in(position.getClientId_in());
 		positionImpl.setClientId_out(position.getClientId_out());
 		positionImpl.setStrategy_in(position.getStrategy_in());
@@ -11247,9 +11294,9 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 		positionImpl.setPercentual_trailling_stop_lost(position.getPercentual_trailling_stop_lost());
 		positionImpl.setPricetrailling_stop_lost(position.getPricetrailling_stop_lost());
 		positionImpl.setPendingcancelled(position.getPendingcancelled());
-		positionImpl.setTrading_data_operations(position.getTrading_data_operations());
 		positionImpl.setSimulation_mode(position.isSimulation_mode());
 		positionImpl.setTotalcommision(position.getTotalcommision());
+		positionImpl.setForceclose(position.isForceclose());
 
 		return positionImpl;
 	}

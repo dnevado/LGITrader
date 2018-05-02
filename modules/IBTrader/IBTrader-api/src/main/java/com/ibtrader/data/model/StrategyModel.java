@@ -371,6 +371,27 @@ public interface StrategyModel extends BaseModel<Strategy>, ShardedModel,
 	public void setUserUuid(String userUuid);
 
 	/**
+	 * Returns the visible of this strategy.
+	 *
+	 * @return the visible of this strategy
+	 */
+	public boolean getVisible();
+
+	/**
+	 * Returns <code>true</code> if this strategy is visible.
+	 *
+	 * @return <code>true</code> if this strategy is visible; <code>false</code> otherwise
+	 */
+	public boolean isVisible();
+
+	/**
+	 * Sets whether this strategy is visible.
+	 *
+	 * @param visible the visible of this strategy
+	 */
+	public void setVisible(boolean visible);
+
+	/**
 	 * Returns <code>true</code> if this strategy is approved.
 	 *
 	 * @return <code>true</code> if this strategy is approved; <code>false</code> otherwise

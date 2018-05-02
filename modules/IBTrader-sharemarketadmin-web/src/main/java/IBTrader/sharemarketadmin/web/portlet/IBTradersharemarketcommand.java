@@ -165,11 +165,11 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
 	    	StrategyShare strategyshare_stopprofit = null;
 	    	StrategyShare strategyshare_traillingstoplost = null;
 	    	
-	    	if (_IBSTRATEGY_STOPLOST!=null)
+	    	if (_IBSTRATEGY_STOPLOST!=null && share!=null)
 	    		 strategyshare_stoplost = _strategyshareLocalService.getByCommpanyShareStrategyId(themeDisplay.getScopeGroupId(), themeDisplay.getCompanyId(), share.getShareId(), _IBSTRATEGY_STOPLOST.getStrategyID());
-	    	if (_IBSTRATEGY_STOPROFIT!=null)
+	    	if (_IBSTRATEGY_STOPROFIT!=null && share!=null)
 	    		strategyshare_stopprofit = _strategyshareLocalService.getByCommpanyShareStrategyId(themeDisplay.getScopeGroupId(), themeDisplay.getCompanyId(), share.getShareId(), _IBSTRATEGY_STOPROFIT.getStrategyID());
-	    	if (_IBSTRATEGY_TRAILINGSTOPLOST!=null)
+	    	if (_IBSTRATEGY_TRAILINGSTOPLOST!=null && share!=null)
 				strategyshare_traillingstoplost  = _strategyshareLocalService.getByCommpanyShareStrategyId(themeDisplay.getScopeGroupId(), themeDisplay.getCompanyId(), share.getShareId(), _IBSTRATEGY_TRAILINGSTOPLOST.getStrategyID());
 	    	
 	    	

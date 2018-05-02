@@ -74,8 +74,6 @@
 		<field name="date_out" type="Date" />
 		<field name="date_real_out" type="Date" />
 		<field name="share_number" type="long" />
-		<field name="share_number_to_trade" type="long" />
-		<field name="share_number_traded" type="long" />
 		<field name="clientId_in" type="long" />
 		<field name="clientId_out" type="long" />
 		<field name="strategy_in" type="String" />
@@ -87,9 +85,9 @@
 		<field name="percentual_trailling_stop_lost" type="double" />
 		<field name="pricetrailling_stop_lost" type="double" />
 		<field name="pendingcancelled" type="long" />
-		<field name="trading_data_operations" type="String" />
 		<field name="simulation_mode" type="boolean" />
 		<field name="totalcommision" type="double" />
+		<field name="forceclose" type="boolean" />
 	</model>
 	<model name="com.ibtrader.data.model.Realtime">
 		<field name="uuid" type="String" />
@@ -159,6 +157,7 @@
 		<field name="can_override_params" type="boolean" />
 		<field name="className" type="String" />
 		<field name="userId" type="long" />
+		<field name="visible" type="boolean" />
 	</model>
 	<model name="com.ibtrader.data.model.StrategyShare">
 		<field name="uuid" type="String" />
@@ -170,6 +169,9 @@
 		<field name="strategyId" type="long" />
 		<field name="shareId" type="long" />
 		<field name="active" type="boolean" />
+		<field name="visible" type="boolean">
+			<hint name="default-value">1</hint>
+		</field>
 		<field name="strategyparamsoverride" type="String">
 			<hint-collection name="CLOB" />
 		</field>

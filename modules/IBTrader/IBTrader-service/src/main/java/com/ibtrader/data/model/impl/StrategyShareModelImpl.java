@@ -79,6 +79,7 @@ public class StrategyShareModelImpl extends BaseModelImpl<StrategyShare>
 			{ "strategyId", Types.BIGINT },
 			{ "shareId", Types.BIGINT },
 			{ "active_", Types.BOOLEAN },
+			{ "visible", Types.BOOLEAN },
 			{ "strategyparamsoverride", Types.CLOB },
 			{ "description", Types.CLOB }
 		};
@@ -94,11 +95,12 @@ public class StrategyShareModelImpl extends BaseModelImpl<StrategyShare>
 		TABLE_COLUMNS_MAP.put("strategyId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("shareId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("active_", Types.BOOLEAN);
+		TABLE_COLUMNS_MAP.put("visible", Types.BOOLEAN);
 		TABLE_COLUMNS_MAP.put("strategyparamsoverride", Types.CLOB);
 		TABLE_COLUMNS_MAP.put("description", Types.CLOB);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table ibtrader_StrategyShare (uuid_ VARCHAR(75) null,strategyshareId LONG not null primary key,groupId LONG,companyId LONG,createDate DATE null,modifiedDate DATE null,strategyId LONG,shareId LONG,active_ BOOLEAN,strategyparamsoverride TEXT null,description TEXT null)";
+	public static final String TABLE_SQL_CREATE = "create table ibtrader_StrategyShare (uuid_ VARCHAR(75) null,strategyshareId LONG not null primary key,groupId LONG,companyId LONG,createDate DATE null,modifiedDate DATE null,strategyId LONG,shareId LONG,active_ BOOLEAN,visible BOOLEAN,strategyparamsoverride TEXT null,description TEXT null)";
 	public static final String TABLE_SQL_DROP = "drop table ibtrader_StrategyShare";
 	public static final String ORDER_BY_JPQL = " ORDER BY strategyShare.strategyshareId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY ibtrader_StrategyShare.strategyshareId ASC";
@@ -143,6 +145,7 @@ public class StrategyShareModelImpl extends BaseModelImpl<StrategyShare>
 		model.setStrategyId(soapModel.getStrategyId());
 		model.setShareId(soapModel.getShareId());
 		model.setActive(soapModel.getActive());
+		model.setVisible(soapModel.getVisible());
 		model.setStrategyparamsoverride(soapModel.getStrategyparamsoverride());
 		model.setDescription(soapModel.getDescription());
 
@@ -218,6 +221,7 @@ public class StrategyShareModelImpl extends BaseModelImpl<StrategyShare>
 		attributes.put("strategyId", getStrategyId());
 		attributes.put("shareId", getShareId());
 		attributes.put("active", getActive());
+		attributes.put("visible", getVisible());
 		attributes.put("strategyparamsoverride", getStrategyparamsoverride());
 		attributes.put("description", getDescription());
 
@@ -281,6 +285,12 @@ public class StrategyShareModelImpl extends BaseModelImpl<StrategyShare>
 
 		if (active != null) {
 			setActive(active);
+		}
+
+		Boolean visible = (Boolean)attributes.get("visible");
+
+		if (visible != null) {
+			setVisible(visible);
 		}
 
 		String strategyparamsoverride = (String)attributes.get(
@@ -471,6 +481,23 @@ public class StrategyShareModelImpl extends BaseModelImpl<StrategyShare>
 
 	@JSON
 	@Override
+	public boolean getVisible() {
+		return _visible;
+	}
+
+	@JSON
+	@Override
+	public boolean isVisible() {
+		return _visible;
+	}
+
+	@Override
+	public void setVisible(boolean visible) {
+		_visible = visible;
+	}
+
+	@JSON
+	@Override
 	public String getStrategyparamsoverride() {
 		if (_strategyparamsoverride == null) {
 			return StringPool.BLANK;
@@ -547,6 +574,7 @@ public class StrategyShareModelImpl extends BaseModelImpl<StrategyShare>
 		strategyShareImpl.setStrategyId(getStrategyId());
 		strategyShareImpl.setShareId(getShareId());
 		strategyShareImpl.setActive(getActive());
+		strategyShareImpl.setVisible(getVisible());
 		strategyShareImpl.setStrategyparamsoverride(getStrategyparamsoverride());
 		strategyShareImpl.setDescription(getDescription());
 
@@ -676,6 +704,8 @@ public class StrategyShareModelImpl extends BaseModelImpl<StrategyShare>
 
 		strategyShareCacheModel.active = getActive();
 
+		strategyShareCacheModel.visible = getVisible();
+
 		strategyShareCacheModel.strategyparamsoverride = getStrategyparamsoverride();
 
 		String strategyparamsoverride = strategyShareCacheModel.strategyparamsoverride;
@@ -698,7 +728,7 @@ public class StrategyShareModelImpl extends BaseModelImpl<StrategyShare>
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(23);
+		StringBundler sb = new StringBundler(25);
 
 		sb.append("{uuid=");
 		sb.append(getUuid());
@@ -718,6 +748,8 @@ public class StrategyShareModelImpl extends BaseModelImpl<StrategyShare>
 		sb.append(getShareId());
 		sb.append(", active=");
 		sb.append(getActive());
+		sb.append(", visible=");
+		sb.append(getVisible());
 		sb.append(", strategyparamsoverride=");
 		sb.append(getStrategyparamsoverride());
 		sb.append(", description=");
@@ -729,7 +761,7 @@ public class StrategyShareModelImpl extends BaseModelImpl<StrategyShare>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(37);
+		StringBundler sb = new StringBundler(40);
 
 		sb.append("<model><model-name>");
 		sb.append("com.ibtrader.data.model.StrategyShare");
@@ -772,6 +804,10 @@ public class StrategyShareModelImpl extends BaseModelImpl<StrategyShare>
 		sb.append(getActive());
 		sb.append("]]></column-value></column>");
 		sb.append(
+			"<column><column-name>visible</column-name><column-value><![CDATA[");
+		sb.append(getVisible());
+		sb.append("]]></column-value></column>");
+		sb.append(
 			"<column><column-name>strategyparamsoverride</column-name><column-value><![CDATA[");
 		sb.append(getStrategyparamsoverride());
 		sb.append("]]></column-value></column>");
@@ -808,6 +844,7 @@ public class StrategyShareModelImpl extends BaseModelImpl<StrategyShare>
 	private long _originalShareId;
 	private boolean _setOriginalShareId;
 	private boolean _active;
+	private boolean _visible;
 	private String _strategyparamsoverride;
 	private String _description;
 	private long _columnBitmask;

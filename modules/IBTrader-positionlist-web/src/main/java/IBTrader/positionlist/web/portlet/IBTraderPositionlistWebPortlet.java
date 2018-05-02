@@ -5,10 +5,16 @@ import IBTrader.positionlist.web.constants.IBTraderPositionlistWebPortletKeys;
 import com.ibtrader.data.model.Position;
 import com.ibtrader.data.model.Realtime;
 import com.ibtrader.data.model.Share;
+import com.ibtrader.data.model.Strategy;
+import com.ibtrader.data.model.StrategyShare;
 import com.ibtrader.data.service.PositionLocalService;
 import com.ibtrader.data.service.RealtimeLocalService;
 
 import com.ibtrader.data.service.ShareLocalService;
+import com.ibtrader.data.service.StrategyLocalService;
+import com.ibtrader.data.service.StrategyShareLocalService;
+import com.ibtrader.strategy.IBStrategyCancelPosition;
+import com.ibtrader.strategy.IBStrategyClosePosition;
 import com.ibtrader.util.ConfigKeys;
 import com.ibtrader.util.PositionStates;
 import com.ibtrader.util.Utilities;
@@ -95,6 +101,7 @@ public class IBTraderPositionlistWebPortlet extends MVCPortlet {
 			
 			long positionId  = ParamUtil.getLong(renderRequest, "positionId",-1); 
 			Position position = _positionLocalService.fetchPosition(positionId);
+			
 			Realtime realtime = null;
 			Share share = null;
 			if (position!=null)
@@ -103,11 +110,33 @@ public class IBTraderPositionlistWebPortlet extends MVCPortlet {
 				share = _shareLocalService.fetchShare(position.getShareId());
 				_log.info("isOpen:" + position.IsOpen());
 			}//List<Strategy> _lStrg = StrategyLocalServiceUtil.findByCompanyId(themeDisplay.getCompanyId()); 
-							
+						
+			/* STOPPROFIT, STOPLOST, STOPTRAILING ENABLE?  */
+	    	Strategy _IBSTRATEGY_CLOSEPOSITION = _strategyLocalService.getCompanyClassName(themeDisplay.getCompanyId(), IBStrategyClosePosition.class.getName());
+	    	StrategyShare strategyshare_closeposition = null;
+	    	
+	    	/* STOPPROFIT, STOPLOST, STOPTRAILING ENABLE?  */
+	    	Strategy _IBSTRATEGY_CANCELPOSITION = _strategyLocalService.getCompanyClassName(themeDisplay.getCompanyId(), IBStrategyCancelPosition.class.getName());
+	    	StrategyShare strategyshare_cancelposition = null;
+	    	
+	    		
+		    if (_IBSTRATEGY_CLOSEPOSITION!=null && share!=null)
+		    	strategyshare_closeposition = _strategyshareLocalService.getByCommpanyShareStrategyId(themeDisplay.getScopeGroupId(), themeDisplay.getCompanyId(), share.getShareId(), _IBSTRATEGY_CLOSEPOSITION.getStrategyID());
+		    if (_IBSTRATEGY_CANCELPOSITION!=null && share!=null)
+		    	strategyshare_cancelposition = _strategyshareLocalService.getByCommpanyShareStrategyId(themeDisplay.getScopeGroupId(), themeDisplay.getCompanyId(), share.getShareId(), _IBSTRATEGY_CANCELPOSITION.getStrategyID());
+	    			
+	    		
+			
+		    /* se habilitan los parametros si existen las estrategias  y estan activas */
+	        renderRequest.setAttribute("EnabledStrategyClosePosition", (strategyshare_closeposition==null || (strategyshare_closeposition!=null && !strategyshare_closeposition.isActive()) ? false  : true));
+	        renderRequest.setAttribute("EnabledStrategyCancelPosition", (strategyshare_cancelposition==null || (strategyshare_cancelposition!=null && !strategyshare_cancelposition.isActive()) ? false  : true));
+
 			//List<Strategy> _lStrg = StrategyLocalServiceUtil.find
 			renderRequest.setAttribute("position", position);
 			renderRequest.setAttribute("realtime", realtime);
 			renderRequest.setAttribute("share", share);
+			
+			
 			
 			
 			super.render(renderRequest, renderResponse);  // make sure this is the last  line in your method
@@ -148,6 +177,83 @@ public class IBTraderPositionlistWebPortlet extends MVCPortlet {
 		    	position.setDescription(editor);
 		    	_positionLocalService.updatePosition(position);
 		    	SessionMessages.add(actionRequest, "share.success");
+		    }
+		    else
+		    	SessionErrors.add(actionRequest, "share.error.exist");
+		    
+			actionResponse.setRenderParameter("mvcPath", "/position_detail.jsp");
+			actionResponse.setRenderParameter("positionId", String.valueOf(positionId));
+			actionResponse.setRenderParameter("redirect", String.valueOf(redirect));		
+		    
+		}
+	 
+	 public void cancelPosition(ActionRequest actionRequest, ActionResponse actionResponse)
+		{
+			UploadPortletRequest req = PortalUtil.getUploadPortletRequest(actionRequest);
+			
+			themeDisplay = (ThemeDisplay)actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
+			ServiceContext serviceContext = null;
+			try {
+				serviceContext = ServiceContextFactory.getInstance(Position.class.getName(), actionRequest);
+			} catch (PortalException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+			
+		    long positionId = ParamUtil.getLong(actionRequest, "positionId",-1);
+		    String redirect = ParamUtil.getString(actionRequest,"redirect","");
+		    Position position = _positionLocalService.fetchPosition(positionId);	    
+		    if (position!=null)
+		    {
+		    	
+		    	if (position.IsCancelable())
+		    	{
+		    		position.setPendingcancelled(1);
+		    		_positionLocalService.updatePosition(position);
+			    	SessionMessages.add(actionRequest, "share.success");
+		    	}
+		    	
+		    }
+		    else
+		    	SessionErrors.add(actionRequest, "share.error.exist");
+		    
+			actionResponse.setRenderParameter("mvcPath", "/position_detail.jsp");
+			actionResponse.setRenderParameter("positionId", String.valueOf(positionId));
+			actionResponse.setRenderParameter("redirect", String.valueOf(redirect));		
+		    
+		}
+	 
+	 
+	 
+	 
+	 public void closePosition(ActionRequest actionRequest, ActionResponse actionResponse)
+		{
+			UploadPortletRequest req = PortalUtil.getUploadPortletRequest(actionRequest);
+			
+			themeDisplay = (ThemeDisplay)actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
+			ServiceContext serviceContext = null;
+			try {
+				serviceContext = ServiceContextFactory.getInstance(Position.class.getName(), actionRequest);
+			} catch (PortalException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+			
+		    long positionId = ParamUtil.getLong(actionRequest, "positionId",-1);
+		    String redirect = ParamUtil.getString(actionRequest,"redirect","");
+		    		    Position position = _positionLocalService.fetchPosition(positionId);	    
+		    if (position!=null)
+		    {
+		    	
+		    	if (position.IsOpen() && position.IsCloseable())
+		    	{
+		    		position.setForceclose(Boolean.TRUE);
+		    		_positionLocalService.updatePosition(position);
+			    	SessionMessages.add(actionRequest, "share.success");
+		    	}
+		    	
 		    }
 		    else
 		    	SessionErrors.add(actionRequest, "share.error.exist");
@@ -211,12 +317,12 @@ public class IBTraderPositionlistWebPortlet extends MVCPortlet {
         
         /* ENLACE A MODIFICAR POSICION */
         PortletURL modify = resourceResponse.createRenderURL();
-        modify.setWindowState(LiferayWindowState.POP_UP);
+      //  modify.setWindowState(LiferayWindowState.POP_UP);
         modify.setParameter("mvcPath", "/position_detail.jsp");
         modify.setParameter("positionId", String.valueOf(ibposition.getPositionId()));
         modify.setParameter("redirect", String.valueOf(redirect));
         
-        ibposJSON.put("modify_link", "<button  class=\"btn btn-lg\"  onclick=\"callProcessAction('" + modify + "')\">" + LanguageUtil.get(themeDisplay.getLocale(),"position.modify") + "</button>");
+        ibposJSON.put("modify_link", "<button  class=\"btn btn-lg btn-primary\"  onclick=\"callProcessAction('" + modify + "')\">" + LanguageUtil.get(themeDisplay.getLocale(),"Editar") + "</button>");
         
         
         
@@ -285,16 +391,27 @@ public class IBTraderPositionlistWebPortlet extends MVCPortlet {
 	}
 	
 	@Reference(unbind = "-")
+    protected void setStrategyService(StrategyLocalService strategyLocalService) {
+		_strategyLocalService= strategyLocalService;
+    }
+	
+	@Reference(unbind = "-")
     protected void setShareService(ShareLocalService shareLocalService) {
 		_shareLocalService = shareLocalService;
     }
 
-    
+	private StrategyLocalService _strategyLocalService;
+
+	private StrategyShareLocalService _strategyshareLocalService;
     private ShareLocalService _shareLocalService;
     private PositionLocalService _positionLocalService;
     private RealtimeLocalService _realtimeLocalService;
     
-    
+
+	@Reference(unbind = "-")
+    protected void setStrategyShareService(StrategyShareLocalService strategyshareLocalService) {
+		_strategyshareLocalService= strategyshareLocalService;
+    }
 
 	@Reference(unbind = "-")
     protected void setPositionService(PositionLocalService positionLocalService) {

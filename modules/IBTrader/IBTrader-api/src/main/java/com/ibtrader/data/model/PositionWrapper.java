@@ -84,8 +84,6 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 		attributes.put("date_out", getDate_out());
 		attributes.put("date_real_out", getDate_real_out());
 		attributes.put("share_number", getShare_number());
-		attributes.put("share_number_to_trade", getShare_number_to_trade());
-		attributes.put("share_number_traded", getShare_number_traded());
 		attributes.put("clientId_in", getClientId_in());
 		attributes.put("clientId_out", getClientId_out());
 		attributes.put("strategy_in", getStrategy_in());
@@ -98,9 +96,9 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 			getPercentual_trailling_stop_lost());
 		attributes.put("pricetrailling_stop_lost", getPricetrailling_stop_lost());
 		attributes.put("pendingcancelled", getPendingcancelled());
-		attributes.put("trading_data_operations", getTrading_data_operations());
 		attributes.put("simulation_mode", getSimulation_mode());
 		attributes.put("totalcommision", getTotalcommision());
+		attributes.put("forceclose", getForceclose());
 
 		return attributes;
 	}
@@ -257,19 +255,6 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 			setShare_number(share_number);
 		}
 
-		Long share_number_to_trade = (Long)attributes.get(
-				"share_number_to_trade");
-
-		if (share_number_to_trade != null) {
-			setShare_number_to_trade(share_number_to_trade);
-		}
-
-		Long share_number_traded = (Long)attributes.get("share_number_traded");
-
-		if (share_number_traded != null) {
-			setShare_number_traded(share_number_traded);
-		}
-
 		Long clientId_in = (Long)attributes.get("clientId_in");
 
 		if (clientId_in != null) {
@@ -341,13 +326,6 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 			setPendingcancelled(pendingcancelled);
 		}
 
-		String trading_data_operations = (String)attributes.get(
-				"trading_data_operations");
-
-		if (trading_data_operations != null) {
-			setTrading_data_operations(trading_data_operations);
-		}
-
 		Boolean simulation_mode = (Boolean)attributes.get("simulation_mode");
 
 		if (simulation_mode != null) {
@@ -359,6 +337,12 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 		if (totalcommision != null) {
 			setTotalcommision(totalcommision);
 		}
+
+		Boolean forceclose = (Boolean)attributes.get("forceclose");
+
+		if (forceclose != null) {
+			setForceclose(forceclose);
+		}
 	}
 
 	@Override
@@ -369,6 +353,16 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 	@Override
 	public Position toUnescapedModel() {
 		return new PositionWrapper(_position.toUnescapedModel());
+	}
+
+	@Override
+	public boolean IsCancelable() {
+		return _position.IsCancelable();
+	}
+
+	@Override
+	public boolean IsCloseable() {
+		return _position.IsCloseable();
 	}
 
 	@Override
@@ -392,6 +386,16 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 	}
 
 	/**
+	* Returns the forceclose of this position.
+	*
+	* @return the forceclose of this position
+	*/
+	@Override
+	public boolean getForceclose() {
+		return _position.getForceclose();
+	}
+
+	/**
 	* Returns the simulation_mode of this position.
 	*
 	* @return the simulation_mode of this position
@@ -409,6 +413,16 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 	@Override
 	public boolean isEscapedModel() {
 		return _position.isEscapedModel();
+	}
+
+	/**
+	* Returns <code>true</code> if this position is forceclose.
+	*
+	* @return <code>true</code> if this position is forceclose; <code>false</code> otherwise
+	*/
+	@Override
+	public boolean isForceclose() {
+		return _position.isForceclose();
 	}
 
 	@Override
@@ -647,16 +661,6 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 	}
 
 	/**
-	* Returns the trading_data_operations of this position.
-	*
-	* @return the trading_data_operations of this position
-	*/
-	@Override
-	public java.lang.String getTrading_data_operations() {
-		return _position.getTrading_data_operations();
-	}
-
-	/**
 	* Returns the type of this position.
 	*
 	* @return the type of this position
@@ -856,26 +860,6 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 		return _position.getShare_number();
 	}
 
-	/**
-	* Returns the share_number_to_trade of this position.
-	*
-	* @return the share_number_to_trade of this position
-	*/
-	@Override
-	public long getShare_number_to_trade() {
-		return _position.getShare_number_to_trade();
-	}
-
-	/**
-	* Returns the share_number_traded of this position.
-	*
-	* @return the share_number_traded of this position
-	*/
-	@Override
-	public long getShare_number_traded() {
-		return _position.getShare_number_traded();
-	}
-
 	@Override
 	public void persist() {
 		_position.persist();
@@ -990,6 +974,16 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 	@Override
 	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
 		_position.setExpandoBridgeAttributes(serviceContext);
+	}
+
+	/**
+	* Sets whether this position is forceclose.
+	*
+	* @param forceclose the forceclose of this position
+	*/
+	@Override
+	public void setForceclose(boolean forceclose) {
+		_position.setForceclose(forceclose);
 	}
 
 	/**
@@ -1214,26 +1208,6 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 	}
 
 	/**
-	* Sets the share_number_to_trade of this position.
-	*
-	* @param share_number_to_trade the share_number_to_trade of this position
-	*/
-	@Override
-	public void setShare_number_to_trade(long share_number_to_trade) {
-		_position.setShare_number_to_trade(share_number_to_trade);
-	}
-
-	/**
-	* Sets the share_number_traded of this position.
-	*
-	* @param share_number_traded the share_number_traded of this position
-	*/
-	@Override
-	public void setShare_number_traded(long share_number_traded) {
-		_position.setShare_number_traded(share_number_traded);
-	}
-
-	/**
 	* Sets whether this position is simulation_mode.
 	*
 	* @param simulation_mode the simulation_mode of this position
@@ -1301,17 +1275,6 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 	@Override
 	public void setTotalcommision(double totalcommision) {
 		_position.setTotalcommision(totalcommision);
-	}
-
-	/**
-	* Sets the trading_data_operations of this position.
-	*
-	* @param trading_data_operations the trading_data_operations of this position
-	*/
-	@Override
-	public void setTrading_data_operations(
-		java.lang.String trading_data_operations) {
-		_position.setTrading_data_operations(trading_data_operations);
 	}
 
 	/**

@@ -5246,6 +5246,7 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 		strategyImpl.setCan_override_params(strategy.isCan_override_params());
 		strategyImpl.setClassName(strategy.getClassName());
 		strategyImpl.setUserId(strategy.getUserId());
+		strategyImpl.setVisible(strategy.isVisible());
 
 		return strategyImpl;
 	}

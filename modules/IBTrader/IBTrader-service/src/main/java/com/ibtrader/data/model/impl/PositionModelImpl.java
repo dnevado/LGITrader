@@ -95,8 +95,6 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 			{ "date_out", Types.TIMESTAMP },
 			{ "date_real_out", Types.TIMESTAMP },
 			{ "share_number", Types.BIGINT },
-			{ "share_number_to_trade", Types.BIGINT },
-			{ "share_number_traded", Types.BIGINT },
 			{ "clientId_in", Types.BIGINT },
 			{ "clientId_out", Types.BIGINT },
 			{ "strategy_in", Types.VARCHAR },
@@ -108,9 +106,9 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 			{ "percentual_trailling_stop_lost", Types.DOUBLE },
 			{ "pricetrailling_stop_lost", Types.DOUBLE },
 			{ "pendingcancelled", Types.BIGINT },
-			{ "trading_data_operations", Types.VARCHAR },
 			{ "simulation_mode", Types.BOOLEAN },
-			{ "totalcommision", Types.DOUBLE }
+			{ "totalcommision", Types.DOUBLE },
+			{ "forceclose", Types.BOOLEAN }
 		};
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP = new HashMap<String, Integer>();
 
@@ -140,8 +138,6 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		TABLE_COLUMNS_MAP.put("date_out", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("date_real_out", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("share_number", Types.BIGINT);
-		TABLE_COLUMNS_MAP.put("share_number_to_trade", Types.BIGINT);
-		TABLE_COLUMNS_MAP.put("share_number_traded", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("clientId_in", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("clientId_out", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("strategy_in", Types.VARCHAR);
@@ -153,12 +149,12 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		TABLE_COLUMNS_MAP.put("percentual_trailling_stop_lost", Types.DOUBLE);
 		TABLE_COLUMNS_MAP.put("pricetrailling_stop_lost", Types.DOUBLE);
 		TABLE_COLUMNS_MAP.put("pendingcancelled", Types.BIGINT);
-		TABLE_COLUMNS_MAP.put("trading_data_operations", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("simulation_mode", Types.BOOLEAN);
 		TABLE_COLUMNS_MAP.put("totalcommision", Types.DOUBLE);
+		TABLE_COLUMNS_MAP.put("forceclose", Types.BOOLEAN);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table ibtrader_Position (uuid_ VARCHAR(75) null,positionId LONG not null primary key,groupId LONG,companyId LONG,shareId LONG,createDate DATE null,modifiedDate DATE null,state_ VARCHAR(75) null,state_in VARCHAR(75) null,state_out VARCHAR(75) null,description TEXT null,price_in DOUBLE,price_real_in DOUBLE,limit_price_in DOUBLE,date_in DATE null,date_real_in DATE null,positionId_tws_in LONG,positionId_tws_out LONG,type_ VARCHAR(75) null,price_out DOUBLE,price_real_out DOUBLE,limit_price_out DOUBLE,date_out DATE null,date_real_out DATE null,share_number LONG,share_number_to_trade LONG,share_number_traded LONG,clientId_in LONG,clientId_out LONG,strategy_in VARCHAR(75) null,strategy_out VARCHAR(75) null,percentualstoplost_out DOUBLE,pricestoplost_out DOUBLE,percentualstopprofit_out DOUBLE,pricestopprofit_out DOUBLE,percentual_trailling_stop_lost DOUBLE,pricetrailling_stop_lost DOUBLE,pendingcancelled LONG,trading_data_operations VARCHAR(75) null,simulation_mode BOOLEAN,totalcommision DOUBLE)";
+	public static final String TABLE_SQL_CREATE = "create table ibtrader_Position (uuid_ VARCHAR(75) null,positionId LONG not null primary key,groupId LONG,companyId LONG,shareId LONG,createDate DATE null,modifiedDate DATE null,state_ VARCHAR(75) null,state_in VARCHAR(75) null,state_out VARCHAR(75) null,description TEXT null,price_in DOUBLE,price_real_in DOUBLE,limit_price_in DOUBLE,date_in DATE null,date_real_in DATE null,positionId_tws_in LONG,positionId_tws_out LONG,type_ VARCHAR(75) null,price_out DOUBLE,price_real_out DOUBLE,limit_price_out DOUBLE,date_out DATE null,date_real_out DATE null,share_number LONG,clientId_in LONG,clientId_out LONG,strategy_in VARCHAR(75) null,strategy_out VARCHAR(75) null,percentualstoplost_out DOUBLE,pricestoplost_out DOUBLE,percentualstopprofit_out DOUBLE,pricestopprofit_out DOUBLE,percentual_trailling_stop_lost DOUBLE,pricetrailling_stop_lost DOUBLE,pendingcancelled LONG,simulation_mode BOOLEAN,totalcommision DOUBLE,forceclose BOOLEAN)";
 	public static final String TABLE_SQL_DROP = "drop table ibtrader_Position";
 	public static final String ORDER_BY_JPQL = " ORDER BY position.positionId_tws_in DESC";
 	public static final String ORDER_BY_SQL = " ORDER BY ibtrader_Position.positionId_tws_in DESC";
@@ -229,8 +225,6 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		model.setDate_out(soapModel.getDate_out());
 		model.setDate_real_out(soapModel.getDate_real_out());
 		model.setShare_number(soapModel.getShare_number());
-		model.setShare_number_to_trade(soapModel.getShare_number_to_trade());
-		model.setShare_number_traded(soapModel.getShare_number_traded());
 		model.setClientId_in(soapModel.getClientId_in());
 		model.setClientId_out(soapModel.getClientId_out());
 		model.setStrategy_in(soapModel.getStrategy_in());
@@ -242,9 +236,9 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		model.setPercentual_trailling_stop_lost(soapModel.getPercentual_trailling_stop_lost());
 		model.setPricetrailling_stop_lost(soapModel.getPricetrailling_stop_lost());
 		model.setPendingcancelled(soapModel.getPendingcancelled());
-		model.setTrading_data_operations(soapModel.getTrading_data_operations());
 		model.setSimulation_mode(soapModel.getSimulation_mode());
 		model.setTotalcommision(soapModel.getTotalcommision());
+		model.setForceclose(soapModel.getForceclose());
 
 		return model;
 	}
@@ -334,8 +328,6 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		attributes.put("date_out", getDate_out());
 		attributes.put("date_real_out", getDate_real_out());
 		attributes.put("share_number", getShare_number());
-		attributes.put("share_number_to_trade", getShare_number_to_trade());
-		attributes.put("share_number_traded", getShare_number_traded());
 		attributes.put("clientId_in", getClientId_in());
 		attributes.put("clientId_out", getClientId_out());
 		attributes.put("strategy_in", getStrategy_in());
@@ -348,9 +340,9 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 			getPercentual_trailling_stop_lost());
 		attributes.put("pricetrailling_stop_lost", getPricetrailling_stop_lost());
 		attributes.put("pendingcancelled", getPendingcancelled());
-		attributes.put("trading_data_operations", getTrading_data_operations());
 		attributes.put("simulation_mode", getSimulation_mode());
 		attributes.put("totalcommision", getTotalcommision());
+		attributes.put("forceclose", getForceclose());
 
 		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
 		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
@@ -510,19 +502,6 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 			setShare_number(share_number);
 		}
 
-		Long share_number_to_trade = (Long)attributes.get(
-				"share_number_to_trade");
-
-		if (share_number_to_trade != null) {
-			setShare_number_to_trade(share_number_to_trade);
-		}
-
-		Long share_number_traded = (Long)attributes.get("share_number_traded");
-
-		if (share_number_traded != null) {
-			setShare_number_traded(share_number_traded);
-		}
-
 		Long clientId_in = (Long)attributes.get("clientId_in");
 
 		if (clientId_in != null) {
@@ -594,13 +573,6 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 			setPendingcancelled(pendingcancelled);
 		}
 
-		String trading_data_operations = (String)attributes.get(
-				"trading_data_operations");
-
-		if (trading_data_operations != null) {
-			setTrading_data_operations(trading_data_operations);
-		}
-
 		Boolean simulation_mode = (Boolean)attributes.get("simulation_mode");
 
 		if (simulation_mode != null) {
@@ -611,6 +583,12 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 		if (totalcommision != null) {
 			setTotalcommision(totalcommision);
+		}
+
+		Boolean forceclose = (Boolean)attributes.get("forceclose");
+
+		if (forceclose != null) {
+			setForceclose(forceclose);
 		}
 	}
 
@@ -1065,28 +1043,6 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 	@JSON
 	@Override
-	public long getShare_number_to_trade() {
-		return _share_number_to_trade;
-	}
-
-	@Override
-	public void setShare_number_to_trade(long share_number_to_trade) {
-		_share_number_to_trade = share_number_to_trade;
-	}
-
-	@JSON
-	@Override
-	public long getShare_number_traded() {
-		return _share_number_traded;
-	}
-
-	@Override
-	public void setShare_number_traded(long share_number_traded) {
-		_share_number_traded = share_number_traded;
-	}
-
-	@JSON
-	@Override
 	public long getClientId_in() {
 		return _clientId_in;
 	}
@@ -1255,22 +1211,6 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 	@JSON
 	@Override
-	public String getTrading_data_operations() {
-		if (_trading_data_operations == null) {
-			return StringPool.BLANK;
-		}
-		else {
-			return _trading_data_operations;
-		}
-	}
-
-	@Override
-	public void setTrading_data_operations(String trading_data_operations) {
-		_trading_data_operations = trading_data_operations;
-	}
-
-	@JSON
-	@Override
 	public boolean getSimulation_mode() {
 		return _simulation_mode;
 	}
@@ -1295,6 +1235,23 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 	@Override
 	public void setTotalcommision(double totalcommision) {
 		_totalcommision = totalcommision;
+	}
+
+	@JSON
+	@Override
+	public boolean getForceclose() {
+		return _forceclose;
+	}
+
+	@JSON
+	@Override
+	public boolean isForceclose() {
+		return _forceclose;
+	}
+
+	@Override
+	public void setForceclose(boolean forceclose) {
+		_forceclose = forceclose;
 	}
 
 	@Override
@@ -1359,8 +1316,6 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		positionImpl.setDate_out(getDate_out());
 		positionImpl.setDate_real_out(getDate_real_out());
 		positionImpl.setShare_number(getShare_number());
-		positionImpl.setShare_number_to_trade(getShare_number_to_trade());
-		positionImpl.setShare_number_traded(getShare_number_traded());
 		positionImpl.setClientId_in(getClientId_in());
 		positionImpl.setClientId_out(getClientId_out());
 		positionImpl.setStrategy_in(getStrategy_in());
@@ -1372,9 +1327,9 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		positionImpl.setPercentual_trailling_stop_lost(getPercentual_trailling_stop_lost());
 		positionImpl.setPricetrailling_stop_lost(getPricetrailling_stop_lost());
 		positionImpl.setPendingcancelled(getPendingcancelled());
-		positionImpl.setTrading_data_operations(getTrading_data_operations());
 		positionImpl.setSimulation_mode(getSimulation_mode());
 		positionImpl.setTotalcommision(getTotalcommision());
+		positionImpl.setForceclose(getForceclose());
 
 		positionImpl.resetOriginalValues();
 
@@ -1630,10 +1585,6 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 		positionCacheModel.share_number = getShare_number();
 
-		positionCacheModel.share_number_to_trade = getShare_number_to_trade();
-
-		positionCacheModel.share_number_traded = getShare_number_traded();
-
 		positionCacheModel.clientId_in = getClientId_in();
 
 		positionCacheModel.clientId_out = getClientId_out();
@@ -1668,25 +1619,18 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 		positionCacheModel.pendingcancelled = getPendingcancelled();
 
-		positionCacheModel.trading_data_operations = getTrading_data_operations();
-
-		String trading_data_operations = positionCacheModel.trading_data_operations;
-
-		if ((trading_data_operations != null) &&
-				(trading_data_operations.length() == 0)) {
-			positionCacheModel.trading_data_operations = null;
-		}
-
 		positionCacheModel.simulation_mode = getSimulation_mode();
 
 		positionCacheModel.totalcommision = getTotalcommision();
+
+		positionCacheModel.forceclose = getForceclose();
 
 		return positionCacheModel;
 	}
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(83);
+		StringBundler sb = new StringBundler(79);
 
 		sb.append("{uuid=");
 		sb.append(getUuid());
@@ -1738,10 +1682,6 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		sb.append(getDate_real_out());
 		sb.append(", share_number=");
 		sb.append(getShare_number());
-		sb.append(", share_number_to_trade=");
-		sb.append(getShare_number_to_trade());
-		sb.append(", share_number_traded=");
-		sb.append(getShare_number_traded());
 		sb.append(", clientId_in=");
 		sb.append(getClientId_in());
 		sb.append(", clientId_out=");
@@ -1764,12 +1704,12 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		sb.append(getPricetrailling_stop_lost());
 		sb.append(", pendingcancelled=");
 		sb.append(getPendingcancelled());
-		sb.append(", trading_data_operations=");
-		sb.append(getTrading_data_operations());
 		sb.append(", simulation_mode=");
 		sb.append(getSimulation_mode());
 		sb.append(", totalcommision=");
 		sb.append(getTotalcommision());
+		sb.append(", forceclose=");
+		sb.append(getForceclose());
 		sb.append("}");
 
 		return sb.toString();
@@ -1777,7 +1717,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(127);
+		StringBundler sb = new StringBundler(121);
 
 		sb.append("<model><model-name>");
 		sb.append("com.ibtrader.data.model.Position");
@@ -1884,14 +1824,6 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		sb.append(getShare_number());
 		sb.append("]]></column-value></column>");
 		sb.append(
-			"<column><column-name>share_number_to_trade</column-name><column-value><![CDATA[");
-		sb.append(getShare_number_to_trade());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>share_number_traded</column-name><column-value><![CDATA[");
-		sb.append(getShare_number_traded());
-		sb.append("]]></column-value></column>");
-		sb.append(
 			"<column><column-name>clientId_in</column-name><column-value><![CDATA[");
 		sb.append(getClientId_in());
 		sb.append("]]></column-value></column>");
@@ -1936,16 +1868,16 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		sb.append(getPendingcancelled());
 		sb.append("]]></column-value></column>");
 		sb.append(
-			"<column><column-name>trading_data_operations</column-name><column-value><![CDATA[");
-		sb.append(getTrading_data_operations());
-		sb.append("]]></column-value></column>");
-		sb.append(
 			"<column><column-name>simulation_mode</column-name><column-value><![CDATA[");
 		sb.append(getSimulation_mode());
 		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>totalcommision</column-name><column-value><![CDATA[");
 		sb.append(getTotalcommision());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>forceclose</column-name><column-value><![CDATA[");
+		sb.append(getForceclose());
 		sb.append("]]></column-value></column>");
 
 		sb.append("</model>");
@@ -2001,8 +1933,6 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 	private Date _date_real_out;
 	private Date _originalDate_real_out;
 	private long _share_number;
-	private long _share_number_to_trade;
-	private long _share_number_traded;
 	private long _clientId_in;
 	private long _originalClientId_in;
 	private boolean _setOriginalClientId_in;
@@ -2020,9 +1950,9 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 	private long _pendingcancelled;
 	private long _originalPendingcancelled;
 	private boolean _setOriginalPendingcancelled;
-	private String _trading_data_operations;
 	private boolean _simulation_mode;
 	private double _totalcommision;
+	private boolean _forceclose;
 	private long _columnBitmask;
 	private Position _escapedModel;
 }

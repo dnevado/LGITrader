@@ -2,18 +2,7 @@
 <%@page import="com.ibtrader.util.*"%>
 
 <%@ include file="/init.jsp" %>
-		
-<portlet:actionURL name="editPosition" var="editPositionURL" >
- 	<portlet:param name="redirect" value="<%=themeDisplay.getURLCurrent()%>"/>
- 	<portlet:param name="positionId" value="${position.positionId}"/>
- </portlet:actionURL>
- <portlet:actionURL name="exitPosition" var="exitPositionURL" >
- 	<portlet:param name="redirect" value="<%=themeDisplay.getURLCurrent()%>"/>
- 	<portlet:param name="positionId" value="${position.positionId}"/>
- </portlet:actionURL>
-
-
-
+	
 
 <% 
 String redirect = ParamUtil.getString(request, "redirect");
@@ -25,9 +14,30 @@ portletDisplay.setURLBack(redirect);
 String portletId= "_" + portletDisplay.getId();
 
 Position _position=(Position) request.getAttribute("position");
+boolean EnabledStrategyClosePosition = false; 
+if (request.getAttribute("EnabledStrategyClosePosition")!=null)
+	EnabledStrategyClosePosition = (Boolean) request.getAttribute("EnabledStrategyClosePosition");
+
+boolean EnabledStrategyCancelPosition = false; 
+if (request.getAttribute("EnabledStrategyCancelPosition")!=null)
+	EnabledStrategyCancelPosition = (Boolean) request.getAttribute("EnabledStrategyCancelPosition");
+
 
 %>
 
+ <portlet:actionURL name="editPosition" var="editPositionURL" >
+ 	<portlet:param name="redirect" value="<%=redirect%>"/>
+ 	<portlet:param name="positionId" value="${position.positionId}"/>
+ </portlet:actionURL>
+ <portlet:actionURL name="closePosition" var="closePositionURL" >
+ 	<portlet:param name="redirect" value="<%=redirect%>"/>
+ 	<portlet:param name="positionId" value="${position.positionId}"/>
+ </portlet:actionURL>
+ <portlet:actionURL name="cancelPosition" var="cancelPositionURL" >
+ 	<portlet:param name="redirect" value="<%=redirect%>"/>
+ 	<portlet:param name="positionId" value="${position.positionId}"/>
+ </portlet:actionURL>
+ 
  
 <div class="container-fluid-1280">
 <aui:form action="<%=editPositionURL%>"   name="fm" method="POST" onsubmit="<portlet:namespace />extractCodeFromEditor()">
@@ -35,6 +45,7 @@ Position _position=(Position) request.getAttribute("position");
     <aui:fieldset>
 	<liferay-ui:success key="share.success" message="share.success"/>
 	<liferay-ui:error key="share.error.exists" message="share.error.exists"/>
+	
 	
 	<liferay-ui:panel-container accordion="true" extended="true" id="dataprices">
 		<liferay-ui:panel title="position.prices" markupView="lexicon">
@@ -62,6 +73,33 @@ Position _position=(Position) request.getAttribute("position");
 		</aui:fieldset>	
 		</liferay-ui:panel> 	
 	</liferay-ui:panel-container>
+	
+	<% if (!EnabledStrategyCancelPosition) { %>
+	
+        <liferay-ui:alert
+        closeable="true"
+        icon="exclamation-full"
+        message="La estrategia CancelPosition debe estar habilitada para poder cerrar una posición abierta"
+        type="success"
+/>
+        
+	
+	<% } %>
+	
+	
+	<% if (!EnabledStrategyClosePosition) { %>
+	
+        <liferay-ui:alert
+        closeable="true"
+        icon="exclamation-full"
+        message="La estrategia ClosePosition debe estar habilitada para poder cerrar una posición abierta"
+        type="success"
+/>
+        
+	
+	<% } %>
+	
+	
 	<aui:row>
     		<aui:col span="4">		 
 				 <aui:fieldset>		
@@ -98,8 +136,11 @@ Position _position=(Position) request.getAttribute("position");
 	</aui:row>
      <aui:button-row>
         <aui:button type="submit" cssClass="btn-lg"></aui:button>
-        <%if (_position.IsOpen()) { %>
-        	<aui:button onClick="<%=exitPositionURL%>" value="position.exit" cssClass="btn-lg"></aui:button>
+        <%if (_position.IsCloseable() && EnabledStrategyClosePosition) { %>
+        	<aui:button onClick="<%=closePositionURL%>" value="position.exit" cssClass="btn btn-lg btn-primary"></aui:button>
+        <%} %>
+        <%if (_position.IsCancelable() && EnabledStrategyCancelPosition) { %>
+        	<aui:button onClick="<%=cancelPositionURL%>" value="position.cancel" cssClass="btn btn-lg btn-primary"></aui:button>
         <%} %>
         <aui:button type="cancel" cssClass="btn-lg" onClick="<%=redirect%>"></aui:button>
     </aui:button-row>

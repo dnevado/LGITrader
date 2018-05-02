@@ -208,6 +208,27 @@ public interface StrategyShareModel extends BaseModel<StrategyShare>,
 	public void setActive(boolean active);
 
 	/**
+	 * Returns the visible of this strategy share.
+	 *
+	 * @return the visible of this strategy share
+	 */
+	public boolean getVisible();
+
+	/**
+	 * Returns <code>true</code> if this strategy share is visible.
+	 *
+	 * @return <code>true</code> if this strategy share is visible; <code>false</code> otherwise
+	 */
+	public boolean isVisible();
+
+	/**
+	 * Sets whether this strategy share is visible.
+	 *
+	 * @param visible the visible of this strategy share
+	 */
+	public void setVisible(boolean visible);
+
+	/**
 	 * Returns the strategyparamsoverride of this strategy share.
 	 *
 	 * @return the strategyparamsoverride of this strategy share

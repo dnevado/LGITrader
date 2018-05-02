@@ -56,6 +56,10 @@ public interface Position extends PositionModel, PersistedModel {
 
 	public boolean IsOpen();
 
+	public boolean IsCancelable();
+
+	public boolean IsCloseable();
+
 	public boolean IsPendingIn();
 
 	public boolean IsPendingOut();

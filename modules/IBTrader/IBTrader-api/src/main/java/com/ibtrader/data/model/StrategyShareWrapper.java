@@ -69,6 +69,7 @@ public class StrategyShareWrapper implements StrategyShare,
 		attributes.put("strategyId", getStrategyId());
 		attributes.put("shareId", getShareId());
 		attributes.put("active", getActive());
+		attributes.put("visible", getVisible());
 		attributes.put("strategyparamsoverride", getStrategyparamsoverride());
 		attributes.put("description", getDescription());
 
@@ -131,6 +132,12 @@ public class StrategyShareWrapper implements StrategyShare,
 			setActive(active);
 		}
 
+		Boolean visible = (Boolean)attributes.get("visible");
+
+		if (visible != null) {
+			setVisible(visible);
+		}
+
 		String strategyparamsoverride = (String)attributes.get(
 				"strategyparamsoverride");
 
@@ -166,6 +173,16 @@ public class StrategyShareWrapper implements StrategyShare,
 	}
 
 	/**
+	* Returns the visible of this strategy share.
+	*
+	* @return the visible of this strategy share
+	*/
+	@Override
+	public boolean getVisible() {
+		return _strategyShare.getVisible();
+	}
+
+	/**
 	* Returns <code>true</code> if this strategy share is active.
 	*
 	* @return <code>true</code> if this strategy share is active; <code>false</code> otherwise
@@ -188,6 +205,16 @@ public class StrategyShareWrapper implements StrategyShare,
 	@Override
 	public boolean isNew() {
 		return _strategyShare.isNew();
+	}
+
+	/**
+	* Returns <code>true</code> if this strategy share is visible.
+	*
+	* @return <code>true</code> if this strategy share is visible; <code>false</code> otherwise
+	*/
+	@Override
+	public boolean isVisible() {
+		return _strategyShare.isVisible();
 	}
 
 	@Override
@@ -495,6 +522,16 @@ public class StrategyShareWrapper implements StrategyShare,
 	@Override
 	public void setUuid(java.lang.String uuid) {
 		_strategyShare.setUuid(uuid);
+	}
+
+	/**
+	* Sets whether this strategy share is visible.
+	*
+	* @param visible the visible of this strategy share
+	*/
+	@Override
+	public void setVisible(boolean visible) {
+		_strategyShare.setVisible(visible);
 	}
 
 	@Override

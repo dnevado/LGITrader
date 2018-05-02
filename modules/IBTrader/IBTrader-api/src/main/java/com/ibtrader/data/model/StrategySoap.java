@@ -51,6 +51,7 @@ public class StrategySoap implements Serializable {
 		soapModel.setCan_override_params(model.getCan_override_params());
 		soapModel.setClassName(model.getClassName());
 		soapModel.setUserId(model.getUserId());
+		soapModel.setVisible(model.getVisible());
 
 		return soapModel;
 	}
@@ -247,6 +248,18 @@ public class StrategySoap implements Serializable {
 		_userId = userId;
 	}
 
+	public boolean getVisible() {
+		return _visible;
+	}
+
+	public boolean isVisible() {
+		return _visible;
+	}
+
+	public void setVisible(boolean visible) {
+		_visible = visible;
+	}
+
 	private String _uuid;
 	private long _strategyID;
 	private long _groupId;
@@ -264,4 +277,5 @@ public class StrategySoap implements Serializable {
 	private boolean _can_override_params;
 	private String _className;
 	private long _userId;
+	private boolean _visible;
 }

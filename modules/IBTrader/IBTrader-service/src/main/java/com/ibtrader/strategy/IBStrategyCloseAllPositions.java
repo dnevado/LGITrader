@@ -101,7 +101,7 @@ public class IBStrategyCloseAllPositions extends StrategyImpl {
 		BuyPositionTWS.action(_OperationTYPE);			
 		_log.info("Order" + BuyPositionTWS.action()  +","+  BuyPositionTWS.lmtPrice()  +","+ BuyPositionTWS.auxPrice() +","+ BuyPositionTWS.account() +","+ BuyPositionTWS.totalQuantity() +","+ BuyPositionTWS.orderType());
 		this.setTargetOrder(BuyPositionTWS);			
-		currentPosition.setPrice_out(this.getValueOut());
+		currentPosition.setPrice_out(Utilities.RoundPrice(this.getValueOut()));
 		currentPosition.setState_out(PositionStates.statusTWSCallBack.PendingSubmit.toString());
 		/* si metemos el date sell en las parciales, no entran las siguientes */
 		/* acumulo las acciones vendidas y a vender en la operativa */

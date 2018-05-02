@@ -192,6 +192,12 @@ public class PositionLocalServiceUtil {
 		return getService().getIndexableActionableDynamicQuery();
 	}
 
+	public static com.liferay.portal.kernel.json.JSONArray findPositionClosedResults(
+		java.util.Date from, java.util.Date to, long groupId, long companyId) {
+		return getService()
+				   .findPositionClosedResults(from, to, groupId, companyId);
+	}
+
 	/**
 	* @throws PortalException
 	*/
@@ -275,11 +281,17 @@ public class PositionLocalServiceUtil {
 				   .dynamicQuery(dynamicQuery, start, end, orderByComparator);
 	}
 
-	public static java.util.List<com.ibtrader.data.model.Position> findByCancelCompanyGroup(
-		long companyId, long groupId, long pendingcancelled) {
+	public static java.util.List<com.ibtrader.data.model.Position> findByCancelShareCompanyGroup(
+		long companyId, long groupId, long pendingcancelled, long shareId) {
 		return getService()
-				   .findByCancelCompanyGroup(companyId, groupId,
-			pendingcancelled);
+				   .findByCancelShareCompanyGroup(companyId, groupId,
+			pendingcancelled, shareId);
+	}
+
+	public static java.util.List<com.ibtrader.data.model.Position> findByCloseCompanyGroup(
+		long companyId, long groupId, boolean forceclose) {
+		return getService()
+				   .findByCloseCompanyGroup(companyId, groupId, forceclose);
 	}
 
 	public static java.util.List<com.ibtrader.data.model.Position> findByCompanyGroupDate(

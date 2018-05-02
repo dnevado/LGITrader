@@ -85,8 +85,6 @@
 		<property name="date_out" type="org.hibernate.type.TimestampType" />
 		<property name="date_real_out" type="org.hibernate.type.TimestampType" />
 		<property name="share_number" type="com.liferay.portal.dao.orm.hibernate.LongType" />
-		<property name="share_number_to_trade" type="com.liferay.portal.dao.orm.hibernate.LongType" />
-		<property name="share_number_traded" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 		<property name="clientId_in" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 		<property name="clientId_out" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 		<property name="strategy_in" type="com.liferay.portal.dao.orm.hibernate.StringType" />
@@ -98,9 +96,9 @@
 		<property name="percentual_trailling_stop_lost" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
 		<property name="pricetrailling_stop_lost" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
 		<property name="pendingcancelled" type="com.liferay.portal.dao.orm.hibernate.LongType" />
-		<property name="trading_data_operations" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="simulation_mode" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />
 		<property name="totalcommision" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
+		<property name="forceclose" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />
 	</class>
 	<class name="com.ibtrader.data.model.impl.RealtimeImpl" table="ibtrader_Realtime">
 		<id name="realtimeId" type="long">
@@ -170,6 +168,7 @@
 		<property name="can_override_params" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />
 		<property name="className" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="userId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="visible" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />
 	</class>
 	<class name="com.ibtrader.data.model.impl.StrategyShareImpl" table="ibtrader_StrategyShare">
 		<id name="strategyshareId" type="long">
@@ -183,6 +182,7 @@
 		<property name="strategyId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 		<property name="shareId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 		<property column="active_" name="active" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />
+		<property name="visible" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />
 		<property name="strategyparamsoverride" type="com.liferay.portal.dao.orm.hibernate.StringClobType" />
 		<property name="description" type="com.liferay.portal.dao.orm.hibernate.StringClobType" />
 	</class>

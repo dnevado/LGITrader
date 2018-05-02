@@ -200,6 +200,13 @@ public class PositionLocalServiceWrapper implements PositionLocalService,
 		return _positionLocalService.getIndexableActionableDynamicQuery();
 	}
 
+	@Override
+	public com.liferay.portal.kernel.json.JSONArray findPositionClosedResults(
+		java.util.Date from, java.util.Date to, long groupId, long companyId) {
+		return _positionLocalService.findPositionClosedResults(from, to,
+			groupId, companyId);
+	}
+
 	/**
 	* @throws PortalException
 	*/
@@ -291,10 +298,17 @@ public class PositionLocalServiceWrapper implements PositionLocalService,
 	}
 
 	@Override
-	public java.util.List<com.ibtrader.data.model.Position> findByCancelCompanyGroup(
-		long companyId, long groupId, long pendingcancelled) {
-		return _positionLocalService.findByCancelCompanyGroup(companyId,
-			groupId, pendingcancelled);
+	public java.util.List<com.ibtrader.data.model.Position> findByCancelShareCompanyGroup(
+		long companyId, long groupId, long pendingcancelled, long shareId) {
+		return _positionLocalService.findByCancelShareCompanyGroup(companyId,
+			groupId, pendingcancelled, shareId);
+	}
+
+	@Override
+	public java.util.List<com.ibtrader.data.model.Position> findByCloseCompanyGroup(
+		long companyId, long groupId, boolean forceclose) {
+		return _positionLocalService.findByCloseCompanyGroup(companyId,
+			groupId, forceclose);
 	}
 
 	@Override

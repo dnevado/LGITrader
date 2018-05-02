@@ -301,6 +301,13 @@ public class TIMApiWrapper implements EWrapper {
 	 */
 	
 	/* thread safe */
+	
+	public  synchronized  void cancelOrder(Contract contract, Order parentOrder, List<Order> childsOrders, OrderState orderState, long  positionTWSId) {
+		
+		clientSocket.cancelOrder( (int) positionTWSId);
+		
+	}
+	
 	public  synchronized  void openOrder(Contract contract, Order parentOrder, List<Order> childsOrders, OrderState orderState, long positionId) {
 	
 		
@@ -340,6 +347,8 @@ public class TIMApiWrapper implements EWrapper {
 		PositionLocalServiceUtil.updatePosition(_position);
 		//	_log.info("1. openOrder...." +  positionId + "," + _INCREMENT_ORDER_ID);
 		// Si hay hijas, aseguramos el transmit correcto,
+		
+		/* CAMBIO, NO HAY HIJAS PORQUE LAS TRAILING VAN CONTROLADAS INTERNAMENTE 
 		if (childsOrders!=null && !childsOrders.isEmpty())			
 			parentOrder.transmit(false);
 	
@@ -349,8 +358,8 @@ public class TIMApiWrapper implements EWrapper {
 			_INCREMENT_ORDER_ID++;
 			childOrder.parentId(parentOrderId);
 			childOrder.transmit(true);
-		//	IBOrderLocalServiceUtil.deleteByOrderCompanyGroup(_INCREMENT_ORDER_ID, _ibtarget_share.getCompanyId(), _ibtarget_share.getGroupId(),_clientId,_ibtarget_share.getShareId());
-			 _order = IBOrderLocalServiceUtil.createIBOrder(_INCREMENT_ORDER_ID);			/* insertamos control de ordenes de peticion */
+			IBOrderLocalServiceUtil.deleteByOrderCompanyGroup(_INCREMENT_ORDER_ID, _ibtarget_share.getCompanyId(), _ibtarget_share.getGroupId(),_clientId,_ibtarget_share.getShareId());
+			 _order = IBOrderLocalServiceUtil.createIBOrder(_INCREMENT_ORDER_ID);			
 			_order.setCompanyId(_ibtarget_share.getCompanyId());
 			_order.setGroupId(_ibtarget_share.getGroupId());
 			_order.setShareID(_ibtarget_share.getShareId());
@@ -360,7 +369,8 @@ public class TIMApiWrapper implements EWrapper {
 			_order.setIbclientId(_clientId);					
 			IBOrderLocalServiceUtil.updateIBOrder(_order);
 			clientSocket.placeOrder(new Long(_INCREMENT_ORDER_ID).intValue(), contract, childOrder);
-		}		
+		}	
+	    */	
 			
 		//}
 		
@@ -483,7 +493,7 @@ public class TIMApiWrapper implements EWrapper {
 					_oPosition.setState(PositionStates.status.SELL_OK.toString());
 					_oPosition.setDate_real_out(_oPosition.getDate_out());
 					_oPosition.setPrice_real_out(execution.avgPrice());
-					_oPosition.setShare_number_traded(_oPosition.getShare_number());
+					
 					
 					bChanged = true;
 					
@@ -500,7 +510,7 @@ public class TIMApiWrapper implements EWrapper {
 				_oPosition.setState_in(PositionStates.statusTWSCallBack.Filled.toString());
 				_oPosition.setDate_real_in(_oPosition.getDate_in());
 				_oPosition.setPrice_real_in(execution.avgPrice());
-				_oPosition.setShare_number_traded(_oPosition.getShare_number());
+			
 				
 				bChanged = true;
 				
@@ -962,84 +972,11 @@ public class TIMApiWrapper implements EWrapper {
 				 */
 				if (PositionStates.statusTWSCallBack.Filled.toString().equals(status) && _oPosition.getState_out()!=null)
 	    		{
-					
-	    			/* acumulo las acciones vendidas y a vender en la operativa */
-	    			long _RemaingShares = _oPosition.getShare_number_to_trade() +_oPosition.getShare_number_traded();
-	    			long _TotalShares = _oPosition.getShare_number();
-	    			
-	    			_oPosition.setShare_number_traded(_RemaingShares);
-	    			_oPosition.setShare_number_to_trade(_oPosition.getShare_number() - _oPosition.getShare_number_traded());
-	    			
-	    			/* NO ES EL SELL OK y PRECIOS REALES NO SE GUARDAN EN LOS CAMPOS hasta que el numero de acciones vendidas quede cerrado*/
-	    			if (_RemaingShares ==_TotalShares)   // ya no hay =
-	    			{	
-	    				_oPosition.setState_out(status);	 
-	    				_oPosition.setDate_out(new Date()) ; // OJO TIMESTAMP.
-	    				_oPosition.setDate_real_out(new Date());			    			
-		    			_oPosition.setPrice_real_out(avgFillPrice);  // cogemos el avg que nos manda el TWS
-	    				_oPosition.setState(PositionStates.status.SELL_OK.toString());
-	    			}
-	    			else   //  hay acciones pendientes para salir..actualizo el stop de beneficio para no dispararse
-	    			{
-	    				// SE PUEDEN DAR DOS COSAS,
-	    				// 1. QUE EL STOP PROFIT SALTO POR DEBAJO DEL INICIAL--> DEJAMOS EL INICIAL
-	    				// 2. QUE EL STOP PROFIT SALTO POR ENCIMA DEL INICIAL --> SIGUE EN TENDENCIA, LOS MULTIPLICAMOS POR UN 50%	    				
-	    				_oPosition.setState_out(null);	
-	    				
-	    				double priceStopProfitAperturaPosicion = 0;
-	    				double priceNewStopProfit = 0;
-	    				
-	    				
-	    				if (_oPosition.getType().equals(PositionStates.statusTWSFire.SELL.toString()))  //short
-		    			{
-	    					// cojo el original
-	    					priceStopProfitAperturaPosicion = _oPosition.getPrice_real_in() - (_oPosition.getPrice_real_in() *  sharePosition.getPercentual_stop_profit() / 100);
-	    					// si el original es mayor...subio la accion mucho, la tendencia es seguir, le subo un 50% para que no salte el resto de la posicion 
-	    					if (priceStopProfitAperturaPosicion > _oPosition.getPricestopprofit_out())
-	    					{
-	    						priceNewStopProfit = _oPosition.getPricestopprofit_out() - (_oPosition.getPricestopprofit_out()*0.5);
-	    						priceNewStopProfit  = priceNewStopProfit /100;
-	    						//_oPosition.setSell_percentual_stop_profit(Utilidades.RedondeaPrice(priceNewStopProfit));	    						
-	    					}
-	    					else  // restauramos el original
-	    					{
-	    						priceNewStopProfit = priceStopProfitAperturaPosicion;
-	    									    						
-	    					}
-		    			}
-		    			else  //long position
-		    			{		
-		    				// cojo el original
-	    					priceStopProfitAperturaPosicion = _oPosition.getPrice_real_in()  + (_oPosition.getPrice_real_in() *  sharePosition.getPercentual_stop_profit() / 100);
-	    					// si el original es menor...subio la accion mucho, la tendencia es seguir, le subo un 50% para que no salte el resto 
-	    					if (priceStopProfitAperturaPosicion < _oPosition.getPricestopprofit_out())
-	    					{
-	    						priceNewStopProfit = _oPosition.getPricestopprofit_out() + (_oPosition.getPricestopprofit_out() *0.5);
-	    						priceNewStopProfit  = priceNewStopProfit / 100;
-	    						//_oPosition.setSell_percentual_stop_profit(Utilidades.RedondeaPrice(priceNewStopProfit));
-	    						
-	    					}
-	    					else  // restauramos el original
-	    					{
-	    						priceNewStopProfit = priceStopProfitAperturaPosicion;
-	    									    						
-	    					}
-	    				}
-	    				
-	    				_oPosition.setPricestopprofit_out(Utilities.RoundPrice(priceNewStopProfit));
-	    				
-	    				//LogTWM.log(Priority.INFO,"New Profit Stop.. " + Utilidades.RedondeaPrice(priceNewStopProfit));
-	    				
-	    			}
-	    			
-	    			// ACTUALIZAMOS EL PRECIO DE SALIDA CON EL PORCENTAJE.
-	    			/*priceStopLost = avgFillPrice  + (avgFillPrice *  _oPosition.getSell_percentual_stop_lost());
-	    			priceStopProfit = avgFillPrice  - (avgFillPrice *  _oPosition.getSell_percentual_stop_profit());*/
-	    			/* DOS DECIMALES PRECIOS DE SALIDA LOST Y PROFIT */
-	    			/*_oPosition.setSell_price_stop_lost(Utilidades.RedondeaPrice(priceStopLost));
-	    			_oPosition.setSell_price_stop_profit(Utilidades.RedondeaPrice(priceStopProfit));*/
-	    			
-	    			
+				_oPosition.setState_out(status);	 
+				_oPosition.setDate_out(new Date()) ; // OJO TIMESTAMP.
+				_oPosition.setDate_real_out(new Date());			    			
+    			_oPosition.setPrice_real_out(avgFillPrice);  // cogemos el avg que nos manda el TWS
+				_oPosition.setState(PositionStates.status.SELL_OK.toString());
 	    		}	    
 				
 			}

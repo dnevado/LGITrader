@@ -95,4 +95,32 @@
  
      ]]>
     </sql>
+    
+     <sql id="com.ibtrader.data.service.persistence.PositionFinder.getPositionClosedResults">
+    <![CDATA[
+    
+			    SELECT  
+						count(*) OPERACIONES, (sum(beneficio*acciones) / SUM(PRECIOENTRADA*acciones)*100)  MARGENBENEFICIO, 
+						 sum(beneficio*acciones) BENEFICIO,sum(PRECIOENTRADA*acciones) INVERTIDO, TIPO
+				FROM
+				(	SELECT case type_
+							 when 'BUY' then price_real_out - price_real_in
+							 when 'SELL' then price_real_in - price_real_out
+					       END BENEFICIO,
+					       share_number acciones,
+					       type_ tipo,
+					       price_real_in PRECIOENTRADA
+					FROM IBTrader_Position
+					WHERE
+						(IBTrader_Position.date_real_in>=?) AND (IBTrader_Position.date_real_in<?)
+						AND  (IBTrader_Position.date_real_out IS NOT NULL)
+						AND (IBTrader_Position.companyid=?)
+	            		AND (IBTrader_Position.groupid=?)         	
+				)	 rt 
+				GROUP BY tipo
+	 
+     ]]>
+    </sql>
+    
+    
 </custom-sql>

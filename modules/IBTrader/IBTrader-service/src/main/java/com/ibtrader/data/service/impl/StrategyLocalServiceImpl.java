@@ -142,7 +142,7 @@ public class StrategyLocalServiceImpl extends StrategyLocalServiceBaseImpl {
 		 /* ESTRATEGIAS  */		 
 		 DynamicQuery _DQ = strategyLocalService.dynamicQuery();
 		 _DQ.add(RestrictionsFactoryUtil.eq("companyId", companyId));
-		 _DQ.add(RestrictionsFactoryUtil.eq("groupId", groupId));
+		 _DQ.add(RestrictionsFactoryUtil.eq("groupId", groupId));		 
 		 //_DQ.add(RestrictionsFactoryUtil.in("strategyID",StrategyIds));
 		 
 		

@@ -19,6 +19,7 @@ import com.ibtrader.data.service.MarketService;
 import com.ibtrader.data.service.persistence.ConfigPersistence;
 import com.ibtrader.data.service.persistence.IBOrderPersistence;
 import com.ibtrader.data.service.persistence.MarketPersistence;
+import com.ibtrader.data.service.persistence.PositionFinder;
 import com.ibtrader.data.service.persistence.PositionPersistence;
 import com.ibtrader.data.service.persistence.RealtimeFinder;
 import com.ibtrader.data.service.persistence.RealtimePersistence;
@@ -282,6 +283,24 @@ public abstract class MarketServiceBaseImpl extends BaseServiceImpl
 	 */
 	public void setPositionPersistence(PositionPersistence positionPersistence) {
 		this.positionPersistence = positionPersistence;
+	}
+
+	/**
+	 * Returns the position finder.
+	 *
+	 * @return the position finder
+	 */
+	public PositionFinder getPositionFinder() {
+		return positionFinder;
+	}
+
+	/**
+	 * Sets the position finder.
+	 *
+	 * @param positionFinder the position finder
+	 */
+	public void setPositionFinder(PositionFinder positionFinder) {
+		this.positionFinder = positionFinder;
 	}
 
 	/**
@@ -750,6 +769,8 @@ public abstract class MarketServiceBaseImpl extends BaseServiceImpl
 	protected com.ibtrader.data.service.PositionService positionService;
 	@BeanReference(type = PositionPersistence.class)
 	protected PositionPersistence positionPersistence;
+	@BeanReference(type = PositionFinder.class)
+	protected PositionFinder positionFinder;
 	@BeanReference(type = com.ibtrader.data.service.RealtimeLocalService.class)
 	protected com.ibtrader.data.service.RealtimeLocalService realtimeLocalService;
 	@BeanReference(type = com.ibtrader.data.service.RealtimeService.class)

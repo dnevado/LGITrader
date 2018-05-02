@@ -430,34 +430,6 @@ public interface PositionModel extends BaseModel<Position>, ShardedModel,
 	public void setShare_number(long share_number);
 
 	/**
-	 * Returns the share_number_to_trade of this position.
-	 *
-	 * @return the share_number_to_trade of this position
-	 */
-	public long getShare_number_to_trade();
-
-	/**
-	 * Sets the share_number_to_trade of this position.
-	 *
-	 * @param share_number_to_trade the share_number_to_trade of this position
-	 */
-	public void setShare_number_to_trade(long share_number_to_trade);
-
-	/**
-	 * Returns the share_number_traded of this position.
-	 *
-	 * @return the share_number_traded of this position
-	 */
-	public long getShare_number_traded();
-
-	/**
-	 * Sets the share_number_traded of this position.
-	 *
-	 * @param share_number_traded the share_number_traded of this position
-	 */
-	public void setShare_number_traded(long share_number_traded);
-
-	/**
 	 * Returns the client id_in of this position.
 	 *
 	 * @return the client id_in of this position
@@ -615,21 +587,6 @@ public interface PositionModel extends BaseModel<Position>, ShardedModel,
 	public void setPendingcancelled(long pendingcancelled);
 
 	/**
-	 * Returns the trading_data_operations of this position.
-	 *
-	 * @return the trading_data_operations of this position
-	 */
-	@AutoEscape
-	public String getTrading_data_operations();
-
-	/**
-	 * Sets the trading_data_operations of this position.
-	 *
-	 * @param trading_data_operations the trading_data_operations of this position
-	 */
-	public void setTrading_data_operations(String trading_data_operations);
-
-	/**
 	 * Returns the simulation_mode of this position.
 	 *
 	 * @return the simulation_mode of this position
@@ -663,6 +620,27 @@ public interface PositionModel extends BaseModel<Position>, ShardedModel,
 	 * @param totalcommision the totalcommision of this position
 	 */
 	public void setTotalcommision(double totalcommision);
+
+	/**
+	 * Returns the forceclose of this position.
+	 *
+	 * @return the forceclose of this position
+	 */
+	public boolean getForceclose();
+
+	/**
+	 * Returns <code>true</code> if this position is forceclose.
+	 *
+	 * @return <code>true</code> if this position is forceclose; <code>false</code> otherwise
+	 */
+	public boolean isForceclose();
+
+	/**
+	 * Sets whether this position is forceclose.
+	 *
+	 * @param forceclose the forceclose of this position
+	 */
+	public void setForceclose(boolean forceclose);
 
 	@Override
 	public boolean isNew();

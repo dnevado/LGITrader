@@ -68,8 +68,6 @@ create table ibtrader_Position (
 	date_out DATE null,
 	date_real_out DATE null,
 	share_number LONG,
-	share_number_to_trade LONG,
-	share_number_traded LONG,
 	clientId_in LONG,
 	clientId_out LONG,
 	strategy_in VARCHAR(75) null,
@@ -81,9 +79,9 @@ create table ibtrader_Position (
 	percentual_trailling_stop_lost DOUBLE,
 	pricetrailling_stop_lost DOUBLE,
 	pendingcancelled LONG,
-	trading_data_operations VARCHAR(75) null,
 	simulation_mode BOOLEAN,
-	totalcommision DOUBLE
+	totalcommision DOUBLE,
+	forceclose BOOLEAN
 );
 
 create table ibtrader_Realtime (
@@ -149,7 +147,8 @@ create table ibtrader_Strategy (
 	type_ VARCHAR(75) null,
 	can_override_params BOOLEAN,
 	className VARCHAR(75) null,
-	userId LONG
+	userId LONG,
+	visible BOOLEAN
 );
 
 create table ibtrader_StrategyShare (
@@ -162,6 +161,7 @@ create table ibtrader_StrategyShare (
 	strategyId LONG,
 	shareId LONG,
 	active_ BOOLEAN,
+	visible BOOLEAN,
 	strategyparamsoverride TEXT null,
 	description TEXT null
 );

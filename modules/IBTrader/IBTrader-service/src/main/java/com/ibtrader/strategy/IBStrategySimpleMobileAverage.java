@@ -180,9 +180,7 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 			BuyPositionSystem.setDescription(_tradeDescription.toString());
 			
     		/* BuyPositionSystem.setSell_percentual_stop_lost(ShareStrategy.getSell_percentual_stop_lost());
-			BuyPositionSystem.setSell_percentual_stop_profit(ShareStrategy.getSell_percentual_stop_profit());*/
-			BuyPositionSystem.setShare_number_traded(new Long(0));
-			BuyPositionSystem.setShare_number_to_trade(number_to_purchase); 			
+			BuyPositionSystem.setSell_percentual_stop_profit(ShareStrategy.getSell_percentual_stop_profit());*/			 		
 			String simulated = Utilities.getConfigurationValue(IBTraderConstants.keySIMULATION_MODE, _share.getCompanyId(), _share.getGroupId());	
 			boolean bSIMULATED_TRADING = simulated.equals("1");  
 			BuyPositionSystem.setSimulation_mode(bSIMULATED_TRADING);			

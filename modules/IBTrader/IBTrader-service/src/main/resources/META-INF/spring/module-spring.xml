@@ -13,6 +13,7 @@
 	<bean class="com.ibtrader.data.service.impl.PositionLocalServiceImpl" id="com.ibtrader.data.service.PositionLocalService" />
 	<bean class="com.ibtrader.data.service.impl.PositionServiceImpl" id="com.ibtrader.data.service.PositionService" />
 	<bean class="com.ibtrader.data.service.persistence.impl.PositionPersistenceImpl" id="com.ibtrader.data.service.persistence.PositionPersistence" parent="basePersistence" />
+	<bean class="com.ibtrader.data.service.persistence.impl.PositionFinderImpl" id="com.ibtrader.data.service.persistence.PositionFinder" parent="basePersistence" />
 	<bean class="com.ibtrader.data.service.impl.RealtimeLocalServiceImpl" id="com.ibtrader.data.service.RealtimeLocalService" />
 	<bean class="com.ibtrader.data.service.impl.RealtimeServiceImpl" id="com.ibtrader.data.service.RealtimeService" />
 	<bean class="com.ibtrader.data.service.persistence.impl.RealtimePersistenceImpl" id="com.ibtrader.data.service.persistence.RealtimePersistence" parent="basePersistence" />

@@ -48,21 +48,21 @@ import com.ibtrader.util.ConfigKeys;
 import com.ibtrader.util.PositionStates;
 import com.ibtrader.util.Utilities;
 
-public class IBStrategyCancelPosition extends StrategyImpl {
+public class IBStrategyClosePosition extends StrategyImpl {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private static Log _log = LogFactoryUtil.getLog(IBStrategyCancelPosition.class);
-	Position cancelPosition = null;
+	private static Log _log = LogFactoryUtil.getLog(IBStrategyClosePosition.class);
+	Position closePosition = null;
 	
 	@Override
 	public long execute(Share _share, Market _market) {
 		// TODO Auto-generated method stub
 	long returnValue=-1;
 	try		
-    {	
+    {
 		_log.info("UserAccount: detectada posible entrada de " + _share.getName() +  "Tick:" + _share.getSymbol() + ",PrecioCompra:" + this.getValueIn());
 		// hace falta???????? ..creo que si, para tener control sobre la operacion de compra /venta 
 		SimpleDateFormat sdf = new SimpleDateFormat (Utilities._IBTRADER_FUTURE_SHORT_DATE);
@@ -84,44 +84,27 @@ public class IBStrategyCancelPosition extends StrategyImpl {
 	   /* NECESARIO PRA LANZAR COMPRA DESDE EL CROUTIL */
 	   this.setTargetContract(oContrat);
 	   
-	   
-	  
-	   if (cancelPosition.getPendingcancelled()==1)
-		{
-			
-			// las PendingSubmit hay que eliminarlas porque no estan negociando. P.e. Prohibido operar a corto, bloqueo de consola
-			if (cancelPosition.getState_in().toString().equals(PositionStates.statusTWSCallBack.PendingSubmit.toString()))
-			{
-				PositionLocalServiceUtil.deletePosition(cancelPosition.getPositionId());
-				
-			}
-			else  
-			{					
-				
-				/* 1. CANCELAMOS LA ENTRADA 
-				 * 2. CANCELAMOS LA SALIDA 
-				 */
-				//getDate_real_out()==null &&   this.getState().equals(PositionStates.status.BUY_OK.toString()); 
-				if (cancelPosition.IsPendingOut() && cancelPosition.getPositionId_tws_out()>=0)
-					returnValue =  cancelPosition.getPositionId_tws_out();
-				if (cancelPosition.IsPendingIn()  && cancelPosition.getPositionId_tws_in()>=0)
-					returnValue =  cancelPosition.getPositionId_tws_in();
-				
-				if (returnValue!=-1)
-				{
-					cancelPosition.setPendingcancelled(0);
-					PositionLocalServiceUtil.updatePosition(cancelPosition);
-					returnValue =  cancelPosition.getPositionId();
-				}
-			}
-		}			
-	   
+		// MyActualPosition contiene la operacion abierta.		
+	    String _OperationTYPE = PositionStates.statusTWSFire.BUY.toString(); 
+		if (closePosition.getType().equals(PositionStates.statusTWSFire.BUY.toString())) // operacion de compra normal..??
+			_OperationTYPE = PositionStates.statusTWSFire.SELL.toString();		
+		Order BuyPositionTWS = new Order();
+		BuyPositionTWS.account(Utilities.getConfigurationValue(IBTraderConstants.keyACCOUNT_IB_NAME, _share.getCompanyId(), _share.getGroupId()));			
+		BuyPositionTWS.totalQuantity(closePosition.getShare_number());
+		BuyPositionTWS.orderType(PositionStates.ordertypes.MKT.toString());		    					
+		BuyPositionTWS.action(_OperationTYPE);			
+		_log.info("Order" + BuyPositionTWS.action()  +","+  BuyPositionTWS.lmtPrice()  +","+ BuyPositionTWS.auxPrice() +","+ BuyPositionTWS.account() +","+ BuyPositionTWS.totalQuantity() +","+ BuyPositionTWS.orderType());
+		this.setTargetOrder(BuyPositionTWS);					
+		closePosition.setState_out(PositionStates.statusTWSCallBack.PendingSubmit.toString());	
+		closePosition.setDate_out(new Date());
+		closePosition.setDescription(this.getClass().getName());
+		closePosition.setStrategy_out(this.getClass().getName());		 		
+		PositionLocalServiceUtil.updatePosition(closePosition);
 		/* Posicion en MYSQL de CONTROL */
-		
+		_log.info("Opening order " + closePosition.getPositionId());
 		
 		/* RETORNAMOS PORQUE DESPUES HAY QUE METER EN LA POSICION EN NUMERO DE ORDEN DE LA TWS */
-	
-		
+		returnValue =  closePosition.getPositionId();
 
 		
     }
@@ -134,7 +117,7 @@ public class IBStrategyCancelPosition extends StrategyImpl {
 	return returnValue;
 	}
 	
-	public IBStrategyCancelPosition() {
+	public IBStrategyClosePosition() {
 		
 		super();
 		// TODO Auto-generated constructor stub
@@ -144,22 +127,20 @@ public class IBStrategyCancelPosition extends StrategyImpl {
 	public boolean verify(Share _share, Market _market,StrategyShare _strategyImpl) {
 	
 	boolean verified = false;
-	List<Position> lCancelled = null;
+	List<Position> lToClose = null;
 	try
     {
 		/* cancelada y abierta */
-		lCancelled = PositionLocalServiceUtil.findByCancelShareCompanyGroup(_share.getCompanyId(), _share.getGroupId(),1, _share.getShareId());
-		if (lCancelled!=null && !lCancelled.isEmpty())
+		lToClose = PositionLocalServiceUtil.findByCloseCompanyGroup(_share.getCompanyId(), _share.getGroupId(), Boolean.TRUE); 
+		if (lToClose!=null && !lToClose.isEmpty())
 		{
-			for (Position position : lCancelled)
+			for (Position position : lToClose)
 			{
-				if (position.IsCancelable())
+				if (position.IsOpen() && position.IsCloseable())
 				{
-					
-					cancelPosition  = position;
+					closePosition  =position;
 					verified = Boolean.TRUE;
 					break;
-					
 				}
 			}
 			
@@ -175,6 +156,12 @@ public class IBStrategyCancelPosition extends StrategyImpl {
     }
 
 	return verified;
+	}
+
+	@Override
+	public void init(long companyId) {
+		// TODO Auto-generated method stub
+		super.init(companyId);
 	}
 	
 }

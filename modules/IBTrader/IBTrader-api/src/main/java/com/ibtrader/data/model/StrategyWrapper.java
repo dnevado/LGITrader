@@ -76,6 +76,7 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 		attributes.put("can_override_params", getCan_override_params());
 		attributes.put("className", getClassName());
 		attributes.put("userId", getUserId());
+		attributes.put("visible", getVisible());
 
 		return attributes;
 	}
@@ -184,6 +185,12 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 		if (userId != null) {
 			setUserId(userId);
 		}
+
+		Boolean visible = (Boolean)attributes.get("visible");
+
+		if (visible != null) {
+			setVisible(visible);
+		}
 	}
 
 	@Override
@@ -219,6 +226,16 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 	@Override
 	public boolean getCan_override_params() {
 		return _strategy.getCan_override_params();
+	}
+
+	/**
+	* Returns the visible of this strategy.
+	*
+	* @return the visible of this strategy
+	*/
+	@Override
+	public boolean getVisible() {
+		return _strategy.getVisible();
 	}
 
 	/**
@@ -339,6 +356,16 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 	@Override
 	public boolean isVerified() {
 		return _strategy.isVerified();
+	}
+
+	/**
+	* Returns <code>true</code> if this strategy is visible.
+	*
+	* @return <code>true</code> if this strategy is visible; <code>false</code> otherwise
+	*/
+	@Override
+	public boolean isVisible() {
+		return _strategy.isVisible();
 	}
 
 	@Override
@@ -946,6 +973,16 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 	@Override
 	public void setVerified(boolean verified) {
 		_strategy.setVerified(verified);
+	}
+
+	/**
+	* Sets whether this strategy is visible.
+	*
+	* @param visible the visible of this strategy
+	*/
+	@Override
+	public void setVisible(boolean visible) {
+		_strategy.setVisible(visible);
 	}
 
 	@Override

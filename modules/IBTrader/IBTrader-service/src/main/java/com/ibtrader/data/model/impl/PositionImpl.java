@@ -42,6 +42,16 @@ public class PositionImpl extends PositionBaseImpl {
 		
 		return !this.getState().equals(PositionStates.status.SELL_OK.toString()); 
 	}
+	/* COMPRADA Y NO SALIDA */
+	public boolean IsCancelable() {
+		
+		return (this.IsPendingOut() && this.getPositionId_tws_out()>0) || (this.IsPendingIn() && this.getPositionId_tws_in()>0);  
+	}
+	/* COMPRADA Y NO SALIDA */
+	public boolean IsCloseable() {
+		
+		return this.getState().equals(PositionStates.status.BUY_OK.toString()) && this.getState_out().equals("");
+	}
 	/* PENDIENTE DE ENTRAR, NO ESTA COMPRADA, NI VENDIDA    */
 	public boolean IsPendingIn() {
 		return this.getDate_real_in()==null &&   !this.getState().equals(PositionStates.status.BUY_OK.toString()); 

@@ -17,4 +17,4 @@ Share _share = ShareLocalServiceUtil.fetchShare(ShareId);
 
 %>
   
-<%=_share.getName() %>(<%=_share.getSymbol()%>)
+<%=_share.getSymbol()%>

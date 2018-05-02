@@ -25,6 +25,8 @@ import com.ibtrader.data.service.PositionLocalServiceUtil;
 import com.ibtrader.data.service.base.PositionLocalServiceBaseImpl;
 import com.ibtrader.data.service.persistence.PositionPersistence;
 import com.ibtrader.util.ConfigKeys;
+import com.ibtrader.util.PositionStates;
+import com.ibtrader.util.Utilities;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.OrderFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.Projection;
@@ -35,6 +37,7 @@ import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 
 
 /**
@@ -59,10 +62,23 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 	 */
 	
 	
-	public List<Position> findByCancelCompanyGroup(long companyId, long groupId, long pendingcancelled)
+	public List<Position> findByCloseCompanyGroup(long companyId, long groupId, boolean forceclose)
 	{	
 		
-		return  getPositionPersistence().findByCancelCompanyGroup(companyId, groupId, pendingcancelled);
+		DynamicQuery _DQ = PositionLocalServiceUtil.dynamicQuery();
+
+		_DQ.add(RestrictionsFactoryUtil.eq("companyId", companyId));
+		_DQ.add(RestrictionsFactoryUtil.eq("groupId", groupId));
+		_DQ.add(RestrictionsFactoryUtil.eq("forceclose", forceclose));		
+		_DQ.add(RestrictionsFactoryUtil.ne("state", PositionStates.status.SELL_OK.toString()));		
+		return PositionLocalServiceUtil.dynamicQuery(_DQ);
+	}
+	
+	
+	public List<Position> findByCancelShareCompanyGroup(long companyId, long groupId, long pendingcancelled, long shareId)
+	{	
+		
+		return  getPositionPersistence().findByCancelShareCompanyGroup(companyId, groupId, pendingcancelled,shareId);
 	}
 	
 	
@@ -213,7 +229,7 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 	public Position  findPositionToExit(long groupId, long companyId, long shareId)
 	{	
 		Position _rPosition = null; 
-		List<Position> _lPosition =getPositionPersistence().findByPositionShareStateDatesRealOut(groupId, companyId, shareId, com.ibtrader.util.PositionStates.status.BUY_OK.toString(),null,null);		
+		List<Position> _lPosition = getPositionPersistence().findByPositionShareStateDatesRealOut(groupId, companyId, shareId, com.ibtrader.util.PositionStates.status.BUY_OK.toString(),null,null);		
 		if (!_lPosition.isEmpty() && _lPosition.size()>0)
 		{
 			_rPosition = _lPosition.get(0);
@@ -221,7 +237,46 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 		return _rPosition;
 	}
 	
+	/* YO GENERARIA UN JSON DE DATOS DE VUELTA */
+	/*
+	 *		    OPERACIONES --> OPERACIONES POR TIPO 
+		        MARGENBENEFICIO --> MARGEN 
+		        BENEFICIO --> TOTAL BENEFIOCIO 
+			    INVERTIDO  --> TOTAL INVERTIDO 
+			    TIPO --> OPERACION(non-Javadoc)
+	 * 
+	 */
+	public JSONArray findPositionClosedResults(Date from, Date to,long groupId, long companyId)
+	{
+		//return realtimeFinder.findSimpleMobileAvgGroupByPeriods( shareId, companyId,  groupId,from, to, mobileAvgDates);
+		List lResults = null;
+		lResults = positionFinder.getPositionClosedResults(from, to,groupId,companyId); 
+		String serilizeString=null;				
+		JSONArray positionResults = JSONFactoryUtil.createJSONArray();
 	
+		if (lResults!=null && !lResults.isEmpty())
+		{
+			for (Object oPosition : lResults)
+			{
+				//[1,3,23,545,23]
+				serilizeString=JSONFactoryUtil.serialize(oPosition);
+				serilizeString = serilizeString.replace("[","").replace("]","");
+				String[] arrayData = serilizeString.split(",");
+				
+				JSONObject positionResult = JSONFactoryUtil.createJSONObject();
+				positionResult.put("OPERACIONES", arrayData[0]);
+				positionResult.put("MARGENBENEFICIO", Utilities.RoundPrice(Double.parseDouble(arrayData[1])));
+				positionResult.put("BENEFICIO", Utilities.RoundPrice(Double.parseDouble(arrayData[2])));
+				positionResult.put("INVERTIDO", Utilities.RoundPrice(Double.parseDouble(arrayData[3])));
+				positionResult.put("TIPO", arrayData[4]);
+				
+				positionResults.put(positionResult);
+				
+				
+			}
+		}
+		return 	positionResults;
+	}
 	
 	
 

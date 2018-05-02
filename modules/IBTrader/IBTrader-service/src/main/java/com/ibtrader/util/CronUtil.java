@@ -42,6 +42,7 @@ import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.OrganizationLocalServiceUtil;
 import com.ibtrader.interactive.TIMApiGITrader_NOVALE;
 import com.ibtrader.interactive.TIMApiWrapper;
+import com.ibtrader.strategy.IBStrategyCancelPosition;
 
 
 /* OJOOOOOOOOO 
@@ -516,9 +517,13 @@ public class CronUtil {
 						    							if (positionId!=-1) // no hay error 
 						    							{	
 						    								wrapper.set_ibtarget_share(oShare);
-						    							//	wrapper.setStrategyshare(oStrategyShare);
-						    							// 2. ABRIMOS OPERACION CON EL ORDER ESPECIFICAADO EN EL METHOD execute 
-						    								wrapper.openOrder(_strategyImpl.getTargetContract(), _strategyImpl.getTargetOrder(),_strategyImpl.getChildsOrder(),null,positionId);
+						    								//	wrapper.setStrategyshare(oStrategyShare);
+						    								//  1. ABRIMOS CANCELACION EN SU CASO 
+ 						    							    //  2. ABRIMOS OPERACION CON EL ORDER ESPECIFICAADO EN EL METHOD execute
+						    								if (_strategyImpl.getClass().getName().equals(IBStrategyCancelPosition.class.getName()))
+						    									wrapper.cancelOrder(_strategyImpl.getTargetContract(), _strategyImpl.getTargetOrder(),_strategyImpl.getChildsOrder(),null,positionId);
+						    								else						    									
+						    									wrapper.openOrder(_strategyImpl.getTargetContract(), _strategyImpl.getTargetOrder(),_strategyImpl.getChildsOrder(),null,positionId);
 						    								/* LA RAZON ES QUE ES QUE METE DOS O TRES OPERACIONES A LA VEZ A PESAR DE TENER LAS VALIDACIONES 
 						    								 * SEGUNDO PARO */
 						    							//	Thread.sleep(1000);

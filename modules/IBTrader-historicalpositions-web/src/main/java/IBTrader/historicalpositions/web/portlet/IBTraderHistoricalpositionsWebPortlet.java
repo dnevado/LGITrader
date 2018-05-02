@@ -10,6 +10,7 @@ import com.ibtrader.data.service.ShareLocalService;
 import com.ibtrader.util.Utilities;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
@@ -23,6 +24,7 @@ import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
@@ -68,40 +70,70 @@ public class IBTraderHistoricalpositionsWebPortlet extends MVCPortlet {
 	ThemeDisplay themeDisplay;
 	private static final Log   _log = LogFactoryUtil.getLog(IBTraderHistoricalpositionsWebPortlet.class);
 	/* SACAMOS TODAS LAS POSICIONES HISTORICAS, DIA n -1 */
+	
+	private Date _DateINI = null;
+	private Date _DateEND = null;
+	
+	/* lista resultados */
+	 List<Position> _lPosition  = null;
+	/* totales en json */
+	 JSONArray results = null;
+
+	
+	
+	private void getInitialDateFilter(RenderRequest renderRequest, RenderResponse renderResponse)
+	{
+		themeDisplay = (ThemeDisplay)renderRequest.getAttribute(WebKeys.THEME_DISPLAY); 
+		 
+		 
+		 _DateINI = Utilities.getDate(themeDisplay.getUser());
+		 _DateEND = Utilities.getDate(themeDisplay.getUser());
+		 
+		 /* OPERACIONES DEL DIA ANTERIOR, SUPUESTAMENTE FINALIZADAS,
+		  * PONEMOS UN A�O DE 2017*/
+		 Calendar _cINI = Calendar.getInstance();
+		
+		 _cINI.add(Calendar.DATE, -1);  // DOS DIAS ATRAS 		 
+		 _DateINI.setTime(_cINI.getTimeInMillis());
+		 _DateINI.setHours(0);
+		 _DateINI.setMinutes(0);
+		 _DateINI.setSeconds(0);
+		
+		 
+		 _DateEND.setHours(23);
+		 _DateEND.setMinutes(59);
+		 _DateEND.setSeconds(59);
+	}
+	
+	
+	private void getSearchResults()
+	{
+		
+		 /* lista resultados */
+		_lPosition  = _positionLocalService.findByCompanyGroupDate(themeDisplay.getCompanyId(),themeDisplay.getScopeGroupId(), _DateINI,_DateEND );
+		/* totales en json */
+		results = _positionLocalService.findPositionClosedResults(_DateINI, _DateEND, themeDisplay.getScopeGroupId(), themeDisplay.getCompanyId());
+		
+	}
+
 	@SuppressWarnings("deprecation")
 	@Override
 	public void doView(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
 		// TODO Auto-generated method stub
 		
-		themeDisplay = (ThemeDisplay)renderRequest.getAttribute(WebKeys.THEME_DISPLAY); 
-				 
+		/* cuando envia datos de fechas en el action */
+		if (renderRequest.getAttribute("_DateINI")!=null)
+			_DateINI = (Date) renderRequest.getAttribute("_DateINI"); 
+		if (renderRequest.getAttribute("_DateEND")!=null)
+			_DateEND = (Date) renderRequest.getAttribute("_DateEND");
 		 
-		 Date DateINI = Utilities.getDate(themeDisplay.getUser());
-		 Date DateEND = Utilities.getDate(themeDisplay.getUser());;
-		 
-		 /* OPERACIONES DEL DIA ANTERIOR, SUPUESTAMENTE FINALIZADAS,
-		  * PONEMOS UN A�O DE 2017*/
-		 Calendar _cINI = Calendar.getInstance();
-		 DateINI.setHours(0);
-		 DateINI.setMinutes(0);
-		 DateINI.setSeconds(0);
-		 _cINI.setTimeInMillis(DateINI.getTime());
-		 _cINI.set(Calendar.YEAR,2017); 
-		 _cINI.set(Calendar.MONTH,0);  // ENERO 2017
-		 DateINI.setTime(_cINI.getTimeInMillis());
+		if (Validator.isNull(_DateINI))
+			getInitialDateFilter(renderRequest, renderResponse);
 		
-		 
-		 DateEND.setHours(23);
-		 DateEND.setMinutes(59);
-		 DateEND.setSeconds(59);
-		 _cINI.setTimeInMillis(DateEND.getTime());
-		 _cINI.add(Calendar.DATE,-1);
-		 
-		 DateEND.setTime(_cINI.getTimeInMillis());		 
-		 
-		 List<Position> _lPosition  = _positionLocalService.findByCompanyGroupDate(themeDisplay.getCompanyId(),themeDisplay.getScopeGroupId(), DateINI,DateEND );
-				
+		getSearchResults();
+		
 		renderRequest.setAttribute("_lPosition", _lPosition);
+		renderRequest.setAttribute("_jsonResults", results);
 		
 		PortletURL iteratorURL = renderResponse.createRenderURL();
 
@@ -111,7 +143,13 @@ public class IBTraderHistoricalpositionsWebPortlet extends MVCPortlet {
 		searchContainer.setResults(ListUtil.subList(_lPosition, searchContainer.getStart(), searchContainer.getEnd()));
 		searchContainer.setTotal(_lPosition.size());
 		renderRequest.setAttribute("searchPosition" , searchContainer); 
+		
 		renderRequest.setAttribute("iteratorURL" , iteratorURL);
+		renderRequest.setAttribute("iteratorURL" , iteratorURL);
+		renderRequest.setAttribute("_DateINI" , _DateINI);
+		renderRequest.setAttribute("_DateEND" , _DateEND);
+		
+		
 		
 		super.doView(renderRequest, renderResponse);
 
@@ -166,6 +204,43 @@ public class IBTraderHistoricalpositionsWebPortlet extends MVCPortlet {
 		actionResponse.setRenderParameter("mvcPath", "/position_detail.jsp");
 		actionResponse.setRenderParameter("positionId", String.valueOf(positionId));
 		actionResponse.setRenderParameter("redirect", String.valueOf(redirect));		
+	    
+	}
+	
+	public void searchPosition(ActionRequest actionRequest, ActionResponse actionResponse)
+	{
+		themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
+
+		  // Getting the Date Range
+		int fromDay = ParamUtil.getInteger(actionRequest, "startDateDay");
+		int fromMonth = ParamUtil.getInteger(actionRequest, "startDateMonth");
+		int fromYear = ParamUtil.getInteger(actionRequest, "startDateYear");
+		int  toDay = ParamUtil.getInteger(actionRequest, "endDateDay");
+		int  toMonth = ParamUtil.getInteger(actionRequest, "endDateMonth");
+		int  toYear = ParamUtil.getInteger(actionRequest, "endDateYear");
+		
+		try {
+		     _DateINI = PortalUtil.getDate(fromMonth, fromDay, fromYear);
+			 _DateEND = PortalUtil.getDate(toMonth, toDay, toYear);
+			
+			 _DateINI.setHours(0);
+			 _DateINI.setMinutes(0);
+			 _DateINI.setSeconds(0);
+			 
+			 _DateEND.setHours(0);
+			 _DateEND.setMinutes(0);
+			 _DateEND.setSeconds(0);
+			
+			 actionRequest.setAttribute("_DateINI", _DateINI); 
+			 actionRequest.setAttribute("_DateEND", _DateEND); 
+
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();		
+	    }
+		
+		
 	    
 	}
 	

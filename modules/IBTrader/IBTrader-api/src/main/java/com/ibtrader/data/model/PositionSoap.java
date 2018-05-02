@@ -59,8 +59,6 @@ public class PositionSoap implements Serializable {
 		soapModel.setDate_out(model.getDate_out());
 		soapModel.setDate_real_out(model.getDate_real_out());
 		soapModel.setShare_number(model.getShare_number());
-		soapModel.setShare_number_to_trade(model.getShare_number_to_trade());
-		soapModel.setShare_number_traded(model.getShare_number_traded());
 		soapModel.setClientId_in(model.getClientId_in());
 		soapModel.setClientId_out(model.getClientId_out());
 		soapModel.setStrategy_in(model.getStrategy_in());
@@ -72,9 +70,9 @@ public class PositionSoap implements Serializable {
 		soapModel.setPercentual_trailling_stop_lost(model.getPercentual_trailling_stop_lost());
 		soapModel.setPricetrailling_stop_lost(model.getPricetrailling_stop_lost());
 		soapModel.setPendingcancelled(model.getPendingcancelled());
-		soapModel.setTrading_data_operations(model.getTrading_data_operations());
 		soapModel.setSimulation_mode(model.getSimulation_mode());
 		soapModel.setTotalcommision(model.getTotalcommision());
+		soapModel.setForceclose(model.getForceclose());
 
 		return soapModel;
 	}
@@ -327,22 +325,6 @@ public class PositionSoap implements Serializable {
 		_share_number = share_number;
 	}
 
-	public long getShare_number_to_trade() {
-		return _share_number_to_trade;
-	}
-
-	public void setShare_number_to_trade(long share_number_to_trade) {
-		_share_number_to_trade = share_number_to_trade;
-	}
-
-	public long getShare_number_traded() {
-		return _share_number_traded;
-	}
-
-	public void setShare_number_traded(long share_number_traded) {
-		_share_number_traded = share_number_traded;
-	}
-
 	public long getClientId_in() {
 		return _clientId_in;
 	}
@@ -432,14 +414,6 @@ public class PositionSoap implements Serializable {
 		_pendingcancelled = pendingcancelled;
 	}
 
-	public String getTrading_data_operations() {
-		return _trading_data_operations;
-	}
-
-	public void setTrading_data_operations(String trading_data_operations) {
-		_trading_data_operations = trading_data_operations;
-	}
-
 	public boolean getSimulation_mode() {
 		return _simulation_mode;
 	}
@@ -458,6 +432,18 @@ public class PositionSoap implements Serializable {
 
 	public void setTotalcommision(double totalcommision) {
 		_totalcommision = totalcommision;
+	}
+
+	public boolean getForceclose() {
+		return _forceclose;
+	}
+
+	public boolean isForceclose() {
+		return _forceclose;
+	}
+
+	public void setForceclose(boolean forceclose) {
+		_forceclose = forceclose;
 	}
 
 	private String _uuid;
@@ -485,8 +471,6 @@ public class PositionSoap implements Serializable {
 	private Date _date_out;
 	private Date _date_real_out;
 	private long _share_number;
-	private long _share_number_to_trade;
-	private long _share_number_traded;
 	private long _clientId_in;
 	private long _clientId_out;
 	private String _strategy_in;
@@ -498,7 +482,7 @@ public class PositionSoap implements Serializable {
 	private double _percentual_trailling_stop_lost;
 	private double _pricetrailling_stop_lost;
 	private long _pendingcancelled;
-	private String _trading_data_operations;
 	private boolean _simulation_mode;
 	private double _totalcommision;
+	private boolean _forceclose;
 }

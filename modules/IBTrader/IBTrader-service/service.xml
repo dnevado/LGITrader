@@ -70,6 +70,7 @@
 		<column name="shareId" 	   type="long" />
 		
 		<column name="active" 	   type="boolean" /> <!--  defecto false  -->
+		<column name="visible" 	   type="boolean" /> <!--  LAS DEL CORE NO SE PUEDEN ADMINISTRAR   -->
 		
 		<!-- References -->
 		<!-- strategyparamsoverride VALOR EN JSON PARA ALMACENAR LOS PARAMETROS SOBREESCRITOS DE LA ESTRATEGIA GENERAL  -->
@@ -113,6 +114,7 @@
 		<column name="can_override_params" type="boolean" /> <!--  SI PUEDE SOBREESCRIBIR DATOS, P.E. STOPLOST / PROFIT NO, ACTUAN SOBRE LAS ESTRATEGIAS DE ENTRADA -->
 		<column name="className" type="String" />
 		<column name="userId" type="long" />
+		<column name="visible" 	   type="boolean" /> <!--  LAS DEL CORE NO SE PUEDEN ADMINISTRAR   -->
 
 
 
@@ -407,9 +409,7 @@
 		<column name="date_out" type="Date" />
 		<column name="date_real_out" type="Date" />
 		
-		<column name="share_number" type="long" />
-		<column name="share_number_to_trade" type="long" />
-		<column name="share_number_traded" type="long" />
+		<column name="share_number" type="long" />	
 		
 		<column name="clientId_in" type="long" />
 		<column name="clientId_out" type="long" />
@@ -427,10 +427,11 @@
 		
 		
 		
-		<column name="pendingcancelled" type="long" />
-		<column name="trading_data_operations" type="String" />
+		<column name="pendingcancelled" type="long" />		
 		<column name="simulation_mode" type="boolean" />
 		<column name="totalcommision" type="double" />
+		<column name="forceclose" type="boolean" />
+		
 		
 		<!-- /* PARA SACAR LA ULTIMA POSITION ID */ -->
 		<order>
@@ -478,10 +479,11 @@
 			<finder-column name="companyId"/>		
 			<finder-column name="shareId" />						
 		</finder>
-		<finder name="CancelCompanyGroup" return-type="Collection">		
+		<finder name="CancelShareCompanyGroup" return-type="Collection">		
 				<finder-column name="companyId"/>
 				<finder-column name="groupId"/>	
-				<finder-column name="pendingcancelled" />								
+				<finder-column name="pendingcancelled" />
+				<finder-column name="shareId" />										
 		</finder>
 		<finder name="CompanyGroup" return-type="Collection">		
 				<finder-column name="companyId"/>

@@ -65,7 +65,7 @@ public class StrategyCacheModel implements CacheModel<Strategy>, Externalizable 
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(35);
+		StringBundler sb = new StringBundler(37);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -101,6 +101,8 @@ public class StrategyCacheModel implements CacheModel<Strategy>, Externalizable 
 		sb.append(className);
 		sb.append(", userId=");
 		sb.append(userId);
+		sb.append(", visible=");
+		sb.append(visible);
 		sb.append("}");
 
 		return sb.toString();
@@ -184,6 +186,7 @@ public class StrategyCacheModel implements CacheModel<Strategy>, Externalizable 
 		}
 
 		strategyImpl.setUserId(userId);
+		strategyImpl.setVisible(visible);
 
 		strategyImpl.resetOriginalValues();
 
@@ -217,6 +220,8 @@ public class StrategyCacheModel implements CacheModel<Strategy>, Externalizable 
 		className = objectInput.readUTF();
 
 		userId = objectInput.readLong();
+
+		visible = objectInput.readBoolean();
 	}
 
 	@Override
@@ -284,6 +289,8 @@ public class StrategyCacheModel implements CacheModel<Strategy>, Externalizable 
 		}
 
 		objectOutput.writeLong(userId);
+
+		objectOutput.writeBoolean(visible);
 	}
 
 	public String uuid;
@@ -303,4 +310,5 @@ public class StrategyCacheModel implements CacheModel<Strategy>, Externalizable 
 	public boolean can_override_params;
 	public String className;
 	public long userId;
+	public boolean visible;
 }

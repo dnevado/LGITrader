@@ -65,7 +65,7 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(83);
+		StringBundler sb = new StringBundler(79);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -117,10 +117,6 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 		sb.append(date_real_out);
 		sb.append(", share_number=");
 		sb.append(share_number);
-		sb.append(", share_number_to_trade=");
-		sb.append(share_number_to_trade);
-		sb.append(", share_number_traded=");
-		sb.append(share_number_traded);
 		sb.append(", clientId_in=");
 		sb.append(clientId_in);
 		sb.append(", clientId_out=");
@@ -143,12 +139,12 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 		sb.append(pricetrailling_stop_lost);
 		sb.append(", pendingcancelled=");
 		sb.append(pendingcancelled);
-		sb.append(", trading_data_operations=");
-		sb.append(trading_data_operations);
 		sb.append(", simulation_mode=");
 		sb.append(simulation_mode);
 		sb.append(", totalcommision=");
 		sb.append(totalcommision);
+		sb.append(", forceclose=");
+		sb.append(forceclose);
 		sb.append("}");
 
 		return sb.toString();
@@ -259,8 +255,6 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 		}
 
 		positionImpl.setShare_number(share_number);
-		positionImpl.setShare_number_to_trade(share_number_to_trade);
-		positionImpl.setShare_number_traded(share_number_traded);
 		positionImpl.setClientId_in(clientId_in);
 		positionImpl.setClientId_out(clientId_out);
 
@@ -285,16 +279,9 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 		positionImpl.setPercentual_trailling_stop_lost(percentual_trailling_stop_lost);
 		positionImpl.setPricetrailling_stop_lost(pricetrailling_stop_lost);
 		positionImpl.setPendingcancelled(pendingcancelled);
-
-		if (trading_data_operations == null) {
-			positionImpl.setTrading_data_operations(StringPool.BLANK);
-		}
-		else {
-			positionImpl.setTrading_data_operations(trading_data_operations);
-		}
-
 		positionImpl.setSimulation_mode(simulation_mode);
 		positionImpl.setTotalcommision(totalcommision);
+		positionImpl.setForceclose(forceclose);
 
 		positionImpl.resetOriginalValues();
 
@@ -342,10 +329,6 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 
 		share_number = objectInput.readLong();
 
-		share_number_to_trade = objectInput.readLong();
-
-		share_number_traded = objectInput.readLong();
-
 		clientId_in = objectInput.readLong();
 
 		clientId_out = objectInput.readLong();
@@ -365,11 +348,12 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 		pricetrailling_stop_lost = objectInput.readDouble();
 
 		pendingcancelled = objectInput.readLong();
-		trading_data_operations = objectInput.readUTF();
 
 		simulation_mode = objectInput.readBoolean();
 
 		totalcommision = objectInput.readDouble();
+
+		forceclose = objectInput.readBoolean();
 	}
 
 	@Override
@@ -449,10 +433,6 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 
 		objectOutput.writeLong(share_number);
 
-		objectOutput.writeLong(share_number_to_trade);
-
-		objectOutput.writeLong(share_number_traded);
-
 		objectOutput.writeLong(clientId_in);
 
 		objectOutput.writeLong(clientId_out);
@@ -485,16 +465,11 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 
 		objectOutput.writeLong(pendingcancelled);
 
-		if (trading_data_operations == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
-		}
-		else {
-			objectOutput.writeUTF(trading_data_operations);
-		}
-
 		objectOutput.writeBoolean(simulation_mode);
 
 		objectOutput.writeDouble(totalcommision);
+
+		objectOutput.writeBoolean(forceclose);
 	}
 
 	public String uuid;
@@ -522,8 +497,6 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 	public long date_out;
 	public long date_real_out;
 	public long share_number;
-	public long share_number_to_trade;
-	public long share_number_traded;
 	public long clientId_in;
 	public long clientId_out;
 	public String strategy_in;
@@ -535,7 +508,7 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 	public double percentual_trailling_stop_lost;
 	public double pricetrailling_stop_lost;
 	public long pendingcancelled;
-	public String trading_data_operations;
 	public boolean simulation_mode;
 	public double totalcommision;
+	public boolean forceclose;
 }

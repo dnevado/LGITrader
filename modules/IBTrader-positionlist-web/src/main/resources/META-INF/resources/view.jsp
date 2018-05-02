@@ -18,11 +18,6 @@ portletDisplay.setURLBack(redirect);
 %>
 
 
-<portlet:actionURL   name="delete" var="deleteURL">    
-    <portlet:param name="mvcPath" value="/edit_strategy.jsp" />
-     <portlet:param name="redirect" value="<%=themeDisplay.getURLCurrent()%>"/>
-</portlet:actionURL>
-
 <portlet:resourceURL var="PositionListResourceURL">
     <portlet:param name="redirect" value="<%=themeDisplay.getURLCurrent()%>"/>
 </portlet:resourceURL>

@@ -27,6 +27,7 @@ import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Projection;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.model.PersistedModel;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
@@ -173,6 +174,9 @@ public interface PositionLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery();
 
+	public JSONArray findPositionClosedResults(Date from, Date to,
+		long groupId, long companyId);
+
 	/**
 	* @throws PortalException
 	*/
@@ -239,8 +243,11 @@ public interface PositionLocalService extends BaseLocalService,
 	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
 		int end, OrderByComparator<T> orderByComparator);
 
-	public List<Position> findByCancelCompanyGroup(long companyId,
-		long groupId, long pendingcancelled);
+	public List<Position> findByCancelShareCompanyGroup(long companyId,
+		long groupId, long pendingcancelled, long shareId);
+
+	public List<Position> findByCloseCompanyGroup(long companyId, long groupId,
+		boolean forceclose);
 
 	public List<Position> findByCompanyGroupDate(long companyId, long groupId,
 		Date start_date_in, Date end_date_in);
