@@ -177,6 +177,9 @@ public interface PositionLocalService extends BaseLocalService,
 	public JSONArray findPositionClosedResults(Date from, Date to,
 		long groupId, long companyId);
 
+	public JSONArray findPositionOpenResults(Date to, long groupId,
+		long companyId);
+
 	/**
 	* @throws PortalException
 	*/
@@ -254,6 +257,9 @@ public interface PositionLocalService extends BaseLocalService,
 
 	public List<Position> findByCompanyGroupShare(long companyId, long groupId,
 		long share);
+
+	public List<Position> findIntradiaByCompanyGroupDate(long companyId,
+		long groupId, Date end_date_in);
 
 	/**
 	* Returns a range of all the positions.

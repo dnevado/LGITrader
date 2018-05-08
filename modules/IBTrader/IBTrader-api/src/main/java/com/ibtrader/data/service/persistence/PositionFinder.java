@@ -22,6 +22,12 @@ import aQute.bnd.annotation.ProviderType;
  */
 @ProviderType
 public interface PositionFinder {
+	public java.util.List<com.ibtrader.data.model.Position> getIntradiaPositions(
+		java.util.Date to, long groupId, long companyId);
+
 	public java.util.List getPositionClosedResults(java.util.Date from,
 		java.util.Date to, long groupId, long companyId);
+
+	public java.util.List getPositionOpenResults(java.util.Date to,
+		long groupId, long companyId);
 }

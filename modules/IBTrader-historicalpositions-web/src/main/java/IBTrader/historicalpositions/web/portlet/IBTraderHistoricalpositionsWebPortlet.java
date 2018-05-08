@@ -59,6 +59,7 @@ import org.osgi.service.component.annotations.Reference;
 		"javax.portlet.resource-bundle=content.Language",
         "com.liferay.portlet.scopeable=true",
         "javax.portlet.expiration-cache=0",
+        "javax.portlet.init-param.add-process-action-success-action=false",
         "javax.portlet.supports.mime-type=text/html",
 		"javax.portlet.security-role-ref=power-user,user"
 		

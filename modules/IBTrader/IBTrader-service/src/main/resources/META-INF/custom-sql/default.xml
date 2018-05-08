@@ -96,6 +96,36 @@
      ]]>
     </sql>
     
+     <sql id="com.ibtrader.data.service.persistence.PositionFinder.getPositionOpenResults">
+    <![CDATA[
+    
+			    SELECT  
+						(sum(beneficio*acciones) / SUM(PRECIOENTRADA*acciones)*100)  MARGENBENEFICIO, 
+						 sum(beneficio*acciones) BENEFICIO
+				FROM
+				(	SELECT case type_
+							 when 'BUY' then price_real_out - price_real_in
+							 when 'SELL' then price_real_in - price_real_out
+					       END BENEFICIO,
+					       share_number acciones,
+					       type_ tipo,
+					       price_real_in PRECIOENTRADA
+					FROM IBTrader_Position
+					WHERE
+						(
+							(IBTrader_Position.date_real_out>=?)
+							OR
+							(IBTrader_Position.date_real_out) IS NULL
+						)						
+						AND (IBTrader_Position.companyid=?)
+	            		AND (IBTrader_Position.groupid=?)    
+				)	 rt 
+				
+	 
+     ]]>
+    </sql>
+    
+    
      <sql id="com.ibtrader.data.service.persistence.PositionFinder.getPositionClosedResults">
     <![CDATA[
     
@@ -118,6 +148,28 @@
 	            		AND (IBTrader_Position.groupid=?)         	
 				)	 rt 
 				GROUP BY tipo
+	 
+     ]]>
+    </sql>
+    
+    
+    <!--  POSICIONES ABIERTAS SIN CERRAR O OPERACIONES DEL DIA -->
+     <sql id="com.ibtrader.data.service.persistence.PositionFinder.getIntradiaPositions">
+    <![CDATA[
+    				SELECT 	
+    					IBTrader_Position.*
+					FROM 
+						IBTrader_Position
+					WHERE
+						(
+							(IBTrader_Position.date_real_out>=?)
+							OR
+							(IBTrader_Position.date_real_out) IS NULL
+						)						
+						AND (IBTrader_Position.companyid=?)
+	            		AND (IBTrader_Position.groupid=?)         	
+				
+					ORDER BY date_real_in DESC
 	 
      ]]>
     </sql>

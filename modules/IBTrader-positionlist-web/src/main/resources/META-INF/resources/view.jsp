@@ -20,7 +20,10 @@ portletDisplay.setURLBack(redirect);
 
 <portlet:resourceURL var="PositionListResourceURL">
     <portlet:param name="redirect" value="<%=themeDisplay.getURLCurrent()%>"/>
+    <portlet:param name="positionList" value="1"/>
 </portlet:resourceURL>
+
+
 
 <%	ThemeDisplay _themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY); %> 
 
@@ -42,32 +45,34 @@ portletDisplay.setURLBack(redirect);
 	    window.location.href = url;
 	}
 	
+
+	
+	
 	function <portlet:namespace/>CallBackRefreshPosition() {
 	 
 		/* CREACIOM DE UN RENDER Y UN ICON PARA 
 		1.CERRAR LA POSICION EN UN MOMENTO DADO
 		*/
+		
+		
+		/* LISTA */
 		AUI().use("liferay-portlet-url", function(a) {
 			var actionURL = Liferay.PortletURL.createActionURL();
 			actionURL.setWindowState("<%=LiferayWindowState.NORMAL.toString() %>");
 			actionURL.setPortletMode("<%=LiferayPortletMode.VIEW %>");
-			actionURL.setParameter("PositionId", "-1");		
+			actionURL.setParameter("positionList", "1");		
 			actionURL.setParameter("action","DeletePosition");
 			actionURL.setParameter("redirect",'<%=redirect%>');
-			actionURL.setPortletId("<%=_themeDisplay.getPortletDisplay().getId() %>");
+			actionURL.setPortletId("<%=_themeDisplay.getPortletDisplay().getId() %>");			
 			
 			console.log("do some stuff DOM changes ");
 			console.log(actionURL);
 			
 			});
 
+		/* RESULTADOS */
+		
 	
-		
-		
-		
-		
-		
-		
 	} 
 
 	function <portlet:namespace/>RefreshPosition() {
@@ -75,6 +80,8 @@ portletDisplay.setURLBack(redirect);
 		$.fn.dataTable.ext.errMode = 'none';	
 		console.log("adding setInterval 4 seconds");
 		setInterval( function () {tPositions.ajax.reload(<portlet:namespace/>CallBackRefreshPosition());}, 4000 );
+		setInterval( function () {<portlet:namespace/>RefreshResults()}, 4000);
+
 	} 
 
 	
@@ -145,6 +152,8 @@ portletDisplay.setURLBack(redirect);
 </script>
 
 <div class="container-fluid-1280">
+<aui:row>
+<aui:col span="9">
 <table class="table responsive table-striped table-bordered table-hover"  id="positions">
        <thead>
             <tr>
@@ -165,4 +174,7 @@ portletDisplay.setURLBack(redirect);
             </tr>
         </thead>
 </table>
+</aui:col>
+<aui:col span="3"><jsp:include page="/position_graph_results.jsp"/></aui:col>
+</aui:row>
 </div>

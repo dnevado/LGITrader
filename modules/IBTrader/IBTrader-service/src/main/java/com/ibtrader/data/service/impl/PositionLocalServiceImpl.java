@@ -81,10 +81,9 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 		return  getPositionPersistence().findByCancelShareCompanyGroup(companyId, groupId, pendingcancelled,shareId);
 	}
 	
-	
-	public List<Position> findByCompanyGroupDate(long companyId, long groupId, Date start_date_in,Date end_date_in)
+	public List<Position> findByCompanyGroupDate(long companyId, long groupId, Date start_date_in , Date end_date_in)
 	{	
-		DynamicQuery _DQ = PositionLocalServiceUtil.dynamicQuery();
+		 DynamicQuery _DQ = PositionLocalServiceUtil.dynamicQuery();
 
 		_DQ.add(RestrictionsFactoryUtil.eq("companyId", companyId));
 		_DQ.add(RestrictionsFactoryUtil.eq("groupId", groupId));
@@ -92,9 +91,27 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 		_DQ.add(RestrictionsFactoryUtil.ge("date_in", start_date_in));
 		_DQ.addOrder(OrderFactoryUtil.desc("date_in"));
 		
-		//List<Market>  = MarketLocalServiceUtil.dynamicQuery(_DQ);
+		
 		
 		return PositionLocalServiceUtil.dynamicQuery(_DQ);
+	}
+	
+	
+	public List<Position> findIntradiaByCompanyGroupDate(long companyId, long groupId, Date end_date_in)
+	{	
+		/* DynamicQuery _DQ = PositionLocalServiceUtil.dynamicQuery();
+
+		_DQ.add(RestrictionsFactoryUtil.eq("companyId", companyId));
+		_DQ.add(RestrictionsFactoryUtil.eq("groupId", groupId));
+		 _DQ.add(RestrictionsFactoryUtil.le("date_in", end_date_in));
+		_DQ.add(RestrictionsFactoryUtil.ge("date_in", start_date_in));
+		_DQ.addOrder(OrderFactoryUtil.desc("date_in"));
+		*/
+		
+		return positionFinder.getIntradiaPositions(end_date_in, groupId, companyId);
+		
+		//List<Market>  = MarketLocalServiceUtil.dynamicQuery(_DQ);
+		
 		
 		//return  getPositionPersistence().findByCompanyDate(companyId,start_date_in,end_date_in);
 	}
@@ -271,6 +288,38 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 				positionResult.put("TIPO", arrayData[4]);
 				
 				positionResults.put(positionResult);
+				
+				
+			}
+		}
+		return 	positionResults;
+	}
+	public JSONArray findPositionOpenResults(Date to,long groupId, long companyId)
+	{
+		//return realtimeFinder.findSimpleMobileAvgGroupByPeriods( shareId, companyId,  groupId,from, to, mobileAvgDates);
+		List lResults = null;
+		lResults = positionFinder.getPositionOpenResults(to,groupId,companyId); 
+		String serilizeString=null;				
+		JSONArray positionResults = JSONFactoryUtil.createJSONArray();
+	
+		if (lResults!=null && !lResults.isEmpty())
+		{
+			for (Object oPosition : lResults)
+			{
+				//[1,3,23,545,23]
+				serilizeString=JSONFactoryUtil.serialize(oPosition);
+				serilizeString = serilizeString.replace("[","").replace("]","");
+				String[] arrayData = serilizeString.split(",");
+				
+				JSONObject positionResult = JSONFactoryUtil.createJSONObject();
+				
+				positionResult.put("MARGENBENEFICIO", Utilities.RoundPrice(Double.parseDouble(arrayData[0])));
+				positionResult.put("BENEFICIO", Utilities.RoundPrice(Double.parseDouble(arrayData[1])));								
+				
+				positionResults.put(positionResult);
+				
+				/* solo cogemos el array de cobjectos la primera posicion dodne viene serializado todo */
+				break;
 				
 				
 			}

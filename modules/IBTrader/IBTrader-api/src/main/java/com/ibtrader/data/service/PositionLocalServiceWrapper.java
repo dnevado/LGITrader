@@ -207,6 +207,13 @@ public class PositionLocalServiceWrapper implements PositionLocalService,
 			groupId, companyId);
 	}
 
+	@Override
+	public com.liferay.portal.kernel.json.JSONArray findPositionOpenResults(
+		java.util.Date to, long groupId, long companyId) {
+		return _positionLocalService.findPositionOpenResults(to, groupId,
+			companyId);
+	}
+
 	/**
 	* @throws PortalException
 	*/
@@ -324,6 +331,13 @@ public class PositionLocalServiceWrapper implements PositionLocalService,
 		long companyId, long groupId, long share) {
 		return _positionLocalService.findByCompanyGroupShare(companyId,
 			groupId, share);
+	}
+
+	@Override
+	public java.util.List<com.ibtrader.data.model.Position> findIntradiaByCompanyGroupDate(
+		long companyId, long groupId, java.util.Date end_date_in) {
+		return _positionLocalService.findIntradiaByCompanyGroupDate(companyId,
+			groupId, end_date_in);
 	}
 
 	/**

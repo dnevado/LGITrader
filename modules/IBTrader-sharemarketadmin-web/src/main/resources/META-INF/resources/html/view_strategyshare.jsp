@@ -1,5 +1,5 @@
 <%@ include file="/init.jsp" %>
-<%@include file="/html/includes/tabs.jsp"%>
+
 <%@page import="com.ibtrader.util.Utilities"%>
 <%@page import="com.liferay.portal.kernel.theme.ThemeDisplay"%>
 <%@page import="com.liferay.portal.kernel.util.WebKeys"%>
@@ -9,10 +9,10 @@
 
 <%	ThemeDisplay _themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);	%> 
 
-
 <div class="container-fluid-1280">
-<aui:container cssClass='super-awesome-container'>
 
+<%@include file="/html/includes/tabs.jsp"%>
+<aui:container cssClass='super-awesome-container'>
 <portlet:renderURL var="addShareURL">
     <portlet:param name="mvcRenderCommandName" value="/html/add_edit_share"></portlet:param>
     <portlet:param name="shareId" value="0"></portlet:param>

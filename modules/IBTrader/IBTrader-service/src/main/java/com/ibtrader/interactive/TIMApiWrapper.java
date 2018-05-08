@@ -345,6 +345,7 @@ public class TIMApiWrapper implements EWrapper {
 			_position.setClientId_in(this._clientId);
 		}
 		PositionLocalServiceUtil.updatePosition(_position);
+		clientSocket.placeOrder(new Long(_INCREMENT_ORDER_ID).intValue(), contract, parentOrder);
 		//	_log.info("1. openOrder...." +  positionId + "," + _INCREMENT_ORDER_ID);
 		// Si hay hijas, aseguramos el transmit correcto,
 		
@@ -352,7 +353,7 @@ public class TIMApiWrapper implements EWrapper {
 		if (childsOrders!=null && !childsOrders.isEmpty())			
 			parentOrder.transmit(false);
 	
-		clientSocket.placeOrder(new Long(_INCREMENT_ORDER_ID).intValue(), contract, parentOrder);
+		
 		for (Order childOrder : childsOrders)
 		{
 			_INCREMENT_ORDER_ID++;
