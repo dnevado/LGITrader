@@ -79,7 +79,8 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 			{ "checked", Types.BOOLEAN },
 			{ "createDate", Types.TIMESTAMP },
 			{ "modifiedDate", Types.TIMESTAMP },
-			{ "ibclientId", Types.BIGINT }
+			{ "ibclientId", Types.BIGINT },
+			{ "removable_on_reboot", Types.BOOLEAN }
 		};
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP = new HashMap<String, Integer>();
 
@@ -94,9 +95,10 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 		TABLE_COLUMNS_MAP.put("createDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("modifiedDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("ibclientId", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("removable_on_reboot", Types.BOOLEAN);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table ibtrader_IBOrder (uuid_ VARCHAR(75) null,orderIdPk LONG not null primary key IDENTITY,ordersId LONG,groupId LONG,companyId LONG,shareID LONG,checked BOOLEAN,createDate DATE null,modifiedDate DATE null,ibclientId LONG)";
+	public static final String TABLE_SQL_CREATE = "create table ibtrader_IBOrder (uuid_ VARCHAR(75) null,orderIdPk LONG not null primary key IDENTITY,ordersId LONG,groupId LONG,companyId LONG,shareID LONG,checked BOOLEAN,createDate DATE null,modifiedDate DATE null,ibclientId LONG,removable_on_reboot BOOLEAN)";
 	public static final String TABLE_SQL_DROP = "drop table ibtrader_IBOrder";
 	public static final String ORDER_BY_JPQL = " ORDER BY ibOrder.orderIdPk ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY ibtrader_IBOrder.orderIdPk ASC";
@@ -113,12 +115,14 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 				"value.object.column.bitmask.enabled.com.ibtrader.data.model.IBOrder"),
 			true);
 	public static final long COMPANYID_COLUMN_BITMASK = 1L;
-	public static final long GROUPID_COLUMN_BITMASK = 2L;
-	public static final long IBCLIENTID_COLUMN_BITMASK = 4L;
-	public static final long ORDERSID_COLUMN_BITMASK = 8L;
-	public static final long SHAREID_COLUMN_BITMASK = 16L;
-	public static final long UUID_COLUMN_BITMASK = 32L;
-	public static final long ORDERIDPK_COLUMN_BITMASK = 64L;
+	public static final long CREATEDATE_COLUMN_BITMASK = 2L;
+	public static final long GROUPID_COLUMN_BITMASK = 4L;
+	public static final long IBCLIENTID_COLUMN_BITMASK = 8L;
+	public static final long ORDERSID_COLUMN_BITMASK = 16L;
+	public static final long REMOVABLE_ON_REBOOT_COLUMN_BITMASK = 32L;
+	public static final long SHAREID_COLUMN_BITMASK = 64L;
+	public static final long UUID_COLUMN_BITMASK = 128L;
+	public static final long ORDERIDPK_COLUMN_BITMASK = 256L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -143,6 +147,7 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 		model.setCreateDate(soapModel.getCreateDate());
 		model.setModifiedDate(soapModel.getModifiedDate());
 		model.setIbclientId(soapModel.getIbclientId());
+		model.setRemovable_on_reboot(soapModel.getRemovable_on_reboot());
 
 		return model;
 	}
@@ -217,6 +222,7 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 		attributes.put("createDate", getCreateDate());
 		attributes.put("modifiedDate", getModifiedDate());
 		attributes.put("ibclientId", getIbclientId());
+		attributes.put("removable_on_reboot", getRemovable_on_reboot());
 
 		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
 		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
@@ -284,6 +290,13 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 
 		if (ibclientId != null) {
 			setIbclientId(ibclientId);
+		}
+
+		Boolean removable_on_reboot = (Boolean)attributes.get(
+				"removable_on_reboot");
+
+		if (removable_on_reboot != null) {
+			setRemovable_on_reboot(removable_on_reboot);
 		}
 	}
 
@@ -439,7 +452,17 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 
 	@Override
 	public void setCreateDate(Date createDate) {
+		_columnBitmask |= CREATEDATE_COLUMN_BITMASK;
+
+		if (_originalCreateDate == null) {
+			_originalCreateDate = _createDate;
+		}
+
 		_createDate = createDate;
+	}
+
+	public Date getOriginalCreateDate() {
+		return _originalCreateDate;
 	}
 
 	@JSON
@@ -480,6 +503,35 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 
 	public long getOriginalIbclientId() {
 		return _originalIbclientId;
+	}
+
+	@JSON
+	@Override
+	public boolean getRemovable_on_reboot() {
+		return _removable_on_reboot;
+	}
+
+	@JSON
+	@Override
+	public boolean isRemovable_on_reboot() {
+		return _removable_on_reboot;
+	}
+
+	@Override
+	public void setRemovable_on_reboot(boolean removable_on_reboot) {
+		_columnBitmask |= REMOVABLE_ON_REBOOT_COLUMN_BITMASK;
+
+		if (!_setOriginalRemovable_on_reboot) {
+			_setOriginalRemovable_on_reboot = true;
+
+			_originalRemovable_on_reboot = _removable_on_reboot;
+		}
+
+		_removable_on_reboot = removable_on_reboot;
+	}
+
+	public boolean getOriginalRemovable_on_reboot() {
+		return _originalRemovable_on_reboot;
 	}
 
 	@Override
@@ -529,6 +581,7 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 		ibOrderImpl.setCreateDate(getCreateDate());
 		ibOrderImpl.setModifiedDate(getModifiedDate());
 		ibOrderImpl.setIbclientId(getIbclientId());
+		ibOrderImpl.setRemovable_on_reboot(getRemovable_on_reboot());
 
 		ibOrderImpl.resetOriginalValues();
 
@@ -609,11 +662,17 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 
 		ibOrderModelImpl._setOriginalShareID = false;
 
+		ibOrderModelImpl._originalCreateDate = ibOrderModelImpl._createDate;
+
 		ibOrderModelImpl._setModifiedDate = false;
 
 		ibOrderModelImpl._originalIbclientId = ibOrderModelImpl._ibclientId;
 
 		ibOrderModelImpl._setOriginalIbclientId = false;
+
+		ibOrderModelImpl._originalRemovable_on_reboot = ibOrderModelImpl._removable_on_reboot;
+
+		ibOrderModelImpl._setOriginalRemovable_on_reboot = false;
 
 		ibOrderModelImpl._columnBitmask = 0;
 	}
@@ -662,12 +721,14 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 
 		ibOrderCacheModel.ibclientId = getIbclientId();
 
+		ibOrderCacheModel.removable_on_reboot = getRemovable_on_reboot();
+
 		return ibOrderCacheModel;
 	}
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(21);
+		StringBundler sb = new StringBundler(23);
 
 		sb.append("{uuid=");
 		sb.append(getUuid());
@@ -689,6 +750,8 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 		sb.append(getModifiedDate());
 		sb.append(", ibclientId=");
 		sb.append(getIbclientId());
+		sb.append(", removable_on_reboot=");
+		sb.append(getRemovable_on_reboot());
 		sb.append("}");
 
 		return sb.toString();
@@ -696,7 +759,7 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(34);
+		StringBundler sb = new StringBundler(37);
 
 		sb.append("<model><model-name>");
 		sb.append("com.ibtrader.data.model.IBOrder");
@@ -742,6 +805,10 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 			"<column><column-name>ibclientId</column-name><column-value><![CDATA[");
 		sb.append(getIbclientId());
 		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>removable_on_reboot</column-name><column-value><![CDATA[");
+		sb.append(getRemovable_on_reboot());
+		sb.append("]]></column-value></column>");
 
 		sb.append("</model>");
 
@@ -769,11 +836,15 @@ public class IBOrderModelImpl extends BaseModelImpl<IBOrder>
 	private boolean _setOriginalShareID;
 	private boolean _checked;
 	private Date _createDate;
+	private Date _originalCreateDate;
 	private Date _modifiedDate;
 	private boolean _setModifiedDate;
 	private long _ibclientId;
 	private long _originalIbclientId;
 	private boolean _setOriginalIbclientId;
+	private boolean _removable_on_reboot;
+	private boolean _originalRemovable_on_reboot;
+	private boolean _setOriginalRemovable_on_reboot;
 	private long _columnBitmask;
 	private IBOrder _escapedModel;
 }

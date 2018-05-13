@@ -39,6 +39,7 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 
 import java.io.Serializable;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -225,6 +226,11 @@ public interface IBOrderLocalService extends BaseLocalService,
 	*/
 	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
 		int end, OrderByComparator<T> orderByComparator);
+
+	public List<IBOrder> findByDate(Date untilDate);
+
+	public List<IBOrder> findByRemovableDate(Date untilDate,
+		boolean removable_on_reboot);
 
 	public List<IBOrder> findByShareIdCompanyGroup(long shareId,
 		long companyId, long groupId);

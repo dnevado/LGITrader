@@ -69,6 +69,7 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 		attributes.put("createDate", getCreateDate());
 		attributes.put("modifiedDate", getModifiedDate());
 		attributes.put("ibclientId", getIbclientId());
+		attributes.put("removable_on_reboot", getRemovable_on_reboot());
 
 		return attributes;
 	}
@@ -134,6 +135,13 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 		if (ibclientId != null) {
 			setIbclientId(ibclientId);
 		}
+
+		Boolean removable_on_reboot = (Boolean)attributes.get(
+				"removable_on_reboot");
+
+		if (removable_on_reboot != null) {
+			setRemovable_on_reboot(removable_on_reboot);
+		}
 	}
 
 	@Override
@@ -154,6 +162,16 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	@Override
 	public boolean getChecked() {
 		return _ibOrder.getChecked();
+	}
+
+	/**
+	* Returns the removable_on_reboot of this i b order.
+	*
+	* @return the removable_on_reboot of this i b order
+	*/
+	@Override
+	public boolean getRemovable_on_reboot() {
+		return _ibOrder.getRemovable_on_reboot();
 	}
 
 	@Override
@@ -179,6 +197,16 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	@Override
 	public boolean isNew() {
 		return _ibOrder.isNew();
+	}
+
+	/**
+	* Returns <code>true</code> if this i b order is removable_on_reboot.
+	*
+	* @return <code>true</code> if this i b order is removable_on_reboot; <code>false</code> otherwise
+	*/
+	@Override
+	public boolean isRemovable_on_reboot() {
+		return _ibOrder.isRemovable_on_reboot();
 	}
 
 	@Override
@@ -445,6 +473,16 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	@Override
 	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
 		_ibOrder.setPrimaryKeyObj(primaryKeyObj);
+	}
+
+	/**
+	* Sets whether this i b order is removable_on_reboot.
+	*
+	* @param removable_on_reboot the removable_on_reboot of this i b order
+	*/
+	@Override
+	public void setRemovable_on_reboot(boolean removable_on_reboot) {
+		_ibOrder.setRemovable_on_reboot(removable_on_reboot);
 	}
 
 	/**

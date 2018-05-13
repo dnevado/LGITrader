@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDateTime ;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import com.ib.client.Contract;
@@ -123,7 +124,9 @@ public class CronUtil {
 	    			_order.setShareID(-1);	// NO HAY SHARE 
 	    			_order.setOrdersId(_INCREMENT_ORDER_ID);
 	    			_order.setIbclientId(_CLIENT_ID);
+	    			_order.setRemovable_on_reboot(Boolean.TRUE);	 /* los requestid  se borran */
 	    			/* pedimos tiempo real */
+	    			
 	    			IBOrderLocalServiceUtil.updateIBOrder(_order);
 	    			try {
 	    				wrapper.getExecutionOrders(new Long(_INCREMENT_ORDER_ID).intValue());
@@ -326,6 +329,7 @@ public class CronUtil {
 					    			_order.setShareID(oShare.getShareId());
 					    			_order.setOrdersId(_INCREMENT_ORDER_ID);
 					    			_order.setIbclientId(_CLIENT_ID);
+					    			_order.setRemovable_on_reboot(Boolean.TRUE);	 /* los requestid  se borran */
 					    		//	_order.setIborderID(_INCREMENT_ORDER_ID);
 					    			/* pedimos tiempo real */
 					    			IBOrderLocalServiceUtil.updateIBOrder(_order);
@@ -682,6 +686,7 @@ public class CronUtil {
 			    			_order.setShareID(oShare.getShareId());	
 			    			_order.setOrdersId(_INCREMENT_ORDER_ID);
 			    			_order.setIbclientId(_CLIENT_ID);
+			    			_order.setRemovable_on_reboot(Boolean.TRUE);	 /* los requestid  se borran */
 			    			/* pedimos tiempo real */
 			    			IBOrderLocalServiceUtil.updateIBOrder(_order);
 			    			try {
@@ -734,6 +739,28 @@ public class CronUtil {
 
 	}		
 	
+	/* BORRA ORDENDES MYT ANTIGUAS DE REALTIME, TODAS MENOS DE POSICIONES, 7 DIAS PARA ATRAS   */
+	public static void StartDeletingOldOrderRequestCron(Message _message) throws Exception {					
+		
+	    
+		/* DEJAMOS 7 DIAS PARA LOS REINICIOS PREVENTIVOS */
+		Calendar cNow = Calendar.getInstance();
+		cNow.add(Calendar.DATE, -7);
+		cNow.set(Calendar.HOUR_OF_DAY,23);
+		cNow.set(Calendar.MINUTE,59);
+		cNow.set(Calendar.SECOND,59);
+		
+		List<IBOrder> _ordersToRemove =  IBOrderLocalServiceUtil.findByDate(cNow.getTime());
+		
+		for (IBOrder order : _ordersToRemove)
+		{
+			IBOrderLocalServiceUtil.deleteIBOrder(order);
+		}
+			
+		
+		
+
+	}		
 	
 
 }

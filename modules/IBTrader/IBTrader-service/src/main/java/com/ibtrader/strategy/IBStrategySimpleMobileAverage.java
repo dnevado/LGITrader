@@ -283,15 +283,22 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 		
 		// ya no obtenemos el maximo y minimo, sino el correspondiente al tramo que me han dicho
 		
-
+		
 		
 		Double _avgMobileSimple = MobileAvgUtil.getSimpleAvgMobile(_calendarFromNow.getTime(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_macdP, Boolean.FALSE);
+		
+		if (_log.isDebugEnabled())
+			_log.debug("_avgMobileSimple for :" + _share.getSymbol() + ":" +  _avgMobileSimple.doubleValue() + " " + Utilities.getWebFormattedDate(_calendarFromNow.getTime(), _IBUser));
 		
 		if (_avgMobileSimple!=null)
 		{
 			// todo fue bien, tenemos media movil y de los periodos solicitados.
 			// buscamos el cierre de la barra, ultimo valor < que el MINUTE.00  (15.00, 20,00, 25.00)
 			Realtime oRTimeEnTramo =  RealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _calendarFromNow.getTime());
+			
+			if (_log.isDebugEnabled())
+				_log.debug("oRTimeEnTramo for :" + _share.getSymbol() + ":" +  oRTimeEnTramo.getValue());
+			
 			if (oRTimeEnTramo!=null)
 			{
 				/* PERIODO CERO , JUSTAMENTE LA BARRA ANTERIOR */
@@ -303,9 +310,16 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 					/* VARIABLE PARA CONTROLAR QUE SI LA BARRA NO CORTE LA MM, NOS ASEGUREMOS QUE LA
 					 * BARRA N-1 SI LA CORTE 
 					 */
-														
+						
+					if (_log.isDebugEnabled())
+						_log.debug("_WidthRangeBar for :" + _share.getSymbol() + ":MAX" + oRTimeWidthRange.getMax_value() + ",MIN:" + oRTimeWidthRange.getMin_value() );
+					
 					boolean _AvgMovil_InsideBar  = (oRTimeWidthRange.getMax_value() > _avgMobileSimple.doubleValue()  &&
 															oRTimeWidthRange.getMin_value()< _avgMobileSimple.doubleValue());
+					
+					
+					if (_log.isDebugEnabled())
+						_log.debug("_AvgMovil_InsideBar for :" + _share.getSymbol() + _AvgMovil_InsideBar);
 					
 					boolean _BuySuccess = false;
 					boolean _SellSuccess = false;
@@ -329,6 +343,9 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 					
 					_SellSuccess = _SellSuccess  &&  
 							(operationfilter.equals("ALL") || operationfilter.equals(PositionStates.statusTWSFire.SELL.toString()));
+					
+					if (_log.isDebugEnabled())
+						_log.debug("_BuySuccess._SellSuccess, _AvgMovil_InsideBar for :" + _share.getSymbol() + _BuySuccess + "," + _SellSuccess+ "," +_AvgMovil_InsideBar );
 					
 					if (_AvgMovil_InsideBar  && (_BuySuccess || _SellSuccess))
 					{

@@ -34,7 +34,10 @@
 			<order-column name="shareId" />
 		</order>
 
-		<!-- Finder methods -->
+		<!-- FOR MAINTANCE IN MYSQL DIRECTLY  -->
+		<finder name="Date" return-type="Collection">
+		    <finder-column name="createDate" />		    
+		</finder>
 		<finder name="CompanyShare" return-type="Collection">
 		    <finder-column name="companyId" />
 		    <finder-column name="shareId" />
@@ -276,6 +279,7 @@
 		<column name="createDate" type="Date" />
 		<column name="modifiedDate" type="Date" />
 		<column name="ibclientId" type="long" /><!--  TWS CLIENTID  -->
+		<column name="removable_on_reboot" type="boolean"/><!--  TODO LO QUE SAN POSICIONES NO SE TOCANM PARA PODER SINCRONIZAR, LOS REALTIME SE BORRAN AL REDESPLEGAR  -->
 		
 		<!--  SI HAY MARKET DATA SUSCRITA PREVIA --> 
 		<finder name="ShareIdCompanyGroup" return-type="Collection">
@@ -293,6 +297,12 @@
 			<finder-column name="companyId"/>		
 			<finder-column name="groupId"/>
 			<finder-column name="ibclientId"/>									
+		</finder>
+		<finder name="RemovableDateGroupCompany" return-type="Collection"> <!--  PARA ELIMINAR TODO  -->
+			<finder-column name="removable_on_reboot"/>		
+			<finder-column name="companyId"/>		
+			<finder-column name="groupId"/>
+			<finder-column name="createDate"/>									
 		</finder>
 		<finder name="OrderClient" return-type="Collection">				
 			<finder-column name="ordersId"/>

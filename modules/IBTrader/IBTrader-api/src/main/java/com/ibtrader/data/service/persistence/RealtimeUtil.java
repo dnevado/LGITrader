@@ -500,6 +500,161 @@ public class RealtimeUtil {
 	}
 
 	/**
+	* Returns all the realtimes where createDate = &#63;.
+	*
+	* @param createDate the create date
+	* @return the matching realtimes
+	*/
+	public static List<Realtime> findByDate(Date createDate) {
+		return getPersistence().findByDate(createDate);
+	}
+
+	/**
+	* Returns a range of all the realtimes where createDate = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link RealtimeModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param createDate the create date
+	* @param start the lower bound of the range of realtimes
+	* @param end the upper bound of the range of realtimes (not inclusive)
+	* @return the range of matching realtimes
+	*/
+	public static List<Realtime> findByDate(Date createDate, int start, int end) {
+		return getPersistence().findByDate(createDate, start, end);
+	}
+
+	/**
+	* Returns an ordered range of all the realtimes where createDate = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link RealtimeModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param createDate the create date
+	* @param start the lower bound of the range of realtimes
+	* @param end the upper bound of the range of realtimes (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching realtimes
+	*/
+	public static List<Realtime> findByDate(Date createDate, int start,
+		int end, OrderByComparator<Realtime> orderByComparator) {
+		return getPersistence()
+				   .findByDate(createDate, start, end, orderByComparator);
+	}
+
+	/**
+	* Returns an ordered range of all the realtimes where createDate = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link RealtimeModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param createDate the create date
+	* @param start the lower bound of the range of realtimes
+	* @param end the upper bound of the range of realtimes (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching realtimes
+	*/
+	public static List<Realtime> findByDate(Date createDate, int start,
+		int end, OrderByComparator<Realtime> orderByComparator,
+		boolean retrieveFromCache) {
+		return getPersistence()
+				   .findByDate(createDate, start, end, orderByComparator,
+			retrieveFromCache);
+	}
+
+	/**
+	* Returns the first realtime in the ordered set where createDate = &#63;.
+	*
+	* @param createDate the create date
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching realtime
+	* @throws NoSuchRealtimeException if a matching realtime could not be found
+	*/
+	public static Realtime findByDate_First(Date createDate,
+		OrderByComparator<Realtime> orderByComparator)
+		throws com.ibtrader.data.exception.NoSuchRealtimeException {
+		return getPersistence().findByDate_First(createDate, orderByComparator);
+	}
+
+	/**
+	* Returns the first realtime in the ordered set where createDate = &#63;.
+	*
+	* @param createDate the create date
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching realtime, or <code>null</code> if a matching realtime could not be found
+	*/
+	public static Realtime fetchByDate_First(Date createDate,
+		OrderByComparator<Realtime> orderByComparator) {
+		return getPersistence().fetchByDate_First(createDate, orderByComparator);
+	}
+
+	/**
+	* Returns the last realtime in the ordered set where createDate = &#63;.
+	*
+	* @param createDate the create date
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching realtime
+	* @throws NoSuchRealtimeException if a matching realtime could not be found
+	*/
+	public static Realtime findByDate_Last(Date createDate,
+		OrderByComparator<Realtime> orderByComparator)
+		throws com.ibtrader.data.exception.NoSuchRealtimeException {
+		return getPersistence().findByDate_Last(createDate, orderByComparator);
+	}
+
+	/**
+	* Returns the last realtime in the ordered set where createDate = &#63;.
+	*
+	* @param createDate the create date
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching realtime, or <code>null</code> if a matching realtime could not be found
+	*/
+	public static Realtime fetchByDate_Last(Date createDate,
+		OrderByComparator<Realtime> orderByComparator) {
+		return getPersistence().fetchByDate_Last(createDate, orderByComparator);
+	}
+
+	/**
+	* Returns the realtimes before and after the current realtime in the ordered set where createDate = &#63;.
+	*
+	* @param realtimeId the primary key of the current realtime
+	* @param createDate the create date
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next realtime
+	* @throws NoSuchRealtimeException if a realtime with the primary key could not be found
+	*/
+	public static Realtime[] findByDate_PrevAndNext(long realtimeId,
+		Date createDate, OrderByComparator<Realtime> orderByComparator)
+		throws com.ibtrader.data.exception.NoSuchRealtimeException {
+		return getPersistence()
+				   .findByDate_PrevAndNext(realtimeId, createDate,
+			orderByComparator);
+	}
+
+	/**
+	* Removes all the realtimes where createDate = &#63; from the database.
+	*
+	* @param createDate the create date
+	*/
+	public static void removeByDate(Date createDate) {
+		getPersistence().removeByDate(createDate);
+	}
+
+	/**
+	* Returns the number of realtimes where createDate = &#63;.
+	*
+	* @param createDate the create date
+	* @return the number of matching realtimes
+	*/
+	public static int countByDate(Date createDate) {
+		return getPersistence().countByDate(createDate);
+	}
+
+	/**
 	* Returns all the realtimes where companyId = &#63; and shareId = &#63;.
 	*
 	* @param companyId the company ID

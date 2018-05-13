@@ -44,6 +44,7 @@ public class IBOrderSoap implements Serializable {
 		soapModel.setCreateDate(model.getCreateDate());
 		soapModel.setModifiedDate(model.getModifiedDate());
 		soapModel.setIbclientId(model.getIbclientId());
+		soapModel.setRemovable_on_reboot(model.getRemovable_on_reboot());
 
 		return soapModel;
 	}
@@ -180,6 +181,18 @@ public class IBOrderSoap implements Serializable {
 		_ibclientId = ibclientId;
 	}
 
+	public boolean getRemovable_on_reboot() {
+		return _removable_on_reboot;
+	}
+
+	public boolean isRemovable_on_reboot() {
+		return _removable_on_reboot;
+	}
+
+	public void setRemovable_on_reboot(boolean removable_on_reboot) {
+		_removable_on_reboot = removable_on_reboot;
+	}
+
 	private String _uuid;
 	private long _orderIdPk;
 	private long _ordersId;
@@ -190,4 +203,5 @@ public class IBOrderSoap implements Serializable {
 	private Date _createDate;
 	private Date _modifiedDate;
 	private long _ibclientId;
+	private boolean _removable_on_reboot;
 }

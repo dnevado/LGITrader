@@ -1475,6 +1475,539 @@ public class RealtimePersistenceImpl extends BasePersistenceImpl<Realtime>
 	private static final String _FINDER_COLUMN_UUID_C_UUID_2 = "realtime.uuid = ? AND ";
 	private static final String _FINDER_COLUMN_UUID_C_UUID_3 = "(realtime.uuid IS NULL OR realtime.uuid = '') AND ";
 	private static final String _FINDER_COLUMN_UUID_C_COMPANYID_2 = "realtime.companyId = ?";
+	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_DATE = new FinderPath(RealtimeModelImpl.ENTITY_CACHE_ENABLED,
+			RealtimeModelImpl.FINDER_CACHE_ENABLED, RealtimeImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByDate",
+			new String[] {
+				Date.class.getName(),
+				
+			Integer.class.getName(), Integer.class.getName(),
+				OrderByComparator.class.getName()
+			});
+	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_DATE = new FinderPath(RealtimeModelImpl.ENTITY_CACHE_ENABLED,
+			RealtimeModelImpl.FINDER_CACHE_ENABLED, RealtimeImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByDate",
+			new String[] { Date.class.getName() },
+			RealtimeModelImpl.CREATEDATE_COLUMN_BITMASK |
+			RealtimeModelImpl.SHAREID_COLUMN_BITMASK);
+	public static final FinderPath FINDER_PATH_COUNT_BY_DATE = new FinderPath(RealtimeModelImpl.ENTITY_CACHE_ENABLED,
+			RealtimeModelImpl.FINDER_CACHE_ENABLED, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByDate",
+			new String[] { Date.class.getName() });
+
+	/**
+	 * Returns all the realtimes where createDate = &#63;.
+	 *
+	 * @param createDate the create date
+	 * @return the matching realtimes
+	 */
+	@Override
+	public List<Realtime> findByDate(Date createDate) {
+		return findByDate(createDate, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the realtimes where createDate = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link RealtimeModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param createDate the create date
+	 * @param start the lower bound of the range of realtimes
+	 * @param end the upper bound of the range of realtimes (not inclusive)
+	 * @return the range of matching realtimes
+	 */
+	@Override
+	public List<Realtime> findByDate(Date createDate, int start, int end) {
+		return findByDate(createDate, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the realtimes where createDate = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link RealtimeModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param createDate the create date
+	 * @param start the lower bound of the range of realtimes
+	 * @param end the upper bound of the range of realtimes (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching realtimes
+	 */
+	@Override
+	public List<Realtime> findByDate(Date createDate, int start, int end,
+		OrderByComparator<Realtime> orderByComparator) {
+		return findByDate(createDate, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the realtimes where createDate = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link RealtimeModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param createDate the create date
+	 * @param start the lower bound of the range of realtimes
+	 * @param end the upper bound of the range of realtimes (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the ordered range of matching realtimes
+	 */
+	@Override
+	public List<Realtime> findByDate(Date createDate, int start, int end,
+		OrderByComparator<Realtime> orderByComparator, boolean retrieveFromCache) {
+		boolean pagination = true;
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+				(orderByComparator == null)) {
+			pagination = false;
+			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_DATE;
+			finderArgs = new Object[] { createDate };
+		}
+		else {
+			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_DATE;
+			finderArgs = new Object[] { createDate, start, end, orderByComparator };
+		}
+
+		List<Realtime> list = null;
+
+		if (retrieveFromCache) {
+			list = (List<Realtime>)finderCache.getResult(finderPath,
+					finderArgs, this);
+
+			if ((list != null) && !list.isEmpty()) {
+				for (Realtime realtime : list) {
+					if (!Objects.equals(createDate, realtime.getCreateDate())) {
+						list = null;
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler query = null;
+
+			if (orderByComparator != null) {
+				query = new StringBundler(3 +
+						(orderByComparator.getOrderByFields().length * 2));
+			}
+			else {
+				query = new StringBundler(3);
+			}
+
+			query.append(_SQL_SELECT_REALTIME_WHERE);
+
+			boolean bindCreateDate = false;
+
+			if (createDate == null) {
+				query.append(_FINDER_COLUMN_DATE_CREATEDATE_1);
+			}
+			else {
+				bindCreateDate = true;
+
+				query.append(_FINDER_COLUMN_DATE_CREATEDATE_2);
+			}
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
+					orderByComparator);
+			}
+			else
+			 if (pagination) {
+				query.append(RealtimeModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				if (bindCreateDate) {
+					qPos.add(new Timestamp(createDate.getTime()));
+				}
+
+				if (!pagination) {
+					list = (List<Realtime>)QueryUtil.list(q, getDialect(),
+							start, end, false);
+
+					Collections.sort(list);
+
+					list = Collections.unmodifiableList(list);
+				}
+				else {
+					list = (List<Realtime>)QueryUtil.list(q, getDialect(),
+							start, end);
+				}
+
+				cacheResult(list);
+
+				finderCache.putResult(finderPath, finderArgs, list);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Returns the first realtime in the ordered set where createDate = &#63;.
+	 *
+	 * @param createDate the create date
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching realtime
+	 * @throws NoSuchRealtimeException if a matching realtime could not be found
+	 */
+	@Override
+	public Realtime findByDate_First(Date createDate,
+		OrderByComparator<Realtime> orderByComparator)
+		throws NoSuchRealtimeException {
+		Realtime realtime = fetchByDate_First(createDate, orderByComparator);
+
+		if (realtime != null) {
+			return realtime;
+		}
+
+		StringBundler msg = new StringBundler(4);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("createDate=");
+		msg.append(createDate);
+
+		msg.append(StringPool.CLOSE_CURLY_BRACE);
+
+		throw new NoSuchRealtimeException(msg.toString());
+	}
+
+	/**
+	 * Returns the first realtime in the ordered set where createDate = &#63;.
+	 *
+	 * @param createDate the create date
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching realtime, or <code>null</code> if a matching realtime could not be found
+	 */
+	@Override
+	public Realtime fetchByDate_First(Date createDate,
+		OrderByComparator<Realtime> orderByComparator) {
+		List<Realtime> list = findByDate(createDate, 0, 1, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last realtime in the ordered set where createDate = &#63;.
+	 *
+	 * @param createDate the create date
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching realtime
+	 * @throws NoSuchRealtimeException if a matching realtime could not be found
+	 */
+	@Override
+	public Realtime findByDate_Last(Date createDate,
+		OrderByComparator<Realtime> orderByComparator)
+		throws NoSuchRealtimeException {
+		Realtime realtime = fetchByDate_Last(createDate, orderByComparator);
+
+		if (realtime != null) {
+			return realtime;
+		}
+
+		StringBundler msg = new StringBundler(4);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("createDate=");
+		msg.append(createDate);
+
+		msg.append(StringPool.CLOSE_CURLY_BRACE);
+
+		throw new NoSuchRealtimeException(msg.toString());
+	}
+
+	/**
+	 * Returns the last realtime in the ordered set where createDate = &#63;.
+	 *
+	 * @param createDate the create date
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching realtime, or <code>null</code> if a matching realtime could not be found
+	 */
+	@Override
+	public Realtime fetchByDate_Last(Date createDate,
+		OrderByComparator<Realtime> orderByComparator) {
+		int count = countByDate(createDate);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<Realtime> list = findByDate(createDate, count - 1, count,
+				orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the realtimes before and after the current realtime in the ordered set where createDate = &#63;.
+	 *
+	 * @param realtimeId the primary key of the current realtime
+	 * @param createDate the create date
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next realtime
+	 * @throws NoSuchRealtimeException if a realtime with the primary key could not be found
+	 */
+	@Override
+	public Realtime[] findByDate_PrevAndNext(long realtimeId, Date createDate,
+		OrderByComparator<Realtime> orderByComparator)
+		throws NoSuchRealtimeException {
+		Realtime realtime = findByPrimaryKey(realtimeId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			Realtime[] array = new RealtimeImpl[3];
+
+			array[0] = getByDate_PrevAndNext(session, realtime, createDate,
+					orderByComparator, true);
+
+			array[1] = realtime;
+
+			array[2] = getByDate_PrevAndNext(session, realtime, createDate,
+					orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected Realtime getByDate_PrevAndNext(Session session,
+		Realtime realtime, Date createDate,
+		OrderByComparator<Realtime> orderByComparator, boolean previous) {
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(4 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(3);
+		}
+
+		query.append(_SQL_SELECT_REALTIME_WHERE);
+
+		boolean bindCreateDate = false;
+
+		if (createDate == null) {
+			query.append(_FINDER_COLUMN_DATE_CREATEDATE_1);
+		}
+		else {
+			bindCreateDate = true;
+
+			query.append(_FINDER_COLUMN_DATE_CREATEDATE_2);
+		}
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			query.append(RealtimeModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = query.toString();
+
+		Query q = session.createQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		if (bindCreateDate) {
+			qPos.add(new Timestamp(createDate.getTime()));
+		}
+
+		if (orderByComparator != null) {
+			Object[] values = orderByComparator.getOrderByConditionValues(realtime);
+
+			for (Object value : values) {
+				qPos.add(value);
+			}
+		}
+
+		List<Realtime> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Removes all the realtimes where createDate = &#63; from the database.
+	 *
+	 * @param createDate the create date
+	 */
+	@Override
+	public void removeByDate(Date createDate) {
+		for (Realtime realtime : findByDate(createDate, QueryUtil.ALL_POS,
+				QueryUtil.ALL_POS, null)) {
+			remove(realtime);
+		}
+	}
+
+	/**
+	 * Returns the number of realtimes where createDate = &#63;.
+	 *
+	 * @param createDate the create date
+	 * @return the number of matching realtimes
+	 */
+	@Override
+	public int countByDate(Date createDate) {
+		FinderPath finderPath = FINDER_PATH_COUNT_BY_DATE;
+
+		Object[] finderArgs = new Object[] { createDate };
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(2);
+
+			query.append(_SQL_COUNT_REALTIME_WHERE);
+
+			boolean bindCreateDate = false;
+
+			if (createDate == null) {
+				query.append(_FINDER_COLUMN_DATE_CREATEDATE_1);
+			}
+			else {
+				bindCreateDate = true;
+
+				query.append(_FINDER_COLUMN_DATE_CREATEDATE_2);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				if (bindCreateDate) {
+					qPos.add(new Timestamp(createDate.getTime()));
+				}
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_DATE_CREATEDATE_1 = "realtime.createDate IS NULL";
+	private static final String _FINDER_COLUMN_DATE_CREATEDATE_2 = "realtime.createDate = ?";
 	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_COMPANYSHARE =
 		new FinderPath(RealtimeModelImpl.ENTITY_CACHE_ENABLED,
 			RealtimeModelImpl.FINDER_CACHE_ENABLED, RealtimeImpl.class,
@@ -3648,6 +4181,23 @@ public class RealtimePersistenceImpl extends BasePersistenceImpl<Realtime>
 
 				finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_C, args);
 				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID_C,
+					args);
+			}
+
+			if ((realtimeModelImpl.getColumnBitmask() &
+					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_DATE.getColumnBitmask()) != 0) {
+				Object[] args = new Object[] {
+						realtimeModelImpl.getOriginalCreateDate()
+					};
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_DATE, args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_DATE,
+					args);
+
+				args = new Object[] { realtimeModelImpl.getCreateDate() };
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_DATE, args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_DATE,
 					args);
 			}
 

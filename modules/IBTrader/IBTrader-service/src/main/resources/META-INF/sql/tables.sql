@@ -23,7 +23,8 @@ create table ibtrader_IBOrder (
 	checked BOOLEAN,
 	createDate DATE null,
 	modifiedDate DATE null,
-	ibclientId LONG
+	ibclientId LONG,
+	removable_on_reboot BOOLEAN
 );
 
 create table ibtrader_Market (

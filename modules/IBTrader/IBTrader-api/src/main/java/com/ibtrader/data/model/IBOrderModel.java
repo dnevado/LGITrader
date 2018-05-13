@@ -221,6 +221,27 @@ public interface IBOrderModel extends BaseModel<IBOrder>, ShardedModel,
 	 */
 	public void setIbclientId(long ibclientId);
 
+	/**
+	 * Returns the removable_on_reboot of this i b order.
+	 *
+	 * @return the removable_on_reboot of this i b order
+	 */
+	public boolean getRemovable_on_reboot();
+
+	/**
+	 * Returns <code>true</code> if this i b order is removable_on_reboot.
+	 *
+	 * @return <code>true</code> if this i b order is removable_on_reboot; <code>false</code> otherwise
+	 */
+	public boolean isRemovable_on_reboot();
+
+	/**
+	 * Sets whether this i b order is removable_on_reboot.
+	 *
+	 * @param removable_on_reboot the removable_on_reboot of this i b order
+	 */
+	public void setRemovable_on_reboot(boolean removable_on_reboot);
+
 	@Override
 	public boolean isNew();
 

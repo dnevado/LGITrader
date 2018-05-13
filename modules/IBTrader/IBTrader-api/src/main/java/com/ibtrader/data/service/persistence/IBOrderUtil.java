@@ -26,6 +26,7 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 
 import org.osgi.util.tracker.ServiceTracker;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -1110,6 +1111,230 @@ public class IBOrderUtil {
 		return getPersistence()
 				   .countByOrderClientGroupCompany(ordersId, companyId,
 			groupId, ibclientId);
+	}
+
+	/**
+	* Returns all the i b orders where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
+	*
+	* @param removable_on_reboot the removable_on_reboot
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param createDate the create date
+	* @return the matching i b orders
+	*/
+	public static List<IBOrder> findByRemovableDateGroupCompany(
+		boolean removable_on_reboot, long companyId, long groupId,
+		Date createDate) {
+		return getPersistence()
+				   .findByRemovableDateGroupCompany(removable_on_reboot,
+			companyId, groupId, createDate);
+	}
+
+	/**
+	* Returns a range of all the i b orders where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param removable_on_reboot the removable_on_reboot
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param createDate the create date
+	* @param start the lower bound of the range of i b orders
+	* @param end the upper bound of the range of i b orders (not inclusive)
+	* @return the range of matching i b orders
+	*/
+	public static List<IBOrder> findByRemovableDateGroupCompany(
+		boolean removable_on_reboot, long companyId, long groupId,
+		Date createDate, int start, int end) {
+		return getPersistence()
+				   .findByRemovableDateGroupCompany(removable_on_reboot,
+			companyId, groupId, createDate, start, end);
+	}
+
+	/**
+	* Returns an ordered range of all the i b orders where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param removable_on_reboot the removable_on_reboot
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param createDate the create date
+	* @param start the lower bound of the range of i b orders
+	* @param end the upper bound of the range of i b orders (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching i b orders
+	*/
+	public static List<IBOrder> findByRemovableDateGroupCompany(
+		boolean removable_on_reboot, long companyId, long groupId,
+		Date createDate, int start, int end,
+		OrderByComparator<IBOrder> orderByComparator) {
+		return getPersistence()
+				   .findByRemovableDateGroupCompany(removable_on_reboot,
+			companyId, groupId, createDate, start, end, orderByComparator);
+	}
+
+	/**
+	* Returns an ordered range of all the i b orders where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param removable_on_reboot the removable_on_reboot
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param createDate the create date
+	* @param start the lower bound of the range of i b orders
+	* @param end the upper bound of the range of i b orders (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching i b orders
+	*/
+	public static List<IBOrder> findByRemovableDateGroupCompany(
+		boolean removable_on_reboot, long companyId, long groupId,
+		Date createDate, int start, int end,
+		OrderByComparator<IBOrder> orderByComparator, boolean retrieveFromCache) {
+		return getPersistence()
+				   .findByRemovableDateGroupCompany(removable_on_reboot,
+			companyId, groupId, createDate, start, end, orderByComparator,
+			retrieveFromCache);
+	}
+
+	/**
+	* Returns the first i b order in the ordered set where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
+	*
+	* @param removable_on_reboot the removable_on_reboot
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param createDate the create date
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching i b order
+	* @throws NoSuchIBOrderException if a matching i b order could not be found
+	*/
+	public static IBOrder findByRemovableDateGroupCompany_First(
+		boolean removable_on_reboot, long companyId, long groupId,
+		Date createDate, OrderByComparator<IBOrder> orderByComparator)
+		throws com.ibtrader.data.exception.NoSuchIBOrderException {
+		return getPersistence()
+				   .findByRemovableDateGroupCompany_First(removable_on_reboot,
+			companyId, groupId, createDate, orderByComparator);
+	}
+
+	/**
+	* Returns the first i b order in the ordered set where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
+	*
+	* @param removable_on_reboot the removable_on_reboot
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param createDate the create date
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching i b order, or <code>null</code> if a matching i b order could not be found
+	*/
+	public static IBOrder fetchByRemovableDateGroupCompany_First(
+		boolean removable_on_reboot, long companyId, long groupId,
+		Date createDate, OrderByComparator<IBOrder> orderByComparator) {
+		return getPersistence()
+				   .fetchByRemovableDateGroupCompany_First(removable_on_reboot,
+			companyId, groupId, createDate, orderByComparator);
+	}
+
+	/**
+	* Returns the last i b order in the ordered set where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
+	*
+	* @param removable_on_reboot the removable_on_reboot
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param createDate the create date
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching i b order
+	* @throws NoSuchIBOrderException if a matching i b order could not be found
+	*/
+	public static IBOrder findByRemovableDateGroupCompany_Last(
+		boolean removable_on_reboot, long companyId, long groupId,
+		Date createDate, OrderByComparator<IBOrder> orderByComparator)
+		throws com.ibtrader.data.exception.NoSuchIBOrderException {
+		return getPersistence()
+				   .findByRemovableDateGroupCompany_Last(removable_on_reboot,
+			companyId, groupId, createDate, orderByComparator);
+	}
+
+	/**
+	* Returns the last i b order in the ordered set where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
+	*
+	* @param removable_on_reboot the removable_on_reboot
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param createDate the create date
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching i b order, or <code>null</code> if a matching i b order could not be found
+	*/
+	public static IBOrder fetchByRemovableDateGroupCompany_Last(
+		boolean removable_on_reboot, long companyId, long groupId,
+		Date createDate, OrderByComparator<IBOrder> orderByComparator) {
+		return getPersistence()
+				   .fetchByRemovableDateGroupCompany_Last(removable_on_reboot,
+			companyId, groupId, createDate, orderByComparator);
+	}
+
+	/**
+	* Returns the i b orders before and after the current i b order in the ordered set where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
+	*
+	* @param orderIdPk the primary key of the current i b order
+	* @param removable_on_reboot the removable_on_reboot
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param createDate the create date
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next i b order
+	* @throws NoSuchIBOrderException if a i b order with the primary key could not be found
+	*/
+	public static IBOrder[] findByRemovableDateGroupCompany_PrevAndNext(
+		long orderIdPk, boolean removable_on_reboot, long companyId,
+		long groupId, Date createDate,
+		OrderByComparator<IBOrder> orderByComparator)
+		throws com.ibtrader.data.exception.NoSuchIBOrderException {
+		return getPersistence()
+				   .findByRemovableDateGroupCompany_PrevAndNext(orderIdPk,
+			removable_on_reboot, companyId, groupId, createDate,
+			orderByComparator);
+	}
+
+	/**
+	* Removes all the i b orders where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63; from the database.
+	*
+	* @param removable_on_reboot the removable_on_reboot
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param createDate the create date
+	*/
+	public static void removeByRemovableDateGroupCompany(
+		boolean removable_on_reboot, long companyId, long groupId,
+		Date createDate) {
+		getPersistence()
+			.removeByRemovableDateGroupCompany(removable_on_reboot, companyId,
+			groupId, createDate);
+	}
+
+	/**
+	* Returns the number of i b orders where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
+	*
+	* @param removable_on_reboot the removable_on_reboot
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param createDate the create date
+	* @return the number of matching i b orders
+	*/
+	public static int countByRemovableDateGroupCompany(
+		boolean removable_on_reboot, long companyId, long groupId,
+		Date createDate) {
+		return getPersistence()
+				   .countByRemovableDateGroupCompany(removable_on_reboot,
+			companyId, groupId, createDate);
 	}
 
 	/**

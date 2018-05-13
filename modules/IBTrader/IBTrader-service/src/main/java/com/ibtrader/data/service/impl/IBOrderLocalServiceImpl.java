@@ -16,10 +16,12 @@ package com.ibtrader.data.service.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import java.util.Date;
 import java.util.List;
 
 import com.ibtrader.data.exception.NoSuchIBOrderException;
 import com.ibtrader.data.model.IBOrder;
+import com.ibtrader.data.service.IBOrderLocalServiceUtil;
 import com.ibtrader.data.service.MarketLocalServiceUtil;
 import com.ibtrader.data.service.base.IBOrderLocalServiceBaseImpl;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
@@ -51,6 +53,30 @@ public class IBOrderLocalServiceImpl extends IBOrderLocalServiceBaseImpl {
 	 *
 	 * Never reference this class directly. Always use {@link com.ibtrader.data.service.IBOrderLocalServiceUtil} to access the i b order local service.
 	 */
+	
+	
+	/* AQUI BORRAMOS TODAS , ANTIGUAS */
+	public 	List<IBOrder> findByDate(Date untilDate)
+	{
+		DynamicQuery _DQ = IBOrderLocalServiceUtil.dynamicQuery();
+				
+		_DQ.add(RestrictionsFactoryUtil.le("createDate", untilDate));
+		
+		return ibOrderLocalService.dynamicQuery(_DQ);
+	}
+	
+	
+	/* SACAMOS TODAS LAS IBORDER A BORRAR PARA QUE NO ENTREN EN CONFLICTO AL REINICIAR, SOLO LAS REMOVABLE, LAS DE POSICIONES LAS DEJAMOS */
+	public 	List<IBOrder> findByRemovableDate(Date untilDate,   boolean removable_on_reboot)
+	{
+		DynamicQuery _DQ = IBOrderLocalServiceUtil.dynamicQuery();
+		
+		_DQ.add(RestrictionsFactoryUtil.eq("removable_on_reboot", removable_on_reboot));
+		_DQ.add(RestrictionsFactoryUtil.le("createDate", untilDate));
+		
+		return ibOrderLocalService.dynamicQuery(_DQ);
+	}
+	
 	
 	/* DEBERIAMOS COGER EL ULTIMO */
 	public 	List<IBOrder> findByShareIdCompanyGroup(long shareId, long companyId, long groupId)

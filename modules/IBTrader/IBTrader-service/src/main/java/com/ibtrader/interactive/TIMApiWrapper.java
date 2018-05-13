@@ -330,7 +330,8 @@ public class TIMApiWrapper implements EWrapper {
 		_order.setOrdersId(_INCREMENT_ORDER_ID);
 		_order.setCreateDate(new Date());
 		_order.setModifiedDate(new Date());			
-		_order.setIbclientId(_clientId);					
+		_order.setIbclientId(_clientId);				
+		_order.setRemovable_on_reboot(Boolean.FALSE);	 /* los requestid de las posiciones no se borran */		
 		IBOrderLocalServiceUtil.updateIBOrder(_order);
 		Position _position = PositionLocalServiceUtil.fetchPosition(positionId);
 		/* ACTULIAMOS CON LA POSICION DE ENTRADA  SI  ES UNA ENTRADA */
@@ -852,6 +853,9 @@ public class TIMApiWrapper implements EWrapper {
 			
 			if (share.getSimulation_end_date()==null)
 			{
+				
+				_log.debug("share : " + share.getShareId() + "Impl tickPrice : + " + tickerId + ",prices:" + price + ",field" + field + ",_clientId" + _clientId);
+				
 				Realtime  oReal = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));
 				oReal.setGroupId(MyOrder.getGroupId());
 				oReal.setCompanyId(MyOrder.getCompanyId());

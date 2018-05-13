@@ -80,7 +80,10 @@ portletDisplay.setURLBack(redirect);
 		$.fn.dataTable.ext.errMode = 'none';	
 		console.log("adding setInterval 4 seconds");
 		setInterval( function () {tPositions.ajax.reload(<portlet:namespace/>CallBackRefreshPosition());}, 4000 );
-		setInterval( function () {<portlet:namespace/>RefreshResults()}, 4000);
+		/* esta en el jsp de graph*/
+		setInterval( function () {<portlet:namespace/>RefreshResults()}, 8000);
+		// si se eliminan posiciones no se refresca, es un caso extremo, llamamos al draw cada mas tiempo  60 segundos
+		setInterval( function () {tPositions.clear();}, 60000);
 
 	} 
 
@@ -105,7 +108,7 @@ portletDisplay.setURLBack(redirect);
 			        		"sSearch":         "Buscar:",
 			        		"sUrl":            "",
 			        		"sInfoThousands":  ",",
-			        		"sLoadingRecords": "Cargando...",
+			        		"sLoadingRecords": "Lista de posiciones",
 			        		"oPaginate": {
 			        			"sFirst":    "Primero",
 			        			"sLast":     "Último",
@@ -153,7 +156,7 @@ portletDisplay.setURLBack(redirect);
 
 <div class="container-fluid-1280">
 <aui:row>
-<aui:col span="9">
+<aui:col span="10">
 <table class="table responsive table-striped table-bordered table-hover"  id="positions">
        <thead>
             <tr>
@@ -175,6 +178,6 @@ portletDisplay.setURLBack(redirect);
         </thead>
 </table>
 </aui:col>
-<aui:col span="3"><jsp:include page="/position_graph_results.jsp"/></aui:col>
+<aui:col span="2"><jsp:include page="/position_graph_results.jsp"/></aui:col>
 </aui:row>
 </div>

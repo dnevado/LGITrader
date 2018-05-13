@@ -257,6 +257,19 @@ public class IBOrderLocalServiceWrapper implements IBOrderLocalService,
 	}
 
 	@Override
+	public java.util.List<com.ibtrader.data.model.IBOrder> findByDate(
+		java.util.Date untilDate) {
+		return _ibOrderLocalService.findByDate(untilDate);
+	}
+
+	@Override
+	public java.util.List<com.ibtrader.data.model.IBOrder> findByRemovableDate(
+		java.util.Date untilDate, boolean removable_on_reboot) {
+		return _ibOrderLocalService.findByRemovableDate(untilDate,
+			removable_on_reboot);
+	}
+
+	@Override
 	public java.util.List<com.ibtrader.data.model.IBOrder> findByShareIdCompanyGroup(
 		long shareId, long companyId, long groupId) {
 		return _ibOrderLocalService.findByShareIdCompanyGroup(shareId,

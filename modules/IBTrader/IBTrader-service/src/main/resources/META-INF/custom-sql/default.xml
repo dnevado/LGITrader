@@ -96,21 +96,24 @@
      ]]>
     </sql>
     
+    <!--  como las posiciones puieden estar abiertas, cogemos el realtime en su caso o el precio de cierre  
+    incluimos el multiplicador del activo para los futuros o 1 para el resto -->
      <sql id="com.ibtrader.data.service.persistence.PositionFinder.getPositionOpenResults">
     <![CDATA[
     
 			    SELECT  
-						(sum(beneficio*acciones) / SUM(PRECIOENTRADA*acciones)*100)  MARGENBENEFICIO, 
-						 sum(beneficio*acciones) BENEFICIO
+						(sum(beneficio*acciones*multiplier) / SUM(PRECIOENTRADA*multiplier*acciones)*100)  MARGENBENEFICIO, 
+						 sum(beneficio*acciones*multiplier) BENEFICIO
 				FROM
 				(	SELECT case type_
-							 when 'BUY' then price_real_out - price_real_in
-							 when 'SELL' then price_real_in - price_real_out
+						   WHEN 'BUY' then IFNULL(price_real_out,REALTIME.value) - price_real_in
+						   WHEN 'SELL' then price_real_in - IFNULL(price_real_out,REALTIME.value)
 					       END BENEFICIO,
 					       share_number acciones,
 					       type_ tipo,
-					       price_real_in PRECIOENTRADA
-					FROM IBTrader_Position
+					       price_real_in PRECIOENTRADA,
+					       SHARE.multiplier
+					FROM IBTrader_Position, IBTrader_Realtime REALTIME,IBTrader_share SHARE
 					WHERE
 						(
 							(IBTrader_Position.date_real_out>=?)
@@ -118,20 +121,33 @@
 							(IBTrader_Position.date_real_out) IS NULL
 						)						
 						AND (IBTrader_Position.companyid=?)
-	            		AND (IBTrader_Position.groupid=?)    
+	            		AND (IBTrader_Position.groupid=?)
+	            		AND	 (REALTIME.shareId=IBTrader_Position.shareId)
+						AND	 (REALTIME.companyid=IBTrader_Position.companyid)
+						AND	 (REALTIME.groupid=IBTrader_Position.groupid)
+						AND	 (REALTIME.shareId=SHARE.shareId)
+						AND	 (REALTIME.companyid=SHARE.companyid)
+						AND	 (REALTIME.groupid=SHARE.groupid)
+	           		    AND (REALTIME.createDate)=  (SELECT  max(IBTrader_Realtime.createDate) FROM 
+					         			IBTrader_Realtime      
+					      	  		WHERE            
+					           			 (IBTrader_Realtime.shareId=IBTrader_Position.shareId)
+					          		  AND (IBTrader_Realtime.companyid=IBTrader_Position.companyid)
+					          		  AND (IBTrader_Realtime.groupid=IBTrader_Position.groupid))    
 				)	 rt 
 				
 	 
      ]]>
     </sql>
     
-    
+     <!--  
+    incluimos el multiplicador del activo para los futuros o 1 para el resto -->
      <sql id="com.ibtrader.data.service.persistence.PositionFinder.getPositionClosedResults">
     <![CDATA[
     
 			    SELECT  
-						count(*) OPERACIONES, (sum(beneficio*acciones) / SUM(PRECIOENTRADA*acciones)*100)  MARGENBENEFICIO, 
-						 sum(beneficio*acciones) BENEFICIO,sum(PRECIOENTRADA*acciones) INVERTIDO, TIPO
+						count(*) OPERACIONES, (sum(beneficio*acciones*multiplier) / SUM(PRECIOENTRADA*acciones*multiplier)*100)  MARGENBENEFICIO, 
+						 sum(beneficio*acciones*multiplier) BENEFICIO,sum(PRECIOENTRADA*acciones*multiplier) INVERTIDO, TIPO
 				FROM
 				(	SELECT case type_
 							 when 'BUY' then price_real_out - price_real_in
@@ -139,13 +155,15 @@
 					       END BENEFICIO,
 					       share_number acciones,
 					       type_ tipo,
-					       price_real_in PRECIOENTRADA
-					FROM IBTrader_Position
+					       price_real_in PRECIOENTRADA,
+					       SHARE.multiplier
+					FROM IBTrader_Position,IBTrader_share SHARE
 					WHERE
 						(IBTrader_Position.date_real_in>=?) AND (IBTrader_Position.date_real_in<?)
 						AND  (IBTrader_Position.date_real_out IS NOT NULL)
 						AND (IBTrader_Position.companyid=?)
-	            		AND (IBTrader_Position.groupid=?)         	
+	            		AND (IBTrader_Position.groupid=?)        
+	            		AND	 (IBTrader_Position.shareId=SHARE.shareId) 	
 				)	 rt 
 				GROUP BY tipo
 	 

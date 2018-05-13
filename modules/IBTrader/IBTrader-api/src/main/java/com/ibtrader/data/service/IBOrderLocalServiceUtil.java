@@ -246,6 +246,16 @@ public class IBOrderLocalServiceUtil {
 				   .dynamicQuery(dynamicQuery, start, end, orderByComparator);
 	}
 
+	public static java.util.List<com.ibtrader.data.model.IBOrder> findByDate(
+		java.util.Date untilDate) {
+		return getService().findByDate(untilDate);
+	}
+
+	public static java.util.List<com.ibtrader.data.model.IBOrder> findByRemovableDate(
+		java.util.Date untilDate, boolean removable_on_reboot) {
+		return getService().findByRemovableDate(untilDate, removable_on_reboot);
+	}
+
 	public static java.util.List<com.ibtrader.data.model.IBOrder> findByShareIdCompanyGroup(
 		long shareId, long companyId, long groupId) {
 		return getService()

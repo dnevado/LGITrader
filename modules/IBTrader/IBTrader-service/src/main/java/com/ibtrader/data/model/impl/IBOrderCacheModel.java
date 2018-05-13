@@ -65,7 +65,7 @@ public class IBOrderCacheModel implements CacheModel<IBOrder>, Externalizable {
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(21);
+		StringBundler sb = new StringBundler(23);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -87,6 +87,8 @@ public class IBOrderCacheModel implements CacheModel<IBOrder>, Externalizable {
 		sb.append(modifiedDate);
 		sb.append(", ibclientId=");
 		sb.append(ibclientId);
+		sb.append(", removable_on_reboot=");
+		sb.append(removable_on_reboot);
 		sb.append("}");
 
 		return sb.toString();
@@ -125,6 +127,7 @@ public class IBOrderCacheModel implements CacheModel<IBOrder>, Externalizable {
 		}
 
 		ibOrderImpl.setIbclientId(ibclientId);
+		ibOrderImpl.setRemovable_on_reboot(removable_on_reboot);
 
 		ibOrderImpl.resetOriginalValues();
 
@@ -150,6 +153,8 @@ public class IBOrderCacheModel implements CacheModel<IBOrder>, Externalizable {
 		modifiedDate = objectInput.readLong();
 
 		ibclientId = objectInput.readLong();
+
+		removable_on_reboot = objectInput.readBoolean();
 	}
 
 	@Override
@@ -177,6 +182,8 @@ public class IBOrderCacheModel implements CacheModel<IBOrder>, Externalizable {
 		objectOutput.writeLong(modifiedDate);
 
 		objectOutput.writeLong(ibclientId);
+
+		objectOutput.writeBoolean(removable_on_reboot);
 	}
 
 	public String uuid;
@@ -189,4 +196,5 @@ public class IBOrderCacheModel implements CacheModel<IBOrder>, Externalizable {
 	public long createDate;
 	public long modifiedDate;
 	public long ibclientId;
+	public boolean removable_on_reboot;
 }

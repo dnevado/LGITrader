@@ -28,6 +28,9 @@
 		<field name="createDate" type="Date" />
 		<field name="modifiedDate" type="Date" />
 		<field name="ibclientId" type="long" />
+		<field name="removable_on_reboot" type="boolean">
+			<hint name="default-value">0</hint>
+		</field>
 	</model>
 	<model name="com.ibtrader.data.model.Market">
 		<field name="uuid" type="String" />

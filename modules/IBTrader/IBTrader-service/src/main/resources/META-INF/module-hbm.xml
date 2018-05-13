@@ -39,6 +39,7 @@
 		<property name="createDate" type="org.hibernate.type.TimestampType" />
 		<property name="modifiedDate" type="org.hibernate.type.TimestampType" />
 		<property name="ibclientId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="removable_on_reboot" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />
 	</class>
 	<class name="com.ibtrader.data.model.impl.MarketImpl" table="ibtrader_Market">
 		<id name="marketId" type="long">

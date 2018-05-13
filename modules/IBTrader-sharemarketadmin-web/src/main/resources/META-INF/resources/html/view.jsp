@@ -40,7 +40,7 @@
 </aui:button-row>
 
 
-<liferay-ui:search-container cssClass="table responsive table-striped table-bordered table-hover"  searchContainer="${searchShare}" iteratorURL="${iteratorURL}"> 
+<liferay-ui:search-container cssClass="table table-responsive table-striped table-bordered table-hover"  searchContainer="${searchShare}" iteratorURL="${iteratorURL}"> 
 <liferay-ui:search-container-results results="${searchShare.getResults()}"/>    
 <liferay-ui:search-container-row  className="com.ibtrader.data.model.Share" keyProperty="ShareId" modelVar="Share">
 <liferay-ui:search-container-column-text  orderable="<%= true %>"  orderableProperty="name" name="share.name" value="${Share.name}(${Share.symbol})" />

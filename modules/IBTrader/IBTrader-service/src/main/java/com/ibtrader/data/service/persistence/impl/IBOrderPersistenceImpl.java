@@ -46,6 +46,8 @@ import com.liferay.portal.spring.extender.service.ServiceReference;
 
 import java.io.Serializable;
 
+import java.sql.Timestamp;
+
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -3285,6 +3287,688 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 		"ibOrder.groupId = ? AND ";
 	private static final String _FINDER_COLUMN_ORDERCLIENTGROUPCOMPANY_IBCLIENTID_2 =
 		"ibOrder.ibclientId = ?";
+	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_REMOVABLEDATEGROUPCOMPANY =
+		new FinderPath(IBOrderModelImpl.ENTITY_CACHE_ENABLED,
+			IBOrderModelImpl.FINDER_CACHE_ENABLED, IBOrderImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+			"findByRemovableDateGroupCompany",
+			new String[] {
+				Boolean.class.getName(), Long.class.getName(),
+				Long.class.getName(), Date.class.getName(),
+				
+			Integer.class.getName(), Integer.class.getName(),
+				OrderByComparator.class.getName()
+			});
+	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_REMOVABLEDATEGROUPCOMPANY =
+		new FinderPath(IBOrderModelImpl.ENTITY_CACHE_ENABLED,
+			IBOrderModelImpl.FINDER_CACHE_ENABLED, IBOrderImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"findByRemovableDateGroupCompany",
+			new String[] {
+				Boolean.class.getName(), Long.class.getName(),
+				Long.class.getName(), Date.class.getName()
+			},
+			IBOrderModelImpl.REMOVABLE_ON_REBOOT_COLUMN_BITMASK |
+			IBOrderModelImpl.COMPANYID_COLUMN_BITMASK |
+			IBOrderModelImpl.GROUPID_COLUMN_BITMASK |
+			IBOrderModelImpl.CREATEDATE_COLUMN_BITMASK);
+	public static final FinderPath FINDER_PATH_COUNT_BY_REMOVABLEDATEGROUPCOMPANY =
+		new FinderPath(IBOrderModelImpl.ENTITY_CACHE_ENABLED,
+			IBOrderModelImpl.FINDER_CACHE_ENABLED, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"countByRemovableDateGroupCompany",
+			new String[] {
+				Boolean.class.getName(), Long.class.getName(),
+				Long.class.getName(), Date.class.getName()
+			});
+
+	/**
+	 * Returns all the i b orders where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
+	 *
+	 * @param removable_on_reboot the removable_on_reboot
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param createDate the create date
+	 * @return the matching i b orders
+	 */
+	@Override
+	public List<IBOrder> findByRemovableDateGroupCompany(
+		boolean removable_on_reboot, long companyId, long groupId,
+		Date createDate) {
+		return findByRemovableDateGroupCompany(removable_on_reboot, companyId,
+			groupId, createDate, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the i b orders where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param removable_on_reboot the removable_on_reboot
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param createDate the create date
+	 * @param start the lower bound of the range of i b orders
+	 * @param end the upper bound of the range of i b orders (not inclusive)
+	 * @return the range of matching i b orders
+	 */
+	@Override
+	public List<IBOrder> findByRemovableDateGroupCompany(
+		boolean removable_on_reboot, long companyId, long groupId,
+		Date createDate, int start, int end) {
+		return findByRemovableDateGroupCompany(removable_on_reboot, companyId,
+			groupId, createDate, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the i b orders where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param removable_on_reboot the removable_on_reboot
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param createDate the create date
+	 * @param start the lower bound of the range of i b orders
+	 * @param end the upper bound of the range of i b orders (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching i b orders
+	 */
+	@Override
+	public List<IBOrder> findByRemovableDateGroupCompany(
+		boolean removable_on_reboot, long companyId, long groupId,
+		Date createDate, int start, int end,
+		OrderByComparator<IBOrder> orderByComparator) {
+		return findByRemovableDateGroupCompany(removable_on_reboot, companyId,
+			groupId, createDate, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the i b orders where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param removable_on_reboot the removable_on_reboot
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param createDate the create date
+	 * @param start the lower bound of the range of i b orders
+	 * @param end the upper bound of the range of i b orders (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the ordered range of matching i b orders
+	 */
+	@Override
+	public List<IBOrder> findByRemovableDateGroupCompany(
+		boolean removable_on_reboot, long companyId, long groupId,
+		Date createDate, int start, int end,
+		OrderByComparator<IBOrder> orderByComparator, boolean retrieveFromCache) {
+		boolean pagination = true;
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+				(orderByComparator == null)) {
+			pagination = false;
+			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_REMOVABLEDATEGROUPCOMPANY;
+			finderArgs = new Object[] {
+					removable_on_reboot, companyId, groupId, createDate
+				};
+		}
+		else {
+			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_REMOVABLEDATEGROUPCOMPANY;
+			finderArgs = new Object[] {
+					removable_on_reboot, companyId, groupId, createDate,
+					
+					start, end, orderByComparator
+				};
+		}
+
+		List<IBOrder> list = null;
+
+		if (retrieveFromCache) {
+			list = (List<IBOrder>)finderCache.getResult(finderPath, finderArgs,
+					this);
+
+			if ((list != null) && !list.isEmpty()) {
+				for (IBOrder ibOrder : list) {
+					if ((removable_on_reboot != ibOrder.getRemovable_on_reboot()) ||
+							(companyId != ibOrder.getCompanyId()) ||
+							(groupId != ibOrder.getGroupId()) ||
+							!Objects.equals(createDate, ibOrder.getCreateDate())) {
+						list = null;
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler query = null;
+
+			if (orderByComparator != null) {
+				query = new StringBundler(6 +
+						(orderByComparator.getOrderByFields().length * 2));
+			}
+			else {
+				query = new StringBundler(6);
+			}
+
+			query.append(_SQL_SELECT_IBORDER_WHERE);
+
+			query.append(_FINDER_COLUMN_REMOVABLEDATEGROUPCOMPANY_REMOVABLE_ON_REBOOT_2);
+
+			query.append(_FINDER_COLUMN_REMOVABLEDATEGROUPCOMPANY_COMPANYID_2);
+
+			query.append(_FINDER_COLUMN_REMOVABLEDATEGROUPCOMPANY_GROUPID_2);
+
+			boolean bindCreateDate = false;
+
+			if (createDate == null) {
+				query.append(_FINDER_COLUMN_REMOVABLEDATEGROUPCOMPANY_CREATEDATE_1);
+			}
+			else {
+				bindCreateDate = true;
+
+				query.append(_FINDER_COLUMN_REMOVABLEDATEGROUPCOMPANY_CREATEDATE_2);
+			}
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
+					orderByComparator);
+			}
+			else
+			 if (pagination) {
+				query.append(IBOrderModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(removable_on_reboot);
+
+				qPos.add(companyId);
+
+				qPos.add(groupId);
+
+				if (bindCreateDate) {
+					qPos.add(new Timestamp(createDate.getTime()));
+				}
+
+				if (!pagination) {
+					list = (List<IBOrder>)QueryUtil.list(q, getDialect(),
+							start, end, false);
+
+					Collections.sort(list);
+
+					list = Collections.unmodifiableList(list);
+				}
+				else {
+					list = (List<IBOrder>)QueryUtil.list(q, getDialect(),
+							start, end);
+				}
+
+				cacheResult(list);
+
+				finderCache.putResult(finderPath, finderArgs, list);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Returns the first i b order in the ordered set where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
+	 *
+	 * @param removable_on_reboot the removable_on_reboot
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param createDate the create date
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching i b order
+	 * @throws NoSuchIBOrderException if a matching i b order could not be found
+	 */
+	@Override
+	public IBOrder findByRemovableDateGroupCompany_First(
+		boolean removable_on_reboot, long companyId, long groupId,
+		Date createDate, OrderByComparator<IBOrder> orderByComparator)
+		throws NoSuchIBOrderException {
+		IBOrder ibOrder = fetchByRemovableDateGroupCompany_First(removable_on_reboot,
+				companyId, groupId, createDate, orderByComparator);
+
+		if (ibOrder != null) {
+			return ibOrder;
+		}
+
+		StringBundler msg = new StringBundler(10);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("removable_on_reboot=");
+		msg.append(removable_on_reboot);
+
+		msg.append(", companyId=");
+		msg.append(companyId);
+
+		msg.append(", groupId=");
+		msg.append(groupId);
+
+		msg.append(", createDate=");
+		msg.append(createDate);
+
+		msg.append(StringPool.CLOSE_CURLY_BRACE);
+
+		throw new NoSuchIBOrderException(msg.toString());
+	}
+
+	/**
+	 * Returns the first i b order in the ordered set where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
+	 *
+	 * @param removable_on_reboot the removable_on_reboot
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param createDate the create date
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching i b order, or <code>null</code> if a matching i b order could not be found
+	 */
+	@Override
+	public IBOrder fetchByRemovableDateGroupCompany_First(
+		boolean removable_on_reboot, long companyId, long groupId,
+		Date createDate, OrderByComparator<IBOrder> orderByComparator) {
+		List<IBOrder> list = findByRemovableDateGroupCompany(removable_on_reboot,
+				companyId, groupId, createDate, 0, 1, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last i b order in the ordered set where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
+	 *
+	 * @param removable_on_reboot the removable_on_reboot
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param createDate the create date
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching i b order
+	 * @throws NoSuchIBOrderException if a matching i b order could not be found
+	 */
+	@Override
+	public IBOrder findByRemovableDateGroupCompany_Last(
+		boolean removable_on_reboot, long companyId, long groupId,
+		Date createDate, OrderByComparator<IBOrder> orderByComparator)
+		throws NoSuchIBOrderException {
+		IBOrder ibOrder = fetchByRemovableDateGroupCompany_Last(removable_on_reboot,
+				companyId, groupId, createDate, orderByComparator);
+
+		if (ibOrder != null) {
+			return ibOrder;
+		}
+
+		StringBundler msg = new StringBundler(10);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("removable_on_reboot=");
+		msg.append(removable_on_reboot);
+
+		msg.append(", companyId=");
+		msg.append(companyId);
+
+		msg.append(", groupId=");
+		msg.append(groupId);
+
+		msg.append(", createDate=");
+		msg.append(createDate);
+
+		msg.append(StringPool.CLOSE_CURLY_BRACE);
+
+		throw new NoSuchIBOrderException(msg.toString());
+	}
+
+	/**
+	 * Returns the last i b order in the ordered set where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
+	 *
+	 * @param removable_on_reboot the removable_on_reboot
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param createDate the create date
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching i b order, or <code>null</code> if a matching i b order could not be found
+	 */
+	@Override
+	public IBOrder fetchByRemovableDateGroupCompany_Last(
+		boolean removable_on_reboot, long companyId, long groupId,
+		Date createDate, OrderByComparator<IBOrder> orderByComparator) {
+		int count = countByRemovableDateGroupCompany(removable_on_reboot,
+				companyId, groupId, createDate);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<IBOrder> list = findByRemovableDateGroupCompany(removable_on_reboot,
+				companyId, groupId, createDate, count - 1, count,
+				orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the i b orders before and after the current i b order in the ordered set where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
+	 *
+	 * @param orderIdPk the primary key of the current i b order
+	 * @param removable_on_reboot the removable_on_reboot
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param createDate the create date
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next i b order
+	 * @throws NoSuchIBOrderException if a i b order with the primary key could not be found
+	 */
+	@Override
+	public IBOrder[] findByRemovableDateGroupCompany_PrevAndNext(
+		long orderIdPk, boolean removable_on_reboot, long companyId,
+		long groupId, Date createDate,
+		OrderByComparator<IBOrder> orderByComparator)
+		throws NoSuchIBOrderException {
+		IBOrder ibOrder = findByPrimaryKey(orderIdPk);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			IBOrder[] array = new IBOrderImpl[3];
+
+			array[0] = getByRemovableDateGroupCompany_PrevAndNext(session,
+					ibOrder, removable_on_reboot, companyId, groupId,
+					createDate, orderByComparator, true);
+
+			array[1] = ibOrder;
+
+			array[2] = getByRemovableDateGroupCompany_PrevAndNext(session,
+					ibOrder, removable_on_reboot, companyId, groupId,
+					createDate, orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected IBOrder getByRemovableDateGroupCompany_PrevAndNext(
+		Session session, IBOrder ibOrder, boolean removable_on_reboot,
+		long companyId, long groupId, Date createDate,
+		OrderByComparator<IBOrder> orderByComparator, boolean previous) {
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(7 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(6);
+		}
+
+		query.append(_SQL_SELECT_IBORDER_WHERE);
+
+		query.append(_FINDER_COLUMN_REMOVABLEDATEGROUPCOMPANY_REMOVABLE_ON_REBOOT_2);
+
+		query.append(_FINDER_COLUMN_REMOVABLEDATEGROUPCOMPANY_COMPANYID_2);
+
+		query.append(_FINDER_COLUMN_REMOVABLEDATEGROUPCOMPANY_GROUPID_2);
+
+		boolean bindCreateDate = false;
+
+		if (createDate == null) {
+			query.append(_FINDER_COLUMN_REMOVABLEDATEGROUPCOMPANY_CREATEDATE_1);
+		}
+		else {
+			bindCreateDate = true;
+
+			query.append(_FINDER_COLUMN_REMOVABLEDATEGROUPCOMPANY_CREATEDATE_2);
+		}
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			query.append(IBOrderModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = query.toString();
+
+		Query q = session.createQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(removable_on_reboot);
+
+		qPos.add(companyId);
+
+		qPos.add(groupId);
+
+		if (bindCreateDate) {
+			qPos.add(new Timestamp(createDate.getTime()));
+		}
+
+		if (orderByComparator != null) {
+			Object[] values = orderByComparator.getOrderByConditionValues(ibOrder);
+
+			for (Object value : values) {
+				qPos.add(value);
+			}
+		}
+
+		List<IBOrder> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Removes all the i b orders where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63; from the database.
+	 *
+	 * @param removable_on_reboot the removable_on_reboot
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param createDate the create date
+	 */
+	@Override
+	public void removeByRemovableDateGroupCompany(boolean removable_on_reboot,
+		long companyId, long groupId, Date createDate) {
+		for (IBOrder ibOrder : findByRemovableDateGroupCompany(
+				removable_on_reboot, companyId, groupId, createDate,
+				QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+			remove(ibOrder);
+		}
+	}
+
+	/**
+	 * Returns the number of i b orders where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
+	 *
+	 * @param removable_on_reboot the removable_on_reboot
+	 * @param companyId the company ID
+	 * @param groupId the group ID
+	 * @param createDate the create date
+	 * @return the number of matching i b orders
+	 */
+	@Override
+	public int countByRemovableDateGroupCompany(boolean removable_on_reboot,
+		long companyId, long groupId, Date createDate) {
+		FinderPath finderPath = FINDER_PATH_COUNT_BY_REMOVABLEDATEGROUPCOMPANY;
+
+		Object[] finderArgs = new Object[] {
+				removable_on_reboot, companyId, groupId, createDate
+			};
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(5);
+
+			query.append(_SQL_COUNT_IBORDER_WHERE);
+
+			query.append(_FINDER_COLUMN_REMOVABLEDATEGROUPCOMPANY_REMOVABLE_ON_REBOOT_2);
+
+			query.append(_FINDER_COLUMN_REMOVABLEDATEGROUPCOMPANY_COMPANYID_2);
+
+			query.append(_FINDER_COLUMN_REMOVABLEDATEGROUPCOMPANY_GROUPID_2);
+
+			boolean bindCreateDate = false;
+
+			if (createDate == null) {
+				query.append(_FINDER_COLUMN_REMOVABLEDATEGROUPCOMPANY_CREATEDATE_1);
+			}
+			else {
+				bindCreateDate = true;
+
+				query.append(_FINDER_COLUMN_REMOVABLEDATEGROUPCOMPANY_CREATEDATE_2);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(removable_on_reboot);
+
+				qPos.add(companyId);
+
+				qPos.add(groupId);
+
+				if (bindCreateDate) {
+					qPos.add(new Timestamp(createDate.getTime()));
+				}
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_REMOVABLEDATEGROUPCOMPANY_REMOVABLE_ON_REBOOT_2 =
+		"ibOrder.removable_on_reboot = ? AND ";
+	private static final String _FINDER_COLUMN_REMOVABLEDATEGROUPCOMPANY_COMPANYID_2 =
+		"ibOrder.companyId = ? AND ";
+	private static final String _FINDER_COLUMN_REMOVABLEDATEGROUPCOMPANY_GROUPID_2 =
+		"ibOrder.groupId = ? AND ";
+	private static final String _FINDER_COLUMN_REMOVABLEDATEGROUPCOMPANY_CREATEDATE_1 =
+		"ibOrder.createDate IS NULL";
+	private static final String _FINDER_COLUMN_REMOVABLEDATEGROUPCOMPANY_CREATEDATE_2 =
+		"ibOrder.createDate = ?";
 	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_ORDERCLIENT =
 		new FinderPath(IBOrderModelImpl.ENTITY_CACHE_ENABLED,
 			IBOrderModelImpl.FINDER_CACHE_ENABLED, IBOrderImpl.class,
@@ -4246,6 +4930,33 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 			}
 
 			if ((ibOrderModelImpl.getColumnBitmask() &
+					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_REMOVABLEDATEGROUPCOMPANY.getColumnBitmask()) != 0) {
+				Object[] args = new Object[] {
+						ibOrderModelImpl.getOriginalRemovable_on_reboot(),
+						ibOrderModelImpl.getOriginalCompanyId(),
+						ibOrderModelImpl.getOriginalGroupId(),
+						ibOrderModelImpl.getOriginalCreateDate()
+					};
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_REMOVABLEDATEGROUPCOMPANY,
+					args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_REMOVABLEDATEGROUPCOMPANY,
+					args);
+
+				args = new Object[] {
+						ibOrderModelImpl.getRemovable_on_reboot(),
+						ibOrderModelImpl.getCompanyId(),
+						ibOrderModelImpl.getGroupId(),
+						ibOrderModelImpl.getCreateDate()
+					};
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_REMOVABLEDATEGROUPCOMPANY,
+					args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_REMOVABLEDATEGROUPCOMPANY,
+					args);
+			}
+
+			if ((ibOrderModelImpl.getColumnBitmask() &
 					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ORDERCLIENT.getColumnBitmask()) != 0) {
 				Object[] args = new Object[] {
 						ibOrderModelImpl.getOriginalOrdersId(),
@@ -4298,6 +5009,7 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 		ibOrderImpl.setCreateDate(ibOrder.getCreateDate());
 		ibOrderImpl.setModifiedDate(ibOrder.getModifiedDate());
 		ibOrderImpl.setIbclientId(ibOrder.getIbclientId());
+		ibOrderImpl.setRemovable_on_reboot(ibOrder.isRemovable_on_reboot());
 
 		return ibOrderImpl;
 	}

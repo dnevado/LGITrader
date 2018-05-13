@@ -3,9 +3,15 @@
 <%@ include file="/init.jsp" %>
 <%@ page import="com.liferay.portal.kernel.json.*" %>
 
-<canvas id="percentageprofit"></canvas>
-<canvas id="profit"></canvas>
-
+<canvas id="percentageprofit" width="400" height="350"></canvas>
+<canvas id="profit" width="400" height="350"></canvas>
+<style>
+	canvas {
+		-moz-user-select: none;
+		-webkit-user-select: none;
+		-ms-user-select: none;
+	}
+	</style>
 
 <portlet:resourceURL var="PositionResultsResourceURL">
     <portlet:param name="redirect" value="<%=themeDisplay.getURLCurrent()%>"/>
@@ -38,12 +44,102 @@ function <portlet:namespace/>RefreshResults() {
 	type: "POST",
 	url: "<%=renderResponse.encodeURL(PositionResultsResourceURL.toString())%>",		
 	success: function(msg) {
-	// code here
+		
+		if (msg!=null && msg!='')
+			<portlet:namespace/>showResults(msg)
 	}
 	});
 	} 
 
 
+function <portlet:namespace/>showResults(data) {	
+	
+	
+	var Data = $.parseJSON(data);
+	var profit;
+	var profitrate;
+	
+	if (Data!=null &&  Data.dataResults!=null && Data.dataResults[0]!=null)
+	{
+		profit=Data.dataResults[0]["BENEFICIO"];
+		profitrate=Data.dataResults[0]["MARGENBENEFICIO"];
+		
+		var backgroundcolor = "#FF4500" // rojo
+		var remaining;
+		if (profit>0)
+			backgroundcolor = "#009587" // verde
+			
+		
+		/* lo quitamos el signo ya que el color da el valor */
+		profitrate = Math.abs(profitrate);
+		remaining = 100-profitrate;	
+		Chart.pluginService.register({
+		    beforeDraw: function (chart) {
+		        var width = chart.chart.width,
+		            height = chart.chart.height,
+		            ctx = chart.chart.ctx;
+		        ctx.restore();
+		        var fontSize = (height / 114).toFixed(2);
+		        ctx.font = fontSize + "em sans-serif";
+		        ctx.textBaseline = "middle";
+		        var text = chart.config.options.elements.center.text,
+		            textX = Math.round((width - ctx.measureText(text).width) / 2),
+		            textY = height / 2;
+		        ctx.fillText(text, textX, textY);
+		        ctx.save();
+		    }
+		});
+		// chart1
+		var data = {
+		    labels: ['<liferay-ui:message key="profitrate"/>',''],
+		    datasets: [{
+		        data: [profitrate,remaining],
+		        backgroundColor: [backgroundcolor, "#668cff"]		       
+		    }]
+		};
+		var promisedDeliveryChart = new Chart(document.getElementById('percentageprofit'), {
+		    type: 'doughnut',
+		    data: data,
+		    options: {
+		        elements: {
+		            center: {
+		                text: profitrate + "%"  //set as you wish
+		            }
+		        },
+		        cutoutPercentage: 75,
+		        legend: {
+		            display: false
+		        }
+		    }
+		});
+		// chart2
+		var data = {
+			labels: ['<liferay-ui:message key="profit"/>'],
+		    datasets: [{
+		        data: [profit],
+		        backgroundColor: [backgroundcolor]
+		    }]
+		};
+		var promisedDeliveryChart = new Chart(document.getElementById('profit'), {
+		    type: 'doughnut',
+		    data: data,
+		    options: {
+		        elements: {
+		            center: {
+		                text: profit //set as you wish
+		            }
+		        },
+		        cutoutPercentage: 75,
+		        legend: {
+		        	display: false
+		        }
+		    }
+		});
+		
+	} // end if (Data!=null &&  Data.dataResults!=null && Data.dataResultss[0]!=null)
+	
+			
+}  // <portlet:namespace/>showResults(data) {	
 
 
 
@@ -54,53 +150,7 @@ function <portlet:namespace/>RefreshResults() {
 			
 			console.log('It works!1');
 			
-			var ctx = document.getElementById("percentageprofit").getContext('2d');
-			var myDoughnutChart = new Chart(ctx, {
-			    type: 'doughnut',
-			    data: {
-			        labels: ["BUY", "SELL"],
-			        datasets: [{
-			            label: '<liferay-ui:message key="profit"/>',
-			            data: [1,2],			         
-			            borderColor: [
-			            	'rgba(75, 192, 192, 1)',			                
-			                'rgba(255,99,132,1)'
-			            ],
-			            borderWidth: 1
-			        }]
-			    },
-			    options: {
-			        scales: {
-			            xAxes: [{ barPercentage: 0.5 }]
-			        }
-			    }
-			});
-			var ctx = document.getElementById("profit").getContext('2d');
-			var myDoughnutChart = new Chart(ctx, {
-			    type: 'doughnut',
-			    data: {
-			        labels: ["BUY", "SELL"],
-			        datasets: [{
-			            label: '<liferay-ui:message key="profit"/>',
-			            data: [1,2],			         
-			            borderColor: [
-			            	'rgba(75, 192, 192, 1)',			                
-			                'rgba(255,99,132,1)'
-			            ],
-			            borderWidth: 1
-			        }]
-			    },
-			    options: {
-			        scales: {
-			            xAxes: [{ barPercentage: 0.5 }]
-			        }
-			    }
-			});
-
-		
-			
-		
-			
+	
 		});
  });
  
