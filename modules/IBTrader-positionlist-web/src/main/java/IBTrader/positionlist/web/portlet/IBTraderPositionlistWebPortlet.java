@@ -190,6 +190,8 @@ public class IBTraderPositionlistWebPortlet extends MVCPortlet {
 		    
 		}
 	 
+	 
+	 /* CANCELA UNA OPERACION ENTRADA O SALIDA PENDIENTE DE EJECUTARSE  */
 	 public void cancelPosition(ActionRequest actionRequest, ActionResponse actionResponse)
 		{
 			UploadPortletRequest req = PortalUtil.getUploadPortletRequest(actionRequest);
@@ -229,7 +231,7 @@ public class IBTraderPositionlistWebPortlet extends MVCPortlet {
 	 
 	 
 	 
-	 
+	 /* CIERRA UNA POSICION ABIERTA */
 	 public void closePosition(ActionRequest actionRequest, ActionResponse actionResponse)
 		{
 			UploadPortletRequest req = PortalUtil.getUploadPortletRequest(actionRequest);
@@ -369,6 +371,9 @@ public class IBTraderPositionlistWebPortlet extends MVCPortlet {
 	        
 	        if (ibposition.getType().equals(PositionStates.statusTWSFire.SELL.toString())) // operacion de venta  normal..??
 	        	profit =   ibposition.getPrice_real_in() - price_out;
+	        
+	        profit  =  Utilities.RoundPrice(profit);
+	        
 	        percentual_profit = (profit /  ibposition.getPrice_real_in() * 100);
 	        percentual_profit = Utilities.RoundPrice(percentual_profit);
 	        if (profit>0)     

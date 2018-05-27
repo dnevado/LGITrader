@@ -135,8 +135,15 @@ function <portlet:namespace/>showResults(data) {
 		        }
 		    }
 		});
+		$("percentageprofit").show();
+		$("profit").show();
 		
 	} // end if (Data!=null &&  Data.dataResults!=null && Data.dataResultss[0]!=null)
+	else
+	{
+		$("percentageprofit").hide();
+		$("profit").hide();
+	}
 	
 			
 }  // <portlet:namespace/>showResults(data) {	
