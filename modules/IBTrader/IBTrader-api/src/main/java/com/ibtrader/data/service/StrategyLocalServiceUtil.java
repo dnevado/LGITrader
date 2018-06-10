@@ -127,9 +127,11 @@ public class StrategyLocalServiceUtil {
 		return getService().fetchStrategyByUuidAndGroupId(uuid, groupId);
 	}
 
-	public static com.ibtrader.data.model.Strategy getCompanyClassName(
-		long companyId, java.lang.String strategyClassName) {
-		return getService().getCompanyClassName(companyId, strategyClassName);
+	public static com.ibtrader.data.model.Strategy getCompanyGroupClassName(
+		long companyId, long groupid, java.lang.String strategyClassName) {
+		return getService()
+				   .getCompanyGroupClassName(companyId, groupid,
+			strategyClassName);
 	}
 
 	/**

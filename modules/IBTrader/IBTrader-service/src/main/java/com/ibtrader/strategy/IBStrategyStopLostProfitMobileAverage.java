@@ -67,6 +67,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.ibtrader.util.MobileAvgUtil;
 import com.ibtrader.util.ConfigKeys;
@@ -112,6 +113,7 @@ public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
 			if (!existsPosition)
 				return returnValue;
 			_log.info("UserAccount: detectada posible entrada de " + _share.getName() +  "Tick:" + _share.getSymbol() + ",PrecioCompra:" + this.getValueIn());
+			_log.info(_tradeDescription);
 			// hace falta???????? ..creo que si, para tener control sobre la operacion de compra /venta 
 			SimpleDateFormat sdf = new SimpleDateFormat (Utilities._IBTRADER_FUTURE_SHORT_DATE);
 			boolean bIsFutureStock = _share.getSecurity_type().equals(ConfigKeys.SECURITY_TYPE_FUTUROS)  && _share.getExpiry_date()!=null;
@@ -164,13 +166,17 @@ public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
 			
 			this.setTargetOrder(BuyPositionTWS);			
 			/* Posicion en MYSQL de CONTROL. OJO...ANTES SIEMPRE PARA DESPUES CONTROLARLA EN CASO DE ERROR. */
-			currentPosition.setState_out(PositionStates.statusTWSCallBack.PendingSubmit.toString());
+			//currentPosition.setState_out(PositionStates.statusTWSCallBack.PendingSubmit.toString());
 			/* si metemos el date sell en las parciales, no entran las siguientes */
 			/* acumulo las acciones vendidas y a vender en la operativa */
 			currentPosition.setDate_out(new Date());
 			currentPosition.setDescription(this.getClass().getName());
 			currentPosition.setStrategy_out(this.getClass().getName());		 		
-			currentPosition.setDescription(currentPosition.getDescription() + "|" + _tradeDescription.toString());			
+			currentPosition.setDescription(currentPosition.getDescription() + StringPool.RETURN_NEW_LINE + _tradeDescription.toString());	
+			
+			/* MODO FAKE CUENTA DEMO */
+			currentPosition = Utilities.fillStatesOrder(currentPosition);
+			/* END MODO FAKE CUENTA DEMO */
 			PositionLocalServiceUtil.updatePosition(currentPosition);
 			/* Posicion en MYSQL de CONTROL */
 			_log.info("Opening order " + currentPosition.getPositionId());
@@ -357,6 +363,7 @@ public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
 						this.bBuyOperation = _BuySuccess;									
 						this.bSellOperation = _SellSuccess;
 						
+						
 						_tradeDescription = JSONFactoryUtil.createJSONObject();
 						_tradeDescription.put("_WidthBarRangePercent", _WidthBarRangePercent);
 						_tradeDescription.put("_AvgMovil_InsideBar", _AvgMovil_InsideBar);
@@ -365,9 +372,11 @@ public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
 						_tradeDescription.put("oRTimeWidthRange.getMin_value()", oRTimeWidthRange.getMin_value());
 						_tradeDescription.put("oRTimeEnTramo", oRTimeEnTramo.getValue());
 						_tradeDescription.put("_avgMobileSimple", _avgMobileSimple.doubleValue());
-						_tradeDescription.put("_num_macdP", _num_macdP);
-//						_tradeDescription.put("_num_macdT", _num_macdT);
+						_tradeDescription.put("_periods:", _num_macdP);
+						_tradeDescription.put("_candlesize(minutes):", _num_macdT);
+						_tradeDescription.put("_barentryrate", _entryrate);										
 						_tradeDescription.put("_calendarFromNow", TimeFormat.format(_calendarFromNow.getTime()));
+					
 					}
 				} // 				if (oRTimeWidthRange!=null  && oRTimeWidthRange.getMax_value()>0 && oRTimeWidthRange.getMin_value()>0)
 

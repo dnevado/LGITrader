@@ -19,6 +19,7 @@ import aQute.bnd.annotation.ProviderType;
 import java.util.Date;
 import java.util.List;
 
+import com.ibtrader.cron.IBTraderOrderRequestMaintance;
 import com.ibtrader.data.exception.NoSuchIBOrderException;
 import com.ibtrader.data.model.IBOrder;
 import com.ibtrader.data.service.IBOrderLocalServiceUtil;
@@ -30,6 +31,8 @@ import com.liferay.portal.kernel.dao.orm.ProjectionFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.ProjectionList;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 
 
 /**
@@ -53,7 +56,8 @@ public class IBOrderLocalServiceImpl extends IBOrderLocalServiceBaseImpl {
 	 *
 	 * Never reference this class directly. Always use {@link com.ibtrader.data.service.IBOrderLocalServiceUtil} to access the i b order local service.
 	 */
-	
+	Log _log = LogFactoryUtil.getLog(IBOrderLocalServiceImpl.class);
+
 	
 	/* AQUI BORRAMOS TODAS , ANTIGUAS */
 	public 	List<IBOrder> findByDate(Date untilDate)
@@ -88,11 +92,17 @@ public class IBOrderLocalServiceImpl extends IBOrderLocalServiceBaseImpl {
 	public 	IBOrder findByOrderClientGroupCompany(long iborderId, long clientId, long companyId, long groupId)
 	{
 		List<IBOrder> _orders = null;
-		IBOrder order = null; 		
-		_orders = getIBOrderPersistence().findByOrderClientGroupCompany(iborderId,companyId,groupId,clientId);
-		if (_orders!=null && !_orders.isEmpty())
-			order = _orders.get(0); 
-		
+		IBOrder order = null; 	
+		try 
+		{
+			_orders = getIBOrderPersistence().findByOrderClientGroupCompany(iborderId,companyId,groupId,clientId);
+			if (_orders!=null && !_orders.isEmpty())
+					order = _orders.get(0); 
+		}
+		catch (Exception e)
+		{
+			_log.info("findByOrderClientGroupCompany:" + e.getMessage());
+		}
 		return order;
 	}
 	/* al usar el ID VALIDO DE LA TWS, BORRAMOS PARA EVITAR DUPLUICADOS AL INTERNATR CONECTARNOS 

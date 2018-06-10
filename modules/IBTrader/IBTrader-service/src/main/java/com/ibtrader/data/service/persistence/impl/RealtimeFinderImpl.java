@@ -6,6 +6,7 @@ import java.util.List;
 import com.ibtrader.data.model.Realtime;
 import com.ibtrader.data.model.impl.RealtimeImpl;
 import com.ibtrader.data.service.persistence.RealtimeFinder;
+import com.ibtrader.interactive.TIMApiWrapper;
 import com.liferay.portal.dao.orm.custom.sql.CustomSQLUtil;
 import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
@@ -14,12 +15,13 @@ import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactory;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.StringUtil;
 
 public class RealtimeFinderImpl extends RealtimeFinderBaseImpl  implements RealtimeFinder {
 	
-	
+	Log _log = LogFactoryUtil.getLog(RealtimeFinderImpl.class);
 	@SuppressWarnings("unchecked")
 	public List findMinMaxRealTime(Date from, Date to, long shareId, long companyId, long groupId)
 	{
@@ -174,6 +176,7 @@ public class RealtimeFinderImpl extends RealtimeFinderBaseImpl  implements Realt
         sql = StringUtil.replace(sql, "[$TIMEBAR_DATES$]", sDatesIN.toString());
 
         SQLQuery q = session.createSQLQuery(sql);
+        
         q.setCacheable(false);
       //  q.addEntity("IBTrader_Realtime", RealtimeImpl.class);
         q.addScalar("value", com.liferay.portal.kernel.dao.orm.Type.DOUBLE);
@@ -191,10 +194,14 @@ public class RealtimeFinderImpl extends RealtimeFinderBaseImpl  implements Realt
         // no funciona 
         //qPos.add(mobileAvgDates.toArray(new Date[mobileAvgDates.size()]));
       //  System.out.println(sql);
-
+       
         
         
         lSampleMobileAvg = (List) QueryUtil.list(q, getDialect(), 0, 10);
+        
+        if (_log.isDebugEnabled())
+        	_log.info(sql + ",from:" + from + ",to:" + to + ",share:" + shareId + ",compamy:" + companyId + ",groupid:" + groupId + ",isnull:" + lSampleMobileAvg.isEmpty());
+        
         if (!lSampleMobileAvg.isEmpty())
     		return lSampleMobileAvg;
         else

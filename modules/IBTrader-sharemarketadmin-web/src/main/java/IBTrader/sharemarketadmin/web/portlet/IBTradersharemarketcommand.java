@@ -13,12 +13,15 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.ibtrader.data.model.Market;
+import com.ibtrader.data.model.Realtime;
 import com.ibtrader.data.model.Share;
 import com.ibtrader.data.model.Strategy;
 import com.ibtrader.data.model.StrategyShare;
 import com.ibtrader.data.model.impl.StrategyImpl;
 import com.ibtrader.data.service.MarketLocalService;
 import com.ibtrader.data.service.MarketLocalServiceUtil;
+import com.ibtrader.data.service.RealtimeLocalService;
+import com.ibtrader.data.service.RealtimeLocalServiceUtil;
 import com.ibtrader.data.service.ShareLocalService;
 import com.ibtrader.data.service.ShareLocalServiceUtil;
 import com.ibtrader.data.service.StrategyLocalService;
@@ -43,6 +46,7 @@ import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 
 import IBTrader.sharemarketadmin.web.constants.IBTraderSharemarketadminWebPortletKeys;
@@ -69,6 +73,7 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
     private MarketLocalService _marketLocalService; 
     private StrategyLocalService _strategyLocalService;
     private StrategyShareLocalService _strategyshareLocalService;
+    private RealtimeLocalService _realtimLocalService;
 
 
     private static String _JSP_COMMAND_EDIT_SHARE_DETAIL = "/html/add_edit_share.jsp";
@@ -76,6 +81,12 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
     private static String  _JSP_COMMAND_LIST_SHARE_STRATEGIES = "/html/view_strategyshare.jsp";
     private static String  _JSP_COMMAND_EDIT_MARKET = "/html/add_edit_market.jsp";
     private static String  _JSP_COMMAND_LIST_MARKETS = "/html/view_market.jsp";
+    
+    
+    @Reference(unbind = "-")
+    protected void setRealtimeLocalService(RealtimeLocalService realtimLocalService) {
+    	_realtimLocalService = realtimLocalService;
+    }
     
     
     @Reference(unbind = "-")
@@ -112,36 +123,28 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
 	}
 
     
+	@SuppressWarnings("unchecked")
 	@Override
 	public String render(RenderRequest renderRequest, RenderResponse renderResponse) throws PortletException {
 		// TODO Auto-generated method stub
 		themeDisplay = (ThemeDisplay)renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
 		String redirect = ParamUtil.getString(renderRequest, "redirect");
 		HttpServletRequest _hR = PortalUtil.getHttpServletRequest(renderRequest);
-		
-		Enumeration<String> lParams = renderRequest.getParameterNames();
-		Enumeration<String> lAttr = renderRequest.getAttributeNames();	
-		_log.info("Rendering porltlet MVCCOMMANDNAME...");
-		while (lParams.hasMoreElements())
-		{
-			String  p = lParams.nextElement();
-			_log.info("Param:" + p + ":" + renderRequest.getParameter(p));
-		}
-		while (lAttr.hasMoreElements())
-		{
-			String  p2 = lAttr.nextElement();
-			_log.info("Param:" + p2 + ":" + renderRequest.getParameter(p2));
-		}
-				
 	    String _mvcCommand = "";
 	    List<Market> _lMarket = null;
-	    Market Market = null;	    
+	    Market Market = null;	 
+
+	   
+	   
         List<Strategy> _lStrategies = null; 
         Strategy Strategy = null;
         StrategyImpl _strategyImpl = null;
         Share share = null;
         JSONObject  jsonStrategyShareParams = null;
         JSONObject  jsonFutureParams = null;
+        
+        /* Lastrealtime */
+        Realtime realtime  = null; 
         
 		
 	    try {
@@ -151,15 +154,21 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
 	        long shareAddedId = ParamUtil.getLong(renderRequest, "shareAddedId",-1);
 	        long strategyId = ParamUtil.getLong(renderRequest, "strategyId");
 	        long marketId = ParamUtil.getLong(renderRequest, "marketId");
+	        
+			String strategyselected = ParamUtil.getString(renderRequest, "strategyselected", "SELECTED");
+			
+			
+			
+			
 	        if (shareAddedId!=-1)
 	        	shareId = shareAddedId;
 	        
 	    	share = _shareLocalService.fetchShare(shareId);
 	    	
 	    	/* STOPPROFIT, STOPLOST, STOPTRAILING ENABLE?  */
-	    	Strategy _IBSTRATEGY_STOPLOST = _strategyLocalService.getCompanyClassName(themeDisplay.getCompanyId(), IBStrategyStopLost.class.getName());
-	    	Strategy _IBSTRATEGY_TRAILINGSTOPLOST = _strategyLocalService.getCompanyClassName(themeDisplay.getCompanyId(), IBStrategyTrailingStopLost.class.getName());
-	    	Strategy _IBSTRATEGY_STOPROFIT = _strategyLocalService.getCompanyClassName(themeDisplay.getCompanyId(), IBStrategyStopProfit.class.getName());
+	    	Strategy _IBSTRATEGY_STOPLOST = _strategyLocalService.getCompanyGroupClassName(themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId(),IBStrategyStopLost.class.getName());
+	    	Strategy _IBSTRATEGY_TRAILINGSTOPLOST = _strategyLocalService.getCompanyGroupClassName(themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId(),IBStrategyTrailingStopLost.class.getName());
+	    	Strategy _IBSTRATEGY_STOPROFIT = _strategyLocalService.getCompanyGroupClassName(themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId(),IBStrategyStopProfit.class.getName());
 	    	
 	    	StrategyShare strategyshare_stoplost = null;
 	    	StrategyShare strategyshare_stopprofit = null;
@@ -189,15 +198,25 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
 	        		// share = _shareLocalService.fetchShare(shareId);
 		        	 renderResponse.setTitle((share != null) ? share.getName() :  LanguageUtil.get(_hR, "share.addshare"));
 		        	 if (share!=null &&  share.getExpiry_expression()!=null && !share.getExpiry_expression().equals("")) 
+		        	 {
 		        		 jsonFutureParams = JSONFactoryUtil.createJSONObject(share.getExpiry_expression());
+		        		 realtime = _realtimLocalService.findLastRealTime(share.getShareId(), share.getCompanyId(), share.getGroupId());
+		        	 }
+		        	 
 	        }
+			 /* ojo, podrian rellenarse en el action via request, lo detectamos 
+			  *  llamando al mvcrendercommand no funciona desde el action 
+			  * 
+			  * */	 
 	        if (_mvcCommand.equals("/html/view_strategyshare"))	  
 	        {	
 	        	
-
-	        		 _lStrategies = _strategyLocalService.findStrategies(shareId, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
+	        		 if (strategyselected.equals("SELECTED"))	    		
+	        			 _lStrategies = _strategyshareLocalService.findByActiveStrategies(Boolean.TRUE, shareId, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
+	        		 else
+		        		 _lStrategies = _strategyLocalService.findStrategies(shareId, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
+	        		 
 	        		 PortletURL iteratorURL = renderResponse.createRenderURL();
-
 	        		 SearchContainer<Strategy> searchContainer = null;
 	        		 searchContainer  = new SearchContainer<Strategy>(renderRequest, null, null, SearchContainer.DEFAULT_CUR_PARAM, SearchContainer.DEFAULT_DELTA, iteratorURL, null, StringPool.BLANK);
 	        		 searchContainer.setEmptyResultsMessage("Estrategias  no encontradas");        
@@ -264,6 +283,8 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
 	        renderRequest.setAttribute("jsonStrategyShareParams", jsonStrategyShareParams);
 	        renderRequest.setAttribute("jsonFutureParams", jsonFutureParams);	        
 	        renderRequest.setAttribute("marketId", marketId);
+	        renderRequest.setAttribute("realtime", realtime);
+	        
 	        
 	        
 	        

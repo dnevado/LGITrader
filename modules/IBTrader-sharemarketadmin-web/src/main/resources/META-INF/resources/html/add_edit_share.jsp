@@ -94,6 +94,9 @@ else
 
 %>
 
+
+realtime
+
 <%@include file="/html/includes/tabs.jsp"%>
 
 
@@ -116,6 +119,9 @@ else
 		 </div>  
 		 <div class="col col-sm-2">	
 			<aui:input label="share.validated" disabled="true"  name="validated_trader_provider" type="toggle-card" checked="${share.validated_trader_provider ? 'true':''}"/>
+		 </div>
+		 <div class="col col-sm-2">	
+			<%@include file="/html/add_edit_share_last_realtime.jsp"%>
 		 </div>
       </aui:fieldset>
       <aui:fieldset> 
@@ -194,10 +200,10 @@ else
   			<aui:row>
     		<aui:col span="6">
   			   <!--  html5 versus liferay debido a los numbers con dcecimales  -->    
-     			 <label class="control-label" for="<%=portletId%>_tick_futures">share.tickfutures</label><input  id="<%=portletId%>_tick_futures" class="field form-control"  min="0"  type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_tick_futures"  value="${share.tick_futures gt 0 ? share.tick_futures : ''}"/>			    	
+     			 <label class="control-label" for="<%=portletId%>_tick_futures"><liferay-ui:message key="share.tickfutures"/></label><input  id="<%=portletId%>_tick_futures" class="field form-control"  min="0"  type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_tick_futures"  value="${share.tick_futures gt 0 ? share.tick_futures : ''}"/>			    	
 	        </aui:col>  	
 		     <aui:col span="6">
-			     <label class="control-label" for="<%=portletId%>_share.multiplier">share.multiplier</label><input  id="<%=portletId%>_multiplier" class="field form-control"  min="0"  type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_multiplier"  value="${share.multiplier gt 0 ? share.multiplier : ''}"/>
+			     <label class="control-label" for="<%=portletId%>_share.multiplier"><liferay-ui:message key="share.multiplier"/></label><input  id="<%=portletId%>_multiplier" class="field form-control"  min="0"  type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_multiplier"  value="${share.multiplier gt 0 ? share.multiplier : ''}"/>
 			 </aui:col>
 	        </aui:row>	  
          </liferay-ui:panel>

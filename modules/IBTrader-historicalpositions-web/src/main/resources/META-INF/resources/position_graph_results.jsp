@@ -58,7 +58,7 @@ if (results != null && results.length() > 0) {
 
 <script>
 
-var positiveRGB = "rgba(75, 192, 192, 0.2)";
+var positiveRGB = "rgba(129, 183, 88, 0.2)";
 var negativeRGB = "rgba(255, 99, 132, 0.2)";
 
  AUI().ready(function() {

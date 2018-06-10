@@ -66,7 +66,7 @@ import org.osgi.service.component.annotations.Reference;
 @Component(
 	immediate = true,
 	property = {
-		"com.liferay.portlet.display-category=category.sample",
+		"com.liferay.portlet.display-category=ibtrader",
 		"com.liferay.portlet.instanceable=true",
 		"javax.portlet.display-name=IBTrader-positionlist-web Portlet",
 		"javax.portlet.init-param.template-path=/",
@@ -115,11 +115,11 @@ public class IBTraderPositionlistWebPortlet extends MVCPortlet {
 			}//List<Strategy> _lStrg = StrategyLocalServiceUtil.findByCompanyId(themeDisplay.getCompanyId()); 
 						
 			/* STOPPROFIT, STOPLOST, STOPTRAILING ENABLE?  */
-	    	Strategy _IBSTRATEGY_CLOSEPOSITION = _strategyLocalService.getCompanyClassName(themeDisplay.getCompanyId(), IBStrategyClosePosition.class.getName());
+	    	Strategy _IBSTRATEGY_CLOSEPOSITION = _strategyLocalService.getCompanyGroupClassName(themeDisplay.getCompanyId(),themeDisplay.getScopeGroupId(), IBStrategyClosePosition.class.getName());
 	    	StrategyShare strategyshare_closeposition = null;
 	    	
 	    	/* STOPPROFIT, STOPLOST, STOPTRAILING ENABLE?  */
-	    	Strategy _IBSTRATEGY_CANCELPOSITION = _strategyLocalService.getCompanyClassName(themeDisplay.getCompanyId(), IBStrategyCancelPosition.class.getName());
+	    	Strategy _IBSTRATEGY_CANCELPOSITION = _strategyLocalService.getCompanyGroupClassName(themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId(),IBStrategyCancelPosition.class.getName());
 	    	StrategyShare strategyshare_cancelposition = null;
 	    	
 	    		

@@ -43,6 +43,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.ibtrader.util.ConfigKeys;
 import com.ibtrader.util.PositionStates;
@@ -102,12 +103,18 @@ public class IBStrategyCloseAllPositions extends StrategyImpl {
 		_log.info("Order" + BuyPositionTWS.action()  +","+  BuyPositionTWS.lmtPrice()  +","+ BuyPositionTWS.auxPrice() +","+ BuyPositionTWS.account() +","+ BuyPositionTWS.totalQuantity() +","+ BuyPositionTWS.orderType());
 		this.setTargetOrder(BuyPositionTWS);			
 		currentPosition.setPrice_out(Utilities.RoundPrice(this.getValueOut()));
-		currentPosition.setState_out(PositionStates.statusTWSCallBack.PendingSubmit.toString());
+		//currentPosition.setState_out(PositionStates.statusTWSCallBack.PendingSubmit.toString());
 		/* si metemos el date sell en las parciales, no entran las siguientes */
 		/* acumulo las acciones vendidas y a vender en la operativa */
 		currentPosition.setDate_out(new Date());
-		currentPosition.setDescription(this.getClass().getName());
+		currentPosition.setDescription(currentPosition.getDescription() + StringPool.RETURN_NEW_LINE + this.getClass().getName());
 		currentPosition.setStrategy_out(this.getClass().getName());		 		
+		
+		/* MODO FAKE CUENTA DEMO */
+		currentPosition = Utilities.fillStatesOrder(currentPosition);
+		/* END MODO FAKE CUENTA DEMO */
+		
+		
 		PositionLocalServiceUtil.updatePosition(currentPosition);
 		/* Posicion en MYSQL de CONTROL */
 		_log.info("Opening order " + currentPosition.getPositionId());

@@ -13,11 +13,14 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.SQLQuery;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.StringUtil;
 
 public class PositionFinderImpl  extends PositionFinderBaseImpl  implements PositionFinder {
 	
+	private Log _log = LogFactoryUtil.getLog(PositionFinderImpl.class.getName());
 	
 	@SuppressWarnings("unchecked")
 	public List<Position> getIntradiaPositions(Date to,long groupId, long companyId)
@@ -133,7 +136,15 @@ public class PositionFinderImpl  extends PositionFinderBaseImpl  implements Posi
         QueryPos qPos = QueryPos.getInstance(q);	          
         qPos.add(to);
         qPos.add(companyId);
-        qPos.add(groupId);      
+        qPos.add(groupId);     
+        
+        _log.debug(q.toString());
+        _log.debug(to);
+        _log.debug(companyId);
+        _log.debug(groupId);
+        
+        
+        
         lResults = (List) QueryUtil.list(q, getDialect(), 0, 100);
         if (!lResults.isEmpty())
     		return lResults;

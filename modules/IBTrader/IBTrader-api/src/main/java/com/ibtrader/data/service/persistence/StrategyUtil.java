@@ -1472,69 +1472,78 @@ public class StrategyUtil {
 	}
 
 	/**
-	* Returns the strategy where companyId = &#63; and className = &#63; or throws a {@link NoSuchStrategyException} if it could not be found.
+	* Returns the strategy where companyId = &#63; and className = &#63; and groupId = &#63; or throws a {@link NoSuchStrategyException} if it could not be found.
 	*
 	* @param companyId the company ID
 	* @param className the class name
+	* @param groupId the group ID
 	* @return the matching strategy
 	* @throws NoSuchStrategyException if a matching strategy could not be found
 	*/
 	public static Strategy findByCompanyClassName(long companyId,
-		java.lang.String className)
+		java.lang.String className, long groupId)
 		throws com.ibtrader.data.exception.NoSuchStrategyException {
-		return getPersistence().findByCompanyClassName(companyId, className);
+		return getPersistence()
+				   .findByCompanyClassName(companyId, className, groupId);
 	}
 
 	/**
-	* Returns the strategy where companyId = &#63; and className = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	* Returns the strategy where companyId = &#63; and className = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	*
 	* @param companyId the company ID
 	* @param className the class name
+	* @param groupId the group ID
 	* @return the matching strategy, or <code>null</code> if a matching strategy could not be found
 	*/
 	public static Strategy fetchByCompanyClassName(long companyId,
-		java.lang.String className) {
-		return getPersistence().fetchByCompanyClassName(companyId, className);
+		java.lang.String className, long groupId) {
+		return getPersistence()
+				   .fetchByCompanyClassName(companyId, className, groupId);
 	}
 
 	/**
-	* Returns the strategy where companyId = &#63; and className = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	* Returns the strategy where companyId = &#63; and className = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	*
 	* @param companyId the company ID
 	* @param className the class name
+	* @param groupId the group ID
 	* @param retrieveFromCache whether to retrieve from the finder cache
 	* @return the matching strategy, or <code>null</code> if a matching strategy could not be found
 	*/
 	public static Strategy fetchByCompanyClassName(long companyId,
-		java.lang.String className, boolean retrieveFromCache) {
+		java.lang.String className, long groupId, boolean retrieveFromCache) {
 		return getPersistence()
-				   .fetchByCompanyClassName(companyId, className,
+				   .fetchByCompanyClassName(companyId, className, groupId,
 			retrieveFromCache);
 	}
 
 	/**
-	* Removes the strategy where companyId = &#63; and className = &#63; from the database.
+	* Removes the strategy where companyId = &#63; and className = &#63; and groupId = &#63; from the database.
 	*
 	* @param companyId the company ID
 	* @param className the class name
+	* @param groupId the group ID
 	* @return the strategy that was removed
 	*/
 	public static Strategy removeByCompanyClassName(long companyId,
-		java.lang.String className)
+		java.lang.String className, long groupId)
 		throws com.ibtrader.data.exception.NoSuchStrategyException {
-		return getPersistence().removeByCompanyClassName(companyId, className);
+		return getPersistence()
+				   .removeByCompanyClassName(companyId, className, groupId);
 	}
 
 	/**
-	* Returns the number of strategies where companyId = &#63; and className = &#63;.
+	* Returns the number of strategies where companyId = &#63; and className = &#63; and groupId = &#63;.
 	*
 	* @param companyId the company ID
 	* @param className the class name
+	* @param groupId the group ID
 	* @return the number of matching strategies
 	*/
 	public static int countByCompanyClassName(long companyId,
-		java.lang.String className) {
-		return getPersistence().countByCompanyClassName(companyId, className);
+		java.lang.String className, long groupId) {
+		return getPersistence()
+				   .countByCompanyClassName(companyId, className, groupId);
 	}
 
 	/**

@@ -16,15 +16,24 @@ package com.ibtrader.data.service.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
+
+import org.osgi.service.component.annotations.Reference;
 
 import com.ibtrader.constants.IBTraderConstants;
 import com.ibtrader.data.exception.NoSuchConfigException;
 import com.ibtrader.data.model.Config;
+import com.ibtrader.data.model.Strategy;
 import com.ibtrader.data.service.ConfigLocalService;
 import com.ibtrader.data.service.ConfigLocalServiceUtil;
+import com.ibtrader.data.service.MarketLocalService;
 import com.ibtrader.data.service.MarketLocalServiceUtil;
+import com.ibtrader.data.service.RealtimeLocalService;
+import com.ibtrader.data.service.ShareLocalService;
+import com.ibtrader.data.service.StrategyLocalService;
+import com.ibtrader.data.service.StrategyShareLocalService;
 import com.ibtrader.data.service.base.ConfigLocalServiceBaseImpl;
 import com.ibtrader.util.Utilities;
 import com.ibtrader.util.Utilities.OSType;
@@ -34,6 +43,7 @@ import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+
 
 
 /**
@@ -56,13 +66,34 @@ public class ConfigLocalServiceImpl extends ConfigLocalServiceBaseImpl {
 	 *
 	 * Never reference this class directly. Always use {@link com.ibtrader.data.service.configLocalService} to access the config local service.
 	 */	
-
 	private static final Log _log = LogFactoryUtil.getLog(ConfigLocalServiceImpl.class);
+
+	
+  /*   private StrategyLocalService _strategyLocalService;
+    private StrategyShareLocalService _strategyshareLocalService;
+	    
+	    
+	    
+  
+	
 	
 	public List<Config> findByKeyGlobalDefault(String _key, boolean _global)
 	{
 		return getConfigPersistence().findByKeyGlobalDefault(_key, _global);
 	}
+	
+	@Reference(unbind = "-")
+	public void setStrategyLocalService(StrategyLocalService strategyLocalService) {
+    	_strategyLocalService = strategyLocalService;
+    }
+    
+    
+    @Reference(unbind = "-")
+	public void setStrategyShareLocalService(StrategyShareLocalService strategyshareLocalService) {
+    	_strategyshareLocalService = strategyshareLocalService;
+    }
+		    
+	*/	
 	
 	public Config findByIsCronValue(boolean isCron, String value)
 	{
@@ -134,6 +165,10 @@ public class ConfigLocalServiceImpl extends ConfigLocalServiceBaseImpl {
 		  /* TWS HOST */
 		 _log.info("Adding missing Config Table Values .." );		
 		 Config _conf = configLocalService.findByKeyCompanyGroup(IBTraderConstants.keyTWS_HOST, _company, _group);
+		 
+		 /* VERIFICAMOS ESTRATEGIAS */
+		 long strategies = strategyLocalService.getStrategysCount(_group);
+		 
 		 int _TotalConfigs = (_conf!=null ? 1 : 0 );
 		 
 		 boolean bLinux = false;
@@ -347,9 +382,91 @@ public class ConfigLocalServiceImpl extends ConfigLocalServiceBaseImpl {
 			 _conf.setGlobaldefault(false);
 			 _conf.setIscron(Boolean.FALSE);
 			 configLocalService.updateConfig(_conf);   	
+			 
+			 
+			 /* CLIENTS_IDS, INICITAL CONFIGURACION  */
+			 _conf = configLocalService.createConfig(counterLocalService.increment(Config.class.getName()));
+			 _conf.setCompanyId(_company);
+			 _conf.setGroupId(_group);
+			 _conf.setConfig_key(IBTraderConstants.keyCRON_CONTRACTCHECKER_CLIENT_INITIAL);
+			 _conf.setValue(String.valueOf(IBTraderConstants.vCRON_CONTRACTCHECKER_CLIENT_INITIAL));
+			 _conf.setName(IBTraderConstants.keyCRON_CONTRACTCHECKER_CLIENT_INITIAL);
+			 _conf.setDescription(IBTraderConstants.keyCRON_CONTRACTCHECKER_CLIENT_INITIAL);
+			 _conf.setGlobaldefault(false);
+			 _conf.setIscron(Boolean.TRUE);
+			 configLocalService.updateConfig(_conf);   
+			  
+			 /* CLIENTS_IDS, INICITAL CONFIGURACION  */
+			 _conf = configLocalService.createConfig(counterLocalService.increment(Config.class.getName()));
+			 _conf.setCompanyId(_company);
+			 _conf.setGroupId(_group);
+			 _conf.setConfig_key(IBTraderConstants.keyCRON_ORDERSCHECKER_CLIENT_INITIAL);
+			 _conf.setValue(String.valueOf(IBTraderConstants.vCRON_ORDERSCHECKER_CLIENT_INITIAL));
+			 _conf.setName(IBTraderConstants.keyCRON_ORDERSCHECKER_CLIENT_INITIAL);
+			 _conf.setDescription(IBTraderConstants.keyCRON_ORDERSCHECKER_CLIENT_INITIAL);
+			 _conf.setGlobaldefault(false);
+			 _conf.setIscron(Boolean.TRUE);
+			 configLocalService.updateConfig(_conf);   
+			 
+			 
+			 _conf = configLocalService.createConfig(counterLocalService.increment(Config.class.getName()));
+			 _conf.setCompanyId(_company);
+			 _conf.setGroupId(_group);
+			 _conf.setConfig_key(IBTraderConstants.keyCRON_READING_CLIENT_INITIAL);
+			 _conf.setValue(String.valueOf(IBTraderConstants.vCRON_READING_CLIENT_INITIAL));
+			 _conf.setName(IBTraderConstants.keyCRON_READING_CLIENT_INITIAL);
+			 _conf.setDescription(IBTraderConstants.keyCRON_READING_CLIENT_INITIAL);
+			 _conf.setIscron(Boolean.TRUE);
+			 configLocalService.updateConfig(_conf);   
+			 
+			 _conf = configLocalService.createConfig(counterLocalService.increment(Config.class.getName()));
+			 _conf.setCompanyId(_company);
+			 _conf.setGroupId(_group);
+			 _conf.setConfig_key(IBTraderConstants.keyCRON_TRADING_CLIENT_INITIAL);
+			 _conf.setValue(String.valueOf(IBTraderConstants.vCRON_TRADING_CLIENT_INITIAL));
+			 _conf.setName(IBTraderConstants.keyCRON_TRADING_CLIENT_INITIAL);
+			 _conf.setDescription(IBTraderConstants.keyCRON_TRADING_CLIENT_INITIAL);
+			 _conf.setIscron(Boolean.TRUE);
+			 configLocalService.updateConfig(_conf);   
 			
 			  
 		 }
+		 if (strategies==0)
+		 {
+			 /* COGEMOS EL DE OTRO GROUP */
+			 List<Strategy> strategiesCompany =  strategyLocalService.findByActiveCompanyId(Boolean.TRUE, _company);
+			 long existingGroupId = 0 ;
+			 if (strategiesCompany!=null && !strategiesCompany.isEmpty())
+			 {
+				 Strategy strategy = strategiesCompany.get(0);
+				 existingGroupId = strategy.getGroupId();				 
+			 }
+			 /* replicamos la de una existente 
+			  * 
+			  */
+			 List<Strategy> strategiesGroup =  strategyLocalService.findBYGroupIDStatus(existingGroupId,1);
+			 for (Strategy strategygroup : strategiesGroup)
+			 {
+				 Strategy StrategyNew =  strategyLocalService.createStrategy(counterLocalService.increment(Strategy.class.getName()));
+				 StrategyNew.setActive(strategygroup.getActive());
+				 StrategyNew.setCan_override_params(strategygroup.getCan_override_params());
+				 StrategyNew.setClassName(strategygroup.getClassName());
+				 StrategyNew.setName(strategygroup.getName());
+				 StrategyNew.setDescription(strategygroup.getDescription());
+				 StrategyNew.setCreateDate(new Date());
+				 StrategyNew.setModifiedDate(new Date());
+				 StrategyNew.setStatus(strategygroup.getStatus());
+				 StrategyNew.setType(strategygroup.getType());
+				 StrategyNew.setVisible(strategygroup.getVisible());
+				 StrategyNew.setGroupId(_group);
+				 StrategyNew.setCompanyId(strategygroup.getCompanyId());
+				 
+				 strategyLocalService.updateStrategy(StrategyNew);
+				 
+			 }
+			 
+		 }
+		 
 	}
 	public void removeConfigurationValuesCompanyGroup(long  _company, long _group)
 	{

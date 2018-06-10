@@ -26,6 +26,7 @@ To deal with this situation, there are three things that need to be done:
 
 package com.ibtrader.interactive;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -107,7 +108,7 @@ public class TIMApiWrapper implements EWrapper {
 	private Share _ibtarget_share= null;
 	private Organization _ibtarget_organization= null;
 	
-	private Date currentTWSDate=null;
+	private boolean standalone_mode = false; // si solo hay una TWS para todos   
 	
 
 	
@@ -126,11 +127,15 @@ public class TIMApiWrapper implements EWrapper {
 		_clientId = clientId;
 		try {
 			guestGroupId = GroupLocalServiceUtil.getGroup(PortalUtil.getDefaultCompanyId(), GroupConstants.GUEST).getGroupId();
+			standalone_mode = (Utilities.getConfigurationValue(IBTraderConstants.keyFAKE_MODE, PortalUtil.getDefaultCompanyId(), guestGroupId).equals("1") ? Boolean.TRUE : Boolean.FALSE);	  // el dos para leer, el 3 para escribir
 		} catch (PortalException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			guestGroupId = -1;
 		}
+		
+
+		 
 	}
 	
 	public void getContractDetails(int requestId, Contract contract){
@@ -148,11 +153,11 @@ public class TIMApiWrapper implements EWrapper {
 
     	/* DESDE CUANDO */
     	
-		int  _orders_from_hours = Long.valueOf(Utilities.getConfigurationValue(IBTraderConstants.keyLAST_POSITIONS_TO_CHECK_IN_HOURS, _ibtarget_organization.getCompanyId(), guestGroupId)).intValue();;	  // el dos para leer, el 3 para escribir
+	//	int  _orders_from_hours = Long.valueOf(Utilities.getConfigurationValue(IBTraderConstants.keyLAST_POSITIONS_TO_CHECK_IN_HOURS, _ibtarget_organization.getCompanyId(), guestGroupId)).intValue();;	  // el dos para leer, el 3 para escribir
 
 		//yyyymmdd hh:mm:ss
 		// ojo entre la hora de la TWS ya la hora UTC 
-		Calendar now = Calendar.getInstance();
+	//	Calendar now = Calendar.getInstance();
 		/*now.setTime(currentTWSDate);		
 		now.add(Calendar.HOUR_OF_DAY, -_orders_from_hours);
 		SimpleDateFormat sdf = new SimpleDateFormat(Utilities.__IBTRADER_ORDERS_EXECUTED__DATE_FORMAT);		
@@ -204,11 +209,17 @@ public class TIMApiWrapper implements EWrapper {
 		new Thread(() -> {
 		    while (clientSocket.isConnected() && !_sendDisconnectEvent) {
 		    	readerSignal.waitForSignal();
-		        try {
-		            reader.processMsgs();
+		    	try {
+					reader.processMsgs();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		        /*try {
+		           
 		        } catch (Exception e) {
 		        	_log.info("Connnect Exception: "+e.getMessage());
-		        }
+		        }*/
 		    }
 		    _log.info("_sendDisconnectEvent: "+_sendDisconnectEvent);
 		 }).start();
@@ -319,10 +330,14 @@ public class TIMApiWrapper implements EWrapper {
 		 * OJO, LAS ORDENES INCLUIDAS EN LAS POSICIONES NO SE PUEDEN REUTILIZAR PUESTO QUE SE USAN PARA TRATARLAS EN CASO DE DESCONEXION 
 		 *  
 		 */
-		int  _INCREMENT_ORDER_ID = getNextOrderId();
-		int  parentOrderId = _INCREMENT_ORDER_ID;
 		
-	//	IBOrderLocalServiceUtil.deleteByOrderCompanyGroup(_INCREMENT_ORDER_ID, _ibtarget_share.getCompanyId(), _ibtarget_share.getGroupId(),_clientId,_ibtarget_share.getShareId());
+		Position _position = PositionLocalServiceUtil.fetchPosition(positionId);
+		/* PUEDE VENIR EL MODO FAKE O STANDALONE */
+		if (standalone_mode) // ya esta todo configurado para que no se mande a la TWS 
+			return;
+		
+		
+		int  _INCREMENT_ORDER_ID = getNextOrderId();
 		IBOrder _order = IBOrderLocalServiceUtil.createIBOrder(_INCREMENT_ORDER_ID);			/* insertamos control de ordenes de peticion */
 		_order.setCompanyId(_ibtarget_share.getCompanyId());
 		_order.setGroupId(_ibtarget_share.getGroupId());
@@ -333,7 +348,6 @@ public class TIMApiWrapper implements EWrapper {
 		_order.setIbclientId(_clientId);				
 		_order.setRemovable_on_reboot(Boolean.FALSE);	 /* los requestid de las posiciones no se borran */		
 		IBOrderLocalServiceUtil.updateIBOrder(_order);
-		Position _position = PositionLocalServiceUtil.fetchPosition(positionId);
 		/* ACTULIAMOS CON LA POSICION DE ENTRADA  SI  ES UNA ENTRADA */
 		if (_position.getDate_real_in()!=null)  // SALIDA DE LA MISMA POSICION
 		{
@@ -603,7 +617,7 @@ public class TIMApiWrapper implements EWrapper {
 	//! [realtimebar]
 	@Override
 	public void currentTime(long time) {
-		currentTWSDate  =  new Date(time * 1000L);
+		new Date(time * 1000L);
 	}
 	//! [fundamentaldata]
 	@Override
@@ -826,6 +840,7 @@ public class TIMApiWrapper implements EWrapper {
 			clientSocket.startAPI();
 		}
 	}
+	/* introducimos el modo_fake para usar una misma TWS */
 	@Override
 	public void tickPrice(int tickerId, int field, double price, TickAttr attrib) {
     	 //  TODO Auto-generated method stub
@@ -850,32 +865,60 @@ public class TIMApiWrapper implements EWrapper {
 			
 			// verificamos si esta en modo simulation con precios introducidos a mano 
 			Share share = ShareLocalServiceUtil.fetchShare(MyOrder.getShareID());
-			
-			if (share.getSimulation_end_date()==null)
+			if (share!=null) 
 			{
-				
-				_log.debug("share : " + share.getShareId() + "Impl tickPrice : + " + tickerId + ",prices:" + price + ",field" + field + ",_clientId" + _clientId);
-				
-				Realtime  oReal = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));
-				oReal.setGroupId(MyOrder.getGroupId());
-				oReal.setCompanyId(MyOrder.getCompanyId());
-				oReal.setShareId(MyOrder.getShareID());
-				oReal.setValue(price);
-				oReal.setCreateDate(_calNow.getTime());
-				oReal.setModifiedDate(_calNow.getTime());
-				RealtimeLocalServiceUtil.updateRealtime(oReal);
-				
-				/* MyOrder.setChecked(true);
-				IBOrderLocalServiceUtil.updateIBOrder(MyOrder);*/
+					if (share.getSimulation_end_date()==null)
+					{
+						
+						_log.debug("share : " + share.getSymbol() + "," + share.getShareId() + "Impl tickPrice : + " + tickerId + ",prices:" + price + ",field" + field + ",_clientId" + _clientId);
+						
+						Realtime  oReal = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));
+						oReal.setGroupId(MyOrder.getGroupId());
+						oReal.setCompanyId(MyOrder.getCompanyId());
+						oReal.setShareId(MyOrder.getShareID());
+						oReal.setValue(price);
+						oReal.setCreateDate(_calNow.getTime());
+						oReal.setModifiedDate(_calNow.getTime());
+						RealtimeLocalServiceUtil.updateRealtime(oReal);
+						
+						/* MODO FAKE, UN SOLO TWS, REPLICAMOS REALTIME PARA CADA SYMBOL IGUAL  */
+						if (standalone_mode)
+						{
+							List<Share> fakesharelist = ShareLocalServiceUtil.findBySymbolExcludingId(share.getSymbol(), share.getShareId());
+							for (Share fakeshare : fakesharelist)
+							{
+								oReal = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));
+								oReal.setGroupId(fakeshare.getGroupId());
+								oReal.setCompanyId(fakeshare.getCompanyId());
+								oReal.setShareId(fakeshare.getShareId());
+								oReal.setValue(price);
+								oReal.setCreateDate(_calNow.getTime());
+								oReal.setModifiedDate(_calNow.getTime());
+								RealtimeLocalServiceUtil.updateRealtime(oReal);
+							}
+							
+							
+							
+						}
+						
+						
+						/* MyOrder.setChecked(true);
+						IBOrderLocalServiceUtil.updateIBOrder(MyOrder);*/
+					}
+					else
+					{
+						if (cNow.after(share.getSimulation_end_date())) 				 // pasada la simulación?
+						{
+							share.setSimulation_end_date(null);
+							ShareLocalServiceUtil.updateShare(share);
+						}
+						
+					}
 			}
 			else
 			{
-				if (cNow.after(share.getSimulation_end_date())) 				 // pasada la simulación?
-				{
-					share.setSimulation_end_date(null);
-					ShareLocalServiceUtil.updateShare(share);
-				}
-				
+				_log.debug("No se encuentra share for OrderId + " + MyOrder.getShareID());
+
 			}
 		
 		}

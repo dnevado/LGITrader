@@ -14,14 +14,23 @@
 
 package com.ibtrader.data.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import org.osgi.service.component.annotations.Reference;
 
 import com.ibtrader.data.exception.NoSuchStrategyShareException;
 import com.ibtrader.data.model.Strategy;
 import com.ibtrader.data.model.StrategyShare;
+import com.ibtrader.data.service.ShareLocalService;
+import com.ibtrader.data.service.StrategyLocalService;
+import com.ibtrader.data.service.StrategyLocalServiceUtil;
 import com.ibtrader.data.service.base.StrategyShareLocalServiceBaseImpl;
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
+import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
+import com.liferay.portal.kernel.exception.PortalException;
 
 /**
  * The implementation of the strategy share local service.
@@ -44,6 +53,8 @@ public class StrategyShareLocalServiceImpl 	extends StrategyShareLocalServiceBas
 	 * Never reference this class directly. Always use {@link com.ibtrader.data.service.StrategyShareLocalServiceUtil} to access the strategy share local service.
 	 */
 	
+	private StrategyLocalService _strategyLocalService;
+	
 	public StrategyShare  addStrategyShare(StrategyShare _strategyshare)
 	{
 			StrategyShare strategyshare = strategyShareLocalService.createStrategyShare(CounterLocalServiceUtil.increment(StrategyShare.class.getName()));
@@ -60,6 +71,27 @@ public class StrategyShareLocalServiceImpl 	extends StrategyShareLocalServiceBas
 			
 	}
 	
+	public List<Strategy> findByActiveStrategies(boolean active, long shareId, long companyId, long groupId) {
+		// TODO Auto-generated method stub
+				 /* ESTRATEGIAS  */
+		List<Strategy> lStrategies= new ArrayList<Strategy>(); 
+		List<StrategyShare> lStrategiesShare = getStrategySharePersistence().findByActiveCommpanyGroupShare(shareId,active, groupId, companyId);
+		if (lStrategiesShare!=null && !lStrategiesShare.isEmpty())
+		{
+			for (StrategyShare  oStrategyShare : lStrategiesShare)
+			{
+				try {
+					Strategy strategy = StrategyLocalServiceUtil.getStrategy(oStrategyShare.getStrategyId());
+					if (strategy!=null)
+						lStrategies.add(strategy);
+				} catch (PortalException e) {
+					// TODO Auto-generated catch block
+					//e.printStackTrace();
+				}
+			}
+		}
+		return lStrategies;
+	}
 	
 	public List<StrategyShare>getByGroupCompanyShareId(long groupid, long companyid, long shareId)
 	{

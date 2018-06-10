@@ -47,13 +47,14 @@ create index IX_2B607221 on ibtrader_Share (uuid_[$COLUMN_LENGTH:75$], companyId
 create unique index IX_DCF10CE3 on ibtrader_Share (uuid_[$COLUMN_LENGTH:75$], groupId);
 
 create index IX_2BA54552 on ibtrader_Strategy (companyId, active_);
-create index IX_DFC8AF1C on ibtrader_Strategy (companyId, className[$COLUMN_LENGTH:75$]);
+create index IX_F01A050E on ibtrader_Strategy (companyId, className[$COLUMN_LENGTH:75$], groupId);
 create index IX_A5F719BF on ibtrader_Strategy (groupId, status);
 create index IX_95F2591B on ibtrader_Strategy (groupId, strategyID);
 create index IX_244BCDD7 on ibtrader_Strategy (status);
 create index IX_B6BAD7A5 on ibtrader_Strategy (uuid_[$COLUMN_LENGTH:75$], companyId);
 create unique index IX_2FEF0367 on ibtrader_Strategy (uuid_[$COLUMN_LENGTH:75$], groupId);
 
+create index IX_C28E62F7 on ibtrader_StrategyShare (shareId, active_, groupId, companyId);
 create index IX_4BDEDA0E on ibtrader_StrategyShare (shareId, groupId, companyId);
 create index IX_AE04E7F0 on ibtrader_StrategyShare (shareId, strategyId, groupId, companyId);
 create index IX_C838DDEE on ibtrader_StrategyShare (uuid_[$COLUMN_LENGTH:75$], companyId);

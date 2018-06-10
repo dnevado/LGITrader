@@ -43,6 +43,8 @@ public class IBTraderConstants {
 	public static String    vPATH_TO_CONFIGURATION_FILE = "{PLATFORM_PATH}/IbController_live/IBController.ini";   // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
 	public static String   	vPATH_TO_EXECUTABLE_FILE = "{PLATFORM_PATH}/IbController_live/IBControllerStart";   // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
 
+	public static long   	vFAKE_MODE = 0;  // 1, entramos en fake mode, para testeo 
+	
 	public static String    vPAPER_USER_TWS = "edemo"; 
 	public static String    vPAPER_USER_PWD = "demouser"; 
 	public static String    vPAPER_ACCOUNT_IB_NAME = "PAPER_ACCOUNT_IB_NAME";
@@ -64,6 +66,11 @@ public class IBTraderConstants {
 	public static String    keyCRON_ORDERSCHECKER_CLIENT_INITIAL = "CRON_ORDERSCHECKER_CLIENT_INITIAL";
 	public static String    keyCRON_TRADING_CLIENT_INITIAL = "CRON_TRADING_CLIENT_INITIAL"; 
 	public static String    keyCRON_READING_CLIENT_INITIAL = "CRON_READING_CLIENT_INITIAL";
+	
+	public static String    keyFAKE_MODE = "FAKE_MODE";
+	
+	
+	
 	
 	
 	public static String   keyUSER_TWS = "USER_TWS"; 

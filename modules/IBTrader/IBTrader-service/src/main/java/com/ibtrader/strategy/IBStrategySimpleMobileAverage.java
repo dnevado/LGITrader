@@ -109,6 +109,7 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 			if (existsPosition)
 				return returnValue;
 			_log.info("UserAccount: detectada posible entrada de " + _share.getName() +  "Tick:" + _share.getSymbol() + ",PrecioCompra:" + this.getValueIn());
+			_log.info(_tradeDescription);
 			// hace falta???????? ..creo que si, para tener control sobre la operacion de compra /venta 
 			SimpleDateFormat sdf = new SimpleDateFormat (Utilities._IBTRADER_FUTURE_SHORT_DATE);
 			boolean bIsFutureStock = _share.getSecurity_type().equals(ConfigKeys.SECURITY_TYPE_FUTUROS)  && _share.getExpiry_date()!=null;
@@ -171,8 +172,9 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 			BuyPositionSystem.setDate_in(new Date());// .setDate_buy(new Timestamp(Calendar.getInstance().getTimeInMillis()));
 			BuyPositionSystem.setShare_number(number_to_purchase);
 			BuyPositionSystem.setShareId(_share.getShareId());
-			BuyPositionSystem.setState_in(PositionStates.statusTWSCallBack.PendingSubmit.toString());
-			BuyPositionSystem.setState(PositionStates.status.PENDING_BUY.toString());
+		
+			/* BuyPositionSystem.setState_in(PositionStates.statusTWSCallBack.PendingSubmit.toString());
+			BuyPositionSystem.setState(PositionStates.status.PENDING_BUY.toString()); */
 			BuyPositionSystem.setType(BuyPositionTWS.getAction());
 			BuyPositionSystem.setCompanyId(_share.getCompanyId());
 			BuyPositionSystem.setGroupId(_share.getGroupId());
@@ -180,7 +182,12 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 			BuyPositionSystem.setDescription(_tradeDescription.toString());
 			
     		/* BuyPositionSystem.setSell_percentual_stop_lost(ShareStrategy.getSell_percentual_stop_lost());
-			BuyPositionSystem.setSell_percentual_stop_profit(ShareStrategy.getSell_percentual_stop_profit());*/			 		
+			BuyPositionSystem.setSell_percentual_stop_profit(ShareStrategy.getSell_percentual_stop_profit());*/			
+			
+			/* MODO FAKE CUENTA DEMO */
+    		BuyPositionSystem = Utilities.fillStatesOrder(BuyPositionSystem);
+			/* END MODO FAKE CUENTA DEMO */
+			
 			String simulated = Utilities.getConfigurationValue(IBTraderConstants.keySIMULATION_MODE, _share.getCompanyId(), _share.getGroupId());	
 			boolean bSIMULATED_TRADING = simulated.equals("1");  
 			BuyPositionSystem.setSimulation_mode(bSIMULATED_TRADING);			
@@ -368,8 +375,10 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 						_tradeDescription.put("oRTimeWidthRange.getMin_value()", oRTimeWidthRange.getMin_value());
 						_tradeDescription.put("oRTimeEnTramo", oRTimeEnTramo.getValue());
 						_tradeDescription.put("_avgMobileSimple", _avgMobileSimple.doubleValue());
-						_tradeDescription.put("_num_macdP", _num_macdP);
-//						_tradeDescription.put("_num_macdT", _num_macdT);
+						_tradeDescription.put("_periods:", _num_macdP);
+						_tradeDescription.put("_candlesize(minutes):", _num_macdT);
+						_tradeDescription.put("_barentryrate", _entryrate);
+						_tradeDescription.put("operationfilter", operationfilter);						
 						_tradeDescription.put("_calendarFromNow", TimeFormat.format(_calendarFromNow.getTime()));
 						
 						

@@ -43,6 +43,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.ibtrader.util.ConfigKeys;
 import com.ibtrader.util.PositionStates;
@@ -95,12 +96,21 @@ public class IBStrategyClosePosition extends StrategyImpl {
 		BuyPositionTWS.action(_OperationTYPE);			
 		_log.info("Order" + BuyPositionTWS.action()  +","+  BuyPositionTWS.lmtPrice()  +","+ BuyPositionTWS.auxPrice() +","+ BuyPositionTWS.account() +","+ BuyPositionTWS.totalQuantity() +","+ BuyPositionTWS.orderType());
 		this.setTargetOrder(BuyPositionTWS);					
-		closePosition.setState_out(PositionStates.statusTWSCallBack.PendingSubmit.toString());	
+		//closePosition.setState_out(PositionStates.statusTWSCallBack.PendingSubmit.toString());	
 		closePosition.setDate_out(new Date());
-		closePosition.setDescription(this.getClass().getName());
-		closePosition.setStrategy_out(this.getClass().getName());		 		
+		closePosition.setDescription(closePosition.getDescription() + StringPool.RETURN_NEW_LINE + this.getClass().getName());
+		closePosition.setStrategy_out(this.getClass().getName());
+		
+		/* MODO FAKE CUENTA DEMO */
+		closePosition = Utilities.fillStatesOrder(closePosition);
+		/* END MODO FAKE CUENTA DEMO */
+		
+		
 		PositionLocalServiceUtil.updatePosition(closePosition);
 		/* Posicion en MYSQL de CONTROL */
+		
+		
+		
 		_log.info("Opening order " + closePosition.getPositionId());
 		
 		/* RETORNAMOS PORQUE DESPUES HAY QUE METER EN LA POSICION EN NUMERO DE ORDEN DE LA TWS */

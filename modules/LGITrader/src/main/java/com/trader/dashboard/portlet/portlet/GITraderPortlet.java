@@ -34,7 +34,7 @@ import org.osgi.service.component.annotations.Reference;
 @Component(
 	immediate = true,
 	property = {
-		"com.liferay.portlet.display-category=category.sample",
+		"com.liferay.portlet.display-category=ibtrader",
 		"com.liferay.portlet.instanceable=true",
 		"javax.portlet.display-name=LGITrader Portlet",
 		"javax.portlet.init-param.template-path=/",
@@ -73,7 +73,7 @@ public class GITraderPortlet extends MVCPortlet {
 			// TODO Auto-generated catch block
 				e.printStackTrace();			
 			}
-			_conf = _configLocalService.findByKeyCompanyGroup(IBTraderConstants.keyLAST_POSITIONS_TO_CHECK_IN_HOURS, _Company.getCompanyId(), guestGroupId);
+			_conf = _configLocalService.findByKeyCompanyGroup(IBTraderConstants.keyCRON_READING_CLIENT_INITIAL, _Company.getCompanyId(), guestGroupId);
 			int _TotalConfigs = (_conf!=null ? 1 : 0 );
 			if (_TotalConfigs==0)
 			{
@@ -137,50 +137,16 @@ public class GITraderPortlet extends MVCPortlet {
 				 _conf.setDescription(IBTraderConstants.keyCRON_READING_STATUS);
 				 _conf.setGlobaldefault(false);
 				 _conf.setIscron(Boolean.FALSE);
-				 _configLocalService.updateConfig(_conf);   
+				 _configLocalService.updateConfig(_conf);   				 
 				 
-				 /* CLIENTS_IDS, INICITAL CONFIGURACION  */
+				  /* MODO FAKE,  REALTIME PARA PODER GESTIONAR TIEMPO REAL SIN TWS  */
 				 _conf = _configLocalService.createConfig(CounterLocalServiceUtil.increment(Config.class.getName()));
 				 _conf.setCompanyId(_Company.getCompanyId());
 				 _conf.setGroupId(guestGroupId);
-				 _conf.setConfig_key(IBTraderConstants.keyCRON_CONTRACTCHECKER_CLIENT_INITIAL);
-				 _conf.setValue(String.valueOf(IBTraderConstants.vCRON_CONTRACTCHECKER_CLIENT_INITIAL));
-				 _conf.setName(IBTraderConstants.keyCRON_CONTRACTCHECKER_CLIENT_INITIAL);
-				 _conf.setDescription(IBTraderConstants.keyCRON_CONTRACTCHECKER_CLIENT_INITIAL);
-				 _conf.setGlobaldefault(false);
-				 _conf.setIscron(Boolean.TRUE);
-				 _configLocalService.updateConfig(_conf);   
-				 
-				 /* CLIENTS_IDS, INICITAL CONFIGURACION  */
-				 _conf = _configLocalService.createConfig(CounterLocalServiceUtil.increment(Config.class.getName()));
-				 _conf.setCompanyId(_Company.getCompanyId());
-				 _conf.setGroupId(guestGroupId);
-				 _conf.setConfig_key(IBTraderConstants.keyCRON_ORDERSCHECKER_CLIENT_INITIAL);
-				 _conf.setValue(String.valueOf(IBTraderConstants.vCRON_ORDERSCHECKER_CLIENT_INITIAL));
-				 _conf.setName(IBTraderConstants.keyCRON_ORDERSCHECKER_CLIENT_INITIAL);
-				 _conf.setDescription(IBTraderConstants.keyCRON_ORDERSCHECKER_CLIENT_INITIAL);
-				 _conf.setGlobaldefault(false);
-				 _conf.setIscron(Boolean.TRUE);
-				 _configLocalService.updateConfig(_conf);   
-				 
-				 
-				 _conf = _configLocalService.createConfig(CounterLocalServiceUtil.increment(Config.class.getName()));
-				 _conf.setCompanyId(_Company.getCompanyId());
-				 _conf.setGroupId(guestGroupId);
-				 _conf.setConfig_key(IBTraderConstants.keyCRON_READING_CLIENT_INITIAL);
-				 _conf.setValue(String.valueOf(IBTraderConstants.vCRON_READING_CLIENT_INITIAL));
-				 _conf.setName(IBTraderConstants.keyCRON_READING_CLIENT_INITIAL);
-				 _conf.setDescription(IBTraderConstants.keyCRON_READING_CLIENT_INITIAL);
-				 _conf.setIscron(Boolean.TRUE);
-				 _configLocalService.updateConfig(_conf);   
-				 
-				 _conf = _configLocalService.createConfig(CounterLocalServiceUtil.increment(Config.class.getName()));
-				 _conf.setCompanyId(_Company.getCompanyId());
-				 _conf.setGroupId(guestGroupId);
-				 _conf.setConfig_key(IBTraderConstants.keyCRON_TRADING_CLIENT_INITIAL);
-				 _conf.setValue(String.valueOf(IBTraderConstants.vCRON_TRADING_CLIENT_INITIAL));
-				 _conf.setName(IBTraderConstants.keyCRON_TRADING_CLIENT_INITIAL);
-				 _conf.setDescription(IBTraderConstants.keyCRON_TRADING_CLIENT_INITIAL);
+				 _conf.setConfig_key(IBTraderConstants.keyFAKE_MODE);
+				 _conf.setValue(String.valueOf(IBTraderConstants.vFAKE_MODE));
+				 _conf.setName(IBTraderConstants.keyFAKE_MODE);
+				 _conf.setDescription(IBTraderConstants.keyFAKE_MODE);
 				 _conf.setIscron(Boolean.TRUE);
 				 _configLocalService.updateConfig(_conf);   
 				 

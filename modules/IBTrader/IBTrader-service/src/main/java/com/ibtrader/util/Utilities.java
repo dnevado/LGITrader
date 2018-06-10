@@ -42,13 +42,17 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.scheduler.SchedulerEngineHelperUtil;
 import com.liferay.portal.kernel.scheduler.SchedulerException;
 import com.liferay.portal.kernel.scheduler.messaging.SchedulerResponse;
+import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.ibtrader.constants.IBTraderConstants;
 import com.ibtrader.cron.IBTraderTrade;
 import com.ibtrader.data.model.Config;
@@ -151,15 +155,23 @@ public class Utilities {
 	 
    public static String  getConfigurationValue(String  keyValue, long companyId, long _groupId)
    {
-	   /* MODO DE SIMULACION */		
-	    String _ConfigValue = "";
-		Config _conf = ConfigLocalServiceUtil.findByKeyCompanyGroup(keyValue, companyId, _groupId);
-	
-		if (_conf!=null)				
+	   /* MODO DE SIMULACION */	
+	   String _ConfigValue = "";
+	   try 
+	   {		    
+			Config _conf = ConfigLocalServiceUtil.findByKeyCompanyGroup(keyValue, companyId, _groupId);
+		
+			if (_conf!=null)				
+			{
+				 _ConfigValue = _conf.getValue();
+				
+			}
+	   }
+		catch (Exception e)
 		{
-			 _ConfigValue = _conf.getValue();
 			
 		}
+		
 		return _ConfigValue;
 	   
    }
@@ -218,7 +230,67 @@ public class Utilities {
 
    		
    	}
-    
+    /* AUTORELLENAMOS LOS DATOS PARA QUE NO PASEN POR LA TWS */
+    public static Position  fillStatesOrder(Position position)
+   	{       	
+    	long guestGroupId;
+    	boolean standalone_mode = Boolean.FALSE;
+    	Position _position = position;
+    	double avgFillPrice = 0;
+		try {
+			guestGroupId = GroupLocalServiceUtil.getGroup(PortalUtil.getDefaultCompanyId(), GroupConstants.GUEST).getGroupId();
+			standalone_mode = (Utilities.getConfigurationValue(IBTraderConstants.keyFAKE_MODE, PortalUtil.getDefaultCompanyId(), guestGroupId).equals("1") ? Boolean.TRUE : Boolean.FALSE);	  // el dos para leer, el 3 para escribir						
+
+		} catch (PortalException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+		}
+		if (_position.getDate_out()==null) // OUT
+		{
+			_position.setState_in(standalone_mode ? PositionStates.statusTWSCallBack.Filled.toString() :  PositionStates.statusTWSCallBack.PendingSubmit.toString());
+			_position.setState(standalone_mode ? PositionStates.status.BUY_OK.toString() :  PositionStates.status.PENDING_BUY.toString());
+			if  (standalone_mode)
+			{
+				_position.setDate_real_in(new Date());
+				_position.setPrice_real_in(_position.getPrice_in());		
+				avgFillPrice = _position.getPrice_in();
+				
+				double priceStopLost = 0;
+				double priceStopProfit = 0;	
+			
+				if (_position.getType().equals(PositionStates.statusTWSFire.SELL.toString()))  	{ //short
+					if (_position.getPercentualstoplost_out()>0)
+						priceStopLost = avgFillPrice +  (avgFillPrice *  _position.getPercentualstoplost_out() / 100);
+					if (_position.getPercentualstopprofit_out()>0)
+						priceStopProfit = avgFillPrice  - (avgFillPrice *  _position.getPercentualstopprofit_out() / 100); }
+				else {  //long
+					if (_position.getPercentualstoplost_out()>0)
+						priceStopLost    = avgFillPrice  - (avgFillPrice *  _position.getPercentualstoplost_out() / 100);
+					if (_position.getPercentualstopprofit_out()>0)
+						priceStopProfit = avgFillPrice  + (avgFillPrice *  _position.getPercentualstopprofit_out() / 100); }	    				 	    		
+				
+				_position.setPricestoplost_out(Utilities.RoundPrice(priceStopLost));
+				_position.setPricestopprofit_out(Utilities.RoundPrice(priceStopProfit));
+				
+			}
+			
+		}
+		else // OUT
+		{
+			_position.setState_out(standalone_mode ? PositionStates.statusTWSCallBack.Filled.toString() :  PositionStates.statusTWSCallBack.PendingSubmit.toString());
+			_position.setState(standalone_mode ? PositionStates.status.SELL_OK.toString() :  PositionStates.status.PENDING_SELL.toString());
+			if  (standalone_mode)
+			{
+				_position.setDate_real_out(new Date());
+				_position.setPrice_real_out(_position.getPrice_out());		
+				avgFillPrice = _position.getPrice_out();
+			}
+		}
+		
+		/* END MODO FAKE CUENTA DEMO */
+
+   		return _position;
+   	}
 
     
     /* HORA AJUSTADA A LA ZONA DEL USUARIO */

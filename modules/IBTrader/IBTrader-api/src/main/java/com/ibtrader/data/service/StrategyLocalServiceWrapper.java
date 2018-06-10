@@ -124,10 +124,10 @@ public class StrategyLocalServiceWrapper implements StrategyLocalService,
 	}
 
 	@Override
-	public com.ibtrader.data.model.Strategy getCompanyClassName(
-		long companyId, java.lang.String strategyClassName) {
-		return _strategyLocalService.getCompanyClassName(companyId,
-			strategyClassName);
+	public com.ibtrader.data.model.Strategy getCompanyGroupClassName(
+		long companyId, long groupid, java.lang.String strategyClassName) {
+		return _strategyLocalService.getCompanyGroupClassName(companyId,
+			groupid, strategyClassName);
 	}
 
 	/**

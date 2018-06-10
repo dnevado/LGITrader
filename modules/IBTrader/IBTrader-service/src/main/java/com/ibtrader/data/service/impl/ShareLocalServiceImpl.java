@@ -62,6 +62,20 @@ public class ShareLocalServiceImpl extends ShareLocalServiceBaseImpl {
 		return getSharePersistence().findByMarketGroupCompany(groupId, companyId, _marketId);
 	}
 	
+	/* PARA EL MODO FAKE DE UNA TWS PARA TODOS, LOS REALTIME PARECEN QUE NO FUNCIONAN DE MISMO SIMBOL */
+	public List<Share> findBySymbolExcludingId(String symbol, long exludingShareId)
+	{
+
+		DynamicQuery _DQ = shareLocalService.dynamicQuery();
+	
+		_DQ.add(RestrictionsFactoryUtil.eq("symbol", symbol));
+		_DQ.add(RestrictionsFactoryUtil.eq("active", Boolean.TRUE));
+		_DQ.add(RestrictionsFactoryUtil.ne("shareId", exludingShareId));
+		
+		return shareLocalService.dynamicQuery(_DQ);
+
+		
+	}
 	
 	public List<Share> findByActiveMarketGroupCompany(long _marketId, boolean _active, long groupId, long companyId)
 	{

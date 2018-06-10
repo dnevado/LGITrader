@@ -248,6 +248,9 @@ public interface ShareLocalService extends BaseLocalService,
 	public List<Share> findByMarketGroupCompany(long _marketId, long groupId,
 		long companyId);
 
+	public List<Share> findBySymbolExcludingId(java.lang.String symbol,
+		long exludingShareId);
+
 	public List<Share> findByValidatedTraderProviderMarketGroupCompany(
 		long marketId, long groupId, long companyId);
 

@@ -42,9 +42,12 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.ibtrader.util.ConfigKeys;
 import com.ibtrader.util.PositionStates;
@@ -73,10 +76,7 @@ public class IBStrategyMinMax extends StrategyImpl {
 	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OPERATIONS_TYPE = "Operation Type [ALL, BUY, SELL]";  // offset desde inicio de mercado en minutos
 	
 	JSONObject _tradeDescription;
-	
-	private List<Order> childOrders = new ArrayList<Order>(); 
-
-
+	 
 	/* trailing stop orders can't be directly attached to MKT orders.
 	 * s  (non-Javadoc)
 	 * @see com.ibtrader.data.model.impl.StrategyImpl#execute(com.ibtrader.data.model.Share, com.ibtrader.data.model.Market)
@@ -151,13 +151,17 @@ public class IBStrategyMinMax extends StrategyImpl {
 			BuyPositionSystem.setDate_in(new Date());// .setDate_buy(new Timestamp(Calendar.getInstance().getTimeInMillis()));
 			BuyPositionSystem.setShare_number(number_to_purchase);
 			BuyPositionSystem.setShareId(_share.getShareId());
-			BuyPositionSystem.setState_in(PositionStates.statusTWSCallBack.PendingSubmit.toString());
-			BuyPositionSystem.setState(PositionStates.status.PENDING_BUY.toString());
+
+
+			
+			
 			BuyPositionSystem.setLimit_price_in(BuyPositionTWS.lmtPrice());
 			BuyPositionSystem.setType(BuyPositionTWS.getAction());
 			BuyPositionSystem.setCompanyId(_share.getCompanyId());
 			BuyPositionSystem.setGroupId(_share.getGroupId());
 			BuyPositionSystem.setStrategy_in(this.getClass().getName());
+			BuyPositionSystem.setDescription(_tradeDescription.toString());
+
     		/* 5 PUNTOS o 5%  POR DEFECTO EN LOS FUTUROS */			
     		double _defaultstop_percent = 0;
     		boolean _IsFuture = (_share.getSecurity_type()!=null && _share.getSecurity_type().equals(ConfigKeys.SECURITY_TYPE_STOCK) ? true : false);
@@ -195,28 +199,6 @@ public class IBStrategyMinMax extends StrategyImpl {
     			
     			BuyPositionSystem.setPricetrailling_stop_lost(Utilities.RoundPrice(pricetrailingstop));
     		}	
-    		/* else
-    			BuyPositionSystem.setPercentual_trailling_stop_lost(_defaultstop_percent); */
-    		
-    		
-    		
-    		/*  trailing stop lost , introducimos el trailing % y stop lost, son ordenes hijas pero sin BBDD     		
-    		if (traillingstoplost>0)    	
-    		{
-    			
-    			Order _childTrailOrder = new Order();
-    			//stopLoss.orderId(parent.orderId() + 2);
-    			_childTrailOrder.action(BuyPositionTWS.equals(PositionStates.statusTWSFire.BUY.toString()) ? PositionStates.statusTWSFire.SELL.toString() : PositionStates.statusTWSFire.BUY.toString());
-    			_childTrailOrder.orderType( PositionStates.ordertypes.TRAIL.toString());
-    			_childTrailOrder.trailingPercent(Utilities.RoundPrice(traillingstoplost));
-    			_childTrailOrder.totalQuantity(BuyPositionTWS.totalQuantity());    
-    			childOrders.add(_childTrailOrder);
-
-    			BuyPositionSystem.setPercentual_trailling_stop_lost(traillingstoplost);
-    		*/ 
-    		
-    		
-    		
     		double stopprofit =_share.getPercentual_stop_profit();
     		/* EXISTE ALGO SOBREESCRITO */
     		if (this.getJsonStrategyShareParams()!=null && this.getJsonStrategyShareParams().getDouble(ConfigKeys._FIELD_STOP_PROFIT,0)>0)
@@ -224,7 +206,12 @@ public class IBStrategyMinMax extends StrategyImpl {
     		
     		if (stopprofit>0)
     			BuyPositionSystem.setPercentualstopprofit_out(stopprofit);
-    		 			
+    		 	
+    		/* MODO FAKE CUENTA DEMO */
+    		BuyPositionSystem = Utilities.fillStatesOrder(BuyPositionSystem);
+			/* END MODO FAKE CUENTA DEMO */
+    		
+    		
 			String simulated = Utilities.getConfigurationValue(IBTraderConstants.keySIMULATION_MODE, _share.getCompanyId(), _share.getGroupId());	
 			boolean bSIMULATED_TRADING = simulated.equals("1");  
 			BuyPositionSystem.setSimulation_mode(bSIMULATED_TRADING);			
@@ -376,9 +363,15 @@ public class IBStrategyMinMax extends StrategyImpl {
 				_tradeDescription.put("bReachedMin", bReachedMin);
 				_tradeDescription.put("MaxValue", MaxValue);
 				_tradeDescription.put("MinValue", MinValue);
+				_tradeDescription.put("MinValueWithGap", MinValueWithGap);
+				_tradeDescription.put("MaxValueWithGap", MaxValueWithGap);
+				_tradeDescription.put("percentual_limit_buy", percentual_limit_buy);				
 				_tradeDescription.put("MaxValueWithGapAndLimit", MaxValueWithGapAndLimit);
+				_tradeDescription.put("operationfilter", operationfilter);				
 				_tradeDescription.put("MinValueWithGapAndLimit", MinValueWithGapAndLimit);
 				_tradeDescription.put("oShareLastRTime.getValue()", oShareLastRTime.getValue());
+				_tradeDescription.put("_FromIniMarket", _FromIniMarket);
+				_tradeDescription.put("_ToIniMarket", _ToIniMarket);
 				
 				this.setVerified(Boolean.TRUE);												
 				verified = true;

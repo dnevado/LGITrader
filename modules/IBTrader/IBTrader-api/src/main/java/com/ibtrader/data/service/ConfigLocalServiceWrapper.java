@@ -266,12 +266,6 @@ public class ConfigLocalServiceWrapper implements ConfigLocalService,
 			orderByComparator);
 	}
 
-	@Override
-	public java.util.List<com.ibtrader.data.model.Config> findByKeyGlobalDefault(
-		java.lang.String _key, boolean _global) {
-		return _configLocalService.findByKeyGlobalDefault(_key, _global);
-	}
-
 	/**
 	* Returns a range of all the configs.
 	*

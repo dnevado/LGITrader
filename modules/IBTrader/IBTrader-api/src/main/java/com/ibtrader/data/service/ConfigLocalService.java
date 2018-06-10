@@ -230,9 +230,6 @@ public interface ConfigLocalService extends BaseLocalService,
 	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
 		int end, OrderByComparator<T> orderByComparator);
 
-	public List<Config> findByKeyGlobalDefault(java.lang.String _key,
-		boolean _global);
-
 	/**
 	* Returns a range of all the configs.
 	*

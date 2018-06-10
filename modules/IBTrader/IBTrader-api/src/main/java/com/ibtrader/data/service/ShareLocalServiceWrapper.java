@@ -315,6 +315,13 @@ public class ShareLocalServiceWrapper implements ShareLocalService,
 	}
 
 	@Override
+	public java.util.List<com.ibtrader.data.model.Share> findBySymbolExcludingId(
+		java.lang.String symbol, long exludingShareId) {
+		return _shareLocalService.findBySymbolExcludingId(symbol,
+			exludingShareId);
+	}
+
+	@Override
 	public java.util.List<com.ibtrader.data.model.Share> findByValidatedTraderProviderMarketGroupCompany(
 		long marketId, long groupId, long companyId) {
 		return _shareLocalService.findByValidatedTraderProviderMarketGroupCompany(marketId,

@@ -16,6 +16,7 @@ package com.ibtrader.data.service;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.ibtrader.data.model.Strategy;
 import com.ibtrader.data.model.StrategyShare;
 
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
@@ -228,6 +229,9 @@ public interface StrategyShareLocalService extends BaseLocalService,
 	*/
 	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
 		int end, OrderByComparator<T> orderByComparator);
+
+	public List<Strategy> findByActiveStrategies(boolean active, long shareId,
+		long companyId, long groupId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<StrategyShare> getByGroupCompanyShareId(long groupid,

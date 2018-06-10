@@ -42,7 +42,8 @@ public class PositionImpl extends PositionBaseImpl {
 		
 		return !this.getState().equals(PositionStates.status.SELL_OK.toString()); 
 	}
-	/* COMPRADA Y NO SALIDA */
+	/* ENTRADA --> PENDINGSUBMIT  */
+	/* SALIDA  --> PENDINGSUBMIT  */
 	public boolean IsCancelable() {
 		
 		return (this.IsPendingOut() && this.getPositionId_tws_out()>0) || (this.IsPendingIn() && this.getPositionId_tws_in()>0);  

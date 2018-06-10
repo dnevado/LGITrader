@@ -145,8 +145,7 @@ public class IBTraderHistoricalpositionsWebPortlet extends MVCPortlet {
 		searchContainer.setTotal(_lPosition.size());
 		renderRequest.setAttribute("searchPosition" , searchContainer); 
 		
-		renderRequest.setAttribute("iteratorURL" , iteratorURL);
-		renderRequest.setAttribute("iteratorURL" , iteratorURL);
+		renderRequest.setAttribute("iteratorURL" , iteratorURL);		
 		renderRequest.setAttribute("_DateINI" , _DateINI);
 		renderRequest.setAttribute("_DateEND" , _DateEND);
 		

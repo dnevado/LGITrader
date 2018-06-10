@@ -265,6 +265,13 @@ public class StrategyShareLocalServiceWrapper
 	}
 
 	@Override
+	public java.util.List<com.ibtrader.data.model.Strategy> findByActiveStrategies(
+		boolean active, long shareId, long companyId, long groupId) {
+		return _strategyShareLocalService.findByActiveStrategies(active,
+			shareId, companyId, groupId);
+	}
+
+	@Override
 	public java.util.List<com.ibtrader.data.model.StrategyShare> getByGroupCompanyShareId(
 		long groupid, long companyid, long shareId) {
 		return _strategyShareLocalService.getByGroupCompanyShareId(groupid,

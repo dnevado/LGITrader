@@ -1177,56 +1177,63 @@ public interface StrategyPersistence extends BasePersistence<Strategy> {
 	public int countByG_G(long groupId, long strategyID);
 
 	/**
-	* Returns the strategy where companyId = &#63; and className = &#63; or throws a {@link NoSuchStrategyException} if it could not be found.
+	* Returns the strategy where companyId = &#63; and className = &#63; and groupId = &#63; or throws a {@link NoSuchStrategyException} if it could not be found.
 	*
 	* @param companyId the company ID
 	* @param className the class name
+	* @param groupId the group ID
 	* @return the matching strategy
 	* @throws NoSuchStrategyException if a matching strategy could not be found
 	*/
 	public Strategy findByCompanyClassName(long companyId,
-		java.lang.String className) throws NoSuchStrategyException;
+		java.lang.String className, long groupId)
+		throws NoSuchStrategyException;
 
 	/**
-	* Returns the strategy where companyId = &#63; and className = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	* Returns the strategy where companyId = &#63; and className = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	*
 	* @param companyId the company ID
 	* @param className the class name
+	* @param groupId the group ID
 	* @return the matching strategy, or <code>null</code> if a matching strategy could not be found
 	*/
 	public Strategy fetchByCompanyClassName(long companyId,
-		java.lang.String className);
+		java.lang.String className, long groupId);
 
 	/**
-	* Returns the strategy where companyId = &#63; and className = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	* Returns the strategy where companyId = &#63; and className = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	*
 	* @param companyId the company ID
 	* @param className the class name
+	* @param groupId the group ID
 	* @param retrieveFromCache whether to retrieve from the finder cache
 	* @return the matching strategy, or <code>null</code> if a matching strategy could not be found
 	*/
 	public Strategy fetchByCompanyClassName(long companyId,
-		java.lang.String className, boolean retrieveFromCache);
+		java.lang.String className, long groupId, boolean retrieveFromCache);
 
 	/**
-	* Removes the strategy where companyId = &#63; and className = &#63; from the database.
+	* Removes the strategy where companyId = &#63; and className = &#63; and groupId = &#63; from the database.
 	*
 	* @param companyId the company ID
 	* @param className the class name
+	* @param groupId the group ID
 	* @return the strategy that was removed
 	*/
 	public Strategy removeByCompanyClassName(long companyId,
-		java.lang.String className) throws NoSuchStrategyException;
+		java.lang.String className, long groupId)
+		throws NoSuchStrategyException;
 
 	/**
-	* Returns the number of strategies where companyId = &#63; and className = &#63;.
+	* Returns the number of strategies where companyId = &#63; and className = &#63; and groupId = &#63;.
 	*
 	* @param companyId the company ID
 	* @param className the class name
+	* @param groupId the group ID
 	* @return the number of matching strategies
 	*/
 	public int countByCompanyClassName(long companyId,
-		java.lang.String className);
+		java.lang.String className, long groupId);
 
 	/**
 	* Caches the strategy in the entity cache if it is enabled.

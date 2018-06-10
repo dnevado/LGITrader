@@ -84,7 +84,7 @@ import javax.portlet.PortletException;
 @Component(
 	immediate = true,
 	property = {
-		"com.liferay.portlet.display-category=category.sample",
+		"com.liferay.portlet.display-category=ibtrader",
 		"com.liferay.portlet.instanceable=true",
 		"javax.portlet.display-name=IBTrader-unitintegration-tests-web Portlet",
 		"javax.portlet.init-param.template-path=/",
@@ -101,7 +101,7 @@ public class IBTraderUnitintegrationTestsWebPortlet extends MVCPortlet {
 	public  void fillDataStrategyMinMax(ActionRequest actionRequest, ActionResponse actionResponse)
 			throws PortletException {
 		
-		// TODO Auto-generated method stub
+			// TODO Auto-generated method stub
 				String starthour = ParamUtil.getString(actionRequest,"starthour","");
 				long OffSet1FromOpenMarket = ParamUtil.getLong(actionRequest,"OffSet1FromOpenMarket",1);
 				long OffSet2FromOpenMarket = ParamUtil.getLong(actionRequest,"OffSet2FromOpenMarket",30);
@@ -333,7 +333,7 @@ public class IBTraderUnitintegrationTestsWebPortlet extends MVCPortlet {
 	public  void fillDataStrategyMobileAverage(ActionRequest actionRequest, ActionResponse actionResponse)
 			throws PortletException {
 		
-		// TODO Auto-generated method stub
+			   // TODO Auto-generated method stub
 				String starthour = ParamUtil.getString(actionRequest,"starthour","");
 				long periods = ParamUtil.getLong(actionRequest,"periods",8);
 				long timebars = ParamUtil.getLong(actionRequest,"timebars",5);
@@ -341,6 +341,23 @@ public class IBTraderUnitintegrationTestsWebPortlet extends MVCPortlet {
 				double entrygap = ParamUtil.getDouble(actionRequest,"entrygap",75);
 				entrygap = entrygap / 100;
 				double aproxvalue = ParamUtil.getDouble(actionRequest,"aproxvalue",176);
+				
+				double mobileavg  = (aproxvalue * periods) / periods;
+				
+				/* el maximo hay que inventarselo */
+				double max_periodn  = mobileavg  + (mobileavg*(entrygap)*1.05); // le sumamos un 5%; 
+				double min_periodn =   (mobileavg  - (mobileavg*(1-entrygap)))*1.3; // le sumamos un 5%; 	  
+				double width_gap  = (max_periodn - min_periodn)*entrygap;
+				double close_periodn  = (min_periodn + width_gap)*1.05; // le sumamos un 10%;
+				
+				
+				/* el maximo hay que inventarselo */
+				double mobileavgn1  = (aproxvalue * (periods-1) + close_periodn) / periods;
+
+				double max_periodn1  = (mobileavgn1  + (mobileavgn1*(1-entrygap))); // le sumamos un 5%; 
+				double min_periodn1  =(mobileavgn1  - (mobileavgn1*(entrygap)))*0.9; // le sumamos un 5%;	  
+				double width_gapn1  = (max_periodn1 - min_periodn1)*entrygap;
+				double close_periodn1  = (max_periodn1 - width_gapn1)*0.95; // le sumamos un 10%;
 				
 				/* MEDIA MOBIL DE O PERIODOS DE 176+177.... ES 190 */
 				
@@ -408,7 +425,7 @@ public class IBTraderUnitintegrationTestsWebPortlet extends MVCPortlet {
 				Realtime _realtime = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));
 				_realtime.setCreateDate(_calendario.getTime());
 				_realtime.setModifiedDate(_calendario.getTime());
-				_realtime.setValue(600); // MIN 
+				_realtime.setValue(close_periodn); // C 
 				_realtime.setGroupId(serviceContext.getScopeGroupId());
 				_realtime.setCompanyId(serviceContext.getCompanyId());
 				_realtime.setShareId(share);
@@ -420,7 +437,7 @@ public class IBTraderUnitintegrationTestsWebPortlet extends MVCPortlet {
 				 _realtime = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));
 				_realtime.setCreateDate(_calendario.getTime());
 				_realtime.setModifiedDate(_calendario.getTime());
-				_realtime.setValue(100); // MIN 
+				_realtime.setValue(close_periodn1); // MIN 
 				_realtime.setGroupId(serviceContext.getScopeGroupId());
 				_realtime.setCompanyId(serviceContext.getCompanyId());
 				_realtime.setShareId(share);
@@ -432,7 +449,7 @@ public class IBTraderUnitintegrationTestsWebPortlet extends MVCPortlet {
 				 _realtime = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));
 				_realtime.setCreateDate(_calendario.getTime());
 				_realtime.setModifiedDate(_calendario.getTime());
-				_realtime.setValue(90); // MIN 
+				_realtime.setValue(min_periodn1); // MIN 
 				_realtime.setGroupId(serviceContext.getScopeGroupId());
 				_realtime.setCompanyId(serviceContext.getCompanyId());
 				_realtime.setShareId(share);
@@ -445,7 +462,7 @@ public class IBTraderUnitintegrationTestsWebPortlet extends MVCPortlet {
 				 _realtime = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));
 				_realtime.setCreateDate(_calendario.getTime());
 				_realtime.setModifiedDate(_calendario.getTime());
-				_realtime.setValue(150); // MIN 
+				_realtime.setValue(min_periodn); // MIN 
 				_realtime.setGroupId(serviceContext.getScopeGroupId());
 				_realtime.setCompanyId(serviceContext.getCompanyId());
 				_realtime.setShareId(share);
@@ -460,7 +477,7 @@ public class IBTraderUnitintegrationTestsWebPortlet extends MVCPortlet {
 				 _realtime = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));
 				_realtime.setCreateDate(_calendario.getTime());
 				_realtime.setModifiedDate(_calendario.getTime());
-				_realtime.setValue(220); // MAX BARRA ANTERIOR 
+				_realtime.setValue(max_periodn); // MAX BARRA ANTERIOR 
 				_realtime.setGroupId(serviceContext.getScopeGroupId());
 				_realtime.setCompanyId(serviceContext.getCompanyId());
 				_realtime.setShareId(share);
@@ -471,7 +488,7 @@ public class IBTraderUnitintegrationTestsWebPortlet extends MVCPortlet {
 				 _realtime = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));
 				_realtime.setCreateDate(_calendario.getTime());
 				_realtime.setModifiedDate(_calendario.getTime());
-				_realtime.setValue(250); // MAX BARRA ANTERIOR 
+				_realtime.setValue(max_periodn1); // MAX BARRA ANTERIOR 
 				_realtime.setGroupId(serviceContext.getScopeGroupId());
 				_realtime.setCompanyId(serviceContext.getCompanyId());
 				_realtime.setShareId(share);
@@ -491,7 +508,7 @@ public class IBTraderUnitintegrationTestsWebPortlet extends MVCPortlet {
 					 _realtime = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));
 					 _realtime.setCreateDate(_calendario.getTime());
 					_realtime.setModifiedDate(_calendario.getTime());
-					_realtime.setValue(166);
+					_realtime.setValue(aproxvalue);
 					_realtime.setGroupId(serviceContext.getScopeGroupId());
 					_realtime.setCompanyId(serviceContext.getCompanyId());
 					_realtime.setShareId(share);

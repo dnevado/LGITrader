@@ -106,8 +106,8 @@
 						 sum(beneficio*acciones*multiplier) BENEFICIO
 				FROM
 				(	SELECT case type_
-						   WHEN 'BUY' then IFNULL(price_real_out,REALTIME.value) - price_real_in
-						   WHEN 'SELL' then price_real_in - IFNULL(price_real_out,REALTIME.value)
+						   WHEN 'BUY' then IF(price_real_out>0,price_real_out,REALTIME.value) - price_real_in
+						   WHEN 'SELL' then price_real_in - IF(price_real_out>0,price_real_out,REALTIME.value)
 					       END BENEFICIO,
 					       share_number acciones,
 					       type_ tipo,

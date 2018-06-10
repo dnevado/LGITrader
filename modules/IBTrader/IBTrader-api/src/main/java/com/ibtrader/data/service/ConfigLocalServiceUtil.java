@@ -253,11 +253,6 @@ public class ConfigLocalServiceUtil {
 				   .dynamicQuery(dynamicQuery, start, end, orderByComparator);
 	}
 
-	public static java.util.List<com.ibtrader.data.model.Config> findByKeyGlobalDefault(
-		java.lang.String _key, boolean _global) {
-		return getService().findByKeyGlobalDefault(_key, _global);
-	}
-
 	/**
 	* Returns a range of all the configs.
 	*

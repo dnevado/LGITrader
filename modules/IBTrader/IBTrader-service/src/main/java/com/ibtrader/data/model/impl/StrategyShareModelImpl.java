@@ -116,12 +116,13 @@ public class StrategyShareModelImpl extends BaseModelImpl<StrategyShare>
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.service.foo.service.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.ibtrader.data.model.StrategyShare"),
 			true);
-	public static final long COMPANYID_COLUMN_BITMASK = 1L;
-	public static final long GROUPID_COLUMN_BITMASK = 2L;
-	public static final long SHAREID_COLUMN_BITMASK = 4L;
-	public static final long STRATEGYID_COLUMN_BITMASK = 8L;
-	public static final long UUID_COLUMN_BITMASK = 16L;
-	public static final long STRATEGYSHAREID_COLUMN_BITMASK = 32L;
+	public static final long ACTIVE_COLUMN_BITMASK = 1L;
+	public static final long COMPANYID_COLUMN_BITMASK = 2L;
+	public static final long GROUPID_COLUMN_BITMASK = 4L;
+	public static final long SHAREID_COLUMN_BITMASK = 8L;
+	public static final long STRATEGYID_COLUMN_BITMASK = 16L;
+	public static final long UUID_COLUMN_BITMASK = 32L;
+	public static final long STRATEGYSHAREID_COLUMN_BITMASK = 64L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -476,7 +477,19 @@ public class StrategyShareModelImpl extends BaseModelImpl<StrategyShare>
 
 	@Override
 	public void setActive(boolean active) {
+		_columnBitmask |= ACTIVE_COLUMN_BITMASK;
+
+		if (!_setOriginalActive) {
+			_setOriginalActive = true;
+
+			_originalActive = _active;
+		}
+
 		_active = active;
+	}
+
+	public boolean getOriginalActive() {
+		return _originalActive;
 	}
 
 	@JSON
@@ -658,6 +671,10 @@ public class StrategyShareModelImpl extends BaseModelImpl<StrategyShare>
 		strategyShareModelImpl._originalShareId = strategyShareModelImpl._shareId;
 
 		strategyShareModelImpl._setOriginalShareId = false;
+
+		strategyShareModelImpl._originalActive = strategyShareModelImpl._active;
+
+		strategyShareModelImpl._setOriginalActive = false;
 
 		strategyShareModelImpl._columnBitmask = 0;
 	}
@@ -844,6 +861,8 @@ public class StrategyShareModelImpl extends BaseModelImpl<StrategyShare>
 	private long _originalShareId;
 	private boolean _setOriginalShareId;
 	private boolean _active;
+	private boolean _originalActive;
+	private boolean _setOriginalActive;
 	private boolean _visible;
 	private String _strategyparamsoverride;
 	private String _description;

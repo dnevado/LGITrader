@@ -67,7 +67,7 @@ function <portlet:namespace/>showResults(data) {
 		var backgroundcolor = "#FF4500" // rojo
 		var remaining;
 		if (profit>0)
-			backgroundcolor = "#009587" // verde
+			backgroundcolor = "#81B758" // verde
 			
 		
 		/* lo quitamos el signo ya que el color da el valor */
@@ -135,14 +135,14 @@ function <portlet:namespace/>showResults(data) {
 		        }
 		    }
 		});
-		$("percentageprofit").show();
-		$("profit").show();
+		$("#percentageprofit").show();
+		$("#profit").show();
 		
 	} // end if (Data!=null &&  Data.dataResults!=null && Data.dataResultss[0]!=null)
 	else
 	{
-		$("percentageprofit").hide();
-		$("profit").hide();
+		$("#percentageprofit").hide();
+		$("#profit").hide();
 	}
 	
 			

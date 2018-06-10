@@ -91,6 +91,12 @@
 			<finder-column name="groupId"/>
 			<finder-column name="companyId"/>
 		</finder>
+		<finder name="ActiveCommpanyGroupShare" return-type="Collection">
+			<finder-column name="shareId"/>
+			<finder-column name="active"/>
+			<finder-column name="groupId"/>
+			<finder-column name="companyId"/>
+		</finder>
 	</entity>
 	
 	
@@ -152,6 +158,8 @@
 		<finder name="CompanyClassName" return-type="Strategy">
 			<finder-column name="companyId" />
 			<finder-column name="className" />
+			<finder-column name="groupId" />
+			
 		</finder>
 		
 		

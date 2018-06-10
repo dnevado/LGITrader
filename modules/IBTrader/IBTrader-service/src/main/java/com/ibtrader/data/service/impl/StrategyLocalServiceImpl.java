@@ -107,11 +107,11 @@ public class StrategyLocalServiceImpl extends StrategyLocalServiceBaseImpl {
 
 	    return strategyPersistence.countByGroupId(groupId);
 	}
-	public Strategy getCompanyClassName(long companyId, String strategyClassName) {
+	public Strategy getCompanyGroupClassName(long companyId, long groupid, String strategyClassName) {
 
 		Strategy _strategy = null;
 	    try {
-	    	_strategy =strategyPersistence.findByCompanyClassName(companyId, strategyClassName);
+	    	_strategy =strategyPersistence.findByCompanyClassName(companyId, strategyClassName,groupid);
 		} catch (NoSuchStrategyException e) {
 			// TODO Auto-generated catch block
 			//e.printStackTrace();

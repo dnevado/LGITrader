@@ -97,6 +97,7 @@ import org.osgi.service.component.annotations.Reference;
         "com.liferay.portlet.footer-portlet-javascript=/js/main.js",
         "com.liferay.portlet.header-portlet-css=/css/main.css",
 		"javax.portlet.resource-bundle=content.Language",
+		"javax.portlet.init-param.add-process-action-success-action=false",
 		 "mvc.command.name=/html/add_edit_share",
 		"javax.portlet.security-role-ref=power-user,user"
 	},
@@ -266,9 +267,9 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 					{
 						if (!bEditMode)
 							share = _shareLocalService.createShare(CounterLocalServiceUtil.increment(Share.class.getName()));
-						else
-							share = _shareLocalService.fetchShare(shareId);
-						share.setActive(active.equals("") ? Boolean.FALSE : Boolean.TRUE);
+						 else
+							share = _shareLocalService.fetchShare(shareId); 
+						share.setActive(active.equals("false") ? Boolean.FALSE : Boolean.TRUE);
 						share.setName(name);
 						share.setSymbol(symbol);
 						share.setNumbertopurchase(numbertopurchase);
@@ -621,7 +622,44 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 		
 		
 	}
+	public void searchStrategyShare(ActionRequest actionRequest, ActionResponse actionResponse)
+	{
+		
+		themeDisplay = (ThemeDisplay)actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
+
+		_log.info("Entering searchStrategyShare...");
+		String strategyselected = ParamUtil.getString(actionRequest, "strategyselected", "SELECTED");
+		long shareId = ParamUtil.getLong(actionRequest, "shareId");
+        String tab_selected= ParamUtil.getString(actionRequest, "tab", "share.details");
+
+        List<Strategy> _lStrategies = null; 
 	
+        if (strategyselected.equals("SELECTED"))	    		
+			 _lStrategies = _strategyshareLocalService.findByActiveStrategies(Boolean.TRUE, shareId, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
+		 else
+			 _lStrategies = _strategyLocalService.findStrategies(shareId, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
+        
+        // Share share = _shareLocalService.fetchShare(shareId);
+    	
+         actionResponse.setRenderParameter("shareId", String.valueOf(shareId));
+         actionResponse.setRenderParameter("tab_selected", tab_selected);
+         actionResponse.setRenderParameter("strategyselected", strategyselected);
+         actionResponse.setRenderParameter("mvcRenderCommandName", "/html/view_strategyshare");
+
+		 /* PortletURL iteratorURL = actionResponse.createRenderURL();
+		 SearchContainer<Strategy> searchContainer = null;
+		 searchContainer  = new SearchContainer<Strategy>(actionRequest, null, null, SearchContainer.DEFAULT_CUR_PARAM, SearchContainer.DEFAULT_DELTA, iteratorURL, null, StringPool.BLANK);
+		 searchContainer.setEmptyResultsMessage("Estrategias  no encontradas");        
+		 searchContainer.setResults(ListUtil.subList(_lStrategies, searchContainer.getStart(), searchContainer.getEnd()));
+		 searchContainer.setTotal(_lStrategies.size());
+		 actionRequest.setAttribute("searchStrategy" , searchContainer); 
+		 actionRequest.setAttribute("iteratorURL" , iteratorURL);	
+		 actionRequest.setAttribute("share", share);
+		 actionRequest.setAttribute("tab_selected", tab_selected);	
+		  */
+		
+		 
+	}
 	public void addeditMarket(ActionRequest actionRequest, ActionResponse actionResponse)
 	{
 		themeDisplay = (ThemeDisplay)actionRequest.getAttribute(WebKeys.THEME_DISPLAY);

@@ -9,7 +9,7 @@
 
 <%	ThemeDisplay _themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);	%> 
 
-<div class="container-fluid-1280">
+<div class="strategyshareresultscontainer-fluid-1280">
 
 <%@include file="/html/includes/tabs.jsp"%>
 <aui:container cssClass='super-awesome-container'>
@@ -57,6 +57,15 @@ function <portlet:namespace/>switchStrategyShare(StrategyShare)
 	});
 }
 
+/* QUITAMOS EL AUTOFIT DE LA TABLE */
+AUI().ready(function() {
+
+	$("#strategyshareresults table").removeClass("table-autofit");
+	
+	/* LOS TEXTOS DE LOS TOGGLE */
+	$(".toggle-card-container .toggle-card-label span").text("");
+})
+
 </script>
 
 
@@ -64,14 +73,25 @@ function <portlet:namespace/>switchStrategyShare(StrategyShare)
     <liferay-frontend:add-menu-item title='<%= LanguageUtil.get(request,"share.addshare") %>' url="<%= addShareURL.toString() %>" />
     <liferay-frontend:add-menu-item title='<%= LanguageUtil.get(request,"share.addmarket") %>' url="<%= addMarketURL.toString() %>" />
 </liferay-frontend:add-menu>
-<liferay-ui:search-container  searchContainer="${searchStrategy}" iteratorURL="${iteratorURL}"> 
+<aui:row>
+<aui:col span="12">
+<jsp:include page="/html/strategyshare_filter.jsp"/>
+</aui:col>
+</aui:row>
+<aui:row>
+<aui:col span="12">
+<div id="strategyshareresults">
+<liferay-ui:search-container id="strategyshareresults" searchContainer="${searchStrategy}" iteratorURL="${iteratorURL}"> 
 <liferay-ui:search-container-results results="${searchStrategy.getResults()}"/>    
 <liferay-ui:search-container-row  className="com.ibtrader.data.model.Strategy" keyProperty="strategyId" modelVar="Strategy">
-<liferay-ui:search-container-column-text name="strategy.name" value="${Strategy.name}" />
-<liferay-ui:search-container-column-text name="strategy.classname" value="${Strategy.className}"/>
-<liferay-ui:search-container-column-jsp  path="/html/add_edit_strategyshare_actions.jsp"/>
+<liferay-ui:search-container-column-text cssClass="col-md-2" name="strategy.name" value="${Strategy.name}" />
+<liferay-ui:search-container-column-text cssClass="col-md-6" name="strategy.description" value="${Strategy.description}"/>
+<liferay-ui:search-container-column-jsp  cssClass="col-md-2" path="/html/add_edit_strategyshare_actions.jsp"/>
 </liferay-ui:search-container-row>    
 <liferay-ui:search-iterator markupView="lexicon"/>
 </liferay-ui:search-container>
+</div>
+</aui:col>
+</aui:row>
 </aui:container>
 </div>

@@ -133,7 +133,7 @@ public interface StrategyLocalService extends BaseLocalService,
 		long groupId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public Strategy getCompanyClassName(long companyId,
+	public Strategy getCompanyGroupClassName(long companyId, long groupid,
 		java.lang.String strategyClassName);
 
 	/**

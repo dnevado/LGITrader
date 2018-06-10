@@ -4445,30 +4445,39 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 	public static final FinderPath FINDER_PATH_FETCH_BY_COMPANYCLASSNAME = new FinderPath(StrategyModelImpl.ENTITY_CACHE_ENABLED,
 			StrategyModelImpl.FINDER_CACHE_ENABLED, StrategyImpl.class,
 			FINDER_CLASS_NAME_ENTITY, "fetchByCompanyClassName",
-			new String[] { Long.class.getName(), String.class.getName() },
+			new String[] {
+				Long.class.getName(), String.class.getName(),
+				Long.class.getName()
+			},
 			StrategyModelImpl.COMPANYID_COLUMN_BITMASK |
-			StrategyModelImpl.CLASSNAME_COLUMN_BITMASK);
+			StrategyModelImpl.CLASSNAME_COLUMN_BITMASK |
+			StrategyModelImpl.GROUPID_COLUMN_BITMASK);
 	public static final FinderPath FINDER_PATH_COUNT_BY_COMPANYCLASSNAME = new FinderPath(StrategyModelImpl.ENTITY_CACHE_ENABLED,
 			StrategyModelImpl.FINDER_CACHE_ENABLED, Long.class,
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
 			"countByCompanyClassName",
-			new String[] { Long.class.getName(), String.class.getName() });
+			new String[] {
+				Long.class.getName(), String.class.getName(),
+				Long.class.getName()
+			});
 
 	/**
-	 * Returns the strategy where companyId = &#63; and className = &#63; or throws a {@link NoSuchStrategyException} if it could not be found.
+	 * Returns the strategy where companyId = &#63; and className = &#63; and groupId = &#63; or throws a {@link NoSuchStrategyException} if it could not be found.
 	 *
 	 * @param companyId the company ID
 	 * @param className the class name
+	 * @param groupId the group ID
 	 * @return the matching strategy
 	 * @throws NoSuchStrategyException if a matching strategy could not be found
 	 */
 	@Override
-	public Strategy findByCompanyClassName(long companyId, String className)
-		throws NoSuchStrategyException {
-		Strategy strategy = fetchByCompanyClassName(companyId, className);
+	public Strategy findByCompanyClassName(long companyId, String className,
+		long groupId) throws NoSuchStrategyException {
+		Strategy strategy = fetchByCompanyClassName(companyId, className,
+				groupId);
 
 		if (strategy == null) {
-			StringBundler msg = new StringBundler(6);
+			StringBundler msg = new StringBundler(8);
 
 			msg.append(_NO_SUCH_ENTITY_WITH_KEY);
 
@@ -4477,6 +4486,9 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 
 			msg.append(", className=");
 			msg.append(className);
+
+			msg.append(", groupId=");
+			msg.append(groupId);
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
@@ -4491,29 +4503,32 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 	}
 
 	/**
-	 * Returns the strategy where companyId = &#63; and className = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 * Returns the strategy where companyId = &#63; and className = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
 	 * @param companyId the company ID
 	 * @param className the class name
+	 * @param groupId the group ID
 	 * @return the matching strategy, or <code>null</code> if a matching strategy could not be found
 	 */
 	@Override
-	public Strategy fetchByCompanyClassName(long companyId, String className) {
-		return fetchByCompanyClassName(companyId, className, true);
+	public Strategy fetchByCompanyClassName(long companyId, String className,
+		long groupId) {
+		return fetchByCompanyClassName(companyId, className, groupId, true);
 	}
 
 	/**
-	 * Returns the strategy where companyId = &#63; and className = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	 * Returns the strategy where companyId = &#63; and className = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param companyId the company ID
 	 * @param className the class name
+	 * @param groupId the group ID
 	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the matching strategy, or <code>null</code> if a matching strategy could not be found
 	 */
 	@Override
 	public Strategy fetchByCompanyClassName(long companyId, String className,
-		boolean retrieveFromCache) {
-		Object[] finderArgs = new Object[] { companyId, className };
+		long groupId, boolean retrieveFromCache) {
+		Object[] finderArgs = new Object[] { companyId, className, groupId };
 
 		Object result = null;
 
@@ -4526,13 +4541,14 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 			Strategy strategy = (Strategy)result;
 
 			if ((companyId != strategy.getCompanyId()) ||
-					!Objects.equals(className, strategy.getClassName())) {
+					!Objects.equals(className, strategy.getClassName()) ||
+					(groupId != strategy.getGroupId())) {
 				result = null;
 			}
 		}
 
 		if (result == null) {
-			StringBundler query = new StringBundler(4);
+			StringBundler query = new StringBundler(5);
 
 			query.append(_SQL_SELECT_STRATEGY_WHERE);
 
@@ -4552,6 +4568,8 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 				query.append(_FINDER_COLUMN_COMPANYCLASSNAME_CLASSNAME_2);
 			}
 
+			query.append(_FINDER_COLUMN_COMPANYCLASSNAME_GROUPID_2);
+
 			String sql = query.toString();
 
 			Session session = null;
@@ -4569,6 +4587,8 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 					qPos.add(className);
 				}
 
+				qPos.add(groupId);
+
 				List<Strategy> list = q.list();
 
 				if (list.isEmpty()) {
@@ -4578,7 +4598,7 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 				else {
 					if ((list.size() > 1) && _log.isWarnEnabled()) {
 						_log.warn(
-							"StrategyPersistenceImpl.fetchByCompanyClassName(long, String, boolean) with parameters (" +
+							"StrategyPersistenceImpl.fetchByCompanyClassName(long, String, long, boolean) with parameters (" +
 							StringUtil.merge(finderArgs) +
 							") yields a result set with more than 1 result. This violates the logical unique restriction. There is no order guarantee on which result is returned by this finder.");
 					}
@@ -4591,7 +4611,8 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 
 					if ((strategy.getCompanyId() != companyId) ||
 							(strategy.getClassName() == null) ||
-							!strategy.getClassName().equals(className)) {
+							!strategy.getClassName().equals(className) ||
+							(strategy.getGroupId() != groupId)) {
 						finderCache.putResult(FINDER_PATH_FETCH_BY_COMPANYCLASSNAME,
 							finderArgs, strategy);
 					}
@@ -4617,37 +4638,40 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 	}
 
 	/**
-	 * Removes the strategy where companyId = &#63; and className = &#63; from the database.
+	 * Removes the strategy where companyId = &#63; and className = &#63; and groupId = &#63; from the database.
 	 *
 	 * @param companyId the company ID
 	 * @param className the class name
+	 * @param groupId the group ID
 	 * @return the strategy that was removed
 	 */
 	@Override
-	public Strategy removeByCompanyClassName(long companyId, String className)
-		throws NoSuchStrategyException {
-		Strategy strategy = findByCompanyClassName(companyId, className);
+	public Strategy removeByCompanyClassName(long companyId, String className,
+		long groupId) throws NoSuchStrategyException {
+		Strategy strategy = findByCompanyClassName(companyId, className, groupId);
 
 		return remove(strategy);
 	}
 
 	/**
-	 * Returns the number of strategies where companyId = &#63; and className = &#63;.
+	 * Returns the number of strategies where companyId = &#63; and className = &#63; and groupId = &#63;.
 	 *
 	 * @param companyId the company ID
 	 * @param className the class name
+	 * @param groupId the group ID
 	 * @return the number of matching strategies
 	 */
 	@Override
-	public int countByCompanyClassName(long companyId, String className) {
+	public int countByCompanyClassName(long companyId, String className,
+		long groupId) {
 		FinderPath finderPath = FINDER_PATH_COUNT_BY_COMPANYCLASSNAME;
 
-		Object[] finderArgs = new Object[] { companyId, className };
+		Object[] finderArgs = new Object[] { companyId, className, groupId };
 
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
-			StringBundler query = new StringBundler(3);
+			StringBundler query = new StringBundler(4);
 
 			query.append(_SQL_COUNT_STRATEGY_WHERE);
 
@@ -4667,6 +4691,8 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 				query.append(_FINDER_COLUMN_COMPANYCLASSNAME_CLASSNAME_2);
 			}
 
+			query.append(_FINDER_COLUMN_COMPANYCLASSNAME_GROUPID_2);
+
 			String sql = query.toString();
 
 			Session session = null;
@@ -4683,6 +4709,8 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 				if (bindClassName) {
 					qPos.add(className);
 				}
+
+				qPos.add(groupId);
 
 				count = (Long)q.uniqueResult();
 
@@ -4702,9 +4730,10 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 	}
 
 	private static final String _FINDER_COLUMN_COMPANYCLASSNAME_COMPANYID_2 = "strategy.companyId = ? AND ";
-	private static final String _FINDER_COLUMN_COMPANYCLASSNAME_CLASSNAME_1 = "strategy.className IS NULL";
-	private static final String _FINDER_COLUMN_COMPANYCLASSNAME_CLASSNAME_2 = "strategy.className = ?";
-	private static final String _FINDER_COLUMN_COMPANYCLASSNAME_CLASSNAME_3 = "(strategy.className IS NULL OR strategy.className = '')";
+	private static final String _FINDER_COLUMN_COMPANYCLASSNAME_CLASSNAME_1 = "strategy.className IS NULL AND ";
+	private static final String _FINDER_COLUMN_COMPANYCLASSNAME_CLASSNAME_2 = "strategy.className = ? AND ";
+	private static final String _FINDER_COLUMN_COMPANYCLASSNAME_CLASSNAME_3 = "(strategy.className IS NULL OR strategy.className = '') AND ";
+	private static final String _FINDER_COLUMN_COMPANYCLASSNAME_GROUPID_2 = "strategy.groupId = ?";
 
 	public StrategyPersistenceImpl() {
 		setModelClass(Strategy.class);
@@ -4724,8 +4753,10 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 			new Object[] { strategy.getUuid(), strategy.getGroupId() }, strategy);
 
 		finderCache.putResult(FINDER_PATH_FETCH_BY_COMPANYCLASSNAME,
-			new Object[] { strategy.getCompanyId(), strategy.getClassName() },
-			strategy);
+			new Object[] {
+				strategy.getCompanyId(), strategy.getClassName(),
+				strategy.getGroupId()
+			}, strategy);
 
 		strategy.resetOriginalValues();
 	}
@@ -4809,7 +4840,8 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 
 			args = new Object[] {
 					strategyModelImpl.getCompanyId(),
-					strategyModelImpl.getClassName()
+					strategyModelImpl.getClassName(),
+					strategyModelImpl.getGroupId()
 				};
 
 			finderCache.putResult(FINDER_PATH_COUNT_BY_COMPANYCLASSNAME, args,
@@ -4835,7 +4867,8 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 					FINDER_PATH_FETCH_BY_COMPANYCLASSNAME.getColumnBitmask()) != 0) {
 				Object[] args = new Object[] {
 						strategyModelImpl.getCompanyId(),
-						strategyModelImpl.getClassName()
+						strategyModelImpl.getClassName(),
+						strategyModelImpl.getGroupId()
 					};
 
 				finderCache.putResult(FINDER_PATH_COUNT_BY_COMPANYCLASSNAME,
@@ -4867,7 +4900,7 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 
 		args = new Object[] {
 				strategyModelImpl.getCompanyId(),
-				strategyModelImpl.getClassName()
+				strategyModelImpl.getClassName(), strategyModelImpl.getGroupId()
 			};
 
 		finderCache.removeResult(FINDER_PATH_COUNT_BY_COMPANYCLASSNAME, args);
@@ -4877,7 +4910,8 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 				FINDER_PATH_FETCH_BY_COMPANYCLASSNAME.getColumnBitmask()) != 0) {
 			args = new Object[] {
 					strategyModelImpl.getOriginalCompanyId(),
-					strategyModelImpl.getOriginalClassName()
+					strategyModelImpl.getOriginalClassName(),
+					strategyModelImpl.getOriginalGroupId()
 				};
 
 			finderCache.removeResult(FINDER_PATH_COUNT_BY_COMPANYCLASSNAME, args);
