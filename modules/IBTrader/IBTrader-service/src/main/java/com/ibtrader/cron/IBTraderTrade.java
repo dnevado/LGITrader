@@ -111,7 +111,7 @@ public class IBTraderTrade  extends BaseSchedulerEntryMessageListener {
 		
 	   if(runningJob)
 	   {
-		   		_log.info("CronTrading already running, not starting again");
+		   		_log.debug("CronTrading already running, not starting again");
 		        return;
 	   }
 		runningJob = true;
@@ -121,6 +121,7 @@ public class IBTraderTrade  extends BaseSchedulerEntryMessageListener {
 		}
 		catch (Exception e)
 		{
+			
 			runningJob = false;
 		}
 		runningJob = false; 

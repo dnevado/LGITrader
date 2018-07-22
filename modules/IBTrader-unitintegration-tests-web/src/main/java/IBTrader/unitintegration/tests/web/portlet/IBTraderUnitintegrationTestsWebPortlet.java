@@ -342,6 +342,8 @@ public class IBTraderUnitintegrationTestsWebPortlet extends MVCPortlet {
 				entrygap = entrygap / 100;
 				double aproxvalue = ParamUtil.getDouble(actionRequest,"aproxvalue",176);
 				
+				double  simulationtimes = ParamUtil.getDouble(actionRequest,"simulationtimes",10);
+				
 				double mobileavg  = (aproxvalue * periods) / periods;
 				
 				/* el maximo hay que inventarselo */

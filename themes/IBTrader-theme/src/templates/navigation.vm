@@ -1,0 +1,34 @@
+<div id="top-menu">
+	## Menu - Level 0
+	
+	<ul>
+		#foreach ($nav_item in $nav_items)
+			#if ($nav_item.isSelected())
+				<li class="active">
+			#else
+				<li>
+			#end
+				<a href="$nav_item.getURL()" $nav_item.getTarget()>$nav_item.getName()</a>
+
+				## Menu - Level 1
+				
+				#if ($nav_item.hasChildren())
+				<div class="child-menu">
+					<ul>
+						#foreach ($nav_child in $nav_item.getChildren())
+							#if ($nav_child.isSelected())
+								<li class="active">
+							#else
+								<li>
+							#end
+								<a href="$nav_child.getURL()" $nav_child.getTarget()>$nav_child.getName()</a>
+														
+							</li>
+						#end
+					</ul>
+				</div>
+				#end
+			</li>
+		#end
+	</ul>
+</div>

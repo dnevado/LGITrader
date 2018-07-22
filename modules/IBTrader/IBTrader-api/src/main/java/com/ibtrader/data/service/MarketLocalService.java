@@ -242,7 +242,7 @@ public interface MarketLocalService extends BaseLocalService,
 		boolean active);
 
 	public List<Market> findByActiveStartEndHour(java.lang.String _Start,
-		java.lang.String _End, boolean active);
+		java.lang.String _End, boolean active, long companyId, long groupId);
 
 	public List<Market> findByCompanyGroup(long companyId, long groupId);
 

@@ -49,7 +49,7 @@ public class MarketLocalServiceImpl extends MarketLocalServiceBaseImpl {
 	 *
 	 * Never reference this class directly. Always use {@link com.ibtrader.data.service.MarketLocalServiceUtil} to access the market local service.
 	 */ 
-	public List<Market> findByActiveStartEndHour(String _Start,String _End, boolean active)
+	public List<Market> findByActiveStartEndHour(String _Start,String _End, boolean active, long companyId, long groupId)
 	{
 		DynamicQuery _DQ = MarketLocalServiceUtil.dynamicQuery();
 
@@ -57,6 +57,9 @@ public class MarketLocalServiceImpl extends MarketLocalServiceBaseImpl {
 		_DQ.add(RestrictionsFactoryUtil.eq("active", active));
 		_DQ.add(RestrictionsFactoryUtil.le("start_hour", _Start));
 		_DQ.add(RestrictionsFactoryUtil.ge("end_hour", _End));
+		_DQ.add(RestrictionsFactoryUtil.eq("companyId", companyId));
+		_DQ.add(RestrictionsFactoryUtil.eq("groupId", groupId));
+		
 		
 		//List<Market>  = MarketLocalServiceUtil.dynamicQuery(_DQ);
 		

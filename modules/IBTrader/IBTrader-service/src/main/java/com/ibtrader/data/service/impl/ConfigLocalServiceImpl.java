@@ -109,7 +109,7 @@ public class ConfigLocalServiceImpl extends ConfigLocalServiceBaseImpl {
 	}
 	
 	/* SABER LOS CLIENID  REPETIDOS Y RECONECTAR, NO DEBERIA REPERTIRSE  */
-	public Long findByFreeCronClientId()
+	public Long findByFreeCronClientId(long  _company, long _group)
 	{
 		 Long _ClientID = null;
 		/* NO PUEDO APLICAR MAX PORQUE SON VALUES COMO STRING */
@@ -153,7 +153,7 @@ public class ConfigLocalServiceImpl extends ConfigLocalServiceBaseImpl {
 			_config =  getConfigPersistence().findByKeyCompanyGroup(_company, _group, _key);
 		} catch (NoSuchConfigException e) {
 			// TODO Auto-generated catch block
-		//	e.printStackTrace();
+			 _log.debug("findByKeyCompanyGroup " + e.getMessage() + ":"  + _company + "," + _group + "," + _key);
 		}
 		return _config;
 	}
@@ -224,7 +224,8 @@ public class ConfigLocalServiceImpl extends ConfigLocalServiceBaseImpl {
 			 _conf.setCompanyId(_company);
 			 _conf.setGroupId(_group);
 			 _conf.setConfig_key(IBTraderConstants.keyTWS_PORT);
-			 _conf.setValue(String.valueOf(IBTraderConstants.vTWS_PORT));
+			 _conf.setValue(String.valueOf(_group)); // METEMOS EL GROUP ID PARA QUE NO HAYA DUPLICADOS 
+			// _conf.setValue(String.valueOf(IBTraderConstants.vTWS_PORT));
 			 _conf.setName(IBTraderConstants.keyTWS_PORT);
 			 _conf.setDescription(IBTraderConstants.keyTWS_PORT);
 			 _conf.setGlobaldefault(false);
@@ -354,7 +355,8 @@ public class ConfigLocalServiceImpl extends ConfigLocalServiceBaseImpl {
 			 _conf.setGroupId(_group);
 			 _conf.setCompanyId(_company);
 			 _conf.setConfig_key(IBTraderConstants.keyPAPER_TWS_PORT);
-			 _conf.setValue(String.valueOf(IBTraderConstants.vPAPER_TWS_PORT));
+			 //_conf.setValue(String.valueOf(IBTraderConstants.vPAPER_TWS_PORT));			 
+			 _conf.setValue(String.valueOf(_group)); // METEMOS EL GROUP ID PARA QUE NO HAYA DUPLICADOS 
 			 _conf.setName(IBTraderConstants.keyPAPER_TWS_PORT);
 			 _conf.setDescription(IBTraderConstants.keyPAPER_TWS_PORT);
 			 _conf.setGlobaldefault(false);

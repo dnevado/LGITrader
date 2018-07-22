@@ -1,0 +1,58 @@
+$FontAwesomePath: "aui/lexicon/fonts/alloy-font-awesome/font";
+$font-awesome-path: "aui/lexicon/fonts/alloy-font-awesome/font";
+$icon-font-path: "aui/lexicon/fonts/";
+
+$gray: #555;
+/* $white has been removed in Bootstrap 3 -- $white: #FFF; */
+
+$link-color: #4f99c6;
+$link-hover-color: darken($link-color, 15%);
+
+$border-radius-base: 2px;
+$border-radius-large: 3px;
+$border-radius-small: 2px;
+
+$btn-default-bg: #F6F6F6;
+/* $btn-default-bg-highlight has been removed in Bootstrap 3 -- $btn-default-bg-highlight: #EAEAEA; */
+$btn-default-border: #CFCFCF;
+$btn-danger-bg: #F53924;
+/* $btn-danger-bg-highlight has been removed in Bootstrap 3 -- $btn-danger-bg-highlight: #ED2C17; */
+$btn-info-bg: #00CFFF;
+/* $btn-info-bg-highlight has been removed in Bootstrap 3 -- $btn-info-bg-highlight: darken($btn-info-bg, 4%); */
+$btn-primary-bg: #6fb3e0;
+/* $btn-primary-bg-highlight has been removed in Bootstrap 3 -- $btn-primary-bg-highlight: #E57272; */
+$btn-success-bg: #0ECD27;
+/* $btn-success-bg-highlight has been removed in Bootstrap 3 -- $btn-success-bg-highlight: #0ABA1D; */
+$btn-warning-bg: #FFA658;
+/* $btn-warning-bg-highlight has been removed in Bootstrap 3 -- $btn-warning-bg-highlight: #F49645; */
+
+$dropdown-link-active-bg: lighten($link-color, 5%);
+$dropdown-link-hover-bg: darken(#EB827D, 10%);
+/* $white has been removed in Bootstrap 3 -- $dropdown-link-active-color: $white; */
+
+$navbar-default-bg: #F3F3F3;
+/* $navbar-default-bg-highlight has been removed in Bootstrap 3 -- $navbar-default-bg-highlight: #F9F9F9; */
+$navbar-default-border: #DDDDDD;
+$navbar-default-link-active-bg: lighten($navbar-default-bg, 25%);
+$navbar-default-link-color: $gray;
+$navbar-default-link-hover-color: $link-hover-color;
+$navbar-default-color: $navbar-default-link-color;
+
+$error-bg: #FEE5E2;
+$error-border: #FCACA5;
+$error-text: #B50303;
+$info-bg: #CEF1FC;
+$info-border: darken($info-bg, 10%);
+$info-text: #12718F;
+$success-bg: #F1FBD1;
+$success-border: #BCE830;
+$success-text: #488F06;
+$warning-bg: #FFFBDC;
+$warning-border: #F1D875;
+$warning-text: #BF7900;
+
+$body-bg: #ffffff;
+$text-color: #808080;
+$font-family-base: "dosisregular";
+$font-size-base: 14px;
+/*$line-height-base: 20px; */

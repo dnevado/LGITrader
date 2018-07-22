@@ -172,14 +172,7 @@ public class TIMApiGITrader_NOVALE extends TIMApiWrapper {
 			/* OBTENEMOS EL CRON USADO DE LA TABLA  CON EL CLIENTID USADO, COMO TENEMOS 3 CRON, 
 			 * CLIENT_ID SERÁ EL CLIENT_ID MAS EL RESTO DEL CONFIGURATIONID DE LA CLAVE PRIMERARIO, AL SER 
 			 * SECUENCIALES LOS 3 CRON, NOS ASEGURAMOS DE SER DISTINTOS, HASTA UN MAXIMO DE 1024 INICIALMENTE    */
-			Config _conf = ConfigLocalServiceUtil.findByIsCronValue(Boolean.TRUE, String.valueOf(_ConnectionCLIENTID));			
-			if (_conf!=null)
-			{
-				Long  NewClientID = ConfigLocalServiceUtil.findByFreeCronClientId();
-				_conf.setValue(String.valueOf(NewClientID));
-				ConfigLocalServiceUtil.updateConfig(_conf);
-			}			
-
+			
 
 		}
 		else

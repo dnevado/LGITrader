@@ -43,8 +43,8 @@ public class MobileAvgUtil {
 		if (_avgMobileSimple<= (oRTimeWidthRange.getMax_value() - _WidthBarRangePercent)
 				&& (oRTimeEnTramoBar.getValue() >= (oRTimeWidthRange.getMin_value() + _WidthBarRangePercent)))
 		{
-			_log.info("MM <= Max - Ancho = " + _avgMobileSimple+ "<="  + oRTimeEnTramoBar.getValue() + "-" + _WidthBarRangePercent);
-			_log.info("Cierre  >= Min + Ancho = " + oRTimeEnTramoBar.getValue() + ">="  + oRTimeWidthRange.getMin_value() + "+" + _WidthBarRangePercent);
+			_log.debug("MM <= Max - Ancho = " + _avgMobileSimple+ "<="  + oRTimeEnTramoBar.getValue() + "-" + _WidthBarRangePercent);
+			_log.debug("Cierre  >= Min + Ancho = " + oRTimeEnTramoBar.getValue() + ">="  + oRTimeWidthRange.getMin_value() + "+" + _WidthBarRangePercent);
 		}
 		
 		return (_avgMobileSimple  <= (oRTimeWidthRange.getMax_value() - _WidthBarRangePercent) && (oRTimeEnTramoBar.getValue() >= (oRTimeWidthRange.getMin_value() + _WidthBarRangePercent)));
@@ -58,8 +58,8 @@ public class MobileAvgUtil {
 		if (_avgMobileSimple  >= (oRTimeWidthRange.getMin_value() + _WidthBarRangePercent)
 				&& (oRTimeEnTramoBar.getValue() <= (oRTimeWidthRange.getMax_value() - _WidthBarRangePercent)))
 		{
-			_log.info("MM >= Min + Ancho = " + _avgMobileSimple + ">="  + oRTimeEnTramoBar.getValue() + "+" + _WidthBarRangePercent);
-			_log.info("Cierre  <= Max - Ancho = " + oRTimeEnTramoBar.getValue() + "<="  + oRTimeWidthRange.getMin_value() + "-" + _WidthBarRangePercent);
+			_log.debug("MM >= Min + Ancho = " + _avgMobileSimple + ">="  + oRTimeEnTramoBar.getValue() + "+" + _WidthBarRangePercent);
+			_log.debug("Cierre  <= Max - Ancho = " + oRTimeEnTramoBar.getValue() + "<="  + oRTimeWidthRange.getMin_value() + "-" + _WidthBarRangePercent);
 		}
 		
 		return (_avgMobileSimple>= (oRTimeWidthRange.getMin_value() + _WidthBarRangePercent) && (oRTimeEnTramoBar.getValue() <= (oRTimeWidthRange.getMax_value() - _WidthBarRangePercent)));

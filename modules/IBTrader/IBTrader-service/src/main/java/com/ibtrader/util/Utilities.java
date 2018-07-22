@@ -159,6 +159,7 @@ public class Utilities {
 	   String _ConfigValue = "";
 	   try 
 	   {		    
+		   // long total = ConfigLocalServiceUtil.getConfigsCount();
 			Config _conf = ConfigLocalServiceUtil.findByKeyCompanyGroup(keyValue, companyId, _groupId);
 		
 			if (_conf!=null)				
@@ -169,7 +170,7 @@ public class Utilities {
 	   }
 		catch (Exception e)
 		{
-			
+			_log.debug("No se encuentra el sevicio getConfigurationValue "  + keyValue + " " + _groupId + ",message:" + e.getMessage()) ;
 		}
 		
 		return _ConfigValue;

@@ -199,8 +199,8 @@ public class ConfigLocalServiceWrapper implements ConfigLocalService,
 	}
 
 	@Override
-	public java.lang.Long findByFreeCronClientId() {
-		return _configLocalService.findByFreeCronClientId();
+	public java.lang.Long findByFreeCronClientId(long _company, long _group) {
+		return _configLocalService.findByFreeCronClientId(_company, _group);
 	}
 
 	/**

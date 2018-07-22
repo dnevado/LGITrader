@@ -19,6 +19,7 @@ import com.ibtrader.cron.IBTraderTrade;
 import com.ibtrader.data.model.Config;
 import com.ibtrader.data.model.IBOrder;
 import com.ibtrader.data.model.Market;
+import com.ibtrader.data.model.Position;
 import com.ibtrader.data.model.Share;
 import com.ibtrader.data.model.Strategy;
 import com.ibtrader.data.model.StrategyShare;
@@ -26,6 +27,7 @@ import com.ibtrader.data.model.impl.StrategyImpl;
 import com.ibtrader.data.service.ConfigLocalServiceUtil;
 import com.ibtrader.data.service.IBOrderLocalServiceUtil;
 import com.ibtrader.data.service.MarketLocalServiceUtil;
+import com.ibtrader.data.service.PositionLocalServiceUtil;
 import com.ibtrader.data.service.ShareLocalServiceUtil;
 import com.ibtrader.data.service.StrategyLocalServiceUtil;
 import com.ibtrader.data.service.StrategyShareLocalServiceUtil;
@@ -68,8 +70,8 @@ public class CronUtil {
 		boolean _bCheckParam = Boolean.TRUE;
 		List<Company> lCompanies = CompanyLocalServiceUtil.getCompanies();
 		Company _company = lCompanies.get(0); // tiene que existir
-		long companyId =  _company.getCompanyId();		
-		/*  VERIFICAMOS MERCADOS ACTIVOS 
+		long companyId =  _company.getCompanyId();		 
+		/*  VERIFICAMOS MERCADOS ACTIVOS  
 	    long guestGroupId = 0;
 		try {
 			guestGroupId = GroupLocalServiceUtil.getGroup(_company.getCompanyId(), GroupConstants.GUEST).getGroupId();
@@ -89,7 +91,7 @@ public class CronUtil {
 				try
 				{
 				
-				_CLIENT_ID = Long.valueOf(Utilities.getConfigurationValue(IBTraderConstants.keyCRON_TRADING_CLIENT_INITIAL, companyId, _Organization.getGroupId())).intValue();;	  // el dos para leer, el 3 para escribir	
+				_CLIENT_ID = Long.valueOf(Utilities.getConfigurationValue(IBTraderConstants.keyCRON_ORDERSCHECKER_CLIENT_INITIAL, companyId, _Organization.getGroupId())).intValue();;	  // el dos para leer, el 3 para escribir	
 
 				/* CUERNTA PAPER */
 				String simulated = Utilities.getConfigurationValue(IBTraderConstants.keySIMULATION_MODE, companyId, _Organization.getGroupId());
@@ -117,12 +119,23 @@ public class CronUtil {
 				 if (wrapper.isConnected()) wrapper.disconnect();
 				 wrapper.connect(_HOST, _PORT,_CLIENT_ID); 	 	
 				 
+				if (!wrapper.isConnected()) // si no se conecta, lo intentamos con otro clienid , aunque pudiera ser que no tenga configuracion o tws activa 
+				{
+					Config _conf = ConfigLocalServiceUtil.findByKeyCompanyGroup(IBTraderConstants.keyCRON_ORDERSCHECKER_CLIENT_INITIAL,_Organization.getCompanyId(), _Organization.getGroupId());
+										
+					Long  NewClientID = ConfigLocalServiceUtil.findByFreeCronClientId(_Organization.getCompanyId(), _Organization.getGroupId());
+					_conf.setValue(String.valueOf(NewClientID));
+					ConfigLocalServiceUtil.updateConfig(_conf);
+					
+				}
+				 
 				 if (wrapper.isConnected())
 			     {
 					
 					 /* VERIFICACION DE LA CONECTIVIDAD, SIEMPRE NECESARIO */
 					wrapper.reqNextId(); 
 					wrapper.set_ibtarget_organization(_Organization);
+					wrapper.setCronId(IBTraderConstants.keyCRON_ORDERSCHECKER_CLIENT_INITIAL);
 					
 					if (wrapper.getCurrentOrderId()==-1)
 					{
@@ -130,7 +143,7 @@ public class CronUtil {
 						return;
 					}
 					wrapper.getCurrentTwsTime();
-					_log.info("Connected, StartOrdersValidator, connecting to TWS,currentOrderId:");
+					_log.debug("Connected, StartOrdersValidator, connecting to TWS,currentOrderId:");
 					
 					long  _INCREMENT_ORDER_ID = wrapper.getNextOrderId();
 					IBOrderLocalServiceUtil.deleteByOrderCompanyGroup(_INCREMENT_ORDER_ID, _Organization.getCompanyId(), _Organization.getGroupId(),_CLIENT_ID,-1);
@@ -205,15 +218,17 @@ public class CronUtil {
 	Map<Long,TIMApiWrapper> clientspool = new HashMap<Long,TIMApiWrapper>();
 	
 	
-	List<Organization> lOrganization = OrganizationLocalServiceUtil.getOrganizations(companyId, OrganizationConstants.DEFAULT_PARENT_ORGANIZATION_ID, 0, OrganizationLocalServiceUtil.getOrganizationsCount()+1);
-	if (lOrganization.isEmpty())
-		return;
+
 	// 	iteramos de corrido 
 	
 	ArrayList<String> lShareRequested = new ArrayList<String>();
 	
 	while (true)
 	{
+	List<Organization> lOrganization = OrganizationLocalServiceUtil.getOrganizations(companyId, OrganizationConstants.DEFAULT_PARENT_ORGANIZATION_ID, 0, OrganizationLocalServiceUtil.getOrganizationsCount()+1);
+	if (lOrganization.isEmpty())
+		return;	
+		
 	for (Organization _Organization : lOrganization )
 		{
 		 
@@ -221,7 +236,7 @@ public class CronUtil {
 		try
 		{
 		
-		_CLIENT_ID = Long.valueOf(Utilities.getConfigurationValue(IBTraderConstants.keyCRON_TRADING_CLIENT_INITIAL, companyId, _Organization.getGroupId())).intValue();;	  // el dos para leer, el 3 para escribir	
+		_CLIENT_ID = Long.valueOf(Utilities.getConfigurationValue(IBTraderConstants.keyCRON_READING_CLIENT_INITIAL, companyId, _Organization.getGroupId())).intValue();;	  // el dos para leer, el 3 para escribir	
 
 		/* CUERNTA PAPER */
 		String simulated = Utilities.getConfigurationValue(IBTraderConstants.keySIMULATION_MODE, companyId, _Organization.getGroupId());
@@ -256,7 +271,7 @@ public class CronUtil {
 			 if (wrapper.isConnected()) wrapper.disconnect();*/
 			 wrapper.connect(_HOST, _PORT,_CLIENT_ID);
 			 
-			 _log.info("Connected, StartReadingCron for " + _Organization.getName() + ", connecting to TWS for " + _Organization.getName());
+			 _log.info("Connected, StartReadingCron for " + _Organization.getName() + ", connecting to TWS for " + _Organization.getName() + ",threadID:" + Thread.currentThread().getId());
 			 
 			 clientspool.put(_Organization.getOrganizationId(),wrapper);
 		 }
@@ -264,8 +279,19 @@ public class CronUtil {
 		 {
 			 // lo obtenemos 
 			 wrapper = clientspool.get(_Organization.getOrganizationId());
-				if (!wrapper.isConnected()) 
+			if (!wrapper.isConnected()) 
 					 wrapper.connect(_HOST, _PORT,_CLIENT_ID);
+			
+			if (!wrapper.isConnected()) // si no se conecta, lo intentamos con otro clienid , aunque pudiera ser que no tenga configuracion o tws activa 
+			{
+				Config _conf = ConfigLocalServiceUtil.findByKeyCompanyGroup(IBTraderConstants.keyCRON_READING_CLIENT_INITIAL,_Organization.getCompanyId(), _Organization.getGroupId());
+									
+				Long  NewClientID = ConfigLocalServiceUtil.findByFreeCronClientId(_Organization.getCompanyId(), _Organization.getGroupId());
+				_conf.setValue(String.valueOf(NewClientID));
+				ConfigLocalServiceUtil.updateConfig(_conf);
+				
+			}
+			
 		 }
 				 
 		// if (oTWS.GITraderTWSIsConnected() )
@@ -275,7 +301,7 @@ public class CronUtil {
 				/* VERIFICACION DE LA CONECTIVIDAD, SIEMPRE NECESARIO */
 				wrapper.reqNextId(); 
 				wrapper.set_ibtarget_organization(_Organization);
-				
+				wrapper.setCronId(IBTraderConstants.keyCRON_READING_CLIENT_INITIAL);
 				if (wrapper.getCurrentOrderId()==-1)
 				{
 					wrapper.disconnect();
@@ -314,7 +340,7 @@ public class CronUtil {
 				    	 // empezamos a contar desde 5 o 10 minutos antes de la apertura para contar precios
 				    	String _HORACTUAL = Utilities.getActualHourFormatPlusMinutes(Utilities.getGlobalIBDateNowFormat(),10); 
 				    	
-				    	List<Market> lActiveMarkets = MarketLocalServiceUtil.findByActiveStartEndHour(_HORACTUAL, _HORACTUAL,true);
+				    	List<Market> lActiveMarkets = MarketLocalServiceUtil.findByActiveStartEndHour(_HORACTUAL, _HORACTUAL,Boolean.TRUE,_Organization.getCompanyId(), _Organization.getGroupId());
 					    
 				    	for (Market oMarket : lActiveMarkets)
 				    	{
@@ -510,23 +536,37 @@ public class CronUtil {
 				 //wrapper = new TIMApiWrapper(_CLIENT_ID);				
 				 wrapper.connect(_HOST, _PORT,_CLIENT_ID);
 				 
-				 clientspool.put(_Organization.getOrganizationId(),wrapper);
+				 if (wrapper.isConnected()) 				 
+					 clientspool.put(_Organization.getOrganizationId(),wrapper);
 				
 			 }
 			 else
 			 {
 				 // lo obtenemos 
 				 wrapper = clientspool.get(_Organization.getOrganizationId());
-				  
-				if (!wrapper.isConnected()) 
-				 wrapper.connect(_HOST, _PORT,_CLIENT_ID);
+				 
+				_log.debug("threadID:" + Thread.currentThread().getId() + ",Wrapper obtained from pool:" + wrapper.getClient().connectedHost() + "," + _PORT + ",group:" + _Organization.getGroupId() + ",_CLIENT_ID:" + _CLIENT_ID);
+				 
+				 if (!wrapper.isConnected()) 
+				   wrapper.connect(_HOST, _PORT,_CLIENT_ID);
 				//_log.info("Connection to," + _Organization.getName() + "clientid:" + _CLIENT_ID + ", getting wrapper pool, conectado:" + wrapper.isConnected());
 			 }
+			 if (!wrapper.isConnected()) // si no se conecta, lo intentamos con otro clienid , aunque pudiera ser que no tenga configuracion o tws activa 
+			 {
+				Config _conf = ConfigLocalServiceUtil.findByKeyCompanyGroup(IBTraderConstants.keyCRON_TRADING_CLIENT_INITIAL,_Organization.getCompanyId(), _Organization.getGroupId());
+									
+				Long  NewClientID = ConfigLocalServiceUtil.findByFreeCronClientId(_Organization.getCompanyId(), _Organization.getGroupId());
+				_conf.setValue(String.valueOf(NewClientID));
+				ConfigLocalServiceUtil.updateConfig(_conf);
+				
+			 }
 			 
-			if (wrapper.isConnected())
-		    {
+			 if (wrapper.isConnected())
+		     {
 								
 				wrapper.set_ibtarget_organization(_Organization);
+				wrapper.setCronId(IBTraderConstants.keyCRON_TRADING_CLIENT_INITIAL);
+				
 				if (wrapper.getCurrentOrderId()==-1)
 				{
 					wrapper.disconnect();
@@ -551,7 +591,7 @@ public class CronUtil {
 				    	 
 				    } 
 				 	String _HORACTUAL = Utilities.getActualHourFormatPlusMinutes(Utilities.getGlobalIBDateNowFormat(),10); 				   	 
-			   	 	List<Market> lActiveMarkets = MarketLocalServiceUtil.findByActiveStartEndHour(_HORACTUAL, _HORACTUAL,Boolean.TRUE);				   	 	
+			   	 	List<Market> lActiveMarkets = MarketLocalServiceUtil.findByActiveStartEndHour(_HORACTUAL, _HORACTUAL,Boolean.TRUE,_Organization.getCompanyId(), _Organization.getGroupId());				   	 	
 			   	  
 			   	    try
 			   	    {
@@ -586,12 +626,28 @@ public class CronUtil {
 					    					if (!oStrategyShare.isActive()) continue;  // si no esta activa, no se trata 
 					    					StrategyImpl _strategyImpl= (StrategyImpl) Utilities.getContextClassLoader().loadClass(oStrategy.getClassName()).newInstance();
 					    					_strategyImpl.init(oShare.getCompanyId());   // verify if custom fields are created and filled 	    						    				
-					    					if (_strategyImpl.verify(oShare, oMarket,oStrategyShare))
+					    					if (_strategyImpl.verify(oShare, oMarket,oStrategyShare) && wrapper.isConnected())
 					    					{		
+					    											    							
 					    							long positionId = _strategyImpl.execute(oShare, oMarket);
 					    							// 1. ESTABLECEMOS EL CONTEXTO 
 					    							if (positionId!=-1) // no hay error 
 					    							{	
+					    								if (!wrapper.isConnected()) // si se produce un error, salimos, eliminando order.
+					    								{
+					    									Position _position = PositionLocalServiceUtil.fetchPosition(positionId);
+					    									/* borramos ordenes y posicion */
+					    									if (_position!=null)
+					    									{
+					    										if (_position.getPositionId_tws_in()>0)	
+						    										IBOrderLocalServiceUtil.deleteByOrderCompanyGroup(_position.getPositionId_tws_in(), _Organization.getCompanyId(), _Organization.getGroupId(),_position.getClientId_in(),-1);
+						    									if (_position.getPositionId_tws_out()>0)	
+						    										IBOrderLocalServiceUtil.deleteByOrderCompanyGroup(_position.getPositionId_tws_out(), _Organization.getCompanyId(), _Organization.getGroupId(),_position.getClientId_out(),-1);
+					    										PositionLocalServiceUtil.deletePosition(positionId);
+					    									}
+						    								continue;
+					    								} // fin de wrapper.isConnected()
+					    								_log.debug("Opening order CronUTIL,threadID:" + Thread.currentThread().getId()  +",wrapper:" + wrapper.getClient().connectedHost() + "," + _PORT + ",group:" + _Organization.getGroupId() + ",_CLIENT_ID:" + _CLIENT_ID);
 					    								wrapper.set_ibtarget_share(oShare);
 					    								//	wrapper.setStrategyshare(oStrategyShare);
 					    								//  1. ABRIMOS CANCELACION EN SU CASO 
@@ -600,6 +656,7 @@ public class CronUtil {
 					    									wrapper.cancelOrder(_strategyImpl.getTargetContract(), _strategyImpl.getTargetOrder(),_strategyImpl.getChildsOrder(),null,positionId);
 					    								else						    									
 					    									wrapper.openOrder(_strategyImpl.getTargetContract(), _strategyImpl.getTargetOrder(),_strategyImpl.getChildsOrder(),null,positionId);
+
 					    								/* LA RAZON ES QUE ES QUE METE DOS O TRES OPERACIONES A LA VEZ A PESAR DE TENER LAS VALIDACIONES 
 					    								 * SEGUNDO PARO */
 					    							//	Thread.sleep(1000);
@@ -684,7 +741,7 @@ public class CronUtil {
 				try
 				{
 				
-				_CLIENT_ID = Long.valueOf(Utilities.getConfigurationValue(IBTraderConstants.keyCRON_TRADING_CLIENT_INITIAL, companyId, _Organization.getGroupId())).intValue();;	  // el dos para leer, el 3 para escribir	
+				_CLIENT_ID = Long.valueOf(Utilities.getConfigurationValue(IBTraderConstants.keyCRON_CONTRACTCHECKER_CLIENT_INITIAL, companyId, _Organization.getGroupId())).intValue();;	  // el dos para leer, el 3 para escribir	
 
 				/* CUERNTA PAPER */
 				String simulated = Utilities.getConfigurationValue(IBTraderConstants.keySIMULATION_MODE, companyId, _Organization.getGroupId());
@@ -711,21 +768,29 @@ public class CronUtil {
 				 if (wrapper.isConnected()) wrapper.disconnect();
 				 wrapper.connect(_HOST, _PORT,_CLIENT_ID); 	 	
 				
-				 
+				 if (!wrapper.isConnected()) // si no se conecta, lo intentamos con otro clienid , aunque pudiera ser que no tenga configuracion o tws activa 
+					{
+						Config _conf = ConfigLocalServiceUtil.findByKeyCompanyGroup(IBTraderConstants.keyCRON_CONTRACTCHECKER_CLIENT_INITIAL,_Organization.getCompanyId(), _Organization.getGroupId());
+											
+						Long  NewClientID = ConfigLocalServiceUtil.findByFreeCronClientId(_Organization.getCompanyId(), _Organization.getGroupId());
+						_conf.setValue(String.valueOf(NewClientID));
+						ConfigLocalServiceUtil.updateConfig(_conf);
+						
+				 }
 				 if (wrapper.isConnected())
 			     {
 
 					 /* VERIFICACION DE LA CONECTIVIDAD, SIEMPRE NECESARIO */
 					wrapper.reqNextId(); 
 					wrapper.set_ibtarget_organization(_Organization);
-					
+					wrapper.setCronId(IBTraderConstants.keyCRON_CONTRACTCHECKER_CLIENT_INITIAL);
 					if (wrapper.getCurrentOrderId()==-1)
 					{
 						wrapper.disconnect();
 						return;
 					}
 					
-					_log.info("Connected, StartVerifyContractsCron, connecting to TWS");
+				//	_log.info("Connected, StartVerifyContractsCron, connecting to TWS");
 
 					 
 					List<Market> lActiveMarkets = MarketLocalServiceUtil.findByActive(Boolean.TRUE);

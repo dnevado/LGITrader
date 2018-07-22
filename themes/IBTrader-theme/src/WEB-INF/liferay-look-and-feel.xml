@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!DOCTYPE look-and-feel PUBLIC "-//Liferay//DTD Look and Feel 7.0.0//EN" "http://www.liferay.com/dtd/liferay-look-and-feel_7_0_0.dtd">
+
+<look-and-feel>
+	<compatibility>
+		<version>7.0.0+</version>
+	</compatibility>
+	<theme id="IBTrader-theme" name="IBTrader-theme">
+		<template-extension>ftl</template-extension>
+		<settings>
+			<setting configurable="true" key="portlet-setup-show-borders-default" type="checkbox" value="true"/>
+			<setting configurable="true" type="checkbox" key="default-profi-business-logo" value="true"/>
+			<setting configurable="true" key="footer-company-name" type="text" value="Your company name"/>
+			<setting configurable="true" type="checkbox" key="footer-social-bar" value="true"/>
+			<setting configurable="true" key="footer-phone-show" type="checkbox" value="true"/>
+			<setting configurable="true" key="footer-phone" type="text" value="Phone Number"/>
+			<setting configurable="true" key="footer-e-mail-show" type="checkbox" value="true"/>
+			<setting configurable="true" key="footer-e-mail" type="text" value="E-mail"/>
+			<setting configurable="true" type="checkbox" key="footer-fb" value="false"/>
+			<setting configurable="true" key="footer-fb-url" type="text" value="Facebook URL"/>
+			<setting configurable="true" type="checkbox" key="footer-google-plus" value="false"/>
+			<setting configurable="true" key="footer-google-plus-url" type="text" value="Google+ URL"/>
+			<setting configurable="true" type="checkbox" key="footer-twitter" value="false"/>
+			<setting configurable="true" key="footer-twitter-url" type="text" value="Twitter URL"/>
+			<setting configurable="true" type="checkbox" key="footer-linkedin" value="false"/>
+			<setting configurable="true" key="footer-linkedin-url" type="text" value="Linkedin URL"/>
+			<setting configurable="true" key="footer-address-line1" type="text" value="Address line 1"/>
+			<setting configurable="true" key="footer-address-line2" type="text" value="Address line 2"/>
+			<setting configurable="true" key="footer-address-line3" type="text" value="Address line 3"/>
+			<setting configurable="true" key="footer-address-phone" type="text"/>
+			<setting configurable="true" key="footer-address-fax" type="text"/>
+			<setting configurable="true" type="checkbox" key="footer-company-logo" value="true"/>
+		</settings>
+		<portlet-decorator id="barebone" name="Barebone">
+			<default-portlet-decorator>true</default-portlet-decorator>
+			<portlet-decorator-css-class>portlet-barebone</portlet-decorator-css-class>
+		</portlet-decorator>
+		<portlet-decorator id="borderless" name="Borderless">
+			<portlet-decorator-css-class>portlet-borderless</portlet-decorator-css-class>
+		</portlet-decorator>
+		<portlet-decorator id="decorate" name="Decorate">
+			<portlet-decorator-css-class>portlet-decorate</portlet-decorator-css-class>
+		</portlet-decorator>
+	</theme>
+</look-and-feel>

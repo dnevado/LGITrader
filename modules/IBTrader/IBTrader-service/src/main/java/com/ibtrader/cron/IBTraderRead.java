@@ -14,6 +14,7 @@ import com.ibtrader.data.service.MarketLocalServiceUtil;
 import com.ibtrader.data.service.ShareLocalServiceUtil;
 
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.BaseSchedulerEntryMessageListener;
@@ -21,6 +22,7 @@ import com.liferay.portal.kernel.messaging.BaseSchedulerEntryMessageListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
@@ -35,6 +37,7 @@ import com.liferay.portal.kernel.messaging.BaseSchedulerEntryMessageListener;
 import com.liferay.portal.kernel.messaging.DestinationNames;
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
 import com.liferay.portal.kernel.scheduler.SchedulerEngineHelper;
 import com.liferay.portal.kernel.scheduler.StorageType;
@@ -43,9 +46,12 @@ import com.liferay.portal.kernel.scheduler.TriggerFactory;
 import com.liferay.portal.kernel.scheduler.TriggerFactoryUtil;
 import com.liferay.portal.kernel.scheduler.TriggerState;
 import com.liferay.portal.kernel.scheduler.messaging.SchedulerResponse;
+import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
+import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.ibtrader.interactive.TIMApiGITrader_NOVALE;
+import com.ibtrader.util.ConfigKeys;
 import com.ibtrader.util.CronUtil;
 import com.ibtrader.util.Utilities;
 
@@ -103,9 +109,13 @@ public class IBTraderRead  extends BaseSchedulerEntryMessageListener {
 	@Override
 	protected void doReceive(Message message) throws Exception {
 		
-	   if(runningJob)
+	
+	
+		
+		
+	   if(runningJob) 
 	   {
-		   		_log.info("TradingRead already running, not starting again");
+		   		_log.debug("TradingRead already running, not starting again");
 		        return;
 	   }
 		runningJob = true;

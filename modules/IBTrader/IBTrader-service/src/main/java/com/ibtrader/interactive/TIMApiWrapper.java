@@ -110,6 +110,8 @@ public class TIMApiWrapper implements EWrapper {
 	
 	private boolean standalone_mode = false; // si solo hay una TWS para todos   
 	
+	private String  cronId = "";  // nos sirve para cambiar el value del clientId en su caso en la BBDD
+	
 
 	
 	//! [socket_declare]
@@ -221,7 +223,7 @@ public class TIMApiWrapper implements EWrapper {
 		        	_log.info("Connnect Exception: "+e.getMessage());
 		        }*/
 		    }
-		    _log.info("_sendDisconnectEvent: "+_sendDisconnectEvent);
+		    _log.debug("_sendDisconnectEvent: "+_sendDisconnectEvent);
 		 }).start();
 		Thread.sleep(1000);
 		
@@ -269,7 +271,7 @@ public class TIMApiWrapper implements EWrapper {
 	
 	@Override
 	public void tickSize(int tickerId, int field, int size) {
-		//System.out.println("Tick Size. Ticker Id:" + tickerId + ", Field: " + field + ", Size: " + size);
+		//_log.debug("Tick Size. Ticker Id:" + tickerId + ", Field: " + field + ", Size: " + size);
 	}
 	//! [ticksize]
 	//! [tickoptioncomputation]
@@ -278,7 +280,7 @@ public class TIMApiWrapper implements EWrapper {
 			double impliedVol, double delta, double optPrice,
 			double pvDividend, double gamma, double vega, double theta,
 			double undPrice) {
-		System.out.println("TickOptionComputation. TickerId: "+tickerId+", field: "+field+", ImpliedVolatility: "+impliedVol+", Delta: "+delta
+		_log.debug("TickOptionComputation. TickerId: "+tickerId+", field: "+field+", ImpliedVolatility: "+impliedVol+", Delta: "+delta
                 +", OptionPrice: "+optPrice+", pvDividend: "+pvDividend+", Gamma: "+gamma+", Vega: "+vega+", Theta: "+theta+", UnderlyingPrice: "+undPrice);
 	}
 	//! [tickoptioncomputation]
@@ -286,14 +288,14 @@ public class TIMApiWrapper implements EWrapper {
 	//! [tickgeneric]
 	@Override
 	public void tickGeneric(int tickerId, int tickType, double value) {
-		//System.out.println("Tick Generic. Ticker Id:" + tickerId + ", Field: " + ", Value: " + value);
+		//_log.debug("Tick Generic. Ticker Id:" + tickerId + ", Field: " + ", Value: " + value);
 	}
 	//! [tickgeneric]
 	
 	//! [tickstring]
 	@Override
 	public void tickString(int tickerId, int tickType, String value) {
-	//	System.out.println("Tick string. Ticker Id:" + tickerId + ", Type: " + tickType + ", Value: " + value);
+	//	_log.debug("Tick string. Ticker Id:" + tickerId + ", Type: " + tickType + ", Value: " + value);
 	}
 	//! [tickstring]
 	@Override
@@ -301,7 +303,7 @@ public class TIMApiWrapper implements EWrapper {
 			String formattedBasisPoints, double impliedFuture, int holdDays,
 			String futureLastTradeDate, double dividendImpact,
 			double dividendsToLastTradeDate) {
-		System.out.println("TickEFP. "+tickerId+", Type: "+tickType+", BasisPoints: "+basisPoints+", FormattedBasisPoints: "+
+		_log.debug("TickEFP. "+tickerId+", Type: "+tickType+", BasisPoints: "+basisPoints+", FormattedBasisPoints: "+
 			formattedBasisPoints+", ImpliedFuture: "+impliedFuture+", HoldDays: "+holdDays+", FutureLastTradeDate: "+futureLastTradeDate+
 			", DividendImpact: "+dividendImpact+", DividendsToLastTradeDate: "+dividendsToLastTradeDate);
 	}
@@ -330,6 +332,9 @@ public class TIMApiWrapper implements EWrapper {
 		 * OJO, LAS ORDENES INCLUIDAS EN LAS POSICIONES NO SE PUEDEN REUTILIZAR PUESTO QUE SE USAN PARA TRATARLAS EN CASO DE DESCONEXION 
 		 *  
 		 */
+		
+		
+		/* METEMOS LA LISTA DE ORDENES HIJAS */
 		
 		Position _position = PositionLocalServiceUtil.fetchPosition(positionId);
 		/* PUEDE VENIR EL MODO FAKE O STANDALONE */
@@ -361,6 +366,9 @@ public class TIMApiWrapper implements EWrapper {
 		}
 		PositionLocalServiceUtil.updatePosition(_position);
 		clientSocket.placeOrder(new Long(_INCREMENT_ORDER_ID).intValue(), contract, parentOrder);
+		
+		_log.info("placeOrder _INCREMENT_ORDER_ID: " + _INCREMENT_ORDER_ID +",symbol"+  contract.symbol()+",groupid::" + _ibtarget_share.getGroupId() + " IP:" + this._host + ",port:" + this._port + ",client:" + this._clientId + ",Isconnected:" + this.isConnected());
+
 		//	_log.info("1. openOrder...." +  positionId + "," + _INCREMENT_ORDER_ID);
 		// Si hay hijas, aseguramos el transmit correcto,
 		
@@ -395,8 +403,9 @@ public class TIMApiWrapper implements EWrapper {
 	//! [openorder]
 	@Override
 	public void openOrder(int orderId, Contract contract, Order order,OrderState orderState) {
-		 _log.info("OpenOrder. ID: "+orderId+", "+contract.symbol()+", "+contract.secType()+" @ "+contract.exchange()+": "+
-			order.action()+", "+order.orderType()+" "+order.totalQuantity());				 
+		/*  _log.info("OpenOrder. ID: "+orderId+", "+contract.symbol()+", "+contract.secType()+" @ "+contract.exchange()+": "+
+			order.action()+", "+order.orderType()+" "+order.totalQuantity());
+		*/				 
 		}
 			
 	//! [openorder]
@@ -404,7 +413,7 @@ public class TIMApiWrapper implements EWrapper {
 	//! [openorderend]
 	@Override
 	public void openOrderEnd() {
-		System.out.println("OpenOrderEnd");
+		_log.debug("OpenOrderEnd");
 	}
 	//! [openorderend]
 	
@@ -413,7 +422,7 @@ public class TIMApiWrapper implements EWrapper {
 	@Override
 	public void updateAccountValue(String key, String value, String currency,
 			String accountName) {
-		System.out.println("UpdateAccountValue. Key: " + key + ", Value: " + value + ", Currency: " + currency + ", AccountName: " + accountName);
+		_log.debug("UpdateAccountValue. Key: " + key + ", Value: " + value + ", Currency: " + currency + ", AccountName: " + accountName);
 	}
 	//! [updateaccountvalue]
 	
@@ -422,21 +431,21 @@ public class TIMApiWrapper implements EWrapper {
 	//! [updateaccounttime]
 	@Override
 	public void updateAccountTime(String timeStamp) {
-		System.out.println("UpdateAccountTime. Time: " + timeStamp+"\n");
+		_log.debug("UpdateAccountTime. Time: " + timeStamp+"\n");
 	}
 	//! [updateaccounttime]
 	
 	//! [accountdownloadend]
 	@Override
 	public void accountDownloadEnd(String accountName) {
-		System.out.println("Account download finished: "+accountName+"\n");
+		_log.debug("Account download finished: "+accountName+"\n");
 	}
 	//! [accountdownloadend]
 	
 	//! [nextvalidid]
 	@Override
 	public void nextValidId(int orderId) {
-		System.out.println("Next Valid Id: ["+orderId+"]");
+		_log.debug("Next Valid Id: ["+orderId+"]");
 		currentOrderId = orderId;
 	}
 	//! [nextvalidid]
@@ -444,18 +453,18 @@ public class TIMApiWrapper implements EWrapper {
 	//! [contractdetails]
 	@Override
 	public void contractDetails(int reqId, ContractDetails contractDetails) {
-		System.out.println("TIMApiWrapper ContractDetails. ReqId: ["+reqId+"] - ["+contractDetails.contract().symbol()+"], ["+contractDetails.contract().secType()+"], ConId: ["+contractDetails.contract().conid()+"] @ ["+contractDetails.contract().exchange()+"]");
+		_log.debug("TIMApiWrapper ContractDetails. ReqId: ["+reqId+"] - ["+contractDetails.contract().symbol()+"], ["+contractDetails.contract().secType()+"], ConId: ["+contractDetails.contract().conid()+"] @ ["+contractDetails.contract().exchange()+"]");
 	}
 	//! [contractdetails]
 	@Override
 	public void bondContractDetails(int reqId, ContractDetails contractDetails) {
-		System.out.println("bondContractDetails");
+		_log.debug("bondContractDetails");
 	}
 	//! [contractdetailsend]
 	@Override
 	public void contractDetailsEnd(int reqId)
     {
-		 _log.info("contractDetailsEnd:" + reqId);
+		 _log.debug("contractDetailsEnd:" + reqId);
 		 IBOrder _ibOrder;		 	
 		 //_ibOrder = IBOrderLocalServiceUtil.fetchIBOrder(reqId);
 		 _ibOrder = IBOrderLocalServiceUtil.findByOrderClientGroupCompany(reqId, _clientId, _ibtarget_organization.getCompanyId(),_ibtarget_share.getGroupId());
@@ -467,7 +476,7 @@ public class TIMApiWrapper implements EWrapper {
 			share.setDate_validated_trader_provider(new Date());
 			share.setLast_error_trader_provider(null);							
 			/* actualizamos datos error de operativa */
-			_log.info("Updating contract share:" + share.getSymbol());
+			_log.debug("Updating contract share:" + share.getSymbol());
 			ShareLocalServiceUtil.updateShare(share);		
 			
 			
@@ -542,7 +551,7 @@ public class TIMApiWrapper implements EWrapper {
 	//! [execdetailsend]
 	@Override
 	public void execDetailsEnd(int reqId) {
-		System.out.println("ExecDetailsEnd. "+reqId+"\n");
+		//_log.debug("ExecDetailsEnd. "+reqId+"\n");
 	}
 	//! [execdetailsend]
 	
@@ -550,33 +559,33 @@ public class TIMApiWrapper implements EWrapper {
 	@Override
 	public void updateMktDepth(int tickerId, int position, int operation,
 			int side, double price, int size) {
-		System.out.println("UpdateMarketDepth. "+tickerId+" - Position: "+position+", Operation: "+operation+", Side: "+side+", Price: "+price+", Size: "+size+"");
+		_log.debug("UpdateMarketDepth. "+tickerId+" - Position: "+position+", Operation: "+operation+", Side: "+side+", Price: "+price+", Size: "+size+"");
 	}
 	//! [updatemktdepth]
 	@Override
 	public void updateMktDepthL2(int tickerId, int position,
 			String marketMaker, int operation, int side, double price, int size) {
-		System.out.println("updateMktDepthL2");
+		_log.debug("updateMktDepthL2");
 	}
 	//! [updatenewsbulletin]
 	@Override
 	public void updateNewsBulletin(int msgId, int msgType, String message,
 			String origExchange) {
-		System.out.println("News Bulletins. "+msgId+" - Type: "+msgType+", Message: "+message+", Exchange of Origin: "+origExchange+"\n");
+		_log.debug("News Bulletins. "+msgId+" - Type: "+msgType+", Message: "+message+", Exchange of Origin: "+origExchange+"\n");
 	}
 	//! [updatenewsbulletin]
 	
 	//! [managedaccounts]
 	@Override
 	public void managedAccounts(String accountsList) {
-		System.out.println("Account list: " +accountsList);
+		_log.debug("Account list: " +accountsList);
 	}
 	//! [managedaccounts]
 
 	//! [receivefa]
 	@Override
 	public void receiveFA(int faDataType, String xml) {
-		System.out.println("Receing FA: "+faDataType+" - "+xml);
+		_log.debug("Receing FA: "+faDataType+" - "+xml);
 	}
 	//! [receivefa]
 	
@@ -587,7 +596,7 @@ public class TIMApiWrapper implements EWrapper {
 	//! [scannerparameters]
 	@Override
 	public void scannerParameters(String xml) {
-		System.out.println("ScannerParameters. "+xml+"\n");
+		_log.debug("ScannerParameters. "+xml+"\n");
 	}
 	//! [scannerparameters]
 	
@@ -596,7 +605,7 @@ public class TIMApiWrapper implements EWrapper {
 	public void scannerData(int reqId, int rank,
 			ContractDetails contractDetails, String distance, String benchmark,
 			String projection, String legsStr) {
-		System.out.println("ScannerData. "+reqId+" - Rank: "+rank+", Symbol: "+contractDetails.contract().symbol()+", SecType: "+contractDetails.contract().secType()+", Currency: "+contractDetails.contract().currency()
+		_log.debug("ScannerData. "+reqId+" - Rank: "+rank+", Symbol: "+contractDetails.contract().symbol()+", SecType: "+contractDetails.contract().secType()+", Currency: "+contractDetails.contract().currency()
                 +", Distance: "+distance+", Benchmark: "+benchmark+", Projection: "+projection+", Legs String: "+legsStr);
 	}
 	//! [scannerdata]
@@ -604,7 +613,7 @@ public class TIMApiWrapper implements EWrapper {
 	//! [scannerdataend]
 	@Override
 	public void scannerDataEnd(int reqId) {
-		System.out.println("ScannerDataEnd. "+reqId);
+		_log.debug("ScannerDataEnd. "+reqId);
 	}
 	//! [scannerdataend]
 	
@@ -612,7 +621,7 @@ public class TIMApiWrapper implements EWrapper {
 	@Override
 	public void realtimeBar(int reqId, long time, double open, double high,
 			double low, double close, long volume, double wap, int count) {
-		System.out.println("RealTimeBars. " + reqId + " - Time: " + time + ", Open: " + open + ", High: " + high + ", Low: " + low + ", Close: " + close + ", Volume: " + volume + ", Count: " + count + ", WAP: " + wap);
+		_log.debug("RealTimeBars. " + reqId + " - Time: " + time + ", Open: " + open + ", High: " + high + ", Low: " + low + ", Close: " + close + ", Volume: " + volume + ", Count: " + count + ", WAP: " + wap);
 	}
 	//! [realtimebar]
 	@Override
@@ -622,31 +631,31 @@ public class TIMApiWrapper implements EWrapper {
 	//! [fundamentaldata]
 	@Override
 	public void fundamentalData(int reqId, String data) {
-		System.out.println("FundamentalData. ReqId: ["+reqId+"] - Data: ["+data+"]");
+		_log.debug("FundamentalData. ReqId: ["+reqId+"] - Data: ["+data+"]");
 	}
 	//! [fundamentaldata]
 	@Override
 	public void deltaNeutralValidation(int reqId, DeltaNeutralContract underComp) {
-		System.out.println("deltaNeutralValidation");
+		_log.debug("deltaNeutralValidation");
 	}
 	//! [ticksnapshotend]
 	@Override
 	public void tickSnapshotEnd(int reqId) {
-		System.out.println("TickSnapshotEnd: "+reqId);
+		_log.debug("TickSnapshotEnd: "+reqId);
 	}
 	//! [ticksnapshotend]
 	
 	//! [marketdatatype]
 	@Override
 	public void marketDataType(int reqId, int marketDataType) {
-		System.out.println("MarketDataType. ["+reqId+"], Type: ["+marketDataType+"]\n");
+		_log.debug("MarketDataType. ["+reqId+"], Type: ["+marketDataType+"]\n");
 	}
 	//! [marketdatatype]
 	
 	//! [commissionreport]
 	@Override
 	public void commissionReport(CommissionReport commissionReport) {
-		System.out.println("CommissionReport. ["+commissionReport.m_execId+"] - ["+commissionReport.m_commission+"] ["+commissionReport.m_currency+"] RPNL ["+commissionReport.m_realizedPNL+"]");
+		_log.debug("CommissionReport. ["+commissionReport.m_execId+"] - ["+commissionReport.m_commission+"] ["+commissionReport.m_currency+"] RPNL ["+commissionReport.m_realizedPNL+"]");
 	}
 	//! [commissionreport]
 	
@@ -655,7 +664,7 @@ public class TIMApiWrapper implements EWrapper {
 	//! [positionend]
 	@Override
 	public void positionEnd() {
-		System.out.println("PositionEnd \n");
+		_log.debug("PositionEnd \n");
 	}
 	//! [positionend]
 	
@@ -663,56 +672,56 @@ public class TIMApiWrapper implements EWrapper {
 	@Override
 	public void accountSummary(int reqId, String account, String tag,
 			String value, String currency) {
-		System.out.println("Acct Summary. ReqId: " + reqId + ", Acct: " + account + ", Tag: " + tag + ", Value: " + value + ", Currency: " + currency);
+		_log.debug("Acct Summary. ReqId: " + reqId + ", Acct: " + account + ", Tag: " + tag + ", Value: " + value + ", Currency: " + currency);
 	}
 	//! [accountsummary]
 	
 	//! [accountsummaryend]
 	@Override
 	public void accountSummaryEnd(int reqId) {
-		System.out.println("AccountSummaryEnd. Req Id: "+reqId+"\n");
+		_log.debug("AccountSummaryEnd. Req Id: "+reqId+"\n");
 	}
 	//! [accountsummaryend]
 	@Override
 	public void verifyMessageAPI(String apiData) {
-		System.out.println("verifyMessageAPI");
+		_log.debug("verifyMessageAPI");
 	}
 
 	@Override
 	public void verifyCompleted(boolean isSuccessful, String errorText) {
-		System.out.println("verifyCompleted");
+		_log.debug("verifyCompleted");
 	}
 
 	@Override
 	public void verifyAndAuthMessageAPI(String apiData, String xyzChallange) {
-		System.out.println("verifyAndAuthMessageAPI");
+		_log.debug("verifyAndAuthMessageAPI");
 	}
 
 	@Override
 	public void verifyAndAuthCompleted(boolean isSuccessful, String errorText) {
-		System.out.println("verifyAndAuthCompleted");
+		_log.debug("verifyAndAuthCompleted");
 	}
 	//! [displaygrouplist]
 	@Override
 	public void displayGroupList(int reqId, String groups) {
-		System.out.println("Display Group List. ReqId: "+reqId+", Groups: "+groups+"\n");
+		_log.debug("Display Group List. ReqId: "+reqId+", Groups: "+groups+"\n");
 	}
 	//! [displaygrouplist]
 	
 	//! [displaygroupupdated]
 	@Override
 	public void displayGroupUpdated(int reqId, String contractInfo) {
-		System.out.println("Display Group Updated. ReqId: "+reqId+", Contract info: "+contractInfo+"\n");
+		_log.debug("Display Group Updated. ReqId: "+reqId+", Contract info: "+contractInfo+"\n");
 	}
 	//! [displaygroupupdated]
 	@Override
 	public void error(Exception e) {
-		_log.info("error Exception: "+e.getMessage());
+		_log.debug("error Exception: "+e.getMessage());
 	}
 
 	@Override
 	public void error(String str) {
-		System.out.println("Error STR");
+		_log.debug("Error STR");
 	}
 	//! [error]
 	@Override
@@ -727,17 +736,22 @@ public class TIMApiWrapper implements EWrapper {
 		
 		if (errorCode==507)  // client_id invalidao, buscamos otros 
 		{
-			 _log.info("Error :" + errorCode + ",reqId" + reqId + ",txt:" + str + "clientId:" + _clientId) ;
+			 _log.debug("Error :" + errorCode + ",reqId" + reqId + ",txt:" + str + "clientId:" + _clientId) ;
 			/* OBTENEMOS EL CRON USADO DE LA TABLA  CON EL CLIENTID USADO, COMO TENEMOS 3 CRON, 
 			 * CLIENT_ID SERÁ EL CLIENT_ID MAS EL RESTO DEL CONFIGURATIONID DE LA CLAVE PRIMERARIO, AL SER 
 			 * SECUENCIALES LOS 3 CRON, NOS ASEGURAMOS DE SER DISTINTOS, HASTA UN MAXIMO DE 1024 INICIALMENTE    */
-			Config _conf = ConfigLocalServiceUtil.findByIsCronValue(Boolean.TRUE, String.valueOf(_clientId));			
-			if (_conf!=null)
+						
+			if (_ibtarget_organization!=null)
 			{
-				Long  NewClientID = ConfigLocalServiceUtil.findByFreeCronClientId();
-				_conf.setValue(String.valueOf(NewClientID));
-				ConfigLocalServiceUtil.updateConfig(_conf);
-			}			
+			
+				Config _conf = ConfigLocalServiceUtil.findByKeyCompanyGroup(this.cronId,_ibtarget_organization.getCompanyId(),_ibtarget_organization.getGroupId());
+				if (_conf!=null)
+				{
+					Long  NewClientID = ConfigLocalServiceUtil.findByFreeCronClientId(_ibtarget_organization.getCompanyId(),_ibtarget_organization.getGroupId());
+					_conf.setValue(String.valueOf(NewClientID));
+					ConfigLocalServiceUtil.updateConfig(_conf);
+				}			
+			}
 
 
 		}
@@ -745,13 +759,13 @@ public class TIMApiWrapper implements EWrapper {
 		{
 			if (errorCode==300)  // An attempt was made to cancel market data for a ticker ID that was not associated with a current subscription. With the DDE API this occurs by clearing the spreadsheet cell.
 			{
-				 _log.info("Error :" + errorCode + ",reqId" + reqId + ",txt:" + str + ",clientid:" + _clientId) ;			 		
+				 _log.debug("Error :" + errorCode + ",reqId" + reqId + ",txt:" + str + ",clientid:" + _clientId) ;			 		
 	
 			}
 			else				
 			{
 				 if (errorCode==511) // 511,Cancel Market Data Sending Error
-					 _log.info("Error :" + errorCode + ",reqId" + reqId + ",txt:" + str + ",clientid:" + _clientId) ;
+					 _log.debug("Error :" + errorCode + ",reqId" + reqId + ",txt:" + str + ",clientid:" + _clientId) ;
 				 else					 						
 				 {	
 					if (errorCode>=0 && reqId>=0)  // errores operativa - lectura
@@ -767,8 +781,8 @@ public class TIMApiWrapper implements EWrapper {
 						{ 
 							
 							oErrorShare = ShareLocalServiceUtil.fetchShare(_ErrorPosition.getShareId());  
-							_log.info("error operativa : [" + reqId + "," + errorCode + "," + str + "]");
-							_log.info("error order  : " + oErrorShare.getSymbol());
+							_log.debug("error operativa : [" + reqId + "," + errorCode + "," + str + "]");
+							_log.debug("error order  : " + oErrorShare.getSymbol());
 							oErrorShare.setActive(Boolean.FALSE);// desactivamos lectura.
 							oErrorShare.setValidated_trader_provider(Boolean.FALSE);
 							oErrorShare.setDate_validated_trader_provider(new Date());
@@ -779,14 +793,14 @@ public class TIMApiWrapper implements EWrapper {
 								PositionLocalServiceUtil.deletePosition(_ErrorPosition.getPositionId());
 							} catch (PortalException e) {
 								// TODO Auto-generated catch block
-								_log.info("error operativa PositionLocalServiceUtil.deletePosition : [" + e.getMessage() + "]") ;
+								_log.debug("error operativa PositionLocalServiceUtil.deletePosition : [" + e.getMessage() + "]") ;
 							}							
 								
 						}
 						else   // supuestamente error lectura de datos en tiempo real.
 							   // METEMOS EL 25-12-2013 un  job verificador que pide el contract detail con variable de estado asociada.		
 						{			
-							 _log.info("error lectura [HISTORICAL_DATA:  : [" + reqId + "," + errorCode+ "," + str + "]");
+							 _log.debug("error lectura [HISTORICAL_DATA:  : [" + reqId + "," + errorCode+ "," + str + "]");
 							
 							/* SIEMPRE VA A VER _ErrorOrder con errores de tiempo real.
 							 * TENEMOS UN PROBLEMA DE CONECTIVIDAD EN EL TICK --> PASA POR AQUI.
@@ -811,7 +825,7 @@ public class TIMApiWrapper implements EWrapper {
 								oErrorShare = ShareLocalServiceUtil.fetchShare(_ErrorOrder.getShareID());  					
 								if (oErrorShare!=null) 						
 								{						
-									_log.info("error order  : " + oErrorShare.getSymbol());
+									_log.debug("error order  : " + oErrorShare.getSymbol());
 									oErrorShare.setActive(Boolean.FALSE);// desactivamos lectura.
 									oErrorShare.setValidated_trader_provider(Boolean.FALSE);
 									oErrorShare.setDate_validated_trader_provider(new Date());
@@ -829,14 +843,14 @@ public class TIMApiWrapper implements EWrapper {
 	//! [error]
 	@Override
 	public void connectionClosed() {
-		System.out.println("Connection closed");
+		_log.debug("Connection closed");
 	}
 
 	//! [connectack]
 	@Override
 	public void connectAck() {
 		if (clientSocket.isAsyncEConnect()) {
-			System.out.println("Acknowledging connection");
+			_log.debug("Acknowledging connection");
 			clientSocket.startAPI();
 		}
 	}
@@ -854,7 +868,7 @@ public class TIMApiWrapper implements EWrapper {
 			MyOrder =  IBOrderLocalServiceUtil.findByOrderClientGroupCompany(tickerId, _clientId, _ibtarget_organization.getCompanyId(),_ibtarget_organization.getGroupId());
 			if (MyOrder == null) {
 				
-				_log.info("No se encuentra el ID " + tickerId);
+				_log.debug("No se encuentra el ID " + tickerId);
 				return;
 			}
 			
@@ -946,13 +960,16 @@ public class TIMApiWrapper implements EWrapper {
 			_oPosition = PositionLocalServiceUtil.findByPositionID_Out_TWS(_ibtarget_share.getGroupId(), _ibtarget_organization.getCompanyId(),orderId,clientId);
 			if (_oPosition==null) 
 			{
-				_log.info("Error Execution Details order not found for Order Key:" + orderId);
+				_log.debug("Error Execution Details order not found for Order Key:" + orderId);
 				return;
 			}
 			else
 				bIsSellOperation = true;
 			
 		}
+		
+		_log.debug("orderStatus for " + orderId + ",status:" +  status);
+		
 		/* SUPOEMOS UNA POSICION */
 		Share sharePosition = ShareLocalServiceUtil.fetchShare(_oPosition.getShareId());
 		/* DETECTAMOS SI ES UNA ORDER DE COMPRA O DE VENTA. VERIFICAMOS SI HA CAMBIADO . VERIFICAR SI HAY UNA ORDEN DE COMPRA PREVIA. */
@@ -1218,6 +1235,16 @@ public class TIMApiWrapper implements EWrapper {
 
 	public void set_ibtarget_organization(Organization _ibtarget_organization) {
 		this._ibtarget_organization = _ibtarget_organization;
+	}
+
+	
+
+	public String getCronId() {
+		return cronId;
+	}
+
+	public void setCronId(String cronId) {
+		this.cronId = cronId;
 	}
 	
 	

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+
+#parse ($init)
+
+<html class="$root_css_class" dir="#language ("lang.dir")" lang="$w3c_language_id">
+
+<head>
+	<title>$the_title - $company_name</title>
+
+	<meta content="initial-scale=1.0, width=device-width" name="viewport" />
+
+	$theme.include($top_head_include)
+	
+	#set ($logo_profi = $theme_display.getThemeSetting('default-profi-business-logo'))
+	#set ($footer_company_name = $theme_display.getThemeSetting('footer-company-name'))
+	#set ($footer_social_bar = $theme_display.getThemeSetting('footer-social-bar'))
+	#set ($footer_phone_show = $theme_display.getThemeSetting('footer-phone-show'))
+	#set ($footer_phone = $theme_display.getThemeSetting('footer-phone'))
+	#set ($footer_e_mail_show = $theme_display.getThemeSetting('footer-e-mail-show'))
+	#set ($footer_e_mail = $theme_display.getThemeSetting('footer-e-mail'))
+	#set ($footer_fb = $theme_display.getThemeSetting('footer-fb'))
+	#set ($footer_fb_url = $theme_display.getThemeSetting('footer-fb-url'))
+	#set ($footer_google_plus = $theme_display.getThemeSetting('footer-google-plus'))
+	#set ($footer_google_plus_url = $theme_display.getThemeSetting('footer-google-plus-url'))
+	#set ($footer_twitter = $theme_display.getThemeSetting('footer-twitter'))
+	#set ($footer_twitter_url = $theme_display.getThemeSetting('footer-twitter-url'))
+	#set ($footer_linkedin = $theme_display.getThemeSetting('footer-linkedin'))
+	#set ($footer_linkedin_url = $theme_display.getThemeSetting('footer-linkedin-url'))
+	#set ($footer_address_line1 = $theme_display.getThemeSetting('footer-address-line1'))
+	#set ($footer_address_line2 = $theme_display.getThemeSetting('footer-address-line2'))
+	#set ($footer_address_line3 = $theme_display.getThemeSetting('footer-address-line3'))
+	#set ($footer_address_phone = $theme_display.getThemeSetting('footer-address-phone'))
+	#set ($footer_address_fax = $theme_display.getThemeSetting('footer-address-fax'))
+	#set ($footer_company_logo = $theme_display.getThemeSetting('footer-company-logo'))
+
+</head>
+
+<body class="$css_class">
+
+<a href="#main-content" id="skip-to-content">#language ("skip-to-content")</a>
+
+$theme.include($body_top_include)
+
+#if ($is_signed_in)
+	#control_menu()
+#end
+
+<div id="wrapper" class="container-fluid">
+		<header>
+			<div id="top">
+					<a class="$logo_css_class" href="$site_default_url" title="#language_format ("go-to-x", [$site_name])">
+						#if($logo_profi == 'true')
+							<img class="topLogo" alt="IBTrader-theme Logo" src="$images_folder/profi/site_logo.png"/>
+						#else
+							<img class="topLogo" alt="$logo_description" height="$site_logo_height" src="$site_logo" width="$site_logo_width" />
+						#end
+						
+					</a>				
+					<nav id="navigation">
+						#if ($has_navigation || $is_signed_in)
+							#parse ("$full_templates_path/navigation.vm")
+						#end
+					</nav>
+				<div class="clear"></div>
+			</div>		
+		</header>
+		<div id="content">
+			<div id="main-content">
+				#if ($selectable)
+					$theme.include($content_include)
+				#else
+					$portletDisplay.recycle()
+		
+					$portletDisplay.setTitle($the_title)
+		
+					$theme.wrapPortlet("portlet.vm", $content_include)
+				#end			
+			</div>		
+		</div>
+	</div>
+	<div id="footer">
+		<div id="footer-content">
+			<div class="foter-content-row">
+					<h3>$footer_company_name</h3>
+			</div>
+			#if($footer_social_bar == 'true')
+			<div class="foter-content-row-line">
+				#if($footer_phone_show == 'true')
+					<a class="phoneNumber" rel="nofollow" href="#"> $footer_phone </a>
+				#end 
+				
+				#if($footer_e_mail_show == 'true')
+					<a class="email" rel="nofollow" href="mailto:$footer_e_mail"> $footer_e_mail </a>
+				#end 
+				
+				#if($footer_fb == 'true')
+					<a class="footer-icon" href="$footer_fb_url" target="_blank"><i class="icon-facebook"></i></a>
+				#end 
+				
+				#if($footer_google_plus == 'true')
+					<a class="footer-icon" href="$footer_google_plus_url" target="_blank"><i class="icon-google-plus"></i></a>
+				#end
+				
+				#if($footer_twitter == 'true')
+					<a class="footer-icon" href="$footer_twitter_url" target="_blank"><i class="icon-twitter"></i></a> 
+				#end
+				
+				#if($footer_linkedin == 'true')
+					<a class="footer-icon" href="$footer_linkedin_url" target="_blank"><i class="icon-linkedin"></i></a>
+				#end
+				<div class="clear"></div>
+			</div>
+			#end
+			<div class="foter-content-row">
+				<div class="col-left">
+					$footer_address_line1<br/>
+					$footer_address_line2 <br/>
+					$footer_address_line3<br/>
+					#if($footer_address_phone != '')
+						tel: $footer_address_phone<br/>
+					#end
+					
+					#if($footer_address_fax != '')
+						fax: $footer_address_fax
+					#end
+					
+				</div>
+				<div class="col-right">
+					#if($footer_company_logo == 'true')
+						#if($logo_profi == 'true')
+							<img class="topLogo" alt="IBTrader-theme Logo" src="$images_folder/profi/site_logo_footer.png"/>
+						#else
+							<img class="topLogo" alt="$logo_description" height="$site_logo_height" src="$site_logo" width="$site_logo_width" />
+						#end
+					#end					
+					<br/>					
+				</div>
+				<div class="clear"></div>
+			</div>
+		</div>
+	</div>	
+
+$theme.include($body_bottom_include)
+
+$theme.include($bottom_include)
+
+</body>
+
+</html>

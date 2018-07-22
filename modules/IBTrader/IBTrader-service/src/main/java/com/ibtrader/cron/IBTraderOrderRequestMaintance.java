@@ -77,19 +77,27 @@ public class IBTraderOrderRequestMaintance  extends BaseSchedulerEntryMessageLis
 	protected void deactivate() {
 		
 		/* INTENTAMOS ELIMINAR TODAS LAS QUE SE PUEDEN ELIMINAR, REALTIME, CONTRACT DETAIL, ETC...*/
-	
-		_log.info("Deleting iborders requestid while rebooting...");
-		/* DEJAMOS 7 DIAS PARA LOS REINICIOS PREVENTIVOS */
-		Calendar cNow = Calendar.getInstance();	
-		cNow.set(Calendar.HOUR_OF_DAY,23);
-		cNow.set(Calendar.MINUTE,59);
-		cNow.set(Calendar.SECOND,59);
 		
-		List<IBOrder> _ordersToRemove =  IBOrderLocalServiceUtil.findByRemovableDate(cNow.getTime(), Boolean.TRUE);
-		
-		for (IBOrder order : _ordersToRemove)
+		try 
 		{
-			IBOrderLocalServiceUtil.deleteIBOrder(order);
+			
+			_log.info("Deleting iborders requestid while rebooting...");
+			/* DEJAMOS 7 DIAS PARA LOS REINICIOS PREVENTIVOS */
+			Calendar cNow = Calendar.getInstance();	
+			cNow.set(Calendar.HOUR_OF_DAY,23);
+			cNow.set(Calendar.MINUTE,59);
+			cNow.set(Calendar.SECOND,59);
+			
+			List<IBOrder> _ordersToRemove =  IBOrderLocalServiceUtil.findByRemovableDate(cNow.getTime(), Boolean.TRUE);
+			
+			for (IBOrder order : _ordersToRemove)
+			{
+				IBOrderLocalServiceUtil.deleteIBOrder(order);
+			}
+		}
+		catch (Exception e)
+		{
+			
 		}
 		 	 
 		_schedulerEngineHelper.unregister(this);

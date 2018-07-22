@@ -119,7 +119,13 @@ public class IBStrategyMinMax extends StrategyImpl {
 			// colocamos operacion de compra			
 			Order BuyPositionTWS = new Order();
 			BuyPositionTWS.account(Utilities.getConfigurationValue(IBTraderConstants.keyACCOUNT_IB_NAME, _share.getCompanyId(), _share.getGroupId()));		
-			BuyPositionTWS.orderType(PositionStates.ordertypes.LMT.toString());		    
+			
+			/* POR DEFECTO LIMITADA EN ESTA ESTRATEGIA */
+			String orderType = PositionStates.ordertypes.LMT.toString();
+			/* SI SIMULAMOS LA ACCION CON DATOS FICTICIOS TENEMOS EL SIMULATION MODE, METEMOS A MERCADO PARA QUE NO SE NOS CANCELE */ 
+			if (_share.getSimulation_end_date()!=null)			
+				orderType = PositionStates.ordertypes.MKT.toString();
+			BuyPositionTWS.orderType(orderType);		    
 
 			/* EXISTE ALGO SOBREESCRITO */
 			long number_to_purchase = _share.getNumbertopurchase();
@@ -141,7 +147,6 @@ public class IBStrategyMinMax extends StrategyImpl {
 				BuyPositionTWS.action(PositionStates.statusTWSFire.SELL.toString());
 			}
 			
-			_log.info("Order" + BuyPositionTWS.action()  +","+  BuyPositionTWS.lmtPrice()  +","+ BuyPositionTWS.auxPrice() +","+ BuyPositionTWS.account() +","+ BuyPositionTWS.totalQuantity() +","+ BuyPositionTWS.orderType());
 			
 			this.setTargetOrder(BuyPositionTWS);			
 			/* Posicion en MYSQL de CONTROL. OJO...ANTES SIEMPRE PARA DESPUES CONTROLARLA EN CASO DE ERROR. */
@@ -217,6 +222,7 @@ public class IBStrategyMinMax extends StrategyImpl {
 			BuyPositionSystem.setSimulation_mode(bSIMULATED_TRADING);			
 			PositionLocalServiceUtil.updatePosition(BuyPositionSystem);
 			/* Posicion en MYSQL de CONTROL */
+			_log.info("Order" + BuyPositionTWS.action()  +","+  BuyPositionTWS.lmtPrice()  +","+ BuyPositionTWS.auxPrice() +","+ BuyPositionTWS.account() +","+ BuyPositionTWS.totalQuantity() +","+ BuyPositionTWS.orderType());
 			_log.info("Opening order " + BuyPositionSystem.getPositionId());
 			/* METEMOS LA LISTA DE ORDENES HIJAS */
 			//this.setChildsOrder(childOrders);			

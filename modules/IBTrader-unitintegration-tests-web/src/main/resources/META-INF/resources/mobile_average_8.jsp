@@ -21,6 +21,9 @@ con tiempo real
 	<aui:input type="number" name="periods" value="8" label="Simple Mobile Average Periods"/>	
 </aui:fieldset>	 
 <aui:fieldset>
+	<aui:input type="number" name="simulationtimes" value="10" label="Number of succesful signals"/>	
+</aui:fieldset>
+<aui:fieldset>
 	<aui:input type="number" name="timebars" value="5" label="Simple Mobile Average TimeBars"/>	
 </aui:fieldset>
 <aui:fieldset>

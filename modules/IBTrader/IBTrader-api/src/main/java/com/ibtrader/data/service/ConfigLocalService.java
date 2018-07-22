@@ -182,7 +182,7 @@ public interface ConfigLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getConfigsCount();
 
-	public java.lang.Long findByFreeCronClientId();
+	public java.lang.Long findByFreeCronClientId(long _company, long _group);
 
 	/**
 	* Returns the OSGi service identifier.

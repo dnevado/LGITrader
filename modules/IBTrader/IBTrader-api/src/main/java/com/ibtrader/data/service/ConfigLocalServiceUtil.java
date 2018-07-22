@@ -190,8 +190,9 @@ public class ConfigLocalServiceUtil {
 		return getService().getConfigsCount();
 	}
 
-	public static java.lang.Long findByFreeCronClientId() {
-		return getService().findByFreeCronClientId();
+	public static java.lang.Long findByFreeCronClientId(long _company,
+		long _group) {
+		return getService().findByFreeCronClientId(_company, _group);
 	}
 
 	/**
