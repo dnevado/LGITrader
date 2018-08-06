@@ -102,6 +102,12 @@ public class RealtimeLocalServiceImpl extends RealtimeLocalServiceBaseImpl {
 		}
 		return 	MinMaxRealtime;
 	}
+	
+	public Realtime findCloseRealTime(long shareId, long companyId, long groupId, Date closeDate)
+	{
+		return realtimeFinder.findCloseRealTimeDate(shareId, companyId, groupId,closeDate);
+	}
+	
 	public Realtime findLastRealTime(long shareId, long companyId, long groupId)
 	{
 		return realtimeFinder.findLastRealTime(shareId, companyId,  groupId);	
@@ -135,6 +141,13 @@ public class RealtimeLocalServiceImpl extends RealtimeLocalServiceBaseImpl {
 		}
 		return 	SimpleMobileAvgGroupByPeriodsRealtime;
 	}
+	
+	public List<Realtime> findExponentialMobileAvgGroupByPeriods( long shareId, long companyId, long groupId,Date from, Date to, List<String> mobileAvgDates)
+	{
+		return realtimeFinder.findExponentialMobileGroupByPeriods(shareId, companyId, groupId, from, to, mobileAvgDates);
+
+	}
+	
 	
 	 public Realtime findLastCompanyShare(long companyId, long shareId, long groupId)
 	{

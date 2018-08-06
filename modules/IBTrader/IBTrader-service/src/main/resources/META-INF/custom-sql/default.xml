@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <custom-sql>
+	
+	<sql id="com.ibtrader.data.service.persistence.RealtimeFinder.findCloseRealTimeDate">
+    <![CDATA[ 
+        SELECT 
+        		*
+        FROM 
+        		IBTrader_Realtime      
+        WHERE            
+            (IBTrader_Realtime.shareId=?)
+            AND (IBTrader_Realtime.companyid=?)
+            AND (IBTrader_Realtime.groupid=?)
+         	AND (date(IBTrader_Realtime.createDate))=date(?)  
+         	AND  (IBTrader_Realtime.closprice=1)
+     ]]>
+    </sql>
+
+	
 	<sql id="com.ibtrader.data.service.persistence.RealtimeFinder.findLastRealTimeLessThanDate">
     <![CDATA[ 
         SELECT 
@@ -90,6 +107,48 @@
 	        and  treal.shareId= IBTrader_Realtime.shareid
 	        and  treal.companyId= IBTrader_Realtime.companyId
 	        and  treal.groupId= IBTrader_Realtime.groupId
+	          
+	          
+ 
+     ]]>
+    </sql>
+    
+    
+    <sql id="com.ibtrader.data.service.persistence.RealtimeFinder.findExponentialMobileGroupByPeriods">
+    <![CDATA[ 
+    	SELECT 
+    		 IBTrader_Realtime.*
+    	FROM (
+	    	SELECT 
+	    		 max(T.createDate) as createDate, barDate,T.shareId,T.companyId,T.groupId
+	    	FROM (
+	        	SELECT 
+	        		IBTrader_Realtime.createDate, DATE_FORMAT(IBTrader_Realtime.createDate, '%Y-%m-%d %H:%i') as barDate, 
+	        		IBTrader_Realtime.shareId,IBTrader_Realtime.companyId,IBTrader_Realtime.groupId         
+	        	FROM 
+	        		IBTrader_Realtime      
+	        	WHERE            
+		        	(IBTrader_Realtime.createDate>=?) AND (IBTrader_Realtime.createDate<?) 
+		        	AND (IBTrader_Realtime.shareId=?)
+	            	AND (IBTrader_Realtime.companyid=?)
+	            	AND (IBTrader_Realtime.groupid=?)         	
+	         		AND  DATE_FORMAT(createDate, '%Y-%m-%d %H:%i') in ([$TIMEBAR_DATES$])
+		        ORDER  BY 	
+	        	 	IBTrader_Realtime.createdate
+	        	 ) as  T
+	       	GROUP BY 
+				barDate,
+				T.shareid,
+				T.companyId,
+				T.groupId             
+            ) as  treal, IBTrader_Realtime 
+		WHERE
+		 	treal.createDate= IBTrader_Realtime.createDate
+	        and  treal.shareId= IBTrader_Realtime.shareid
+	        and  treal.companyId= IBTrader_Realtime.companyId
+	        and  treal.groupId= IBTrader_Realtime.groupId
+	   ORDER BY
+	   			IBTrader_Realtime.createdate
 	          
 	          
  

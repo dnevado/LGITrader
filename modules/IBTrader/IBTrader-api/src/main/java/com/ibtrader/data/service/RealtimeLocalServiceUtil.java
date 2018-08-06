@@ -105,6 +105,12 @@ public class RealtimeLocalServiceUtil {
 		return getService().fetchRealtimeByUuidAndGroupId(uuid, groupId);
 	}
 
+	public static com.ibtrader.data.model.Realtime findCloseRealTime(
+		long shareId, long companyId, long groupId, java.util.Date closeDate) {
+		return getService()
+				   .findCloseRealTime(shareId, companyId, groupId, closeDate);
+	}
+
 	public static com.ibtrader.data.model.Realtime findLastCompanyShare(
 		long companyId, long shareId, long groupId) {
 		return getService().findLastCompanyShare(companyId, shareId, groupId);
@@ -272,6 +278,14 @@ public class RealtimeLocalServiceUtil {
 		com.liferay.portal.kernel.util.OrderByComparator<T> orderByComparator) {
 		return getService()
 				   .dynamicQuery(dynamicQuery, start, end, orderByComparator);
+	}
+
+	public static java.util.List<com.ibtrader.data.model.Realtime> findExponentialMobileAvgGroupByPeriods(
+		long shareId, long companyId, long groupId, java.util.Date from,
+		java.util.Date to, java.util.List<java.lang.String> mobileAvgDates) {
+		return getService()
+				   .findExponentialMobileAvgGroupByPeriods(shareId, companyId,
+			groupId, from, to, mobileAvgDates);
 	}
 
 	/**

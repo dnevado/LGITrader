@@ -81,7 +81,8 @@ public class RealtimeModelImpl extends BaseModelImpl<Realtime>
 			{ "max_value", Types.DOUBLE },
 			{ "min_value", Types.DOUBLE },
 			{ "volume", Types.INTEGER },
-			{ "avg_volume", Types.INTEGER }
+			{ "avg_volume", Types.INTEGER },
+			{ "closeprice", Types.BOOLEAN }
 		};
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP = new HashMap<String, Integer>();
 
@@ -98,9 +99,10 @@ public class RealtimeModelImpl extends BaseModelImpl<Realtime>
 		TABLE_COLUMNS_MAP.put("min_value", Types.DOUBLE);
 		TABLE_COLUMNS_MAP.put("volume", Types.INTEGER);
 		TABLE_COLUMNS_MAP.put("avg_volume", Types.INTEGER);
+		TABLE_COLUMNS_MAP.put("closeprice", Types.BOOLEAN);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table ibtrader_Realtime (uuid_ VARCHAR(75) null,realtimeId LONG not null primary key,groupId LONG,companyId LONG,shareId LONG,value DOUBLE,createDate DATE null,modifiedDate DATE null,max_value DOUBLE,min_value DOUBLE,volume INTEGER,avg_volume INTEGER)";
+	public static final String TABLE_SQL_CREATE = "create table ibtrader_Realtime (uuid_ VARCHAR(75) null,realtimeId LONG not null primary key,groupId LONG,companyId LONG,shareId LONG,value DOUBLE,createDate DATE null,modifiedDate DATE null,max_value DOUBLE,min_value DOUBLE,volume INTEGER,avg_volume INTEGER,closeprice BOOLEAN)";
 	public static final String TABLE_SQL_DROP = "drop table ibtrader_Realtime";
 	public static final String ORDER_BY_JPQL = " ORDER BY realtime.shareId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY ibtrader_Realtime.shareId ASC";
@@ -116,11 +118,12 @@ public class RealtimeModelImpl extends BaseModelImpl<Realtime>
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.service.foo.service.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.ibtrader.data.model.Realtime"),
 			true);
-	public static final long COMPANYID_COLUMN_BITMASK = 1L;
-	public static final long CREATEDATE_COLUMN_BITMASK = 2L;
-	public static final long GROUPID_COLUMN_BITMASK = 4L;
-	public static final long SHAREID_COLUMN_BITMASK = 8L;
-	public static final long UUID_COLUMN_BITMASK = 16L;
+	public static final long CLOSEPRICE_COLUMN_BITMASK = 1L;
+	public static final long COMPANYID_COLUMN_BITMASK = 2L;
+	public static final long CREATEDATE_COLUMN_BITMASK = 4L;
+	public static final long GROUPID_COLUMN_BITMASK = 8L;
+	public static final long SHAREID_COLUMN_BITMASK = 16L;
+	public static final long UUID_COLUMN_BITMASK = 32L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -147,6 +150,7 @@ public class RealtimeModelImpl extends BaseModelImpl<Realtime>
 		model.setMin_value(soapModel.getMin_value());
 		model.setVolume(soapModel.getVolume());
 		model.setAvg_volume(soapModel.getAvg_volume());
+		model.setCloseprice(soapModel.getCloseprice());
 
 		return model;
 	}
@@ -223,6 +227,7 @@ public class RealtimeModelImpl extends BaseModelImpl<Realtime>
 		attributes.put("min_value", getMin_value());
 		attributes.put("volume", getVolume());
 		attributes.put("avg_volume", getAvg_volume());
+		attributes.put("closeprice", getCloseprice());
 
 		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
 		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
@@ -302,6 +307,12 @@ public class RealtimeModelImpl extends BaseModelImpl<Realtime>
 
 		if (avg_volume != null) {
 			setAvg_volume(avg_volume);
+		}
+
+		Boolean closeprice = (Boolean)attributes.get("closeprice");
+
+		if (closeprice != null) {
+			setCloseprice(closeprice);
 		}
 	}
 
@@ -502,6 +513,35 @@ public class RealtimeModelImpl extends BaseModelImpl<Realtime>
 		_avg_volume = avg_volume;
 	}
 
+	@JSON
+	@Override
+	public boolean getCloseprice() {
+		return _closeprice;
+	}
+
+	@JSON
+	@Override
+	public boolean isCloseprice() {
+		return _closeprice;
+	}
+
+	@Override
+	public void setCloseprice(boolean closeprice) {
+		_columnBitmask |= CLOSEPRICE_COLUMN_BITMASK;
+
+		if (!_setOriginalCloseprice) {
+			_setOriginalCloseprice = true;
+
+			_originalCloseprice = _closeprice;
+		}
+
+		_closeprice = closeprice;
+	}
+
+	public boolean getOriginalCloseprice() {
+		return _originalCloseprice;
+	}
+
 	@Override
 	public StagedModelType getStagedModelType() {
 		return new StagedModelType(PortalUtil.getClassNameId(
@@ -551,6 +591,7 @@ public class RealtimeModelImpl extends BaseModelImpl<Realtime>
 		realtimeImpl.setMin_value(getMin_value());
 		realtimeImpl.setVolume(getVolume());
 		realtimeImpl.setAvg_volume(getAvg_volume());
+		realtimeImpl.setCloseprice(getCloseprice());
 
 		realtimeImpl.resetOriginalValues();
 
@@ -637,6 +678,10 @@ public class RealtimeModelImpl extends BaseModelImpl<Realtime>
 
 		realtimeModelImpl._setModifiedDate = false;
 
+		realtimeModelImpl._originalCloseprice = realtimeModelImpl._closeprice;
+
+		realtimeModelImpl._setOriginalCloseprice = false;
+
 		realtimeModelImpl._columnBitmask = 0;
 	}
 
@@ -688,12 +733,14 @@ public class RealtimeModelImpl extends BaseModelImpl<Realtime>
 
 		realtimeCacheModel.avg_volume = getAvg_volume();
 
+		realtimeCacheModel.closeprice = getCloseprice();
+
 		return realtimeCacheModel;
 	}
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(25);
+		StringBundler sb = new StringBundler(27);
 
 		sb.append("{uuid=");
 		sb.append(getUuid());
@@ -719,6 +766,8 @@ public class RealtimeModelImpl extends BaseModelImpl<Realtime>
 		sb.append(getVolume());
 		sb.append(", avg_volume=");
 		sb.append(getAvg_volume());
+		sb.append(", closeprice=");
+		sb.append(getCloseprice());
 		sb.append("}");
 
 		return sb.toString();
@@ -726,7 +775,7 @@ public class RealtimeModelImpl extends BaseModelImpl<Realtime>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(40);
+		StringBundler sb = new StringBundler(43);
 
 		sb.append("<model><model-name>");
 		sb.append("com.ibtrader.data.model.Realtime");
@@ -780,6 +829,10 @@ public class RealtimeModelImpl extends BaseModelImpl<Realtime>
 			"<column><column-name>avg_volume</column-name><column-value><![CDATA[");
 		sb.append(getAvg_volume());
 		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>closeprice</column-name><column-value><![CDATA[");
+		sb.append(getCloseprice());
+		sb.append("]]></column-value></column>");
 
 		sb.append("</model>");
 
@@ -811,6 +864,9 @@ public class RealtimeModelImpl extends BaseModelImpl<Realtime>
 	private double _min_value;
 	private int _volume;
 	private int _avg_volume;
+	private boolean _closeprice;
+	private boolean _originalCloseprice;
+	private boolean _setOriginalCloseprice;
 	private long _columnBitmask;
 	private Realtime _escapedModel;
 }

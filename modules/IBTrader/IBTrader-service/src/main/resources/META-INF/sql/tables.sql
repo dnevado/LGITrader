@@ -97,7 +97,8 @@ create table ibtrader_Realtime (
 	max_value DOUBLE,
 	min_value DOUBLE,
 	volume INTEGER,
-	avg_volume INTEGER
+	avg_volume INTEGER,
+	closeprice BOOLEAN
 );
 
 create table ibtrader_Share (

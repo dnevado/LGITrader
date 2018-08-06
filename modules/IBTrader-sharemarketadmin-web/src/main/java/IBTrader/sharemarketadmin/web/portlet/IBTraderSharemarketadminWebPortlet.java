@@ -648,7 +648,7 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 
 		 /* PortletURL iteratorURL = actionResponse.createRenderURL();
 		 SearchContainer<Strategy> searchContainer = null;
-		 searchContainer  = new SearchContainer<Strategy>(actionRequest, null, null, SearchContainer.DEFAULT_CUR_PARAM, SearchContainer.DEFAULT_DELTA, iteratorURL, null, StringPool.BLANK);
+		 searchContainer  = new SearchContainer<Strategy>(actionReq	uest, null, null, SearchContainer.DEFAULT_CUR_PARAM, SearchContainer.DEFAULT_DELTA, iteratorURL, null, StringPool.BLANK);
 		 searchContainer.setEmptyResultsMessage("Estrategias  no encontradas");        
 		 searchContainer.setResults(ListUtil.subList(_lStrategies, searchContainer.getStart(), searchContainer.getEnd()));
 		 searchContainer.setTotal(_lStrategies.size());

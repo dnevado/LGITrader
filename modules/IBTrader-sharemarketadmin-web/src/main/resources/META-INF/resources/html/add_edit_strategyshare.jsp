@@ -10,6 +10,7 @@
 <%@ page import="java.util.Calendar" %>
 <%@ page import="com.liferay.portal.kernel.util.*" %>
 <%@ page import="com.liferay.portal.kernel.theme.*" %>
+<%@ page import="java.util.regex.*" %>
 
 <%@ page import="com.liferay.portal.kernel.json.JSONFactoryUtil" %>
 <%@ page import="com.liferay.portal.kernel.json.JSONObject" %>
@@ -134,6 +135,7 @@ String portletId= "_" + portletDisplay.getId();
     	<%
     	String _type = "text";
     	String _step = "1";
+    	String _default_value = "";// {12}
     	String _pattern = "";
 
     	List<String> _lValues = null;
@@ -142,8 +144,23 @@ String portletId= "_" + portletDisplay.getId();
     	String _pname = Utilities._IBTRADER_STRATEGY_CUSTOM_FIELDS_.concat(StrategyParameter.getName());
     	String _pvalue = (jsonStrategyShareParams.get(StrategyParameter.getName().trim())!=null ? jsonStrategyShareParams.get(StrategyParameter.getName().trim()).toString() : "");
 
-    	_pvalue.trim();
+    	_pvalue = _pvalue.trim();
     	
+    	/* buscamos el default value */
+    	if (_pname.contains("{") &&  _pname.contains("}") && _pvalue.equals(""))
+    	{
+    			// var1[value1]
+    		 	Pattern pattern = Pattern.compile("(\\{)([0-9]+)(\\})");
+    	        Matcher matcher = pattern.matcher(_pname);
+
+    	        if (matcher.find())
+    	        	_default_value = matcher.group();
+    	        
+				
+    	        
+    	        _pvalue =  _default_value.replace("{", "").replace("}", "");
+    	        //_pname  =  _default_value.replace("{", "").replace("}", "");
+    	}
     	if (StrategyParameter.getType()==ExpandoColumnConstants.LONG || StrategyParameter.getType()==ExpandoColumnConstants.INTEGER || 
     			StrategyParameter.getType()==ExpandoColumnConstants.FLOAT || StrategyParameter.getType()==ExpandoColumnConstants.DOUBLE)
     	{

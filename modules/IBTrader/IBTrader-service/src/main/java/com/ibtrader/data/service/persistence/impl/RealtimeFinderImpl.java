@@ -112,6 +112,50 @@ public class RealtimeFinderImpl extends RealtimeFinderBaseImpl  implements Realt
 		return null;
 		}
 	
+	
+	@SuppressWarnings("unchecked")
+	public Realtime findCloseRealTimeDate(long shareId, long companyId, long groupId, Date date)
+	{
+	 List<Realtime> lRealtime = null;
+	 Session session = null;
+	    try {
+	        session = openSession();
+
+	        String sql = CustomSQLUtil.get(getClass(),FIND_CLOSE_REALTIME_DATE);
+
+	        SQLQuery q = session.createSQLQuery(sql);
+	        q.setCacheable(false);	   	  
+	        q.addEntity("IBTrader_Realtime", RealtimeImpl.class);
+
+	        QueryPos qPos = QueryPos.getInstance(q);	    
+	        qPos.add(shareId);
+	        qPos.add(companyId);
+	        qPos.add(groupId);
+	        qPos.add(shareId);	   
+	        qPos.add(date);
+
+	        lRealtime = (List<Realtime>) QueryUtil.list(q, getDialect(), 0, 10);
+	        if (!lRealtime.isEmpty())
+	        		return lRealtime.get(0);
+	        else
+	        		return null;
+	        
+	    }
+	    catch (Exception e) {
+	        try {
+	            throw new SystemException(e);
+	        }
+	        catch (SystemException se) {
+	            se.printStackTrace();
+	        }
+	    }
+	    finally {
+	        closeSession(session);
+	    }
+
+		return null;
+		}
+	
 	@SuppressWarnings("unchecked")
 	public Realtime findLastRealTimeLessThanDate(long shareId, long companyId, long groupId, Date To)
 	{
@@ -223,12 +267,69 @@ public class RealtimeFinderImpl extends RealtimeFinderBaseImpl  implements Realt
 		return null;
 		}
 	 
+	
+	@SuppressWarnings("unchecked")
+	public List<Realtime> findExponentialMobileGroupByPeriods(long shareId, long companyId, long groupId,Date from, Date to, List<String> mobileAvgDates)
+	{
+	 List lExponentialMobile = null;
+	 
+	 Session session = null;
+	 try {
+        session = openSession();
+
+        String sql = CustomSQLUtil.get(getClass(),FIND_EXPONENTIAL_MOBILE_REALTIMES_GROUP_BY_PERIODS);
+        
+        String Dates_IN = String.join("','", mobileAvgDates);
+        StringBuilder sDatesIN = new StringBuilder("'");
+        sDatesIN.append(Dates_IN);
+        //StringBuilder sDatesIN = new StringBuilder(Dates_IN);
+        sDatesIN.append("'");
+        sql = StringUtil.replace(sql, "[$TIMEBAR_DATES$]", sDatesIN.toString());
+
+        SQLQuery q = session.createSQLQuery(sql);        
+        q.setCacheable(false);
+        q.addEntity("IBTrader_Realtime", RealtimeImpl.class);
+         
+        QueryPos qPos = QueryPos.getInstance(q);	    
+        qPos.add(from);
+        qPos.add(to);
+        qPos.add(shareId);
+        qPos.add(companyId);
+        qPos.add(groupId);        
+        
+        lExponentialMobile = (List<Realtime>) QueryUtil.list(q, getDialect(), 0, 1000);
+        
+        if (_log.isDebugEnabled())
+        	_log.info(sql + ",from:" + from + ",to:" + to + ",share:" + shareId + ",compamy:" + companyId + ",groupid:" + groupId + ",isnull:" + lExponentialMobile.isEmpty());
+        
+        if (!lExponentialMobile.isEmpty())
+    		return lExponentialMobile;
+        else
+    		return null;
+	        
+	    }
+	    catch (Exception e) {
+	        try {
+	            throw new SystemException(e);
+	        }
+	        catch (SystemException se) {
+	            se.printStackTrace();
+	        }
+	    }
+	    finally {
+	        closeSession(session);
+	    }
+
+		return null;
+		}
 		
 	
 		public static final String FIND_MINMAX_REALTIME = RealtimeFinder.class.getName() + ".findMinMaxRealTime";
 		public static final String FIND_LAST_REALTIME = RealtimeFinder.class.getName() + ".findLastRealTime";
 		public static final String FIND_LAST_REALTIMES_GROUP_BY_PERIODS = RealtimeFinder.class.getName() + ".findSimpleMobileAvgGroupByPeriods";
 		public static final String FIND_LAST_REALTIME_LESS_THAN_DATE = RealtimeFinder.class.getName() + ".findLastRealTimeLessThanDate";
+		public static final String FIND_CLOSE_REALTIME_DATE = RealtimeFinder.class.getName() + ".findCloseRealTimeDate";
+		public static final String FIND_EXPONENTIAL_MOBILE_REALTIMES_GROUP_BY_PERIODS = RealtimeFinder.class.getName() + ".findExponentialMobileGroupByPeriods";
 		
 
 		

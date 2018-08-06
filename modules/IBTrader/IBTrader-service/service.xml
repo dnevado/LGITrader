@@ -27,6 +27,7 @@
 		<column name="min_value" type="double" />
 		<column name="volume" type="int" />
 		<column name="avg_volume" type="int" />
+		<column name="closeprice" type="boolean" /><!--  cierre del dia, falta probarlo  -->
 
 		<!-- Order -->
 
@@ -53,6 +54,13 @@
 		    <finder-column name="shareId" />
 		    <finder-column name="createDate" />
 		    <finder-column name="groupId" />
+		</finder>			
+		<finder name="CompanySharegGroupClose" return-type="Collection">
+		    <finder-column name="companyId" />
+		    <finder-column name="shareId" />
+		    <finder-column name="createDate" />
+		     <finder-column name="groupId" />
+		    <finder-column name="closeprice" />
 		</finder>
 		
 

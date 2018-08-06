@@ -116,6 +116,7 @@
 		<property name="min_value" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
 		<property name="volume" type="com.liferay.portal.dao.orm.hibernate.IntegerType" />
 		<property name="avg_volume" type="com.liferay.portal.dao.orm.hibernate.IntegerType" />
+		<property name="closeprice" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />
 	</class>
 	<class name="com.ibtrader.data.model.impl.ShareImpl" table="ibtrader_Share">
 		<id name="shareId" type="long">

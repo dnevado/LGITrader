@@ -862,7 +862,7 @@ public class TIMApiWrapper implements EWrapper {
 		// TODO Auto-generated method stub
 		IBOrder MyOrder = null;
 		
-		if (price>0 && (field==ConfigKeys._TICKTYPE_LAST || field==ConfigKeys._TICKTYPE_DELAYED_LAST)) {
+		if (price>0 && (field==ConfigKeys._TICKTYPE_LAST || field==ConfigKeys. _TICKTYPE_DELAYED_LAST || field==ConfigKeys. _TICKTYPE_CLOSE)) {
 
 			//MyOrder =  IBOrderLocalServiceUtil.fetchIBOrder(tickerId);
 			MyOrder =  IBOrderLocalServiceUtil.findByOrderClientGroupCompany(tickerId, _clientId, _ibtarget_organization.getCompanyId(),_ibtarget_organization.getGroupId());
@@ -893,6 +893,9 @@ public class TIMApiWrapper implements EWrapper {
 						oReal.setValue(price);
 						oReal.setCreateDate(_calNow.getTime());
 						oReal.setModifiedDate(_calNow.getTime());
+						oReal.setCloseprice(field==ConfigKeys. _TICKTYPE_CLOSE ? Boolean.TRUE : Boolean.FALSE);
+						
+						
 						RealtimeLocalServiceUtil.updateRealtime(oReal);
 						
 						/* MODO FAKE, UN SOLO TWS, REPLICAMOS REALTIME PARA CADA SYMBOL IGUAL  */
@@ -905,6 +908,7 @@ public class TIMApiWrapper implements EWrapper {
 								oReal.setGroupId(fakeshare.getGroupId());
 								oReal.setCompanyId(fakeshare.getCompanyId());
 								oReal.setShareId(fakeshare.getShareId());
+								oReal.setCloseprice(field==ConfigKeys. _TICKTYPE_CLOSE ? Boolean.TRUE : Boolean.FALSE);
 								oReal.setValue(price);
 								oReal.setCreateDate(_calNow.getTime());
 								oReal.setModifiedDate(_calNow.getTime());

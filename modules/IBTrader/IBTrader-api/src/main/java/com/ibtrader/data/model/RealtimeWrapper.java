@@ -71,6 +71,7 @@ public class RealtimeWrapper implements Realtime, ModelWrapper<Realtime> {
 		attributes.put("min_value", getMin_value());
 		attributes.put("volume", getVolume());
 		attributes.put("avg_volume", getAvg_volume());
+		attributes.put("closeprice", getCloseprice());
 
 		return attributes;
 	}
@@ -148,6 +149,12 @@ public class RealtimeWrapper implements Realtime, ModelWrapper<Realtime> {
 		if (avg_volume != null) {
 			setAvg_volume(avg_volume);
 		}
+
+		Boolean closeprice = (Boolean)attributes.get("closeprice");
+
+		if (closeprice != null) {
+			setCloseprice(closeprice);
+		}
 	}
 
 	@Override
@@ -160,9 +167,29 @@ public class RealtimeWrapper implements Realtime, ModelWrapper<Realtime> {
 		return new RealtimeWrapper(_realtime.toUnescapedModel());
 	}
 
+	/**
+	* Returns the closeprice of this realtime.
+	*
+	* @return the closeprice of this realtime
+	*/
+	@Override
+	public boolean getCloseprice() {
+		return _realtime.getCloseprice();
+	}
+
 	@Override
 	public boolean isCachedModel() {
 		return _realtime.isCachedModel();
+	}
+
+	/**
+	* Returns <code>true</code> if this realtime is closeprice.
+	*
+	* @return <code>true</code> if this realtime is closeprice; <code>false</code> otherwise
+	*/
+	@Override
+	public boolean isCloseprice() {
+		return _realtime.isCloseprice();
 	}
 
 	@Override
@@ -363,6 +390,16 @@ public class RealtimeWrapper implements Realtime, ModelWrapper<Realtime> {
 	@Override
 	public void setCachedModel(boolean cachedModel) {
 		_realtime.setCachedModel(cachedModel);
+	}
+
+	/**
+	* Sets whether this realtime is closeprice.
+	*
+	* @param closeprice the closeprice of this realtime
+	*/
+	@Override
+	public void setCloseprice(boolean closeprice) {
+		_realtime.setCloseprice(closeprice);
 	}
 
 	/**

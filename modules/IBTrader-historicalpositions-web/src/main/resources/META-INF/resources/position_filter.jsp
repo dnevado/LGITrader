@@ -32,6 +32,7 @@ int endTimeYear = cend.get(Calendar.YEAR);
 
 %>
 <aui:form action="<%=searchPositionURL%>"   name="fm" method="POST">
+	 <liferay-ui:panel collapsible="false" defaultState="collapsed"  markupView="lexicon" extended="true" title="">
 	   <aui:row>
 	   <aui:col span="2">
 	    	 <aui:fieldset>	
@@ -60,11 +61,13 @@ int endTimeYear = cend.get(Calendar.YEAR);
   			
   				 </aui:fieldset>    	    	            
       </aui:col>
-	  </aui:row>      
-	
-     <aui:button-row>
-     	<aui:button type="submit" cssClass="btn-lg" value="position.search"/>		                
-    </aui:button-row>     
+      <aui:col span="6"> 
+    	 <aui:button-row>
+	     	<aui:button type="submit" cssClass="btn-lg" value="position.search"/>		                
+	    </aui:button-row>
+      </aui:col>
+        </aui:row>
+	   </liferay-ui:panel>     
 </aui:form>
   
 

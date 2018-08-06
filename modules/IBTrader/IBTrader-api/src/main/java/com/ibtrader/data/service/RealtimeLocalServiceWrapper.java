@@ -100,6 +100,13 @@ public class RealtimeLocalServiceWrapper implements RealtimeLocalService,
 	}
 
 	@Override
+	public com.ibtrader.data.model.Realtime findCloseRealTime(long shareId,
+		long companyId, long groupId, java.util.Date closeDate) {
+		return _realtimeLocalService.findCloseRealTime(shareId, companyId,
+			groupId, closeDate);
+	}
+
+	@Override
 	public com.ibtrader.data.model.Realtime findLastCompanyShare(
 		long companyId, long shareId, long groupId) {
 		return _realtimeLocalService.findLastCompanyShare(companyId, shareId,
@@ -285,6 +292,14 @@ public class RealtimeLocalServiceWrapper implements RealtimeLocalService,
 		com.liferay.portal.kernel.util.OrderByComparator<T> orderByComparator) {
 		return _realtimeLocalService.dynamicQuery(dynamicQuery, start, end,
 			orderByComparator);
+	}
+
+	@Override
+	public java.util.List<com.ibtrader.data.model.Realtime> findExponentialMobileAvgGroupByPeriods(
+		long shareId, long companyId, long groupId, java.util.Date from,
+		java.util.Date to, java.util.List<java.lang.String> mobileAvgDates) {
+		return _realtimeLocalService.findExponentialMobileAvgGroupByPeriods(shareId,
+			companyId, groupId, from, to, mobileAvgDates);
 	}
 
 	/**

@@ -28,6 +28,8 @@ if (request.getAttribute("share")!=null)
 	<portlet:param name="mvcRenderCommandName" value="/html/add_edit_strategyshare"/>
     <portlet:param name="shareId" value="<%= String.valueOf(shareId) %>"/>
     <portlet:param name="strategyId" value="<%= String.valueOf(StrategyId) %>"/>    
+     <portlet:param name="redirect" value="<%=themeDisplay.getURLCurrent()%>"/>
+      
     <portlet:param name="tab" value="share.strategy"></portlet:param>
 </portlet:renderURL>
 

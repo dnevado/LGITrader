@@ -65,7 +65,7 @@ public class RealtimeCacheModel implements CacheModel<Realtime>, Externalizable 
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(25);
+		StringBundler sb = new StringBundler(27);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -91,6 +91,8 @@ public class RealtimeCacheModel implements CacheModel<Realtime>, Externalizable 
 		sb.append(volume);
 		sb.append(", avg_volume=");
 		sb.append(avg_volume);
+		sb.append(", closeprice=");
+		sb.append(closeprice);
 		sb.append("}");
 
 		return sb.toString();
@@ -131,6 +133,7 @@ public class RealtimeCacheModel implements CacheModel<Realtime>, Externalizable 
 		realtimeImpl.setMin_value(min_value);
 		realtimeImpl.setVolume(volume);
 		realtimeImpl.setAvg_volume(avg_volume);
+		realtimeImpl.setCloseprice(closeprice);
 
 		realtimeImpl.resetOriginalValues();
 
@@ -160,6 +163,8 @@ public class RealtimeCacheModel implements CacheModel<Realtime>, Externalizable 
 		volume = objectInput.readInt();
 
 		avg_volume = objectInput.readInt();
+
+		closeprice = objectInput.readBoolean();
 	}
 
 	@Override
@@ -191,6 +196,8 @@ public class RealtimeCacheModel implements CacheModel<Realtime>, Externalizable 
 		objectOutput.writeInt(volume);
 
 		objectOutput.writeInt(avg_volume);
+
+		objectOutput.writeBoolean(closeprice);
 	}
 
 	public String uuid;
@@ -205,4 +212,5 @@ public class RealtimeCacheModel implements CacheModel<Realtime>, Externalizable 
 	public double min_value;
 	public int volume;
 	public int avg_volume;
+	public boolean closeprice;
 }

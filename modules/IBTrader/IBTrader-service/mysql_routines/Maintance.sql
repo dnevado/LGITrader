@@ -1,4 +1,4 @@
-CREATE EVENT `REALTIME_MAINTANCE`
+CREATE DEFINER=`root`@`localhost` EVENT `REALTIME_MAINTANCE`
 	ON SCHEDULE
 		EVERY 4 HOUR STARTS '2018-05-01 10:59:31'
 	ON COMPLETION NOT PRESERVE
@@ -21,16 +21,16 @@ WHERE
 IF (NUM_DAYS_PAST_REALTIME<>-1) THEN
 	
 	
-		DELETE FROM ibtrader_realtime 
-				WHERE date(createDate) <
+	DELETE FROM ibtrader_realtime 
+				WHERE date(createDate) <=
 	(
-		select min(fecha) from
-	(
- 	SELECT  FECHA  FROM (
-			select distinct date(createDate) FECHA  from ibtrader_realtime order by createDate DESC
-			) TAB
-	LIMIT 2
-	) t);
+	select max(fecha) from
+	( 	
+  			   select distinct date(createDate) FECHA  from ibtrader_realtime 
+				where date(createdate)< date(DATE_ADD(now(), INTERVAL -NUM_DAYS_PAST_REALTIME DAY))  
+				order by createDate DESC	
+	) t
+	);
 	 
 END IF;
 

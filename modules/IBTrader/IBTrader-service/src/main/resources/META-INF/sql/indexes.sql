@@ -1,6 +1,6 @@
 create unique index IX_A132C258 on ibtrader_Config (companyId, groupId, config_key[$COLUMN_LENGTH:75$]);
 create index IX_279C27D8 on ibtrader_Config (config_key[$COLUMN_LENGTH:75$], globaldefault);
-create index IX_971FC937 on ibtrader_Config (iscron, value[$COLUMN_LENGTH:75$], companyId, groupId);
+create index IX_91075835 on ibtrader_Config (iscron, value[$COLUMN_LENGTH:75$]);
 create index IX_33B037F4 on ibtrader_Config (uuid_[$COLUMN_LENGTH:75$], companyId);
 create unique index IX_380E2B76 on ibtrader_Config (uuid_[$COLUMN_LENGTH:75$], groupId);
 
@@ -33,7 +33,8 @@ create index IX_B0CE8E78 on ibtrader_Position (groupId, companyId, shareId, stat
 create index IX_BB6FD65B on ibtrader_Position (uuid_[$COLUMN_LENGTH:75$], companyId);
 create unique index IX_7C20379D on ibtrader_Position (uuid_[$COLUMN_LENGTH:75$], groupId);
 
-create index IX_EC95441 on ibtrader_Realtime (companyId, shareId, createDate, groupId);
+create index IX_A61B958E on ibtrader_Realtime (companyId, shareId, createDate, closeprice);
+create index IX_6E4B2B46 on ibtrader_Realtime (companyId, shareId, createDate, groupId, closeprice);
 create index IX_228E3527 on ibtrader_Realtime (createDate);
 create index IX_4CC4359D on ibtrader_Realtime (uuid_[$COLUMN_LENGTH:75$], companyId);
 create unique index IX_72277F5F on ibtrader_Realtime (uuid_[$COLUMN_LENGTH:75$], groupId);

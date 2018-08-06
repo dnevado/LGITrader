@@ -46,6 +46,7 @@ public class RealtimeSoap implements Serializable {
 		soapModel.setMin_value(model.getMin_value());
 		soapModel.setVolume(model.getVolume());
 		soapModel.setAvg_volume(model.getAvg_volume());
+		soapModel.setCloseprice(model.getCloseprice());
 
 		return soapModel;
 	}
@@ -194,6 +195,18 @@ public class RealtimeSoap implements Serializable {
 		_avg_volume = avg_volume;
 	}
 
+	public boolean getCloseprice() {
+		return _closeprice;
+	}
+
+	public boolean isCloseprice() {
+		return _closeprice;
+	}
+
+	public void setCloseprice(boolean closeprice) {
+		_closeprice = closeprice;
+	}
+
 	private String _uuid;
 	private long _realtimeId;
 	private long _groupId;
@@ -206,4 +219,5 @@ public class RealtimeSoap implements Serializable {
 	private double _min_value;
 	private int _volume;
 	private int _avg_volume;
+	private boolean _closeprice;
 }

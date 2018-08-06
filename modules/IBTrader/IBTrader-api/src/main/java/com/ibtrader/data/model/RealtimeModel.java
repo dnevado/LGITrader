@@ -242,6 +242,27 @@ public interface RealtimeModel extends BaseModel<Realtime>, ShardedModel,
 	 */
 	public void setAvg_volume(int avg_volume);
 
+	/**
+	 * Returns the closeprice of this realtime.
+	 *
+	 * @return the closeprice of this realtime
+	 */
+	public boolean getCloseprice();
+
+	/**
+	 * Returns <code>true</code> if this realtime is closeprice.
+	 *
+	 * @return <code>true</code> if this realtime is closeprice; <code>false</code> otherwise
+	 */
+	public boolean isCloseprice();
+
+	/**
+	 * Sets whether this realtime is closeprice.
+	 *
+	 * @param closeprice the closeprice of this realtime
+	 */
+	public void setCloseprice(boolean closeprice);
+
 	@Override
 	public boolean isNew();
 

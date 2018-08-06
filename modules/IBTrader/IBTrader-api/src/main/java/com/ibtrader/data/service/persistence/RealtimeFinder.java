@@ -28,10 +28,17 @@ public interface RealtimeFinder {
 	public com.ibtrader.data.model.Realtime findLastRealTime(long shareId,
 		long companyId, long groupId);
 
+	public com.ibtrader.data.model.Realtime findCloseRealTimeDate(
+		long shareId, long companyId, long groupId, java.util.Date date);
+
 	public com.ibtrader.data.model.Realtime findLastRealTimeLessThanDate(
 		long shareId, long companyId, long groupId, java.util.Date To);
 
 	public java.util.List findSimpleMobileAvgGroupByPeriods(long shareId,
 		long companyId, long groupId, java.util.Date from, java.util.Date to,
 		java.util.List<java.lang.String> mobileAvgDates);
+
+	public java.util.List<com.ibtrader.data.model.Realtime> findExponentialMobileGroupByPeriods(
+		long shareId, long companyId, long groupId, java.util.Date from,
+		java.util.Date to, java.util.List<java.lang.String> mobileAvgDates);
 }

@@ -35,6 +35,8 @@ import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.ibtrader.util.ConfigKeys;
+import com.ibtrader.util.DirectionalMovementADXRUtil;
+import com.ibtrader.util.MobileAvgUtil;
 import com.ibtrader.util.PositionStates;
 import com.ibtrader.util.Utilities;
 import com.ibtrader.constants.IBTraderConstants;
@@ -327,6 +329,17 @@ public class TIMApiGITrader_NOVALE extends TIMApiWrapper {
 		_contractAPI3.exchange("ISLAND");
 		_contractAPI3.currency("USD");
 		*/
+		/* 
+		 * 2018-07-25 01:39:59.999000
+		
+		Calendar cData = Calendar.getInstance();
+		cData.set(2018, 6, 25, 1, 40, 0);
+		DirectionalMovementADXRUtil  ADXR =  new DirectionalMovementADXRUtil(cData.getTime(), 5, 14, 2602, 20116, 101213);
+		ADXR.getADXR();
+		ADXR.isCrossDI();
+		MobileAvgUtil.getExponentialAvgMobile(cData.getTime(), 5, 2602, 20116, 101213, 200);
+		
+		 */
 		TIMApiWrapper wrapper = new TIMApiWrapper(6,false);
 		final EClientSocket m_client = wrapper.getClient();
 		final EReaderSignal m_signal = wrapper.getSignal(); 

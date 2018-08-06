@@ -85,7 +85,7 @@ import javax.portlet.PortletException;
 	immediate = true,
 	property = {
 		"com.liferay.portlet.display-category=ibtrader",
-		"com.liferay.portlet.instanceable=true",
+		"com.liferay.portlet.instanceable=false",
 		"javax.portlet.display-name=IBTrader-unitintegration-tests-web Portlet",
 		"javax.portlet.init-param.template-path=/",
 		"javax.portlet.init-param.view-template=/view.jsp",
@@ -266,7 +266,7 @@ public class IBTraderUnitintegrationTestsWebPortlet extends MVCPortlet {
 				_realtime.setShareId(shareId);
 				RealtimeLocalServiceUtil.updateRealtime(_realtime);
 				
-				/* ENTRADA CORTO  +30 SECONDS   */
+				/* ENTRADA CORTO  +30 SECONDS   
 				_calendario.add(Calendar.SECOND, 30);
 				double minpluspercent = max * (1 + percent);
 				
@@ -278,8 +278,8 @@ public class IBTraderUnitintegrationTestsWebPortlet extends MVCPortlet {
 				_realtime.setCompanyId(serviceContext.getCompanyId());
 				_realtime.setShareId(shareId);
 				RealtimeLocalServiceUtil.updateRealtime(_realtime);
-				
-				/* SALIDA STOP LOST  +30 SECONDS   */
+				*/
+				/* SALIDA STOP LOST  +30 SECONDS   
 				_calendario.add(Calendar.SECOND, 30);
 
 				 _realtime = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));
@@ -291,7 +291,7 @@ public class IBTraderUnitintegrationTestsWebPortlet extends MVCPortlet {
 				_realtime.setShareId(shareId);
 				
 				RealtimeLocalServiceUtil.updateRealtime(_realtime);
-				
+				*/
 				/* SLA SEÑAL ENTRADA A LARGO   +30 SECONDS   */
 				_calendario.add(Calendar.SECOND, 30);
 

@@ -140,6 +140,7 @@ portletDisplay.setURLBack(redirect);
 			             { data: "modify_link" }			             			             
 			        ],
 			        select: true ,
+			        aaSorting: [[4, 'desc']],  /* descending  by entry date */
 			        "ajax": '<%=PositionListResourceURL.toString()%>'
 			        
 			    });

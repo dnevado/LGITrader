@@ -118,6 +118,56 @@ public class MobileAvgUtil {
 		
 	}
 	
+	/* HORA DE LA NARRA ACTUAL, PARA CALCULAR LOS N PERIOS PREVIOS 
+	 * 
+	 * 
+	 * expAvgMobile = (CLOSE (i) * P) + (EMA (i - 1) * (1 - P))
+	 *  P = 2/(1+PERIODOS)
+	 * */
+	public  static Double getExponentialAvgMobile(Date _ActualDateBar, long TimeBars,long shareId, long companyId, long groupId, long PeriodN)
+	{
+		
+		Realtime _realtimeAvgMobile = null;
+		List<String> lAvgPeriods = new ArrayList<String>();
+		
+		
+		double expAvgMobile = 0d;
+		double avgPeridosParam = 2 / (PeriodN+1);
+		
+		
+		
+		Calendar _cSimpleAvgMobileDateFrom = Calendar.getInstance();
+		_cSimpleAvgMobileDateFrom.setTime(_ActualDateBar);
+		
+		/* fechas  de cierre */ 
+		lAvgPeriods = getPeriodsMinutesMobileAvg(_ActualDateBar, PeriodN, TimeBars);
+		
+		/* MODIFICACION, MEDIAS MOVILES HASTA EL PERIDO N, N-1, N-2 */
+		_cSimpleAvgMobileDateFrom.add(Calendar.MINUTE,  (int) - (PeriodN * TimeBars));
+		
+		// le resto un segundo para que coga la primera barra especificada, asi coge el 59:59 
+		_cSimpleAvgMobileDateFrom.add(Calendar.SECOND,-1);
+		
+		
+		List<Realtime> exponentialRealtime = RealtimeLocalServiceUtil.findExponentialMobileAvgGroupByPeriods(shareId, companyId, groupId, _cSimpleAvgMobileDateFrom.getTime(), _ActualDateBar, lAvgPeriods);
+		/* CUANTOS PERIODOS CALCULADOS ??' */
+		if (exponentialRealtime!=null && !exponentialRealtime.isEmpty()  && exponentialRealtime.size()!=PeriodN)
+		{
+			
+			for (Realtime _closeValue : exponentialRealtime)
+			{
+				expAvgMobile =  _closeValue.getValue() * avgPeridosParam + expAvgMobile * (1-avgPeridosParam);
+			}
+			return Double.valueOf(expAvgMobile);
+			
+		}
+		else
+			return null;
+		
+		
+	}
+	
+	
 	/* public static Realtime getAvgMobileMM8(Calendar _oDateFrom, Calendar _oDateTo, int Periods, int TimeBars, int ShareStrategyID, boolean Simulation)
 	{
 		return getAvgMobileMM8(_oDateFrom, _oDateTo, Periods, TimeBars, ShareStrategyID, 0, Simulation);

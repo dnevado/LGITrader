@@ -105,6 +105,7 @@
 		<field name="min_value" type="double" />
 		<field name="volume" type="int" />
 		<field name="avg_volume" type="int" />
+		<field name="closeprice" type="boolean" />
 	</model>
 	<model name="com.ibtrader.data.model.Share">
 		<field name="uuid" type="String" />
