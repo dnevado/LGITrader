@@ -226,7 +226,7 @@ public class RealtimeFinderImpl extends RealtimeFinderBaseImpl  implements Realt
         q.addScalar("value", com.liferay.portal.kernel.dao.orm.Type.DOUBLE);
 	    q.addScalar("periodsfound", com.liferay.portal.kernel.dao.orm.Type.LONG);	   
 	    
-        	
+	    _log.debug("findSimpleMobileAvgGroupByPeriods:" + sql + ",q:" + q);
          
         QueryPos qPos = QueryPos.getInstance(q);	    
         qPos.add(from);
@@ -269,7 +269,7 @@ public class RealtimeFinderImpl extends RealtimeFinderBaseImpl  implements Realt
 	 
 	
 	@SuppressWarnings("unchecked")
-	public List<Realtime> findExponentialMobileGroupByPeriods(long shareId, long companyId, long groupId,Date from, Date to, List<String> mobileAvgDates)
+	public List<Realtime> findCloseRealTimes(long shareId, long companyId, long groupId,Date from, Date to, List<String> mobileAvgDates)
 	{
 	 List lExponentialMobile = null;
 	 
@@ -277,7 +277,7 @@ public class RealtimeFinderImpl extends RealtimeFinderBaseImpl  implements Realt
 	 try {
         session = openSession();
 
-        String sql = CustomSQLUtil.get(getClass(),FIND_EXPONENTIAL_MOBILE_REALTIMES_GROUP_BY_PERIODS);
+        String sql = CustomSQLUtil.get(getClass(),FIND_CLOSE_REALTIMES);
         
         String Dates_IN = String.join("','", mobileAvgDates);
         StringBuilder sDatesIN = new StringBuilder("'");
@@ -329,7 +329,7 @@ public class RealtimeFinderImpl extends RealtimeFinderBaseImpl  implements Realt
 		public static final String FIND_LAST_REALTIMES_GROUP_BY_PERIODS = RealtimeFinder.class.getName() + ".findSimpleMobileAvgGroupByPeriods";
 		public static final String FIND_LAST_REALTIME_LESS_THAN_DATE = RealtimeFinder.class.getName() + ".findLastRealTimeLessThanDate";
 		public static final String FIND_CLOSE_REALTIME_DATE = RealtimeFinder.class.getName() + ".findCloseRealTimeDate";
-		public static final String FIND_EXPONENTIAL_MOBILE_REALTIMES_GROUP_BY_PERIODS = RealtimeFinder.class.getName() + ".findExponentialMobileGroupByPeriods";
+		public static final String FIND_CLOSE_REALTIMES = RealtimeFinder.class.getName() + ".findCloseRealTimes";
 		
 
 		

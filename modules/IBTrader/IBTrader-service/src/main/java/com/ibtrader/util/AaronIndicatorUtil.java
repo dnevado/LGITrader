@@ -56,7 +56,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.Validator;
 
-public class DirectionalMovementADXRUtil {
+public class AaronIndicatorUtil {
 
 	 
 	private double _ADX = 0d;
@@ -77,9 +77,9 @@ public class DirectionalMovementADXRUtil {
 	/*
 	 * ADX- Average Directional 
 	 */
-	private static Log _log = LogFactoryUtil.getLog(DirectionalMovementADXRUtil.class);
+	private static Log _log = LogFactoryUtil.getLog(AaronIndicatorUtil.class);
 
-	public DirectionalMovementADXRUtil(Date dateTo, long timebar,  long shareId, long companyId, long groupId) {
+	public AaronIndicatorUtil(Date dateTo, long timebar,  long shareId, long companyId, long groupId) {
 		getAvgDirectionalRate(dateTo,  timebar, shareId, companyId, groupId);
 	}
 	/* para las medias armonizadas de  DM */
@@ -177,7 +177,7 @@ public class DirectionalMovementADXRUtil {
 		 */
 		Calendar cData = Calendar.getInstance();
 		cData.set(2018, 6, 25, 1, 40, 0);
-		DirectionalMovementADXRUtil ADXR =  new DirectionalMovementADXRUtil(cData.getTime(), 5,  2602, 20116, 101213);
+		AaronIndicatorUtil ADXR =  new AaronIndicatorUtil(cData.getTime(), 5,  2602, 20116, 101213);
 		ADXR.getADXR();
 		
 		

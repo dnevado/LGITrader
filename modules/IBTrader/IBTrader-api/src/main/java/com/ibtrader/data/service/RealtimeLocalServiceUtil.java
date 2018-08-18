@@ -280,12 +280,12 @@ public class RealtimeLocalServiceUtil {
 				   .dynamicQuery(dynamicQuery, start, end, orderByComparator);
 	}
 
-	public static java.util.List<com.ibtrader.data.model.Realtime> findExponentialMobileAvgGroupByPeriods(
+	public static java.util.List<com.ibtrader.data.model.Realtime> findCloseRealTimes(
 		long shareId, long companyId, long groupId, java.util.Date from,
-		java.util.Date to, java.util.List<java.lang.String> mobileAvgDates) {
+		java.util.Date to, java.util.List<java.lang.String> closingDates) {
 		return getService()
-				   .findExponentialMobileAvgGroupByPeriods(shareId, companyId,
-			groupId, from, to, mobileAvgDates);
+				   .findCloseRealTimes(shareId, companyId, groupId, from, to,
+			closingDates);
 	}
 
 	/**

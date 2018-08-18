@@ -295,11 +295,11 @@ public class RealtimeLocalServiceWrapper implements RealtimeLocalService,
 	}
 
 	@Override
-	public java.util.List<com.ibtrader.data.model.Realtime> findExponentialMobileAvgGroupByPeriods(
+	public java.util.List<com.ibtrader.data.model.Realtime> findCloseRealTimes(
 		long shareId, long companyId, long groupId, java.util.Date from,
-		java.util.Date to, java.util.List<java.lang.String> mobileAvgDates) {
-		return _realtimeLocalService.findExponentialMobileAvgGroupByPeriods(shareId,
-			companyId, groupId, from, to, mobileAvgDates);
+		java.util.Date to, java.util.List<java.lang.String> closingDates) {
+		return _realtimeLocalService.findCloseRealTimes(shareId, companyId,
+			groupId, from, to, closingDates);
 	}
 
 	/**

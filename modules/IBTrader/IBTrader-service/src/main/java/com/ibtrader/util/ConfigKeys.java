@@ -35,6 +35,9 @@ public class ConfigKeys {
     public static final String CURRENCY_DOLLAR = "USD";
     public static final String CURRENCY_EURO = "EUR";
     
+    public static final int ADXR_PERIODS = 14;
+    public static final int INDICATORS_MIN_SERIE_COUNT = 125;  // PARA EL CALCULO DEL ADXR / MACD ..., NECESITAMOS PARA TENER PRECISION 125 BARRAS 
+    
     
     public static final String ERROR_CODE_PACING_VIOLATION = "162";
     

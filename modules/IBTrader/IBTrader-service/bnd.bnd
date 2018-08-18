@@ -17,3 +17,4 @@ Export-Package: \
 Import-Package: \
 	com.ibtrader.data.service.persistence,\
 	*
+Include-Resource:\@ta4j-core-0.11.jar

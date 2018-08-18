@@ -242,9 +242,8 @@ public interface RealtimeLocalService extends BaseLocalService,
 	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
 		int end, OrderByComparator<T> orderByComparator);
 
-	public List<Realtime> findExponentialMobileAvgGroupByPeriods(long shareId,
-		long companyId, long groupId, Date from, Date to,
-		List<java.lang.String> mobileAvgDates);
+	public List<Realtime> findCloseRealTimes(long shareId, long companyId,
+		long groupId, Date from, Date to, List<java.lang.String> closingDates);
 
 	/**
 	* Returns a range of all the realtimes.

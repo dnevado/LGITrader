@@ -38,7 +38,7 @@ public interface RealtimeFinder {
 		long companyId, long groupId, java.util.Date from, java.util.Date to,
 		java.util.List<java.lang.String> mobileAvgDates);
 
-	public java.util.List<com.ibtrader.data.model.Realtime> findExponentialMobileGroupByPeriods(
+	public java.util.List<com.ibtrader.data.model.Realtime> findCloseRealTimes(
 		long shareId, long companyId, long groupId, java.util.Date from,
 		java.util.Date to, java.util.List<java.lang.String> mobileAvgDates);
 }

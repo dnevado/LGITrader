@@ -114,7 +114,7 @@
     </sql>
     
     
-    <sql id="com.ibtrader.data.service.persistence.RealtimeFinder.findExponentialMobileGroupByPeriods">
+    <sql id="com.ibtrader.data.service.persistence.RealtimeFinder.findCloseRealTimes">
     <![CDATA[ 
     	SELECT 
     		 IBTrader_Realtime.*

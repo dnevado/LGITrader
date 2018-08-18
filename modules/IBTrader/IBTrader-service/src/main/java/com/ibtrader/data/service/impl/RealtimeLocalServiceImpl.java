@@ -90,9 +90,9 @@ public class RealtimeLocalServiceImpl extends RealtimeLocalServiceBaseImpl {
 			serilizeString=JSONFactoryUtil.serialize(oRealtime);
 			try {
 				minmaxRealtimeJsonArray=JSONFactoryUtil.createJSONArray(serilizeString);
-				MinMaxRealtime = realtimeLocalService.createRealtime(-1); // no persistimos 
-				MinMaxRealtime.setMin_value(minmaxRealtimeJsonArray.getDouble(0));
-				MinMaxRealtime.setMax_value(minmaxRealtimeJsonArray.getDouble(1));
+				MinMaxRealtime = realtimeLocalService.createRealtime(-1); // no persistimos 				
+				MinMaxRealtime.setMin_value(Double.isNaN(minmaxRealtimeJsonArray.getDouble(0)) ? 0d : minmaxRealtimeJsonArray.getDouble(0));
+				MinMaxRealtime.setMax_value(Double.isNaN(minmaxRealtimeJsonArray.getDouble(1)) ? 0d : minmaxRealtimeJsonArray.getDouble(1));
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				//e.printStackTrace();
@@ -106,6 +106,10 @@ public class RealtimeLocalServiceImpl extends RealtimeLocalServiceBaseImpl {
 	public Realtime findCloseRealTime(long shareId, long companyId, long groupId, Date closeDate)
 	{
 		return realtimeFinder.findCloseRealTimeDate(shareId, companyId, groupId,closeDate);
+	}
+	public List<Realtime> findCloseRealTimes( long shareId, long companyId, long groupId,Date from, Date to, List<String> closingDates)
+	{
+		return realtimeFinder.findCloseRealTimes(shareId, companyId, groupId,from,to, closingDates);
 	}
 	
 	public Realtime findLastRealTime(long shareId, long companyId, long groupId)
@@ -142,12 +146,12 @@ public class RealtimeLocalServiceImpl extends RealtimeLocalServiceBaseImpl {
 		return 	SimpleMobileAvgGroupByPeriodsRealtime;
 	}
 	
-	public List<Realtime> findExponentialMobileAvgGroupByPeriods( long shareId, long companyId, long groupId,Date from, Date to, List<String> mobileAvgDates)
+	/* public List<Realtime> findExponentialMobileAvgGroupByPeriods( long shareId, long companyId, long groupId,Date from, Date to, List<String> mobileAvgDates)
 	{
 		return realtimeFinder.findExponentialMobileGroupByPeriods(shareId, companyId, groupId, from, to, mobileAvgDates);
 
 	}
-	
+	*/
 	
 	 public Realtime findLastCompanyShare(long companyId, long shareId, long groupId)
 	{
