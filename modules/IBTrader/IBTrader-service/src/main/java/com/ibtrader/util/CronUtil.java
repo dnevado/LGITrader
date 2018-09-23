@@ -345,7 +345,7 @@ public class CronUtil {
 				    	for (Market oMarket : lActiveMarkets)
 				    	{
 				    						    		
-				    		lShare =  ShareLocalServiceUtil.findByActiveMarketGroupCompany(oMarket.getMarketId(), true, oMarket.getGroupId(), oMarket.getCompanyId());
+				    		lShare =  ShareLocalServiceUtil.findByActiveMarketGroupCompany(oMarket.getMarketId(), Boolean.TRUE, oMarket.getGroupId(), oMarket.getCompanyId());
 				    		for (Share oShare : lShare)
 					    	{				    		
 				    				
@@ -866,7 +866,10 @@ public class CronUtil {
 
 	}	
 	
-	/* ESTE PUEDE EJECUTARSE POR VECES */
+	/* ESTE PUEDE EJECUTARSE POR VECES 
+	 * 
+	 *  EXPIRAN HOY, SE LES CAMBIA LA FECHA. 
+	 * */
 	public static void StartVerifyFuturesDatesCron(Message _message) throws Exception {					
 		
 	    

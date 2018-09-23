@@ -62,10 +62,7 @@
 </c:choose>
 <aui:input  readOnly="readOnly"   id="validated_${Share.shareId}" name="share.validated" type="toggle-switch"  checked="${checked2}" />
 </liferay-ui:search-container-column-text>
-<liferay-ui:search-container-column-text orderable="<%= true %>"  property="numbertopurchase" orderableProperty="numbertopurchase" name="share.numbertopurchase" value="${Share.numbertopurchase}"/>
-<liferay-ui:search-container-column-text orderable="<%= true %>"  property="percentual_limit_buy" orderableProperty="percentual_limit_buy" name="share.percentual_limit_buy" value="${Share.percentual_limit_buy}"/>
-<liferay-ui:search-container-column-text orderable="<%= true %>"  property="percentual_stop_lost" orderableProperty="percentual_stop_lost" name="share.percentual_stop_lost" value="${Share.percentual_stop_lost}"/>
-<liferay-ui:search-container-column-text orderable="<%= true %>"  property="percentual_stop_profit" orderableProperty="percentual_stop_profit" name="share.percentual_stop_profit" value="${Share.percentual_stop_profit}"/>
+<liferay-ui:search-container-column-text orderable="<%= true %>"  property="numbertopurchase" orderableProperty="numbertopurchase" name="share.numbertopurchase" value="${Share.numbertopurchase}"/> 
 <liferay-ui:search-container-column-text orderable="<%= true %>"  property="security_type" orderableProperty="security_type" name="share.security_type" value="${Share.security_type}"/>
 <liferay-ui:search-container-column-text orderable="<%= true %>"  property="primary_exchange" orderableProperty="primary_exchange" name="share.primary_exchange" value="${Share.primary_exchange}"/>
 <liferay-ui:search-container-column-jsp path="/html/share_market_data.jsp"/>

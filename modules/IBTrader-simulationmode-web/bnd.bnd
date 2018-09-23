@@ -1,0 +1,4 @@
+Bundle-Name: IBTrader-simulationmode-web
+Bundle-SymbolicName: IBTrader.simulationmode.web
+Bundle-Version: 1.0.0
+Export-Package: IBTrader.simulationmode.web.constants

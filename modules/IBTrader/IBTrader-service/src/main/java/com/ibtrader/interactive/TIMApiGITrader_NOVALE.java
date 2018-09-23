@@ -2317,7 +2317,7 @@ public class TIMApiGITrader_NOVALE extends TIMApiWrapper {
 	public static void main(String[] args) throws InterruptedException {
 			
 	
-		AddExampleBars1();
+		/*AddExampleBars1();
 		AddExampleBars2();
 		AddExampleBars3();
 		
@@ -2352,7 +2352,7 @@ public class TIMApiGITrader_NOVALE extends TIMApiWrapper {
 		
 		
 			System.out.println("ADXIndicator::" +  ADXIndicator.getValue(1971));
-				
+				*/
 		
 		
 
@@ -2361,7 +2361,7 @@ public class TIMApiGITrader_NOVALE extends TIMApiWrapper {
 		final EClientSocket m_client = wrapper.getClient();
 		final EReaderSignal m_signal = wrapper.getSignal(); 
 		//! [connect]
-		m_client.eConnect("127.0.0.1", 7497, 13); 
+		m_client.eConnect("127.0.0.1", 7499, 13); 
 		//! [connect]
 		//! [ereader]
 		final EReader reader = new EReader(m_client, m_signal);   
@@ -2380,13 +2380,27 @@ public class TIMApiGITrader_NOVALE extends TIMApiWrapper {
 		        }
 		    }
 		}).start();
-		 
-		Calendar now = Calendar.getInstance();
-		now.add(Calendar.HOUR_OF_DAY, -1);
-		SimpleDateFormat sdf = new SimpleDateFormat(Utilities.__IBTRADER_ORDERS_EXECUTED__DATE_FORMAT);		
+
+		Contract contract = new Contract();
+		contract = new FutContract( "ESTX50", "201809");		    			
+		contract.exchange("DTB");
+		contract.currency("USD");
 		
-		ExecutionFilter filter = new ExecutionFilter(5668,"",sdf.format(now.getTime()),"","","","");
-		m_client.reqExecutions(5668,filter);
+		
+	/* 	contract.symbol("DAX");
+		contract.secType("FUT");
+		contract.currency("EUR");
+		contract.exchange("DTB");
+		contract.lastTradeDateOrContractMonth("2");
+		contract.multiplier("5");
+		*/
+		SimpleDateFormat sd = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+		Calendar d = Calendar.getInstance();
+		d.add(Calendar.MONTH, -6);
+		String queryTime = sd.format(d.getTime());		
+		List<TagValue> list = new ArrayList<TagValue>();
+		m_client.reqMarketDataType(ConfigKeys.MARKET_DATA_TYPE_DELAYED_LIVE);
+		m_client.reqMktData(4003, contract,  "", false, false, null); // false
 		 
 		
 	}

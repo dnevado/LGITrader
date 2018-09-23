@@ -111,7 +111,9 @@ public class ShareLocalServiceImpl extends ShareLocalServiceBaseImpl {
 	//	_DQ.add(RestrictionsFactoryUtil.eq("active", active));
 		_DQ.add(RestrictionsFactoryUtil.eq("companyId", companyId));
 		_DQ.add(RestrictionsFactoryUtil.eq("groupId", groupId));
-		_DQ.add(RestrictionsFactoryUtil.isNull("date_validated_trader_provider"));
+		//_DQ.add(RestrictionsFactoryUtil.isNull("date_validated_trader_provider"));
+		_DQ.add(RestrictionsFactoryUtil.eq("validated_trader_provider",Boolean.FALSE));
+		
 		
 		/*
 		 * al editarlo, 

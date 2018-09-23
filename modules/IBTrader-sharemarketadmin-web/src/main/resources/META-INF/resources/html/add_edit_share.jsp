@@ -95,8 +95,6 @@ else
 %>
 
 
-realtime
-
 <%@include file="/html/includes/tabs.jsp"%>
 
 
@@ -131,8 +129,7 @@ realtime
 			  <aui:validator name="digits"/>
 		 </aui:input>
     </aui:fieldset>
-    <aui:row>
-    
+    <aui:row>    
     	<aui:col span="6">
 	    	 <aui:fieldset>		         
 	       	 <label class="control-label" for="<%=portletId%>_share.percentual_limit_buy"><liferay-ui:message key="share.percentual_limit_buy"/></label><input  id="<%=portletId%>_percentual_limit_buy" class="field form-control"  min="0"  max="100" type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_percentual_limit_buy"  value="${share.percentual_limit_buy gt 0 ? share.percentual_limit_buy : ''}"/> 	    		
@@ -153,15 +150,18 @@ realtime
    <liferay-ui:panel-container accordion="true" extended="true" id="datafutures">
 		<liferay-ui:panel title="share.datafutures" markupView="lexicon">
 		<aui:row>
-    	<aui:col span="6">
-			    <aui:fieldset>	  				
-  				<aui:select multiple="true"  label="data.expirationmonth" name="expirationmonth">
-				    <% int monthCounter=0;				    				    
-				    for (String s: ConfigKeys._FUTURES_MONTHS)  { %>	
-				        <aui:option  value="<%=monthCounter%>" selected="<%=(_months.contains(String.valueOf(monthCounter)) ? true :  false)%>"><%=s%></aui:option> 
-				    <% monthCounter+=1;} %>				     							
-				</aui:select> 
-				</aui:fieldset>
+    	<aui:col span="6">    		
+		    <aui:fieldset>	  
+		    	<label class="control-label" for="<%=portletId%>_expirationmonth">
+		    		<liferay-ui:message key="data.expirationmonth"/>
+		    	</label>		    			
+		    	<select class="field form-control" id="<%=portletId%>_expirationmonth" multiple  name="<%=portletId%>_expirationmonth">
+		    	<% int monthCounter=0;				    				    
+			    for (String s: ConfigKeys._FUTURES_MONTHS)  { %>	
+			        <option value="<%=monthCounter%>" <%=(_months.contains(String.valueOf(monthCounter)) ? "selected" :  "")%>><%=s%></option> 
+			    <% monthCounter++;} %>
+		    	</select>	 				
+			</aui:fieldset>
 	     </aui:col> 
 	     <aui:col span="2">
 	      		<aui:fieldset>	  		
@@ -181,10 +181,12 @@ realtime
 			       	for (String s: ConfigKeys._FUTURES_DAYOFWEEK)  { %>        	    				    	
 				        <aui:option  value="<%=dayCounter%>" selected="<%=(expirationdayweek.equals(String.valueOf(dayCounter)) ? true :  false)%>"><%=s%></aui:option> 
 				    <% dayCounter+=1;} %>		   				    				   		   
-				</aui:select>
-  				 </aui:fieldset>	      			
-  				<aui:fieldset>		
-  				<liferay-ui:message key="data.expirationdate"/>
+				 </aui:select>
+  				 </aui:fieldset>	      			  					
+  		</aui:col> 
+  		 <aui:col span="2">
+  		 		<aui:fieldset>
+  		 		<liferay-ui:message key="data.expirationdate"/>
   				<liferay-ui:input-date dayParam="startDateDay"
 					     dayValue="<%= startTimeDay %>"
 					     disabled="true"					     
@@ -195,7 +197,7 @@ realtime
 					     yearValue="<%= startTimeYear %>"/>
   			
   				 </aui:fieldset>
-  		    </aui:col>  	
+  		 </aui:col>
 	    	</aui:row>	 
   			<aui:row>
     		<aui:col span="6">

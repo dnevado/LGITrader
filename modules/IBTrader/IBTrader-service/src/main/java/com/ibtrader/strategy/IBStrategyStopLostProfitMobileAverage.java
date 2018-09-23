@@ -82,9 +82,9 @@ public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
 	private static HashMap<String, Double> Parameters = new HashMap<String,Double>();
 	private List<ExpandoColumn> ExpandoColumns = new ArrayList<ExpandoColumn>(); 
 	
-	private static String _EXPANDO_MOBILE_AVERAGE_PERIODS_NUMBER = "Mobile Average Periods Number";  // offset desde inicio de mercado en minutos
-	private static String _EXPANDO_MOBILE_AVERAGE_CANDLE_SIZE = "Mobile Average Candle Size (Minutes)";  // offset hasta desde inicio de mercado en minutos
-	private static String _EXPANDO_MOBILE_AVERAGE_GAP_SIZE = "Mobile Average Percentual Gap Size"; // operar hasta minutos antes de cierre mercado
+	private static String _EXPANDO_MOBILE_AVERAGE_PERIODS_NUMBER = "Mobile Average Periods Number {8}";  // offset desde inicio de mercado en minutos
+	private static String _EXPANDO_MOBILE_AVERAGE_CANDLE_SIZE = "Mobile Average Candle Size (Minutes) {5}";  // offset hasta desde inicio de mercado en minutos
+	private static String _EXPANDO_MOBILE_AVERAGE_GAP_SIZE = "Mobile Average Percentual Gap Size {75}"; // operar hasta minutos antes de cierre mercado
 	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_TO_CLOSEMARKET = "Mobile Average Trade Until x Minutes From CloseMarket"; // operar hasta minutos antes de cierre mercado
 	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET = "OffSet From Open Market (Minutes) To Start Trading";  // offset desde inicio de mercado en minutos
 

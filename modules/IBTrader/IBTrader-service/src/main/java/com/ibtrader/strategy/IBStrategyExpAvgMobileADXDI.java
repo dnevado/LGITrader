@@ -66,6 +66,7 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.ibtrader.util.MobileAvgUtil;
+import com.ibtrader.util.AroonIndicatorUtil;
 import com.ibtrader.util.ConfigKeys;
 import com.ibtrader.util.DirectionalMovementADXRUtil;
 import com.ibtrader.util.PositionStates;
@@ -80,8 +81,9 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 	private List<ExpandoColumn> ExpandoColumns = new ArrayList<ExpandoColumn>(); 
 	
 	private static String _EXPANDO_MOBILE_AVERAGE_PERIODS_NUMBER = "Mobile Average Periods Number";  // offset desde inicio de mercado en minutos
-	private static String _EXPANDO_MOBILE_AVERAGE_CANDLE_SIZE = "Mobile Average Candle Size (Minutes)";  // offset hasta desde inicio de mercado en minutos
-	private static String _EXPANDO_MOBILE_ADX_PASSED_RATE= "ADXR Passed Rate"; // operar hasta minutos antes de cierre mercado	
+	private static String _EXPANDO_MOBILE_AVERAGE_CANDLE_SIZE = "Mobile Average Candle Size (Minutes) {5}";  // offset hasta desde inicio de mercado en minutos
+	private static String _EXPANDO_MOBILE_ADX_PASSED_RATE= "ADXR Passed Rate {25}"; // operar hasta minutos antes de cierre mercado	
+	private static String _EXPANDO_AROON_PERIODS= "Aroon Periods {25}"; // operar hasta minutos antes de cierre mercado
 	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_TO_CLOSEMARKET = "Mobile Average Trade Until x Minutes From CloseMarket"; // operar hasta minutos antes de cierre mercado
 	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET = "OffSet From Open Market (Minutes) To Start Trading";  // offset desde inicio de mercado en minutos
 	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OPERATIONS_TYPE = "Operation Type [ALL, BUY, SELL]";  // offset desde inicio de mercado en minutos
@@ -89,7 +91,7 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 	private static String _EXPANDO_MACD_PERIODOS_LONG_EXP_MOBILE = "MACD  Long-Avg Mobile Periods {26}";  //   SINTAXIS PARA VALORES POR DEFECTO	
 	private static String _EXPANDO_MACD_PERIODOS_SIGNALLINE_EXP_MOBILE = "MACD  Signal Line Avg Mobile Periods {9}";  //   SINTAXIS PARA VALORES POR DEFECTO
 
-
+	long  _num_aroonP = 8;   // Periodos
 	long  _num_macdP = 8;   // Periodos
 	long  _num_macdT = 5;   // Tiempo de barras
 	long  _num_adxr_rate = 25;
@@ -98,6 +100,7 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 	long  _num_shortAvgMACD_P = 12;   // Tiempo de barras
 	long  _num_longAvgMACD_P = 26;   // Tiempo de barras
 	long  _num_signalLineMACD_P = 9;   // Tiempo de barras
+	
 	
 	String operationfilter="";    // ALL, BUY, SELL
 	
@@ -266,13 +269,16 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 		_num_macdP       = this.getJsonStrategyShareParams().getLong(_EXPANDO_MOBILE_AVERAGE_PERIODS_NUMBER,0);
 		_num_macdT 		 = this.getJsonStrategyShareParams().getLong(_EXPANDO_MOBILE_AVERAGE_CANDLE_SIZE,0);
 		_num_adxr_rate   = this.getJsonStrategyShareParams().getLong(_EXPANDO_MOBILE_ADX_PASSED_RATE,0);
+		_num_aroonP       = this.getJsonStrategyShareParams().getLong(_EXPANDO_AROON_PERIODS,0);  
+		
+		
 		operationfilter = this.getJsonStrategyShareParams().getString(_EXPANDO_MOBILE_AVERAGE_TRADE_OPERATIONS_TYPE,"ALL").trim();
 		
 		_num_shortAvgMACD_P   = this.getJsonStrategyShareParams().getLong(_EXPANDO_MACD_PERIODOS_SHORT_EXP_MOBILE,0);
 		_num_longAvgMACD_P    = this.getJsonStrategyShareParams().getLong(_EXPANDO_MACD_PERIODOS_LONG_EXP_MOBILE,0); 
 		_num_signalLineMACD_P = this.getJsonStrategyShareParams().getLong(_EXPANDO_MACD_PERIODOS_SIGNALLINE_EXP_MOBILE,0);
 		
-		if (_num_macdP==0 || _num_macdT==0 || _num_adxr_rate==0 || _num_shortAvgMACD_P==0 || _num_longAvgMACD_P==0 || _num_signalLineMACD_P==0 )
+		if (_num_aroonP==0 || _num_macdP==0 || _num_macdT==0 || _num_adxr_rate==0 || _num_shortAvgMACD_P==0 || _num_longAvgMACD_P==0 || _num_signalLineMACD_P==0 )
 			return Boolean.FALSE;
 		
 		/* SOLO PODEMOS ENTRAR EN EL PERIODO MARCADO DE CADA MINUTO, PARA LO CUAL OBTENEMOS EL RESTO */	
@@ -335,11 +341,14 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 			
 					DirectionalMovementADXRUtil  ADXR =  new DirectionalMovementADXRUtil(_calendarFromNow.getTime(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId());
 					
-					/* if (Validator.isNull(ADXR)  || (Validator.isNotNull(ADXR) && ADXR.getADXR()<=0))
+					if (Validator.isNull(ADXR))
 						return Boolean.FALSE;
-					*/
-					double MACD = 0d; //new DirectionalMovementADXRUtil(_calendarFromNow.getTime(), _num_macdT, _num_macdP,_share.getShareId(), _share.getCompanyId(), _share.getGroupId());
 					
+					AroonIndicatorUtil  Aroon =  new AroonIndicatorUtil(_calendarFromNow.getTime(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(),_num_aroonP);
+					if (Validator.isNull(Aroon))
+						return Boolean.FALSE;
+					
+					double MACD = 0d; //new DirectionalMovementADXRUtil(_calendarFromNow.getTime(), _num_macdT, _num_macdP,_share.getShareId(), _share.getCompanyId(), _share.getGroupId());					
 					double previousMACD = 0d; //new DirectionalMovementADXRUtil(_calendarFromNow.getTime(), _num_macdT, _num_macdP,_share.getShareId(), _share.getCompanyId(), _share.getGroupId());
 					
 					//MACD = EMA12 – EMA26
@@ -370,13 +379,18 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 					
 					boolean bBuyADXRSignal =  Validator.isNotNull(ADXR) && ADXR.getADXR() >=_num_adxr_rate && ADXR.isCrossDIUpWard();
 				    boolean bSellADXRSignal = Validator.isNotNull(ADXR) && ADXR.getADXR() >=_num_adxr_rate && ADXR.isCrossDIDownWard();
-						  
+				    
+				    boolean bBuyAroonSignal =  Validator.isNotNull(Aroon) && Aroon.isCrossAroonUpWard();
+				    boolean bSellAroonSignal = Validator.isNotNull(Aroon) && Aroon.isCrossAroonDownWard();
+				    
+					
+					
 					bBuyMACDSignal =  MACD < 0 && MACD > previousMACD  && MACD > _macd_SignalAvgMobileExponential.doubleValue(); // teniendo un valor inferior a cero, cruce en sentido ascendente a su media de nueve períodos.
 					bSellMACDSignal =  MACD > 0 && MACD < previousMACD  && MACD < _macd_SignalAvgMobileExponential.doubleValue(); // teniendo un valor inferior a cero, cruce en sentido ascendente a su media de nueve períodos.
 					// se produce una señal de venta cuando el MACD, teniendo valores positivos, traspase a su media en sentido descendente.							
 					
-					_BuySuccess =  oShareLastRTime.getValue()>_avgMobileExponential.doubleValue() && (bBuyADXRSignal || bBuyMACDSignal);					
-					_SellSuccess = oShareLastRTime.getValue()<_avgMobileExponential.doubleValue() && (bSellADXRSignal || bSellMACDSignal);
+					_BuySuccess =  oShareLastRTime.getValue()>_avgMobileExponential.doubleValue() && (bBuyADXRSignal  || bBuyMACDSignal  || bBuyAroonSignal);					
+					_SellSuccess = oShareLastRTime.getValue()<_avgMobileExponential.doubleValue() && (bSellADXRSignal || bSellMACDSignal || bSellAroonSignal);
 					
 					
 					_BuySuccess = _BuySuccess &&  
@@ -407,9 +421,22 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 						_tradeDescription.put("previousMACD", previousMACD);
 						_tradeDescription.put("MACD", MACD);						
 						_tradeDescription.put("_macd_SignalAvgMobileExponential", _macd_SignalAvgMobileExponential);
-						_tradeDescription.put("ADXR.", ADXR.getADXR());
+						_tradeDescription.put("ADXR", ADXR.getADXR());
 						_tradeDescription.put("ADXR.isCrossDIUpWard", ADXR.isCrossDIUpWard());
-						_tradeDescription.put("ADXR.isCrossDIDownWard", ADXR.isCrossDIDownWard());						
+						_tradeDescription.put("ADXR.isCrossDIDownWard", ADXR.isCrossDIDownWard());		
+						_tradeDescription.put("Aroon.isCrossAroonUpWard", Aroon.isCrossAroonUpWard());
+						_tradeDescription.put("Aroon.isCrossAroonDownWard", Aroon.isCrossAroonDownWard());
+						_tradeDescription.put("Aroon.getAroonDown", Aroon.getAroonDown());
+						_tradeDescription.put("Aroon.getAroonUp", Aroon.getAroonUp());
+						_tradeDescription.put("Aroon.getLastAroonDown", Aroon.getLastAroonDown());
+						_tradeDescription.put("Aroon.getLastAroonUp", Aroon.getLastAroonUp());
+						
+						
+						
+						
+						
+						
+						
 					
 					}						
 				 } // if  (Validator.isNotNull(oShareLastRTime))			   	
@@ -441,7 +468,8 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 	Parameters.put(_EXPANDO_MACD_PERIODOS_SHORT_EXP_MOBILE,  String.valueOf(ExpandoColumnConstants.INTEGER));  // ESTE ES EL UNICO DOUBLE
 	Parameters.put(_EXPANDO_MACD_PERIODOS_LONG_EXP_MOBILE,  String.valueOf(ExpandoColumnConstants.INTEGER));  // ESTE ES EL UNICO DOUBLE
 	Parameters.put(_EXPANDO_MACD_PERIODOS_SIGNALLINE_EXP_MOBILE,  String.valueOf(ExpandoColumnConstants.INTEGER));  // ESTE ES EL UNICO DOUBLE
-	
+	Parameters.put(_EXPANDO_AROON_PERIODS,  String.valueOf(ExpandoColumnConstants.INTEGER));  // ESTE ES EL UNICO DOUBLE
+
 	
 	ExpandoTable expandoTable;
 	try {

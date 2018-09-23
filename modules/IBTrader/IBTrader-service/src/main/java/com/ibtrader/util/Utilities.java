@@ -774,7 +774,13 @@ public class Utilities {
 	    		_fdate.set(Calendar.YEAR, _years[y]);  // SPAIN MONDAY
 	    		_fdate.set(Calendar.DAY_OF_WEEK, Integer.parseInt(DayOfWeek));  // SPAIN MONDAY
 	    		_fdate.set(Calendar.MONTH, Integer.parseInt(aMonths[k].trim()));  // months -1
-	    		_fdate.set(Calendar.WEEK_OF_MONTH, Integer.parseInt(WeekMonth));  // months -1	    		
+	    	    // add +1 to week if first weekday of mounth > dayOfWeek
+	    		int localWeek = Integer.parseInt(WeekMonth);
+	    	    if (_fdate.get(_fdate.DAY_OF_WEEK) > Integer.parseInt(DayOfWeek)-1) {
+	    	        localWeek++;
+	    	    }
+	    		
+	    		_fdate.set(Calendar.WEEK_OF_MONTH, localWeek);  // months -1	    		
 	    		_FutDate.add(sdfSorted.format(_fdate.getTime()));
 	    	}
     	
