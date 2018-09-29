@@ -404,6 +404,9 @@ public class MobileAvgUtil {
 		_cExponentialAvgMobile.add(Calendar.SECOND,-1);		
 		List<Realtime> closeRealTimes = RealtimeLocalServiceUtil.findCloseRealTimes(shareId, companyId, groupId,  _cExponentialAvgMobile.getTime(), _ActualDateBar, lExponentialAvgPeriods);
 				
+		if (Validator.isNull(closeRealTimes))
+			return null;
+		
 		TimeSeries series = new BaseTimeSeries("getExponentialAvgMobile");
         ZonedDateTime endTime = ZonedDateTime.now();
         int counter = 1;
@@ -466,7 +469,7 @@ public class MobileAvgUtil {
 		double MACD = 0d;
 	
 		MACDIndicator  MACDIndicator = getMACDIndicator(_ActualDateBar, TimeBars , shareId, companyId, groupId, shortMACDPeriods, longMACDPeriods);
-		System.out.println(MACDIndicator.getValue(Long.valueOf(ConfigKeys.INDICATORS_MIN_SERIE_COUNT-1).intValue()));
+		_log.debug(MACDIndicator.getValue(Long.valueOf(ConfigKeys.INDICATORS_MIN_SERIE_COUNT-1).intValue()));
 				
 		MACD =  MACDIndicator.getValue(Long.valueOf(ConfigKeys.INDICATORS_MIN_SERIE_COUNT-1).intValue()).doubleValue();
         
@@ -474,6 +477,20 @@ public class MobileAvgUtil {
 				
 		
 	}
+	
+	public  static Double getMACDPrevious(Date _ActualDateBar,  long TimeBars,long shareId, long companyId, long groupId, long shortMACDPeriods, long longMACDPeriods)
+	{
+		double MACD = 0d;
+		
+		MACDIndicator  MACDIndicator = getMACDIndicator(_ActualDateBar, TimeBars , shareId, companyId, groupId, shortMACDPeriods, longMACDPeriods);
+		_log.debug(MACDIndicator.getValue(Long.valueOf(ConfigKeys.INDICATORS_MIN_SERIE_COUNT-2).intValue()));
+				
+		MACD = MACDIndicator.getValue(Long.valueOf(ConfigKeys.INDICATORS_MIN_SERIE_COUNT-2).intValue()).doubleValue();
+        
+		return MACD;
+		
+	}
+	
 	
 	/* SERIES DE MACD DE 9, APLICAS UNA MEDIA EXPONENECIAL */
 	public  static Double getMACDSignal(Date _ActualDateBar,  long TimeBars,long shareId, long companyId, long groupId, long shortMACDPeriods, 
@@ -504,19 +521,37 @@ public class MobileAvgUtil {
 				
 		
 	}
-	
-	public  static Double getMACDPrevious(Date _ActualDateBar,  long TimeBars,long shareId, long companyId, long groupId, long shortMACDPeriods, long longMACDPeriods)
+	/* SERIES DE MACD DE 9, APLICAS UNA MEDIA EXPONENECIAL */
+	public  static Double getMACDSignalPrevious(Date _ActualDateBar,  long TimeBars,long shareId, long companyId, long groupId, long shortMACDPeriods, 
+			long longMACDPeriods, long signalMACDPeriods)
 	{
-		double MACD = 0d;
 		
+		/* macd 26, 0..26*/
 		MACDIndicator  MACDIndicator = getMACDIndicator(_ActualDateBar, TimeBars , shareId, companyId, groupId, shortMACDPeriods, longMACDPeriods);
-		System.out.println(MACDIndicator.getValue(Long.valueOf(ConfigKeys.INDICATORS_MIN_SERIE_COUNT-2).intValue()));
-				
-		MACD = MACDIndicator.getValue(Long.valueOf(ConfigKeys.INDICATORS_MIN_SERIE_COUNT-2).intValue()).doubleValue();
+		TimeSeries series = new BaseTimeSeries("getMACDSignal");
+        ZonedDateTime endTime = ZonedDateTime.now();        
+        for (int j=0;j<ConfigKeys.INDICATORS_MIN_SERIE_COUNT;j++)
+        {
+        	series.addBar(new BaseBar(endTime.plusMinutes(TimeBars*(j+1)),0.0,0.0,0.0, MACDIndicator.getValue(j).doubleValue(),0.0));        	
+        }
+		
+        ClosePriceIndicator closePrice = new ClosePriceIndicator(series); 
+        EMAIndicator macd_emea = new EMAIndicator(closePrice, (int) signalMACDPeriods);
         
-		return MACD;
+
+        if (_log.isDebugEnabled())
+        {
+	        for (int j=0;j<ConfigKeys.INDICATORS_MIN_SERIE_COUNT;j++)
+			{ 
+				try {_log.debug("getMACDSignal:" + j + ":" +  macd_emea.getValue(j).doubleValue());} catch (Exception e) {}	
+			}
+        }
+		return macd_emea.getValue((int) ConfigKeys.INDICATORS_MIN_SERIE_COUNT-2).doubleValue();
+				
 		
 	}
+	
+	
 	
 	
 	/* public static Realtime getAvgMobileMM8(Calendar _oDateFrom, Calendar _oDateTo, int Periods, int TimeBars, int ShareStrategyID, boolean Simulation)

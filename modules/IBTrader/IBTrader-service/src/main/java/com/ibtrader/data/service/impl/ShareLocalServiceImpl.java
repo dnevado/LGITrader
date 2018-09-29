@@ -14,6 +14,7 @@
 
 package com.ibtrader.data.service.impl;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -104,6 +105,13 @@ public class ShareLocalServiceImpl extends ShareLocalServiceBaseImpl {
 		return shareLocalService.dynamicQuery(_DQ);
 	}
 	
+	
+	/* CUANDO SE EDITE UNA ACCION, 
+	 * 1. PONEMOS EL DATE_VALIDATED A date()
+	 * 2. Intentamos eliminar que si un contrato ha sido verificado hoy, no lo saque.   
+	 * 
+	 */
+	
 	public List<Share> findByValidatedTraderProviderMarketGroupCompany(long marketId, long groupId, long companyId)
 	{
 		DynamicQuery _DQ = shareLocalService.dynamicQuery();
@@ -113,6 +121,7 @@ public class ShareLocalServiceImpl extends ShareLocalServiceBaseImpl {
 		_DQ.add(RestrictionsFactoryUtil.eq("groupId", groupId));
 		//_DQ.add(RestrictionsFactoryUtil.isNull("date_validated_trader_provider"));
 		_DQ.add(RestrictionsFactoryUtil.eq("validated_trader_provider",Boolean.FALSE));
+		_DQ.add(RestrictionsFactoryUtil.le("date_validated_trader_provider",new Date()));
 		
 		
 		/*
@@ -224,6 +233,13 @@ public class ShareLocalServiceImpl extends ShareLocalServiceBaseImpl {
 		_share.setCreateDate(share.getCreateDate());
 		_share.setModifiedDate(share.getModifiedDate());
 		_share.setUserCreatedId(share.getUserCreatedId());
+		
+		Calendar _Now = Calendar.getInstance();
+		_Now.add(Calendar.DATE, -2);  // para que lo valide el sistema, coge aquellos no validados hoy.
+		
+		_share.setDate_validated_trader_provider(_Now.getTime());
+		
+		
 		
 		
 		sharePersistence.update(_share);

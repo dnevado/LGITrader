@@ -62,6 +62,7 @@ import com.liferay.portal.kernel.util.WebKeys;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -306,7 +307,12 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 							share.setCreateDate(new Date());
 						else
 						{
-							share.setDate_validated_trader_provider(null);  // para verificarlo de nuevo
+							Calendar _Now = Calendar.getInstance();
+							_Now.add(Calendar.DATE, -2);  // para que lo valide el sistema, coge aquellos no validados hoy.
+							
+							share.setDate_validated_trader_provider(_Now.getTime());
+							
+							//share.setDate_validated_trader_provider(null);  // para verificarlo de nuevo
 							share.setValidated_trader_provider(Boolean.FALSE);
 						}
 						share.setModifiedDate(new Date());

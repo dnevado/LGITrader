@@ -454,6 +454,20 @@ public class TIMApiWrapper implements EWrapper {
 	@Override
 	public void contractDetails(int reqId, ContractDetails contractDetails) {
 		_log.debug("TIMApiWrapper ContractDetails. ReqId: ["+reqId+"] - ["+contractDetails.contract().symbol()+"], ["+contractDetails.contract().secType()+"], ConId: ["+contractDetails.contract().conid()+"] @ ["+contractDetails.contract().exchange()+"]");
+		
+		 IBOrder _ibOrder;		 	
+		 //_ibOrder = IBOrderLocalServiceUtil.fetchIBOrder(reqId);
+		 _ibOrder = IBOrderLocalServiceUtil.findByOrderClientGroupCompany(reqId, _clientId, _ibtarget_organization.getCompanyId(),_ibtarget_share.getGroupId());
+	 	 if (_ibOrder!=null)  // error en una posicion dada abierta		
+		 { 
+	 		 
+			Share share = ShareLocalServiceUtil.fetchShare(_ibOrder.getShareID());  								
+			share.setDate_validated_trader_provider(new Date());
+			/* actualizamos datos error de operativa */
+			_log.debug("Updating contractDetails share:" + share.getSymbol());
+			ShareLocalServiceUtil.updateShare(share);	
+		 }
+		
 	}
 	//! [contractdetails]
 	@Override

@@ -370,8 +370,10 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 					previousMACD  = MobileAvgUtil.getMACDPrevious(_calendarFromNow.getTime(), _num_macdT , _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_shortAvgMACD_P, _num_longAvgMACD_P);
 										
 					
-					Double _macd_SignalAvgMobileExponential  = MobileAvgUtil.getMACDSignal(_calendarFromNow.getTime(),  _num_macdT , _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_shortAvgMACD_P,_num_longAvgMACD_P,_num_signalLineMACD_P);
+					Double _macd_SignalAvgMobileExponential  		 = MobileAvgUtil.getMACDSignal(_calendarFromNow.getTime(),  _num_macdT , _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_shortAvgMACD_P,_num_longAvgMACD_P,_num_signalLineMACD_P);
+					Double _macd_PreviousSignalAvgMobileExponential  = MobileAvgUtil.getMACDSignalPrevious(_calendarFromNow.getTime(),  _num_macdT , _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_shortAvgMACD_P,_num_longAvgMACD_P,_num_signalLineMACD_P);
 					
+										
 					boolean _BuySuccess = false;
 					boolean _SellSuccess = false;
 					boolean bBuyMACDSignal = Boolean.FALSE;  
@@ -383,10 +385,20 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 				    boolean bBuyAroonSignal =  Validator.isNotNull(Aroon) && Aroon.isCrossAroonUpWard();
 				    boolean bSellAroonSignal = Validator.isNotNull(Aroon) && Aroon.isCrossAroonDownWard();
 				    
+				    boolean crossMACDSignalUp = Boolean.FALSE;
+	    			boolean crossMACDSignalDown = Boolean.FALSE;
 					
-					
-					bBuyMACDSignal =  MACD < 0 && MACD > previousMACD  && MACD > _macd_SignalAvgMobileExponential.doubleValue(); // teniendo un valor inferior a cero, cruce en sentido ascendente a su media de nueve períodos.
-					bSellMACDSignal =  MACD > 0 && MACD < previousMACD  && MACD < _macd_SignalAvgMobileExponential.doubleValue(); // teniendo un valor inferior a cero, cruce en sentido ascendente a su media de nueve períodos.
+				    //MACD > _macd_SignalAvgMobileExponential.doubleValue() ES UN CRUCE??????
+				    if (Validator.isNotNull(_macd_SignalAvgMobileExponential) && Validator.isNotNull(_macd_PreviousSignalAvgMobileExponential))
+				    {
+				    	
+				    			crossMACDSignalUp = (_macd_PreviousSignalAvgMobileExponential >  previousMACD && MACD > _macd_SignalAvgMobileExponential) ;
+				    			crossMACDSignalDown = (_macd_PreviousSignalAvgMobileExponential < previousMACD  && MACD <_macd_SignalAvgMobileExponential);
+
+				    	
+				    			bBuyMACDSignal =  MACD < 0 && MACD > previousMACD  && crossMACDSignalUp; // teniendo un valor inferior a cero, cruce en sentido ascendente a su media de nueve períodos.
+				    			bSellMACDSignal =  MACD > 0 && MACD < previousMACD  && crossMACDSignalDown; // teniendo un valor inferior a cero, cruce en sentido ascendente a su media de nueve períodos.
+				    }
 					// se produce una señal de venta cuando el MACD, teniendo valores positivos, traspase a su media en sentido descendente.							
 					
 					_BuySuccess =  oShareLastRTime.getValue()>_avgMobileExponential.doubleValue() && (bBuyADXRSignal  || bBuyMACDSignal  || bBuyAroonSignal);					
@@ -421,6 +433,9 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 						_tradeDescription.put("previousMACD", previousMACD);
 						_tradeDescription.put("MACD", MACD);						
 						_tradeDescription.put("_macd_SignalAvgMobileExponential", _macd_SignalAvgMobileExponential);
+						_tradeDescription.put("_macd_PreviousSignalAvgMobileExponential", _macd_PreviousSignalAvgMobileExponential);
+						_tradeDescription.put("crossMACDSignalUp", crossMACDSignalUp);
+						_tradeDescription.put("crossMACDSignalDown", crossMACDSignalDown);
 						_tradeDescription.put("ADXR", ADXR.getADXR());
 						_tradeDescription.put("ADXR.isCrossDIUpWard", ADXR.isCrossDIUpWard());
 						_tradeDescription.put("ADXR.isCrossDIDownWard", ADXR.isCrossDIDownWard());		
