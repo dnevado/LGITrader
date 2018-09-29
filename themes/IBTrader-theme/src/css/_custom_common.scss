@@ -107,7 +107,7 @@ html {
 		text-decoration: none;
 
 		&:focus, &:hover {
-			color: #4f99c6;
+			color: #5b907d;
 			text-decoration: none;
 		}
 
@@ -147,7 +147,7 @@ html {
 
 	.navbar .nav > li > a {
 		&:focus, &:hover {
-			color: #4f99c6;
+			color: #5b907d;
 		}
 	}
 
@@ -306,7 +306,7 @@ html {
 				}
 
 				.dropdown-menu, .site-administration-menu {
-					background: #4f99c6;
+					background: #5b907d;
 					border-width: 0;
 					left: 0;
 					margin: 0;
@@ -781,7 +781,7 @@ html {
 	.lfr-add-panel {
 		.add-content-menu {
 			.lfr-content-item {
-				color: #4f99c6;
+				color: #5b907d;
 
 				&:focus, &:hover {
 					background-color: #E5F5FC;
@@ -821,7 +821,7 @@ html {
 
 	.lfr-add-panel, .lfr-device-preview-panel, .lfr-edit-layout-panel {
 		&.lfr-admin-panel h1 {
-			color: #4f99c6;
+			color: #5b907d;
 			font-size: 26px;
 			font-weight: normal;
 			line-height: 26px;
@@ -834,7 +834,7 @@ html {
 
 	@each $prefix in $prefixes {
 		::#{$prefix}selection {
-			background: #2AAAE6 !important;
+			background: #5b907d !important;
 			color: #FFF;
 
 			text-shadow: -1px -1px rgba(0, 0, 0, 0.3);

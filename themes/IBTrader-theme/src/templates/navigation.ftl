@@ -1,11 +1,15 @@
-<div id="top-menu">
-	
-	<ul>
+<div class="container-fluid">
+    <a class="navbar-brand" href="#">Navbar</a>
+  		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+    	<span class="navbar-toggler-icon"></span>
+  </button>
+<div id="top-menu" class="collapse navbar-collapse">	
+	 <ul class="navbar-nav">
 		<#list nav_items as nav_item>
 			<#if nav_item.isSelected()>
-				<li class="active">
+				<li  class="nav-item  active">
 			<#else>
-				<li>
+				<li class="nav-item">
 			</#if>
 				<a href="${nav_item.getURL()}" ${nav_item.getTarget()}>${nav_item.getName()}</a>
 
@@ -29,4 +33,5 @@
 			</li>
 		</#list>
 	</ul>
+</div>
 </div>

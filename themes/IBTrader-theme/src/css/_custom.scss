@@ -6,10 +6,10 @@
 @import url(color_schemes/dark.css);
 @import url(color_schemes/light.css);*/
 
-$dockbar-gradient-end: #6fb3e0;
-$dockbar-gradient-start: #4f99c6;
+$dockbar-gradient-end: #5b9575;
+$dockbar-gradient-start: #5b907d;
 
-$dockbar-open-gradient-end: #6fb3e0;
+$dockbar-open-gradient-end: #5b9575;
 $dockbar-open-gradient-start: #EFA293; 
 
 /* ---------- Base styles ---------- */
@@ -346,7 +346,7 @@ html {
 
 		.drag-handle {
 			background-color: rgba(255, 255, 255, 0.75);
-			color: #4f99c6;
+			color: #5b907d;
 		}
 	}
 
@@ -696,9 +696,15 @@ html {
 		}
 	}
 	.button-holder {float :right}
-	.btn-group a.btn-default { background-color: #4f99c6;
+	.btn-group a.btn-default { background-color: #5b907d;
     color: #ffff;}
     table tr td {text-align :center};
+	.panel-group .panel-title > a, .panel-group .panel-title > span {
+    color : #ffffff;
+	}
+	.portlet-content .panel-group .panel-heading { background-color : #73885b; }
+	.table thead th   {color : #ffffff; background: #8cb29d;}
+	table.dataTable thead th, table.dataTable tfoot th {font-weight : normal}
 
 	/* ---------- IE8 ---------- */
 

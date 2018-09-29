@@ -32,6 +32,8 @@
 	#set ($footer_address_phone = $theme_display.getThemeSetting('footer-address-phone'))
 	#set ($footer_address_fax = $theme_display.getThemeSetting('footer-address-fax'))
 	#set ($footer_company_logo = $theme_display.getThemeSetting('footer-company-logo'))
+	
+	<link href="https://fonts.googleapis.com/css?family=Work+Sans" rel="stylesheet">
 
 </head>
 
@@ -66,6 +68,7 @@ $theme.include($body_top_include)
 		</header>
 		<div id="content">
 			<div id="main-content">
+				
 				#if ($selectable)
 					$theme.include($content_include)
 				#else

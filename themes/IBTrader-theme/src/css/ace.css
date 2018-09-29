@@ -1451,7 +1451,7 @@ html {
   .aui .breadcrumbs {
     position: relative;
     border-bottom: 1px solid #e5e5e5;
-    background-color: #f5f5f5;
+    background-color: #73885b; color: #ffffff;
     min-height: 40px;
     line-height: 39px;
     padding: 0 12px 0 0;
@@ -1503,7 +1503,7 @@ html {
   .aui .nav-search .form-search {
     margin-bottom: 0; }
   .aui .nav-search .nav-search-input {
-    border-color: #6fb3e0;
+    border-color: #5b9575;
     border-width: 1px;
     width: 120px;
     height: 18px !important;
@@ -1524,9 +1524,9 @@ html {
     right: 0; }
   .aui .nav-search .nav-search-input:focus,
   .aui .nav-search .nav-search-input:hover {
-    border-color: #6fb3e0; }
+    border-color: #5b9575; }
   .aui .nav-search .nav-search-icon {
-    color: #6fb3e0 !important;
+    color: #5b9575 !important;
     font-size: 14px !important;
     line-height: 24px !important; }
   .aui .nav-search.minimized .nav-search-input {
@@ -2019,7 +2019,7 @@ html {
     width: 158px;
     height: 39px;
     line-height: 38px;
-    background-color: #f5f5f5;
+    background-color: #73885b; color: #ffffff;
     z-index: 121;
     -webkit-box-shadow: 2px 1px 2px 0 rgba(0, 0, 0, 0.2);
     -moz-box-shadow: 2px 1px 2px 0 rgba(0, 0, 0, 0.2);
@@ -2222,14 +2222,14 @@ html {
   .aui .btn-primary[disabled] {
     background-color: #2283c5 !important; }
   .aui .btn-info {
-    background-color: #6fb3e0 !important;
-    border-color: #6fb3e0; }
+    background-color: #5b9575 !important;
+    border-color: #5b9575; }
   .aui .btn-info:hover {
-    background-color: #4f99c6 !important; }
+    background-color: #5b907d !important; }
   .aui .btn-info.no-border:hover {
-    border-color: #4f99c6; }
+    border-color: #5b907d; }
   .aui .btn-info.no-hover:hover {
-    background-color: #6fb3e0 !important; }
+    background-color: #5b9575 !important; }
   .aui .btn-info.active {
     background-color: #5fa6d3 !important;
     border-color: #4799cc; }
@@ -2238,7 +2238,7 @@ html {
     border-color: #539fd0; }
   .aui .btn-info.disabled,
   .aui .btn-info[disabled] {
-    background-color: #6fb3e0 !important; }
+    background-color: #5b9575 !important; }
   .aui .btn-success {
     background-color: #87b87f !important;
     border-color: #87b87f; }
@@ -3242,7 +3242,7 @@ html {
   .aui .dropdown-menu li.active a:hover,
   .aui .dropdown-menu .dropdown-submenu:hover > a,
   .aui .nav-tabs .dropdown-menu li > a:focus {
-    background: #4f99c6;
+    background: #5b907d;
     color: #ffffff; }
   .aui .dropdown-default li a:hover,
   .aui .dropdown-default li a:focus,
@@ -3260,7 +3260,7 @@ html {
   .aui .dropdown-info li.active a:hover,
   .aui .dropdown-info .dropdown-submenu:hover > a,
   .aui .nav-tabs .dropdown-info li > a:focus {
-    background: #6fb3e0;
+    background: #5b9575;
     color: #ffffff; }
   .aui .dropdown-primary li a:hover,
   .aui .dropdown-primary li a:focus,
@@ -3511,12 +3511,12 @@ html {
   .aui .dropdown-navbar > li:last-child > a {
     border-bottom: 0 solid #DDD;
     border-top: 1px dotted transparent;
-    color: #4F99C6;
+    color: #5b907d;
     text-align: center;
     font-size: 13px; }
   .aui .dropdown-navbar > li:last-child > a:hover {
     background-color: #FFF;
-    color: #4F99C6;
+    color: #5b907d;
     text-decoration: underline; }
   .aui .dropdown-navbar > li:last-child > a:hover > [class*="icon-"] {
     text-decoration: none; }
@@ -3974,7 +3974,7 @@ html {
     height: 18px;
     overflow: hidden;
     border-radius: 12px;
-    background-color: #F5F5F5;
+    background-color: #73885b; color: #ffffff;
     box-shadow: inset 0px 2px 2px 0px rgba(0, 0, 0, 0.2);
     border: 1px solid #CCC;
     text-align: left;
@@ -4187,7 +4187,7 @@ html {
     color: #468fcc;
     background-color: #FFF;
     text-indent: -33px;
-    border-color: #6fb3e0; }
+    border-color: #5b9575; }
   .aui input[type=checkbox].ace.ace-switch.ace-switch-7:checked + .lbl::after {
     left: 3px;
     content: '\f00c';
@@ -4280,7 +4280,7 @@ html {
     padding: 0 8px;
     line-height: 24px;
     text-align: center;
-    background-color: #6fb3e0;
+    background-color: #5b9575;
     color: #FFF;
     font-size: 11px;
     font-weight: bold;
@@ -4921,8 +4921,8 @@ html {
     text-align: center; }
   .aui .nav-tabs > li.open .dropdown-toggle {
     /* dropdown in tabs */
-    background-color: #4F99C6;
-    border-color: #4F99C6;
+    background-color: #5b907d;
+    border-color: #5b907d;
     color: #FFF; }
   .aui .nav-tabs > li.open .dropdown-toggle > [class*="icon-"] {
     color: #FFF !important; }
@@ -4933,8 +4933,8 @@ html {
   .aui .nav-pills .open .dropdown-toggle,
   .aui .nav > li.dropdown.open.active > a:hover,
   .aui .nav > li.dropdown.open.active > a:focus {
-    background-color: #4F99C6;
-    border-color: #4F99C6;
+    background-color: #5b907d;
+    border-color: #5b907d;
     color: #FFFFFF; }
   .aui .nav-pills .open .dropdown-toggle > [class*="icon-"],
   .aui .nav > li.dropdown.open.active > a:hover > [class*="icon-"],
@@ -6179,13 +6179,13 @@ html {
     background-color: #cb6fd7;
     border-color: #cb6fd7; }
   .aui .infobox-blue {
-    color: #6fb3e0;
-    border-color: #6fb3e0; }
+    color: #5b9575;
+    border-color: #5b9575; }
   .aui .infobox-blue > .infobox-icon > [class*="icon-"] {
-    background-color: #6fb3e0; }
+    background-color: #5b9575; }
   .aui .infobox-blue.infobox-dark {
-    background-color: #6fb3e0;
-    border-color: #6fb3e0; }
+    background-color: #5b9575;
+    border-color: #5b9575; }
   .aui .infobox-blue2 {
     color: #3983c2;
     border-color: #3983c2; }
@@ -6991,7 +6991,7 @@ html {
   .aui li.item-green2 {
     border-left-color: #0490a6; }
   .aui li.item-blue {
-    border-left-color: #4f99c6; }
+    border-left-color: #5b907d; }
   .aui li.item-blue2 {
     border-left-color: #3983c2; }
   .aui li.item-blue3 {
@@ -7397,7 +7397,7 @@ html {
     margin: 0 12px;
     position: relative; }
   .aui .message-item.message-unread .attachment {
-    color: #4F99C6; }
+    color: #5b907d; }
   .aui .message-content .time {
     font-weight: normal; }
   .aui .message-star {
@@ -7683,7 +7683,7 @@ html {
     top: 1px;
     bottom: 1px;
     left: -1px;
-    border-left: 3px solid #4F99C6; }
+    border-left: 3px solid #5b907d; }
   .aui .inbox-folders .btn.active:after {
     display: none; }
   .aui .inbox-folders .btn .counter {
@@ -7919,8 +7919,8 @@ html {
     color: #DDD; }
   .aui .fc-state-active,
   .aui .fc-state-active .fc-button-inner {
-    border-color: #4F99C6;
-    background-color: #6FB3E0; }
+    border-color: #5b907d;
+    background-color: #5b9575; }
   .aui .fc-state-hover,
   .aui .fc-state-hover .fc-button-inner {
     background-color: #8B9AA3; }
@@ -8263,7 +8263,7 @@ html {
     .aui .select2-search input {
       background-position: auto !important; } }
   .aui .select2-container-active.select2-dropdown-open .select2-choice {
-    background-color: #f5f5f5;
+    background-color: #73885b; color: #ffffff;
     background-image: -moz-linear-gradient(top, #eeeeee, white);
     background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#eeeeee), to(white));
     background-image: -webkit-linear-gradient(top, #eeeeee, white);
@@ -9068,7 +9068,7 @@ html {
     width: 9px; }
   .aui .ui-slider-handle {
     border-radius: 0;
-    background-color: #F5F5F5;
+    background-color: #73885b; color: #ffffff;
     border: 1px solid; }
   .aui .ui-slider-handle:before {
     display: inline-block;
@@ -9408,7 +9408,7 @@ html {
   .aui .ui-menu .ui-menu-item a:hover,
   .aui .ui-menu .ui-menu-item a.ui-state-focus,
   .aui .ui-menu .ui-menu-item a.ui-state-active {
-    background-color: #4f99c6;
+    background-color: #5b907d;
     color: #FFF;
     margin: auto;
     font-weight: normal; }
@@ -10451,7 +10451,7 @@ html {
   .aui .tags .tag-success {
     background-color: #87b87f; }
   .aui .tags .tag-info {
-    background-color: #6fb3e0; }
+    background-color: #5b9575; }
   .aui .tags .tag-inverse {
     background-color: #555555; }
   .aui .tags .tag .close {
@@ -11323,7 +11323,7 @@ html {
   .aui .rtl li.item-green2 {
     border-right-color: #0490a6; }
   .aui .rtl li.item-blue {
-    border-right-color: #4f99c6; }
+    border-right-color: #5b907d; }
   .aui .rtl li.item-blue2 {
     border-right-color: #3983c2; }
   .aui .rtl li.item-blue3 {
@@ -11428,7 +11428,7 @@ html {
     left: auto;
     right: -1px;
     border-left: none;
-    border-right: 3px solid #4F99C6; }
+    border-right: 3px solid #5b907d; }
   .aui .rtl .inbox-folders .btn .counter {
     right: auto;
     left: 8px; }

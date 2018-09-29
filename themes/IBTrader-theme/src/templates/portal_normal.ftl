@@ -36,6 +36,10 @@
 	>
 
 
+
+	<link href="https://fonts.googleapis.com/css?family=Work+Sans" rel="stylesheet">
+	
+
 </head>
 
 <body class="${css_class} ">
@@ -58,8 +62,8 @@
 							<img class="topLogo" alt="${logo_description}" height="${site_logo_height}" src="${site_logo}" width="${site_logo_width}" />
 						</#if>
 						
-					</a>				
-					<nav id="navigation">
+					</a>
+					<nav id="navigation" class="navbar navbar-expand-lg navbar-light bg-light">
 						<#if has_navigation || is_signed_in>
 							<#include "${full_templates_path}/navigation.ftl" />
 						</#if>
@@ -69,6 +73,11 @@
 		</header>
 		<div id="content">
 			<div id="main-content">
+				<#if is_signed_in> 
+				    <@liferay_portlet["runtime"]				    
+					    portletName="IBTraderSimulationmodeWeb"
+					/>
+				</#if>
 				<#if selectable>
 					<@liferay_util["include"] page=content_include />
 				<#else>
