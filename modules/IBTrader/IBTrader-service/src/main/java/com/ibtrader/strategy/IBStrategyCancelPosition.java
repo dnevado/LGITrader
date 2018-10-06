@@ -195,8 +195,10 @@ public class IBStrategyCancelPosition extends StrategyImpl {
 	List<Position> lCancelled = null;
 	try
     {
+		String position_mode = Utilities.getPositionModeType(null, _share.getCompanyId(),_share.getGroupId());
+
 		/* cancelada y abierta */
-		lCancelled = PositionLocalServiceUtil.findByCancelShareCompanyGroup(_share.getCompanyId(), _share.getGroupId(),1, _share.getShareId());
+		lCancelled = PositionLocalServiceUtil.findByCancelShareCompanyGroup(_share.getCompanyId(), _share.getGroupId(),1, _share.getShareId(),position_mode);
 		if (lCancelled!=null && !lCancelled.isEmpty())
 		{
 			for (Position position : lCancelled)

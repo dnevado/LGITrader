@@ -65,6 +65,8 @@ public class IBStrategyMinMax extends StrategyImpl {
 	/* PAIR NAME / DATA TYPE PARAMETERES */	
 	private static HashMap<String, String> Parameters = new HashMap<String,String>();
 	
+	
+
 	String operationfilter="";    // ALL, BUY, SELL
 	
 	private List<ExpandoColumn> ExpandoColumns = new ArrayList<ExpandoColumn>(); 
@@ -84,13 +86,13 @@ public class IBStrategyMinMax extends StrategyImpl {
 
 	
 	@Override
-	public long execute(Share _share, Market _market) {
+	public long execute(Share _share, Market _market, Date backtestingDate) {
 		// TODO Auto-generated method stub
 		long returnValue=-1;
 		try		
         {
-			
-			boolean existsPosition = PositionLocalServiceUtil.ExistsOpenPosition (_share.getGroupId(),_share.getCompanyId(),_share.getShareId());
+			String position_mode = Utilities.getPositionModeType(null, _share.getCompanyId(),_share.getGroupId());
+			boolean existsPosition = PositionLocalServiceUtil.ExistsOpenPosition (_share.getGroupId(),_share.getCompanyId(),_share.getShareId(),position_mode);
 			if (existsPosition)
 				return returnValue;
 			_log.info("UserAccount: detectada posible entrada de " + _share.getName() +  "Tick:" + _share.getSymbol() + ",PrecioCompra:" + this.getValueIn());
@@ -217,9 +219,7 @@ public class IBStrategyMinMax extends StrategyImpl {
 			/* END MODO FAKE CUENTA DEMO */
     		
     		
-			String simulated = Utilities.getConfigurationValue(IBTraderConstants.keySIMULATION_MODE, _share.getCompanyId(), _share.getGroupId());	
-			boolean bSIMULATED_TRADING = simulated.equals("1");  
-			BuyPositionSystem.setSimulation_mode(bSIMULATED_TRADING);			
+			BuyPositionSystem.setPosition_mode(position_mode);			
 			PositionLocalServiceUtil.updatePosition(BuyPositionSystem);
 			/* Posicion en MYSQL de CONTROL */
 			_log.info("Order" + BuyPositionTWS.action()  +","+  BuyPositionTWS.lmtPrice()  +","+ BuyPositionTWS.auxPrice() +","+ BuyPositionTWS.account() +","+ BuyPositionTWS.totalQuantity() +","+ BuyPositionTWS.orderType());
@@ -271,7 +271,8 @@ public class IBStrategyMinMax extends StrategyImpl {
 			
 	calFechaActualWithDeadLine.add(Calendar.MINUTE, this.getJsonStrategyShareParams().getInt(_EXPANDO_TRADE_OFFSET_TO_CLOSEMARKET));
 	Calendar calFechaFinMercado = Utilities.getNewCalendarWithHour(_market.getEnd_hour());
-	existsPosition = PositionLocalServiceUtil.ExistsOpenPosition (_share.getGroupId(),_share.getCompanyId(),_share.getShareId());
+	String position_mode = Utilities.getPositionModeType(null, _share.getCompanyId(),_share.getGroupId());
+	existsPosition = PositionLocalServiceUtil.ExistsOpenPosition (_share.getGroupId(),_share.getCompanyId(),_share.getShareId(),position_mode);
 	/*  CONTROLAMOS EL DEADLINE PARA COMPRAR */ 
 	// maximos y minimos...ya lo tenemos de la tabla.
 	//RealTime oShareMixMaxRTime = RealTimeDAO.getMinMaxRealTime(ShareStrategy.getShareId().intValue());

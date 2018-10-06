@@ -381,6 +381,19 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 	}
 
 	@Override
+	public boolean verify(Share _share, Market _market,
+		StrategyShare _strategyImpl, Date backtestingdDate) {
+		return _strategy.verify(_share, _market, _strategyImpl, backtestingdDate);
+	}
+
+	@Override
+	public boolean verifyBackTesting(Share _share, Market _market,
+		StrategyShare _strategyImpl, Date backtestingDate) {
+		return _strategy.verifyBackTesting(_share, _market, _strategyImpl,
+			backtestingDate);
+	}
+
+	@Override
 	public com.ib.client.Contract getTargetContract() {
 		return _strategy.getTargetContract();
 	}
@@ -603,6 +616,17 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 	@Override
 	public long execute(Share _share, Market _market) {
 		return _strategy.execute(_share, _market);
+	}
+
+	@Override
+	public long execute(Share _share, Market _market, Date backtestingdDate) {
+		return _strategy.execute(_share, _market, backtestingdDate);
+	}
+
+	@Override
+	public long executeBackTesting(Share _share, Market _market,
+		Date backtestingDate) {
+		return _strategy.executeBackTesting(_share, _market, backtestingDate);
 	}
 
 	/**

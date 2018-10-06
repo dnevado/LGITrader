@@ -17,6 +17,7 @@ package com.ibtrader.data.service.base;
 import com.ibtrader.data.model.StrategyShare;
 import com.ibtrader.data.service.StrategyShareService;
 import com.ibtrader.data.service.persistence.ConfigPersistence;
+import com.ibtrader.data.service.persistence.HistoricalRealtimePersistence;
 import com.ibtrader.data.service.persistence.IBOrderPersistence;
 import com.ibtrader.data.service.persistence.MarketPersistence;
 import com.ibtrader.data.service.persistence.PositionFinder;
@@ -116,6 +117,63 @@ public abstract class StrategyShareServiceBaseImpl extends BaseServiceImpl
 	 */
 	public void setConfigPersistence(ConfigPersistence configPersistence) {
 		this.configPersistence = configPersistence;
+	}
+
+	/**
+	 * Returns the historical realtime local service.
+	 *
+	 * @return the historical realtime local service
+	 */
+	public com.ibtrader.data.service.HistoricalRealtimeLocalService getHistoricalRealtimeLocalService() {
+		return historicalRealtimeLocalService;
+	}
+
+	/**
+	 * Sets the historical realtime local service.
+	 *
+	 * @param historicalRealtimeLocalService the historical realtime local service
+	 */
+	public void setHistoricalRealtimeLocalService(
+		com.ibtrader.data.service.HistoricalRealtimeLocalService historicalRealtimeLocalService) {
+		this.historicalRealtimeLocalService = historicalRealtimeLocalService;
+	}
+
+	/**
+	 * Returns the historical realtime remote service.
+	 *
+	 * @return the historical realtime remote service
+	 */
+	public com.ibtrader.data.service.HistoricalRealtimeService getHistoricalRealtimeService() {
+		return historicalRealtimeService;
+	}
+
+	/**
+	 * Sets the historical realtime remote service.
+	 *
+	 * @param historicalRealtimeService the historical realtime remote service
+	 */
+	public void setHistoricalRealtimeService(
+		com.ibtrader.data.service.HistoricalRealtimeService historicalRealtimeService) {
+		this.historicalRealtimeService = historicalRealtimeService;
+	}
+
+	/**
+	 * Returns the historical realtime persistence.
+	 *
+	 * @return the historical realtime persistence
+	 */
+	public HistoricalRealtimePersistence getHistoricalRealtimePersistence() {
+		return historicalRealtimePersistence;
+	}
+
+	/**
+	 * Sets the historical realtime persistence.
+	 *
+	 * @param historicalRealtimePersistence the historical realtime persistence
+	 */
+	public void setHistoricalRealtimePersistence(
+		HistoricalRealtimePersistence historicalRealtimePersistence) {
+		this.historicalRealtimePersistence = historicalRealtimePersistence;
 	}
 
 	/**
@@ -752,6 +810,12 @@ public abstract class StrategyShareServiceBaseImpl extends BaseServiceImpl
 	protected com.ibtrader.data.service.ConfigService configService;
 	@BeanReference(type = ConfigPersistence.class)
 	protected ConfigPersistence configPersistence;
+	@BeanReference(type = com.ibtrader.data.service.HistoricalRealtimeLocalService.class)
+	protected com.ibtrader.data.service.HistoricalRealtimeLocalService historicalRealtimeLocalService;
+	@BeanReference(type = com.ibtrader.data.service.HistoricalRealtimeService.class)
+	protected com.ibtrader.data.service.HistoricalRealtimeService historicalRealtimeService;
+	@BeanReference(type = HistoricalRealtimePersistence.class)
+	protected HistoricalRealtimePersistence historicalRealtimePersistence;
 	@BeanReference(type = com.ibtrader.data.service.IBOrderLocalService.class)
 	protected com.ibtrader.data.service.IBOrderLocalService ibOrderLocalService;
 	@BeanReference(type = com.ibtrader.data.service.IBOrderService.class)

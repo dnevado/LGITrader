@@ -67,6 +67,69 @@
 		<!-- References -->
 	</entity>
 	
+	
+	<!--  INTENTAMOS QUE SEAN CIERRES DE BARRAS DE 5 MINUTOS  -->
+	<entity local-service="true"  cache-enabled="false"   name="HistoricalRealtime" remote-service="true" uuid="true">
+
+		<!-- PK fields -->
+
+		<column name="realtimeId" primary="true" type="long" />
+		<!-- Group instance -->
+
+		<column name="groupId" type="long" />
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="shareId" type="long" />
+		<column name="value" type="double" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+
+		<!-- Other fields -->
+		<column name="max_value" type="double" />
+		<column name="min_value" type="double" />
+		<column name="volume" type="int" />
+		<column name="avg_volume" type="int" />
+		<column name="closeprice" type="boolean" /><!--  cierre del dia, falta probarlo  -->
+
+		<!-- Order -->
+
+		<order by="asc">
+			<order-column name="shareId" />
+		</order>
+
+		<!-- FOR MAINTANCE IN MYSQL DIRECTLY  -->
+		<finder name="Date" return-type="Collection">
+		    <finder-column name="createDate" />		    
+		</finder>
+		<finder name="CompanyShare" return-type="Collection">
+		    <finder-column name="companyId" />
+		    <finder-column name="shareId" />
+		</finder>
+		<finder name="CompanyShareDate" return-type="Collection">
+		    <finder-column name="companyId" />
+		    <finder-column name="shareId" />
+		    <finder-column name="createDate" />
+		    
+		</finder>		
+		<finder name="CompanySharegGroupDate" return-type="Collection">
+		    <finder-column name="companyId" />
+		    <finder-column name="shareId" />
+		    <finder-column name="createDate" />
+		    <finder-column name="groupId" />
+		</finder>			
+		<finder name="CompanySharegGroupClose" return-type="Collection">
+		    <finder-column name="companyId" />
+		    <finder-column name="shareId" />
+		    <finder-column name="createDate" />
+		     <finder-column name="groupId" />
+		    <finder-column name="closeprice" />
+		</finder>
+		
+
+		<!-- References -->
+	</entity>
 		
 	<entity cache-enabled="false" local-service="true" name="StrategyShare" remote-service="true" uuid="true">
 		<column name="strategyshareId" primary="true" type="long" />
@@ -358,7 +421,7 @@
 	        <column name="validated_trader_provider" type="boolean"></column> <!--  si esta validado contra interactive brokers -->
 	        <column name="date_validated_trader_provider" type="Date"></column> <!--  si esta validado contra interactive brokers -->
 	        <column name="last_error_trader_provider" type="String"></column> <!--  si esta validado contra interactive brokers -->
-	        <column name="simulation_end_date" type="Date"></column> <!--  durante la simulacion en curso, no almacenamos el realtime para no interferir  -->
+	        <column name="simulation_end_date" type="Date"></column> <!--  ultimo dia de datos historicos almacenados   -->
 	        
 	        
     <!--    	<reference package-path="com.ibtrader.data" entity="Market"></reference>-->
@@ -454,7 +517,7 @@
 		
 		
 		<column name="pendingcancelled" type="long" />		
-		<column name="simulation_mode" type="boolean" />
+		<column name="position_mode" type="String" />
 		<column name="totalcommision" type="double" />
 		<column name="forceclose" type="boolean" />
 		
@@ -486,7 +549,8 @@
 			<finder-column name="shareId" />
 			<finder-column name="state" />			
 			<finder-column name="date_real_out" />
-			<finder-column name="date_out" />
+			<finder-column name="date_out" />			
+			<finder-column name="position_mode" />
 		</finder>
 		<finder  name="PositionShareDateIn" return-type="Collection">	
 			<finder-column name="groupId"/>
@@ -503,17 +567,26 @@
 		<finder  name="CompanyGroupShare" return-type="Collection">	
 			<finder-column name="groupId"/>
 			<finder-column name="companyId"/>		
-			<finder-column name="shareId" />						
+			<finder-column name="shareId" />		
+			<finder-column name="position_mode" />				
 		</finder>
 		<finder name="CancelShareCompanyGroup" return-type="Collection">		
 				<finder-column name="companyId"/>
 				<finder-column name="groupId"/>	
 				<finder-column name="pendingcancelled" />
+				<finder-column name="shareId" />		
+				<finder-column name="position_mode" />								
+		</finder>		
+		<finder name="ModeShareCompanyGroup" return-type="Collection">		
+				<finder-column name="companyId"/>
+				<finder-column name="groupId"/>	
+				<finder-column name="position_mode" />
 				<finder-column name="shareId" />										
 		</finder>
 		<finder name="CompanyGroup" return-type="Collection">		
 				<finder-column name="companyId"/>
-				<finder-column name="groupId"/>					
+				<finder-column name="groupId"/>		
+				<finder-column name="position_mode" />					
 		</finder>	
 		<finder name="CompanyGroupDate" return-type="Collection">		
 			<finder-column name="companyId"/>
@@ -546,13 +619,14 @@
 				<finder-column name="companyId"/>		
 				<finder-column name="positionId_tws_out" />		
 				<finder-column name="clientId_out" />							
-							
+				<finder-column name="position_mode" />		
 		</finder>
 		<finder name="PositionInGroupCompany" return-type="Position">		
 				<finder-column name="groupId"/>
 				<finder-column name="companyId"/>		
 				<finder-column name="positionId_tws_in" />
-				<finder-column name="clientId_in" />							
+				<finder-column name="clientId_in" />	
+				<finder-column name="position_mode" />								
 		</finder>
 		
 		<!-- Order -->

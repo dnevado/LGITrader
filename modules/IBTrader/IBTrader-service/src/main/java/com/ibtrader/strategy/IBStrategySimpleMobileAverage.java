@@ -63,6 +63,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.ibtrader.util.MobileAvgUtil;
 import com.ibtrader.util.ConfigKeys;
 import com.ibtrader.util.PositionStates;
@@ -82,12 +83,10 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_TO_CLOSEMARKET = "Mobile Average Trade Until x Minutes From CloseMarket"; // operar hasta minutos antes de cierre mercado
 	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET = "OffSet From Open Market (Minutes) To Start Trading";  // offset desde inicio de mercado en minutos
 	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OPERATIONS_TYPE = "Operation Type [ALL, BUY, SELL]";  // offset desde inicio de mercado en minutos
-
-
-	
 	
 	long _num_macdP = 8;   // Periodos
 	long  _num_macdT = 5;   // Tiempo de barras
+	
 	double _entryrate=75.0;    // Umbral de superacion, en porcentaje
 	String operationfilter="";    // ALL, BUY, SELL
 	
@@ -99,13 +98,212 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 	SimpleDateFormat TimeFormat = new SimpleDateFormat (Utilities.__IBTRADER_SHORT_HOUR_FORMAT);
 	
 	@Override
-	public long execute(Share _share, Market _market) {
+	public boolean verify(Share _share, Market _market,StrategyShare _strategyImpl, Date backtestingdDate) {
+		boolean verified = Boolean.FALSE;
+		boolean existsPosition = Boolean.FALSE;
+
+		try
+	    {
+			
+		if (_strategyImpl.getStrategyparamsoverride()==null)
+			return Boolean.FALSE;
+			
+	    this.setJsonStrategyShareParams(JSONFactoryUtil.createJSONObject(_strategyImpl.getStrategyparamsoverride()));					
+
+			
+		User _IBUser = UserLocalServiceUtil.getUser(_share.getUserCreatedId());
+	
+		String HoraActual = Utilities.getHourNowFormat(_IBUser);	
+		Calendar calFechaActualWithDeadLine;
+		Calendar calFechaFinMercado;
+		
+		if (Validator.isNull(backtestingdDate))
+		{
+			HoraActual = Utilities.getHourNowFormat(_IBUser);
+			calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(HoraActual);
+			calFechaFinMercado = Utilities.getNewCalendarWithHour(_market.getEnd_hour());
+		}
+		else	
+		{
+			HoraActual = Utilities.getHourNowFormat(_IBUser,backtestingdDate);
+			calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(backtestingdDate, HoraActual);
+			calFechaFinMercado = Utilities.getNewCalendarWithHour(backtestingdDate, _market.getEnd_hour());			
+		}		
+		
+//		StrategyShare _strategyshare = StrategyShareLocalServiceUtil.getByCommpanyShareStrategyId(_share.getGroupId(),_share.getCompanyId(),_share.getShareId(),_strategyImpl.getStrategyId());
+									
+		calFechaActualWithDeadLine.add(Calendar.MINUTE, this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_TO_CLOSEMARKET));
+		existsPosition = PositionLocalServiceUtil.ExistsOpenPosition (_share.getGroupId(),_share.getCompanyId(),_share.getShareId(),
+				Utilities.getPositionModeType(backtestingdDate, _share.getCompanyId(),_share.getGroupId()));		/*  CONTROLAMOS EL DEADLINE PARA COMPRAR */ 
+		// maximos y minimos...ya lo tenemos de la tabla.
+		//RealTime oShareMixMaxRTime = RealTimeDAO.getMinMaxRealTime(ShareStrategy.getShareId().intValue());
+
+		// verificamos compra previa. No compramos si hay una compra previa y estamos en el margen de tiempo de compra.
+		// verificamos si ha pasado el tiempo necesario con los offset de lectura 		
+		// 00
+		//_log.info("existsPosition:" +  existsPosition);
+		
+		_num_macdP = this.getJsonStrategyShareParams().getLong(_EXPANDO_MOBILE_AVERAGE_PERIODS_NUMBER,0);
+		_num_macdT = this.getJsonStrategyShareParams().getLong(_EXPANDO_MOBILE_AVERAGE_CANDLE_SIZE,0);
+		_entryrate = this.getJsonStrategyShareParams().getDouble(_EXPANDO_MOBILE_AVERAGE_GAP_SIZE,0.0f) / 100;
+		operationfilter = this.getJsonStrategyShareParams().getString(_EXPANDO_MOBILE_AVERAGE_TRADE_OPERATIONS_TYPE,"ALL").trim();
+		
+		if (_num_macdP==0 || _num_macdT==0 || _entryrate==0)
+			return Boolean.FALSE;
+		
+		/* SOLO PODEMOS ENTRAR EN EL PERIODO MARCADO DE CADA MINUTO, PARA LO CUAL OBTENEMOS EL RESTO */	
+		
+		/* TIMEZONE AJUSTADO */
+		Date _FromNow =  Validator.isNull(backtestingdDate) ?   Utilities.getDate(_IBUser) : backtestingdDate;
+		Calendar _calendarFromNow = Calendar.getInstance();
+		_calendarFromNow.setTime(_FromNow);		
+		_calendarFromNow.set(Calendar.SECOND, 0);
+		_calendarFromNow.set(Calendar.MILLISECOND, 0);
+		
+		long _ModMinuteToEntry = _calendarFromNow.get(Calendar.MINUTE) % _num_macdT;
+		if (_ModMinuteToEntry!=0)  // NO ESTOY EN EL MINUTO 5,10,15,20..etc (para las barras de 5)
+			return Boolean.FALSE;
+		
+		if (!existsPosition &&  !calFechaActualWithDeadLine.after(calFechaFinMercado))		
+		{	
+			// supuestamente estamos leyendo...verificamos si con respecto al mercado ya tenemos los max y min
+			// comparamos que la hora de lectura final haya sobrepasado el actual 
+			// HHMM
+			// HORA DE FIN DE CALCULO DE MAX Y MINIMOS.		
+			String StartHourTrading = Utilities.getActualHourFormatPlusMinutes(_market.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET));
+			// COMPROBAMOS ALGUN TIPO DE ERROR 
+			if (StartHourTrading.contains("-1"))
+			{
+				_log.info("[ Errores formateando las horas de StarHourTrading de la accion. Hora[" + _market.getStart_hour()  + "], Offset1[" + this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET)+ "]");
+				return Boolean.FALSE;
+			}
+				
+			
+			if (HoraActual.compareTo(StartHourTrading)>0)   // hora actyual ya ha pasado, podemos entrar en la operativa
+			{
+			
+			// ya no obtenemos el maximo y minimo, sino el correspondiente al tramo que me han dicho
+			
+			
+			
+			Double _avgMobileSimple = MobileAvgUtil.getSimpleAvgMobile(_calendarFromNow.getTime(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_macdP, Boolean.FALSE);
+			
+			if (_log.isDebugEnabled())
+				_log.debug("_avgMobileSimple for :" + _share.getSymbol() + ":" +  _avgMobileSimple.doubleValue() + " " + Utilities.getWebFormattedDate(_calendarFromNow.getTime(), _IBUser));
+			
+			if (_avgMobileSimple!=null)
+			{
+				// todo fue bien, tenemos media movil y de los periodos solicitados.
+				// buscamos el cierre de la barra, ultimo valor < que el MINUTE.00  (15.00, 20,00, 25.00)
+				Realtime oRTimeEnTramo =  RealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _calendarFromNow.getTime());
+				
+				if (_log.isDebugEnabled())
+					_log.debug("oRTimeEnTramo for :" + _share.getSymbol() + ":" +  oRTimeEnTramo.getValue());
+				
+				if (oRTimeEnTramo!=null)
+				{
+					/* PERIODO CERO , JUSTAMENTE LA BARRA ANTERIOR */
+					Realtime oRTimeWidthRange = MobileAvgUtil.getMinMaxBarFromShare(_calendarFromNow,  _num_macdT, 0,_share.getShareId(), _share.getCompanyId(), _share.getGroupId(), Boolean.FALSE) ;
+					if (oRTimeWidthRange!=null  && oRTimeWidthRange.getMax_value()>0 && oRTimeWidthRange.getMin_value()>0)
+					{
+						/* RAGO DE LA barra */
+						double _WidthRangeBar = oRTimeWidthRange.getMax_value() - oRTimeWidthRange.getMin_value(); 
+						/* VARIABLE PARA CONTROLAR QUE SI LA BARRA NO CORTE LA MM, NOS ASEGUREMOS QUE LA
+						 * BARRA N-1 SI LA CORTE 
+						 */
+							
+						if (_log.isDebugEnabled())
+							_log.debug("_WidthRangeBar for :" + _share.getSymbol() + ":MAX" + oRTimeWidthRange.getMax_value() + ",MIN:" + oRTimeWidthRange.getMin_value() );
+						
+						boolean _AvgMovil_InsideBar  = (oRTimeWidthRange.getMax_value() > _avgMobileSimple.doubleValue()  &&
+																oRTimeWidthRange.getMin_value()< _avgMobileSimple.doubleValue());
+						
+						
+						if (_log.isDebugEnabled())
+							_log.debug("_AvgMovil_InsideBar for :" + _share.getSymbol() + _AvgMovil_InsideBar);
+						
+						boolean _BuySuccess = false;
+						boolean _SellSuccess = false;
+						
+						// que no entre si es la primera posicion y viene de una mecanismo de continuidad de la señal anterior
+
+						
+						double _WidthBarRangePercent =  _WidthRangeBar *  _entryrate;
+
+						/* A/ La barra debe cruzar la MM8 y al cierre el 75% de su cuerpo debe ser superior al precio cierre de la MM.
+						y B/ Además, el precio cierre de la barra será => que el 75% del rango.*/
+						
+						/* 2- La particularidad de este caso afecta a la primera sentencia, el cierre de la barra se sitúa en su 100% por encima de la MM, con lo cual debe comprar, el filtro B aquí no afecta.
+						 * */
+						_BuySuccess = MobileAvgUtil._IsBuySignalMM8_5MINBar(_avgMobileSimple, oRTimeWidthRange, _WidthBarRangePercent, oRTimeEnTramo);
+						_SellSuccess = MobileAvgUtil._IsSellSignalMM8_5MINBar(_avgMobileSimple, oRTimeWidthRange, _WidthBarRangePercent, oRTimeEnTramo);
+						/* tipos de operacion */
+						_BuySuccess = _BuySuccess &&  
+								(operationfilter.equals("ALL") || operationfilter.equals(PositionStates.statusTWSFire.BUY.toString())); 
+
+						
+						_SellSuccess = _SellSuccess  &&  
+								(operationfilter.equals("ALL") || operationfilter.equals(PositionStates.statusTWSFire.SELL.toString()));
+						
+						if (_log.isDebugEnabled())
+							_log.debug("_BuySuccess._SellSuccess, _AvgMovil_InsideBar for :" + _share.getSymbol() + _BuySuccess + "," + _SellSuccess+ "," +_AvgMovil_InsideBar );
+						
+						if (_AvgMovil_InsideBar  && (_BuySuccess || _SellSuccess))
+						{
+							
+						    this.setValueIn(oRTimeEnTramo.getValue());											
+							this.setVerified(Boolean.TRUE);												
+							verified = true;
+							/* OJO, PUEDE SER QUE NO DE SEÑAL DE COMPRA Y VENTA SEGUN CONDICIONES,
+							 * SI NO QUE SE VERIFICA QUE N NO CORTE LA BARRA LA MM  SI
+							 */					
+							this.bBuyOperation = _BuySuccess;									
+							this.bSellOperation = _SellSuccess;
+							
+							
+							_tradeDescription = JSONFactoryUtil.createJSONObject();
+							_tradeDescription.put("_WidthBarRangePercent", _WidthBarRangePercent);
+							_tradeDescription.put("_AvgMovil_InsideBar", _AvgMovil_InsideBar);
+							_tradeDescription.put("_WidthRangeBar", _WidthRangeBar);
+							_tradeDescription.put("oRTimeWidthRange.getMax_value()", oRTimeWidthRange.getMax_value());
+							_tradeDescription.put("oRTimeWidthRange.getMin_value()", oRTimeWidthRange.getMin_value());
+							_tradeDescription.put("oRTimeEnTramo", oRTimeEnTramo.getValue());
+							_tradeDescription.put("_avgMobileSimple", _avgMobileSimple.doubleValue());
+							_tradeDescription.put("_periods:", _num_macdP);
+							_tradeDescription.put("_candlesize(minutes):", _num_macdT);
+							_tradeDescription.put("_barentryrate", _entryrate);
+							_tradeDescription.put("operationfilter", operationfilter);						
+							_tradeDescription.put("_calendarFromNow", TimeFormat.format(_calendarFromNow.getTime()));
+							
+							
+							
+						}
+					}
+
+				}
+			}
+			   	
+		  }
+	    }// NO EXISTE POSICION 
+	    }
+		catch (Exception er)
+	    {
+			_log.info(er.getMessage());
+			this.setVerified(Boolean.FALSE);				
+	    }
+
+		return verified;
+	}
+	@Override
+	public  long  execute(Share _share, Market _market,  Date backtestingdDate)
+	{
 		// TODO Auto-generated method stub
 		long returnValue=-1;
 		try		
         {
-			
-			boolean existsPosition = PositionLocalServiceUtil.ExistsOpenPosition (_share.getGroupId(),_share.getCompanyId(),_share.getShareId());
+			String position_mode = Utilities.getPositionModeType(backtestingdDate, _share.getCompanyId(),_share.getGroupId()); 
+			boolean existsPosition = PositionLocalServiceUtil.ExistsOpenPosition (_share.getGroupId(),_share.getCompanyId(),
+					_share.getShareId(),position_mode);			
 			if (existsPosition)
 				return returnValue;
 			_log.info("UserAccount: detectada posible entrada de " + _share.getName() +  "Tick:" + _share.getSymbol() + ",PrecioCompra:" + this.getValueIn());
@@ -131,40 +329,47 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
   		   /* NECESARIO PRA LANZAR COMPRA DESDE EL CROUTIL */
   		   this.setTargetContract(oContrat);
   		   
-  			
-			// colocamos operacion de compra
-			
-			Order BuyPositionTWS = new Order();
-			BuyPositionTWS.account(Utilities.getConfigurationValue(IBTraderConstants.keyACCOUNT_IB_NAME, _share.getCompanyId(), _share.getGroupId()));		
-			
-			/* EXISTE ALGO SOBREESCRITO */
 			long number_to_purchase = _share.getNumbertopurchase();
-    		if (this.getJsonStrategyShareParams()!=null && this.getJsonStrategyShareParams().getInt(ConfigKeys._FIELD_NUMBER_TO_PURCHASE,0)>0)
-    			number_to_purchase =this.getJsonStrategyShareParams().getInt(ConfigKeys._FIELD_NUMBER_TO_PURCHASE,0);    	
+			String action = PositionStates.statusTWSFire.BUY.toString();
+		    if (bSellOperation)
+		    {
+			    action = PositionStates.statusTWSFire.SELL.toString();
+		    }
+			// colocamos operacion de compra
+  			if (Validator.isNull(backtestingdDate))
+  			{ 
+				Order BuyPositionTWS = new Order();
+				BuyPositionTWS.account(Utilities.getConfigurationValue(IBTraderConstants.keyACCOUNT_IB_NAME, _share.getCompanyId(), _share.getGroupId()));		
+				
+				/* EXISTE ALGO SOBREESCRITO */
+	    		if (this.getJsonStrategyShareParams()!=null && this.getJsonStrategyShareParams().getInt(ConfigKeys._FIELD_NUMBER_TO_PURCHASE,0)>0)
+	    			number_to_purchase =this.getJsonStrategyShareParams().getInt(ConfigKeys._FIELD_NUMBER_TO_PURCHASE,0);    	
+				
+				BuyPositionTWS.totalQuantity(number_to_purchase);
+				BuyPositionTWS.orderType(PositionStates.ordertypes.MKT.toString());		    
+				// precio del tick mÃ¡s o menos un porcentaje ...normalmente %1
+				// ojo con los FUTUROS..llevan cambios porcentuales
+				
+				/* ****************************************************************
+				 * ****************************************************************
+				 * SIEMPRE HAY QUE PONERLO AUNQUE VAYA A MERCADO lmtprice & auxprice
+				 * ****************************************************************
+				 * **************************************************************** */
+				
+				BuyPositionTWS.lmtPrice(Utilities.RoundPrice(this.getValueLimitIn()));
+				BuyPositionTWS.auxPrice(Utilities.RoundPrice(this.getValueLimitIn()));					
+				/*  SI ES UNA COMPRA, NOS POSICIONAMOS CORTOS SI BAJA EL MINIMO */		
+				BuyPositionTWS.action(PositionStates.statusTWSFire.BUY.toString());			
+				if (bSellOperation)
+				{
+					BuyPositionTWS.action(PositionStates.statusTWSFire.SELL.toString());
+				}
+				this.setTargetOrder(BuyPositionTWS);	
+				
+				_log.info("Order" + BuyPositionTWS.action()  +","+  BuyPositionTWS.lmtPrice()  +","+ BuyPositionTWS.auxPrice() +","+ BuyPositionTWS.account() +","+ BuyPositionTWS.totalQuantity() +","+ BuyPositionTWS.orderType());
+  			}
 			
-			BuyPositionTWS.totalQuantity(number_to_purchase);
-			BuyPositionTWS.orderType(PositionStates.ordertypes.MKT.toString());		    
-			// precio del tick mÃ¡s o menos un porcentaje ...normalmente %1
-			// ojo con los FUTUROS..llevan cambios porcentuales
-			
-			/* ****************************************************************
-			 * ****************************************************************
-			 * SIEMPRE HAY QUE PONERLO AUNQUE VAYA A MERCADO lmtprice & auxprice
-			 * ****************************************************************
-			 * **************************************************************** */
-			
-			BuyPositionTWS.lmtPrice(Utilities.RoundPrice(this.getValueLimitIn()));
-			BuyPositionTWS.auxPrice(Utilities.RoundPrice(this.getValueLimitIn()));					
-			/*  SI ES UNA COMPRA, NOS POSICIONAMOS CORTOS SI BAJA EL MINIMO */		
-			BuyPositionTWS.action(PositionStates.statusTWSFire.BUY.toString());			
-			if (bSellOperation)
-			{
-				BuyPositionTWS.action(PositionStates.statusTWSFire.SELL.toString());
-			}
-			
-			_log.info("Order" + BuyPositionTWS.action()  +","+  BuyPositionTWS.lmtPrice()  +","+ BuyPositionTWS.auxPrice() +","+ BuyPositionTWS.account() +","+ BuyPositionTWS.totalQuantity() +","+ BuyPositionTWS.orderType());
-			
-			this.setTargetOrder(BuyPositionTWS);			
+					
 			/* Posicion en MYSQL de CONTROL. OJO...ANTES SIEMPRE PARA DESPUES CONTROLARLA EN CASO DE ERROR. */
 			Position BuyPositionSystem = PositionLocalServiceUtil.createPosition(CounterLocalServiceUtil.increment(Position.class.getName()));			
 			BuyPositionSystem.setDescription("");
@@ -175,7 +380,7 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 		
 			/* BuyPositionSystem.setState_in(PositionStates.statusTWSCallBack.PendingSubmit.toString());
 			BuyPositionSystem.setState(PositionStates.status.PENDING_BUY.toString()); */
-			BuyPositionSystem.setType(BuyPositionTWS.getAction());
+			BuyPositionSystem.setType(action);
 			BuyPositionSystem.setCompanyId(_share.getCompanyId());
 			BuyPositionSystem.setGroupId(_share.getGroupId());
 			BuyPositionSystem.setStrategy_in(this.getClass().getName());
@@ -187,10 +392,7 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 			/* MODO FAKE CUENTA DEMO */
     		BuyPositionSystem = Utilities.fillStatesOrder(BuyPositionSystem);
 			/* END MODO FAKE CUENTA DEMO */
-			
-			String simulated = Utilities.getConfigurationValue(IBTraderConstants.keySIMULATION_MODE, _share.getCompanyId(), _share.getGroupId());	
-			boolean bSIMULATED_TRADING = simulated.equals("1");  
-			BuyPositionSystem.setSimulation_mode(bSIMULATED_TRADING);			
+			BuyPositionSystem.setPosition_mode(position_mode);			
 			PositionLocalServiceUtil.updatePosition(BuyPositionSystem);
 			/* Posicion en MYSQL de CONTROL */
 			_log.info("Opening order " + BuyPositionSystem.getPositionId());
@@ -206,8 +408,10 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 				er.printStackTrace();
 			
 	        }
-		return returnValue;
+		return returnValue;	
 	}
+	
+	
 	
 	public IBStrategySimpleMobileAverage() {
 		
@@ -215,191 +419,7 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 		// TODO Auto-generated constructor stub
 	}
 	
-	@Override
-	public boolean verify(Share _share, Market _market,StrategyShare _strategyImpl) {
 	
-	boolean verified = Boolean.FALSE;
-	boolean existsPosition = Boolean.FALSE;
-
-	try
-    {
-		
-	if (_strategyImpl.getStrategyparamsoverride()==null)
-		return Boolean.FALSE;
-		
-    this.setJsonStrategyShareParams(JSONFactoryUtil.createJSONObject(_strategyImpl.getStrategyparamsoverride()));					
-
-		
-	User _IBUser = UserLocalServiceUtil.getUser(_share.getUserCreatedId());
-	String HoraActual = Utilities.getHourNowFormat(_IBUser);
-	
-	Calendar calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(HoraActual);
-	
-//	StrategyShare _strategyshare = StrategyShareLocalServiceUtil.getByCommpanyShareStrategyId(_share.getGroupId(),_share.getCompanyId(),_share.getShareId(),_strategyImpl.getStrategyId());
-								
-	calFechaActualWithDeadLine.add(Calendar.MINUTE, this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_TO_CLOSEMARKET));
-	Calendar calFechaFinMercado = Utilities.getNewCalendarWithHour(_market.getEnd_hour());
-	existsPosition = PositionLocalServiceUtil.ExistsOpenPosition (_share.getGroupId(),_share.getCompanyId(),_share.getShareId());
-	/*  CONTROLAMOS EL DEADLINE PARA COMPRAR */ 
-	// maximos y minimos...ya lo tenemos de la tabla.
-	//RealTime oShareMixMaxRTime = RealTimeDAO.getMinMaxRealTime(ShareStrategy.getShareId().intValue());
-
-	// verificamos compra previa. No compramos si hay una compra previa y estamos en el margen de tiempo de compra.
-	// verificamos si ha pasado el tiempo necesario con los offset de lectura 		
-	// 00
-	//_log.info("existsPosition:" +  existsPosition);
-	
-	_num_macdP = this.getJsonStrategyShareParams().getLong(_EXPANDO_MOBILE_AVERAGE_PERIODS_NUMBER,0);
-	_num_macdT = this.getJsonStrategyShareParams().getLong(_EXPANDO_MOBILE_AVERAGE_CANDLE_SIZE,0);
-	_entryrate = this.getJsonStrategyShareParams().getDouble(_EXPANDO_MOBILE_AVERAGE_GAP_SIZE,0.0f) / 100;
-	operationfilter = this.getJsonStrategyShareParams().getString(_EXPANDO_MOBILE_AVERAGE_TRADE_OPERATIONS_TYPE,"ALL").trim();
-	
-	if (_num_macdP==0 || _num_macdT==0 || _entryrate==0)
-		return Boolean.FALSE;
-	
-	/* SOLO PODEMOS ENTRAR EN EL PERIODO MARCADO DE CADA MINUTO, PARA LO CUAL OBTENEMOS EL RESTO */	
-	
-	/* TIMEZONE AJUSTADO */
-	Date _FromNow = Utilities.getDate(_IBUser);
-	Calendar _calendarFromNow = Calendar.getInstance();
-	_calendarFromNow.setTime(_FromNow);		
-	_calendarFromNow.set(Calendar.SECOND, 0);
-	_calendarFromNow.set(Calendar.MILLISECOND, 0);
-	
-	long _ModMinuteToEntry = _calendarFromNow.get(Calendar.MINUTE) % _num_macdT;
-	if (_ModMinuteToEntry!=0)  // NO ESTOY EN EL MINUTO 5,10,15,20..etc (para las barras de 5)
-		return Boolean.FALSE;
-	
-	if (!existsPosition &&  !calFechaActualWithDeadLine.after(calFechaFinMercado))		
-	{	
-		// supuestamente estamos leyendo...verificamos si con respecto al mercado ya tenemos los max y min
-		// comparamos que la hora de lectura final haya sobrepasado el actual 
-		// HHMM
-		// HORA DE FIN DE CALCULO DE MAX Y MINIMOS.		
-		String StartHourTrading = Utilities.getActualHourFormatPlusMinutes(_market.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET));
-		// COMPROBAMOS ALGUN TIPO DE ERROR 
-		if (StartHourTrading.contains("-1"))
-		{
-			_log.info("[ Errores formateando las horas de StarHourTrading de la accion. Hora[" + _market.getStart_hour()  + "], Offset1[" + this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET)+ "]");
-			return Boolean.FALSE;
-		}
-			
-		
-		if (HoraActual.compareTo(StartHourTrading)>0)   // hora actyual ya ha pasado, podemos entrar en la operativa
-		{
-		
-		// ya no obtenemos el maximo y minimo, sino el correspondiente al tramo que me han dicho
-		
-		
-		
-		Double _avgMobileSimple = MobileAvgUtil.getSimpleAvgMobile(_calendarFromNow.getTime(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_macdP, Boolean.FALSE);
-		
-		if (_log.isDebugEnabled())
-			_log.debug("_avgMobileSimple for :" + _share.getSymbol() + ":" +  _avgMobileSimple.doubleValue() + " " + Utilities.getWebFormattedDate(_calendarFromNow.getTime(), _IBUser));
-		
-		if (_avgMobileSimple!=null)
-		{
-			// todo fue bien, tenemos media movil y de los periodos solicitados.
-			// buscamos el cierre de la barra, ultimo valor < que el MINUTE.00  (15.00, 20,00, 25.00)
-			Realtime oRTimeEnTramo =  RealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _calendarFromNow.getTime());
-			
-			if (_log.isDebugEnabled())
-				_log.debug("oRTimeEnTramo for :" + _share.getSymbol() + ":" +  oRTimeEnTramo.getValue());
-			
-			if (oRTimeEnTramo!=null)
-			{
-				/* PERIODO CERO , JUSTAMENTE LA BARRA ANTERIOR */
-				Realtime oRTimeWidthRange = MobileAvgUtil.getMinMaxBarFromShare(_calendarFromNow,  _num_macdT, 0,_share.getShareId(), _share.getCompanyId(), _share.getGroupId(), Boolean.FALSE) ;
-				if (oRTimeWidthRange!=null  && oRTimeWidthRange.getMax_value()>0 && oRTimeWidthRange.getMin_value()>0)
-				{
-					/* RAGO DE LA barra */
-					double _WidthRangeBar = oRTimeWidthRange.getMax_value() - oRTimeWidthRange.getMin_value(); 
-					/* VARIABLE PARA CONTROLAR QUE SI LA BARRA NO CORTE LA MM, NOS ASEGUREMOS QUE LA
-					 * BARRA N-1 SI LA CORTE 
-					 */
-						
-					if (_log.isDebugEnabled())
-						_log.debug("_WidthRangeBar for :" + _share.getSymbol() + ":MAX" + oRTimeWidthRange.getMax_value() + ",MIN:" + oRTimeWidthRange.getMin_value() );
-					
-					boolean _AvgMovil_InsideBar  = (oRTimeWidthRange.getMax_value() > _avgMobileSimple.doubleValue()  &&
-															oRTimeWidthRange.getMin_value()< _avgMobileSimple.doubleValue());
-					
-					
-					if (_log.isDebugEnabled())
-						_log.debug("_AvgMovil_InsideBar for :" + _share.getSymbol() + _AvgMovil_InsideBar);
-					
-					boolean _BuySuccess = false;
-					boolean _SellSuccess = false;
-					
-					// que no entre si es la primera posicion y viene de una mecanismo de continuidad de la señal anterior
-
-					
-					double _WidthBarRangePercent =  _WidthRangeBar *  _entryrate;
-
-					/* A/ La barra debe cruzar la MM8 y al cierre el 75% de su cuerpo debe ser superior al precio cierre de la MM.
-					y B/ Además, el precio cierre de la barra será => que el 75% del rango.*/
-					
-					/* 2- La particularidad de este caso afecta a la primera sentencia, el cierre de la barra se sitúa en su 100% por encima de la MM, con lo cual debe comprar, el filtro B aquí no afecta.
-					 * */
-					_BuySuccess = MobileAvgUtil._IsBuySignalMM8_5MINBar(_avgMobileSimple, oRTimeWidthRange, _WidthBarRangePercent, oRTimeEnTramo);
-					_SellSuccess = MobileAvgUtil._IsSellSignalMM8_5MINBar(_avgMobileSimple, oRTimeWidthRange, _WidthBarRangePercent, oRTimeEnTramo);
-					/* tipos de operacion */
-					_BuySuccess = _BuySuccess &&  
-							(operationfilter.equals("ALL") || operationfilter.equals(PositionStates.statusTWSFire.BUY.toString())); 
-
-					
-					_SellSuccess = _SellSuccess  &&  
-							(operationfilter.equals("ALL") || operationfilter.equals(PositionStates.statusTWSFire.SELL.toString()));
-					
-					if (_log.isDebugEnabled())
-						_log.debug("_BuySuccess._SellSuccess, _AvgMovil_InsideBar for :" + _share.getSymbol() + _BuySuccess + "," + _SellSuccess+ "," +_AvgMovil_InsideBar );
-					
-					if (_AvgMovil_InsideBar  && (_BuySuccess || _SellSuccess))
-					{
-						
-					    this.setValueIn(oRTimeEnTramo.getValue());											
-						this.setVerified(Boolean.TRUE);												
-						verified = true;
-						/* OJO, PUEDE SER QUE NO DE SEÑAL DE COMPRA Y VENTA SEGUN CONDICIONES,
-						 * SI NO QUE SE VERIFICA QUE N NO CORTE LA BARRA LA MM  SI
-						 */					
-						this.bBuyOperation = _BuySuccess;									
-						this.bSellOperation = _SellSuccess;
-						
-						
-						_tradeDescription = JSONFactoryUtil.createJSONObject();
-						_tradeDescription.put("_WidthBarRangePercent", _WidthBarRangePercent);
-						_tradeDescription.put("_AvgMovil_InsideBar", _AvgMovil_InsideBar);
-						_tradeDescription.put("_WidthRangeBar", _WidthRangeBar);
-						_tradeDescription.put("oRTimeWidthRange.getMax_value()", oRTimeWidthRange.getMax_value());
-						_tradeDescription.put("oRTimeWidthRange.getMin_value()", oRTimeWidthRange.getMin_value());
-						_tradeDescription.put("oRTimeEnTramo", oRTimeEnTramo.getValue());
-						_tradeDescription.put("_avgMobileSimple", _avgMobileSimple.doubleValue());
-						_tradeDescription.put("_periods:", _num_macdP);
-						_tradeDescription.put("_candlesize(minutes):", _num_macdT);
-						_tradeDescription.put("_barentryrate", _entryrate);
-						_tradeDescription.put("operationfilter", operationfilter);						
-						_tradeDescription.put("_calendarFromNow", TimeFormat.format(_calendarFromNow.getTime()));
-						
-						
-						
-					}
-				}
-
-			}
-		}
-		   	
-	  }
-    }// NO EXISTE POSICION 
-    }
-	catch (Exception er)
-    {
-		_log.info(er.getMessage());
-		this.setVerified(Boolean.FALSE);				
-    }
-
-	return verified;
-	}
 
 	@Override
 	public void init(long companyId) {

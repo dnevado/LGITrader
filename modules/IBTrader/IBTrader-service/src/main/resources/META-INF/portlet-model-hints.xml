@@ -17,6 +17,21 @@
 			<hint-collection name="CLOB" />
 		</field>
 	</model>
+	<model name="com.ibtrader.data.model.HistoricalRealtime">
+		<field name="uuid" type="String" />
+		<field name="realtimeId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="shareId" type="long" />
+		<field name="value" type="double" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="max_value" type="double" />
+		<field name="min_value" type="double" />
+		<field name="volume" type="int" />
+		<field name="avg_volume" type="int" />
+		<field name="closeprice" type="boolean" />
+	</model>
 	<model name="com.ibtrader.data.model.IBOrder">
 		<field name="uuid" type="String" />
 		<field name="orderIdPk" type="long" />
@@ -88,7 +103,7 @@
 		<field name="percentual_trailling_stop_lost" type="double" />
 		<field name="pricetrailling_stop_lost" type="double" />
 		<field name="pendingcancelled" type="long" />
-		<field name="simulation_mode" type="boolean" />
+		<field name="position_mode" type="String" />
 		<field name="totalcommision" type="double" />
 		<field name="forceclose" type="boolean" />
 	</model>

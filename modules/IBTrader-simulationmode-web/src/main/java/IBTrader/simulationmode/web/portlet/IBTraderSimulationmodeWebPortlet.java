@@ -45,9 +45,8 @@ public class IBTraderSimulationmodeWebPortlet extends MVCPortlet {
 		
  
 
-		String simulated = Utilities.getConfigurationValue(IBTraderConstants.keySIMULATION_MODE, themeDisplay.getCompanyId(), 
-				themeDisplay.getScopeGroupId());
-		renderRequest.setAttribute("simulated", simulated);
+		boolean bSIMULATED_TRADING = Utilities.getSimulatedTrading(themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
+		renderRequest.setAttribute("simulated", bSIMULATED_TRADING);
 		super.render(renderRequest, renderResponse);
 	}
 }

@@ -70,7 +70,7 @@ public class PositionSoap implements Serializable {
 		soapModel.setPercentual_trailling_stop_lost(model.getPercentual_trailling_stop_lost());
 		soapModel.setPricetrailling_stop_lost(model.getPricetrailling_stop_lost());
 		soapModel.setPendingcancelled(model.getPendingcancelled());
-		soapModel.setSimulation_mode(model.getSimulation_mode());
+		soapModel.setPosition_mode(model.getPosition_mode());
 		soapModel.setTotalcommision(model.getTotalcommision());
 		soapModel.setForceclose(model.getForceclose());
 
@@ -414,16 +414,12 @@ public class PositionSoap implements Serializable {
 		_pendingcancelled = pendingcancelled;
 	}
 
-	public boolean getSimulation_mode() {
-		return _simulation_mode;
+	public String getPosition_mode() {
+		return _position_mode;
 	}
 
-	public boolean isSimulation_mode() {
-		return _simulation_mode;
-	}
-
-	public void setSimulation_mode(boolean simulation_mode) {
-		_simulation_mode = simulation_mode;
+	public void setPosition_mode(String position_mode) {
+		_position_mode = position_mode;
 	}
 
 	public double getTotalcommision() {
@@ -482,7 +478,7 @@ public class PositionSoap implements Serializable {
 	private double _percentual_trailling_stop_lost;
 	private double _pricetrailling_stop_lost;
 	private long _pendingcancelled;
-	private boolean _simulation_mode;
+	private String _position_mode;
 	private double _totalcommision;
 	private boolean _forceclose;
 }

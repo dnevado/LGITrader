@@ -23,7 +23,7 @@ public class PositionFinderImpl  extends PositionFinderBaseImpl  implements Posi
 	private Log _log = LogFactoryUtil.getLog(PositionFinderImpl.class.getName());
 	
 	@SuppressWarnings("unchecked")
-	public List<Position> getIntradiaPositions(Date to,long groupId, long companyId)
+	public List<Position> getIntradiaPositions(Date to,long groupId, long companyId, String positionMode)
 	{
 	 List<Position> lResults = null;
 	 
@@ -43,6 +43,7 @@ public class PositionFinderImpl  extends PositionFinderBaseImpl  implements Posi
         qPos.add(to);
         qPos.add(companyId);
         qPos.add(groupId);      
+        qPos.add(positionMode);
         lResults = (List<Position>) QueryUtil.list(q, getDialect(), 0, 10000);
         if (!lResults.isEmpty())
     		return lResults;
@@ -67,7 +68,7 @@ public class PositionFinderImpl  extends PositionFinderBaseImpl  implements Posi
 	
 	
 	@SuppressWarnings("unchecked")
-	public List getPositionClosedResults(Date from, Date to,long groupId, long companyId)
+	public List getPositionClosedResults(Date from, Date to,long groupId, long companyId, String positionMode)
 	{
 	 List lResults = null;
 	 
@@ -93,6 +94,8 @@ public class PositionFinderImpl  extends PositionFinderBaseImpl  implements Posi
         qPos.add(to);
         qPos.add(companyId);
         qPos.add(groupId);      
+        qPos.add(positionMode);
+        
         lResults = (List) QueryUtil.list(q, getDialect(), 0, 100);
         if (!lResults.isEmpty())
     		return lResults;
@@ -116,7 +119,7 @@ public class PositionFinderImpl  extends PositionFinderBaseImpl  implements Posi
 		}
 	
 	@SuppressWarnings("unchecked")
-	public List getPositionOpenResults( Date to,long groupId, long companyId)
+	public List getPositionOpenResults( Date to,long groupId, long companyId, String positionMode)
 	{
 	 List lResults = null;
 	 
@@ -137,11 +140,13 @@ public class PositionFinderImpl  extends PositionFinderBaseImpl  implements Posi
         qPos.add(to);
         qPos.add(companyId);
         qPos.add(groupId);     
+        qPos.add(positionMode);
         
         _log.debug(q.toString());
         _log.debug(to);
         _log.debug(companyId);
         _log.debug(groupId);
+        _log.debug(positionMode);
         
         
         

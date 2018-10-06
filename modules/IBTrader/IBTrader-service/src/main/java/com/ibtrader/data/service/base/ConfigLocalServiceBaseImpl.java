@@ -19,6 +19,7 @@ import aQute.bnd.annotation.ProviderType;
 import com.ibtrader.data.model.Config;
 import com.ibtrader.data.service.ConfigLocalService;
 import com.ibtrader.data.service.persistence.ConfigPersistence;
+import com.ibtrader.data.service.persistence.HistoricalRealtimePersistence;
 import com.ibtrader.data.service.persistence.IBOrderPersistence;
 import com.ibtrader.data.service.persistence.MarketPersistence;
 import com.ibtrader.data.service.persistence.PositionFinder;
@@ -465,6 +466,44 @@ public abstract class ConfigLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 */
 	public void setConfigPersistence(ConfigPersistence configPersistence) {
 		this.configPersistence = configPersistence;
+	}
+
+	/**
+	 * Returns the historical realtime local service.
+	 *
+	 * @return the historical realtime local service
+	 */
+	public com.ibtrader.data.service.HistoricalRealtimeLocalService getHistoricalRealtimeLocalService() {
+		return historicalRealtimeLocalService;
+	}
+
+	/**
+	 * Sets the historical realtime local service.
+	 *
+	 * @param historicalRealtimeLocalService the historical realtime local service
+	 */
+	public void setHistoricalRealtimeLocalService(
+		com.ibtrader.data.service.HistoricalRealtimeLocalService historicalRealtimeLocalService) {
+		this.historicalRealtimeLocalService = historicalRealtimeLocalService;
+	}
+
+	/**
+	 * Returns the historical realtime persistence.
+	 *
+	 * @return the historical realtime persistence
+	 */
+	public HistoricalRealtimePersistence getHistoricalRealtimePersistence() {
+		return historicalRealtimePersistence;
+	}
+
+	/**
+	 * Sets the historical realtime persistence.
+	 *
+	 * @param historicalRealtimePersistence the historical realtime persistence
+	 */
+	public void setHistoricalRealtimePersistence(
+		HistoricalRealtimePersistence historicalRealtimePersistence) {
+		this.historicalRealtimePersistence = historicalRealtimePersistence;
 	}
 
 	/**
@@ -932,6 +971,10 @@ public abstract class ConfigLocalServiceBaseImpl extends BaseLocalServiceImpl
 	protected ConfigLocalService configLocalService;
 	@BeanReference(type = ConfigPersistence.class)
 	protected ConfigPersistence configPersistence;
+	@BeanReference(type = com.ibtrader.data.service.HistoricalRealtimeLocalService.class)
+	protected com.ibtrader.data.service.HistoricalRealtimeLocalService historicalRealtimeLocalService;
+	@BeanReference(type = HistoricalRealtimePersistence.class)
+	protected HistoricalRealtimePersistence historicalRealtimePersistence;
 	@BeanReference(type = com.ibtrader.data.service.IBOrderLocalService.class)
 	protected com.ibtrader.data.service.IBOrderLocalService ibOrderLocalService;
 	@BeanReference(type = IBOrderPersistence.class)

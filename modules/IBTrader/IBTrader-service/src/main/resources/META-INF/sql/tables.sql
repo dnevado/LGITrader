@@ -13,6 +13,22 @@ create table ibtrader_Config (
 	description TEXT null
 );
 
+create table ibtrader_HistoricalRealtime (
+	uuid_ VARCHAR(75) null,
+	realtimeId LONG not null primary key,
+	groupId LONG,
+	companyId LONG,
+	shareId LONG,
+	value DOUBLE,
+	createDate DATE null,
+	modifiedDate DATE null,
+	max_value DOUBLE,
+	min_value DOUBLE,
+	volume INTEGER,
+	avg_volume INTEGER,
+	closeprice BOOLEAN
+);
+
 create table ibtrader_IBOrder (
 	uuid_ VARCHAR(75) null,
 	orderIdPk LONG not null primary key IDENTITY,
@@ -80,7 +96,7 @@ create table ibtrader_Position (
 	percentual_trailling_stop_lost DOUBLE,
 	pricetrailling_stop_lost DOUBLE,
 	pendingcancelled LONG,
-	simulation_mode BOOLEAN,
+	position_mode VARCHAR(75) null,
 	totalcommision DOUBLE,
 	forceclose BOOLEAN
 );

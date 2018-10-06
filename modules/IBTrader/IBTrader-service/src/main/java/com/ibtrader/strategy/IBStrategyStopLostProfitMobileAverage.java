@@ -103,13 +103,15 @@ public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
 
 	
 	@Override
-	public long execute(Share _share, Market _market) {
+	public long execute(Share _share, Market _market, Date backtestingdDate) {
 		// TODO Auto-generated method stub
 		long returnValue=-1;
 		try		
         {
+			String position_mode = Utilities.getPositionModeType(null, _share.getCompanyId(),_share.getGroupId());
+
 			
-			boolean existsPosition = PositionLocalServiceUtil.ExistsOpenPosition (_share.getGroupId(),_share.getCompanyId(),_share.getShareId());
+			boolean existsPosition = PositionLocalServiceUtil.ExistsOpenPosition (_share.getGroupId(),_share.getCompanyId(),_share.getShareId(),position_mode);
 			if (!existsPosition)
 				return returnValue;
 			_log.info("UserAccount: detectada posible entrada de " + _share.getName() +  "Tick:" + _share.getSymbol() + ",PrecioCompra:" + this.getValueIn());
@@ -138,38 +140,43 @@ public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
 	  	   String _OperationTYPE = PositionStates.statusTWSFire.BUY.toString(); 
 	 	   if (currentPosition.getType().equals(PositionStates.statusTWSFire.BUY.toString())) // operacion de compra normal..??
 	 			_OperationTYPE = PositionStates.statusTWSFire.SELL.toString();		
-			// colocamos operacion de compra			
-			Order BuyPositionTWS = new Order();
-			BuyPositionTWS.account(Utilities.getConfigurationValue(IBTraderConstants.keyACCOUNT_IB_NAME, _share.getCompanyId(), _share.getGroupId()));		
-			
-			/* EXISTE ALGO SOBREESCRITO */
-			long number_to_purchase = _share.getNumbertopurchase();
-    		if (this.getJsonStrategyShareParams()!=null && this.getJsonStrategyShareParams().getInt(ConfigKeys._FIELD_NUMBER_TO_PURCHASE,0)>0)
-    			number_to_purchase =this.getJsonStrategyShareParams().getInt(ConfigKeys._FIELD_NUMBER_TO_PURCHASE,0);    	
-			
-			BuyPositionTWS.totalQuantity(number_to_purchase);
-			BuyPositionTWS.orderType(PositionStates.ordertypes.MKT.toString());		    
-			// precio del tick más o menos un porcentaje ...normalmente %1
-			// ojo con los FUTUROS..llevan cambios porcentuales
-			
-			/* ****************************************************************
-			 * ****************************************************************
-			 * SIEMPRE HAY QUE PONERLO AUNQUE VAYA A MERCADO lmtprice & auxprice
-			 * ****************************************************************
-			 * **************************************************************** */
-			BuyPositionTWS.lmtPrice(Utilities.RoundPrice(this.getValueLimitIn()));
-			BuyPositionTWS.auxPrice(Utilities.RoundPrice(this.getValueLimitIn()));					
-			/*  SI ES UNA COMPRA, NOS POSICIONAMOS CORTOS SI BAJA EL MINIMO */		
-			BuyPositionTWS.action(_OperationTYPE);			
-						
-			_log.info("Order" + BuyPositionTWS.action()  +","+  BuyPositionTWS.lmtPrice()  +","+ BuyPositionTWS.auxPrice() +","+ BuyPositionTWS.account() +","+ BuyPositionTWS.totalQuantity() +","+ BuyPositionTWS.orderType());
-			
-			this.setTargetOrder(BuyPositionTWS);			
+			// colocamos operacion de compra	
+	 	   		// colocamos operacion de compra
+			if (Validator.isNull(backtestingdDate))
+			{
+	 	   
+				Order BuyPositionTWS = new Order();
+				BuyPositionTWS.account(Utilities.getConfigurationValue(IBTraderConstants.keyACCOUNT_IB_NAME, _share.getCompanyId(), _share.getGroupId()));		
+				
+				/* EXISTE ALGO SOBREESCRITO */
+				long number_to_purchase = _share.getNumbertopurchase();
+	    		if (this.getJsonStrategyShareParams()!=null && this.getJsonStrategyShareParams().getInt(ConfigKeys._FIELD_NUMBER_TO_PURCHASE,0)>0)
+	    			number_to_purchase =this.getJsonStrategyShareParams().getInt(ConfigKeys._FIELD_NUMBER_TO_PURCHASE,0);    	
+				
+				BuyPositionTWS.totalQuantity(number_to_purchase);
+				BuyPositionTWS.orderType(PositionStates.ordertypes.MKT.toString());		    
+				// precio del tick más o menos un porcentaje ...normalmente %1
+				// ojo con los FUTUROS..llevan cambios porcentuales
+				
+				/* ****************************************************************
+				 * ****************************************************************
+				 * SIEMPRE HAY QUE PONERLO AUNQUE VAYA A MERCADO lmtprice & auxprice
+				 * ****************************************************************
+				 * **************************************************************** */
+				BuyPositionTWS.lmtPrice(Utilities.RoundPrice(this.getValueLimitIn()));
+				BuyPositionTWS.auxPrice(Utilities.RoundPrice(this.getValueLimitIn()));					
+				/*  SI ES UNA COMPRA, NOS POSICIONAMOS CORTOS SI BAJA EL MINIMO */		
+				BuyPositionTWS.action(_OperationTYPE);			
+							
+				_log.info("Order" + BuyPositionTWS.action()  +","+  BuyPositionTWS.lmtPrice()  +","+ BuyPositionTWS.auxPrice() +","+ BuyPositionTWS.account() +","+ BuyPositionTWS.totalQuantity() +","+ BuyPositionTWS.orderType());
+				
+				this.setTargetOrder(BuyPositionTWS);	
+			}
 			/* Posicion en MYSQL de CONTROL. OJO...ANTES SIEMPRE PARA DESPUES CONTROLARLA EN CASO DE ERROR. */
 			//currentPosition.setState_out(PositionStates.statusTWSCallBack.PendingSubmit.toString());
 			/* si metemos el date sell en las parciales, no entran las siguientes */
 			/* acumulo las acciones vendidas y a vender en la operativa */
-			currentPosition.setDate_out(new Date());
+			currentPosition.setDate_out(Validator.isNull(backtestingdDate) ?  new Date() : backtestingdDate);
 			currentPosition.setDescription(this.getClass().getName());
 			currentPosition.setStrategy_out(this.getClass().getName());		 		
 			currentPosition.setDescription(currentPosition.getDescription() + StringPool.RETURN_NEW_LINE + _tradeDescription.toString());	
@@ -208,7 +215,7 @@ public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
 	}
 	
 	@Override
-	public boolean verify(Share _share, Market _market,StrategyShare _strategyImpl) {
+	public boolean verify(Share _share, Market _market,StrategyShare _strategyImpl, Date backtestingdDate) {
 	
 	boolean verified = Boolean.FALSE;
 	
@@ -216,21 +223,37 @@ public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
 	try
     {
 		
+		String position_mode = Utilities.getPositionModeType(null, _share.getCompanyId(),_share.getGroupId());
+
+		
 		if (_strategyImpl.getStrategyparamsoverride()==null)
 			return Boolean.FALSE;
 		
-		existsPositionToExit = PositionLocalServiceUtil.ExistsPositionToExit(_share.getGroupId(),_share.getCompanyId(),_share.getShareId());
+		existsPositionToExit = PositionLocalServiceUtil.ExistsPositionToExit(_share.getGroupId(),_share.getCompanyId(),_share.getShareId(),position_mode);
 		if (existsPositionToExit)	
 		{
-			currentPosition = PositionLocalServiceUtil.findPositionToExit(_share.getGroupId(),_share.getCompanyId(),_share.getShareId());
+			currentPosition = PositionLocalServiceUtil.findPositionToExit(_share.getGroupId(),_share.getCompanyId(),_share.getShareId(),position_mode);
 	
 		
 	    this.setJsonStrategyShareParams(JSONFactoryUtil.createJSONObject(_strategyImpl.getStrategyparamsoverride()));					
 	
 		User _IBUser = UserLocalServiceUtil.getUser(_share.getUserCreatedId());
-		String HoraActual = Utilities.getHourNowFormat(_IBUser);
 		
-		Calendar calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(HoraActual);
+		String HoraActual = "";
+		
+		Calendar calFechaActualWithDeadLine = null;
+		
+		if (Validator.isNull(backtestingdDate))
+		{
+			HoraActual = Utilities.getHourNowFormat(_IBUser);
+			calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(HoraActual);
+		}
+		else	
+		{
+			HoraActual = Utilities.getHourNowFormat(_IBUser,backtestingdDate);
+			calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(backtestingdDate, HoraActual);					
+		}		
+		
 									
 		calFechaActualWithDeadLine.add(Calendar.MINUTE, this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_TO_CLOSEMARKET));
 		
@@ -253,7 +276,8 @@ public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
 		
 		/* SOLO PODEMOS ENTRAR EN EL PERIODO MARCADO DE CADA MINUTO, PARA LO CUAL OBTENEMOS EL RESTO */	
 		/* TIMEZONE AJUSTADO */
-		Date _FromNow = Utilities.getDate(_IBUser);
+		Date _FromNow =  Validator.isNull(backtestingdDate) ?   Utilities.getDate(_IBUser) : backtestingdDate;
+
 		Calendar _calendarFromNow = Calendar.getInstance();
 		_calendarFromNow.setTime(_FromNow);		
 		_calendarFromNow.set(Calendar.SECOND, 0);

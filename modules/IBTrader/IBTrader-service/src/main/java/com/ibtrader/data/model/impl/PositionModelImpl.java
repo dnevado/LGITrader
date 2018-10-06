@@ -106,7 +106,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 			{ "percentual_trailling_stop_lost", Types.DOUBLE },
 			{ "pricetrailling_stop_lost", Types.DOUBLE },
 			{ "pendingcancelled", Types.BIGINT },
-			{ "simulation_mode", Types.BOOLEAN },
+			{ "position_mode", Types.VARCHAR },
 			{ "totalcommision", Types.DOUBLE },
 			{ "forceclose", Types.BOOLEAN }
 		};
@@ -149,12 +149,12 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		TABLE_COLUMNS_MAP.put("percentual_trailling_stop_lost", Types.DOUBLE);
 		TABLE_COLUMNS_MAP.put("pricetrailling_stop_lost", Types.DOUBLE);
 		TABLE_COLUMNS_MAP.put("pendingcancelled", Types.BIGINT);
-		TABLE_COLUMNS_MAP.put("simulation_mode", Types.BOOLEAN);
+		TABLE_COLUMNS_MAP.put("position_mode", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("totalcommision", Types.DOUBLE);
 		TABLE_COLUMNS_MAP.put("forceclose", Types.BOOLEAN);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table ibtrader_Position (uuid_ VARCHAR(75) null,positionId LONG not null primary key,groupId LONG,companyId LONG,shareId LONG,createDate DATE null,modifiedDate DATE null,state_ VARCHAR(75) null,state_in VARCHAR(75) null,state_out VARCHAR(75) null,description TEXT null,price_in DOUBLE,price_real_in DOUBLE,limit_price_in DOUBLE,date_in DATE null,date_real_in DATE null,positionId_tws_in LONG,positionId_tws_out LONG,type_ VARCHAR(75) null,price_out DOUBLE,price_real_out DOUBLE,limit_price_out DOUBLE,date_out DATE null,date_real_out DATE null,share_number LONG,clientId_in LONG,clientId_out LONG,strategy_in VARCHAR(75) null,strategy_out VARCHAR(75) null,percentualstoplost_out DOUBLE,pricestoplost_out DOUBLE,percentualstopprofit_out DOUBLE,pricestopprofit_out DOUBLE,percentual_trailling_stop_lost DOUBLE,pricetrailling_stop_lost DOUBLE,pendingcancelled LONG,simulation_mode BOOLEAN,totalcommision DOUBLE,forceclose BOOLEAN)";
+	public static final String TABLE_SQL_CREATE = "create table ibtrader_Position (uuid_ VARCHAR(75) null,positionId LONG not null primary key,groupId LONG,companyId LONG,shareId LONG,createDate DATE null,modifiedDate DATE null,state_ VARCHAR(75) null,state_in VARCHAR(75) null,state_out VARCHAR(75) null,description TEXT null,price_in DOUBLE,price_real_in DOUBLE,limit_price_in DOUBLE,date_in DATE null,date_real_in DATE null,positionId_tws_in LONG,positionId_tws_out LONG,type_ VARCHAR(75) null,price_out DOUBLE,price_real_out DOUBLE,limit_price_out DOUBLE,date_out DATE null,date_real_out DATE null,share_number LONG,clientId_in LONG,clientId_out LONG,strategy_in VARCHAR(75) null,strategy_out VARCHAR(75) null,percentualstoplost_out DOUBLE,pricestoplost_out DOUBLE,percentualstopprofit_out DOUBLE,pricestopprofit_out DOUBLE,percentual_trailling_stop_lost DOUBLE,pricetrailling_stop_lost DOUBLE,pendingcancelled LONG,position_mode VARCHAR(75) null,totalcommision DOUBLE,forceclose BOOLEAN)";
 	public static final String TABLE_SQL_DROP = "drop table ibtrader_Position";
 	public static final String ORDER_BY_JPQL = " ORDER BY position.positionId_tws_in DESC";
 	public static final String ORDER_BY_SQL = " ORDER BY ibtrader_Position.positionId_tws_in DESC";
@@ -181,11 +181,12 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 	public static final long PENDINGCANCELLED_COLUMN_BITMASK = 256L;
 	public static final long POSITIONID_TWS_IN_COLUMN_BITMASK = 512L;
 	public static final long POSITIONID_TWS_OUT_COLUMN_BITMASK = 1024L;
-	public static final long SHAREID_COLUMN_BITMASK = 2048L;
-	public static final long STATE_COLUMN_BITMASK = 4096L;
-	public static final long STATE_IN_COLUMN_BITMASK = 8192L;
-	public static final long STATE_OUT_COLUMN_BITMASK = 16384L;
-	public static final long UUID_COLUMN_BITMASK = 32768L;
+	public static final long POSITION_MODE_COLUMN_BITMASK = 2048L;
+	public static final long SHAREID_COLUMN_BITMASK = 4096L;
+	public static final long STATE_COLUMN_BITMASK = 8192L;
+	public static final long STATE_IN_COLUMN_BITMASK = 16384L;
+	public static final long STATE_OUT_COLUMN_BITMASK = 32768L;
+	public static final long UUID_COLUMN_BITMASK = 65536L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -236,7 +237,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		model.setPercentual_trailling_stop_lost(soapModel.getPercentual_trailling_stop_lost());
 		model.setPricetrailling_stop_lost(soapModel.getPricetrailling_stop_lost());
 		model.setPendingcancelled(soapModel.getPendingcancelled());
-		model.setSimulation_mode(soapModel.getSimulation_mode());
+		model.setPosition_mode(soapModel.getPosition_mode());
 		model.setTotalcommision(soapModel.getTotalcommision());
 		model.setForceclose(soapModel.getForceclose());
 
@@ -340,7 +341,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 			getPercentual_trailling_stop_lost());
 		attributes.put("pricetrailling_stop_lost", getPricetrailling_stop_lost());
 		attributes.put("pendingcancelled", getPendingcancelled());
-		attributes.put("simulation_mode", getSimulation_mode());
+		attributes.put("position_mode", getPosition_mode());
 		attributes.put("totalcommision", getTotalcommision());
 		attributes.put("forceclose", getForceclose());
 
@@ -573,10 +574,10 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 			setPendingcancelled(pendingcancelled);
 		}
 
-		Boolean simulation_mode = (Boolean)attributes.get("simulation_mode");
+		String position_mode = (String)attributes.get("position_mode");
 
-		if (simulation_mode != null) {
-			setSimulation_mode(simulation_mode);
+		if (position_mode != null) {
+			setPosition_mode(position_mode);
 		}
 
 		Double totalcommision = (Double)attributes.get("totalcommision");
@@ -1211,19 +1212,28 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 	@JSON
 	@Override
-	public boolean getSimulation_mode() {
-		return _simulation_mode;
+	public String getPosition_mode() {
+		if (_position_mode == null) {
+			return StringPool.BLANK;
+		}
+		else {
+			return _position_mode;
+		}
 	}
 
-	@JSON
 	@Override
-	public boolean isSimulation_mode() {
-		return _simulation_mode;
+	public void setPosition_mode(String position_mode) {
+		_columnBitmask |= POSITION_MODE_COLUMN_BITMASK;
+
+		if (_originalPosition_mode == null) {
+			_originalPosition_mode = _position_mode;
+		}
+
+		_position_mode = position_mode;
 	}
 
-	@Override
-	public void setSimulation_mode(boolean simulation_mode) {
-		_simulation_mode = simulation_mode;
+	public String getOriginalPosition_mode() {
+		return GetterUtil.getString(_originalPosition_mode);
 	}
 
 	@JSON
@@ -1327,7 +1337,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		positionImpl.setPercentual_trailling_stop_lost(getPercentual_trailling_stop_lost());
 		positionImpl.setPricetrailling_stop_lost(getPricetrailling_stop_lost());
 		positionImpl.setPendingcancelled(getPendingcancelled());
-		positionImpl.setSimulation_mode(getSimulation_mode());
+		positionImpl.setPosition_mode(getPosition_mode());
 		positionImpl.setTotalcommision(getTotalcommision());
 		positionImpl.setForceclose(getForceclose());
 
@@ -1449,6 +1459,8 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		positionModelImpl._originalPendingcancelled = positionModelImpl._pendingcancelled;
 
 		positionModelImpl._setOriginalPendingcancelled = false;
+
+		positionModelImpl._originalPosition_mode = positionModelImpl._position_mode;
 
 		positionModelImpl._columnBitmask = 0;
 	}
@@ -1619,7 +1631,13 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 		positionCacheModel.pendingcancelled = getPendingcancelled();
 
-		positionCacheModel.simulation_mode = getSimulation_mode();
+		positionCacheModel.position_mode = getPosition_mode();
+
+		String position_mode = positionCacheModel.position_mode;
+
+		if ((position_mode != null) && (position_mode.length() == 0)) {
+			positionCacheModel.position_mode = null;
+		}
 
 		positionCacheModel.totalcommision = getTotalcommision();
 
@@ -1704,8 +1722,8 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		sb.append(getPricetrailling_stop_lost());
 		sb.append(", pendingcancelled=");
 		sb.append(getPendingcancelled());
-		sb.append(", simulation_mode=");
-		sb.append(getSimulation_mode());
+		sb.append(", position_mode=");
+		sb.append(getPosition_mode());
 		sb.append(", totalcommision=");
 		sb.append(getTotalcommision());
 		sb.append(", forceclose=");
@@ -1868,8 +1886,8 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		sb.append(getPendingcancelled());
 		sb.append("]]></column-value></column>");
 		sb.append(
-			"<column><column-name>simulation_mode</column-name><column-value><![CDATA[");
-		sb.append(getSimulation_mode());
+			"<column><column-name>position_mode</column-name><column-value><![CDATA[");
+		sb.append(getPosition_mode());
 		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>totalcommision</column-name><column-value><![CDATA[");
@@ -1950,7 +1968,8 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 	private long _pendingcancelled;
 	private long _originalPendingcancelled;
 	private boolean _setOriginalPendingcancelled;
-	private boolean _simulation_mode;
+	private String _position_mode;
+	private String _originalPosition_mode;
 	private double _totalcommision;
 	private boolean _forceclose;
 	private long _columnBitmask;

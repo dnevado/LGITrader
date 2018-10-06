@@ -109,8 +109,8 @@
        <aui:fieldset  label="interactive.tws.notifications" id="interactive.tws.notifications">            
         	<aui:input label="desktop_notifications" name="desktop_notifications" type="toggle-card" checked="${_DESTOP_NOTIFICATION eq '1' ? 'true':''}"/>       
         	<aui:input label="email_notifications" name="email_notifications"   type="toggle-card" checked="${_MAIL_NOTIFICATION  eq '1' ? 'true':''}"/>                     
-        	<aui:input label="simulation_mode" name="simulation_mode"   type="toggle-card" checked="${_SIMULATION_MODE eq '1' ? 'true':''}"/>        	
-      </aui:fieldset>
+        	<aui:input label="simulation_mode" name="simulation_mode"   type="toggle-card" checked="${_SIMULATION_MODE eq SIMULATION_VALUE ? 'true':''}"/>        	
+      </aui:fieldset> 
       
         
       

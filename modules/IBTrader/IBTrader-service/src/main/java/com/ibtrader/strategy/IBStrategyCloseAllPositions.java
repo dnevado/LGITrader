@@ -146,6 +146,8 @@ public class IBStrategyCloseAllPositions extends StrategyImpl {
 	try
     {
 		
+	String position_mode = Utilities.getPositionModeType(null, _share.getCompanyId(),_share.getGroupId());
+	
 	User _IBUser = UserLocalServiceUtil.getUser(_share.getUserCreatedId());
 	String HoraActual = Utilities.getHourNowFormat(_IBUser);	
 	Calendar calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(HoraActual);
@@ -157,7 +159,7 @@ public class IBStrategyCloseAllPositions extends StrategyImpl {
 		return false;
 	
 	calFechaActualWithDeadLine.add(Calendar.MINUTE, this.getJsonStrategyShareParams().getInt(_EXPANDO_DEADLINE_UNTIL_CLOSEMARKET));
-	currentPosition = PositionLocalServiceUtil.findPositionToExit(_share.getGroupId(), _share.getCompanyId(), _share.getShareId());
+	currentPosition = PositionLocalServiceUtil.findPositionToExit(_share.getGroupId(), _share.getCompanyId(), _share.getShareId(),position_mode);
 	if (calFechaActualWithDeadLine.after(calFechaFinMercado) && currentPosition!=null) 		  // ya esta en el limite 
 	{		    				
 			Realtime oShareLastRTime = (Realtime)  RealtimeLocalServiceUtil.findLastRealTime(_share.getShareId(), _share.getCompanyId(), _share.getGroupId());

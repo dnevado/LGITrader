@@ -181,6 +181,7 @@
 						)						
 						AND (IBTrader_Position.companyid=?)
 	            		AND (IBTrader_Position.groupid=?)
+	            		AND (IBTrader_Position.position_mode=?)         	
 	            		AND	 (REALTIME.shareId=IBTrader_Position.shareId)
 						AND	 (REALTIME.companyid=IBTrader_Position.companyid)
 						AND	 (REALTIME.groupid=IBTrader_Position.groupid)
@@ -223,6 +224,8 @@
 						AND (IBTrader_Position.companyid=?)
 	            		AND (IBTrader_Position.groupid=?)        
 	            		AND	 (IBTrader_Position.shareId=SHARE.shareId) 	
+	            		AND (IBTrader_Position.position_mode=?)         	
+	            		
 				)	 rt 
 				GROUP BY tipo
 	 
@@ -244,7 +247,8 @@
 							(IBTrader_Position.date_real_out) IS NULL
 						)						
 						AND (IBTrader_Position.companyid=?)
-	            		AND (IBTrader_Position.groupid=?)         	
+	            		AND (IBTrader_Position.groupid=?)      
+	            		AND (IBTrader_Position.position_mode=?)         	
 				
 					ORDER BY date_real_in DESC
 	 

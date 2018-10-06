@@ -35,6 +35,7 @@ import com.ibtrader.data.service.ShareLocalService;
 import com.ibtrader.data.service.StrategyLocalService;
 import com.ibtrader.data.service.StrategyShareLocalService;
 import com.ibtrader.data.service.base.ConfigLocalServiceBaseImpl;
+import com.ibtrader.util.PositionStates;
 import com.ibtrader.util.Utilities;
 import com.ibtrader.util.Utilities.OSType;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
@@ -236,7 +237,7 @@ public class ConfigLocalServiceImpl extends ConfigLocalServiceBaseImpl {
 			 _conf.setGroupId(_group);
 			 _conf.setCompanyId(_company);
 			 _conf.setConfig_key(IBTraderConstants.keySIMULATION_MODE);
-			 _conf.setValue(String.valueOf(IBTraderConstants.vSIMULATION_MODE));
+			 _conf.setValue(PositionStates.position_mode_type.SIMULATED.toString());  // para saber si esta ejecutando o no , ojo a las caidas y exceptiones);
 			 _conf.setName(IBTraderConstants.keySIMULATION_MODE);
 			 _conf.setDescription(IBTraderConstants.keySIMULATION_MODE);
 			 _conf.setGlobaldefault(false);
@@ -397,6 +398,19 @@ public class ConfigLocalServiceImpl extends ConfigLocalServiceBaseImpl {
 			 _conf.setGlobaldefault(false);
 			 _conf.setIscron(Boolean.TRUE);
 			 configLocalService.updateConfig(_conf);   
+			 
+			 /* CLIENTS_IDS, INICITAL CONFIGURACION  */
+			 _conf = configLocalService.createConfig(counterLocalService.increment(Config.class.getName()));
+			 _conf.setCompanyId(_company);
+			 _conf.setGroupId(_group);
+			 _conf.setConfig_key(IBTraderConstants.keyCRON_FILLHISTORICALDATA);
+			 _conf.setValue(String.valueOf(IBTraderConstants.vCRON_FILLHISTORICALDATA));
+			 _conf.setName(IBTraderConstants.keyCRON_FILLHISTORICALDATA);
+			 _conf.setDescription(IBTraderConstants.keyCRON_FILLHISTORICALDATA);
+			 _conf.setGlobaldefault(false);
+			 _conf.setIscron(Boolean.TRUE);
+			 configLocalService.updateConfig(_conf); 
+			 
 			  
 			 /* CLIENTS_IDS, INICITAL CONFIGURACION  */
 			 _conf = configLocalService.createConfig(counterLocalService.increment(Config.class.getName()));

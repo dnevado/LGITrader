@@ -53,6 +53,7 @@ import com.liferay.portal.kernel.scheduler.messaging.SchedulerResponse;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.ibtrader.constants.IBTraderConstants;
 import com.ibtrader.cron.IBTraderTrade;
 import com.ibtrader.data.model.Config;
@@ -77,7 +78,8 @@ public class Utilities {
    public final static String __IBTRADER_LONG_DATE_FORMAT="yyyyMMdd"; 
    public final static String __IBTRADER_SQL_DATE_="yyyy-MM-dd HH:mm"; // PARA EL CUSTOM SQL DE MOBILE AVERAGE 
    public final static String __IBTRADER_ORDERS_EXECUTED__DATE_FORMAT ="yyyymmdd hh:mm:ss"; // PARA EL execution time de ordenes de la tws 
-   
+   public final static String __IBTRADER_HISTORICAL_DATE_FORMAT ="yyyyMMdd HH:mm:ss"; // PARA EL execution time de ordenes de la tws 
+
    
    //public final static String _IBTRADER_DATE_FORMAT="HHmm";
    
@@ -92,6 +94,7 @@ public class Utilities {
    
    public final static String _IBTRADER_STRATEGY_CUSTOM_FIELDS_="exp_";
    
+   public final static String _DEFAULT_USER_DEMO_="edemo";
    
    private static final String TIME24HOURS_PATTERN ="([01]?[0-9]|2[0-3]):[0-5][0-9]";
    
@@ -152,7 +155,44 @@ public class Utilities {
       }
       return detectedOS;
     }
-	 
+  
+  public static boolean getSimulatedTrading(long companyId, long groupId)
+  {
+  
+	boolean return_simulated = Boolean.FALSE;  
+	String simulated = Utilities.getConfigurationValue(IBTraderConstants.keySIMULATION_MODE, companyId, groupId);
+	return_simulated = simulated.equalsIgnoreCase(PositionStates.position_mode_type.SIMULATED.toString());
+	return return_simulated;
+	 	
+  
+  }
+  public static String  getPositionModeType(Date backTesting, long companyId, long groupId)
+  {
+	  
+	   String _retValue = "";
+	   if (Validator.isNotNull(backTesting))
+		   _retValue = PositionStates.position_mode_type.BACKTESTING.toString();
+	   else
+	   {
+		     try 
+		     {		    
+		    	 String simulated = Utilities.getConfigurationValue(IBTraderConstants.keySIMULATION_MODE, companyId,groupId);
+		    	 if (simulated.equalsIgnoreCase(PositionStates.position_mode_type.REAL.toString()))
+		    		 _retValue = PositionStates.position_mode_type.REAL.toString();
+		    	 else
+		    		 _retValue = PositionStates.position_mode_type.SIMULATED.toString();
+
+		     }
+		     catch (Exception e)
+		     {
+		    	 _log.debug("No se encuentra el sevicio getConfigurationValue "  + IBTraderConstants.keySIMULATION_MODE + " " + groupId + ",message:" + e.getMessage()) ;
+		     }
+	   }
+	   return _retValue;
+	   
+  }
+  
+  
    public static String  getConfigurationValue(String  keyValue, long companyId, long _groupId)
    {
 	   /* MODO DE SIMULACION */	
@@ -195,16 +235,7 @@ public class Utilities {
   
    
    
-   public static boolean IsSimulationMode(long companyId, long groupId)
-   {
-	   /* MODO DE SIMULACION */
-	   boolean bSimulated = false;
-	    String _value =  getConfigurationValue(IBTraderConstants.keySIMULATION_MODE.toString(), companyId,groupId);
-	    if (!_value.equals(""))
-	    	bSimulated = Boolean.parseBoolean(_value);						
-	   return bSimulated;
-	   
-   }
+  
     public static void closeTWSConnection(TIMApiGITrader_NOVALE oTWS)
     {
     try
@@ -310,6 +341,12 @@ public class Utilities {
    	{
     	SimpleDateFormat Format = new SimpleDateFormat(__IBTRADER_LONG_HOUR_FORMAT);   		
    		return  Format.format(getIBDateByUser(_user));
+   		
+   	}
+    public static  String getHourNowFormat(User _user, Date date)
+   	{
+    	SimpleDateFormat Format = new SimpleDateFormat(__IBTRADER_LONG_HOUR_FORMAT);   		
+   		return  Format.format(getIBDateByUserDate(_user,date));
    		
    	}
     
@@ -523,16 +560,16 @@ public class Utilities {
 		// 23:59 -_> erroneo 
 		if (HourMinutes.contains(":"))
 			HourMinutes = HourMinutes.replaceAll(":", "");
-		return getNewCalendarWithHour(Hoy, HourMinutes);
+		return getNewCalendarWithHour(Hoy.getTime(), HourMinutes);
 	    
 	}
 	
 	/* HOUR HHMM */
-	public static  Calendar getNewCalendarWithHour(Calendar _oDate, String HourMinutes)
+	public static  Calendar getNewCalendarWithHour(Date  _oDate, String HourMinutes)
 	{
 		Calendar Hoy = Calendar.getInstance();
 		
-		Hoy.setTimeInMillis(_oDate.getTimeInMillis());
+		Hoy.setTimeInMillis(_oDate.getTime());
 	    
 	    int hour = Integer.parseInt(HourMinutes.substring(0, 2));
 	    int minute = Integer.parseInt(HourMinutes.substring(2,4));
@@ -696,8 +733,9 @@ public class Utilities {
     
     	
     	long PositionID=1;
-    	
-    	Position _position =  PositionLocalServiceUtil.findByCompanyGroup(companyId, groupId);
+    	String position_mode = Utilities.getPositionModeType(null, companyId, groupId);
+
+    	Position _position =  PositionLocalServiceUtil.findByCompanyGroup(companyId, groupId, position_mode);
     	if (_position!=null)    		
     		PositionID = _position.getPositionId_tws_in() +1;    	    	
     	return PositionID;

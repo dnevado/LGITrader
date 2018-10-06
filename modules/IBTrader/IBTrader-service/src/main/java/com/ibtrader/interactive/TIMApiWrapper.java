@@ -27,6 +27,7 @@ To deal with this situation, there are three things that need to be done:
 package com.ibtrader.interactive;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -62,13 +63,16 @@ import com.ib.client.OrderState;
 import com.ib.client.PriceIncrement;
 import com.ib.client.SoftDollarTier;
 import com.ib.client.TickAttr;
+import com.ib.contracts.StkContract;
 import com.ibtrader.constants.IBTraderConstants;
 import com.ibtrader.data.model.Config;
+import com.ibtrader.data.model.HistoricalRealtime;
 import com.ibtrader.data.model.IBOrder;
 import com.ibtrader.data.model.Position;
 import com.ibtrader.data.model.Realtime;
 import com.ibtrader.data.model.Share;
 import com.ibtrader.data.service.ConfigLocalServiceUtil;
+import com.ibtrader.data.service.HistoricalRealtimeLocalServiceUtil;
 import com.ibtrader.data.service.IBOrderLocalServiceUtil;
 import com.ibtrader.data.service.PositionLocalServiceUtil;
 import com.ibtrader.data.service.RealtimeLocalServiceUtil;
@@ -84,6 +88,8 @@ import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.Organization;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.Validator;
+
 
 //! [ewrapperimpl]
 public class TIMApiWrapper implements EWrapper {
@@ -112,8 +118,10 @@ public class TIMApiWrapper implements EWrapper {
 	
 	private String  cronId = "";  // nos sirve para cambiar el value del clientId en su caso en la BBDD
 	
+	private String userTWS = "";  
+	private String historicalDataRequest = ""; // me vale solo cuando soy un usuario edemo  y la TWS solo me da el historical del dia de hoy, entonces, lo uso para simular
 
-	
+	private boolean historialDataEnd = Boolean.FALSE; 
 	//! [socket_declare]
 	
 	//! [socket_init]
@@ -123,6 +131,20 @@ public class TIMApiWrapper implements EWrapper {
 		_clientId = clientId;	
 	}
 	
+	public boolean isHistorialDataEnd() {
+		return historialDataEnd;
+	}
+
+	
+
+	public String getUserTWS() {
+		return userTWS;
+	}
+
+	public void setUserTWS(String userTWS) {
+		this.userTWS = userTWS;
+	}
+
 	public TIMApiWrapper(int clientId ) {
 		readerSignal = new EJavaSignal();
 		clientSocket = new EClientSocket(this, readerSignal);
@@ -139,6 +161,31 @@ public class TIMApiWrapper implements EWrapper {
 
 		 
 	}
+	
+	/* USUARIO DEMO, SOLO PERMITE UN DIA, JUSTO EL DIA DE HOY */
+	/* IMPORTANTO QUE SEA DIA A DIA PARA SABER CON USUARIOS DEMO QUE FECHA ES LA TRATADA , YA QUE SOLO VIENE EL ULTIMO DIA
+	 * 
+	 */
+	public void cancelHistoricalData(int requestId)
+	{
+		clientSocket.cancelHistoricalData(requestId);
+	}
+	
+	
+	public void getHistoricalData(int requestId, Contract contract, String EndTime){
+		
+		historicalDataRequest = EndTime;
+		
+		// CONTROL
+		if (this.getUserTWS().equalsIgnoreCase(Utilities._DEFAULT_USER_DEMO_))
+			clientSocket.reqHistoricalData(requestId, contract, "", "1 D", "5 mins", "TRADES", 1, 1, false, null);
+		else
+			clientSocket.reqHistoricalData(requestId, contract, EndTime, "1 D", "5 mins", "TRADES", 1, 1, false, null);
+		
+	}
+	
+	
+	
 	
 	public void getContractDetails(int requestId, Contract contract){
 		clientSocket.reqContractDetails(requestId, contract);
@@ -246,9 +293,13 @@ public class TIMApiWrapper implements EWrapper {
 	 */	
 	public int getNextOrderId() {
 		/* POSICIOES */
-		long  _currentMaxPositionsId= PositionLocalServiceUtil.findMaxOrderClientCompanyGroup(_ibtarget_organization.getCompanyId(), _ibtarget_organization.getGroupId(), this._clientId);
+		
+		String position_mode = Utilities.getPositionModeType(null, _ibtarget_organization.getCompanyId(),_ibtarget_share.getGroupId()); 
+
+		
+		long  _currentMaxPositionsId= PositionLocalServiceUtil.findMaxOrderClientCompanyGroup(_ibtarget_organization.getCompanyId(), _ibtarget_organization.getGroupId(), this._clientId, position_mode);
 		// ordenes 
-		long   _currentMaxOrderId= IBOrderLocalServiceUtil.findMaxOrderClientCompanyGroup(_ibtarget_organization.getCompanyId(), _ibtarget_organization.getGroupId(), this._clientId);
+		long   _currentMaxOrderId = IBOrderLocalServiceUtil.findMaxOrderClientCompanyGroup(_ibtarget_organization.getCompanyId(), _ibtarget_organization.getGroupId(), this._clientId);
 		/* maximo de los tres valores */
 		long  _INCREMENT_ORDER_ID   = Math.max(currentOrderId, Math.max(_currentMaxPositionsId, _currentMaxOrderId));
 		
@@ -445,7 +496,7 @@ public class TIMApiWrapper implements EWrapper {
 	//! [nextvalidid]
 	@Override
 	public void nextValidId(int orderId) {
-		_log.debug("Next Valid Id: ["+orderId+"]");
+		_log.info("Next Valid Id: ["+orderId+"]");
 		currentOrderId = orderId;
 	}
 	//! [nextvalidid]
@@ -510,14 +561,15 @@ public class TIMApiWrapper implements EWrapper {
 	public void execDetails(int reqId, Contract contract, Execution execution) {
 		
 		//_log.info("ExecDetails. "+reqId+" - ["+contract.symbol()+"], ["+contract.secType()+"], ["+contract.currency()+"], ["+execution.execId()+"], ["+execution.orderId()+"], ["+execution.shares()+"]");
+		String position_mode = Utilities.getPositionModeType(null, _ibtarget_organization.getCompanyId(),_ibtarget_share.getGroupId()); 
 
 		
-		Position _oPosition = PositionLocalServiceUtil.findByPositionID_In_TWS(_ibtarget_organization.getGroupId(), _ibtarget_organization.getCompanyId(),execution.orderId(),execution.clientId());
+		Position _oPosition = PositionLocalServiceUtil.findByPositionID_In_TWS(_ibtarget_organization.getGroupId(), _ibtarget_organization.getCompanyId(),execution.orderId(),execution.clientId(), position_mode);
 		boolean bChanged = false;
 		// SI ES NULL, QUIERE DECIR QUE PUEDE VENIR UNA OPERACION DE VENTA...LA BUSCAMOS.		
 		if (_oPosition==null)
 		{
-			_oPosition = PositionLocalServiceUtil.findByPositionID_Out_TWS(_ibtarget_organization.getGroupId(), _ibtarget_organization.getCompanyId(),execution.orderId(),execution.clientId());
+			_oPosition = PositionLocalServiceUtil.findByPositionID_Out_TWS(_ibtarget_organization.getGroupId(), _ibtarget_organization.getCompanyId(),execution.orderId(),execution.clientId(), position_mode);
 			if (_oPosition==null) 
 			{
 				//_log.info("execDetails order not found for Order Key:" + reqId + ",contract:" + contract.symbol() + ",Execution:" + execution.avgPrice());
@@ -971,11 +1023,14 @@ public class TIMApiWrapper implements EWrapper {
 			return;
 		
 		
-		Position _oPosition = PositionLocalServiceUtil.findByPositionID_In_TWS(_ibtarget_share.getGroupId(), _ibtarget_organization.getCompanyId(),orderId,clientId);
+		String position_mode = Utilities.getPositionModeType(null, _ibtarget_organization.getCompanyId(),_ibtarget_share.getGroupId()); 
+
+		
+		Position _oPosition = PositionLocalServiceUtil.findByPositionID_In_TWS(_ibtarget_share.getGroupId(), _ibtarget_organization.getCompanyId(),orderId,clientId,position_mode);
 		// SI ES NULL, QUIERE DECIR QUE PUEDE VENIR UNA OPERACION DE VENTA...LA BUSCAMOS.		
 		if (_oPosition==null)
 		{
-			_oPosition = PositionLocalServiceUtil.findByPositionID_Out_TWS(_ibtarget_share.getGroupId(), _ibtarget_organization.getCompanyId(),orderId,clientId);
+			_oPosition = PositionLocalServiceUtil.findByPositionID_Out_TWS(_ibtarget_share.getGroupId(), _ibtarget_organization.getCompanyId(),orderId,clientId,position_mode);
 			if (_oPosition==null) 
 			{
 				_log.debug("Error Execution Details order not found for Order Key:" + orderId);
@@ -1077,9 +1132,103 @@ public class TIMApiWrapper implements EWrapper {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	/* id=1 date = 20131023  19:15:00 open=5.04 high=5.05 low=4.88 close=4.94 volume=33 count=31 WAP=4.973 hasGaps=false
+	id=1 date = 20131023  19:20:00 open=4.99 high=5.26 low=4.99 close=5.19 volume=44 count=40 WAP=5.163 hasGaps=false
+	id=1 date = 20131023  19:25:00 open=5.2 high=5.21 low=5.07 close=5.14 volume=27 count=24 WAP=5.148 hasGaps=false
+	id=1 date = 20131023  19:30:00 open=5.14 high=5.14 low=5.14 close=5.14 volume=0 count=0 WAP=5.14 hasGaps=false
+	id=1 date = finished-20131023  19:15:01-20131023  19:30:01 o
+	 */
+
+	/* PARA DATOS HISTORICOS DE VARIOS DIAS, PUEDE SER QUE ME DE DATOS DEL DIA ANTERIOR EN CASO DE QUE SEA LA PRIMERA HORA O UN SABADO
+* 	PROVOCANDO DUPLICIDADES, CONTROLO QUE LO SOLICITADO, ES DE LA MISMA FECHA PEDIDA */
+	
 	@Override
 	public void historicalData(int reqId, Bar bar) {
-		// TODO Auto-generated method stub
+	
+	//_log.debug("historicalData , reqId: + " + reqId);	
+	
+	SimpleDateFormat fDateHistorical = new SimpleDateFormat(Utilities.__IBTRADER_HISTORICAL_DATE_FORMAT);
+	Calendar _barDate = Calendar.getInstance();
+	 
+	IBOrder MyOrder = null;
+	
+	//MyOrder =  IBOrderLocalServiceUtil.fetchIBOrder(tickerId);
+	MyOrder =  IBOrderLocalServiceUtil.findByOrderClientGroupCompany(reqId, _clientId, _ibtarget_organization.getCompanyId(),_ibtarget_organization.getGroupId());
+	if (MyOrder == null) {
+		
+		_log.debug("No se encuentra el ID " + reqId);
+		return;
+	}
+	
+	/* CIERRE */
+	/* MAXIMO  */
+	/* MINIMO  */
+	
+	try {
+		
+		Date parsedDate = fDateHistorical.parse(bar.time());
+		Date simulatedDate = fDateHistorical.parse(historicalDataRequest);		
+		// CONTROL de usuarios edemo, simulo fecha actual de historical data, ya que me da solo la actual 
+		
+		Calendar _cSim = Calendar.getInstance();
+		Calendar _cParsed = Calendar.getInstance();
+		
+		_cSim.setTimeInMillis(simulatedDate.getTime());
+		_cParsed.setTimeInMillis(parsedDate.getTime());
+		
+		if (this.getUserTWS().equalsIgnoreCase(Utilities._DEFAULT_USER_DEMO_))
+		{
+			_cParsed.set(Calendar.DAY_OF_MONTH,_cSim.get(Calendar.DAY_OF_MONTH));
+			_cParsed.set(Calendar.MONTH,_cSim.get(Calendar.MONTH));
+			_cParsed.set(Calendar.YEAR,_cSim.get(Calendar.YEAR));
+			
+		}		
+		_barDate.setTimeInMillis(_cParsed.getTimeInMillis());
+		_barDate.add(Calendar.SECOND, -1);
+		_barDate.set(Calendar.MILLISECOND, 0);
+		
+	} catch (ParseException e) {
+		// TODO Auto-generated catch block
+		_log.debug(e.getMessage());
+		//e.printStackTrace();
+	}
+	if (Validator.isNull(_barDate))
+		return;
+	
+	/* CIERRE */
+	HistoricalRealtime historicalrealtime = HistoricalRealtimeLocalServiceUtil.createHistoricalRealtime(CounterLocalServiceUtil.increment(HistoricalRealtime.class.getName()));
+	
+	historicalrealtime.setCreateDate(_barDate.getTime());
+	historicalrealtime.setGroupId(MyOrder.getGroupId());
+	historicalrealtime.setCompanyId(MyOrder.getCompanyId());
+	historicalrealtime.setShareId(MyOrder.getShareID());
+	historicalrealtime.setValue(bar.close());
+	
+	HistoricalRealtimeLocalServiceUtil.updateHistoricalRealtime(historicalrealtime);
+	
+	
+	/* MINIMO  */
+	_barDate.add(Calendar.SECOND, -1);
+	historicalrealtime = HistoricalRealtimeLocalServiceUtil.createHistoricalRealtime(CounterLocalServiceUtil.increment(HistoricalRealtime.class.getName()));
+	historicalrealtime.setCreateDate(_barDate.getTime());
+	historicalrealtime.setGroupId(MyOrder.getGroupId());
+	historicalrealtime.setCompanyId(MyOrder.getCompanyId());
+	historicalrealtime.setShareId(MyOrder.getShareID());
+	historicalrealtime.setValue(bar.low());
+	
+	HistoricalRealtimeLocalServiceUtil.updateHistoricalRealtime(historicalrealtime);
+	/* MAXIMO  */
+	
+	historicalrealtime = HistoricalRealtimeLocalServiceUtil.createHistoricalRealtime(CounterLocalServiceUtil.increment(HistoricalRealtime.class.getName()));	
+	historicalrealtime.setCreateDate(_barDate.getTime());
+	historicalrealtime.setGroupId(MyOrder.getGroupId());
+	historicalrealtime.setCompanyId(MyOrder.getCompanyId());
+	historicalrealtime.setShareId(MyOrder.getShareID());
+	historicalrealtime.setValue(bar.high());
+
+	HistoricalRealtimeLocalServiceUtil.updateHistoricalRealtime(historicalrealtime);
+
 		
 	}
 	@Override
@@ -1138,7 +1287,9 @@ public class TIMApiWrapper implements EWrapper {
 	@Override
 	public void historicalDataEnd(int reqId, String startDateStr, String endDateStr) {
 		// TODO Auto-generated method stub
-		
+		_log.debug("historicalDataEnd for " + reqId + ",startDateStr:" +  startDateStr);
+		historialDataEnd = Boolean.TRUE;
+
 	}
 	@Override
 	public void mktDepthExchanges(DepthMktDataDescription[] depthMktDataDescriptions) {
@@ -1193,7 +1344,8 @@ public class TIMApiWrapper implements EWrapper {
 	}
 	@Override
 	public void historicalDataUpdate(int reqId, Bar bar) {
-		// TODO Auto-generated method stub
+		_log.debug("historicalDataUpdate for " + reqId + ",bar:" +  bar);
+
 		
 	}
 	@Override
@@ -1265,6 +1417,67 @@ public class TIMApiWrapper implements EWrapper {
 		this.cronId = cronId;
 	}
 	
-	
+	public static void main(String[] args) throws InterruptedException {
+
+		TIMApiWrapper wrapper = new TIMApiWrapper(7, true);		
+		final EClientSocket m_client = wrapper.getClient();
+		final EReaderSignal m_signal = wrapper.getSignal();
+		//! [connect]
+		m_client.eConnect("127.0.0.1", 7499, 7);
+		//! [connect]
+		//! [ereader]
+		final EReader reader = new EReader(m_client, m_signal);   
+		
+		reader.start();
+		//An additional thread is created in this program design to empty the messaging queue
+		new Thread(() -> {
+		    while (m_client.isConnected()) {
+		        m_signal.waitForSignal();
+		        try {
+		            reader.processMsgs();
+		        } catch (Exception e) {
+		            System.out.println("Exception: "+e.getMessage());
+		        }
+		    }
+		}).start();
+		//! [ereader]
+		// A pause to give the application time to establish the connection
+		// In a production application, it would be best to wait for callbacks to confirm the connection is complete
+		Thread.sleep(1000);
+
+		//tickDataOperations(wrapper.getClient());
+		//orderOperations(wrapper.getClient(), wrapper.getCurrentOrderId());
+		//contractOperations(wrapper.getClient());
+		//hedgeSample(wrapper.getClient(), wrapper.getCurrentOrderId());
+		//testAlgoSamples(wrapper.getClient(), wrapper.getCurrentOrderId());
+		//bracketSample(wrapper.getClient(), wrapper.getCurrentOrderId());
+		//bulletins(wrapper.getClient());
+		//reutersFundamentals(wrapper.getClient());
+		//marketDataType(wrapper.getClient());
+		Contract  _contractAPI3 =  new StkContract("AAPL");
+		_contractAPI3.symbol("AAPL");
+		_contractAPI3.secType("STK");
+		_contractAPI3.exchange("ISLAND");
+		_contractAPI3.currency("USD");
+				
+		
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DAY_OF_MONTH, -4);
+		SimpleDateFormat form = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+		String formatted = form.format(cal.getTime());
+		m_client.reqHistoricalData(4003, _contractAPI3, formatted, "3 D", "5 mins", "TRADES", 0, 1, false, null);
+		Thread.sleep(2000);
+		//accountOperations(wrapper.getClient());
+		//newsOperations(wrapper.getClient());
+		//marketDepthOperations(wrapper.getClient());
+		//rerouteCFDOperations(wrapper.getClient());
+		//marketRuleOperations(wrapper.getClient());
+		//tickDataOperations(wrapper.getClient());
+		//pnlSingle(wrapper.getClient());
+		//continuousFuturesOperations(wrapper.getClient());
+
+		Thread.sleep(100000);
+		m_client.eDisconnect();
+	}	
 
 }

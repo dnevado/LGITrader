@@ -96,7 +96,7 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 			getPercentual_trailling_stop_lost());
 		attributes.put("pricetrailling_stop_lost", getPricetrailling_stop_lost());
 		attributes.put("pendingcancelled", getPendingcancelled());
-		attributes.put("simulation_mode", getSimulation_mode());
+		attributes.put("position_mode", getPosition_mode());
 		attributes.put("totalcommision", getTotalcommision());
 		attributes.put("forceclose", getForceclose());
 
@@ -326,10 +326,10 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 			setPendingcancelled(pendingcancelled);
 		}
 
-		Boolean simulation_mode = (Boolean)attributes.get("simulation_mode");
+		String position_mode = (String)attributes.get("position_mode");
 
-		if (simulation_mode != null) {
-			setSimulation_mode(simulation_mode);
+		if (position_mode != null) {
+			setPosition_mode(position_mode);
 		}
 
 		Double totalcommision = (Double)attributes.get("totalcommision");
@@ -395,16 +395,6 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 		return _position.getForceclose();
 	}
 
-	/**
-	* Returns the simulation_mode of this position.
-	*
-	* @return the simulation_mode of this position
-	*/
-	@Override
-	public boolean getSimulation_mode() {
-		return _position.getSimulation_mode();
-	}
-
 	@Override
 	public boolean isCachedModel() {
 		return _position.isCachedModel();
@@ -428,16 +418,6 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 	@Override
 	public boolean isNew() {
 		return _position.isNew();
-	}
-
-	/**
-	* Returns <code>true</code> if this position is simulation_mode.
-	*
-	* @return <code>true</code> if this position is simulation_mode; <code>false</code> otherwise
-	*/
-	@Override
-	public boolean isSimulation_mode() {
-		return _position.isSimulation_mode();
 	}
 
 	@Override
@@ -608,6 +588,16 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 	@Override
 	public java.lang.String getDescription() {
 		return _position.getDescription();
+	}
+
+	/**
+	* Returns the position_mode of this position.
+	*
+	* @return the position_mode of this position
+	*/
+	@Override
+	public java.lang.String getPosition_mode() {
+		return _position.getPosition_mode();
 	}
 
 	/**
@@ -1103,6 +1093,16 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 	}
 
 	/**
+	* Sets the position_mode of this position.
+	*
+	* @param position_mode the position_mode of this position
+	*/
+	@Override
+	public void setPosition_mode(java.lang.String position_mode) {
+		_position.setPosition_mode(position_mode);
+	}
+
+	/**
 	* Sets the price_in of this position.
 	*
 	* @param price_in the price_in of this position
@@ -1205,16 +1205,6 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 	@Override
 	public void setShare_number(long share_number) {
 		_position.setShare_number(share_number);
-	}
-
-	/**
-	* Sets whether this position is simulation_mode.
-	*
-	* @param simulation_mode the simulation_mode of this position
-	*/
-	@Override
-	public void setSimulation_mode(boolean simulation_mode) {
-		_position.setSimulation_mode(simulation_mode);
 	}
 
 	/**

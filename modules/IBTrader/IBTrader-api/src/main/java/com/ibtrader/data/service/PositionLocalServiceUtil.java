@@ -42,13 +42,16 @@ public class PositionLocalServiceUtil {
 	 * Never modify this class directly. Add custom service methods to {@link com.ibtrader.data.service.impl.PositionLocalServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
 	public static boolean ExistsOpenPosition(long groupId, long companyId,
-		long shareId) {
-		return getService().ExistsOpenPosition(groupId, companyId, shareId);
+		long shareId, java.lang.String positionMode) {
+		return getService()
+				   .ExistsOpenPosition(groupId, companyId, shareId, positionMode);
 	}
 
 	public static boolean ExistsPositionToExit(long groupId, long companyId,
-		long shareId) {
-		return getService().ExistsPositionToExit(groupId, companyId, shareId);
+		long shareId, java.lang.String positionMode) {
+		return getService()
+				   .ExistsPositionToExit(groupId, companyId, shareId,
+			positionMode);
 	}
 
 	/**
@@ -115,27 +118,31 @@ public class PositionLocalServiceUtil {
 	}
 
 	public static com.ibtrader.data.model.Position findByCompanyGroup(
-		long companyId, long groupId) {
-		return getService().findByCompanyGroup(companyId, groupId);
+		long companyId, long groupId, java.lang.String positionMode) {
+		return getService().findByCompanyGroup(companyId, groupId, positionMode);
 	}
 
 	public static com.ibtrader.data.model.Position findByPositionID_In_TWS(
-		long groupId, long companyId, long _PositionIDTWS, long clientId_in) {
+		long groupId, long companyId, long _PositionIDTWS, long clientId_in,
+		java.lang.String positionMode) {
 		return getService()
 				   .findByPositionID_In_TWS(groupId, companyId, _PositionIDTWS,
-			clientId_in);
+			clientId_in, positionMode);
 	}
 
 	public static com.ibtrader.data.model.Position findByPositionID_Out_TWS(
-		long groupId, long companyId, long _PositionIDTWS, long clientId_out) {
+		long groupId, long companyId, long _PositionIDTWS, long clientId_out,
+		java.lang.String positionMode) {
 		return getService()
 				   .findByPositionID_Out_TWS(groupId, companyId,
-			_PositionIDTWS, clientId_out);
+			_PositionIDTWS, clientId_out, positionMode);
 	}
 
 	public static com.ibtrader.data.model.Position findPositionToExit(
-		long groupId, long companyId, long shareId) {
-		return getService().findPositionToExit(groupId, companyId, shareId);
+		long groupId, long companyId, long shareId,
+		java.lang.String positionMode) {
+		return getService()
+				   .findPositionToExit(groupId, companyId, shareId, positionMode);
 	}
 
 	/**
@@ -193,14 +200,18 @@ public class PositionLocalServiceUtil {
 	}
 
 	public static com.liferay.portal.kernel.json.JSONArray findPositionClosedResults(
-		java.util.Date from, java.util.Date to, long groupId, long companyId) {
+		java.util.Date from, java.util.Date to, long groupId, long companyId,
+		java.lang.String positionMode) {
 		return getService()
-				   .findPositionClosedResults(from, to, groupId, companyId);
+				   .findPositionClosedResults(from, to, groupId, companyId,
+			positionMode);
 	}
 
 	public static com.liferay.portal.kernel.json.JSONArray findPositionOpenResults(
-		java.util.Date to, long groupId, long companyId) {
-		return getService().findPositionOpenResults(to, groupId, companyId);
+		java.util.Date to, long groupId, long companyId,
+		java.lang.String positionMode) {
+		return getService()
+				   .findPositionOpenResults(to, groupId, companyId, positionMode);
 	}
 
 	/**
@@ -287,36 +298,42 @@ public class PositionLocalServiceUtil {
 	}
 
 	public static java.util.List<com.ibtrader.data.model.Position> findByCancelShareCompanyGroup(
-		long companyId, long groupId, long pendingcancelled, long shareId) {
+		long companyId, long groupId, long pendingcancelled, long shareId,
+		java.lang.String positionMode) {
 		return getService()
 				   .findByCancelShareCompanyGroup(companyId, groupId,
-			pendingcancelled, shareId);
+			pendingcancelled, shareId, positionMode);
 	}
 
 	public static java.util.List<com.ibtrader.data.model.Position> findByCloseCompanyGroup(
-		long companyId, long groupId, boolean forceclose) {
+		long companyId, long groupId, boolean forceclose,
+		java.lang.String positionMode) {
 		return getService()
-				   .findByCloseCompanyGroup(companyId, groupId, forceclose);
+				   .findByCloseCompanyGroup(companyId, groupId, forceclose,
+			positionMode);
 	}
 
 	public static java.util.List<com.ibtrader.data.model.Position> findByCompanyGroupDate(
 		long companyId, long groupId, java.util.Date start_date_in,
-		java.util.Date end_date_in) {
+		java.util.Date end_date_in, java.lang.String positionMode) {
 		return getService()
 				   .findByCompanyGroupDate(companyId, groupId, start_date_in,
-			end_date_in);
+			end_date_in, positionMode);
 	}
 
 	public static java.util.List<com.ibtrader.data.model.Position> findByCompanyGroupShare(
-		long companyId, long groupId, long share) {
-		return getService().findByCompanyGroupShare(companyId, groupId, share);
+		long companyId, long groupId, long share, java.lang.String positionMode) {
+		return getService()
+				   .findByCompanyGroupShare(companyId, groupId, share,
+			positionMode);
 	}
 
 	public static java.util.List<com.ibtrader.data.model.Position> findIntradiaByCompanyGroupDate(
-		long companyId, long groupId, java.util.Date end_date_in) {
+		long companyId, long groupId, java.util.Date end_date_in,
+		java.lang.String positionMode) {
 		return getService()
 				   .findIntradiaByCompanyGroupDate(companyId, groupId,
-			end_date_in);
+			end_date_in, positionMode);
 	}
 
 	/**
@@ -390,9 +407,10 @@ public class PositionLocalServiceUtil {
 	}
 
 	public static long findMaxOrderClientCompanyGroup(long companyId,
-		long groupId, long clientId) {
+		long groupId, long clientId, java.lang.String positionMode) {
 		return getService()
-				   .findMaxOrderClientCompanyGroup(companyId, groupId, clientId);
+				   .findMaxOrderClientCompanyGroup(companyId, groupId,
+			clientId, positionMode);
 	}
 
 	public static PositionLocalService getService() {

@@ -59,7 +59,8 @@ public class IBStrategyClosePosition extends StrategyImpl {
 	Position closePosition = null;
 	
 	@Override
-	public long execute(Share _share, Market _market) {
+	public long execute(Share _share, Market _market,  Date backtestingdDate)
+	{
 		// TODO Auto-generated method stub
 	long returnValue=-1;
 	try		
@@ -89,15 +90,19 @@ public class IBStrategyClosePosition extends StrategyImpl {
 	    String _OperationTYPE = PositionStates.statusTWSFire.BUY.toString(); 
 		if (closePosition.getType().equals(PositionStates.statusTWSFire.BUY.toString())) // operacion de compra normal..??
 			_OperationTYPE = PositionStates.statusTWSFire.SELL.toString();		
-		Order BuyPositionTWS = new Order();
-		BuyPositionTWS.account(Utilities.getConfigurationValue(IBTraderConstants.keyACCOUNT_IB_NAME, _share.getCompanyId(), _share.getGroupId()));			
-		BuyPositionTWS.totalQuantity(closePosition.getShare_number());
-		BuyPositionTWS.orderType(PositionStates.ordertypes.MKT.toString());		    					
-		BuyPositionTWS.action(_OperationTYPE);			
-		_log.info("Order" + BuyPositionTWS.action()  +","+  BuyPositionTWS.lmtPrice()  +","+ BuyPositionTWS.auxPrice() +","+ BuyPositionTWS.account() +","+ BuyPositionTWS.totalQuantity() +","+ BuyPositionTWS.orderType());
-		this.setTargetOrder(BuyPositionTWS);					
+				
+		if (Validator.isNull(backtestingdDate))
+		{
+			Order BuyPositionTWS = new Order();
+			BuyPositionTWS.account(Utilities.getConfigurationValue(IBTraderConstants.keyACCOUNT_IB_NAME, _share.getCompanyId(), _share.getGroupId()));			
+			BuyPositionTWS.totalQuantity(closePosition.getShare_number());
+			BuyPositionTWS.orderType(PositionStates.ordertypes.MKT.toString());		    					
+			BuyPositionTWS.action(_OperationTYPE);			
+			_log.info("Order" + BuyPositionTWS.action()  +","+  BuyPositionTWS.lmtPrice()  +","+ BuyPositionTWS.auxPrice() +","+ BuyPositionTWS.account() +","+ BuyPositionTWS.totalQuantity() +","+ BuyPositionTWS.orderType());
+			this.setTargetOrder(BuyPositionTWS);
+		}
 		//closePosition.setState_out(PositionStates.statusTWSCallBack.PendingSubmit.toString());	
-		closePosition.setDate_out(new Date());
+		closePosition.setDate_out(Validator.isNull(backtestingdDate) ? new Date() : backtestingdDate);
 		closePosition.setDescription(closePosition.getDescription() + StringPool.RETURN_NEW_LINE + this.getClass().getName());
 		closePosition.setStrategy_out(this.getClass().getName());
 		
@@ -133,15 +138,18 @@ public class IBStrategyClosePosition extends StrategyImpl {
 		// TODO Auto-generated constructor stub
 	}
 	
+	
 	@Override
-	public boolean verify(Share _share, Market _market,StrategyShare _strategyImpl) {
+	public  boolean verify(Share _share, Market _market,StrategyShare _strategyImpl, Date backtestingdDate) {
 	
 	boolean verified = false;
 	List<Position> lToClose = null;
 	try
     {
+		String position_mode = Utilities.getPositionModeType(null, _share.getCompanyId(),_share.getGroupId());
+
 		/* cancelada y abierta */
-		lToClose = PositionLocalServiceUtil.findByCloseCompanyGroup(_share.getCompanyId(), _share.getGroupId(), Boolean.TRUE); 
+		lToClose = PositionLocalServiceUtil.findByCloseCompanyGroup(_share.getCompanyId(), _share.getGroupId(), Boolean.TRUE,position_mode); 
 		if (lToClose!=null && !lToClose.isEmpty())
 		{
 			for (Position position : lToClose)

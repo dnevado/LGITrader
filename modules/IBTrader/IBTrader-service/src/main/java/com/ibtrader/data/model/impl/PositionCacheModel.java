@@ -139,8 +139,8 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 		sb.append(pricetrailling_stop_lost);
 		sb.append(", pendingcancelled=");
 		sb.append(pendingcancelled);
-		sb.append(", simulation_mode=");
-		sb.append(simulation_mode);
+		sb.append(", position_mode=");
+		sb.append(position_mode);
 		sb.append(", totalcommision=");
 		sb.append(totalcommision);
 		sb.append(", forceclose=");
@@ -279,7 +279,14 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 		positionImpl.setPercentual_trailling_stop_lost(percentual_trailling_stop_lost);
 		positionImpl.setPricetrailling_stop_lost(pricetrailling_stop_lost);
 		positionImpl.setPendingcancelled(pendingcancelled);
-		positionImpl.setSimulation_mode(simulation_mode);
+
+		if (position_mode == null) {
+			positionImpl.setPosition_mode(StringPool.BLANK);
+		}
+		else {
+			positionImpl.setPosition_mode(position_mode);
+		}
+
 		positionImpl.setTotalcommision(totalcommision);
 		positionImpl.setForceclose(forceclose);
 
@@ -348,8 +355,7 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 		pricetrailling_stop_lost = objectInput.readDouble();
 
 		pendingcancelled = objectInput.readLong();
-
-		simulation_mode = objectInput.readBoolean();
+		position_mode = objectInput.readUTF();
 
 		totalcommision = objectInput.readDouble();
 
@@ -465,7 +471,12 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 
 		objectOutput.writeLong(pendingcancelled);
 
-		objectOutput.writeBoolean(simulation_mode);
+		if (position_mode == null) {
+			objectOutput.writeUTF(StringPool.BLANK);
+		}
+		else {
+			objectOutput.writeUTF(position_mode);
+		}
 
 		objectOutput.writeDouble(totalcommision);
 
@@ -508,7 +519,7 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 	public double percentual_trailling_stop_lost;
 	public double pricetrailling_stop_lost;
 	public long pendingcancelled;
-	public boolean simulation_mode;
+	public String position_mode;
 	public double totalcommision;
 	public boolean forceclose;
 }

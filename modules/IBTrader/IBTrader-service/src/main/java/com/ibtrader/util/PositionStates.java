@@ -76,6 +76,17 @@ public class PositionStates {
 	    	nametypes = s;
 	    }
 	}
+	public enum position_mode_type {
+		SIMULATED ("SIMULATED"), 
+		REAL ("REAL"),   
+		BACKTESTING ("BACKTESTING");   
+	    
+	    private String position_mode_type;       
+
+	    private position_mode_type (String s) {
+	    	position_mode_type = s;
+	    }
+	}
 	
 	
 	/* private enum status {BUY,SELL,PENDING_BUY,BUY_OK, PENDING_SELL, SELL_OK,CANCEL_BUY, CANCEL_SELL}

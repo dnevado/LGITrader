@@ -111,15 +111,15 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 	
 	SimpleDateFormat TimeFormat = new SimpleDateFormat (Utilities.__IBTRADER_SHORT_HOUR_FORMAT);
 	
-	
 	@Override
-	public long execute(Share _share, Market _market) {
-		// TODO Auto-generated method stub
-		long returnValue=-1;
+	public long  execute(Share _share, Market _market,  Date backtestingdDate)
+	{
+		long returnValue =-1;
 		try		
         {
-			
-			boolean existsPosition = PositionLocalServiceUtil.ExistsOpenPosition (_share.getGroupId(),_share.getCompanyId(),_share.getShareId());
+			String position_mode = Utilities.getPositionModeType(backtestingdDate, _share.getCompanyId(),_share.getGroupId());
+			boolean existsPosition = PositionLocalServiceUtil.ExistsOpenPosition (_share.getGroupId(),_share.getCompanyId(),
+					_share.getShareId(),position_mode);
 			if (existsPosition)
 				return returnValue;
 			_log.info("UserAccount: detectada posible entrada de " + _share.getName() +  "Tick:" + _share.getSymbol() + ",PrecioCompra:" + this.getValueIn());
@@ -144,52 +144,55 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
   		   
   		   /* NECESARIO PRA LANZAR COMPRA DESDE EL CROUTIL */
   		   this.setTargetContract(oContrat);
-  		   
-  			
+		   long number_to_purchase = _share.getNumbertopurchase();
+
+		   String action = PositionStates.statusTWSFire.BUY.toString();
+		   if (bSellOperation)
+		   {
+			   action = PositionStates.statusTWSFire.SELL.toString();
+		   }
+		   
 			// colocamos operacion de compra
-			
-			Order BuyPositionTWS = new Order();
-			BuyPositionTWS.account(Utilities.getConfigurationValue(IBTraderConstants.keyACCOUNT_IB_NAME, _share.getCompanyId(), _share.getGroupId()));		
-			
-			/* EXISTE ALGO SOBREESCRITO */
-			long number_to_purchase = _share.getNumbertopurchase();
-    		if (this.getJsonStrategyShareParams()!=null && this.getJsonStrategyShareParams().getInt(ConfigKeys._FIELD_NUMBER_TO_PURCHASE,0)>0)
-    			number_to_purchase =this.getJsonStrategyShareParams().getInt(ConfigKeys._FIELD_NUMBER_TO_PURCHASE,0);    	
-			
-			BuyPositionTWS.totalQuantity(number_to_purchase);
-			BuyPositionTWS.orderType(PositionStates.ordertypes.MKT.toString());		    
-			// precio del tick más o menos un porcentaje ...normalmente %1
-			// ojo con los FUTUROS..llevan cambios porcentuales
-			
-			/* ****************************************************************
-			 * ****************************************************************
-			 * SIEMPRE HAY QUE PONERLO AUNQUE VAYA A MERCADO lmtprice & auxprice
-			 * ****************************************************************
-			 * **************************************************************** */
-			
-			BuyPositionTWS.lmtPrice(Utilities.RoundPrice(this.getValueLimitIn()));
-			BuyPositionTWS.auxPrice(Utilities.RoundPrice(this.getValueLimitIn()));					
-			/*  SI ES UNA COMPRA, NOS POSICIONAMOS CORTOS SI BAJA EL MINIMO */		
-			BuyPositionTWS.action(PositionStates.statusTWSFire.BUY.toString());			
-			if (bSellOperation)
-			{
-				BuyPositionTWS.action(PositionStates.statusTWSFire.SELL.toString());
-			}
-			
-			_log.info("Order" + BuyPositionTWS.action()  +","+  BuyPositionTWS.lmtPrice()  +","+ BuyPositionTWS.auxPrice() +","+ BuyPositionTWS.account() +","+ BuyPositionTWS.totalQuantity() +","+ BuyPositionTWS.orderType());
-			
-			this.setTargetOrder(BuyPositionTWS);			
+  			if (Validator.isNull(backtestingdDate))
+  			{
+  			
+				Order BuyPositionTWS = new Order();
+				BuyPositionTWS.account(Utilities.getConfigurationValue(IBTraderConstants.keyACCOUNT_IB_NAME, _share.getCompanyId(), _share.getGroupId()));		
+				
+				/* EXISTE ALGO SOBREESCRITO */
+	    		if (this.getJsonStrategyShareParams()!=null && this.getJsonStrategyShareParams().getInt(ConfigKeys._FIELD_NUMBER_TO_PURCHASE,0)>0)
+	    			number_to_purchase =this.getJsonStrategyShareParams().getInt(ConfigKeys._FIELD_NUMBER_TO_PURCHASE,0);    	
+				
+				BuyPositionTWS.totalQuantity(number_to_purchase);
+				BuyPositionTWS.orderType(PositionStates.ordertypes.MKT.toString());		    
+				// precio del tick más o menos un porcentaje ...normalmente %1
+				// ojo con los FUTUROS..llevan cambios porcentuales
+				
+				/* ****************************************************************
+				 * ****************************************************************
+				 * SIEMPRE HAY QUE PONERLO AUNQUE VAYA A MERCADO lmtprice & auxprice
+				 * ****************************************************************
+				 * **************************************************************** */
+				
+				BuyPositionTWS.lmtPrice(Utilities.RoundPrice(this.getValueLimitIn()));
+				BuyPositionTWS.auxPrice(Utilities.RoundPrice(this.getValueLimitIn()));					
+				/*  SI ES UNA COMPRA, NOS POSICIONAMOS CORTOS SI BAJA EL MINIMO */		
+				BuyPositionTWS.action(action);			
+				
+				_log.info("Order" + BuyPositionTWS.action()  +","+  BuyPositionTWS.lmtPrice()  +","+ BuyPositionTWS.auxPrice() +","+ BuyPositionTWS.account() +","+ BuyPositionTWS.totalQuantity() +","+ BuyPositionTWS.orderType());
+				
+				this.setTargetOrder(BuyPositionTWS);			
+  			}
 			/* Posicion en MYSQL de CONTROL. OJO...ANTES SIEMPRE PARA DESPUES CONTROLARLA EN CASO DE ERROR. */
 			Position BuyPositionSystem = PositionLocalServiceUtil.createPosition(CounterLocalServiceUtil.increment(Position.class.getName()));			
-			BuyPositionSystem.setDescription("");
 			BuyPositionSystem.setPrice_in( this.getValueIn());  // ojo, es estimativo
-			BuyPositionSystem.setDate_in(new Date());// .setDate_buy(new Timestamp(Calendar.getInstance().getTimeInMillis()));
+			BuyPositionSystem.setDate_in(Validator.isNull(backtestingdDate) ? new Date() : backtestingdDate);// .setDate_buy(new Timestamp(Calendar.getInstance().getTimeInMillis()));
 			BuyPositionSystem.setShare_number(number_to_purchase);
 			BuyPositionSystem.setShareId(_share.getShareId());
 		
 			/* BuyPositionSystem.setState_in(PositionStates.statusTWSCallBack.PendingSubmit.toString());
 			BuyPositionSystem.setState(PositionStates.status.PENDING_BUY.toString()); */
-			BuyPositionSystem.setType(BuyPositionTWS.getAction());
+			BuyPositionSystem.setType(action);
 			BuyPositionSystem.setCompanyId(_share.getCompanyId());
 			BuyPositionSystem.setGroupId(_share.getGroupId());
 			BuyPositionSystem.setStrategy_in(this.getClass().getName());
@@ -201,10 +204,8 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 			/* MODO FAKE CUENTA DEMO */
     		BuyPositionSystem = Utilities.fillStatesOrder(BuyPositionSystem);
 			/* END MODO FAKE CUENTA DEMO */
-			
-			String simulated = Utilities.getConfigurationValue(IBTraderConstants.keySIMULATION_MODE, _share.getCompanyId(), _share.getGroupId());	
-			boolean bSIMULATED_TRADING = simulated.equals("1");  
-			BuyPositionSystem.setSimulation_mode(bSIMULATED_TRADING);			
+  
+			BuyPositionSystem.setPosition_mode(position_mode);			
 			PositionLocalServiceUtil.updatePosition(BuyPositionSystem);
 			/* Posicion en MYSQL de CONTROL */
 			_log.info("Opening order " + BuyPositionSystem.getPositionId());
@@ -215,13 +216,13 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 			
         }
 		catch (Exception er)
-	        {
+	    {
 				_log.info(er.getMessage());
 				er.printStackTrace();
-			
-	        }
+	    }
 		return returnValue;
 	}
+	
 	
 	public IBStrategyExpAvgMobileADXDI() {
 		
@@ -229,12 +230,13 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 		// TODO Auto-generated constructor stub
 	}
 	
+	/* 
+	backtestingdDate --> backtestingdDate, SI ES BACKTESTING  O NO 
+	*/
 	@Override
-	public boolean verify(Share _share, Market _market,StrategyShare _strategyImpl) {
-		
-		
-		
-		
+	public boolean verify(Share _share, Market _market,StrategyShare _strategyImpl, Date backtestingdDate) {
+	
+
 		boolean verified = Boolean.FALSE;
 		boolean existsPosition = Boolean.FALSE;
 
@@ -245,18 +247,28 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 			return Boolean.FALSE;
 			
 	    this.setJsonStrategyShareParams(JSONFactoryUtil.createJSONObject(_strategyImpl.getStrategyparamsoverride()));					
-
-			
 		User _IBUser = UserLocalServiceUtil.getUser(_share.getUserCreatedId());
-		String HoraActual = Utilities.getHourNowFormat(_IBUser);
-		
-		Calendar calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(HoraActual);
-		
+		String HoraActual = "";
+		Calendar calFechaActualWithDeadLine;
+		Calendar calFechaFinMercado;
+		if (Validator.isNull(backtestingdDate))
+		{
+			HoraActual = Utilities.getHourNowFormat(_IBUser);
+			calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(HoraActual);
+			calFechaFinMercado = Utilities.getNewCalendarWithHour(_market.getEnd_hour());
+		}
+		else	
+		{
+			HoraActual = Utilities.getHourNowFormat(_IBUser,backtestingdDate);
+			calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(backtestingdDate, HoraActual);
+			calFechaFinMercado = Utilities.getNewCalendarWithHour(backtestingdDate, _market.getEnd_hour());			
+		}			
 //		StrategyShare _strategyshare = StrategyShareLocalServiceUtil.getByCommpanyShareStrategyId(_share.getGroupId(),_share.getCompanyId(),_share.getShareId(),_strategyImpl.getStrategyId());
 									
 		calFechaActualWithDeadLine.add(Calendar.MINUTE, this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_TO_CLOSEMARKET));
-		Calendar calFechaFinMercado = Utilities.getNewCalendarWithHour(_market.getEnd_hour());
-		existsPosition = PositionLocalServiceUtil.ExistsOpenPosition (_share.getGroupId(),_share.getCompanyId(),_share.getShareId());
+		
+		existsPosition = PositionLocalServiceUtil.ExistsOpenPosition (_share.getGroupId(),_share.getCompanyId(),_share.getShareId(),
+				Utilities.getPositionModeType(backtestingdDate, _share.getCompanyId(),_share.getGroupId()));
 		/*  CONTROLAMOS EL DEADLINE PARA COMPRAR */ 
 		// maximos y minimos...ya lo tenemos de la tabla.
 		//RealTime oShareMixMaxRTime = RealTimeDAO.getMinMaxRealTime(ShareStrategy.getShareId().intValue());
@@ -269,7 +281,7 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 		_num_macdP       = this.getJsonStrategyShareParams().getLong(_EXPANDO_MOBILE_AVERAGE_PERIODS_NUMBER,0);
 		_num_macdT 		 = this.getJsonStrategyShareParams().getLong(_EXPANDO_MOBILE_AVERAGE_CANDLE_SIZE,0);
 		_num_adxr_rate   = this.getJsonStrategyShareParams().getLong(_EXPANDO_MOBILE_ADX_PASSED_RATE,0);
-		_num_aroonP       = this.getJsonStrategyShareParams().getLong(_EXPANDO_AROON_PERIODS,0);  
+		_num_aroonP      = this.getJsonStrategyShareParams().getLong(_EXPANDO_AROON_PERIODS,0);  
 		
 		
 		operationfilter = this.getJsonStrategyShareParams().getString(_EXPANDO_MOBILE_AVERAGE_TRADE_OPERATIONS_TYPE,"ALL").trim();
@@ -284,7 +296,7 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 		/* SOLO PODEMOS ENTRAR EN EL PERIODO MARCADO DE CADA MINUTO, PARA LO CUAL OBTENEMOS EL RESTO */	
 		
 		/* TIMEZONE AJUSTADO */
-		Date _FromNow = Utilities.getDate(_IBUser);
+		Date _FromNow =  Validator.isNull(backtestingdDate) ?   Utilities.getDate(_IBUser) : backtestingdDate;
 		Calendar _calendarFromNow = Calendar.getInstance();
 		_calendarFromNow.setTime(_FromNow);		
 		_calendarFromNow.set(Calendar.SECOND, 0);
@@ -446,12 +458,6 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 						_tradeDescription.put("Aroon.getLastAroonDown", Aroon.getLastAroonDown());
 						_tradeDescription.put("Aroon.getLastAroonUp", Aroon.getLastAroonUp());
 						
-						
-						
-						
-						
-						
-						
 					
 					}						
 				 } // if  (Validator.isNotNull(oShareLastRTime))			   	
@@ -466,8 +472,7 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 	    }
 		return verified;
 	}
-	
-	
+
 
 	@Override
 	public void init(long companyId) {

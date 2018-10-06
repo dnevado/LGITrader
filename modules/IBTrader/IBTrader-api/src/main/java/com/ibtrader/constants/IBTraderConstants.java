@@ -35,11 +35,12 @@ public class IBTraderConstants {
 	public static long   	vCRON_CONTRACTCHECKER_CLIENT_INITIAL = 2;  // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
 	public static long   	vCRON_TRADING_CLIENT_INITIAL = 3;  // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
 	public static long  	vCRON_READING_CLIENT_INITIAL = 4;  // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
+	public static long  	vCRON_FILLHISTORICALDATA = 6;  // para saber si esta ejecutando o no , ojo a las caidas y exceptiones	
 	public static String    vUSER_TWS = "edemo";  // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
 	public static String    vUSER_PWD = "demouser";   // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
 	public static long   	vENABLE_DESKTOP_NOTIFICATIONS = 1;  // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
 	public static long   	vENABLE_MAIL_NOTIFICATIONS = 1;  // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
-	public static long   	vSIMULATION_MODE = 0;  // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
+	public static String   	vSIMULATION_MODE = "";  // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
 	public static String    vPATH_TO_CONFIGURATION_FILE = "{PLATFORM_PATH}/IbController_live/IBController.ini";   // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
 	public static String   	vPATH_TO_EXECUTABLE_FILE = "{PLATFORM_PATH}/IbController_live/IBControllerStart";   // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
 
@@ -64,6 +65,7 @@ public class IBTraderConstants {
 	public static String    keyCRON_TRADING_STATUS = "CRON_TRADING_STATUS";	
 	public static String    keyCRON_CONTRACTCHECKER_CLIENT_INITIAL = "CRON_CONTRACTCHECKER_CLIENT_INITIAL"; 
 	public static String    keyCRON_ORDERSCHECKER_CLIENT_INITIAL = "CRON_ORDERSCHECKER_CLIENT_INITIAL";
+	public static String    keyCRON_FILLHISTORICALDATA = "CRON_FILLHISTORICALDATA";
 	public static String    keyCRON_TRADING_CLIENT_INITIAL = "CRON_TRADING_CLIENT_INITIAL"; 
 	public static String    keyCRON_READING_CLIENT_INITIAL = "CRON_READING_CLIENT_INITIAL";
 	

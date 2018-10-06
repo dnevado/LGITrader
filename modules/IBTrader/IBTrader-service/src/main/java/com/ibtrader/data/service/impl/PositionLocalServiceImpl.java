@@ -62,7 +62,7 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 	 */
 	
 	
-	public List<Position> findByCloseCompanyGroup(long companyId, long groupId, boolean forceclose)
+	public List<Position> findByCloseCompanyGroup(long companyId, long groupId, boolean forceclose, String positionMode)
 	{	
 		
 		DynamicQuery _DQ = PositionLocalServiceUtil.dynamicQuery();
@@ -70,24 +70,26 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 		_DQ.add(RestrictionsFactoryUtil.eq("companyId", companyId));
 		_DQ.add(RestrictionsFactoryUtil.eq("groupId", groupId));
 		_DQ.add(RestrictionsFactoryUtil.eq("forceclose", forceclose));		
+		_DQ.add(RestrictionsFactoryUtil.eq("position_mode", positionMode));		
 		_DQ.add(RestrictionsFactoryUtil.ne("state", PositionStates.status.SELL_OK.toString()));		
 		return PositionLocalServiceUtil.dynamicQuery(_DQ);
 	}
 	
 	
-	public List<Position> findByCancelShareCompanyGroup(long companyId, long groupId, long pendingcancelled, long shareId)
+	public List<Position> findByCancelShareCompanyGroup(long companyId, long groupId, long pendingcancelled, long shareId, String positionMode)
 	{	
 		
-		return  getPositionPersistence().findByCancelShareCompanyGroup(companyId, groupId, pendingcancelled,shareId);
+		return  getPositionPersistence().findByCancelShareCompanyGroup(companyId, groupId, pendingcancelled,shareId,positionMode);
 	}
 	
-	public List<Position> findByCompanyGroupDate(long companyId, long groupId, Date start_date_in , Date end_date_in)
+	public List<Position> findByCompanyGroupDate(long companyId, long groupId, Date start_date_in , Date end_date_in, String positionMode)
 	{	
 		 DynamicQuery _DQ = PositionLocalServiceUtil.dynamicQuery();
 
 		_DQ.add(RestrictionsFactoryUtil.eq("companyId", companyId));
 		_DQ.add(RestrictionsFactoryUtil.eq("groupId", groupId));
-		 _DQ.add(RestrictionsFactoryUtil.le("date_in", end_date_in));
+		_DQ.add(RestrictionsFactoryUtil.eq("position_mode", positionMode));		
+		_DQ.add(RestrictionsFactoryUtil.le("date_in", end_date_in));
 		_DQ.add(RestrictionsFactoryUtil.ge("date_in", start_date_in));
 		_DQ.addOrder(OrderFactoryUtil.desc("date_in"));
 		
@@ -97,7 +99,7 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 	}
 	
 	
-	public List<Position> findIntradiaByCompanyGroupDate(long companyId, long groupId, Date end_date_in)
+	public List<Position> findIntradiaByCompanyGroupDate(long companyId, long groupId, Date end_date_in, String positionMode)
 	{	
 		/* DynamicQuery _DQ = PositionLocalServiceUtil.dynamicQuery();
 
@@ -108,7 +110,7 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 		_DQ.addOrder(OrderFactoryUtil.desc("date_in"));
 		*/
 		
-		return positionFinder.getIntradiaPositions(end_date_in, groupId, companyId);
+		return positionFinder.getIntradiaPositions(end_date_in, groupId, companyId,positionMode);
 		
 		//List<Market>  = MarketLocalServiceUtil.dynamicQuery(_DQ);
 		
@@ -118,7 +120,7 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 	
 	
 	/* sacamos el maximo de las ordenes metidas en las posiciones para saber si usar estas o el currentOrderId de la TWS */
-	public long findMaxOrderClientCompanyGroup(long companyId, long groupId, long clientId)
+	public long findMaxOrderClientCompanyGroup(long companyId, long groupId, long clientId, String positionMode)
 	{
 		 
 		
@@ -134,6 +136,8 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 		_DQ.add(RestrictionsFactoryUtil.eq("companyId", companyId));
 		_DQ.add(RestrictionsFactoryUtil.le("groupId", groupId));
 		_DQ.add(RestrictionsFactoryUtil.le("clientId_in", groupId));
+		_DQ.add(RestrictionsFactoryUtil.le("position_mode", positionMode));
+		
 		
 		ProjectionList ListMaxValues  = ProjectionFactoryUtil.projectionList();
 		ListMaxValues.add(projection_max_in);
@@ -167,18 +171,18 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 		
 	}
 	
-	public List<Position> findByCompanyGroupShare(long companyId, long groupId, long share)
+	public List<Position> findByCompanyGroupShare(long companyId, long groupId, long share, String positionMode)
 	{
 		 
-		List<Position> _lPosition = getPositionPersistence().findByCompanyGroupShare(companyId,groupId,share);	
+		List<Position> _lPosition = getPositionPersistence().findByCompanyGroupShare(companyId,groupId,share,positionMode);	
 		return _lPosition;
 		
 	}
 	
-	public Position findByCompanyGroup(long companyId, long groupId)
+	public Position findByCompanyGroup(long companyId, long groupId, String positionMode)
 	{
 		Position _rPosition = null; 
-		List<Position> _lPosition = getPositionPersistence().findByCompanyGroup(companyId,groupId);
+		List<Position> _lPosition = getPositionPersistence().findByCompanyGroup(companyId,groupId,positionMode);
 		if (!_lPosition.isEmpty() && _lPosition.size()>0)
 		{
 			_rPosition = _lPosition.get(0);
@@ -187,12 +191,12 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 		
 	}
 	
-	public Position findByPositionID_Out_TWS(long groupId, long companyId, long _PositionIDTWS, long clientId_out)
+	public Position findByPositionID_Out_TWS(long groupId, long companyId, long _PositionIDTWS, long clientId_out,String positionMode)
 	{
 		 
 		Position _rPosition = null;
 		try {
-			_rPosition = getPositionPersistence().findByPositionOutGroupCompany(groupId,companyId, _PositionIDTWS,clientId_out);
+			_rPosition = getPositionPersistence().findByPositionOutGroupCompany(groupId,companyId, _PositionIDTWS,clientId_out,positionMode);
 		} catch (NoSuchPositionException e) {
 			// TODO Auto-generated catch block
 			//e.printStackTrace();
@@ -200,11 +204,11 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 		return _rPosition;
 		
 	}
-	public Position findByPositionID_In_TWS(long groupId, long companyId, long _PositionIDTWS, long clientId_in)
+	public Position findByPositionID_In_TWS(long groupId, long companyId, long _PositionIDTWS, long clientId_in, String positionMode)
 	{
 		Position _rPosition = null;
 		try {
-			_rPosition =  getPositionPersistence().findByPositionInGroupCompany(groupId,companyId, _PositionIDTWS,clientId_in);
+			_rPosition =  getPositionPersistence().findByPositionInGroupCompany(groupId,companyId, _PositionIDTWS,clientId_in,positionMode);
 		} 
 		catch (NoSuchPositionException e) {
 			// TODO Auto-generated catch block
@@ -215,7 +219,7 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 	}
 	
 	/* FECHA  SALIDA   Y REAL DE SALIDA A  NULL , SI PODEMOS LA  REAL  ENTRADA, PUEDE VOLVOER A ENTRAR HASTA QUE NO ESTE FILLED */
-	public boolean  ExistsOpenPosition(long groupId, long companyId, long shareId)
+	public boolean  ExistsOpenPosition(long groupId, long companyId, long shareId, String positionMode)
 	{		
 		
 		
@@ -227,7 +231,9 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 		_DQ.add(RestrictionsFactoryUtil.eq("companyId", companyId));
 		_DQ.add(RestrictionsFactoryUtil.eq("groupId", groupId));
 		_DQ.add(RestrictionsFactoryUtil.eq("shareId", shareId));
+		_DQ.add(RestrictionsFactoryUtil.eq("position_mode", positionMode));		
 		_DQ.add(RestrictionsFactoryUtil.ne("state", com.ibtrader.util.PositionStates.status.SELL_OK.toString()));
+		
 		
 		_lPosition =  PositionLocalServiceUtil.dynamicQuery(_DQ);
 		
@@ -237,16 +243,16 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 				
 	}
 	/* BUY_OK  y no fecha de salida real */
-	public boolean  ExistsPositionToExit(long groupId, long companyId, long shareId)
+	public boolean  ExistsPositionToExit(long groupId, long companyId, long shareId,String positionMode)
 	{		
-		int total = getPositionPersistence().countByPositionShareStateDatesRealOut(groupId, companyId, shareId, com.ibtrader.util.PositionStates.status.BUY_OK.toString(),null, null);
+		int total = getPositionPersistence().countByPositionShareStateDatesRealOut(groupId, companyId, shareId, com.ibtrader.util.PositionStates.status.BUY_OK.toString(),null, null, positionMode);
 		return (total>0);
 	}
 	/* BUY_OK  y no fecha de salida */
-	public Position  findPositionToExit(long groupId, long companyId, long shareId)
+	public Position  findPositionToExit(long groupId, long companyId, long shareId, String positionMode)
 	{	
 		Position _rPosition = null; 
-		List<Position> _lPosition = getPositionPersistence().findByPositionShareStateDatesRealOut(groupId, companyId, shareId, com.ibtrader.util.PositionStates.status.BUY_OK.toString(),null,null);		
+		List<Position> _lPosition = getPositionPersistence().findByPositionShareStateDatesRealOut(groupId, companyId, shareId, com.ibtrader.util.PositionStates.status.BUY_OK.toString(),null,null, positionMode);		
 		if (!_lPosition.isEmpty() && _lPosition.size()>0)
 		{
 			_rPosition = _lPosition.get(0);
@@ -263,11 +269,11 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 			    TIPO --> OPERACION(non-Javadoc)
 	 * 
 	 */
-	public JSONArray findPositionClosedResults(Date from, Date to,long groupId, long companyId)
+	public JSONArray findPositionClosedResults(Date from, Date to,long groupId, long companyId, String positionMode)
 	{
 		//return realtimeFinder.findSimpleMobileAvgGroupByPeriods( shareId, companyId,  groupId,from, to, mobileAvgDates);
 		List lResults = null;
-		lResults = positionFinder.getPositionClosedResults(from, to,groupId,companyId); 
+		lResults = positionFinder.getPositionClosedResults(from, to,groupId,companyId,positionMode); 
 		String serilizeString=null;				
 		JSONArray positionResults = JSONFactoryUtil.createJSONArray();
 	
@@ -294,11 +300,11 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 		}
 		return 	positionResults;
 	}
-	public JSONArray findPositionOpenResults(Date to,long groupId, long companyId)
+	public JSONArray findPositionOpenResults(Date to,long groupId, long companyId, String positionMode)
 	{
 		//return realtimeFinder.findSimpleMobileAvgGroupByPeriods( shareId, companyId,  groupId,from, to, mobileAvgDates);
 		List lResults = null;
-		lResults = positionFinder.getPositionOpenResults(to,groupId,companyId); 
+		lResults = positionFinder.getPositionOpenResults(to,groupId,companyId,positionMode); 
 		String serilizeString=null;				
 		JSONArray positionResults = JSONFactoryUtil.createJSONArray();
 	

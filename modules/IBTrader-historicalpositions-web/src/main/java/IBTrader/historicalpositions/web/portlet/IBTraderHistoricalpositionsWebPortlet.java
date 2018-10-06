@@ -111,9 +111,12 @@ public class IBTraderHistoricalpositionsWebPortlet extends MVCPortlet {
 	{
 		
 		 /* lista resultados */
-		_lPosition  = _positionLocalService.findByCompanyGroupDate(themeDisplay.getCompanyId(),themeDisplay.getScopeGroupId(), _DateINI,_DateEND );
+		String position_mode = Utilities.getPositionModeType(null, themeDisplay.getCompanyId(),themeDisplay.getScopeGroupId()); 
+
+		
+		_lPosition  = _positionLocalService.findByCompanyGroupDate(themeDisplay.getCompanyId(),themeDisplay.getScopeGroupId(), _DateINI,_DateEND, position_mode);
 		/* totales en json */
-		results = _positionLocalService.findPositionClosedResults(_DateINI, _DateEND, themeDisplay.getScopeGroupId(), themeDisplay.getCompanyId());
+		results = _positionLocalService.findPositionClosedResults(_DateINI, _DateEND, themeDisplay.getScopeGroupId(), themeDisplay.getCompanyId(), position_mode);
 		
 	}
 

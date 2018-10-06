@@ -291,7 +291,10 @@ public class IBTraderPositionlistWebPortlet extends MVCPortlet {
 		 DateEND.setSeconds(59);
 		*/
 		 
-		 List<Position> _lPosition  = _positionLocalService.findIntradiaByCompanyGroupDate(themeDisplay.getCompanyId(),themeDisplay.getScopeGroupId(), DateINI );
+		String position_mode = Utilities.getPositionModeType(null, themeDisplay.getCompanyId(),themeDisplay.getScopeGroupId()); 
+
+		 
+		 List<Position> _lPosition  = _positionLocalService.findIntradiaByCompanyGroupDate(themeDisplay.getCompanyId(),themeDisplay.getScopeGroupId(), DateINI, position_mode );
 	     JSONArray posListJson = JSONFactoryUtil.createJSONArray();     
 	     for (Position ibposition : _lPosition)
 	     { 
@@ -432,7 +435,9 @@ public class IBTraderPositionlistWebPortlet extends MVCPortlet {
 		 DateINI.setMinutes(0);
 		 DateINI.setSeconds(0);
 		
-		 JSONArray results = _positionLocalService.findPositionOpenResults(DateINI, themeDisplay.getScopeGroupId(), themeDisplay.getCompanyId());
+		 String position_mode = Utilities.getPositionModeType(null, themeDisplay.getCompanyId(),themeDisplay.getScopeGroupId());
+		 
+		 JSONArray results = _positionLocalService.findPositionOpenResults(DateINI, themeDisplay.getScopeGroupId(), themeDisplay.getCompanyId(), position_mode);
 		 JSONObject tableData = JSONFactoryUtil.createJSONObject();
 	     JSONArray posListJson = JSONFactoryUtil.createJSONArray();     
 	     if (results!=null)

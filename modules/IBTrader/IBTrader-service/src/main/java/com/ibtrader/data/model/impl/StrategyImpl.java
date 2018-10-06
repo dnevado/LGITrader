@@ -14,6 +14,7 @@
 
 package com.ibtrader.data.model.impl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -52,6 +53,7 @@ public class StrategyImpl extends StrategyBaseImpl {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
 	/* DATOS GENERALES DE LA ESTRATEGIA DEL SERVICIO */
 	/* LISTA DE PARAMETROS EXPANDOS  */
 	private List<ExpandoColumn> _IBStrategyParams;
@@ -79,7 +81,33 @@ public class StrategyImpl extends StrategyBaseImpl {
 	/* COMPORTAMIENTO DE LOS PARAMETROS DE ENTRADA EN CUANTO A TIPOS */
 	public boolean validateParams(Map<String, String> paramValues) {return Boolean.TRUE;}
 	//public void execute(Share _share, Market _market) {}
-	public boolean verify(Share _share, Market _market,StrategyShare _strategyImpl) {return Boolean.TRUE;}  // share general, market y datos de la estrategoa con los valores parametrizados 
+	public boolean verify(Share _share, Market _market,StrategyShare _strategyImpl, Date backtestingdDate) {
+		return Boolean.TRUE;
+	}
+	public boolean verify(Share _share, Market _market,StrategyShare _strategyImpl) {
+		return verify(_share, _market,_strategyImpl,null);
+	}  // share general, market y datos de la estrategoa con los valores parametrizados
+
+	public boolean verifyBackTesting(Share _share, Market _market, StrategyShare _strategyImpl, Date backtestingDate) {
+		// TODO Auto-generated method stub
+		return verify(_share, _market,_strategyImpl,backtestingDate);
+	}
+	
+	public  long execute(Share _share, Market _market,  Date backtestingdDate)
+	{
+		return 0;
+	}
+	
+	public long execute(Share _share, Market _market) {
+		// TODO Auto-generated method stub
+		return execute(_share,_market,null);		
+	}
+	public long executeBackTesting(Share _share, Market _market, Date backtestingDate){
+		// TODO Auto-generated method stub
+		return execute(_share,_market,backtestingDate);
+		
+	}
+	
 	/* CREATE THE REQUERIMENT EXPANDOS PARAMETERS */
 	public void init(long companyId) {}
 	public boolean activated() {return Boolean.TRUE;}
@@ -180,12 +208,7 @@ public class StrategyImpl extends StrategyBaseImpl {
 	public void setJsonStrategyShareParams(JSONObject _jsonStrategyShareParams) {
 		this.jsonStrategyShareParams = _jsonStrategyShareParams;
 	}
-	@Override
-	public long execute(Share _share, Market _market) {
-		// TODO Auto-generated method stub
-		return 0;
-		
-	}
+	
 	/* ESTO NO ES UNA IMPLEMENTACION YA QUE EN DENERIA METER EL TIMApiWrapper EN LA API Y ES COSTOSO */
 	/*public void execute(Share _share, Market _market, com.ibtrader.interactive.TIMApiWrapper wrapper) {
 		// TODO Auto-generated method stub

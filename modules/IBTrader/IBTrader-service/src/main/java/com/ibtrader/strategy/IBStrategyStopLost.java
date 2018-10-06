@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.Validator;
 import com.ibtrader.util.ConfigKeys;
 import com.ibtrader.util.PositionStates;
 import com.ibtrader.util.Utilities;
@@ -37,13 +38,17 @@ public class IBStrategyStopLost extends StrategyImpl {
 	private static final long serialVersionUID = 1L;
 	private static Log _log = LogFactoryUtil.getLog(IBStrategyStopLost.class);
 	private Position currentPosition = null;
+	
 	@Override
-	public long execute(Share _share, Market _market) {
+	public  long execute(Share _share, Market _market, Date backtestingdDate) {
 		// TODO Auto-generated method stub
 	long returnValue=-1;
 	try		
     {
-		boolean existsPositionToExit = PositionLocalServiceUtil.ExistsPositionToExit(_share.getGroupId(),_share.getCompanyId(),_share.getShareId());
+		String position_mode = Utilities.getPositionModeType(null, _share.getCompanyId(),_share.getGroupId());
+
+		boolean existsPositionToExit = PositionLocalServiceUtil.ExistsPositionToExit(_share.getGroupId(),_share.getCompanyId(),_share.getShareId(),
+				position_mode);
 		if (!existsPositionToExit)
 			return -1;
 		
@@ -73,24 +78,28 @@ public class IBStrategyStopLost extends StrategyImpl {
 		if (currentPosition.getType().equals(PositionStates.statusTWSFire.BUY.toString())) // operacion de compra normal..??
 			_OperationTYPE = PositionStates.statusTWSFire.SELL.toString();		
 					
-		// colocamos operacion de compra
+				// colocamos operacion de compra
+		if (Validator.isNull(backtestingdDate))
+		{
 		
-		Order BuyPositionTWS = new Order();
-		BuyPositionTWS.account(Utilities.getConfigurationValue(IBTraderConstants.keyACCOUNT_IB_NAME, _share.getCompanyId(), _share.getGroupId()));			
-		BuyPositionTWS.totalQuantity(currentPosition.getShare_number());
-		BuyPositionTWS.orderType(PositionStates.ordertypes.MKT.toString());		    
-		BuyPositionTWS.lmtPrice(Utilities.RoundPrice(this.getValueOut()));
-		BuyPositionTWS.auxPrice(Utilities.RoundPrice(this.getValueOut()));				
-		BuyPositionTWS.action(_OperationTYPE);			
-		
-		_log.info("Order" + BuyPositionTWS.action()  +","+  BuyPositionTWS.lmtPrice()  +","+ BuyPositionTWS.auxPrice() +","+ BuyPositionTWS.account() +","+ BuyPositionTWS.totalQuantity() +","+ BuyPositionTWS.orderType());
-		this.setTargetOrder(BuyPositionTWS);			
+			Order BuyPositionTWS = new Order();
+			BuyPositionTWS.account(Utilities.getConfigurationValue(IBTraderConstants.keyACCOUNT_IB_NAME, _share.getCompanyId(), _share.getGroupId()));			
+			BuyPositionTWS.totalQuantity(currentPosition.getShare_number());
+			BuyPositionTWS.orderType(PositionStates.ordertypes.MKT.toString());		    
+			BuyPositionTWS.lmtPrice(Utilities.RoundPrice(this.getValueOut()));
+			BuyPositionTWS.auxPrice(Utilities.RoundPrice(this.getValueOut()));				
+			BuyPositionTWS.action(_OperationTYPE);			
+			
+			_log.info("Order" + BuyPositionTWS.action()  +","+  BuyPositionTWS.lmtPrice()  +","+ BuyPositionTWS.auxPrice() +","+ BuyPositionTWS.account() +","+ BuyPositionTWS.totalQuantity() +","+ BuyPositionTWS.orderType());
+			this.setTargetOrder(BuyPositionTWS);			
+		}
 				
 		currentPosition.setPrice_out(this.getValueOut());
 	//	currentPosition.setState_out(PositionStates.statusTWSCallBack.PendingSubmit.toString());
 		/* si metemos el date sell en las parciales, no entran las siguientes */
 		/* acumulo las acciones vendidas y a vender en la operativa */
-		currentPosition.setDate_out(new Date());
+		currentPosition.setDate_out(Validator.isNull(backtestingdDate) ?  new Date() : backtestingdDate);
+
 		currentPosition.setDescription(currentPosition.getDescription() + StringPool.RETURN_NEW_LINE + this.getClass().getName());
 		currentPosition.setStrategy_out(this.getClass().getName());		 	
 		
@@ -122,24 +131,27 @@ public class IBStrategyStopLost extends StrategyImpl {
 	}
 	
 	@Override
-	public boolean verify(Share _share, Market _market,StrategyShare _strategyImpl) {
+	public  boolean verify(Share _share, Market _market,StrategyShare _strategyImpl,Date backtestingdDate) {
 	
 	boolean verified = false;
 	boolean existsPositionToExit = false;
 	try
-    {		
-	existsPositionToExit = PositionLocalServiceUtil.ExistsPositionToExit(_share.getGroupId(),_share.getCompanyId(),_share.getShareId());
+    {	
+	
+	String position_mode = Utilities.getPositionModeType(null, _share.getCompanyId(),_share.getGroupId());
+
+	existsPositionToExit = PositionLocalServiceUtil.ExistsPositionToExit(_share.getGroupId(),_share.getCompanyId(),_share.getShareId(),position_mode);
 	if (existsPositionToExit)		
 	{	
 		 
 		/* CAMBIAMOS POR EL ULTIMO VALOR MENOR QUE AHORA PARA QUE SE PUEDAN METER VALORES FUTURES COMO CONJUNTO DE PRUEBAS */
 		User _IBUser = UserLocalServiceUtil.getUser(_share.getUserCreatedId());
 		
-		Date _ToNow   = Utilities.getDate(_IBUser);
+		Date _ToNow   = Validator.isNull(backtestingdDate) ?   Utilities.getDate(_IBUser) : backtestingdDate;
 		Realtime oShareLastRTime =  RealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _ToNow);
 		
 		//Realtime oShareLastRTime = (Realtime)  RealtimeLocalServiceUtil.findLastRealTime(_share.getShareId(), _share.getCompanyId(), _share.getGroupId());
-		currentPosition = PositionLocalServiceUtil.findPositionToExit(_share.getGroupId(),_share.getCompanyId(),_share.getShareId());
+		currentPosition = PositionLocalServiceUtil.findPositionToExit(_share.getGroupId(),_share.getCompanyId(),_share.getShareId(),position_mode);
 		
 		if (oShareLastRTime!=null && currentPosition!=null && currentPosition.getPercentualstoplost_out()>0)
 		{	

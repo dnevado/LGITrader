@@ -58,7 +58,21 @@ public interface Strategy extends StrategyModel, PersistedModel {
 		java.util.Map<java.lang.String, java.lang.String> paramValues);
 
 	public boolean verify(Share _share, Market _market,
+		StrategyShare _strategyImpl, java.util.Date backtestingdDate);
+
+	public boolean verify(Share _share, Market _market,
 		StrategyShare _strategyImpl);
+
+	public boolean verifyBackTesting(Share _share, Market _market,
+		StrategyShare _strategyImpl, java.util.Date backtestingDate);
+
+	public long execute(Share _share, Market _market,
+		java.util.Date backtestingdDate);
+
+	public long execute(Share _share, Market _market);
+
+	public long executeBackTesting(Share _share, Market _market,
+		java.util.Date backtestingDate);
 
 	public void init(long companyId);
 
@@ -107,8 +121,6 @@ public interface Strategy extends StrategyModel, PersistedModel {
 
 	public void setJsonStrategyShareParams(
 		com.liferay.portal.kernel.json.JSONObject _jsonStrategyShareParams);
-
-	public long execute(Share _share, Market _market);
 
 	public com.ib.client.Order getTargetOrder();
 

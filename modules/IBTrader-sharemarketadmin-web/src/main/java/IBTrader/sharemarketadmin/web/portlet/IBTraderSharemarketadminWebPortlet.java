@@ -302,9 +302,15 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 						}
 						else
 							share.setExpiry_expression(null);
-						/* GENERAMOS EL JSON CON LOS DATOS DEL FUTURO   */					
+						/* GENERAMOS EL JSON CON LOS DATOS DEL FUTURO   */
+						Calendar yearMinusOne = Calendar.getInstance();
+						yearMinusOne.add(Calendar.YEAR, -1);
+						
 						if (!bEditMode)
+						{
 							share.setCreateDate(new Date());
+							share.setSimulation_end_date(yearMinusOne.getTime());
+						}
 						else
 						{
 							Calendar _Now = Calendar.getInstance();
@@ -314,6 +320,10 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 							
 							//share.setDate_validated_trader_provider(null);  // para verificarlo de nuevo
 							share.setValidated_trader_provider(Boolean.FALSE);
+							if (Validator.isNull(share.getSimulation_end_date()))
+									share.setSimulation_end_date(yearMinusOne.getTime());
+
+									
 						}
 						share.setModifiedDate(new Date());
 						share.setUserCreatedId(themeDisplay.getUserId());
@@ -791,8 +801,9 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 		long shareId =  ParamUtil.getLong(actionRequest,"shareId",-1);
 		Share share =  _shareLocalService.fetchShare(shareId);
 		
-		
-		List<Position> lPositions =  PositionLocalServiceUtil.findByCompanyGroupShare(themeDisplay.getScopeGroupId(), themeDisplay.getCompanyId(), shareId);
+		String position_mode = Utilities.getPositionModeType(null, themeDisplay.getCompanyId(),themeDisplay.getScopeGroupId()); 
+
+		List<Position> lPositions =  PositionLocalServiceUtil.findByCompanyGroupShare(themeDisplay.getScopeGroupId(), themeDisplay.getCompanyId(), shareId, position_mode);
 		if (!lPositions.isEmpty())
 			SessionErrors.add(actionRequest, "share.error.positionexists");
 		else
@@ -828,7 +839,11 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 		}
 		long shareId =  ParamUtil.getLong(actionRequest,"shareId",-1);
 		boolean  validated = ValidateDataShare(actionRequest);
-		boolean _bOpenPosition =  PositionLocalServiceUtil.ExistsOpenPosition(themeDisplay.getScopeGroupId(), themeDisplay.getCompanyId(), shareId);
+		
+		String position_mode = Utilities.getPositionModeType(null, themeDisplay.getCompanyId(),themeDisplay.getScopeGroupId()); 
+
+		
+		boolean _bOpenPosition =  PositionLocalServiceUtil.ExistsOpenPosition(themeDisplay.getScopeGroupId(), themeDisplay.getCompanyId(), shareId, position_mode);
 		try 
 		{		
 				if (validated)
@@ -870,8 +885,8 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 		}
 
 		boolean validated = ValidateDataShare(actionRequest);
-		 JSONObject  jsonFutureParams =null;
-		
+		JSONObject  jsonFutureParams =null;
+
 		try 
 		{
 				if (validated)

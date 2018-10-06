@@ -65,10 +65,11 @@ public interface PositionLocalService extends BaseLocalService,
 	 *
 	 * Never modify or reference this interface directly. Always use {@link PositionLocalServiceUtil} to access the position local service. Add custom service methods to {@link com.ibtrader.data.service.impl.PositionLocalServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	public boolean ExistsOpenPosition(long groupId, long companyId, long shareId);
+	public boolean ExistsOpenPosition(long groupId, long companyId,
+		long shareId, java.lang.String positionMode);
 
 	public boolean ExistsPositionToExit(long groupId, long companyId,
-		long shareId);
+		long shareId, java.lang.String positionMode);
 
 	/**
 	* Adds the position to the database. Also notifies the appropriate model listeners.
@@ -120,16 +121,17 @@ public interface PositionLocalService extends BaseLocalService,
 	public Position fetchPositionByUuidAndGroupId(java.lang.String uuid,
 		long groupId);
 
-	public Position findByCompanyGroup(long companyId, long groupId);
+	public Position findByCompanyGroup(long companyId, long groupId,
+		java.lang.String positionMode);
 
 	public Position findByPositionID_In_TWS(long groupId, long companyId,
-		long _PositionIDTWS, long clientId_in);
+		long _PositionIDTWS, long clientId_in, java.lang.String positionMode);
 
 	public Position findByPositionID_Out_TWS(long groupId, long companyId,
-		long _PositionIDTWS, long clientId_out);
+		long _PositionIDTWS, long clientId_out, java.lang.String positionMode);
 
 	public Position findPositionToExit(long groupId, long companyId,
-		long shareId);
+		long shareId, java.lang.String positionMode);
 
 	/**
 	* Returns the position with the primary key.
@@ -175,10 +177,10 @@ public interface PositionLocalService extends BaseLocalService,
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery();
 
 	public JSONArray findPositionClosedResults(Date from, Date to,
-		long groupId, long companyId);
+		long groupId, long companyId, java.lang.String positionMode);
 
 	public JSONArray findPositionOpenResults(Date to, long groupId,
-		long companyId);
+		long companyId, java.lang.String positionMode);
 
 	/**
 	* @throws PortalException
@@ -247,19 +249,20 @@ public interface PositionLocalService extends BaseLocalService,
 		int end, OrderByComparator<T> orderByComparator);
 
 	public List<Position> findByCancelShareCompanyGroup(long companyId,
-		long groupId, long pendingcancelled, long shareId);
+		long groupId, long pendingcancelled, long shareId,
+		java.lang.String positionMode);
 
 	public List<Position> findByCloseCompanyGroup(long companyId, long groupId,
-		boolean forceclose);
+		boolean forceclose, java.lang.String positionMode);
 
 	public List<Position> findByCompanyGroupDate(long companyId, long groupId,
-		Date start_date_in, Date end_date_in);
+		Date start_date_in, Date end_date_in, java.lang.String positionMode);
 
 	public List<Position> findByCompanyGroupShare(long companyId, long groupId,
-		long share);
+		long share, java.lang.String positionMode);
 
 	public List<Position> findIntradiaByCompanyGroupDate(long companyId,
-		long groupId, Date end_date_in);
+		long groupId, Date end_date_in, java.lang.String positionMode);
 
 	/**
 	* Returns a range of all the positions.
@@ -320,5 +323,5 @@ public interface PositionLocalService extends BaseLocalService,
 		Projection projection);
 
 	public long findMaxOrderClientCompanyGroup(long companyId, long groupId,
-		long clientId);
+		long clientId, java.lang.String positionMode);
 }

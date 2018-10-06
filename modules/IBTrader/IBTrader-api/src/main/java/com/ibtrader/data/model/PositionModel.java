@@ -587,25 +587,19 @@ public interface PositionModel extends BaseModel<Position>, ShardedModel,
 	public void setPendingcancelled(long pendingcancelled);
 
 	/**
-	 * Returns the simulation_mode of this position.
+	 * Returns the position_mode of this position.
 	 *
-	 * @return the simulation_mode of this position
+	 * @return the position_mode of this position
 	 */
-	public boolean getSimulation_mode();
+	@AutoEscape
+	public String getPosition_mode();
 
 	/**
-	 * Returns <code>true</code> if this position is simulation_mode.
+	 * Sets the position_mode of this position.
 	 *
-	 * @return <code>true</code> if this position is simulation_mode; <code>false</code> otherwise
+	 * @param position_mode the position_mode of this position
 	 */
-	public boolean isSimulation_mode();
-
-	/**
-	 * Sets whether this position is simulation_mode.
-	 *
-	 * @param simulation_mode the simulation_mode of this position
-	 */
-	public void setSimulation_mode(boolean simulation_mode);
+	public void setPosition_mode(String position_mode);
 
 	/**
 	 * Returns the totalcommision of this position.

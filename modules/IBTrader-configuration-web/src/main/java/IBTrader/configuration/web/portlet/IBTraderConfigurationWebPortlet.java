@@ -9,6 +9,7 @@ import com.ibtrader.data.service.ConfigLocalService;
 import com.ibtrader.data.service.ConfigLocalServiceUtil;
 import com.ibtrader.data.service.MarketLocalService;
 import com.ibtrader.data.service.StrategyLocalService;
+import com.ibtrader.util.PositionStates;
 import com.ibtrader.util.Utilities;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.log.Log;
@@ -136,6 +137,8 @@ public class IBTraderConfigurationWebPortlet extends MVCPortlet {
 		        renderRequest.setAttribute("_PAPER_PATH_TO_CONFIGURATION_FILE", _PAPER_PATH_TO_CONFIGURATION_FILE);
 		        renderRequest.setAttribute("_PAPER_PATH_TO_EXECUTABLE_FILE", _PAPER_PATH_TO_EXECUTABLE_FILE);
 		        
+		        renderRequest.setAttribute("REAL_VALUE", PositionStates.position_mode_type.REAL.toString());
+		        renderRequest.setAttribute("SIMULATION_VALUE", PositionStates.position_mode_type.SIMULATED.toString());
 
 		        	       	        
 
@@ -329,10 +332,11 @@ public class IBTraderConfigurationWebPortlet extends MVCPortlet {
 				
 			}
 			/* keySIMULATION_MODE */
+			
 			_config = _configLocalService.findByKeyCompanyGroup(IBTraderConstants.keySIMULATION_MODE, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
 			if (_config!=null)
 			{
-				String _val = String.valueOf(simulation_mode ? "1" : "0");
+				String _val = String.valueOf(simulation_mode ? PositionStates.position_mode_type.SIMULATED.toString() : PositionStates.position_mode_type.REAL.toString());
 				_config.setValue(_val);
 				_configLocalService.updateConfig(_config);
 				
