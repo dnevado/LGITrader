@@ -294,7 +294,7 @@ public class TIMApiWrapper implements EWrapper {
 	public int getNextOrderId() {
 		/* POSICIOES */
 		
-		String position_mode = Utilities.getPositionModeType(null, _ibtarget_organization.getCompanyId(),_ibtarget_share.getGroupId()); 
+		String position_mode = Utilities.getPositionModeType(null, _ibtarget_organization.getCompanyId(),_ibtarget_organization.getGroupId()); 
 
 		
 		long  _currentMaxPositionsId= PositionLocalServiceUtil.findMaxOrderClientCompanyGroup(_ibtarget_organization.getCompanyId(), _ibtarget_organization.getGroupId(), this._clientId, position_mode);

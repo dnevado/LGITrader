@@ -57,8 +57,54 @@ public class IBStrategyCancelPosition extends StrategyImpl {
 	private static Log _log = LogFactoryUtil.getLog(IBStrategyCancelPosition.class);
 	Position cancelPosition = null;
 	
+	
+	public IBStrategyCancelPosition() {
+		
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	
 	@Override
-	public long execute(Share _share, Market _market) {
+	public boolean verify(Share _share, Market _market, StrategyShare _strategyImpl, Date backtestingdDate) {
+			
+	boolean verified = false;
+	List<Position> lCancelled = null;
+	try
+    {
+		String position_mode = Utilities.getPositionModeType(backtestingdDate, _share.getCompanyId(),_share.getGroupId());
+
+		/* cancelada y abierta */
+		lCancelled = PositionLocalServiceUtil.findByCancelShareCompanyGroup(_share.getCompanyId(), _share.getGroupId(),1, _share.getShareId(),position_mode);
+		if (lCancelled!=null && !lCancelled.isEmpty())
+		{
+			for (Position position : lCancelled)
+			{
+				if (position.IsCancelable())
+				{
+					
+					cancelPosition  = position;
+					verified = Boolean.TRUE;
+					break;
+					
+				}
+			}
+			
+			
+		}
+    }	
+
+	catch (Exception er)
+    {
+		_log.info(er.getMessage());
+		//er.printStackTrace();
+		this.setVerified(Boolean.FALSE);				
+    }
+
+	return verified;			
+	}
+
+	@Override
+	public long execute(Share _share, Market _market, Date backtestingdDate){
 		// TODO Auto-generated method stub
 	long returnValue=-1;
 	try		
@@ -180,51 +226,5 @@ public class IBStrategyCancelPosition extends StrategyImpl {
 		
         }
 	return returnValue;
-	}
-	
-	public IBStrategyCancelPosition() {
-		
-		super();
-		// TODO Auto-generated constructor stub
-	}
-	
-	@Override
-	public boolean verify(Share _share, Market _market,StrategyShare _strategyImpl) {
-	
-	boolean verified = false;
-	List<Position> lCancelled = null;
-	try
-    {
-		String position_mode = Utilities.getPositionModeType(null, _share.getCompanyId(),_share.getGroupId());
-
-		/* cancelada y abierta */
-		lCancelled = PositionLocalServiceUtil.findByCancelShareCompanyGroup(_share.getCompanyId(), _share.getGroupId(),1, _share.getShareId(),position_mode);
-		if (lCancelled!=null && !lCancelled.isEmpty())
-		{
-			for (Position position : lCancelled)
-			{
-				if (position.IsCancelable())
-				{
-					
-					cancelPosition  = position;
-					verified = Boolean.TRUE;
-					break;
-					
-				}
-			}
-			
-			
-		}
-    }	
-
-	catch (Exception er)
-    {
-		_log.info(er.getMessage());
-		//er.printStackTrace();
-		this.setVerified(Boolean.FALSE);				
-    }
-
-	return verified;
-	}
-	
+	}	
 }

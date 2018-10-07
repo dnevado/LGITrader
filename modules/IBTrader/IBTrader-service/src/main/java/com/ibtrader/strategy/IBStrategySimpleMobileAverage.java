@@ -110,10 +110,22 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 			
 	    this.setJsonStrategyShareParams(JSONFactoryUtil.createJSONObject(_strategyImpl.getStrategyparamsoverride()));					
 
-			
+	    /* SOLO PODEMOS ENTRAR EN EL PERIODO MARCADO DE CADA MINUTO, PARA LO CUAL OBTENEMOS EL RESTO */	
 		User _IBUser = UserLocalServiceUtil.getUser(_share.getUserCreatedId());
+
+		/* TIMEZONE AJUSTADO */
+		Date _FromNow =  Validator.isNull(backtestingdDate) ?   Utilities.getDate(_IBUser) : backtestingdDate;
+		Calendar _calendarFromNow = Calendar.getInstance();
+		_calendarFromNow.setTime(_FromNow);		
+		_calendarFromNow.set(Calendar.SECOND, 0);
+		_calendarFromNow.set(Calendar.MILLISECOND, 0);
+		
+		long _ModMinuteToEntry = _calendarFromNow.get(Calendar.MINUTE) % _num_macdT;
+		if (_ModMinuteToEntry!=0)  // NO ESTOY EN EL MINUTO 5,10,15,20..etc (para las barras de 5)
+			return Boolean.FALSE;
+			
 	
-		String HoraActual = Utilities.getHourNowFormat(_IBUser);	
+		String HoraActual = "";	
 		Calendar calFechaActualWithDeadLine;
 		Calendar calFechaFinMercado;
 		
@@ -151,18 +163,7 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 		if (_num_macdP==0 || _num_macdT==0 || _entryrate==0)
 			return Boolean.FALSE;
 		
-		/* SOLO PODEMOS ENTRAR EN EL PERIODO MARCADO DE CADA MINUTO, PARA LO CUAL OBTENEMOS EL RESTO */	
 		
-		/* TIMEZONE AJUSTADO */
-		Date _FromNow =  Validator.isNull(backtestingdDate) ?   Utilities.getDate(_IBUser) : backtestingdDate;
-		Calendar _calendarFromNow = Calendar.getInstance();
-		_calendarFromNow.setTime(_FromNow);		
-		_calendarFromNow.set(Calendar.SECOND, 0);
-		_calendarFromNow.set(Calendar.MILLISECOND, 0);
-		
-		long _ModMinuteToEntry = _calendarFromNow.get(Calendar.MINUTE) % _num_macdT;
-		if (_ModMinuteToEntry!=0)  // NO ESTOY EN EL MINUTO 5,10,15,20..etc (para las barras de 5)
-			return Boolean.FALSE;
 		
 		if (!existsPosition &&  !calFechaActualWithDeadLine.after(calFechaFinMercado))		
 		{	
@@ -170,8 +171,11 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 			// comparamos que la hora de lectura final haya sobrepasado el actual 
 			// HHMM
 			// HORA DE FIN DE CALCULO DE MAX Y MINIMOS.		
-			String StartHourTrading = Utilities.getActualHourFormatPlusMinutes(_market.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET));
-			// COMPROBAMOS ALGUN TIPO DE ERROR 
+			String StartHourTrading = "";
+			if (Validator.isNull(backtestingdDate))
+				 StartHourTrading =  Utilities.getActualHourFormatPlusMinutes(_calendarFromNow, _market.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET));
+			else				
+				 StartHourTrading = Utilities.getActualHourFormatPlusMinutes(_market.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET));			// COMPROBAMOS ALGUN TIPO DE ERROR 
 			if (StartHourTrading.contains("-1"))
 			{
 				_log.info("[ Errores formateando las horas de StarHourTrading de la accion. Hora[" + _market.getStart_hour()  + "], Offset1[" + this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET)+ "]");
@@ -374,7 +378,7 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 			Position BuyPositionSystem = PositionLocalServiceUtil.createPosition(CounterLocalServiceUtil.increment(Position.class.getName()));			
 			BuyPositionSystem.setDescription("");
 			BuyPositionSystem.setPrice_in( this.getValueIn());  // ojo, es estimativo
-			BuyPositionSystem.setDate_in(new Date());// .setDate_buy(new Timestamp(Calendar.getInstance().getTimeInMillis()));
+			BuyPositionSystem.setDate_in(Validator.isNull(backtestingdDate) ? new Date() : backtestingdDate);// .setDate_buy(new Timestamp(Calendar.getInstance().getTimeInMillis()));
 			BuyPositionSystem.setShare_number(number_to_purchase);
 			BuyPositionSystem.setShareId(_share.getShareId());
 		

@@ -91,7 +91,7 @@ public class IBStrategyMinMax extends StrategyImpl {
 		long returnValue=-1;
 		try		
         {
-			String position_mode = Utilities.getPositionModeType(null, _share.getCompanyId(),_share.getGroupId());
+			String position_mode = Utilities.getPositionModeType(backtestingDate, _share.getCompanyId(),_share.getGroupId());
 			boolean existsPosition = PositionLocalServiceUtil.ExistsOpenPosition (_share.getGroupId(),_share.getCompanyId(),_share.getShareId(),position_mode);
 			if (existsPosition)
 				return returnValue;
@@ -116,54 +116,62 @@ public class IBStrategyMinMax extends StrategyImpl {
   		   
   		   /* NECESARIO PRA LANZAR COMPRA DESDE EL CROUTIL */
   		   this.setTargetContract(oContrat);
-  		   
-  			
-			// colocamos operacion de compra			
-			Order BuyPositionTWS = new Order();
-			BuyPositionTWS.account(Utilities.getConfigurationValue(IBTraderConstants.keyACCOUNT_IB_NAME, _share.getCompanyId(), _share.getGroupId()));		
-			
-			/* POR DEFECTO LIMITADA EN ESTA ESTRATEGIA */
-			String orderType = PositionStates.ordertypes.LMT.toString();
-			/* SI SIMULAMOS LA ACCION CON DATOS FICTICIOS TENEMOS EL SIMULATION MODE, METEMOS A MERCADO PARA QUE NO SE NOS CANCELE */ 
-			if (_share.getSimulation_end_date()!=null)			
-				orderType = PositionStates.ordertypes.MKT.toString();
-			BuyPositionTWS.orderType(orderType);		    
-
-			/* EXISTE ALGO SOBREESCRITO */
-			long number_to_purchase = _share.getNumbertopurchase();
-    		if (this.getJsonStrategyShareParams()!=null && this.getJsonStrategyShareParams().getInt(ConfigKeys._FIELD_NUMBER_TO_PURCHASE,0)>0)
-    			number_to_purchase =this.getJsonStrategyShareParams().getInt(ConfigKeys._FIELD_NUMBER_TO_PURCHASE,0);    	
-			
-    		
-    		
-    		
-			BuyPositionTWS.totalQuantity(number_to_purchase);
-			// precio del tick más o menos un porcentaje ...normalmente %1
-			// ojo con los FUTUROS..llevan cambios porcentuales
-			BuyPositionTWS.lmtPrice(Utilities.RoundPrice(this.getValueLimitIn()));
-			BuyPositionTWS.auxPrice(Utilities.RoundPrice(this.getValueLimitIn()));					
-			/*  SI ES UNA COMPRA, NOS POSICIONAMOS CORTOS SI BAJA EL MINIMO */		
-			BuyPositionTWS.action(PositionStates.statusTWSFire.BUY.toString());			
-			if (bReachedMin)
-			{
-				BuyPositionTWS.action(PositionStates.statusTWSFire.SELL.toString());
+  		   long number_to_purchase = _share.getNumbertopurchase();
+  		   double limit_price = Utilities.RoundPrice(this.getValueLimitIn());
+  		   String action = PositionStates.statusTWSFire.BUY.toString();
+		    if (bReachedMin)
+		    {
+			    action = PositionStates.statusTWSFire.SELL.toString();
+		    }
+			// colocamos operacion de compra	
+  		    if (Validator.isNull(backtestingDate))
+			{ 
+				Order BuyPositionTWS = new Order();
+				BuyPositionTWS.account(Utilities.getConfigurationValue(IBTraderConstants.keyACCOUNT_IB_NAME, _share.getCompanyId(), _share.getGroupId()));		
+				
+				/* POR DEFECTO LIMITADA EN ESTA ESTRATEGIA */
+				String orderType = PositionStates.ordertypes.LMT.toString();
+				/* SI SIMULAMOS LA ACCION CON DATOS FICTICIOS TENEMOS EL SIMULATION MODE, METEMOS A MERCADO PARA QUE NO SE NOS CANCELE */ 
+				if (_share.getSimulation_end_date()!=null)			
+					orderType = PositionStates.ordertypes.MKT.toString();
+				BuyPositionTWS.orderType(orderType);		    
+	
+				/* EXISTE ALGO SOBREESCRITO */
+	    		if (this.getJsonStrategyShareParams()!=null && this.getJsonStrategyShareParams().getInt(ConfigKeys._FIELD_NUMBER_TO_PURCHASE,0)>0)
+	    			number_to_purchase =this.getJsonStrategyShareParams().getInt(ConfigKeys._FIELD_NUMBER_TO_PURCHASE,0);    	
+				
+				BuyPositionTWS.totalQuantity(number_to_purchase);
+				// precio del tick más o menos un porcentaje ...normalmente %1
+				// ojo con los FUTUROS..llevan cambios porcentuales
+				BuyPositionTWS.lmtPrice(limit_price);
+				BuyPositionTWS.auxPrice(Utilities.RoundPrice(this.getValueLimitIn()));					
+				/*  SI ES UNA COMPRA, NOS POSICIONAMOS CORTOS SI BAJA EL MINIMO */		
+				BuyPositionTWS.action(action);			
+				if (bReachedMin)
+				{
+					BuyPositionTWS.action(action);
+				}
+				
+				
+				this.setTargetOrder(BuyPositionTWS);	
+				
+				_log.info("Order" + BuyPositionTWS.action()  +","+  BuyPositionTWS.lmtPrice()  +","+ BuyPositionTWS.auxPrice() +","+ BuyPositionTWS.account() +","+ BuyPositionTWS.totalQuantity() +","+ BuyPositionTWS.orderType());
+				
+				
 			}
-			
-			
-			this.setTargetOrder(BuyPositionTWS);			
 			/* Posicion en MYSQL de CONTROL. OJO...ANTES SIEMPRE PARA DESPUES CONTROLARLA EN CASO DE ERROR. */
 			Position BuyPositionSystem = PositionLocalServiceUtil.createPosition(CounterLocalServiceUtil.increment(Position.class.getName()));			
 			BuyPositionSystem.setDescription("");
 			BuyPositionSystem.setPrice_in( this.getValueIn());  // ojo, es estimativo
-			BuyPositionSystem.setDate_in(new Date());// .setDate_buy(new Timestamp(Calendar.getInstance().getTimeInMillis()));
+			BuyPositionSystem.setDate_in(Validator.isNull(backtestingDate) ? new Date() : backtestingDate);// .setDate_buy(new Timestamp(Calendar.getInstance().getTimeInMillis()));
 			BuyPositionSystem.setShare_number(number_to_purchase);
 			BuyPositionSystem.setShareId(_share.getShareId());
 
 
 			
 			
-			BuyPositionSystem.setLimit_price_in(BuyPositionTWS.lmtPrice());
-			BuyPositionSystem.setType(BuyPositionTWS.getAction());
+			BuyPositionSystem.setLimit_price_in(limit_price);
+			BuyPositionSystem.setType(action);
 			BuyPositionSystem.setCompanyId(_share.getCompanyId());
 			BuyPositionSystem.setGroupId(_share.getGroupId());
 			BuyPositionSystem.setStrategy_in(this.getClass().getName());
@@ -222,15 +230,14 @@ public class IBStrategyMinMax extends StrategyImpl {
 			BuyPositionSystem.setPosition_mode(position_mode);			
 			PositionLocalServiceUtil.updatePosition(BuyPositionSystem);
 			/* Posicion en MYSQL de CONTROL */
-			_log.info("Order" + BuyPositionTWS.action()  +","+  BuyPositionTWS.lmtPrice()  +","+ BuyPositionTWS.auxPrice() +","+ BuyPositionTWS.account() +","+ BuyPositionTWS.totalQuantity() +","+ BuyPositionTWS.orderType());
-			_log.info("Opening order " + BuyPositionSystem.getPositionId());
+			
 			/* METEMOS LA LISTA DE ORDENES HIJAS */
 			//this.setChildsOrder(childOrders);			
 
 			/* RETORNAMOS PORQUE DESPUES HAY QUE METER EN LA POSICION EN NUMERO DE ORDEN DE LA TWS */
 			returnValue =  BuyPositionSystem.getPositionId();
 
-			
+			_log.info("Opening order " + BuyPositionSystem.getPositionId());
         }
 		catch (Exception er)
 	        {
@@ -248,7 +255,7 @@ public class IBStrategyMinMax extends StrategyImpl {
 	}
 	
 	@Override
-	public boolean verify(Share _share, Market _market,StrategyShare _strategyImpl) {
+	public boolean verify(Share _share, Market _market,StrategyShare _strategyImpl, Date backtestingdDate) {
 	
 	boolean verified = false;
 	boolean existsPosition = false;
@@ -256,9 +263,24 @@ public class IBStrategyMinMax extends StrategyImpl {
     {
 		
 	User _IBUser = UserLocalServiceUtil.getUser(_share.getUserCreatedId());
-	String HoraActual = Utilities.getHourNowFormat(_IBUser);
+	String HoraActual = "";
 	
-	Calendar calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(HoraActual);
+	Calendar calFechaActualWithDeadLine;
+	Calendar calFechaFinMercado;
+
+	if (Validator.isNull(backtestingdDate))
+	{
+		HoraActual = Utilities.getHourNowFormat(_IBUser);
+		calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(HoraActual);
+		calFechaFinMercado = Utilities.getNewCalendarWithHour(_market.getEnd_hour());
+	}
+	else	
+	{
+		HoraActual = Utilities.getHourNowFormat(_IBUser,backtestingdDate);
+		calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(backtestingdDate, HoraActual);
+		calFechaFinMercado = Utilities.getNewCalendarWithHour(backtestingdDate, _market.getEnd_hour());			
+	}
+	
 	
 //	StrategyShare _strategyshare = StrategyShareLocalServiceUtil.getByCommpanyShareStrategyId(_share.getGroupId(),_share.getCompanyId(),_share.getShareId(),_strategyImpl.getStrategyId());
 	
@@ -267,11 +289,8 @@ public class IBStrategyMinMax extends StrategyImpl {
 		
     this.setJsonStrategyShareParams(JSONFactoryUtil.createJSONObject(_strategyImpl.getStrategyparamsoverride()));					
 	
-		
-			
 	calFechaActualWithDeadLine.add(Calendar.MINUTE, this.getJsonStrategyShareParams().getInt(_EXPANDO_TRADE_OFFSET_TO_CLOSEMARKET));
-	Calendar calFechaFinMercado = Utilities.getNewCalendarWithHour(_market.getEnd_hour());
-	String position_mode = Utilities.getPositionModeType(null, _share.getCompanyId(),_share.getGroupId());
+	String position_mode = Utilities.getPositionModeType(backtestingdDate, _share.getCompanyId(),_share.getGroupId());
 	existsPosition = PositionLocalServiceUtil.ExistsOpenPosition (_share.getGroupId(),_share.getCompanyId(),_share.getShareId(),position_mode);
 	/*  CONTROLAMOS EL DEADLINE PARA COMPRAR */ 
 	// maximos y minimos...ya lo tenemos de la tabla.
@@ -288,8 +307,27 @@ public class IBStrategyMinMax extends StrategyImpl {
 		// HHMM
 		// HORA DE FIN DE CALCULO DE MAX Y MINIMOS.
 		
-		String HoraInicioLecturaMaxMin = Utilities.getActualHourFormatPlusMinutes(_market.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_OFFSET1_FROM_OPENMARKET));
-		String HoraFinLecturaMaxMin = Utilities.getActualHourFormatPlusMinutes(_market.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_OFFSET2_FROM_OPENMARKET));
+		String HoraInicioLecturaMaxMin = "";
+		String HoraFinLecturaMaxMin = "";
+		
+		Date _FromNow =  Validator.isNull(backtestingdDate) ?   Utilities.getDate(_IBUser) : backtestingdDate;
+		Calendar _calendarFromNow = Calendar.getInstance();
+		_calendarFromNow.setTime(_FromNow);		
+		_calendarFromNow.set(Calendar.SECOND, 0);
+		_calendarFromNow.set(Calendar.MILLISECOND, 0);
+		
+		if (Validator.isNull(backtestingdDate))
+		{
+			HoraInicioLecturaMaxMin = Utilities.getActualHourFormatPlusMinutes(_calendarFromNow, _market.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_OFFSET1_FROM_OPENMARKET));
+			HoraFinLecturaMaxMin = Utilities.getActualHourFormatPlusMinutes(_calendarFromNow, _market.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_OFFSET2_FROM_OPENMARKET));
+
+		}
+		else
+		{
+			HoraInicioLecturaMaxMin = Utilities.getActualHourFormatPlusMinutes(_market.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_OFFSET1_FROM_OPENMARKET));
+			HoraFinLecturaMaxMin = Utilities.getActualHourFormatPlusMinutes(_market.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_OFFSET2_FROM_OPENMARKET));
+			 
+		}
 		
 		// COMPROBAMOS ALGUN TIPO DE ERROR 
 		if (HoraInicioLecturaMaxMin.contains("-1") || HoraFinLecturaMaxMin.contains("-1"))
@@ -305,9 +343,9 @@ public class IBStrategyMinMax extends StrategyImpl {
 		
 		// ya no obtenemos el maximo y minimo, sino el correspondiente al tramo que me han dicho
 		/* TIMEZONE AJUSTADO */
-		Date _FromIniMarket = Utilities.getDate(_IBUser);
-		Date _ToIniMarket   = Utilities.getDate(_IBUser);
-		Date _ToNow   = Utilities.getDate(_IBUser);
+		Date _FromIniMarket =  Validator.isNull(backtestingdDate) ?   Utilities.getDate(_IBUser) : backtestingdDate;
+		Date _ToIniMarket   =  Validator.isNull(backtestingdDate) ?   Utilities.getDate(_IBUser) : backtestingdDate;
+		Date _ToNow  =  Validator.isNull(backtestingdDate) ?   Utilities.getDate(_IBUser) : backtestingdDate;
 
 		
 		_FromIniMarket = Utilities.setDateWithHour(_FromIniMarket,HoraInicioLecturaMaxMin);

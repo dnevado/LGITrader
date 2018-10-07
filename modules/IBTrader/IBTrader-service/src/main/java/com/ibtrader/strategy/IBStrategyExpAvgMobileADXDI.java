@@ -311,8 +311,12 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 			// supuestamente estamos leyendo...verificamos si con respecto al mercado ya tenemos los max y min
 			// comparamos que la hora de lectura final haya sobrepasado el actual 
 			// HHMM
-			// HORA DE FIN DE CALCULO DE MAX Y MINIMOS.		
-			String StartHourTrading = Utilities.getActualHourFormatPlusMinutes(_market.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET));
+			// HORA DE FIN DE CALCULO DE MAX Y MINIMOS.
+			String StartHourTrading = "";
+			if (Validator.isNull(backtestingdDate))
+				 StartHourTrading =  Utilities.getActualHourFormatPlusMinutes(_calendarFromNow, _market.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET));
+			else				
+				 StartHourTrading = Utilities.getActualHourFormatPlusMinutes(_market.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET));
 			// COMPROBAMOS ALGUN TIPO DE ERROR 
 			if (StartHourTrading.contains("-1"))
 			{
@@ -353,12 +357,8 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 			
 					DirectionalMovementADXRUtil  ADXR =  new DirectionalMovementADXRUtil(_calendarFromNow.getTime(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId());
 					
-					if (Validator.isNull(ADXR))
-						return Boolean.FALSE;
-					
 					AroonIndicatorUtil  Aroon =  new AroonIndicatorUtil(_calendarFromNow.getTime(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(),_num_aroonP);
-					if (Validator.isNull(Aroon))
-						return Boolean.FALSE;
+					
 					
 					double MACD = 0d; //new DirectionalMovementADXRUtil(_calendarFromNow.getTime(), _num_macdT, _num_macdP,_share.getShareId(), _share.getCompanyId(), _share.getGroupId());					
 					double previousMACD = 0d; //new DirectionalMovementADXRUtil(_calendarFromNow.getTime(), _num_macdT, _num_macdP,_share.getShareId(), _share.getCompanyId(), _share.getGroupId());

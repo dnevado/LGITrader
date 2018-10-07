@@ -291,8 +291,11 @@ public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
 		// comparamos que la hora de lectura final haya sobrepasado el actual 
 		// HHMM
 		// HORA DE FIN DE CALCULO DE MAX Y MINIMOS.		
-		String StartHourTrading = Utilities.getActualHourFormatPlusMinutes(_market.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET));
-		// COMPROBAMOS ALGUN TIPO DE ERROR 
+		String StartHourTrading = "";
+		if (Validator.isNull(backtestingdDate))
+			 StartHourTrading =  Utilities.getActualHourFormatPlusMinutes(_calendarFromNow, _market.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET));
+		else				
+			 StartHourTrading = Utilities.getActualHourFormatPlusMinutes(_market.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET));		// COMPROBAMOS ALGUN TIPO DE ERROR 
 		if (StartHourTrading.contains("-1"))
 		{
 			_log.info("[ Errores formateando las horas de StarHourTrading de la accion. Hora[" + _market.getStart_hour()  + "], Offset1[" + this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET)+ "]");

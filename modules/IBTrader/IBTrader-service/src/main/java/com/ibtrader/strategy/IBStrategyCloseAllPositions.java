@@ -65,7 +65,7 @@ public class IBStrategyCloseAllPositions extends StrategyImpl {
 
 	
 	@Override
-	public long execute(Share _share, Market _market) {
+	public long execute(Share _share, Market _market, Date backtestingdDate) {
 		// TODO Auto-generated method stub
 	long returnValue=-1;
 	try		
@@ -94,19 +94,23 @@ public class IBStrategyCloseAllPositions extends StrategyImpl {
 		// MyActualPosition contiene la operacion abierta.		
 	    String _OperationTYPE = PositionStates.statusTWSFire.BUY.toString(); 
 		if (currentPosition.getType().equals(PositionStates.statusTWSFire.BUY.toString())) // operacion de compra normal..??
-			_OperationTYPE = PositionStates.statusTWSFire.SELL.toString();		
-		Order BuyPositionTWS = new Order();
-		BuyPositionTWS.account(Utilities.getConfigurationValue(IBTraderConstants.keyACCOUNT_IB_NAME, _share.getCompanyId(), _share.getGroupId()));			
-		BuyPositionTWS.totalQuantity(currentPosition.getShare_number());
-		BuyPositionTWS.orderType(PositionStates.ordertypes.MKT.toString());		    					
-		BuyPositionTWS.action(_OperationTYPE);			
-		_log.info("Order" + BuyPositionTWS.action()  +","+  BuyPositionTWS.lmtPrice()  +","+ BuyPositionTWS.auxPrice() +","+ BuyPositionTWS.account() +","+ BuyPositionTWS.totalQuantity() +","+ BuyPositionTWS.orderType());
-		this.setTargetOrder(BuyPositionTWS);			
+			_OperationTYPE = PositionStates.statusTWSFire.SELL.toString();
+		// colocamos operacion de compra
+		if (Validator.isNull(backtestingdDate))
+		{ 
+			Order BuyPositionTWS = new Order();
+			BuyPositionTWS.account(Utilities.getConfigurationValue(IBTraderConstants.keyACCOUNT_IB_NAME, _share.getCompanyId(), _share.getGroupId()));			
+			BuyPositionTWS.totalQuantity(currentPosition.getShare_number());
+			BuyPositionTWS.orderType(PositionStates.ordertypes.MKT.toString());		    					
+			BuyPositionTWS.action(_OperationTYPE);			
+			_log.info("Order" + BuyPositionTWS.action()  +","+  BuyPositionTWS.lmtPrice()  +","+ BuyPositionTWS.auxPrice() +","+ BuyPositionTWS.account() +","+ BuyPositionTWS.totalQuantity() +","+ BuyPositionTWS.orderType());
+			this.setTargetOrder(BuyPositionTWS);
+		}
 		currentPosition.setPrice_out(Utilities.RoundPrice(this.getValueOut()));
 		//currentPosition.setState_out(PositionStates.statusTWSCallBack.PendingSubmit.toString());
 		/* si metemos el date sell en las parciales, no entran las siguientes */
 		/* acumulo las acciones vendidas y a vender en la operativa */
-		currentPosition.setDate_out(new Date());
+		currentPosition.setDate_out(Validator.isNull(backtestingdDate) ? new Date() : backtestingdDate);
 		currentPosition.setDescription(currentPosition.getDescription() + StringPool.RETURN_NEW_LINE + this.getClass().getName());
 		currentPosition.setStrategy_out(this.getClass().getName());		 		
 		
@@ -140,19 +144,37 @@ public class IBStrategyCloseAllPositions extends StrategyImpl {
 	}
 	
 	@Override
-	public boolean verify(Share _share, Market _market,StrategyShare _strategyImpl) {
+	public boolean verify(Share _share, Market _market,StrategyShare _strategyImpl, Date backtestingdDate) {
 	
 	boolean verified = false;
 	try
     {
 		
-	String position_mode = Utilities.getPositionModeType(null, _share.getCompanyId(),_share.getGroupId());
+	String position_mode = Utilities.getPositionModeType(backtestingdDate, _share.getCompanyId(),_share.getGroupId());
 	
 	User _IBUser = UserLocalServiceUtil.getUser(_share.getUserCreatedId());
-	String HoraActual = Utilities.getHourNowFormat(_IBUser);	
-	Calendar calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(HoraActual);
+	
+	String HoraActual = "";	
+	Calendar calFechaActualWithDeadLine;
+	Calendar calFechaFinMercado;
+
+	if (Validator.isNull(backtestingdDate))
+	{
+		HoraActual = Utilities.getHourNowFormat(_IBUser);		
+		calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(HoraActual);
+		calFechaFinMercado = Utilities.getNewCalendarWithHour(_market.getEnd_hour());
+
+
+	}
+	else	
+	{
+		HoraActual = Utilities.getHourNowFormat(_IBUser,backtestingdDate);
+		calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(backtestingdDate, HoraActual);
+		calFechaFinMercado = Utilities.getNewCalendarWithHour(backtestingdDate, _market.getEnd_hour());			
+
+
+	}		
 	this.setJsonStrategyShareParams(JSONFactoryUtil.createJSONObject(_strategyImpl.getStrategyparamsoverride()));					
-	Calendar calFechaFinMercado = Utilities.getNewCalendarWithHour(_market.getEnd_hour());
 
 	/* MERCADO ABIERTO */	
 	if (calFechaActualWithDeadLine.after(calFechaFinMercado))
@@ -161,8 +183,15 @@ public class IBStrategyCloseAllPositions extends StrategyImpl {
 	calFechaActualWithDeadLine.add(Calendar.MINUTE, this.getJsonStrategyShareParams().getInt(_EXPANDO_DEADLINE_UNTIL_CLOSEMARKET));
 	currentPosition = PositionLocalServiceUtil.findPositionToExit(_share.getGroupId(), _share.getCompanyId(), _share.getShareId(),position_mode);
 	if (calFechaActualWithDeadLine.after(calFechaFinMercado) && currentPosition!=null) 		  // ya esta en el limite 
-	{		    				
-			Realtime oShareLastRTime = (Realtime)  RealtimeLocalServiceUtil.findLastRealTime(_share.getShareId(), _share.getCompanyId(), _share.getGroupId());
+	{		    		
+			/* TIMEZONE AJUSTADO */
+			Date _FromNow =  Validator.isNull(backtestingdDate) ?   Utilities.getDate(_IBUser) : backtestingdDate;
+			Calendar _calendarFromNow = Calendar.getInstance();
+			_calendarFromNow.setTime(_FromNow);		
+			_calendarFromNow.set(Calendar.SECOND, 0);
+			_calendarFromNow.set(Calendar.MILLISECOND, 0);
+		
+			Realtime oShareLastRTime =  RealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(),_FromNow);
 			double current_price = oShareLastRTime.getValue();
 			this.setVerified(Boolean.TRUE);		
 			this.setValueOut(current_price);												

@@ -636,6 +636,9 @@ public class CronUtil {
 					 {
 						 wrapper.disconnect();
 						 lShareRequested.clear();
+		    		     _log.debug("CronTradingRead:" + e.getMessage());
+
+						 
 					 }
 				}
 					
@@ -838,11 +841,13 @@ public class CronUtil {
 					    					
 					    					if (!oStrategyShare.isActive()) continue;  // si no esta activa, no se trata 
 					    					StrategyImpl _strategyImpl= (StrategyImpl) Utilities.getContextClassLoader().loadClass(oStrategy.getClassName()).newInstance();
-					    					_strategyImpl.init(oShare.getCompanyId());   // verify if custom fields are created and filled 	    						    				
-					    					if (_strategyImpl.verify(oShare, oMarket,oStrategyShare) && wrapper.isConnected())
+					    					_strategyImpl.init(oShare.getCompanyId());   // verify if custom fields are created and filled
+					    					//if (_strategyImpl.verify(oShare, oMarket,oStrategyShare) && wrapper.isConnected())
+
+					    					if (_strategyImpl.verify(oShare, oMarket,oStrategyShare,null) && wrapper.isConnected())
 					    					{		
 					    											    							
-					    							long positionId = _strategyImpl.execute(oShare, oMarket);
+					    							long positionId = _strategyImpl.execute(oShare, oMarket,null);
 					    							// 1. ESTABLECEMOS EL CONTEXTO 
 					    							if (positionId!=-1) // no hay error 
 					    							{	
