@@ -223,11 +223,12 @@ public class IBStrategyMinMax extends StrategyImpl {
     			BuyPositionSystem.setPercentualstopprofit_out(stopprofit);
     		 	
     		/* MODO FAKE CUENTA DEMO */
+			BuyPositionSystem.setPosition_mode(position_mode);			
+
     		BuyPositionSystem = Utilities.fillStatesOrder(BuyPositionSystem);
 			/* END MODO FAKE CUENTA DEMO */
     		
     		
-			BuyPositionSystem.setPosition_mode(position_mode);			
 			PositionLocalServiceUtil.updatePosition(BuyPositionSystem);
 			/* Posicion en MYSQL de CONTROL */
 			
@@ -268,7 +269,7 @@ public class IBStrategyMinMax extends StrategyImpl {
 	Calendar calFechaActualWithDeadLine;
 	Calendar calFechaFinMercado;
 
-	if (Validator.isNull(backtestingdDate))
+	if (!isSimulation_mode())
 	{
 		HoraActual = Utilities.getHourNowFormat(_IBUser);
 		calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(HoraActual);
@@ -310,13 +311,13 @@ public class IBStrategyMinMax extends StrategyImpl {
 		String HoraInicioLecturaMaxMin = "";
 		String HoraFinLecturaMaxMin = "";
 		
-		Date _FromNow =  Validator.isNull(backtestingdDate) ?   Utilities.getDate(_IBUser) : backtestingdDate;
+		Date _FromNow =  !isSimulation_mode() ?   Utilities.getDate(_IBUser) : backtestingdDate;
 		Calendar _calendarFromNow = Calendar.getInstance();
 		_calendarFromNow.setTime(_FromNow);		
 		_calendarFromNow.set(Calendar.SECOND, 0);
 		_calendarFromNow.set(Calendar.MILLISECOND, 0);
 		
-		if (Validator.isNull(backtestingdDate))
+		if (!isSimulation_mode())
 		{
 			HoraInicioLecturaMaxMin = Utilities.getActualHourFormatPlusMinutes(_calendarFromNow, _market.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_OFFSET1_FROM_OPENMARKET));
 			HoraFinLecturaMaxMin = Utilities.getActualHourFormatPlusMinutes(_calendarFromNow, _market.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_OFFSET2_FROM_OPENMARKET));
@@ -343,9 +344,9 @@ public class IBStrategyMinMax extends StrategyImpl {
 		
 		// ya no obtenemos el maximo y minimo, sino el correspondiente al tramo que me han dicho
 		/* TIMEZONE AJUSTADO */
-		Date _FromIniMarket =  Validator.isNull(backtestingdDate) ?   Utilities.getDate(_IBUser) : backtestingdDate;
-		Date _ToIniMarket   =  Validator.isNull(backtestingdDate) ?   Utilities.getDate(_IBUser) : backtestingdDate;
-		Date _ToNow  =  Validator.isNull(backtestingdDate) ?   Utilities.getDate(_IBUser) : backtestingdDate;
+		Date _FromIniMarket =  !isSimulation_mode() ?   Utilities.getDate(_IBUser) : backtestingdDate;
+		Date _ToIniMarket   =  !isSimulation_mode() ?   Utilities.getDate(_IBUser) : backtestingdDate;
+		Date _ToNow  		=  !isSimulation_mode() ?   Utilities.getDate(_IBUser) : backtestingdDate;
 
 		
 		_FromIniMarket = Utilities.setDateWithHour(_FromIniMarket,HoraInicioLecturaMaxMin);

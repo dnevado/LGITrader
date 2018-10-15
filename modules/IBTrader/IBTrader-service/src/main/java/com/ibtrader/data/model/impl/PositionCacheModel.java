@@ -65,7 +65,7 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(79);
+		StringBundler sb = new StringBundler(81);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -145,6 +145,8 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 		sb.append(totalcommision);
 		sb.append(", forceclose=");
 		sb.append(forceclose);
+		sb.append(", backtestingId=");
+		sb.append(backtestingId);
 		sb.append("}");
 
 		return sb.toString();
@@ -289,6 +291,7 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 
 		positionImpl.setTotalcommision(totalcommision);
 		positionImpl.setForceclose(forceclose);
+		positionImpl.setBacktestingId(backtestingId);
 
 		positionImpl.resetOriginalValues();
 
@@ -360,6 +363,8 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 		totalcommision = objectInput.readDouble();
 
 		forceclose = objectInput.readBoolean();
+
+		backtestingId = objectInput.readLong();
 	}
 
 	@Override
@@ -481,6 +486,8 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 		objectOutput.writeDouble(totalcommision);
 
 		objectOutput.writeBoolean(forceclose);
+
+		objectOutput.writeLong(backtestingId);
 	}
 
 	public String uuid;
@@ -522,4 +529,5 @@ public class PositionCacheModel implements CacheModel<Position>, Externalizable 
 	public String position_mode;
 	public double totalcommision;
 	public boolean forceclose;
+	public long backtestingId;
 }

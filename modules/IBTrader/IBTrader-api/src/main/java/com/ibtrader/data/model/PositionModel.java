@@ -636,6 +636,20 @@ public interface PositionModel extends BaseModel<Position>, ShardedModel,
 	 */
 	public void setForceclose(boolean forceclose);
 
+	/**
+	 * Returns the backtesting ID of this position.
+	 *
+	 * @return the backtesting ID of this position
+	 */
+	public long getBacktestingId();
+
+	/**
+	 * Sets the backtesting ID of this position.
+	 *
+	 * @param backtestingId the backtesting ID of this position
+	 */
+	public void setBacktestingId(long backtestingId);
+
 	@Override
 	public boolean isNew();
 

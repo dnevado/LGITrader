@@ -178,9 +178,9 @@ public class TIMApiWrapper implements EWrapper {
 		
 		// CONTROL
 		if (this.getUserTWS().equalsIgnoreCase(Utilities._DEFAULT_USER_DEMO_))
-			clientSocket.reqHistoricalData(requestId, contract, "", "1 D", "5 mins", "TRADES", 1, 1, false, null);
+			clientSocket.reqHistoricalData(requestId, contract, "", "1 D", ConfigKeys.SIMULATION_MINUTES_BAR_SIZE + " mins", "TRADES", 1, 1, false, null);
 		else
-			clientSocket.reqHistoricalData(requestId, contract, EndTime, "1 D", "5 mins", "TRADES", 1, 1, false, null);
+			clientSocket.reqHistoricalData(requestId, contract, EndTime, "1 D", ConfigKeys.SIMULATION_MINUTES_BAR_SIZE + " mins", "TRADES", 1, 1, false, null);
 		
 	}
 	

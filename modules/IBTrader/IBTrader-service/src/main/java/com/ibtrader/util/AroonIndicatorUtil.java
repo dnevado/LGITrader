@@ -27,7 +27,9 @@ import org.ta4j.core.indicators.adx.MinusDIIndicator;
 import org.ta4j.core.indicators.adx.PlusDIIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 
+import com.ibtrader.data.model.HistoricalRealtime;
 import com.ibtrader.data.model.Realtime;
+import com.ibtrader.data.service.HistoricalRealtimeLocalServiceUtil;
 import com.ibtrader.data.service.RealtimeLocalServiceUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -57,14 +59,15 @@ public class AroonIndicatorUtil {
 	
 	private static Log _log = LogFactoryUtil.getLog(AroonIndicatorUtil.class);
 
-	public AroonIndicatorUtil(Date dateTo, long timebar,  long shareId, long companyId, long groupId, long periods) {
-		getAaronIndicatorRate(dateTo,  timebar, shareId, companyId, groupId, periods);
+	public AroonIndicatorUtil(Date dateTo, long timebar,  long shareId, long companyId, long groupId, long periods, boolean simulation) {
+		getAaronIndicatorRate(dateTo,  timebar, shareId, companyId, groupId, periods, simulation);
 	}
 	/* para las medias armonizadas de  DM */
-	private void   getAaronIndicatorRate(Date dateTo, long timebar, long shareId, long companyId, long groupId, long periods)
+	private void   getAaronIndicatorRate(Date dateTo, long timebar, long shareId, long companyId, long groupId, long periods,boolean simulation)
 	{
 		
-		
+		try
+		{
 		int periodsToCalculate = ConfigKeys.INDICATORS_MIN_SERIE_COUNT; // https://estrategiastrading.com/indicador-adx-formula/
 		Calendar  cPeriodFrom = Calendar.getInstance(); 
 	    cPeriodFrom.setTimeInMillis(dateTo.getTime());
@@ -85,13 +88,34 @@ public class AroonIndicatorUtil {
 			Date dateMinMaxFrom = cPeriodFrom.getTime();		    		
 	        Date dateMinMaxTo = cPeriodTo.getTime();
 		    
-			Realtime minMax = RealtimeLocalServiceUtil.findMinMaxRealTime(dateMinMaxFrom, dateMinMaxTo, shareId, companyId, groupId);
-			Realtime closeValue = RealtimeLocalServiceUtil.findLastRealTimeLessThanDate(shareId, companyId, groupId, dateMinMaxTo);
-			
-			if (minMax.getMax_value()<=0  || minMax.getMin_value()<=0 ||  Validator.isNull(closeValue))
-				break;
-			
-			series.addBar(new BaseBar(endTime,0.0,minMax.getMax_value() ,minMax.getMin_value(), closeValue.getValue(),0.0));
+	        
+	        double max_value = 0;
+	        double min_value = 0;
+	        double close_value = 0;
+		    
+	        if (!simulation)
+	        {	        
+	        	Realtime minMax = RealtimeLocalServiceUtil.findMinMaxRealTime(dateMinMaxFrom, dateMinMaxTo, shareId, companyId, groupId);
+	        	Realtime closeValue = RealtimeLocalServiceUtil.findLastRealTimeLessThanDate(shareId, companyId, groupId, dateMinMaxTo);
+	        	if (minMax.getMax_value()<=0  || minMax.getMin_value()<=0 ||  Validator.isNull(closeValue))
+					break;
+	        	max_value = minMax.getMax_value();
+	        	min_value = minMax.getMin_value();
+	        	close_value =closeValue.getValue();
+	        	
+	        }
+	        else
+	        {
+	        	HistoricalRealtime  minMax = HistoricalRealtimeLocalServiceUtil.findMinMaxRealTime(dateMinMaxFrom, dateMinMaxTo, shareId, companyId, groupId);
+	        	HistoricalRealtime  closeValue = HistoricalRealtimeLocalServiceUtil.findLastRealTimeLessThanDate(shareId, companyId, groupId, dateMinMaxTo);
+	        	if (minMax.getMax_value()<=0  || minMax.getMin_value()<=0 ||  Validator.isNull(closeValue))
+					break;
+	        	max_value = minMax.getMax_value();
+	        	min_value = minMax.getMin_value();
+	        	close_value =closeValue.getValue();
+	        }
+	        
+			series.addBar(new BaseBar(endTime,0.0,max_value ,min_value, close_value,0.0));
 			
 			_log.debug("Serie " + j  + " " + series.getBar(j).getClosePrice() + "," + series.getBar(j).getMaxPrice() + "," + series.getBar(j).getMinPrice());
 			
@@ -131,7 +155,11 @@ public class AroonIndicatorUtil {
         _log.debug("_aroonDown:" + _aroonDown);
         _log.debug("_lastAroonUp:" + _lastAroonUp);
         _log.debug("_lastAroonDown:" + _lastAroonDown);
-        
+		}
+		catch (Exception e)
+		{
+			_log.debug(e.getMessage());
+		}
 		
 	}
 	public static void main (String[] args) {

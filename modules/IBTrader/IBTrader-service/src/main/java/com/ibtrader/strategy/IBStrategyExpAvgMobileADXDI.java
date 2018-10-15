@@ -27,7 +27,6 @@ y B/ Además, el precio cierre de la barra será => que el 75% del rango.
 
 package com.ibtrader.strategy;
 
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -40,17 +39,16 @@ import com.ib.client.Order;
 import com.ib.contracts.FutContract;
 import com.ib.contracts.StkContract;
 import com.ibtrader.constants.IBTraderConstants;
+import com.ibtrader.data.model.HistoricalRealtime;
 import com.ibtrader.data.model.Market;
 import com.ibtrader.data.model.Position;
 import com.ibtrader.data.model.Realtime;
 import com.ibtrader.data.model.Share;
-import com.ibtrader.data.model.Strategy;
 import com.ibtrader.data.model.StrategyShare;
 import com.ibtrader.data.model.impl.StrategyImpl;
+import com.ibtrader.data.service.HistoricalRealtimeLocalServiceUtil;
 import com.ibtrader.data.service.PositionLocalServiceUtil;
 import com.ibtrader.data.service.RealtimeLocalServiceUtil;
-import com.ibtrader.data.service.StrategyLocalServiceUtil;
-import com.ibtrader.data.service.StrategyShareLocalServiceUtil;
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.expando.kernel.model.ExpandoColumn;
 import com.liferay.expando.kernel.model.ExpandoColumnConstants;
@@ -153,7 +151,7 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 		   }
 		   
 			// colocamos operacion de compra
-  			if (Validator.isNull(backtestingdDate))
+  			if (!isSimulation_mode())
   			{
   			
 				Order BuyPositionTWS = new Order();
@@ -186,7 +184,7 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 			/* Posicion en MYSQL de CONTROL. OJO...ANTES SIEMPRE PARA DESPUES CONTROLARLA EN CASO DE ERROR. */
 			Position BuyPositionSystem = PositionLocalServiceUtil.createPosition(CounterLocalServiceUtil.increment(Position.class.getName()));			
 			BuyPositionSystem.setPrice_in( this.getValueIn());  // ojo, es estimativo
-			BuyPositionSystem.setDate_in(Validator.isNull(backtestingdDate) ? new Date() : backtestingdDate);// .setDate_buy(new Timestamp(Calendar.getInstance().getTimeInMillis()));
+			BuyPositionSystem.setDate_in(!isSimulation_mode() ? new Date() : backtestingdDate);// .setDate_buy(new Timestamp(Calendar.getInstance().getTimeInMillis()));
 			BuyPositionSystem.setShare_number(number_to_purchase);
 			BuyPositionSystem.setShareId(_share.getShareId());
 		
@@ -202,10 +200,11 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 			BuyPositionSystem.setSell_percentual_stop_profit(ShareStrategy.getSell_percentual_stop_profit());*/			
 			
 			/* MODO FAKE CUENTA DEMO */
+			BuyPositionSystem.setPosition_mode(position_mode);			
     		BuyPositionSystem = Utilities.fillStatesOrder(BuyPositionSystem);
 			/* END MODO FAKE CUENTA DEMO */
   
-			BuyPositionSystem.setPosition_mode(position_mode);			
+			
 			PositionLocalServiceUtil.updatePosition(BuyPositionSystem);
 			/* Posicion en MYSQL de CONTROL */
 			_log.info("Opening order " + BuyPositionSystem.getPositionId());
@@ -251,7 +250,7 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 		String HoraActual = "";
 		Calendar calFechaActualWithDeadLine;
 		Calendar calFechaFinMercado;
-		if (Validator.isNull(backtestingdDate))
+		if (!isSimulation_mode())
 		{
 			HoraActual = Utilities.getHourNowFormat(_IBUser);
 			calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(HoraActual);
@@ -296,7 +295,7 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 		/* SOLO PODEMOS ENTRAR EN EL PERIODO MARCADO DE CADA MINUTO, PARA LO CUAL OBTENEMOS EL RESTO */	
 		
 		/* TIMEZONE AJUSTADO */
-		Date _FromNow =  Validator.isNull(backtestingdDate) ?   Utilities.getDate(_IBUser) : backtestingdDate;
+		Date _FromNow =  !isSimulation_mode() ?   Utilities.getDate(_IBUser) : backtestingdDate;
 		Calendar _calendarFromNow = Calendar.getInstance();
 		_calendarFromNow.setTime(_FromNow);		
 		_calendarFromNow.set(Calendar.SECOND, 0);
@@ -313,7 +312,7 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 			// HHMM
 			// HORA DE FIN DE CALCULO DE MAX Y MINIMOS.
 			String StartHourTrading = "";
-			if (Validator.isNull(backtestingdDate))
+			if (!isSimulation_mode())
 				 StartHourTrading =  Utilities.getActualHourFormatPlusMinutes(_calendarFromNow, _market.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET));
 			else				
 				 StartHourTrading = Utilities.getActualHourFormatPlusMinutes(_market.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET));
@@ -329,13 +328,24 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 			{
 			
 			// ya no obtenemos el maximo y minimo, sino el correspondiente al tramo que me han dicho
-			
-				Realtime oShareLastRTime = (Realtime)  RealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(),_FromNow);
+				
+				Double lastRealtime = null;												
+				if (!isSimulation_mode())
+				{
+					Realtime oShareLastRTime =  RealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(),_FromNow);
+					lastRealtime = Validator.isNull(oShareLastRTime) ? null : oShareLastRTime.getValue();
+				}					
+				else
+				{
+					HistoricalRealtime oShareLastRTime = HistoricalRealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(),_FromNow);
+					lastRealtime = Validator.isNull(oShareLastRTime) ? null : oShareLastRTime.getValue();
 
-				if  (Validator.isNotNull(oShareLastRTime))
+				}
+				
+				if  (Validator.isNotNull(lastRealtime))
 				{
 				//_ActualDateBar, TimeBars, shareId, companyId, groupId, PeriodN)
-				Double _avgMobileExponential = MobileAvgUtil.getExponentialAvgMobile(_calendarFromNow.getTime(), oShareLastRTime.getValue(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_macdP);
+				Double _avgMobileExponential = MobileAvgUtil.getExponentialAvgMobile(_calendarFromNow.getTime(), lastRealtime.doubleValue(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_macdP , isSimulation_mode(), _market);
 				
 				if (_log.isDebugEnabled())
 					_log.debug("_avgMobileSimple for :" + _share.getSymbol() + ":" +  _avgMobileExponential.doubleValue() + " " + Utilities.getWebFormattedDate(_calendarFromNow.getTime(), _IBUser));
@@ -355,9 +365,9 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 					*/
 					
 			
-					DirectionalMovementADXRUtil  ADXR =  new DirectionalMovementADXRUtil(_calendarFromNow.getTime(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId());
+					DirectionalMovementADXRUtil  ADXR =  new DirectionalMovementADXRUtil(_calendarFromNow.getTime(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), isSimulation_mode());
 					
-					AroonIndicatorUtil  Aroon =  new AroonIndicatorUtil(_calendarFromNow.getTime(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(),_num_aroonP);
+					AroonIndicatorUtil  Aroon =  new AroonIndicatorUtil(_calendarFromNow.getTime(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(),_num_aroonP, isSimulation_mode());
 					
 					
 					double MACD = 0d; //new DirectionalMovementADXRUtil(_calendarFromNow.getTime(), _num_macdT, _num_macdP,_share.getShareId(), _share.getCompanyId(), _share.getGroupId());					
@@ -378,12 +388,12 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 					//if ()
 					
 					
-					MACD 		  = MobileAvgUtil.getMACD(_calendarFromNow.getTime(),  _num_macdT , _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_shortAvgMACD_P,_num_longAvgMACD_P );
-					previousMACD  = MobileAvgUtil.getMACDPrevious(_calendarFromNow.getTime(), _num_macdT , _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_shortAvgMACD_P, _num_longAvgMACD_P);
+					MACD 		  = MobileAvgUtil.getMACD(_calendarFromNow.getTime(),  _num_macdT , _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_shortAvgMACD_P,_num_longAvgMACD_P ,isSimulation_mode(),_market);
+					previousMACD  = MobileAvgUtil.getMACDPrevious(_calendarFromNow.getTime(), _num_macdT , _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_shortAvgMACD_P, _num_longAvgMACD_P,isSimulation_mode(),_market);
 										
 					
-					Double _macd_SignalAvgMobileExponential  		 = MobileAvgUtil.getMACDSignal(_calendarFromNow.getTime(),  _num_macdT , _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_shortAvgMACD_P,_num_longAvgMACD_P,_num_signalLineMACD_P);
-					Double _macd_PreviousSignalAvgMobileExponential  = MobileAvgUtil.getMACDSignalPrevious(_calendarFromNow.getTime(),  _num_macdT , _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_shortAvgMACD_P,_num_longAvgMACD_P,_num_signalLineMACD_P);
+					Double _macd_SignalAvgMobileExponential  		 = MobileAvgUtil.getMACDSignal(_calendarFromNow.getTime(),  _num_macdT , _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_shortAvgMACD_P,_num_longAvgMACD_P,_num_signalLineMACD_P,isSimulation_mode(),_market);
+					Double _macd_PreviousSignalAvgMobileExponential  = MobileAvgUtil.getMACDSignalPrevious(_calendarFromNow.getTime(),  _num_macdT , _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_shortAvgMACD_P,_num_longAvgMACD_P,_num_signalLineMACD_P,isSimulation_mode(),_market);
 					
 										
 					boolean _BuySuccess = false;
@@ -413,8 +423,8 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 				    }
 					// se produce una señal de venta cuando el MACD, teniendo valores positivos, traspase a su media en sentido descendente.							
 					
-					_BuySuccess =  oShareLastRTime.getValue()>_avgMobileExponential.doubleValue() && (bBuyADXRSignal  || bBuyMACDSignal  || bBuyAroonSignal);					
-					_SellSuccess = oShareLastRTime.getValue()<_avgMobileExponential.doubleValue() && (bSellADXRSignal || bSellMACDSignal || bSellAroonSignal);
+					_BuySuccess =  lastRealtime.doubleValue() >_avgMobileExponential.doubleValue() && (bBuyADXRSignal  || bBuyMACDSignal  || bBuyAroonSignal);					
+					_SellSuccess = lastRealtime.doubleValue() <_avgMobileExponential.doubleValue() && (bSellADXRSignal || bSellMACDSignal || bSellAroonSignal);
 					
 					
 					_BuySuccess = _BuySuccess &&  
@@ -427,7 +437,7 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 					if (_BuySuccess || _SellSuccess)
 					{
 					
-					    this.setValueIn(oShareLastRTime.getValue());											
+					    this.setValueIn(lastRealtime.doubleValue());											
 						this.setVerified(Boolean.TRUE);												
 						verified = true;							
 						this.bBuyOperation = _BuySuccess;									

@@ -73,6 +73,7 @@ public class PositionSoap implements Serializable {
 		soapModel.setPosition_mode(model.getPosition_mode());
 		soapModel.setTotalcommision(model.getTotalcommision());
 		soapModel.setForceclose(model.getForceclose());
+		soapModel.setBacktestingId(model.getBacktestingId());
 
 		return soapModel;
 	}
@@ -442,6 +443,14 @@ public class PositionSoap implements Serializable {
 		_forceclose = forceclose;
 	}
 
+	public long getBacktestingId() {
+		return _backtestingId;
+	}
+
+	public void setBacktestingId(long backtestingId) {
+		_backtestingId = backtestingId;
+	}
+
 	private String _uuid;
 	private long _positionId;
 	private long _groupId;
@@ -481,4 +490,5 @@ public class PositionSoap implements Serializable {
 	private String _position_mode;
 	private double _totalcommision;
 	private boolean _forceclose;
+	private long _backtestingId;
 }

@@ -50,7 +50,9 @@ import org.ta4j.core.indicators.adx.MinusDIIndicator;
 import org.ta4j.core.indicators.adx.PlusDIIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 
+import com.ibtrader.data.model.HistoricalRealtime;
 import com.ibtrader.data.model.Realtime;
+import com.ibtrader.data.service.HistoricalRealtimeLocalServiceUtil;
 import com.ibtrader.data.service.RealtimeLocalServiceUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -79,8 +81,8 @@ public class DirectionalMovementADXRUtil {
 	 */
 	private static Log _log = LogFactoryUtil.getLog(DirectionalMovementADXRUtil.class);
 
-	public DirectionalMovementADXRUtil(Date dateTo, long timebar,  long shareId, long companyId, long groupId) {
-		getAvgDirectionalRate(dateTo,  timebar, shareId, companyId, groupId);
+	public DirectionalMovementADXRUtil(Date dateTo, long timebar,  long shareId, long companyId, long groupId, boolean simulation) {
+		getAvgDirectionalRate(dateTo,  timebar, shareId, companyId, groupId,simulation);
 	}
 	/* para las medias armonizadas de  DM */
 
@@ -92,10 +94,11 @@ public class DirectionalMovementADXRUtil {
 	 * timebar --> 5 en minutos
 	 * periods --> para calcular el ADXR , normalmente 14 
 	 */
-	private void  getAvgDirectionalRate(Date dateTo, long timebar, long shareId, long companyId, long groupId)
+	private void  getAvgDirectionalRate(Date dateTo, long timebar, long shareId, long companyId, long groupId, boolean simulation)
 	{
 		
-		
+		try 
+		{
 		int periodsToCalculate = ConfigKeys.INDICATORS_MIN_SERIE_COUNT; // https://estrategiastrading.com/indicador-adx-formula/
 		Calendar  cPeriodFrom = Calendar.getInstance(); 
 	    cPeriodFrom.setTimeInMillis(dateTo.getTime());
@@ -115,14 +118,36 @@ public class DirectionalMovementADXRUtil {
 		    
 			Date dateMinMaxFrom = cPeriodFrom.getTime();		    		
 	        Date dateMinMaxTo = cPeriodTo.getTime();
+	        
+	        double max_value = 0;
+	        double min_value = 0;
+	        double close_value = 0;
 		    
-			Realtime minMax = RealtimeLocalServiceUtil.findMinMaxRealTime(dateMinMaxFrom, dateMinMaxTo, shareId, companyId, groupId);
-			Realtime closeValue = RealtimeLocalServiceUtil.findLastRealTimeLessThanDate(shareId, companyId, groupId, dateMinMaxTo);
+	        if (!simulation)
+	        {	        
+	        	Realtime minMax = RealtimeLocalServiceUtil.findMinMaxRealTime(dateMinMaxFrom, dateMinMaxTo, shareId, companyId, groupId);
+	        	Realtime closeValue = RealtimeLocalServiceUtil.findLastRealTimeLessThanDate(shareId, companyId, groupId, dateMinMaxTo);
+	        	if (minMax.getMax_value()<=0  || minMax.getMin_value()<=0 ||  Validator.isNull(closeValue))
+					break;
+	        	max_value = minMax.getMax_value();
+	        	min_value = minMax.getMin_value();
+	        	close_value =closeValue.getValue();
+	        	
+	        }
+	        else
+	        {
+	        	HistoricalRealtime  minMax = HistoricalRealtimeLocalServiceUtil.findMinMaxRealTime(dateMinMaxFrom, dateMinMaxTo, shareId, companyId, groupId);
+	        	HistoricalRealtime  closeValue = HistoricalRealtimeLocalServiceUtil.findLastRealTimeLessThanDate(shareId, companyId, groupId, dateMinMaxTo);
+	        	if (minMax.getMax_value()<=0  || minMax.getMin_value()<=0 ||  Validator.isNull(closeValue))
+					break;
+	        	max_value = minMax.getMax_value();
+	        	min_value = minMax.getMin_value();
+	        	close_value =closeValue.getValue();
+	        }
 			
-			if (minMax.getMax_value()<=0  || minMax.getMin_value()<=0 ||  Validator.isNull(closeValue))
-				break;
 			
-			series.addBar(new BaseBar(endTime,0.0,minMax.getMax_value() ,minMax.getMin_value(), closeValue.getValue(),0.0));
+			
+			series.addBar(new BaseBar(endTime,0.0,max_value ,min_value, close_value,0.0));
 			
 			_log.debug("Serie " + j  + " " + series.getBar(j).getClosePrice() + "," + series.getBar(j).getMaxPrice() + "," + series.getBar(j).getMinPrice());
 			
@@ -152,23 +177,12 @@ public class DirectionalMovementADXRUtil {
         _log.debug("_ADX:" + _ADX);
         _log.debug("_ADX (n -14) :" + ADXIndicator.getValue(periodsToCalculate-1 - ConfigKeys.ADXR_PERIODS).doubleValue());
         _log.debug("_ADXR: (_ADX +  ADX (n-14) / 2)" + _ADXR);
-
-		
-		/* for (int j=0;j<=periodsToCalculate;j++)
-		{ 
-			try {_log.debug("PlusDIIndicator:" + j + ":" +  PlusDIIndicator.getValue(j).doubleValue());} catch (Exception e) {}	
 		}
-		for (int j=0;j<=periodsToCalculate;j++)
-		{ 
-			try {_log.debug("MinusDIIndicator:" + j + ":" +  MinusDIIndicator.getValue(j).doubleValue());} catch (Exception e) {}	
-		}
-		for (int j=0;j<=periodsToCalculate;j++)
-		{ 
-			try {_log.debug("ADXIndicator:" + j + ":" +  ADXIndicator.getValue(j).doubleValue());} catch (Exception e) {}	
-		}
-		*/
-
-		
+        catch (Exception e) {
+        		_log.debug(e.getMessage());
+        }
+        	
+        
 	}
 	public static void main (String[] args) {
 
@@ -177,7 +191,7 @@ public class DirectionalMovementADXRUtil {
 		 */
 		Calendar cData = Calendar.getInstance();
 		cData.set(2018, 6, 25, 1, 40, 0);
-		DirectionalMovementADXRUtil ADXR =  new DirectionalMovementADXRUtil(cData.getTime(), 5,  2602, 20116, 101213);
+		DirectionalMovementADXRUtil ADXR =  new DirectionalMovementADXRUtil(cData.getTime(), 5,  2602, 20116, 101213, false);
 		ADXR.getADXR();
 		
 		

@@ -290,6 +290,48 @@
 
 		<!-- References -->
 	</entity>
+	
+	<entity cache-enabled="true" local-service="true" name="BackTesting" remote-service="true" uuid="true">
+
+		<!-- PK fields -->
+
+		<column name="backTId" primary="true" type="long" />
+		<!-- Group instance -->
+		<column name="groupId" type="long" />
+		<!-- Audit fields -->
+		<column name="companyId" type="long" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" /><!--  si acaba o no, ya que muestra el dia de tratamiento  -->
+		<column name="fromDate" type="Date" />
+		<column name="toDate" type="Date" />		
+		<column name="shareId" type="long" />
+		<column name="countordersBUY" type="long" /> 
+		<column name="countordersSELL" type="long" />
+		<column name="profitordersBUY" type="double" />
+		<column name="profitordersSELL" type="double" />
+		<column name="status" type="String" /><!--  STARTED, FINISHED -->		
+		<column name="description" type="String" />
+		
+		<order>
+		   <order-column name="backTId" order-by="desc" />		   
+		</order>
+		<!-- Other fields -->
+		<finder name="ShareCompanyGroup" return-type="Collection">	
+			<finder-column name="shareId"/>			
+			<finder-column name="companyId"/>
+			<finder-column name="groupId"/>			
+		</finder>
+		<finder name="StatusCompanyGroup" return-type="Collection">	
+			<finder-column name="status"/>			
+			<finder-column name="companyId"/>
+			<finder-column name="groupId"/>			
+		</finder>
+	
+		<!-- References -->
+	</entity>
+	
+	
+	
 	<entity  cache-enabled="true" local-service="true" name="Market" remote-service="true" uuid="true">
 
 		<!-- PK fields -->
@@ -521,6 +563,7 @@
 		<column name="totalcommision" type="double" />
 		<column name="forceclose" type="boolean" />
 		
+		<column name="backtestingId" type="long" />  <!--  POSICION ASOCIADA A UN BACKTESTING  -->
 		
 		<!-- /* PARA SACAR LA ULTIMA POSITION ID */ -->
 		<order>

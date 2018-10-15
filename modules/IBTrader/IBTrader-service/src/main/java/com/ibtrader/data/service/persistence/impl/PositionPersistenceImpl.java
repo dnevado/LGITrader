@@ -12502,6 +12502,7 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 		positionImpl.setPosition_mode(position.getPosition_mode());
 		positionImpl.setTotalcommision(position.getTotalcommision());
 		positionImpl.setForceclose(position.isForceclose());
+		positionImpl.setBacktestingId(position.getBacktestingId());
 
 		return positionImpl;
 	}

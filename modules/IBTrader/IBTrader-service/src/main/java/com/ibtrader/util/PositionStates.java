@@ -3,17 +3,7 @@ package com.ibtrader.util;
 /* usadas para colocar ordenes de compra y para marcar en las tablas la  operacion */
 public class PositionStates {
 	
-	public enum statusSimulation {
-	    Started ("Started"),
-	    Pending  ("Pending"),
-	    Processed  ("Processed");
-	    
-	    private String name;       
-
-	    private statusSimulation(String s) {
-	        name = s;
-	    }
-	}
+	
 	
 	public enum statusTWSCallBack {
 	    Cancelled ("Cancelled"),

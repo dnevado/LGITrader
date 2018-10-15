@@ -76,6 +76,8 @@ public interface Strategy extends StrategyModel, PersistedModel {
 
 	public void init(long companyId);
 
+	public void init_simulation();
+
 	public boolean activated();
 
 	public java.util.List<com.liferay.expando.kernel.model.ExpandoColumn> getIBStrategyParams();
@@ -133,4 +135,9 @@ public interface Strategy extends StrategyModel, PersistedModel {
 	public java.util.List<com.ib.client.Order> getChildsOrder();
 
 	public void setChildsOrder(java.util.List<com.ib.client.Order> _childsOrder);
+
+	/**
+	* @return the simulation_mode
+	*/
+	public boolean isSimulation_mode();
 }

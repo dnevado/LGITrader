@@ -12,12 +12,14 @@ import javax.servlet.http.HttpServletRequest;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.ibtrader.data.model.BackTesting;
 import com.ibtrader.data.model.Market;
 import com.ibtrader.data.model.Realtime;
 import com.ibtrader.data.model.Share;
 import com.ibtrader.data.model.Strategy;
 import com.ibtrader.data.model.StrategyShare;
 import com.ibtrader.data.model.impl.StrategyImpl;
+import com.ibtrader.data.service.BackTestingLocalServiceUtil;
 import com.ibtrader.data.service.MarketLocalService;
 import com.ibtrader.data.service.MarketLocalServiceUtil;
 import com.ibtrader.data.service.RealtimeLocalService;
@@ -81,6 +83,7 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
     private static String  _JSP_COMMAND_LIST_SHARE_STRATEGIES = "/html/view_strategyshare.jsp";
     private static String  _JSP_COMMAND_EDIT_MARKET = "/html/add_edit_market.jsp";
     private static String  _JSP_COMMAND_LIST_MARKETS = "/html/view_market.jsp";
+    private static String  _JSP_COMMAND_LIST_BACKTESTING = "/html/view_backtesting.jsp";
     
     
     @Reference(unbind = "-")
@@ -119,6 +122,8 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
 			jspPage=_JSP_COMMAND_EDIT_MARKET;
     	if (mvcCommand.equals("/html/view_market"))
 			jspPage=_JSP_COMMAND_LIST_MARKETS;
+    	if (mvcCommand.equals("/html/view_backtesting"))
+			jspPage=_JSP_COMMAND_LIST_BACKTESTING;
     	return jspPage; 
 	}
 
@@ -136,7 +141,8 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
 
 	   
 	   
-        List<Strategy> _lStrategies = null; 
+        List<Strategy> _lStrategies = null;
+        List<BackTesting> lBackTesting = null;
         Strategy Strategy = null;
         StrategyImpl _strategyImpl = null;
         Share share = null;
@@ -245,6 +251,24 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
 	        	
 	        	
 	        }
+	        
+	        if (_mvcCommand.equals("/html/view_backtesting"))	  
+	        {	        		
+	        
+	        	 lBackTesting = BackTestingLocalServiceUtil.findByShareCompanyGroup(shareId, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
+	        	
+	        	 PortletURL iteratorURL = renderResponse.createRenderURL();
+	        		
+	       		 SearchContainer<BackTesting> searchContainer = null;
+	       		 searchContainer  = new SearchContainer<BackTesting>(renderRequest, null, null, SearchContainer.DEFAULT_CUR_PARAM, SearchContainer.DEFAULT_DELTA, iteratorURL, null, StringPool.BLANK);
+	       		 searchContainer.setEmptyResultsMessage("Simulaciones  no encontradas");        
+	       		 searchContainer.setResults(ListUtil.subList(lBackTesting, searchContainer.getStart(), searchContainer.getEnd()));
+	       		 searchContainer.setTotal(lBackTesting.size());
+	       		 renderRequest.setAttribute("searchBackTesting" , searchContainer); 
+	       		 renderRequest.setAttribute("iteratorURL" , iteratorURL);	 
+	        	
+	        }
+	        
 	        /* EDITAMOS LOS DATOS DE LA ESTRATEGIA (EXPANDOS + DATOS DEL SHARE QUE TENGAMOS FIJOS PARA GENERAR UN JSON/XML) */
 	        if (_mvcCommand.equals("/html/view_market"))	  
 	        {	        		

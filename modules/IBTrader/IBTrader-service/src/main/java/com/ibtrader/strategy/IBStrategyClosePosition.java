@@ -91,7 +91,7 @@ public class IBStrategyClosePosition extends StrategyImpl {
 		if (closePosition.getType().equals(PositionStates.statusTWSFire.BUY.toString())) // operacion de compra normal..??
 			_OperationTYPE = PositionStates.statusTWSFire.SELL.toString();		
 				
-		if (Validator.isNull(backtestingdDate))
+		if (!isSimulation_mode())
 		{
 			Order BuyPositionTWS = new Order();
 			BuyPositionTWS.account(Utilities.getConfigurationValue(IBTraderConstants.keyACCOUNT_IB_NAME, _share.getCompanyId(), _share.getGroupId()));			
@@ -102,7 +102,7 @@ public class IBStrategyClosePosition extends StrategyImpl {
 			this.setTargetOrder(BuyPositionTWS);
 		}
 		//closePosition.setState_out(PositionStates.statusTWSCallBack.PendingSubmit.toString());	
-		closePosition.setDate_out(Validator.isNull(backtestingdDate) ? new Date() : backtestingdDate);
+		closePosition.setDate_out(!isSimulation_mode() ? new Date() : backtestingdDate);
 		closePosition.setDescription(closePosition.getDescription() + StringPool.RETURN_NEW_LINE + this.getClass().getName());
 		closePosition.setStrategy_out(this.getClass().getName());
 		

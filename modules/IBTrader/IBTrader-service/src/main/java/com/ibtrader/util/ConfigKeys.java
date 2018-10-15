@@ -44,6 +44,10 @@ public class ConfigKeys {
     //http://interactivebrokers.github.io/tws-api/market_data_type.html#gsc.tab=0
     public static final int MARKET_DATA_TYPE_DELAYED_LIVE = 3;
     
+    public static final int SIMULATION_MINUTES_BAR_SIZE = 5; // 5 MINUTOS DE HISTORICAL DATA 
+    
+    
+    
     public static final int _AUDIT_TIME_CRON_READ_IN_MILLISECONDS = 30000;   // 30 SEGUNDOS SE GRABA EL MODIFIED DATABASE 
     
     public static final String  _FIELD_NUMBER_TO_PURCHASE = "numbertopurchase";   // 5 SEGUNDOS SE GRABA EL MODIFIED DATABASE

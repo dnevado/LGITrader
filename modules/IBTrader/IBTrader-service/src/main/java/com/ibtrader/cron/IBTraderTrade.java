@@ -117,7 +117,7 @@ public class IBTraderTrade  extends BaseSchedulerEntryMessageListener {
 		runningJob = true;
 		try
 		{
-			CronUtil.StartTradingCron(message);
+			//CronUtil.StartTradingCron(message);
 		}
 		catch (Exception e)
 		{

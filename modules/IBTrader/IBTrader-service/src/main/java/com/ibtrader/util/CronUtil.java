@@ -16,6 +16,7 @@ import com.ib.contracts.FutContract;
 import com.ib.contracts.StkContract;
 import com.ibtrader.constants.IBTraderConstants;
 import com.ibtrader.cron.IBTraderTrade;
+import com.ibtrader.data.model.BackTesting;
 import com.ibtrader.data.model.Config;
 import com.ibtrader.data.model.IBOrder;
 import com.ibtrader.data.model.Market;
@@ -24,6 +25,7 @@ import com.ibtrader.data.model.Share;
 import com.ibtrader.data.model.Strategy;
 import com.ibtrader.data.model.StrategyShare;
 import com.ibtrader.data.model.impl.StrategyImpl;
+import com.ibtrader.data.service.BackTestingLocalServiceUtil;
 import com.ibtrader.data.service.ConfigLocalServiceUtil;
 import com.ibtrader.data.service.IBOrderLocalServiceUtil;
 import com.ibtrader.data.service.MarketLocalServiceUtil;
@@ -60,6 +62,157 @@ import com.ibtrader.strategy.IBStrategyCancelPosition;
 public class CronUtil {
 
 	private final static Log _log = LogFactoryUtil.getLog(CronUtil.class);
+	
+	public static void StartSimulationCron(Message _message)  throws Exception 	
+	{
+
+		
+		List<Company> lCompanies = CompanyLocalServiceUtil.getCompanies();
+		Company _company = lCompanies.get(0); // tiene que existir
+		long companyId =  _company.getCompanyId();
+		long guestGroupId = 0;
+		try {
+			guestGroupId = GroupLocalServiceUtil.getGroup(_company.getCompanyId(), GroupConstants.GUEST).getGroupId();
+		} catch (PortalException e) {
+		// TODO Auto-generated catch block
+			e.printStackTrace();			
+		}
+		SimpleDateFormat sdf = new SimpleDateFormat ("yyyyMM");
+		LocalDateTime  _now =  LocalDateTime .now();  
+		
+	/* 	while (true)
+		{
+		*/
+		List<Organization> lOrganization = OrganizationLocalServiceUtil.getOrganizations(companyId, OrganizationConstants.DEFAULT_PARENT_ORGANIZATION_ID, 0, OrganizationLocalServiceUtil.getOrganizationsCount()+1);
+		if (lOrganization.isEmpty())
+			return;	
+			
+		for (Organization _Organization : lOrganization )
+		{
+			try
+			{			
+			
+			/* backtesting no acabadas por modifieddate */
+			List<BackTesting> lBackTesting = BackTestingLocalServiceUtil.findByPendingCompanyGroup(_Organization.getCompanyId(), _Organization.getGroupId());
+			
+			if (Validator.isNull(lBackTesting) || lBackTesting.size()==0)
+			{				
+				 continue;
+			}
+			
+			for (BackTesting backtesting : lBackTesting)
+			{
+				
+				
+				Share oShare = ShareLocalServiceUtil.getShare(backtesting.getShareId()); 
+				Market oMarket = MarketLocalServiceUtil.getMarket(oShare.getMarketId());
+				
+				Calendar DateFromSimulation = Calendar.getInstance();
+		    	Calendar DateToSimulation =Calendar.getInstance();
+				
+		    	Date fromDate = backtesting.getFromDate();
+		    	if (backtesting.getFromDate().before(backtesting.getModifiedDate()))
+		    		fromDate = backtesting.getModifiedDate();
+		    	
+		    	/* corte entre medias, acabóp  */
+		    	if (backtesting.getModifiedDate().after(backtesting.getToDate()))
+		    	{
+		    		
+		    		backtesting.setStatus(IBTraderConstants.statusSimulation.Processed.toString());
+					BackTestingLocalServiceUtil.updateBackTesting(backtesting);
+		    		
+		    	}
+		    		
+		    	
+		    	
+		    	DateToSimulation.setTimeInMillis(backtesting.getToDate().getTime());
+		    	/* si ya ha avanzado la simulacion, el modified date es el from */
+		    	DateFromSimulation.setTimeInMillis(fromDate.getTime());
+		    	DateFromSimulation.set(Calendar.SECOND,0);
+		    	DateFromSimulation.set(Calendar.HOUR_OF_DAY,0);
+		    	DateFromSimulation.set(Calendar.MILLISECOND,0);
+		    	DateFromSimulation.set(Calendar.MINUTE,0);
+		    	
+		    	
+				int NUM_DAYS_ = Utilities.daysDiff(DateFromSimulation.getTime(), DateToSimulation.getTime());	
+				
+				for (int jDAY=0;jDAY<=NUM_DAYS_;jDAY++) // recorremos dias, ojo a los limites, por eso dia a dia.
+	    		{
+					
+					Calendar DateDayIni = Calendar.getInstance();
+					Calendar DateDayFin = Calendar.getInstance();
+					
+					DateDayIni.setTimeInMillis(DateFromSimulation.getTimeInMillis());
+	    			DateDayFin.setTimeInMillis(DateFromSimulation.getTimeInMillis());
+	    			
+	    			DateDayIni.add(Calendar.DATE, jDAY);
+	    		    DateDayFin.add(Calendar.DATE, jDAY);
+	    		    
+	    		    /* de 0 a 23.59.59 en barras de 5 minutos */
+	    			int _NUM_PERIODS_TO_REQUEST = 24 * 60 /  ConfigKeys.SIMULATION_MINUTES_BAR_SIZE;
+	    			for (int i=0;i<_NUM_PERIODS_TO_REQUEST;i++) // recorremos dias, ojo a los limites, por eso dia a dia.
+	    			{
+	    			
+	    				DateDayIni.add(Calendar.MINUTE, ConfigKeys.SIMULATION_MINUTES_BAR_SIZE ); //00:05 el primero 
+	    				
+	    				List<Strategy> _lStrategies = StrategyLocalServiceUtil.findByActiveCompanyId(Boolean.TRUE, backtesting.getCompanyId());
+		    			List<StrategyShare> _lStrategiesOfShare = StrategyShareLocalServiceUtil.getByGroupCompanyShareId(backtesting.getGroupId(), 
+		    					backtesting.getCompanyId(), backtesting.getShareId());
+		    			
+		    			for (Strategy oStrategy :_lStrategies)
+		    			{
+		    				
+		    				for (StrategyShare oStrategyShare :_lStrategiesOfShare)
+			    			{
+		    					// salimos si no es la misma 
+		    					if (oStrategyShare.getStrategyId()!=oStrategy.getStrategyID())
+		    						continue;
+		    					
+		    					
+		    					if (!oStrategyShare.isActive()) continue;  // si no esta activa, no se trata 
+		    					
+		    					StrategyImpl _strategyImpl= (StrategyImpl) Utilities.getContextClassLoader().loadClass(oStrategy.getClassName()).newInstance();
+		    					_strategyImpl.init(backtesting.getCompanyId());   // verify if custom fields are created and filled
+		    					_strategyImpl.init_simulation();   // verify if custom fields are created and filled
+		    				
+		    					if (_strategyImpl.verify(oShare, oMarket,oStrategyShare,DateDayIni.getTime()))
+		    					{		
+		    											    							
+	    							long positionId = _strategyImpl.execute(oShare, oMarket,DateDayIni.getTime());
+	    							Position _position = PositionLocalServiceUtil.fetchPosition(positionId);
+	    							if (Validator.isNotNull(_position))
+	    							{
+	    								_position.setBacktestingId(backtesting.getBackTId());
+	    								PositionLocalServiceUtil.updatePosition(_position);
+	    								
+	    							}
+		    					}
+		    					
+		    				}
+		    			}  // for (Strategy oStrategy :_lStrategies)
+	    				
+	    			}
+	    			
+	    			backtesting.setModifiedDate(DateDayIni.getTime());
+					BackTestingLocalServiceUtil.updateBackTesting(backtesting);
+	    			 
+	    		} // for (int jDAY=0;jDAY<=NUM_DAYS_;jDAY++)
+				
+				
+				backtesting.setStatus(IBTraderConstants.statusSimulation.Processed.toString());
+				BackTestingLocalServiceUtil.updateBackTesting(backtesting);
+				
+			} //BackTesting backtesting : lBackTesting
+			
+			}
+			catch (Exception e)
+			{
+				_log.error(e.getMessage());
+			//	e.printStackTrace();
+			}
+		 }   // for (Organization _Organization : lOrganization )
+	//	} // while
+	}
 
 	/* VALIDA CONFIRMACIONES DE ORDENES COMPLETADAS Y NO ENVIADAS A LA API POR DESCONEXIONES  */
 	public static void StartOrdersValidator(Message _message) throws Exception 	{

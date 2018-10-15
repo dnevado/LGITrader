@@ -96,7 +96,7 @@ public class IBStrategyCloseAllPositions extends StrategyImpl {
 		if (currentPosition.getType().equals(PositionStates.statusTWSFire.BUY.toString())) // operacion de compra normal..??
 			_OperationTYPE = PositionStates.statusTWSFire.SELL.toString();
 		// colocamos operacion de compra
-		if (Validator.isNull(backtestingdDate))
+		if (!isSimulation_mode())
 		{ 
 			Order BuyPositionTWS = new Order();
 			BuyPositionTWS.account(Utilities.getConfigurationValue(IBTraderConstants.keyACCOUNT_IB_NAME, _share.getCompanyId(), _share.getGroupId()));			
@@ -110,7 +110,7 @@ public class IBStrategyCloseAllPositions extends StrategyImpl {
 		//currentPosition.setState_out(PositionStates.statusTWSCallBack.PendingSubmit.toString());
 		/* si metemos el date sell en las parciales, no entran las siguientes */
 		/* acumulo las acciones vendidas y a vender en la operativa */
-		currentPosition.setDate_out(Validator.isNull(backtestingdDate) ? new Date() : backtestingdDate);
+		currentPosition.setDate_out(!isSimulation_mode() ? new Date() : backtestingdDate);
 		currentPosition.setDescription(currentPosition.getDescription() + StringPool.RETURN_NEW_LINE + this.getClass().getName());
 		currentPosition.setStrategy_out(this.getClass().getName());		 		
 		
@@ -158,7 +158,7 @@ public class IBStrategyCloseAllPositions extends StrategyImpl {
 	Calendar calFechaActualWithDeadLine;
 	Calendar calFechaFinMercado;
 
-	if (Validator.isNull(backtestingdDate))
+	if (!isSimulation_mode())
 	{
 		HoraActual = Utilities.getHourNowFormat(_IBUser);		
 		calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(HoraActual);
@@ -185,7 +185,7 @@ public class IBStrategyCloseAllPositions extends StrategyImpl {
 	if (calFechaActualWithDeadLine.after(calFechaFinMercado) && currentPosition!=null) 		  // ya esta en el limite 
 	{		    		
 			/* TIMEZONE AJUSTADO */
-			Date _FromNow =  Validator.isNull(backtestingdDate) ?   Utilities.getDate(_IBUser) : backtestingdDate;
+			Date _FromNow =  !isSimulation_mode() ?   Utilities.getDate(_IBUser) : backtestingdDate;
 			Calendar _calendarFromNow = Calendar.getInstance();
 			_calendarFromNow.setTime(_FromNow);		
 			_calendarFromNow.set(Calendar.SECOND, 0);

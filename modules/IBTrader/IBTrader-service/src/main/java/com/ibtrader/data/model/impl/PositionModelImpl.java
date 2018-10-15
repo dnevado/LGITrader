@@ -108,7 +108,8 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 			{ "pendingcancelled", Types.BIGINT },
 			{ "position_mode", Types.VARCHAR },
 			{ "totalcommision", Types.DOUBLE },
-			{ "forceclose", Types.BOOLEAN }
+			{ "forceclose", Types.BOOLEAN },
+			{ "backtestingId", Types.BIGINT }
 		};
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP = new HashMap<String, Integer>();
 
@@ -152,9 +153,10 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		TABLE_COLUMNS_MAP.put("position_mode", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("totalcommision", Types.DOUBLE);
 		TABLE_COLUMNS_MAP.put("forceclose", Types.BOOLEAN);
+		TABLE_COLUMNS_MAP.put("backtestingId", Types.BIGINT);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table ibtrader_Position (uuid_ VARCHAR(75) null,positionId LONG not null primary key,groupId LONG,companyId LONG,shareId LONG,createDate DATE null,modifiedDate DATE null,state_ VARCHAR(75) null,state_in VARCHAR(75) null,state_out VARCHAR(75) null,description TEXT null,price_in DOUBLE,price_real_in DOUBLE,limit_price_in DOUBLE,date_in DATE null,date_real_in DATE null,positionId_tws_in LONG,positionId_tws_out LONG,type_ VARCHAR(75) null,price_out DOUBLE,price_real_out DOUBLE,limit_price_out DOUBLE,date_out DATE null,date_real_out DATE null,share_number LONG,clientId_in LONG,clientId_out LONG,strategy_in VARCHAR(75) null,strategy_out VARCHAR(75) null,percentualstoplost_out DOUBLE,pricestoplost_out DOUBLE,percentualstopprofit_out DOUBLE,pricestopprofit_out DOUBLE,percentual_trailling_stop_lost DOUBLE,pricetrailling_stop_lost DOUBLE,pendingcancelled LONG,position_mode VARCHAR(75) null,totalcommision DOUBLE,forceclose BOOLEAN)";
+	public static final String TABLE_SQL_CREATE = "create table ibtrader_Position (uuid_ VARCHAR(75) null,positionId LONG not null primary key,groupId LONG,companyId LONG,shareId LONG,createDate DATE null,modifiedDate DATE null,state_ VARCHAR(75) null,state_in VARCHAR(75) null,state_out VARCHAR(75) null,description TEXT null,price_in DOUBLE,price_real_in DOUBLE,limit_price_in DOUBLE,date_in DATE null,date_real_in DATE null,positionId_tws_in LONG,positionId_tws_out LONG,type_ VARCHAR(75) null,price_out DOUBLE,price_real_out DOUBLE,limit_price_out DOUBLE,date_out DATE null,date_real_out DATE null,share_number LONG,clientId_in LONG,clientId_out LONG,strategy_in VARCHAR(75) null,strategy_out VARCHAR(75) null,percentualstoplost_out DOUBLE,pricestoplost_out DOUBLE,percentualstopprofit_out DOUBLE,pricestopprofit_out DOUBLE,percentual_trailling_stop_lost DOUBLE,pricetrailling_stop_lost DOUBLE,pendingcancelled LONG,position_mode VARCHAR(75) null,totalcommision DOUBLE,forceclose BOOLEAN,backtestingId LONG)";
 	public static final String TABLE_SQL_DROP = "drop table ibtrader_Position";
 	public static final String ORDER_BY_JPQL = " ORDER BY position.positionId_tws_in DESC";
 	public static final String ORDER_BY_SQL = " ORDER BY ibtrader_Position.positionId_tws_in DESC";
@@ -240,6 +242,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		model.setPosition_mode(soapModel.getPosition_mode());
 		model.setTotalcommision(soapModel.getTotalcommision());
 		model.setForceclose(soapModel.getForceclose());
+		model.setBacktestingId(soapModel.getBacktestingId());
 
 		return model;
 	}
@@ -344,6 +347,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		attributes.put("position_mode", getPosition_mode());
 		attributes.put("totalcommision", getTotalcommision());
 		attributes.put("forceclose", getForceclose());
+		attributes.put("backtestingId", getBacktestingId());
 
 		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
 		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
@@ -590,6 +594,12 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 		if (forceclose != null) {
 			setForceclose(forceclose);
+		}
+
+		Long backtestingId = (Long)attributes.get("backtestingId");
+
+		if (backtestingId != null) {
+			setBacktestingId(backtestingId);
 		}
 	}
 
@@ -1264,6 +1274,17 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		_forceclose = forceclose;
 	}
 
+	@JSON
+	@Override
+	public long getBacktestingId() {
+		return _backtestingId;
+	}
+
+	@Override
+	public void setBacktestingId(long backtestingId) {
+		_backtestingId = backtestingId;
+	}
+
 	@Override
 	public StagedModelType getStagedModelType() {
 		return new StagedModelType(PortalUtil.getClassNameId(
@@ -1340,6 +1361,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		positionImpl.setPosition_mode(getPosition_mode());
 		positionImpl.setTotalcommision(getTotalcommision());
 		positionImpl.setForceclose(getForceclose());
+		positionImpl.setBacktestingId(getBacktestingId());
 
 		positionImpl.resetOriginalValues();
 
@@ -1643,12 +1665,14 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 		positionCacheModel.forceclose = getForceclose();
 
+		positionCacheModel.backtestingId = getBacktestingId();
+
 		return positionCacheModel;
 	}
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(79);
+		StringBundler sb = new StringBundler(81);
 
 		sb.append("{uuid=");
 		sb.append(getUuid());
@@ -1728,6 +1752,8 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		sb.append(getTotalcommision());
 		sb.append(", forceclose=");
 		sb.append(getForceclose());
+		sb.append(", backtestingId=");
+		sb.append(getBacktestingId());
 		sb.append("}");
 
 		return sb.toString();
@@ -1735,7 +1761,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(121);
+		StringBundler sb = new StringBundler(124);
 
 		sb.append("<model><model-name>");
 		sb.append("com.ibtrader.data.model.Position");
@@ -1897,6 +1923,10 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 			"<column><column-name>forceclose</column-name><column-value><![CDATA[");
 		sb.append(getForceclose());
 		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>backtestingId</column-name><column-value><![CDATA[");
+		sb.append(getBacktestingId());
+		sb.append("]]></column-value></column>");
 
 		sb.append("</model>");
 
@@ -1972,6 +2002,7 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 	private String _originalPosition_mode;
 	private double _totalcommision;
 	private boolean _forceclose;
+	private long _backtestingId;
 	private long _columnBitmask;
 	private Position _escapedModel;
 }

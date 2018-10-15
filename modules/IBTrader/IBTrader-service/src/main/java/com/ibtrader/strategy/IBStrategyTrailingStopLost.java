@@ -72,7 +72,7 @@ public class IBStrategyTrailingStopLost extends StrategyImpl {
 		if (currentPosition.getType().equals(PositionStates.statusTWSFire.BUY.toString())) // operacion de compra normal..??
 			_OperationTYPE = PositionStates.statusTWSFire.SELL.toString();
 		
-		if (Validator.isNull(backtestingdDate))
+		if (!isSimulation_mode())
 		{
 		
 			Order BuyPositionTWS = new Order();
@@ -88,7 +88,7 @@ public class IBStrategyTrailingStopLost extends StrategyImpl {
 		}
 		currentPosition.setPrice_out(this.getValueOut());
 		//currentPosition.setState_out(PositionStates.statusTWSCallBack.PendingSubmit.toString());
-		currentPosition.setDate_out(Validator.isNull(backtestingdDate) ?  new Date() : backtestingdDate);
+		currentPosition.setDate_out(!isSimulation_mode() ?  new Date() : backtestingdDate);
 		currentPosition.setDescription(currentPosition.getDescription() + StringPool.RETURN_NEW_LINE  +this.getClass().getName());
 		currentPosition.setStrategy_out(this.getClass().getName());
 		
@@ -133,7 +133,7 @@ public class IBStrategyTrailingStopLost extends StrategyImpl {
 	{	
 		/* CAMBIAMOS POR EL ULTIMO VALOR MENOR QUE AHORA PARA QUE SE PUEDAN METER VALORES FUTURES COMO CONJUNTO DE PRUEBAS */
 		User _IBUser = UserLocalServiceUtil.getUser(_share.getUserCreatedId());
-		Date _ToNow   = Validator.isNull(backtestingdDate) ?   Utilities.getDate(_IBUser) : backtestingdDate;
+		Date _ToNow   = !isSimulation_mode() ?   Utilities.getDate(_IBUser) : backtestingdDate;
 		Realtime oShareLastRTime =  RealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _ToNow);
 
 		currentPosition = PositionLocalServiceUtil.findPositionToExit(_share.getGroupId(),_share.getCompanyId(),_share.getShareId(),position_mode);

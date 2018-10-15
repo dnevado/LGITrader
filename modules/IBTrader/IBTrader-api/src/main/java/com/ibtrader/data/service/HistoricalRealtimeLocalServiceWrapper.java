@@ -104,6 +104,50 @@ public class HistoricalRealtimeLocalServiceWrapper
 			groupId);
 	}
 
+	@Override
+	public com.ibtrader.data.model.HistoricalRealtime findCloseRealTime(
+		long shareId, long companyId, long groupId, java.util.Date closeDate) {
+		return _historicalRealtimeLocalService.findCloseRealTime(shareId,
+			companyId, groupId, closeDate);
+	}
+
+	@Override
+	public com.ibtrader.data.model.HistoricalRealtime findLastCompanyShare(
+		long companyId, long shareId, long groupId) {
+		return _historicalRealtimeLocalService.findLastCompanyShare(companyId,
+			shareId, groupId);
+	}
+
+	@Override
+	public com.ibtrader.data.model.HistoricalRealtime findLastRealTime(
+		long shareId, long companyId, long groupId) {
+		return _historicalRealtimeLocalService.findLastRealTime(shareId,
+			companyId, groupId);
+	}
+
+	@Override
+	public com.ibtrader.data.model.HistoricalRealtime findLastRealTimeLessThanDate(
+		long shareId, long companyId, long groupId, java.util.Date _to) {
+		return _historicalRealtimeLocalService.findLastRealTimeLessThanDate(shareId,
+			companyId, groupId, _to);
+	}
+
+	@Override
+	public com.ibtrader.data.model.HistoricalRealtime findMinMaxRealTime(
+		java.util.Date from, java.util.Date to, long shareId, long companyId,
+		long groupId) {
+		return _historicalRealtimeLocalService.findMinMaxRealTime(from, to,
+			shareId, companyId, groupId);
+	}
+
+	@Override
+	public com.ibtrader.data.model.HistoricalRealtime findSimpleMobileAvgGroupByPeriods(
+		long shareId, long companyId, long groupId, java.util.Date from,
+		java.util.Date to, java.util.List<java.lang.String> mobileAvgDates) {
+		return _historicalRealtimeLocalService.findSimpleMobileAvgGroupByPeriods(shareId,
+			companyId, groupId, from, to, mobileAvgDates);
+	}
+
 	/**
 	* Returns the historical realtime with the primary key.
 	*
@@ -258,6 +302,14 @@ public class HistoricalRealtimeLocalServiceWrapper
 			start, end, orderByComparator);
 	}
 
+	@Override
+	public java.util.List<com.ibtrader.data.model.HistoricalRealtime> findCloseRealTimes(
+		long shareId, long companyId, long groupId, java.util.Date from,
+		java.util.Date to, java.util.List<java.lang.String> closingDates) {
+		return _historicalRealtimeLocalService.findCloseRealTimes(shareId,
+			companyId, groupId, from, to, closingDates);
+	}
+
 	/**
 	* Returns a range of all the historical realtimes.
 	*
@@ -332,6 +384,13 @@ public class HistoricalRealtimeLocalServiceWrapper
 		com.liferay.portal.kernel.dao.orm.Projection projection) {
 		return _historicalRealtimeLocalService.dynamicQueryCount(dynamicQuery,
 			projection);
+	}
+
+	@Override
+	public void removeRealtimeFromToDate(java.util.Date from,
+		java.util.Date to, long shareId, long companyId, long groupId) {
+		_historicalRealtimeLocalService.removeRealtimeFromToDate(from, to,
+			shareId, companyId, groupId);
 	}
 
 	@Override

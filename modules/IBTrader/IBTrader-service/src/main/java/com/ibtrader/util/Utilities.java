@@ -271,7 +271,11 @@ public class Utilities {
     	double avgFillPrice = 0;
 		try {
 			guestGroupId = GroupLocalServiceUtil.getGroup(PortalUtil.getDefaultCompanyId(), GroupConstants.GUEST).getGroupId();
-			standalone_mode = (Utilities.getConfigurationValue(IBTraderConstants.keyFAKE_MODE, PortalUtil.getDefaultCompanyId(), guestGroupId).equals("1") ? Boolean.TRUE : Boolean.FALSE);	  // el dos para leer, el 3 para escribir						
+			standalone_mode = (Utilities.getConfigurationValue(IBTraderConstants.keyFAKE_MODE, PortalUtil.getDefaultCompanyId(), guestGroupId).equals("1") ? Boolean.TRUE : Boolean.FALSE);	  // el dos para leer, el 3 para escribir
+			
+			// backtesting controlamos tb.
+			standalone_mode = standalone_mode ||  position.getPosition_mode().equals(PositionStates.position_mode_type.BACKTESTING.toString());
+			
 
 		} catch (PortalException e) {
 			// TODO Auto-generated catch block
@@ -283,7 +287,7 @@ public class Utilities {
 			_position.setState(standalone_mode ? PositionStates.status.BUY_OK.toString() :  PositionStates.status.PENDING_BUY.toString());
 			if  (standalone_mode)
 			{
-				_position.setDate_real_in(new Date());
+				_position.setDate_real_in(_position.getDate_in());
 				_position.setPrice_real_in(_position.getPrice_in());		
 				avgFillPrice = _position.getPrice_in();
 				
@@ -313,7 +317,7 @@ public class Utilities {
 			_position.setState(standalone_mode ? PositionStates.status.SELL_OK.toString() :  PositionStates.status.PENDING_SELL.toString());
 			if  (standalone_mode)
 			{
-				_position.setDate_real_out(new Date());
+				_position.setDate_real_out(_position.getDate_out());
 				_position.setPrice_real_out(_position.getPrice_out());		
 				avgFillPrice = _position.getPrice_out();
 			}

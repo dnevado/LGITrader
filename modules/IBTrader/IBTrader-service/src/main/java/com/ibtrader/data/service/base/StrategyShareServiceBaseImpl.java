@@ -16,7 +16,9 @@ package com.ibtrader.data.service.base;
 
 import com.ibtrader.data.model.StrategyShare;
 import com.ibtrader.data.service.StrategyShareService;
+import com.ibtrader.data.service.persistence.BackTestingPersistence;
 import com.ibtrader.data.service.persistence.ConfigPersistence;
+import com.ibtrader.data.service.persistence.HistoricalRealtimeFinder;
 import com.ibtrader.data.service.persistence.HistoricalRealtimePersistence;
 import com.ibtrader.data.service.persistence.IBOrderPersistence;
 import com.ibtrader.data.service.persistence.MarketPersistence;
@@ -62,6 +64,63 @@ public abstract class StrategyShareServiceBaseImpl extends BaseServiceImpl
 	 *
 	 * Never modify or reference this class directly. Always use {@link com.ibtrader.data.service.StrategyShareServiceUtil} to access the strategy share remote service.
 	 */
+
+	/**
+	 * Returns the back testing local service.
+	 *
+	 * @return the back testing local service
+	 */
+	public com.ibtrader.data.service.BackTestingLocalService getBackTestingLocalService() {
+		return backTestingLocalService;
+	}
+
+	/**
+	 * Sets the back testing local service.
+	 *
+	 * @param backTestingLocalService the back testing local service
+	 */
+	public void setBackTestingLocalService(
+		com.ibtrader.data.service.BackTestingLocalService backTestingLocalService) {
+		this.backTestingLocalService = backTestingLocalService;
+	}
+
+	/**
+	 * Returns the back testing remote service.
+	 *
+	 * @return the back testing remote service
+	 */
+	public com.ibtrader.data.service.BackTestingService getBackTestingService() {
+		return backTestingService;
+	}
+
+	/**
+	 * Sets the back testing remote service.
+	 *
+	 * @param backTestingService the back testing remote service
+	 */
+	public void setBackTestingService(
+		com.ibtrader.data.service.BackTestingService backTestingService) {
+		this.backTestingService = backTestingService;
+	}
+
+	/**
+	 * Returns the back testing persistence.
+	 *
+	 * @return the back testing persistence
+	 */
+	public BackTestingPersistence getBackTestingPersistence() {
+		return backTestingPersistence;
+	}
+
+	/**
+	 * Sets the back testing persistence.
+	 *
+	 * @param backTestingPersistence the back testing persistence
+	 */
+	public void setBackTestingPersistence(
+		BackTestingPersistence backTestingPersistence) {
+		this.backTestingPersistence = backTestingPersistence;
+	}
 
 	/**
 	 * Returns the config local service.
@@ -174,6 +233,25 @@ public abstract class StrategyShareServiceBaseImpl extends BaseServiceImpl
 	public void setHistoricalRealtimePersistence(
 		HistoricalRealtimePersistence historicalRealtimePersistence) {
 		this.historicalRealtimePersistence = historicalRealtimePersistence;
+	}
+
+	/**
+	 * Returns the historical realtime finder.
+	 *
+	 * @return the historical realtime finder
+	 */
+	public HistoricalRealtimeFinder getHistoricalRealtimeFinder() {
+		return historicalRealtimeFinder;
+	}
+
+	/**
+	 * Sets the historical realtime finder.
+	 *
+	 * @param historicalRealtimeFinder the historical realtime finder
+	 */
+	public void setHistoricalRealtimeFinder(
+		HistoricalRealtimeFinder historicalRealtimeFinder) {
+		this.historicalRealtimeFinder = historicalRealtimeFinder;
 	}
 
 	/**
@@ -804,6 +882,12 @@ public abstract class StrategyShareServiceBaseImpl extends BaseServiceImpl
 		}
 	}
 
+	@BeanReference(type = com.ibtrader.data.service.BackTestingLocalService.class)
+	protected com.ibtrader.data.service.BackTestingLocalService backTestingLocalService;
+	@BeanReference(type = com.ibtrader.data.service.BackTestingService.class)
+	protected com.ibtrader.data.service.BackTestingService backTestingService;
+	@BeanReference(type = BackTestingPersistence.class)
+	protected BackTestingPersistence backTestingPersistence;
 	@BeanReference(type = com.ibtrader.data.service.ConfigLocalService.class)
 	protected com.ibtrader.data.service.ConfigLocalService configLocalService;
 	@BeanReference(type = com.ibtrader.data.service.ConfigService.class)
@@ -816,6 +900,8 @@ public abstract class StrategyShareServiceBaseImpl extends BaseServiceImpl
 	protected com.ibtrader.data.service.HistoricalRealtimeService historicalRealtimeService;
 	@BeanReference(type = HistoricalRealtimePersistence.class)
 	protected HistoricalRealtimePersistence historicalRealtimePersistence;
+	@BeanReference(type = HistoricalRealtimeFinder.class)
+	protected HistoricalRealtimeFinder historicalRealtimeFinder;
 	@BeanReference(type = com.ibtrader.data.service.IBOrderLocalService.class)
 	protected com.ibtrader.data.service.IBOrderLocalService ibOrderLocalService;
 	@BeanReference(type = com.ibtrader.data.service.IBOrderService.class)

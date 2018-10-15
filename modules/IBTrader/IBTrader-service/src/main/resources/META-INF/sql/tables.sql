@@ -1,3 +1,21 @@
+create table ibtrader_BackTesting (
+	uuid_ VARCHAR(75) null,
+	backTId LONG not null primary key,
+	groupId LONG,
+	companyId LONG,
+	createDate DATE null,
+	modifiedDate DATE null,
+	fromDate DATE null,
+	toDate DATE null,
+	shareId LONG,
+	countordersBUY LONG,
+	countordersSELL LONG,
+	profitordersBUY DOUBLE,
+	profitordersSELL DOUBLE,
+	status VARCHAR(75) null,
+	description VARCHAR(75) null
+);
+
 create table ibtrader_Config (
 	uuid_ VARCHAR(75) null,
 	configId LONG not null primary key,
@@ -98,7 +116,8 @@ create table ibtrader_Position (
 	pendingcancelled LONG,
 	position_mode VARCHAR(75) null,
 	totalcommision DOUBLE,
-	forceclose BOOLEAN
+	forceclose BOOLEAN,
+	backtestingId LONG
 );
 
 create table ibtrader_Realtime (

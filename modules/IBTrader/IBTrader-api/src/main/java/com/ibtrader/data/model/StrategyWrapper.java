@@ -353,6 +353,14 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 		return _strategy.isScheduled();
 	}
 
+	/**
+	* @return the simulation_mode
+	*/
+	@Override
+	public boolean isSimulation_mode() {
+		return _strategy.isSimulation_mode();
+	}
+
 	@Override
 	public boolean isVerified() {
 		return _strategy.isVerified();
@@ -692,6 +700,11 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 	@Override
 	public void init(long companyId) {
 		_strategy.init(companyId);
+	}
+
+	@Override
+	public void init_simulation() {
+		_strategy.init_simulation();
 	}
 
 	@Override

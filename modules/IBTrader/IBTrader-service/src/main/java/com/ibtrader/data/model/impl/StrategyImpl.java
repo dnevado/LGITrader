@@ -77,6 +77,9 @@ public class StrategyImpl extends StrategyBaseImpl {
 	/* PRECIOS DE ENTRADA SALIDA  */	
 	/* nos sirve para devolver los session errors de la funciona validatPara	ms*/
 	private String validateParamsKeysError = "";
+	
+	private boolean simulation_mode = Boolean.FALSE;	
+
 
 	/* COMPORTAMIENTO DE LOS PARAMETROS DE ENTRADA EN CUANTO A TIPOS */
 	public boolean validateParams(Map<String, String> paramValues) {return Boolean.TRUE;}
@@ -110,6 +113,10 @@ public class StrategyImpl extends StrategyBaseImpl {
 	
 	/* CREATE THE REQUERIMENT EXPANDOS PARAMETERS */
 	public void init(long companyId) {}
+	public void init_simulation() {
+		simulation_mode = Boolean.TRUE;
+	}
+	
 	public boolean activated() {return Boolean.TRUE;}
 	
 	/* GET LIST EXPANDOS FIELDS */
@@ -231,6 +238,12 @@ public class StrategyImpl extends StrategyBaseImpl {
 	}
 	public void setChildsOrder(List<Order> _childsOrder) {
 		this._childsOrder = _childsOrder;
+	}
+	/**
+	 * @return the simulation_mode
+	 */
+	public boolean isSimulation_mode() {
+		return simulation_mode;
 	}
 
 		

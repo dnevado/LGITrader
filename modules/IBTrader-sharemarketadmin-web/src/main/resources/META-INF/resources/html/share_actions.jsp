@@ -26,8 +26,15 @@ long ShareId = share.getShareId();
     <portlet:param name="shareId" value="<%= String.valueOf(ShareId) %>"/>    
 </portlet:renderURL>  
  
+ <portlet:renderURL   var="BackTestingURL">
+	<portlet:param name="mvcRenderCommandName" value="/html/backtesting_view"/>
+	<portlet:param name="redirect" value="<%=themeDisplay.getURLCurrent()%>"/>
+    <portlet:param name="shareId" value="<%= String.valueOf(ShareId) %>"/>    
+</portlet:renderURL>  
+ 
+ 
 <liferay-ui:icon-menu>
 <liferay-ui:icon image="edit" message="share.edit" url="${EditShareURL}" />
 <liferay-ui:icon image="delete" message="share.delete" url="${removeShareURL}" />
-                         
+<liferay-ui:icon image="activate" message="share.backtesting" url="${BackTestingURL}" />
 </liferay-ui:icon-menu>

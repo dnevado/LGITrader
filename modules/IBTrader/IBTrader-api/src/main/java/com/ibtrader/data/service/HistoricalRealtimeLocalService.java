@@ -39,6 +39,7 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 
 import java.io.Serializable;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -116,6 +117,25 @@ public interface HistoricalRealtimeLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public HistoricalRealtime fetchHistoricalRealtimeByUuidAndGroupId(
 		java.lang.String uuid, long groupId);
+
+	public HistoricalRealtime findCloseRealTime(long shareId, long companyId,
+		long groupId, Date closeDate);
+
+	public HistoricalRealtime findLastCompanyShare(long companyId,
+		long shareId, long groupId);
+
+	public HistoricalRealtime findLastRealTime(long shareId, long companyId,
+		long groupId);
+
+	public HistoricalRealtime findLastRealTimeLessThanDate(long shareId,
+		long companyId, long groupId, Date _to);
+
+	public HistoricalRealtime findMinMaxRealTime(Date from, Date to,
+		long shareId, long companyId, long groupId);
+
+	public HistoricalRealtime findSimpleMobileAvgGroupByPeriods(long shareId,
+		long companyId, long groupId, Date from, Date to,
+		List<java.lang.String> mobileAvgDates);
 
 	/**
 	* Returns the historical realtime with the primary key.
@@ -228,6 +248,10 @@ public interface HistoricalRealtimeLocalService extends BaseLocalService,
 	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
 		int end, OrderByComparator<T> orderByComparator);
 
+	public List<HistoricalRealtime> findCloseRealTimes(long shareId,
+		long companyId, long groupId, Date from, Date to,
+		List<java.lang.String> closingDates);
+
 	/**
 	* Returns a range of all the historical realtimes.
 	*
@@ -285,4 +309,7 @@ public interface HistoricalRealtimeLocalService extends BaseLocalService,
 	*/
 	public long dynamicQueryCount(DynamicQuery dynamicQuery,
 		Projection projection);
+
+	public void removeRealtimeFromToDate(Date from, Date to, long shareId,
+		long companyId, long groupId);
 }

@@ -99,6 +99,7 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 		attributes.put("position_mode", getPosition_mode());
 		attributes.put("totalcommision", getTotalcommision());
 		attributes.put("forceclose", getForceclose());
+		attributes.put("backtestingId", getBacktestingId());
 
 		return attributes;
 	}
@@ -342,6 +343,12 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 
 		if (forceclose != null) {
 			setForceclose(forceclose);
+		}
+
+		Long backtestingId = (Long)attributes.get("backtestingId");
+
+		if (backtestingId != null) {
+			setBacktestingId(backtestingId);
 		}
 	}
 
@@ -741,6 +748,16 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 	}
 
 	/**
+	* Returns the backtesting ID of this position.
+	*
+	* @return the backtesting ID of this position
+	*/
+	@Override
+	public long getBacktestingId() {
+		return _position.getBacktestingId();
+	}
+
+	/**
 	* Returns the client id_in of this position.
 	*
 	* @return the client id_in of this position
@@ -853,6 +870,16 @@ public class PositionWrapper implements Position, ModelWrapper<Position> {
 	@Override
 	public void persist() {
 		_position.persist();
+	}
+
+	/**
+	* Sets the backtesting ID of this position.
+	*
+	* @param backtestingId the backtesting ID of this position
+	*/
+	@Override
+	public void setBacktestingId(long backtestingId) {
+		_position.setBacktestingId(backtestingId);
 	}
 
 	@Override

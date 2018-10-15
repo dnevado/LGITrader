@@ -1,12 +1,16 @@
 <?xml version="1.0"?>
 
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" default-destroy-method="destroy" default-init-method="afterPropertiesSet" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	<bean class="com.ibtrader.data.service.impl.BackTestingLocalServiceImpl" id="com.ibtrader.data.service.BackTestingLocalService" />
+	<bean class="com.ibtrader.data.service.impl.BackTestingServiceImpl" id="com.ibtrader.data.service.BackTestingService" />
+	<bean class="com.ibtrader.data.service.persistence.impl.BackTestingPersistenceImpl" id="com.ibtrader.data.service.persistence.BackTestingPersistence" parent="basePersistence" />
 	<bean class="com.ibtrader.data.service.impl.ConfigLocalServiceImpl" id="com.ibtrader.data.service.ConfigLocalService" />
 	<bean class="com.ibtrader.data.service.impl.ConfigServiceImpl" id="com.ibtrader.data.service.ConfigService" />
 	<bean class="com.ibtrader.data.service.persistence.impl.ConfigPersistenceImpl" id="com.ibtrader.data.service.persistence.ConfigPersistence" parent="basePersistence" />
 	<bean class="com.ibtrader.data.service.impl.HistoricalRealtimeLocalServiceImpl" id="com.ibtrader.data.service.HistoricalRealtimeLocalService" />
 	<bean class="com.ibtrader.data.service.impl.HistoricalRealtimeServiceImpl" id="com.ibtrader.data.service.HistoricalRealtimeService" />
 	<bean class="com.ibtrader.data.service.persistence.impl.HistoricalRealtimePersistenceImpl" id="com.ibtrader.data.service.persistence.HistoricalRealtimePersistence" parent="basePersistence" />
+	<bean class="com.ibtrader.data.service.persistence.impl.HistoricalRealtimeFinderImpl" id="com.ibtrader.data.service.persistence.HistoricalRealtimeFinder" parent="basePersistence" />
 	<bean class="com.ibtrader.data.service.impl.IBOrderLocalServiceImpl" id="com.ibtrader.data.service.IBOrderLocalService" />
 	<bean class="com.ibtrader.data.service.impl.IBOrderServiceImpl" id="com.ibtrader.data.service.IBOrderService" />
 	<bean class="com.ibtrader.data.service.persistence.impl.IBOrderPersistenceImpl" id="com.ibtrader.data.service.persistence.IBOrderPersistence" parent="basePersistence" />

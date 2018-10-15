@@ -16,7 +16,19 @@ package com.ibtrader.data.service.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import java.util.Date;
+import java.util.List;
+
+import com.ibtrader.data.model.HistoricalRealtime;
 import com.ibtrader.data.service.base.HistoricalRealtimeLocalServiceBaseImpl;
+import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.dao.orm.Projection;
+import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
 
 /**
  * The implementation of the historical realtime local service.
@@ -33,11 +45,139 @@ import com.ibtrader.data.service.base.HistoricalRealtimeLocalServiceBaseImpl;
  * @see com.ibtrader.data.service.HistoricalRealtimeLocalServiceUtil
  */
 @ProviderType
-public class HistoricalRealtimeLocalServiceImpl
-	extends HistoricalRealtimeLocalServiceBaseImpl {
+public class HistoricalRealtimeLocalServiceImpl	extends HistoricalRealtimeLocalServiceBaseImpl {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
 	 * Never reference this class directly. Always use {@link com.ibtrader.data.service.HistoricalRealtimeLocalServiceUtil} to access the historical realtime local service.
 	 */
+	
+	public void removeRealtimeFromToDate(Date from, Date to, long shareId, long companyId, long groupId)
+	{
+		
+		DynamicQuery _DQ = historicalRealtimeLocalService.dynamicQuery();
+				
+		_DQ.add(RestrictionsFactoryUtil.eq("companyId", companyId));
+		_DQ.add(RestrictionsFactoryUtil.eq("shareId", shareId));
+		_DQ.add(RestrictionsFactoryUtil.ge("createDate", from));
+		_DQ.add(RestrictionsFactoryUtil.le("createDate", to));
+		_DQ.add(RestrictionsFactoryUtil.eq("groupId", groupId));
+		
+		List<HistoricalRealtime> dRealTime = historicalRealtimeLocalService.dynamicQuery(_DQ);
+		for (HistoricalRealtime rt : dRealTime)
+		{
+			try {
+				historicalRealtimeLocalService.deleteHistoricalRealtime(rt.getPrimaryKey());
+			} catch (PortalException e) {
+				// TODO Auto-generated catch block
+				//e.printStackTrace();
+			}
+		}
+		
+	}
+	/* OBTIENE EL MIN Y MAX DE UN  ACTIVO */	
+	public HistoricalRealtime findMinMaxRealTime(Date from, Date to, long shareId, long companyId, long groupId)
+	{
+		List lMinMaxRealtime = null;
+		lMinMaxRealtime = historicalRealtimeFinder.findMinMaxRealTime(from, to, shareId, companyId,  groupId); 
+		String serilizeString=null;
+		JSONArray minmaxRealtimeJsonArray=null;
+		HistoricalRealtime MinMaxRealtime = null;
+		for (Object oRealtime : lMinMaxRealtime)
+		{
+			serilizeString=JSONFactoryUtil.serialize(oRealtime);
+			try {
+				minmaxRealtimeJsonArray=JSONFactoryUtil.createJSONArray(serilizeString);
+				MinMaxRealtime = historicalRealtimeLocalService.createHistoricalRealtime(-1); // no persistimos 				
+				MinMaxRealtime.setMin_value(Double.isNaN(minmaxRealtimeJsonArray.getDouble(0)) ? 0d : minmaxRealtimeJsonArray.getDouble(0));
+				MinMaxRealtime.setMax_value(Double.isNaN(minmaxRealtimeJsonArray.getDouble(1)) ? 0d : minmaxRealtimeJsonArray.getDouble(1));
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				//e.printStackTrace();
+			}
+			
+			
+		}
+		return 	MinMaxRealtime;
+	}
+	
+	public HistoricalRealtime findCloseRealTime(long shareId, long companyId, long groupId, Date closeDate)
+	{
+		return historicalRealtimeFinder.findCloseRealTimeDate(shareId, companyId, groupId,closeDate);
+	}
+	public List<HistoricalRealtime> findCloseRealTimes( long shareId, long companyId, long groupId,Date from, Date to, List<String> closingDates)
+	{
+		return historicalRealtimeFinder.findCloseRealTimes(shareId, companyId, groupId,from,to, closingDates);
+	}
+	
+	public HistoricalRealtime findLastRealTime(long shareId, long companyId, long groupId)
+	{
+		return historicalRealtimeFinder.findLastRealTime(shareId, companyId,  groupId);	
+	}
+	public HistoricalRealtime findLastRealTimeLessThanDate(long shareId, long companyId, long groupId, Date _to)
+	{
+		return historicalRealtimeFinder.findLastRealTimeLessThanDate(shareId, companyId, groupId, _to);
+	}
+	public HistoricalRealtime findSimpleMobileAvgGroupByPeriods( long shareId, long companyId, long groupId,Date from, Date to, List<String> mobileAvgDates)
+	{
+		//return realtimeFinder.findSimpleMobileAvgGroupByPeriods( shareId, companyId,  groupId,from, to, mobileAvgDates);
+		List lSimpleMobileAvgGroupByPeriods = null;
+		lSimpleMobileAvgGroupByPeriods = historicalRealtimeFinder.findSimpleMobileAvgGroupByPeriods( shareId, companyId,  groupId,from, to, mobileAvgDates); 
+		String serilizeString=null;
+		JSONArray SimpleMobileAvgGroupByPeriodsJsonArray=null;
+		HistoricalRealtime SimpleMobileAvgGroupByPeriodsRealtime = null;
+		for (Object oRealtime : lSimpleMobileAvgGroupByPeriods)
+		{
+			serilizeString=JSONFactoryUtil.serialize(oRealtime);
+			try {
+				SimpleMobileAvgGroupByPeriodsJsonArray=JSONFactoryUtil.createJSONArray(serilizeString);
+				SimpleMobileAvgGroupByPeriodsRealtime = historicalRealtimeLocalService.createHistoricalRealtime(-1); // no persistimos 
+				SimpleMobileAvgGroupByPeriodsRealtime.setValue(SimpleMobileAvgGroupByPeriodsJsonArray.getDouble(0));
+				SimpleMobileAvgGroupByPeriodsRealtime.setVolume(SimpleMobileAvgGroupByPeriodsJsonArray.getInt(1));
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				//e.printStackTrace();
+			}
+			
+			
+		}
+		return 	SimpleMobileAvgGroupByPeriodsRealtime;
+	}
+	
+	/* public List<Realtime> findExponentialMobileAvgGroupByPeriods( long shareId, long companyId, long groupId,Date from, Date to, List<String> mobileAvgDates)
+	{
+		return realtimeFinder.findExponentialMobileGroupByPeriods(shareId, companyId, groupId, from, to, mobileAvgDates);
+
+	}
+	*/
+	
+	 public HistoricalRealtime findLastCompanyShare(long companyId, long shareId, long groupId)
+	{
+		HistoricalRealtime _returnRT=null;
+		DynamicQuery _DQ = historicalRealtimeLocalService.dynamicQuery();
+
+		Projection projection_max = PropertyFactoryUtil.forName("realtimeId").max();
+
+		
+		_DQ.add(RestrictionsFactoryUtil.eq("companyId", companyId));
+		_DQ.add(RestrictionsFactoryUtil.eq("groupId", groupId));
+		_DQ.add(RestrictionsFactoryUtil.le("shareId", shareId));
+		_DQ.setProjection(projection_max);
+		
+		
+		
+		List<Long> LastRealTime = historicalRealtimeLocalService.dynamicQuery(_DQ);
+	
+		/* hay tiempo real*/ 
+		if (!LastRealTime.isEmpty())
+		{
+			_returnRT = historicalRealtimeLocalService.fetchHistoricalRealtime(LastRealTime.get(0));
+		}
+				
+		
+		return _returnRT;
+		
+				
+	}
+	
 }
