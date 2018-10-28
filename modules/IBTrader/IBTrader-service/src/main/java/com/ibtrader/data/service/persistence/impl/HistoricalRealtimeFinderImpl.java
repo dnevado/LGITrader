@@ -4,8 +4,11 @@ import java.util.Date;
 import java.util.List;
 
 import com.ibtrader.data.model.HistoricalRealtime;
+import com.ibtrader.data.model.Realtime;
 import com.ibtrader.data.model.impl.HistoricalRealtimeImpl;
+import com.ibtrader.data.model.impl.RealtimeImpl;
 import com.ibtrader.data.service.persistence.HistoricalRealtimeFinder;
+import com.ibtrader.data.service.persistence.RealtimeFinder;
 import com.ibtrader.interactive.TIMApiWrapper;
 import com.liferay.portal.dao.orm.custom.sql.CustomSQLUtil;
 import com.liferay.portal.kernel.dao.orm.QueryPos;
@@ -66,6 +69,55 @@ public class HistoricalRealtimeFinderImpl extends HistoricalRealtimeFinderBaseIm
 
 		return null;
 		}
+	
+	public List findMinMaxRealTimesGroupedByBars(Date from, Date to, long shareId, long companyId, long groupId, long timebars, String openMarketUTC,String closeMarketUTC)
+	{
+	 List lRealtime = null;
+	 Session session = null;
+	  try {
+	        session = openSession();
+
+	        String sql = CustomSQLUtil.get(getClass(),FIND_MINMAX_REALTIME_GROUPED_BY_BARS);
+	        SQLQuery q = session.createSQLQuery(sql);
+	        q.setCacheable(false);
+
+	        QueryPos qPos = QueryPos.getInstance(q);	
+	        q.addScalar("min_value", com.liferay.portal.kernel.dao.orm.Type.DOUBLE);
+	        q.addScalar("max_value", com.liferay.portal.kernel.dao.orm.Type.DOUBLE);	  
+	        q.addScalar("barDate", com.liferay.portal.kernel.dao.orm.Type.TIMESTAMP);	  
+	        
+	        qPos.add(timebars);
+	        qPos.add(timebars);
+	        qPos.add(from);
+	        qPos.add(to);
+	        qPos.add(shareId);
+	        qPos.add(companyId);
+	        qPos.add(groupId);
+	        qPos.add(openMarketUTC);
+	        qPos.add(closeMarketUTC);
+	        
+	        lRealtime = (List<HistoricalRealtime>) QueryUtil.list(q, getDialect(), 0, 10000);
+	        if (!lRealtime.isEmpty())
+	        		return lRealtime;
+	        else
+	        		return null;
+	        
+	    }
+	    catch (Exception e) {
+	        try {
+	            throw new SystemException(e);
+	        }
+	        catch (SystemException se) {
+	            se.printStackTrace();
+	        }
+	    }
+	    finally {
+	        closeSession(session);
+	    }
+
+		return null;
+		}
+	
 	
 	@SuppressWarnings("unchecked")
 	public HistoricalRealtime findLastRealTime(long shareId, long companyId, long groupId)
@@ -329,7 +381,8 @@ public class HistoricalRealtimeFinderImpl extends HistoricalRealtimeFinderBaseIm
 		public static final String FIND_LAST_REALTIME_LESS_THAN_DATE = HistoricalRealtimeFinder.class.getName() + ".findLastRealTimeLessThanDate";
 		public static final String FIND_CLOSE_REALTIME_DATE = HistoricalRealtimeFinder.class.getName() + ".findCloseRealTimeDate";
 		public static final String FIND_CLOSE_REALTIMES = HistoricalRealtimeFinder.class.getName() + ".findCloseRealTimes";
-		
+		public static final String FIND_MINMAX_REALTIME_GROUPED_BY_BARS = HistoricalRealtimeFinder.class.getName() + ".findMinMaxRealTimesBars";
+
 
 		
 }

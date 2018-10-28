@@ -1,6 +1,8 @@
 
 package com.ibtrader.util;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
@@ -28,6 +30,7 @@ import org.ta4j.core.indicators.adx.PlusDIIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 
 import com.ibtrader.data.model.HistoricalRealtime;
+import com.ibtrader.data.model.Market;
 import com.ibtrader.data.model.Realtime;
 import com.ibtrader.data.service.HistoricalRealtimeLocalServiceUtil;
 import com.ibtrader.data.service.RealtimeLocalServiceUtil;
@@ -59,96 +62,69 @@ public class AroonIndicatorUtil {
 	
 	private static Log _log = LogFactoryUtil.getLog(AroonIndicatorUtil.class);
 
-	public AroonIndicatorUtil(Date dateTo, long timebar,  long shareId, long companyId, long groupId, long periods, boolean simulation) {
-		getAaronIndicatorRate(dateTo,  timebar, shareId, companyId, groupId, periods, simulation);
+	public AroonIndicatorUtil(Date dateTo, long timebar,  long shareId, long companyId, long groupId, long periods, boolean simulation, Market market) {
+		getAaronIndicatorRate(dateTo,  timebar, shareId, companyId, groupId, periods, simulation, market );
 	}
 	/* para las medias armonizadas de  DM */
-	private void   getAaronIndicatorRate(Date dateTo, long timebar, long shareId, long companyId, long groupId, long periods,boolean simulation)
+	private void   getAaronIndicatorRate(Date dateTo, long timebar, long shareId, long companyId, long groupId, long periods,boolean simulation, Market market)
 	{
 		
 		try
 		{
-		int periodsToCalculate = ConfigKeys.INDICATORS_MIN_SERIE_COUNT; // https://estrategiastrading.com/indicador-adx-formula/
-		Calendar  cPeriodFrom = Calendar.getInstance(); 
-	    cPeriodFrom.setTimeInMillis(dateTo.getTime());
-	    cPeriodFrom.add(Calendar.MINUTE, - new Long(timebar * (periodsToCalculate) ).intValue());
-	    cPeriodFrom.set(Calendar.MILLISECOND,0);	
-	    
-	    
-		TimeSeries series = new BaseTimeSeries("getAaronIndicatorRate");
-        ZonedDateTime endTime = ZonedDateTime.now();       
-        for (int j=0;j<periodsToCalculate;j++)
-		{
-        	 /* MAX Y MIN POR BARRA  15:05:00  */
-			Calendar  cPeriodTo = Calendar.getInstance();
-			cPeriodTo.setTime(cPeriodFrom.getTime());
-			cPeriodTo.add(Calendar.MINUTE, new Long(timebar).intValue());
-			//cPeriodTo.add(Calendar.SECOND,  -1);
-		    
-			Date dateMinMaxFrom = cPeriodFrom.getTime();		    		
-	        Date dateMinMaxTo = cPeriodTo.getTime();
-		    
-	        
-	        double max_value = 0;
-	        double min_value = 0;
-	        double close_value = 0;
-		    
-	        if (!simulation)
-	        {	        
-	        	Realtime minMax = RealtimeLocalServiceUtil.findMinMaxRealTime(dateMinMaxFrom, dateMinMaxTo, shareId, companyId, groupId);
-	        	Realtime closeValue = RealtimeLocalServiceUtil.findLastRealTimeLessThanDate(shareId, companyId, groupId, dateMinMaxTo);
-	        	if (minMax.getMax_value()<=0  || minMax.getMin_value()<=0 ||  Validator.isNull(closeValue))
-					break;
-	        	max_value = minMax.getMax_value();
-	        	min_value = minMax.getMin_value();
-	        	close_value =closeValue.getValue();
+			
+			
+		List<String> lMACDPeriods = new ArrayList<String>();
+		Calendar _cMACDDateFrom = Calendar.getInstance();
+		_cMACDDateFrom.setTime(dateTo);
+		
+		int periodsToCalculate = ConfigKeys.INDICATORS_MIN_SERIE_COUNT;
+		
+		lMACDPeriods = MobileAvgUtil.getPeriodsMinutesMobileAvg(dateTo, periodsToCalculate , timebar, Boolean.TRUE, market);
+	
+        /* ESTE FROM ESTA RESTADO DE LAS BARRAS POR LOS PERIODOS, PERO NO CONTEMPLA LOS CIERRES Y APERTURAS DE MERCADO */
+    	/* SOLUCION, COGER EL FROM DE LA PRIMERA BARRA DE getPeriodsMinutesMobileAvg, QUE SI CONTEMPLA LAS APERTURAS */
+        SimpleDateFormat _sdf = new SimpleDateFormat(Utilities.__IBTRADER_SQL_DATE_);
+        Date fromWithOpenMarketsTimes=null;
+        Calendar cfromWithOpenMarketsTimes = null;
+        try {
+			 fromWithOpenMarketsTimes = _sdf.parse(lMACDPeriods.get(lMACDPeriods.size()-1));
+			 cfromWithOpenMarketsTimes = Calendar.getInstance();
+			 cfromWithOpenMarketsTimes.setTimeInMillis(fromWithOpenMarketsTimes.getTime());
+			 cfromWithOpenMarketsTimes.add(Calendar.MINUTE, 1);
+			 cfromWithOpenMarketsTimes.add(Calendar.SECOND, -1);
+			 cfromWithOpenMarketsTimes.set(Calendar.MILLISECOND, 0);
+		} catch (ParseException e) {}
 	        	
-	        }
-	        else
-	        {
-	        	HistoricalRealtime  minMax = HistoricalRealtimeLocalServiceUtil.findMinMaxRealTime(dateMinMaxFrom, dateMinMaxTo, shareId, companyId, groupId);
-	        	HistoricalRealtime  closeValue = HistoricalRealtimeLocalServiceUtil.findLastRealTimeLessThanDate(shareId, companyId, groupId, dateMinMaxTo);
-	        	if (minMax.getMax_value()<=0  || minMax.getMin_value()<=0 ||  Validator.isNull(closeValue))
-					break;
-	        	max_value = minMax.getMax_value();
-	        	min_value = minMax.getMin_value();
-	        	close_value =closeValue.getValue();
-	        }
-	        
-			series.addBar(new BaseBar(endTime,0.0,max_value ,min_value, close_value,0.0));
 			
-			_log.debug("Serie " + j  + " " + series.getBar(j).getClosePrice() + "," + series.getBar(j).getMaxPrice() + "," + series.getBar(j).getMinPrice());
+		TimeSeries series = new BaseTimeSeries("getAaronIndicatorRate");
+		series = BarSeriesCacheUtil.closeMinMaxBarTimeSeries(shareId, companyId, groupId, dateTo, simulation, timebar,ConfigKeys.INDICATORS_MIN_SERIE_COUNT, lMACDPeriods);
 			
-			cPeriodFrom.add(Calendar.MINUTE, new Long(timebar).intValue());
-			endTime = endTime.plusMinutes(timebar);
-        	
-		}
-        
         _log.debug("Series count:" + series.getBarCount());
-       
-        
+         
        // ATRIndicator atr = new ATRIndicator(series, (int) ConfigKeys.ADXR_PERIODS);
         AroonDownIndicator AroonDownIndicator    = new AroonDownIndicator(series, (int) periods);
         AroonUpIndicator AroonUpIndicator   	 = new AroonUpIndicator(series, (int) periods);
         AroonOscillatorIndicator AroonOscilator  = new AroonOscillatorIndicator(series, (int) periods);
 	    
-
-		for (int j=0;j<=periodsToCalculate;j++)
-		{ 
-			try {_log.debug("AroonUpIndicator:" + j + ":" +  AroonUpIndicator.getValue(j).doubleValue());
-				_log.debug("AroonDownIndicator:" + j + ":" +  AroonDownIndicator.getValue(j).doubleValue());
-				_log.debug("AroonOscilator:" + j + ":" +  AroonOscilator.getValue(j).doubleValue());
-				_log.debug("Bar:" + j + ":" + series.getBar(j).getClosePrice().doubleValue());
-				} catch (Exception e) {}	
-				
-		}
+        if (_log.isDebugEnabled())
+        {
+			for (int j=0;j<=ConfigKeys.INDICATORS_MIN_SERIE_COUNT;j++)
+			{ 
+				try {_log.debug("AroonUpIndicator:" + j + ":" +  AroonUpIndicator.getValue(j).doubleValue());
+					_log.debug("AroonDownIndicator:" + j + ":" +  AroonDownIndicator.getValue(j).doubleValue());
+					_log.debug("AroonOscilator:" + j + ":" +  AroonOscilator.getValue(j).doubleValue());
+					_log.debug("Bar:" + j + ":" + series.getBar(j).getClosePrice().doubleValue());
+					} catch (Exception e) {}	
+					
+			}
+        }
     	
         
         
-    	_aroonUp 		=     AroonUpIndicator.getValue(periodsToCalculate-1)!=null  ?  AroonUpIndicator.getValue(periodsToCalculate-1).doubleValue() : 0;
-    	_aroonDown 		=     AroonDownIndicator.getValue(periodsToCalculate-1)!=null ?  AroonDownIndicator.getValue(periodsToCalculate-1).doubleValue() : 0; 
-    	_lastAroonUp 	=     AroonUpIndicator.getValue(periodsToCalculate-2)!=null  ?  AroonUpIndicator.getValue(periodsToCalculate-2).doubleValue() : 0;  
-    	_lastAroonDown 	=     AroonDownIndicator.getValue(periodsToCalculate-2)!=null ?  AroonDownIndicator.getValue(periodsToCalculate-2).doubleValue() : 0;  
+    	_aroonUp 		=     AroonUpIndicator.getValue(ConfigKeys.INDICATORS_MIN_SERIE_COUNT-1)!=null  ?  AroonUpIndicator.getValue(ConfigKeys.INDICATORS_MIN_SERIE_COUNT-1).doubleValue() : 0;
+    	_aroonDown 		=     AroonDownIndicator.getValue(ConfigKeys.INDICATORS_MIN_SERIE_COUNT-1)!=null ?  AroonDownIndicator.getValue(ConfigKeys.INDICATORS_MIN_SERIE_COUNT-1).doubleValue() : 0; 
+    	_lastAroonUp 	=     AroonUpIndicator.getValue(ConfigKeys.INDICATORS_MIN_SERIE_COUNT-2)!=null  ?  AroonUpIndicator.getValue(ConfigKeys.INDICATORS_MIN_SERIE_COUNT-2).doubleValue() : 0;  
+    	_lastAroonDown 	=     AroonDownIndicator.getValue(ConfigKeys.INDICATORS_MIN_SERIE_COUNT-2)!=null ?  AroonDownIndicator.getValue(ConfigKeys.INDICATORS_MIN_SERIE_COUNT-2).doubleValue() : 0;  
 		
 		
         _log.debug("_aroonUp:" + _aroonUp);

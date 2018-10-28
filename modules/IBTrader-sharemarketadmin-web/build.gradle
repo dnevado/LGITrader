@@ -8,4 +8,6 @@ dependencies {
 	compileOnly project(":modules:IBTrader:IBTrader-api")		
 	compileOnly project(":modules:IBTrader:IBTrader-service")
 	
+	compileOnly  group: "org.ta4j", name: "ta4j-core", version: "0.11" 
+		
 }

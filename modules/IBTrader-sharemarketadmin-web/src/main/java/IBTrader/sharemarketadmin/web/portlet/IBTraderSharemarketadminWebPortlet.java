@@ -62,6 +62,9 @@ import com.liferay.portal.kernel.util.WebKeys;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
@@ -69,6 +72,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TimeZone;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -422,8 +426,32 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 					market.setIdentifier(identifier);				
 					market.setCompanyId(themeDisplay.getCompanyId());
 					market.setGroupId(themeDisplay.getScopeGroupId());
-					market.setStart_hour(starthour.replace(":", ""));
-					market.setEnd_hour(endhour.replace(":", ""));
+					
+					
+					/* ZONA YA DEL USUARIO */
+				
+					
+				
+					
+					starthour = starthour.replaceAll(":", "");
+					endhour = endhour.replaceAll(":", "");
+					
+					/* USUARIO */
+					ZonedDateTime dOpen = Utilities.getLocalDate(themeDisplay.getUser(),starthour);
+					ZonedDateTime dClose= Utilities.getLocalDate(themeDisplay.getUser(),endhour);
+					
+					
+					LocalDateTime dOpenUTC 	= Utilities.dateLocalToUTC(dOpen);
+					LocalDateTime dCloseUTC = Utilities.dateLocalToUTC(dClose);
+					
+					DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Utilities.__IBTRADER_SHORT_HOUR_FORMAT);
+
+					
+					starthour =  dOpenUTC.toLocalTime().format(formatter); 
+					endhour =  dCloseUTC.toLocalTime().format(formatter); 
+					
+					market.setStart_hour(starthour);
+					market.setEnd_hour(endhour);
 					market.setCurrency(currency);						
 					if (!bEditMode)
 						market.setCreateDate(new Date());

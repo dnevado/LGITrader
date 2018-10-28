@@ -41,6 +41,9 @@ public class ConfigKeys {
     
     public static final String ERROR_CODE_PACING_VIOLATION = "162";
     
+    public static final long DEFAULT_BACKTESTINGID_VALUE = -1;
+    
+    
     //http://interactivebrokers.github.io/tws-api/market_data_type.html#gsc.tab=0
     public static final int MARKET_DATA_TYPE_DELAYED_LIVE = 3;
     

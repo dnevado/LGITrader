@@ -7,6 +7,7 @@ import com.ibtrader.data.model.Position;
 import com.ibtrader.data.model.Strategy;
 import com.ibtrader.data.service.PositionLocalService;
 import com.ibtrader.data.service.ShareLocalService;
+import com.ibtrader.util.ConfigKeys;
 import com.ibtrader.util.Utilities;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -116,7 +117,7 @@ public class IBTraderHistoricalpositionsWebPortlet extends MVCPortlet {
 		
 		_lPosition  = _positionLocalService.findByCompanyGroupDate(themeDisplay.getCompanyId(),themeDisplay.getScopeGroupId(), _DateINI,_DateEND, position_mode);
 		/* totales en json */
-		results = _positionLocalService.findPositionClosedResults(_DateINI, _DateEND, themeDisplay.getScopeGroupId(), themeDisplay.getCompanyId(), position_mode);
+		results = _positionLocalService.findPositionClosedResults(_DateINI, _DateEND, themeDisplay.getScopeGroupId(), themeDisplay.getCompanyId(), position_mode, ConfigKeys.DEFAULT_BACKTESTINGID_VALUE);
 		
 	}
 

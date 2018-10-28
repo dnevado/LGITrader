@@ -201,10 +201,10 @@ public class PositionLocalServiceUtil {
 
 	public static com.liferay.portal.kernel.json.JSONArray findPositionClosedResults(
 		java.util.Date from, java.util.Date to, long groupId, long companyId,
-		java.lang.String positionMode) {
+		java.lang.String positionMode, long backtestingId) {
 		return getService()
 				   .findPositionClosedResults(from, to, groupId, companyId,
-			positionMode);
+			positionMode, backtestingId);
 	}
 
 	public static com.liferay.portal.kernel.json.JSONArray findPositionOpenResults(

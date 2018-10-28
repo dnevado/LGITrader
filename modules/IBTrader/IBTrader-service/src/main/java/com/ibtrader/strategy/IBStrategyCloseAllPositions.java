@@ -15,6 +15,7 @@ import com.ib.contracts.FutContract;
 import com.ib.contracts.StkContract;
 import com.ibtrader.constants.IBTraderConstants;
 import com.ibtrader.data.model.Config;
+import com.ibtrader.data.model.HistoricalRealtime;
 import com.ibtrader.data.model.IBOrder;
 import com.ibtrader.data.model.Market;
 import com.ibtrader.data.model.Position;
@@ -24,6 +25,7 @@ import com.ibtrader.data.model.Strategy;
 import com.ibtrader.data.model.StrategyShare;
 import com.ibtrader.data.model.impl.StrategyImpl;
 import com.ibtrader.data.service.ConfigLocalServiceUtil;
+import com.ibtrader.data.service.HistoricalRealtimeLocalServiceUtil;
 import com.ibtrader.data.service.IBOrderLocalServiceUtil;
 import com.ibtrader.data.service.PositionLocalServiceUtil;
 import com.ibtrader.data.service.RealtimeLocalServiceUtil;
@@ -191,11 +193,27 @@ public class IBStrategyCloseAllPositions extends StrategyImpl {
 			_calendarFromNow.set(Calendar.SECOND, 0);
 			_calendarFromNow.set(Calendar.MILLISECOND, 0);
 		
-			Realtime oShareLastRTime =  RealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(),_FromNow);
-			double current_price = oShareLastRTime.getValue();
-			this.setVerified(Boolean.TRUE);		
-			this.setValueOut(current_price);												
-			verified = true;
+			
+			Double lastRealtime = null;												
+			if (!isSimulation_mode())
+			{
+				Realtime oShareLastRTime =  RealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(),_FromNow);
+				lastRealtime = Validator.isNull(oShareLastRTime) ? null : oShareLastRTime.getValue();
+			}					
+			else
+			{
+				HistoricalRealtime oShareLastRTime = HistoricalRealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(),_FromNow);
+				lastRealtime = Validator.isNull(oShareLastRTime) ? null : oShareLastRTime.getValue();
+
+			}
+			
+			if (Validator.isNotNull(lastRealtime))
+			{
+				double current_price = lastRealtime.doubleValue();
+				this.setVerified(Boolean.TRUE);		
+				this.setValueOut(current_price);												
+				verified = true;
+			}
     }
     }
 	catch (Exception er)

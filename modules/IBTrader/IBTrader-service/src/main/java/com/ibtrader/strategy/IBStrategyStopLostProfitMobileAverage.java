@@ -110,7 +110,7 @@ public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
 		long returnValue=-1;
 		try		
         {
-			String position_mode = Utilities.getPositionModeType(null, _share.getCompanyId(),_share.getGroupId());
+			String position_mode = Utilities.getPositionModeType(backtestingdDate, _share.getCompanyId(),_share.getGroupId());
 
 			
 			boolean existsPosition = PositionLocalServiceUtil.ExistsOpenPosition (_share.getGroupId(),_share.getCompanyId(),_share.getShareId(),position_mode);
@@ -225,7 +225,7 @@ public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
 	try
     {
 		
-		String position_mode = Utilities.getPositionModeType(null, _share.getCompanyId(),_share.getGroupId());
+		String position_mode = Utilities.getPositionModeType(backtestingdDate, _share.getCompanyId(),_share.getGroupId());
 
 		
 		if (_strategyImpl.getStrategyparamsoverride()==null)

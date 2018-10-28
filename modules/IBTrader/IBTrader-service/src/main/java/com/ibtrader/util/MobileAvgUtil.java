@@ -1,6 +1,7 @@
 package com.ibtrader.util;
 
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import com.ibtrader.data.model.HistoricalRealtime;
 import com.ibtrader.data.model.Market;
 import com.ibtrader.data.model.Realtime;
+import com.ibtrader.data.model.Share;
 import com.ibtrader.data.service.HistoricalRealtimeLocalServiceUtil;
 import com.ibtrader.data.service.RealtimeLocalServiceUtil;
 import com.ibtrader.strategy.IBStrategySimpleMobileAverage;
@@ -321,6 +323,7 @@ public class MobileAvgUtil {
 		_cPeriodsMinutesMobileAvg.set(Calendar.MILLISECOND, 0);
 		_cPeriodsMinutesMobileAvg.add(Calendar.SECOND,-1);
 		List<String> lAvgMobileDates = new ArrayList<String>();
+		
 		for (int j=1;j<=PeriodN;j++)
 		{ 
 			if (j!=1 || (j==1 && !lastBarIncluded))
@@ -331,6 +334,8 @@ public class MobileAvgUtil {
 				
 				Calendar _openMarket = Utilities.getNewCalendarWithHour(_cPeriodsMinutesMobileAvg.getTime(),market.getStart_hour());
 				Calendar _closeMarket = Utilities.getNewCalendarWithHour(_cPeriodsMinutesMobileAvg.getTime(),market.getEnd_hour());
+				
+			
 				if (_cPeriodsMinutesMobileAvg.before(_openMarket)) // no podemos pedir una barra de una hora que no hay mercado 
 				{
 					_cPeriodsMinutesMobileAvg.add(Calendar.DAY_OF_MONTH, -1);  // buscamos la barra del dia anterior del fin de mercado
@@ -375,14 +380,35 @@ public class MobileAvgUtil {
 		// le resto un segundo para que coga la primera barra especificada, asi coge el 59:59 
 		_cSimpleAvgMobileDateFrom.add(Calendar.SECOND,-1);
 		
+		
+		 /* ESTE FROM ESTA RESTADO DE LAS BARRAS POR LOS PERIODOS, PERO NO CONTEMPLA LOS CIERRES Y APERTURAS DE MERCADO */
+    	/* SOLUCION, COGER EL FROM DE LA PRIMERA BARRA DE getPeriodsMinutesMobileAvg, QUE SI CONTEMPLA LAS APERTURAS 
+    	 * */
+		SimpleDateFormat _sdf = new SimpleDateFormat(Utilities.__IBTRADER_SQL_DATE_);
+        Date fromWithOpenMarketsTimes=null;
+        Calendar cfromWithOpenMarketsTimes = null;
+        try {
+			 fromWithOpenMarketsTimes = _sdf.parse(lAvgPeriods.get(lAvgPeriods.size()-1));
+			 cfromWithOpenMarketsTimes = Calendar.getInstance();
+			 cfromWithOpenMarketsTimes.setTimeInMillis(fromWithOpenMarketsTimes.getTime());
+			 cfromWithOpenMarketsTimes.add(Calendar.MINUTE, 1);
+			 cfromWithOpenMarketsTimes.add(Calendar.SECOND, -1);
+			 cfromWithOpenMarketsTimes.set(Calendar.MILLISECOND, 0);
+		} catch (ParseException e) {}
+		
+		
+		/* formato 04:54:59*/
+			
+		
+		
 		if (!simulation)
 		{
-			Realtime simpleAvgMobile = RealtimeLocalServiceUtil.findSimpleMobileAvgGroupByPeriods(shareId, companyId, groupId, _cSimpleAvgMobileDateFrom.getTime(), _ActualDateBar, lAvgPeriods);
+			Realtime simpleAvgMobile = RealtimeLocalServiceUtil.findSimpleMobileAvgGroupByPeriods(shareId, companyId, groupId, cfromWithOpenMarketsTimes.getTime(), _ActualDateBar, lAvgPeriods);
 			returnAvgValue =  simpleAvgMobile!=null && simpleAvgMobile.getVolume()==lAvgPeriods.size() ?  simpleAvgMobile.getValue() : null;
 		}
 		else
 		{
-			HistoricalRealtime simpleHistoricalAvgMobile =  HistoricalRealtimeLocalServiceUtil.findSimpleMobileAvgGroupByPeriods(shareId, companyId, groupId, _cSimpleAvgMobileDateFrom.getTime(), _ActualDateBar, lAvgPeriods);
+			HistoricalRealtime simpleHistoricalAvgMobile =  HistoricalRealtimeLocalServiceUtil.findSimpleMobileAvgGroupByPeriods(shareId, companyId, groupId, cfromWithOpenMarketsTimes.getTime(), _ActualDateBar, lAvgPeriods);
 			returnAvgValue =  simpleHistoricalAvgMobile!=null && simpleHistoricalAvgMobile.getVolume()==lAvgPeriods.size() ?  simpleHistoricalAvgMobile.getValue() : null;
 		}
 		
@@ -414,6 +440,9 @@ public class MobileAvgUtil {
 		cAvgExp.setTimeInMillis(_ActualDateBar.getTime());
 		cAvgExp.add(Calendar.MINUTE, (int) -TimeBars);*/
 		
+		Double exponentialAvgMobile = null;
+		try
+		{		
 		List<String> lExponentialAvgPeriods = new ArrayList<String>();
 
 		Calendar _cExponentialAvgMobile = Calendar.getInstance();
@@ -426,42 +455,47 @@ public class MobileAvgUtil {
 		_cExponentialAvgMobile.add(Calendar.MINUTE,  (int) - ((PeriodN) * TimeBars));
 		_cExponentialAvgMobile.add(Calendar.SECOND,-1);		
 		
-		TimeSeries series = new BaseTimeSeries("getExponentialAvgMobile");
-        ZonedDateTime endTime = ZonedDateTime.now();
-        int counter = 1;
+
+        /* ESTE FROM ESTA RESTADO DE LAS BARRAS POR LOS PERIODOS, PERO NO CONTEMPLA LOS CIERRES Y APERTURAS DE MERCADO */
+    	/* SOLUCION, COGER EL FROM DE LA PRIMERA BARRA DE getPeriodsMinutesMobileAvg, QUE SI CONTEMPLA LAS APERTURAS */
+        SimpleDateFormat _sdf = new SimpleDateFormat(Utilities.__IBTRADER_SQL_DATE_);
+        Date fromWithOpenMarketsTimes=null;
+        Calendar cfromWithOpenMarketsTimes = null;
+        try {
+			 fromWithOpenMarketsTimes = _sdf.parse(lExponentialAvgPeriods.get(lExponentialAvgPeriods.size()-1));
+			 cfromWithOpenMarketsTimes = Calendar.getInstance();
+			 cfromWithOpenMarketsTimes.setTimeInMillis(fromWithOpenMarketsTimes.getTime());
+			 cfromWithOpenMarketsTimes.add(Calendar.MINUTE, 1);
+			 cfromWithOpenMarketsTimes.add(Calendar.SECOND, -1);  // tiene que ser en .59 
+			 cfromWithOpenMarketsTimes.set(Calendar.MILLISECOND, 0);
+		} catch (ParseException e) {}
 		
-		if (!simulation)
-		{
-			List<Realtime> closeRealTimes = RealtimeLocalServiceUtil.findCloseRealTimes(shareId, companyId, groupId,  _cExponentialAvgMobile.getTime(), _ActualDateBar, lExponentialAvgPeriods);
-			if (Validator.isNull(closeRealTimes))
-				return null;
-			for (Realtime closepricebar : closeRealTimes)
-	        {
-	        	series.addBar(new BaseBar(endTime.plusMinutes(TimeBars*counter),0.0,0.0,0.0, closepricebar.getValue(),0.0));
-	        	counter++;
-	        }
-		}
-		else
-		{
-			List<HistoricalRealtime> closeRealTimes = HistoricalRealtimeLocalServiceUtil.findCloseRealTimes(shareId, companyId, groupId,  _cExponentialAvgMobile.getTime(), _ActualDateBar, lExponentialAvgPeriods);
-			if (Validator.isNull(closeRealTimes))
-				return null;
-			for (HistoricalRealtime closepricebar : closeRealTimes)
-		        {
-		        	series.addBar(new BaseBar(endTime.plusMinutes(TimeBars*counter),0.0,0.0,0.0, closepricebar.getValue(),0.0));
-		        	counter++;
-		        }
-		}
+		
+		/* formato 04:54:59*/
+		
+		TimeSeries series = new BaseTimeSeries("getExponentialAvgMobile");
+		series = BarSeriesCacheUtil.closeBarTimeSeries(shareId, companyId, groupId, cfromWithOpenMarketsTimes.getTime(), _ActualDateBar, lExponentialAvgPeriods, simulation, TimeBars);
 		
 		ClosePriceIndicator closePrice = new ClosePriceIndicator(series);
         EMAIndicator emea = new EMAIndicator(closePrice, (int) PeriodN);
-		return  emea.getValue(Long.valueOf(PeriodN).intValue()).doubleValue();
+        exponentialAvgMobile = emea.getValue(Long.valueOf(PeriodN).intValue()).doubleValue();
+
+		}
+	    catch (Exception e)
+		{
+			_log.debug(e.getMessage());
+		}
+		return  exponentialAvgMobile;
 
 		
 	}
 	
-	private static MACDIndicator  getMACDIndicator(Date _ActualDateBar,  long TimeBars,long shareId, long companyId, long groupId, long shortMACDPeriods, long longMACDPeriods, boolean simulation, Market market)
+	private static MACDIndicator  getMACDIndicator(Date _ActualDateBar,  long TimeBars,long shareId, long companyId, long groupId, long shortMACDPeriods, long longMACDPeriods, boolean simulation, 
+			Market market)
 	{
+		MACDIndicator _macdIndicator = null;
+		try
+		{		
 		List<String> lMACDPeriods = new ArrayList<String>();
 		Calendar _cMACDDateFrom = Calendar.getInstance();
 		_cMACDDateFrom.setTime(_ActualDateBar);
@@ -475,33 +509,30 @@ public class MobileAvgUtil {
 		_cMACDDateFrom.set(Calendar.MILLISECOND,0);	
 
 		// le resto un segundo para que coga la primera barra especificada, asi coge el 59:59 
-		_cMACDDateFrom.add(Calendar.SECOND,-1);	
+		_cMACDDateFrom.add(Calendar.SECOND,-1);
 		
-		TimeSeries series = new BaseTimeSeries("getMACD");
-        ZonedDateTime endTime = ZonedDateTime.now();
-        int counter = 1;
-		
-		if (!simulation)
-		{		
-			List<Realtime> closeRealTimes = RealtimeLocalServiceUtil.findCloseRealTimes(shareId, companyId, groupId, _cMACDDateFrom.getTime(), _ActualDateBar, lMACDPeriods);
-			for (Realtime closepricebar : closeRealTimes)
-	        {
-	        	series.addBar(new BaseBar(endTime.plusMinutes(TimeBars*counter),0.0,0.0,0.0, closepricebar.getValue(),0.0));
-	        	counter++;
-	        }
-		}
-		else
-		{
-			List<HistoricalRealtime> closeRealTimes = HistoricalRealtimeLocalServiceUtil.findCloseRealTimes(shareId, companyId, groupId, _cMACDDateFrom.getTime(), _ActualDateBar, lMACDPeriods);
-			for (HistoricalRealtime closepricebar : closeRealTimes)
-	        {
-	        	series.addBar(new BaseBar(endTime.plusMinutes(TimeBars*counter),0.0,0.0,0.0, closepricebar.getValue(),0.0));
-	        	counter++;
-	        }
 
-		}				
+        /* ESTE FROM ESTA RESTADO DE LAS BARRAS POR LOS PERIODOS, PERO NO CONTEMPLA LOS CIERRES Y APERTURAS DE MERCADO */
+    	/* SOLUCION, COGER EL FROM DE LA PRIMERA BARRA DE getPeriodsMinutesMobileAvg, QUE SI CONTEMPLA LAS APERTURAS */
+        SimpleDateFormat _sdf = new SimpleDateFormat(Utilities.__IBTRADER_SQL_DATE_);
+        Date fromWithOpenMarketsTimes=null;
+        Calendar cfromWithOpenMarketsTimes = null;
+        try {
+			 fromWithOpenMarketsTimes = _sdf.parse(lMACDPeriods.get(lMACDPeriods.size()-1));
+			 cfromWithOpenMarketsTimes = Calendar.getInstance();
+			 cfromWithOpenMarketsTimes.setTimeInMillis(fromWithOpenMarketsTimes.getTime());
+			 cfromWithOpenMarketsTimes.add(Calendar.MINUTE, 1);
+			 cfromWithOpenMarketsTimes.add(Calendar.SECOND, -1);
+			 cfromWithOpenMarketsTimes.set(Calendar.MILLISECOND, 0);
+		} catch (ParseException e) {}
+		
+		
+				
+		TimeSeries series = new BaseTimeSeries("getMACD");
+		series = BarSeriesCacheUtil.closeBarTimeSeries(shareId, companyId, groupId, cfromWithOpenMarketsTimes.getTime(), _ActualDateBar, lMACDPeriods, simulation, TimeBars);
+		
         ClosePriceIndicator closePrice = new ClosePriceIndicator(series);
-        MACDIndicator _macdIndicator =  new MACDIndicator(closePrice, Long.valueOf(shortMACDPeriods).intValue(), Long.valueOf(longMACDPeriods).intValue());
+        _macdIndicator =  new MACDIndicator(closePrice, Long.valueOf(shortMACDPeriods).intValue(), Long.valueOf(longMACDPeriods).intValue());
         if (_log.isDebugEnabled())
         {
 			for (int j=0;j<periodsToCalculate;j++)
@@ -509,7 +540,13 @@ public class MobileAvgUtil {
 				try {_log.debug("getMACDIndicator:" + j + ":" +  _macdIndicator.getValue(j).doubleValue());} catch (Exception e) {}	
 			}
         }
+		}
+        catch (Exception e)
+		{
+			_log.debug(e.getMessage());
+		}
 		return _macdIndicator;
+		
 
 	}
 	

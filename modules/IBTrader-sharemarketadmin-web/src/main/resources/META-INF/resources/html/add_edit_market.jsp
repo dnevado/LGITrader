@@ -9,6 +9,9 @@
 
 
 Market  _market = (Market) request.getAttribute("market");
+String   _marketStart =  request.getAttribute("marketStart")!=null ? (String) request.getAttribute("marketStart") : "";
+String   _marketEnd = (String) request.getAttribute("marketEnd")!=null ? (String) request.getAttribute("marketEnd") : "";
+
 
 Calendar cal = Calendar.getInstance();
  int startTimeDay = cal.get(Calendar.DAY_OF_MONTH);
@@ -81,10 +84,11 @@ Calendar cal = Calendar.getInstance();
     </aui:fieldset>    
       </aui:col>
     <% 
-    	int  H1  = _market!=null  && _market.getStart_hour()!=null ? Long.valueOf(_market.getStart_hour().substring(0, 2)).intValue() : 0;
-    	int  M1  = _market!=null  && _market.getStart_hour()!=null ? Long.valueOf(_market.getStart_hour().substring(2, 4)).intValue() : 0;
-    	int  H2  = _market!=null  && _market.getStart_hour()!=null ? Long.valueOf(_market.getEnd_hour().substring(0, 2)).intValue(): 0;
-    	int  M2  = _market!=null  && _market.getEnd_hour()!=null  ? Long.valueOf(_market.getEnd_hour().substring(2, 4)).intValue() :0;
+    
+    	int  H1  = _market!=null  && _marketStart!=null ? Long.valueOf(_marketStart.substring(0, 2)).intValue() : 0;
+    	int  M1  = _market!=null  && _marketStart!=null ? Long.valueOf(_marketStart.substring(2, 4)).intValue() : 0;
+    	int  H2  = _market!=null  && _marketEnd!=null ? Long.valueOf(_marketEnd.substring(0, 2)).intValue(): 0;
+    	int  M2  = _market!=null  && _marketEnd!=null  ? Long.valueOf(_marketEnd.substring(2, 4)).intValue() :0;
     
     %>
      <aui:col span="4">  

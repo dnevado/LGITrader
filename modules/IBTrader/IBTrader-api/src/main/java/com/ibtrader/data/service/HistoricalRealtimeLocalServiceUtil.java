@@ -290,6 +290,14 @@ public class HistoricalRealtimeLocalServiceUtil {
 			closingDates);
 	}
 
+	public static java.util.List<com.ibtrader.data.model.HistoricalRealtime> findMinMaxRealTimesGroupedByBars(
+		java.util.Date from, java.util.Date to, long shareId, long companyId,
+		long groupId, long timebars, com.ibtrader.data.model.Market market) {
+		return getService()
+				   .findMinMaxRealTimesGroupedByBars(from, to, shareId,
+			companyId, groupId, timebars, market);
+	}
+
 	/**
 	* Returns a range of all the historical realtimes.
 	*

@@ -16,11 +16,18 @@ package com.ibtrader.data.service.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import com.ibtrader.data.model.HistoricalRealtime;
+import com.ibtrader.data.model.Market;
+import com.ibtrader.data.model.Realtime;
 import com.ibtrader.data.service.base.HistoricalRealtimeLocalServiceBaseImpl;
+import com.ibtrader.util.Utilities;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Projection;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
@@ -29,6 +36,10 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactory;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 
 /**
  * The implementation of the historical realtime local service.
@@ -51,6 +62,7 @@ public class HistoricalRealtimeLocalServiceImpl	extends HistoricalRealtimeLocalS
 	 *
 	 * Never reference this class directly. Always use {@link com.ibtrader.data.service.HistoricalRealtimeLocalServiceUtil} to access the historical realtime local service.
 	 */
+	private static final Log _log = LogFactoryUtil.getLog(HistoricalRealtimeLocalServiceImpl.class);
 	
 	public void removeRealtimeFromToDate(Date from, Date to, long shareId, long companyId, long groupId)
 	{
@@ -99,6 +111,55 @@ public class HistoricalRealtimeLocalServiceImpl	extends HistoricalRealtimeLocalS
 			
 		}
 		return 	MinMaxRealtime;
+	}
+	public List<HistoricalRealtime> findMinMaxRealTimesGroupedByBars(Date from, Date to, long shareId, long companyId, long groupId, long timebars, Market market)
+	{
+		
+		SimpleDateFormat sf = new SimpleDateFormat(Utilities.__IBTRADER_SHORT_HOUR_FORMAT);
+
+		Calendar _openMarket = Utilities.getNewCalendarWithHour(to,market.getStart_hour());
+		Calendar _closeMarket = Utilities.getNewCalendarWithHour(to,market.getEnd_hour());
+		
+		/* lo pasamos a UTC porque tenemos los realtime en UTC y los datos de mercado en ZONA HORARIA DEL USUARIO */
+		Date _dOpenMarket = _openMarket.getTime();
+		Date _dCloseMarket = _closeMarket.getTime();
+		
+		List<HistoricalRealtime> lMinMaxRealtime = null;
+		lMinMaxRealtime = historicalRealtimeFinder.findMinMaxRealTimesGroupedByBars(from, to, shareId,companyId,groupId,timebars,sf.format(_dOpenMarket),sf.format(_dCloseMarket));
+		String serilizeString=null;
+		JSONArray minmaxRealtimeJsonArray=null;
+		HistoricalRealtime MinMaxRealtime = null;
+		List<HistoricalRealtime> lReturnRealtime = new ArrayList<HistoricalRealtime>();
+
+		Calendar cBarDate = Calendar.getInstance();
+		for (Object oHistoricalRealtime : lMinMaxRealtime)
+		{
+			serilizeString=JSONFactoryUtil.serialize(oHistoricalRealtime);
+			try {
+				minmaxRealtimeJsonArray=JSONFactoryUtil.createJSONArray(serilizeString);
+				MinMaxRealtime = historicalRealtimeLocalService.createHistoricalRealtime(-1); // no persistimos 				
+				MinMaxRealtime.setMin_value(Double.isNaN(minmaxRealtimeJsonArray.getDouble(0)) ? 0d : minmaxRealtimeJsonArray.getDouble(0));
+				MinMaxRealtime.setMax_value(Double.isNaN(minmaxRealtimeJsonArray.getDouble(1)) ? 0d : minmaxRealtimeJsonArray.getDouble(1));
+				
+				JSONObject barDate =  JSONFactoryUtil.createJSONObject(minmaxRealtimeJsonArray.getString(2));
+				cBarDate.setTimeInMillis(barDate.getLong("time"));
+				MinMaxRealtime.setCreateDate(cBarDate.getTime());
+				lReturnRealtime.add(MinMaxRealtime);
+				
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				//e.printStackTrace();
+				_log.debug(e.getMessage());
+				break;
+			}
+			
+			
+		}
+		return 	lReturnRealtime;
+		
+		
+		
+
 	}
 	
 	public HistoricalRealtime findCloseRealTime(long shareId, long companyId, long groupId, Date closeDate)

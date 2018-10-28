@@ -9,6 +9,7 @@ import com.ib.contracts.FutContract;
 import com.ib.contracts.StkContract;
 import com.ibtrader.constants.IBTraderConstants;
 import com.ibtrader.data.model.Config;
+import com.ibtrader.data.model.HistoricalRealtime;
 import com.ibtrader.data.model.IBOrder;
 import com.ibtrader.data.model.Market;
 import com.ibtrader.data.model.Position;
@@ -16,6 +17,7 @@ import com.ibtrader.data.model.Realtime;
 import com.ibtrader.data.model.Share;
 import com.ibtrader.data.model.StrategyShare;
 import com.ibtrader.data.model.impl.StrategyImpl;
+import com.ibtrader.data.service.HistoricalRealtimeLocalServiceUtil;
 import com.ibtrader.data.service.PositionLocalServiceUtil;
 import com.ibtrader.data.service.RealtimeLocalServiceUtil;
 import com.liferay.portal.kernel.log.Log;
@@ -41,7 +43,7 @@ public class IBStrategyTrailingStopLost extends StrategyImpl {
 	try		
     {
 		
-		String position_mode = Utilities.getPositionModeType(null, _share.getCompanyId(),_share.getGroupId());
+		String position_mode = Utilities.getPositionModeType(backtestingdDate, _share.getCompanyId(),_share.getGroupId());
 
 		
 		boolean existsPositionToExit = PositionLocalServiceUtil.ExistsPositionToExit(_share.getGroupId(),_share.getCompanyId(),_share.getShareId(),position_mode);
@@ -126,7 +128,7 @@ public class IBStrategyTrailingStopLost extends StrategyImpl {
 	boolean existsPositionToExit = false;
 	try
     {		
-	String position_mode = Utilities.getPositionModeType(null, _share.getCompanyId(),_share.getGroupId());
+	String position_mode = Utilities.getPositionModeType(backtestingdDate, _share.getCompanyId(),_share.getGroupId());
 	
 	existsPositionToExit = PositionLocalServiceUtil.ExistsPositionToExit(_share.getGroupId(),_share.getCompanyId(),_share.getShareId(),position_mode);
 	if (existsPositionToExit)		
@@ -134,17 +136,30 @@ public class IBStrategyTrailingStopLost extends StrategyImpl {
 		/* CAMBIAMOS POR EL ULTIMO VALOR MENOR QUE AHORA PARA QUE SE PUEDAN METER VALORES FUTURES COMO CONJUNTO DE PRUEBAS */
 		User _IBUser = UserLocalServiceUtil.getUser(_share.getUserCreatedId());
 		Date _ToNow   = !isSimulation_mode() ?   Utilities.getDate(_IBUser) : backtestingdDate;
-		Realtime oShareLastRTime =  RealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _ToNow);
+		
+		Double lastRealtime = null;												
+		if (!isSimulation_mode())
+		{
+			Realtime oShareLastRTime =  RealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(),_ToNow);
+			lastRealtime = Validator.isNull(oShareLastRTime) ? null : oShareLastRTime.getValue();
+		}					
+		else
+		{
+			HistoricalRealtime oShareLastRTime = HistoricalRealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(),_ToNow);
+			lastRealtime = Validator.isNull(oShareLastRTime) ? null : oShareLastRTime.getValue();
+
+		}
+		
 
 		currentPosition = PositionLocalServiceUtil.findPositionToExit(_share.getGroupId(),_share.getCompanyId(),_share.getShareId(),position_mode);
 		
-		if (oShareLastRTime!=null && currentPosition!=null && currentPosition.getPercentual_trailling_stop_lost()>0)
+		if (lastRealtime!=null && currentPosition!=null && currentPosition.getPercentual_trailling_stop_lost()>0)
 		{	
 			boolean bExistslost;
 			/* PRECIO MEJOR DINAMICO */
 			double trailling_stop_lost = currentPosition.getPricetrailling_stop_lost();		
 			double percentual_trailling_stop_lost = currentPosition.getPercentual_trailling_stop_lost();
-			double current_price = oShareLastRTime.getValue();
+			double current_price = lastRealtime;
 
 			if (currentPosition.getType().equals(PositionStates.statusTWSFire.BUY.toString()))  // operacion de compra normal..??
 				bExistslost = (current_price < trailling_stop_lost);

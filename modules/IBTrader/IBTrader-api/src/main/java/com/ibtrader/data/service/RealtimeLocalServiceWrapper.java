@@ -302,6 +302,14 @@ public class RealtimeLocalServiceWrapper implements RealtimeLocalService,
 			groupId, from, to, closingDates);
 	}
 
+	@Override
+	public java.util.List<com.ibtrader.data.model.Realtime> findMinMaxRealTimesGroupedByBars(
+		java.util.Date from, java.util.Date to, long shareId, long companyId,
+		long groupId, long timebars, com.ibtrader.data.model.Market market) {
+		return _realtimeLocalService.findMinMaxRealTimesGroupedByBars(from, to,
+			shareId, companyId, groupId, timebars, market);
+	}
+
 	/**
 	* Returns a range of all the realtimes.
 	*

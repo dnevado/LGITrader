@@ -288,6 +288,14 @@ public class RealtimeLocalServiceUtil {
 			closingDates);
 	}
 
+	public static java.util.List<com.ibtrader.data.model.Realtime> findMinMaxRealTimesGroupedByBars(
+		java.util.Date from, java.util.Date to, long shareId, long companyId,
+		long groupId, long timebars, com.ibtrader.data.model.Market market) {
+		return getService()
+				   .findMinMaxRealTimesGroupedByBars(from, to, shareId,
+			companyId, groupId, timebars, market);
+	}
+
 	/**
 	* Returns a range of all the realtimes.
 	*

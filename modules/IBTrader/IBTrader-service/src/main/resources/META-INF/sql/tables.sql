@@ -13,7 +13,7 @@ create table ibtrader_BackTesting (
 	profitordersBUY DOUBLE,
 	profitordersSELL DOUBLE,
 	status VARCHAR(75) null,
-	description VARCHAR(75) null
+	description TEXT null
 );
 
 create table ibtrader_Config (

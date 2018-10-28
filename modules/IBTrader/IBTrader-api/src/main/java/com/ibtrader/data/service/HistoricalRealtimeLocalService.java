@@ -17,6 +17,7 @@ package com.ibtrader.data.service;
 import aQute.bnd.annotation.ProviderType;
 
 import com.ibtrader.data.model.HistoricalRealtime;
+import com.ibtrader.data.model.Market;
 
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 
@@ -251,6 +252,10 @@ public interface HistoricalRealtimeLocalService extends BaseLocalService,
 	public List<HistoricalRealtime> findCloseRealTimes(long shareId,
 		long companyId, long groupId, Date from, Date to,
 		List<java.lang.String> closingDates);
+
+	public List<HistoricalRealtime> findMinMaxRealTimesGroupedByBars(
+		Date from, Date to, long shareId, long companyId, long groupId,
+		long timebars, Market market);
 
 	/**
 	* Returns a range of all the historical realtimes.

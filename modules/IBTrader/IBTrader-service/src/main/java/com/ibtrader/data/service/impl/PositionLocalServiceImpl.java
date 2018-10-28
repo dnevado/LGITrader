@@ -269,11 +269,11 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 			    TIPO --> OPERACION(non-Javadoc)
 	 * 
 	 */
-	public JSONArray findPositionClosedResults(Date from, Date to,long groupId, long companyId, String positionMode)
+	public JSONArray findPositionClosedResults(Date from, Date to,long groupId, long companyId, String positionMode, long backtestingId)
 	{
 		//return realtimeFinder.findSimpleMobileAvgGroupByPeriods( shareId, companyId,  groupId,from, to, mobileAvgDates);
 		List lResults = null;
-		lResults = positionFinder.getPositionClosedResults(from, to,groupId,companyId,positionMode); 
+		lResults = positionFinder.getPositionClosedResults(from, to,groupId,companyId,positionMode,backtestingId); 
 		String serilizeString=null;				
 		JSONArray positionResults = JSONFactoryUtil.createJSONArray();
 	

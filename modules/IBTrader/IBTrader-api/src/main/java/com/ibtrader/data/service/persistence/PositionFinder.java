@@ -28,7 +28,7 @@ public interface PositionFinder {
 
 	public java.util.List getPositionClosedResults(java.util.Date from,
 		java.util.Date to, long groupId, long companyId,
-		java.lang.String positionMode);
+		java.lang.String positionMode, long backtestingId);
 
 	public java.util.List getPositionOpenResults(java.util.Date to,
 		long groupId, long companyId, java.lang.String positionMode);

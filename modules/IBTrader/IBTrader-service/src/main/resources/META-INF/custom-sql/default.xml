@@ -290,6 +290,35 @@
 					          		  AND (IBTrader_HistoricalRealtime.createDate<?))
      ]]>
     </sql>
+    
+    
+     <!--  aplica a un  intervalo de barras , el parametro es el tiempo de la barra  -->
+    <sql id="com.ibtrader.data.service.persistence.HistoricalRealtimeFinder.findMinMaxRealTimesBars">
+    <![CDATA[ 
+        SELECT 
+        		FROM_UNIXTIME(floor((unix_timestamp(createdate))/(?*60))*(?*60)) as barDate,
+        		max(value) as max_value , min(value) as min_value 
+        FROM 
+        		IBTrader_HistoricalRealtime      
+        WHERE
+	            (IBTrader_HistoricalRealtime.createDate>=?) AND
+	            (IBTrader_HistoricalRealtime.createDate<?) AND
+	            (IBTrader_HistoricalRealtime.shareId=?)
+	            AND (IBTrader_HistoricalRealtime.companyid=?)
+	            AND (IBTrader_HistoricalRealtime.groupid=?)
+	            AND (TIME_FORMAT(IBTrader_HistoricalRealtime.createDate,'%H%i')>=?) AND 
+				(TIME_FORMAT(IBTrader_HistoricalRealtime.createDate,'%H%i')<=?)
+        GROUP BY 
+        		barDate 
+        ORDER BY 
+        		barDate
+     ]]>
+    </sql>
+    
+    
+    
+    
+    <!--  se aplica a una barra  -->
     <sql id="com.ibtrader.data.service.persistence.HistoricalRealtimeFinder.findMinMaxRealTime">
     <![CDATA[ 
         SELECT 
@@ -444,6 +473,30 @@
 					          		  AND (IBTrader_Realtime.createDate<?))
      ]]>
     </sql>
+    <!--  aplica a un  intervalo de barras , el parametro es el tiempo de la barra
+    metemos el control de la fecha de apertura  y cierre del mercado como parametros   -->
+    <sql id="com.ibtrader.data.service.persistence.RealtimeFinder.findMinMaxRealTimesBars">
+    <![CDATA[ 
+        SELECT 
+        		FROM_UNIXTIME(floor((unix_timestamp(createDate))/(?*60))*(?*60)) as barDate,
+        		max(value) as max_value , min(value) as min_value 
+        FROM 
+        		IBTrader_Realtime      
+        WHERE
+	            (IBTrader_Realtime.createDate>=?) AND
+	            (IBTrader_Realtime.createDate<?) AND
+	            (IBTrader_Realtime.shareId=?)
+	            AND (IBTrader_Realtime.companyid=?)
+	            AND (IBTrader_Realtime.groupid=?)
+	    		AND (TIME_FORMAT(IBTrader_HistoricalRealtime.createDate,'%H%i')>=?) AND 
+				(TIME_FORMAT(IBTrader_HistoricalRealtime.createDate,'%H%i')<=?)
+        GROUP BY 
+        		barDate 
+        ORDER BY 
+        		barDate
+     ]]>
+    </sql>
+    <!--  aplica a una barra  -->
     <sql id="com.ibtrader.data.service.persistence.RealtimeFinder.findMinMaxRealTime">
     <![CDATA[ 
         SELECT 
@@ -632,7 +685,8 @@
 						AND (IBTrader_Position.companyid=?)
 	            		AND (IBTrader_Position.groupid=?)        
 	            		AND	 (IBTrader_Position.shareId=SHARE.shareId) 	
-	            		AND (IBTrader_Position.position_mode=?)         	
+	            		AND (IBTrader_Position.position_mode=?)
+	            		AND (IBTrader_Position.backtestingId = ?)            	
 	            		
 				)	 rt 
 				GROUP BY tipo

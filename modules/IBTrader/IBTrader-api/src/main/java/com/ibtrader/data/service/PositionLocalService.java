@@ -177,7 +177,8 @@ public interface PositionLocalService extends BaseLocalService,
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery();
 
 	public JSONArray findPositionClosedResults(Date from, Date to,
-		long groupId, long companyId, java.lang.String positionMode);
+		long groupId, long companyId, java.lang.String positionMode,
+		long backtestingId);
 
 	public JSONArray findPositionOpenResults(Date to, long groupId,
 		long companyId, java.lang.String positionMode);

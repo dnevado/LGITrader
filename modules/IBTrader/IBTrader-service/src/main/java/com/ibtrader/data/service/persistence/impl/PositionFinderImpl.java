@@ -67,8 +67,10 @@ public class PositionFinderImpl  extends PositionFinderBaseImpl  implements Posi
 		}
 	
 	
+	/* backtestingId : las simulaciones llevan un codigo, resto , -1 */
+	 
 	@SuppressWarnings("unchecked")
-	public List getPositionClosedResults(Date from, Date to,long groupId, long companyId, String positionMode)
+	public List getPositionClosedResults(Date from, Date to,long groupId, long companyId, String positionMode, long backtestingId)
 	{
 	 List lResults = null;
 	 
@@ -95,6 +97,7 @@ public class PositionFinderImpl  extends PositionFinderBaseImpl  implements Posi
         qPos.add(companyId);
         qPos.add(groupId);      
         qPos.add(positionMode);
+        qPos.add(backtestingId);
         
         lResults = (List) QueryUtil.list(q, getDialect(), 0, 100);
         if (!lResults.isEmpty())

@@ -1,5 +1,8 @@
 package IBTrader.sharemarketadmin.web.portlet;
 
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -62,8 +65,7 @@ import IBTrader.sharemarketadmin.web.constants.IBTraderSharemarketadminWebPortle
 	       "mvc.command.name=/html/add_edit_market",	       
 	       "mvc.command.name=/html/view_market",	       
 	       "mvc.command.name=/html/view_strategyshare",
-	       
-	       
+	       "mvc.command.name=/html/backtesting_view",	       
 	    },
 	    service = MVCRenderCommand.class
 	)
@@ -122,7 +124,7 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
 			jspPage=_JSP_COMMAND_EDIT_MARKET;
     	if (mvcCommand.equals("/html/view_market"))
 			jspPage=_JSP_COMMAND_LIST_MARKETS;
-    	if (mvcCommand.equals("/html/view_backtesting"))
+    	if (mvcCommand.equals("/html/backtesting_view"))
 			jspPage=_JSP_COMMAND_LIST_BACKTESTING;
     	return jspPage; 
 	}
@@ -252,11 +254,12 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
 	        	
 	        }
 	        
-	        if (_mvcCommand.equals("/html/view_backtesting"))	  
+	        if (_mvcCommand.equals("/html/backtesting_view"))	  
 	        {	        		
 	        
 	        	 lBackTesting = BackTestingLocalServiceUtil.findByShareCompanyGroup(shareId, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
-	        	
+	        	 
+	        	 
 	        	 PortletURL iteratorURL = renderResponse.createRenderURL();
 	        		
 	       		 SearchContainer<BackTesting> searchContainer = null;
@@ -292,6 +295,17 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
 	        }
 	        
 	        
+	        String starthour  = ""; 
+			String endhour =  ""; 
+			
+	        if (Validator.isNotNull(Market))
+	        {
+	    		starthour = Utilities.getIBFormattedUserLocalTime(themeDisplay.getUser(),Market.getStart_hour()); 
+				endhour   = Utilities.getIBFormattedUserLocalTime(themeDisplay.getUser(),Market.getEnd_hour()); 
+			
+	        }
+	        
+	    	
 	    	
 	        /* se habilitan los parametros si existen las estrategias  y estan activas */
 	        renderRequest.setAttribute("readonlyStopLost", (strategyshare_stoplost==null || (strategyshare_stoplost!=null && !strategyshare_stoplost.isActive()) ? "readonly"  : ""));
@@ -302,6 +316,11 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
 	        renderRequest.setAttribute("strategy", Strategy);
 	        renderRequest.setAttribute("_lMarket", _lMarket);
 	        renderRequest.setAttribute("market", Market);
+	        
+	        /* HORAS ADAPTADAS DE UTC A LOCAL DE USUARIO */
+	        renderRequest.setAttribute("marketStart", starthour);
+	        renderRequest.setAttribute("marketEnd", endhour);
+	       
 	        renderRequest.setAttribute("implemented_strategy", _strategyImpl);
 	        renderRequest.setAttribute("tab_selected", tab_selected);	        
 	        renderRequest.setAttribute("jsonStrategyShareParams", jsonStrategyShareParams);

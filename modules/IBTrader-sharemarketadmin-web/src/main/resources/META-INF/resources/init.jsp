@@ -7,6 +7,7 @@
 <%@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 <%@  page import="com.liferay.portal.kernel.util.*" %>
 <%@ page import="com.liferay.taglib.search.*" %>
+<%@ page import="com.ibtrader.data.model.BackTesting" %>
 <%@ page import="com.ibtrader.data.model.Position" %>
 <%@ page import="com.ibtrader.data.model.Share" %>
 <%@ page import="com.ibtrader.data.model.Market" %>
@@ -21,6 +22,7 @@
 <%@ page import="com.liferay.portal.kernel.dao.search.ResultRow" %>
 <%@ page import="com.liferay.portal.kernel.security.permission.ActionKeys" %>
 <%@ page import="com.liferay.portal.kernel.util.ParamUtil"%>
+<%@ page import="com.liferay.portal.kernel.model.User"%>
 <%@ page import="com.liferay.portal.kernel.theme.PortletDisplay"%>
 <%@ page import="com.ibtrader.util.Utilities" %>
 <%@ page import="java.util.List" %>

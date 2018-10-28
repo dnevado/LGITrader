@@ -182,7 +182,8 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 				this.setTargetOrder(BuyPositionTWS);			
   			}
 			/* Posicion en MYSQL de CONTROL. OJO...ANTES SIEMPRE PARA DESPUES CONTROLARLA EN CASO DE ERROR. */
-			Position BuyPositionSystem = PositionLocalServiceUtil.createPosition(CounterLocalServiceUtil.increment(Position.class.getName()));			
+			Position BuyPositionSystem = PositionLocalServiceUtil.createPosition(CounterLocalServiceUtil.increment(Position.class.getName()));
+			BuyPositionSystem.setBacktestingId(ConfigKeys.DEFAULT_BACKTESTINGID_VALUE);
 			BuyPositionSystem.setPrice_in( this.getValueIn());  // ojo, es estimativo
 			BuyPositionSystem.setDate_in(!isSimulation_mode() ? new Date() : backtestingdDate);// .setDate_buy(new Timestamp(Calendar.getInstance().getTimeInMillis()));
 			BuyPositionSystem.setShare_number(number_to_purchase);
@@ -203,7 +204,42 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 			BuyPositionSystem.setPosition_mode(position_mode);			
     		BuyPositionSystem = Utilities.fillStatesOrder(BuyPositionSystem);
 			/* END MODO FAKE CUENTA DEMO */
-  
+ 
+       		double stoplost =_share.getPercentual_stop_lost();
+    		/* EXISTE ALGO SOBREESCRITO */
+    		if (this.getJsonStrategyShareParams()!=null && this.getJsonStrategyShareParams().getDouble(ConfigKeys._FIELD_STOP_LOST,0)>0)
+    			stoplost =this.getJsonStrategyShareParams().getDouble(ConfigKeys._FIELD_STOP_LOST,0);    			
+    		if (stoplost>0)    			
+    			BuyPositionSystem.setPercentualstoplost_out(stoplost);
+    		/* else
+    			BuyPositionSystem.setPercentualstoplost_out(_defaultstop_percent);
+    		*/
+    		/* tralling stop lost */
+    		double percentualtraillingstoplost =_share.getPercentual_trailling_stop_lost();
+    		double pricetrailingstop;
+    		/* EXISTE ALGO SOBREESCRITO */
+    		if (this.getJsonStrategyShareParams()!=null && this.getJsonStrategyShareParams().getDouble(ConfigKeys._FIELD_TRAILLING_STOP_LOST,0)>0)
+    			percentualtraillingstoplost =this.getJsonStrategyShareParams().getDouble(ConfigKeys._FIELD_TRAILLING_STOP_LOST,0);
+    		
+    		if (percentualtraillingstoplost>0)    			
+    		{	
+    			BuyPositionSystem.setPercentual_trailling_stop_lost(percentualtraillingstoplost);
+    			if (BuyPositionSystem.getType().equals(PositionStates.statusTWSFire.BUY.toString()))  // operacion de compra normal..??
+    				pricetrailingstop = (this.getValueIn() - (this.getValueIn() * percentualtraillingstoplost /100));
+    			else
+    				pricetrailingstop = (this.getValueIn() + (this.getValueIn() * percentualtraillingstoplost /100));
+    			
+    			BuyPositionSystem.setPricetrailling_stop_lost(Utilities.RoundPrice(pricetrailingstop));
+    		}	
+    		double stopprofit =_share.getPercentual_stop_profit();
+    		/* EXISTE ALGO SOBREESCRITO */
+    		if (this.getJsonStrategyShareParams()!=null && this.getJsonStrategyShareParams().getDouble(ConfigKeys._FIELD_STOP_PROFIT,0)>0)
+    			stopprofit =this.getJsonStrategyShareParams().getDouble(ConfigKeys._FIELD_STOP_PROFIT,0);    	
+    		
+    		if (stopprofit>0)
+    			BuyPositionSystem.setPercentualstopprofit_out(stopprofit);
+    			
+    		
 			
 			PositionLocalServiceUtil.updatePosition(BuyPositionSystem);
 			/* Posicion en MYSQL de CONTROL */
@@ -365,9 +401,9 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 					*/
 					
 			
-					DirectionalMovementADXRUtil  ADXR =  new DirectionalMovementADXRUtil(_calendarFromNow.getTime(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), isSimulation_mode());
+					DirectionalMovementADXRUtil  ADXR =  new DirectionalMovementADXRUtil(_calendarFromNow.getTime(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), isSimulation_mode(), _market);
 					
-					AroonIndicatorUtil  Aroon =  new AroonIndicatorUtil(_calendarFromNow.getTime(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(),_num_aroonP, isSimulation_mode());
+					AroonIndicatorUtil  Aroon =  new AroonIndicatorUtil(_calendarFromNow.getTime(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(),_num_aroonP, isSimulation_mode(), _market);
 					
 					
 					double MACD = 0d; //new DirectionalMovementADXRUtil(_calendarFromNow.getTime(), _num_macdT, _num_macdP,_share.getShareId(), _share.getCompanyId(), _share.getGroupId());					

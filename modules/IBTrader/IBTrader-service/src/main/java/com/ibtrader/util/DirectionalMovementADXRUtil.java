@@ -27,6 +27,8 @@ El +DI(14) es el movimiento direccional positivo suavizado durante los últimos 1
 
 package com.ibtrader.util;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
@@ -51,6 +53,7 @@ import org.ta4j.core.indicators.adx.PlusDIIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 
 import com.ibtrader.data.model.HistoricalRealtime;
+import com.ibtrader.data.model.Market;
 import com.ibtrader.data.model.Realtime;
 import com.ibtrader.data.service.HistoricalRealtimeLocalServiceUtil;
 import com.ibtrader.data.service.RealtimeLocalServiceUtil;
@@ -81,8 +84,8 @@ public class DirectionalMovementADXRUtil {
 	 */
 	private static Log _log = LogFactoryUtil.getLog(DirectionalMovementADXRUtil.class);
 
-	public DirectionalMovementADXRUtil(Date dateTo, long timebar,  long shareId, long companyId, long groupId, boolean simulation) {
-		getAvgDirectionalRate(dateTo,  timebar, shareId, companyId, groupId,simulation);
+	public DirectionalMovementADXRUtil(Date dateTo, long timebar,  long shareId, long companyId, long groupId, boolean simulation, Market market) {
+		getAvgDirectionalRate(dateTo,  timebar, shareId, companyId, groupId,simulation,market);
 	}
 	/* para las medias armonizadas de  DM */
 
@@ -94,68 +97,37 @@ public class DirectionalMovementADXRUtil {
 	 * timebar --> 5 en minutos
 	 * periods --> para calcular el ADXR , normalmente 14 
 	 */
-	private void  getAvgDirectionalRate(Date dateTo, long timebar, long shareId, long companyId, long groupId, boolean simulation)
+	private void  getAvgDirectionalRate(Date dateTo, long timebar, long shareId, long companyId, long groupId, boolean simulation, Market market)
 	{
 		
 		try 
 		{
-		int periodsToCalculate = ConfigKeys.INDICATORS_MIN_SERIE_COUNT; // https://estrategiastrading.com/indicador-adx-formula/
-		Calendar  cPeriodFrom = Calendar.getInstance(); 
-	    cPeriodFrom.setTimeInMillis(dateTo.getTime());
-	    cPeriodFrom.add(Calendar.MINUTE, - new Long(timebar * (periodsToCalculate) ).intValue());
-	    cPeriodFrom.set(Calendar.MILLISECOND,0);	
-	    
-	    
-		TimeSeries series = new BaseTimeSeries("getAvgDirectionalRate");
-        ZonedDateTime endTime = ZonedDateTime.now();       
-        for (int j=0;j<periodsToCalculate;j++)
-		{
-        	 /* MAX Y MIN POR BARRA  15:05:00  */
-			Calendar  cPeriodTo = Calendar.getInstance();
-			cPeriodTo.setTime(cPeriodFrom.getTime());
-			cPeriodTo.add(Calendar.MINUTE, new Long(timebar).intValue());
-			//cPeriodTo.add(Calendar.SECOND,  -1);
-		    
-			Date dateMinMaxFrom = cPeriodFrom.getTime();		    		
-	        Date dateMinMaxTo = cPeriodTo.getTime();
+		
+		List<String> lMACDPeriods = new ArrayList<String>();
+		Calendar _cMACDDateFrom = Calendar.getInstance();
+		_cMACDDateFrom.setTime(dateTo);
+		
+		int periodsToCalculate = ConfigKeys.INDICATORS_MIN_SERIE_COUNT;
+		
+		lMACDPeriods = MobileAvgUtil.getPeriodsMinutesMobileAvg(dateTo, periodsToCalculate , timebar, Boolean.TRUE, market);
+	
+        /* ESTE FROM ESTA RESTADO DE LAS BARRAS POR LOS PERIODOS, PERO NO CONTEMPLA LOS CIERRES Y APERTURAS DE MERCADO */
+    	/* SOLUCION, COGER EL FROM DE LA PRIMERA BARRA DE getPeriodsMinutesMobileAvg, QUE SI CONTEMPLA LAS APERTURAS */
+        SimpleDateFormat _sdf = new SimpleDateFormat(Utilities.__IBTRADER_SQL_DATE_);
+        Date fromWithOpenMarketsTimes=null;
+        Calendar cfromWithOpenMarketsTimes = null;
+        try {
+			 fromWithOpenMarketsTimes = _sdf.parse(lMACDPeriods.get(lMACDPeriods.size()-1));
+			 cfromWithOpenMarketsTimes = Calendar.getInstance();
+			 cfromWithOpenMarketsTimes.setTimeInMillis(fromWithOpenMarketsTimes.getTime());
+			 cfromWithOpenMarketsTimes.add(Calendar.MINUTE, 1);
+			 cfromWithOpenMarketsTimes.add(Calendar.SECOND, -1);
+			 cfromWithOpenMarketsTimes.set(Calendar.MILLISECOND, 0);
+		} catch (ParseException e) {}
 	        
-	        double max_value = 0;
-	        double min_value = 0;
-	        double close_value = 0;
-		    
-	        if (!simulation)
-	        {	        
-	        	Realtime minMax = RealtimeLocalServiceUtil.findMinMaxRealTime(dateMinMaxFrom, dateMinMaxTo, shareId, companyId, groupId);
-	        	Realtime closeValue = RealtimeLocalServiceUtil.findLastRealTimeLessThanDate(shareId, companyId, groupId, dateMinMaxTo);
-	        	if (minMax.getMax_value()<=0  || minMax.getMin_value()<=0 ||  Validator.isNull(closeValue))
-					break;
-	        	max_value = minMax.getMax_value();
-	        	min_value = minMax.getMin_value();
-	        	close_value =closeValue.getValue();
-	        	
-	        }
-	        else
-	        {
-	        	HistoricalRealtime  minMax = HistoricalRealtimeLocalServiceUtil.findMinMaxRealTime(dateMinMaxFrom, dateMinMaxTo, shareId, companyId, groupId);
-	        	HistoricalRealtime  closeValue = HistoricalRealtimeLocalServiceUtil.findLastRealTimeLessThanDate(shareId, companyId, groupId, dateMinMaxTo);
-	        	if (minMax.getMax_value()<=0  || minMax.getMin_value()<=0 ||  Validator.isNull(closeValue))
-					break;
-	        	max_value = minMax.getMax_value();
-	        	min_value = minMax.getMin_value();
-	        	close_value =closeValue.getValue();
-	        }
 			
-			
-			
-			series.addBar(new BaseBar(endTime,0.0,max_value ,min_value, close_value,0.0));
-			
-			_log.debug("Serie " + j  + " " + series.getBar(j).getClosePrice() + "," + series.getBar(j).getMaxPrice() + "," + series.getBar(j).getMinPrice());
-			
-			cPeriodFrom.add(Calendar.MINUTE, new Long(timebar).intValue());
-			endTime = endTime.plusMinutes(timebar);
-        	
-		}
-        
+		TimeSeries series = new BaseTimeSeries("getAvgDirectionalRate");
+		series = BarSeriesCacheUtil.closeMinMaxBarTimeSeries(shareId, companyId, groupId, dateTo, simulation, timebar,ConfigKeys.INDICATORS_MIN_SERIE_COUNT, lMACDPeriods);
         _log.debug("Series count:" + series.getBarCount());
        
        // ATRIndicator atr = new ATRIndicator(series, (int) ConfigKeys.ADXR_PERIODS);
@@ -163,19 +135,19 @@ public class DirectionalMovementADXRUtil {
 		PlusDIIndicator PlusDIIndicator      = new PlusDIIndicator(series, (int) ConfigKeys.ADXR_PERIODS);
 		ADXIndicator ADXIndicator            = new ADXIndicator(series, (int) ConfigKeys.ADXR_PERIODS);
         
-		_plusDI 		=     PlusDIIndicator.getValue(periodsToCalculate-1)!=null  ?  PlusDIIndicator.getValue(periodsToCalculate-1).doubleValue() : 0;
-		_minusDI 		=     MinusDIIndicator.getValue(periodsToCalculate-1)!=null ?  MinusDIIndicator.getValue(periodsToCalculate-1).doubleValue() : 0; 
-		_lastPlusDI 	=     PlusDIIndicator.getValue(periodsToCalculate-2)!=null  ?  PlusDIIndicator.getValue(periodsToCalculate-2).doubleValue() : 0;  
-		_lastMinusDI 	=     MinusDIIndicator.getValue(periodsToCalculate-2)!=null ?  MinusDIIndicator.getValue(periodsToCalculate-2).doubleValue() : 0;  
-		_ADX            = 	  ADXIndicator.getValue(periodsToCalculate-1) !=null 	?  ADXIndicator.getValue(periodsToCalculate-1).doubleValue() : 0;
-		_ADXR 			= 	  ADXIndicator.getValue(periodsToCalculate-1)!=null 	? (_ADX + ADXIndicator.getValue(periodsToCalculate-1 - ConfigKeys.ADXR_PERIODS).doubleValue()) / 2 : 0;
+		_plusDI 		=     PlusDIIndicator.getValue(ConfigKeys.INDICATORS_MIN_SERIE_COUNT-1)!=null  ?  PlusDIIndicator.getValue(ConfigKeys.INDICATORS_MIN_SERIE_COUNT-1).doubleValue() : 0;
+		_minusDI 		=     MinusDIIndicator.getValue(ConfigKeys.INDICATORS_MIN_SERIE_COUNT-1)!=null ?  MinusDIIndicator.getValue(ConfigKeys.INDICATORS_MIN_SERIE_COUNT-1).doubleValue() : 0; 
+		_lastPlusDI 	=     PlusDIIndicator.getValue(ConfigKeys.INDICATORS_MIN_SERIE_COUNT-2)!=null  ?  PlusDIIndicator.getValue(ConfigKeys.INDICATORS_MIN_SERIE_COUNT-2).doubleValue() : 0;  
+		_lastMinusDI 	=     MinusDIIndicator.getValue(ConfigKeys.INDICATORS_MIN_SERIE_COUNT-2)!=null ?  MinusDIIndicator.getValue(ConfigKeys.INDICATORS_MIN_SERIE_COUNT-2).doubleValue() : 0;  
+		_ADX            = 	  ADXIndicator.getValue(ConfigKeys.INDICATORS_MIN_SERIE_COUNT-1) !=null 	?  ADXIndicator.getValue(ConfigKeys.INDICATORS_MIN_SERIE_COUNT-1).doubleValue() : 0;
+		_ADXR 			= 	  ADXIndicator.getValue(ConfigKeys.INDICATORS_MIN_SERIE_COUNT-1)!=null 	? (_ADX + ADXIndicator.getValue(ConfigKeys.INDICATORS_MIN_SERIE_COUNT-1 - ConfigKeys.ADXR_PERIODS).doubleValue()) / 2 : 0;
 		
         _log.debug("_plusDI:" + _plusDI);
         _log.debug("_minusDI:" + _minusDI);
         _log.debug("_lastPlusDI:" + _lastPlusDI);
         _log.debug("_lastMinusDI:" + _lastMinusDI);
         _log.debug("_ADX:" + _ADX);
-        _log.debug("_ADX (n -14) :" + ADXIndicator.getValue(periodsToCalculate-1 - ConfigKeys.ADXR_PERIODS).doubleValue());
+        _log.debug("_ADX (n -14) :" + ADXIndicator.getValue(ConfigKeys.INDICATORS_MIN_SERIE_COUNT-1 - ConfigKeys.ADXR_PERIODS).doubleValue());
         _log.debug("_ADXR: (_ADX +  ADX (n-14) / 2)" + _ADXR);
 		}
         catch (Exception e) {
@@ -189,10 +161,6 @@ public class DirectionalMovementADXRUtil {
 		/* 
 		 * 2018-07-25 01:39:59.999000
 		 */
-		Calendar cData = Calendar.getInstance();
-		cData.set(2018, 6, 25, 1, 40, 0);
-		DirectionalMovementADXRUtil ADXR =  new DirectionalMovementADXRUtil(cData.getTime(), 5,  2602, 20116, 101213, false);
-		ADXR.getADXR();
 		
 		
 

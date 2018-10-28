@@ -32,8 +32,8 @@ portletDisplay.setURLBack(redirect);%>
 <liferay-ui:search-container-column-text name="market.name" value="${Market.name}" />
 <liferay-ui:search-container-column-text name="market.description" value="${Market.description}"/>
 <liferay-ui:search-container-column-text name="market.currency" value="${Market.currency}"/>
-<liferay-ui:search-container-column-text name="market.start" value="${Market.start_hour}"/>
-<liferay-ui:search-container-column-text name="market.end" value="${Market.end_hour}"/>
+<liferay-ui:search-container-column-text name="market.start" value="<%=Utilities.getIBFormattedUserLocalTime(themeDisplay.getUser(),Market.getStart_hour())%>"/>
+<liferay-ui:search-container-column-text name="market.end" value="<%=Utilities.getIBFormattedUserLocalTime(themeDisplay.getUser(),Market.getEnd_hour())%>"/>
 <liferay-ui:search-container-column-text name="market.active">
 <c:choose>
    <c:when test="${Market.active}">

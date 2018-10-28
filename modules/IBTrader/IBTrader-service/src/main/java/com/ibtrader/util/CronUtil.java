@@ -155,40 +155,30 @@ public class CronUtil {
 	    			
 	    				DateDayIni.add(Calendar.MINUTE, ConfigKeys.SIMULATION_MINUTES_BAR_SIZE ); //00:05 el primero 
 	    				
-	    				List<Strategy> _lStrategies = StrategyLocalServiceUtil.findByActiveCompanyId(Boolean.TRUE, backtesting.getCompanyId());
-		    			List<StrategyShare> _lStrategiesOfShare = StrategyShareLocalServiceUtil.getByGroupCompanyShareId(backtesting.getGroupId(), 
-		    					backtesting.getCompanyId(), backtesting.getShareId());
-		    			
-		    			for (Strategy oStrategy :_lStrategies)
+	    				List<Strategy> _lStrategiesOfShare = StrategyShareLocalServiceUtil.findByActiveStrategies(Boolean.TRUE,
+	    						backtesting.getShareId(),backtesting.getCompanyId(), backtesting.getGroupId());
+	    				
+	    				for (Strategy oStrategyShare :_lStrategiesOfShare)
 		    			{
-		    				
-		    				for (StrategyShare oStrategyShare :_lStrategiesOfShare)
-			    			{
-		    					// salimos si no es la misma 
-		    					if (oStrategyShare.getStrategyId()!=oStrategy.getStrategyID())
-		    						continue;
-		    					
-		    					
-		    					if (!oStrategyShare.isActive()) continue;  // si no esta activa, no se trata 
-		    					
-		    					StrategyImpl _strategyImpl= (StrategyImpl) Utilities.getContextClassLoader().loadClass(oStrategy.getClassName()).newInstance();
-		    					_strategyImpl.init(backtesting.getCompanyId());   // verify if custom fields are created and filled
-		    					_strategyImpl.init_simulation();   // verify if custom fields are created and filled
-		    				
-		    					if (_strategyImpl.verify(oShare, oMarket,oStrategyShare,DateDayIni.getTime()))
-		    					{		
-		    											    							
-	    							long positionId = _strategyImpl.execute(oShare, oMarket,DateDayIni.getTime());
-	    							Position _position = PositionLocalServiceUtil.fetchPosition(positionId);
-	    							if (Validator.isNotNull(_position))
-	    							{
-	    								_position.setBacktestingId(backtesting.getBackTId());
-	    								PositionLocalServiceUtil.updatePosition(_position);
-	    								
-	    							}
-		    					}
-		    					
-		    				}
+	    					
+	    				StrategyImpl _strategyImpl= (StrategyImpl) Utilities.getContextClassLoader().loadClass(oStrategyShare.getClassName()).newInstance();
+	    				StrategyShare strategyShare =  StrategyShareLocalServiceUtil.getByCommpanyShareStrategyId(backtesting.getGroupId(), backtesting.getCompanyId(), backtesting.getShareId(), oStrategyShare.getStrategyID());
+    					_strategyImpl.init(backtesting.getCompanyId());   // verify if custom fields are created and filled
+    					_strategyImpl.init_simulation();   // verify if custom fields are created and filled
+    				
+    					if (_strategyImpl.verify(oShare, oMarket,strategyShare,DateDayIni.getTime()))
+    					{		
+    											    							
+							long positionId = _strategyImpl.execute(oShare, oMarket,DateDayIni.getTime());
+							Position _position = PositionLocalServiceUtil.fetchPosition(positionId);
+							if (Validator.isNotNull(_position))
+							{
+								_position.setBacktestingId(backtesting.getBackTId());
+								PositionLocalServiceUtil.updatePosition(_position);
+								
+							}
+    					}
+		    			
 		    			}  // for (Strategy oStrategy :_lStrategies)
 	    				
 	    			}

@@ -68,6 +68,55 @@ public class RealtimeFinderImpl extends RealtimeFinderBaseImpl  implements Realt
 		return null;
 		}
 	
+	public List findMinMaxRealTimesGroupedByBars(Date from, Date to, long shareId, long companyId, long groupId, long timebars,String openMarketUTC,String closeMarketUTC)
+	{
+	 List lRealtime = null;
+	 Session session = null;
+	  try {
+	        session = openSession();
+
+	        String sql = CustomSQLUtil.get(getClass(),FIND_MINMAX_REALTIME_GROUPED_BY_BARS);
+	        SQLQuery q = session.createSQLQuery(sql);
+	        q.setCacheable(false);
+	        q.addScalar("min_value", com.liferay.portal.kernel.dao.orm.Type.DOUBLE);
+	        q.addScalar("max_value", com.liferay.portal.kernel.dao.orm.Type.DOUBLE);	  
+	        q.addScalar("barDate", com.liferay.portal.kernel.dao.orm.Type.TIMESTAMP);	  
+
+	        QueryPos qPos = QueryPos.getInstance(q);	
+	        
+	        qPos.add(timebars);
+	        qPos.add(timebars);
+	        qPos.add(from);
+	        qPos.add(to);
+	        qPos.add(shareId);
+	        qPos.add(companyId);
+	        qPos.add(groupId);
+	        qPos.add(openMarketUTC);
+	        qPos.add(closeMarketUTC);
+	        
+	        lRealtime = (List<Realtime>) QueryUtil.list(q, getDialect(), 0, 10000);
+	        
+	        if (!lRealtime.isEmpty())
+	        		return lRealtime;
+	        else
+	        		return null;
+	        
+	    }
+	    catch (Exception e) {
+	        try {
+	            throw new SystemException(e);
+	        }
+	        catch (SystemException se) {
+	            se.printStackTrace();
+	        }
+	    }
+	    finally {
+	        closeSession(session);
+	    }
+
+		return null;
+		}
+	
 	@SuppressWarnings("unchecked")
 	public Realtime findLastRealTime(long shareId, long companyId, long groupId)
 	{
@@ -330,6 +379,8 @@ public class RealtimeFinderImpl extends RealtimeFinderBaseImpl  implements Realt
 		public static final String FIND_LAST_REALTIME_LESS_THAN_DATE = RealtimeFinder.class.getName() + ".findLastRealTimeLessThanDate";
 		public static final String FIND_CLOSE_REALTIME_DATE = RealtimeFinder.class.getName() + ".findCloseRealTimeDate";
 		public static final String FIND_CLOSE_REALTIMES = RealtimeFinder.class.getName() + ".findCloseRealTimes";
+		public static final String FIND_MINMAX_REALTIME_GROUPED_BY_BARS = RealtimeFinder.class.getName() + ".findMinMaxRealTimesBars";
+		
 		
 
 		

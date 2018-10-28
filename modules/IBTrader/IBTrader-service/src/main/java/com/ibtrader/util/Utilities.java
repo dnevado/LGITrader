@@ -9,14 +9,18 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -328,12 +332,44 @@ public class Utilities {
    		return _position;
    	}
 
+    public static ZonedDateTime getUTCDate(String HourMinutes)
+   	{   
+    			
+   		return getIBUTCDateByUser(HourMinutes);
+   	}
+    
+    public static ZonedDateTime getLocalDate(User _user, String HourMinutes)
+   	{   
+    			
+   		return getIBLocalDateByUser(_user,HourMinutes);
+   	}
+    
+    public static ZonedDateTime getLocalDate(User _user)
+   	{   
+    			
+   		return getIBLocalDateByUser(_user, "");
+   	}
+    
+    public static String getIBFormattedUserLocalTime(User _user, String HourMinutes)
+    {
+    	
+    	ZonedDateTime dUTCOpen  = getUTCDate(HourMinutes);
+		
+		LocalDateTime dOpenUTC 	= dateLocalFromUTC(dUTCOpen, _user);
+		
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Utilities.__IBTRADER_SHORT_HOUR_FORMAT);
+
+		return dOpenUTC.toLocalTime().format(formatter); 
+    }
+    
+    
     
     /* HORA AJUSTADA A LA ZONA DEL USUARIO */
     public static Date getDate(User _user)
-   	{       	
-   		return  getIBDateByUser(_user);
-   		
+   	{   
+    	Date returnDate = null;
+   		returnDate = getIBDateByUser(_user);		
+   		return returnDate;
    	}
     public static  String getDateNowFormat(User _user)
    	{
@@ -369,16 +405,80 @@ public class Utilities {
    	}
        	   		
     
-    /* HORA PARA EL USUARIO DEPEDE DE LA HORA DEL SERVIDOR Y SU ZONA UTC */
-    private static  Date getIBDateByUser(User _user)
+    /* HORA PARA EL USUARIO DEPEDE DE LA HORA DEL SERVIDOR Y SU ZONA UTC 
+     * 
+     *  VIENE SIEMPRE EN UTC POR LA JVM 
+     *  LO PASO A GMT DEL USUARIO 
+     * */
+    private static  Date getIBDateByUser(User _user) 
     {
-    	    	
-   		ZoneId zoneId = ZoneId.of(_user.getTimeZoneId());
+    	// UTC 
+    	Calendar local =  Calendar.getInstance();	
+		//Here you say to java the initial timezone. This is the secret
+    	
+    	Calendar UserTime =  Calendar.getInstance();	
+    	UserTime.setTimeZone(_user.getTimeZone());
+    	UserTime.setTimeInMillis(local.getTimeInMillis());
+    	
+    	
+	   ZoneId userZone = ZoneId.of(_user.getTimeZone().getID()); 
+       ZonedDateTime userZoneDT = ZonedDateTime.now ( userZone );
+       
+		return new Date().from(userZoneDT.toInstant());
+    	
+    	
+   		/* ZoneId zoneId = ZoneId.of(_user.getTimeZoneId());
    		Date date = new Date();
    		ZonedDateTime zonedDateTime = date.toInstant().atZone(zoneId);
-   		return Date.from(zonedDateTime.toInstant());
+   		return Date.to(zonedDateTime.toInstant());
+   		*/
     	
     }
+    private static  ZonedDateTime getIBLocalDateByUser(User _user, String HourMinutes) 
+    {
+    	// UTC 
+		//Here you say to java the initial timezone. This is the secret
+    	ZonedDateTime userZoneDT = null;
+    	if (!HourMinutes.equals(""))
+    	{
+    		  int hour = Integer.parseInt(HourMinutes.substring(0, 2));
+    		  int minute = Integer.parseInt(HourMinutes.substring(2,4));
+    		  userZoneDT = LocalDateTime.now().withHour(hour).withMinute(minute).atZone(ZoneId.of(_user.getTimeZone().getID()));  
+    	}
+    	else
+    		userZoneDT = LocalDateTime.now().atZone(ZoneId.of(_user.getTimeZone().getID()));  
+    	
+    	  	
+		return userZoneDT;
+    	
+    	
+   		/* ZoneId zoneId = ZoneId.of(_user.getTimeZoneId());
+   		Date date = new Date();
+   		ZonedDateTime zonedDateTime = date.toInstant().atZone(zoneId);
+   		return Date.to(zonedDateTime.toInstant());
+   		*/
+    	
+    }
+    private static  ZonedDateTime getIBUTCDateByUser(String HourMinutes) 
+    {
+    	// UTC 
+		//Here you say to java the initial timezone. This is the secret
+    	ZonedDateTime utcZoneDT = null;    	
+		int hour = Integer.parseInt(HourMinutes.substring(0, 2));
+		int minute = Integer.parseInt(HourMinutes.substring(2,4));
+		utcZoneDT = LocalDateTime.now().withHour(hour).withMinute(minute).atZone(ZoneId.of("UTC"));  
+    	  	
+		return utcZoneDT;
+    	
+    	
+   		/* ZoneId zoneId = ZoneId.of(_user.getTimeZoneId());
+   		Date date = new Date();
+   		ZonedDateTime zonedDateTime = date.toInstant().atZone(zoneId);
+   		return Date.to(zonedDateTime.toInstant());
+   		*/
+    	
+    }
+    
     /* HORA PARA EL USUARIO DEPEDE DE LA HORA DEL SERVIDOR Y SU ZONA UTC */
     private static  Date getIBDateByUserDate(User _user, Date date)
     {
@@ -388,6 +488,23 @@ public class Utilities {
    		return Date.from(zonedDateTime.toInstant());
     	
     }
+   
+   
+    /* DATE ES UNA FECHA EN LA ZONA DEL USUARIO, LA CONVERTIMOS A UTC  */
+
+    public static LocalDateTime dateLocalToUTC(ZonedDateTime date){
+	
+    	ZoneId UTCZone = ZoneId.of("UTC");
+    	return date.withZoneSameInstant(UTCZone).toLocalDateTime();
+
+    }
+    public static LocalDateTime dateLocalFromUTC(ZonedDateTime date, User user){
+    	
+   		ZoneId zoneId = ZoneId.of(user.getTimeZoneId());
+    	return date.withZoneSameInstant(zoneId).toLocalDateTime();
+
+    }
+    
     
  
     
@@ -588,6 +705,8 @@ public class Utilities {
 	    return Hoy;
 	    
 	}
+	/* HOUR HHMM */
+	
 	
 	/* HOUR HHMM */
 	public static  Date setDateWithHour(Date _oDate, String HourMinutes)
@@ -909,9 +1028,21 @@ public class Utilities {
     
     public static void main(String[] args) throws Exception {
  		// TODO Auto-generated method stub
-    	 //List<Position> Lista = PositionDAO.getTradingPositions(new Timestamp(Calendar.getInstance().getTimeInMillis()));
-    	System.out.println(parseXmlFutureInfo("<?xml version='1.0' encoding='iso-8859-1'?><expiration><months>2,3</months><week>4</week><day>5</day></expiration>","months")); 
-    	System.out.println(getActiveFutureDate("3,6,9,12","6","3"));
+    	System.out.println(new Date());
+    	Calendar now = Calendar.getInstance();
+        System.out.println(now.getTimeZone());
+        System.out.println(now.getTime());
+        System.out.println(	(new Date()));
+        
+         ZoneId Paris = ZoneId.of("Europe/Paris"); 
+        ZonedDateTime zParis = ZonedDateTime.now ( Paris );
+        ZonedDateTime nowUtc = zParis.withZoneSameInstant( ZoneOffset.UTC );
+        
+        
+        System.out.println(zParis.toLocalDate());
+        System.out.println(nowUtc.toLocalDate());
+       
+        
 		//System.out.println(TickLimit_WithMultiplier(new Double(2750.25), new Double(0.25), new Double(2749.9), true));
 		
  	}	

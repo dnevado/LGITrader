@@ -15,6 +15,7 @@ import com.ib.contracts.FutContract;
 import com.ib.contracts.StkContract;
 import com.ibtrader.constants.IBTraderConstants;
 import com.ibtrader.data.model.Config;
+import com.ibtrader.data.model.HistoricalRealtime;
 import com.ibtrader.data.model.IBOrder;
 import com.ibtrader.data.model.Market;
 import com.ibtrader.data.model.Position;
@@ -24,6 +25,7 @@ import com.ibtrader.data.model.Strategy;
 import com.ibtrader.data.model.StrategyShare;
 import com.ibtrader.data.model.impl.StrategyImpl;
 import com.ibtrader.data.service.ConfigLocalServiceUtil;
+import com.ibtrader.data.service.HistoricalRealtimeLocalServiceUtil;
 import com.ibtrader.data.service.IBOrderLocalServiceUtil;
 import com.ibtrader.data.service.PositionLocalServiceUtil;
 import com.ibtrader.data.service.RealtimeLocalServiceUtil;
@@ -160,7 +162,8 @@ public class IBStrategyMinMax extends StrategyImpl {
 				
 			}
 			/* Posicion en MYSQL de CONTROL. OJO...ANTES SIEMPRE PARA DESPUES CONTROLARLA EN CASO DE ERROR. */
-			Position BuyPositionSystem = PositionLocalServiceUtil.createPosition(CounterLocalServiceUtil.increment(Position.class.getName()));			
+			Position BuyPositionSystem = PositionLocalServiceUtil.createPosition(CounterLocalServiceUtil.increment(Position.class.getName()));
+			BuyPositionSystem.setBacktestingId(ConfigKeys.DEFAULT_BACKTESTINGID_VALUE);
 			BuyPositionSystem.setDescription("");
 			BuyPositionSystem.setPrice_in( this.getValueIn());  // ojo, es estimativo
 			BuyPositionSystem.setDate_in(Validator.isNull(backtestingDate) ? new Date() : backtestingDate);// .setDate_buy(new Timestamp(Calendar.getInstance().getTimeInMillis()));
@@ -353,21 +356,42 @@ public class IBStrategyMinMax extends StrategyImpl {
 		_ToIniMarket   = Utilities.setDateWithHour(_ToIniMarket,HoraFinLecturaMaxMin);
 		
 		/* TIEMPOS REALES Y MAXIMOS Y MINIMOS CONSEGUIDOS */			
-		//List<Double[]>  lMinMaxRealTime = (List<Double[]>)     RealtimeLocalServiceUtil.findMinMaxRealTime(_FromNow, _ToNow, _share.getShareId(), _share.getCompanyId(), _share.getGroupId());  			
-		Realtime MinMaxRealTime =  RealtimeLocalServiceUtil.findMinMaxRealTime(_FromIniMarket, _ToIniMarket, _share.getShareId(), _share.getCompanyId(), _share.getGroupId());
-		//Realtime oShareLastRTime = (Realtime)  RealtimeLocalServiceUtil.findLastRealTime(_share.getShareId(), _share.getCompanyId(), _share.getGroupId());
-		Realtime oShareLastRTime = (Realtime)  RealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(),_ToNow);
+		//List<Double[]>  lMinMaxRealTime = (List<Double[]>)     RealtimeLocalServiceUtil.findMinMaxRealTime(_FromNow, _ToNow, _share.getShareId(), _share.getCompanyId(), _share.getGroupId());
+		
+		Double lastRealtime = null;	
+		Double MaxRealtime = null;	
+		Double MinRealtime = null;
+		if (!isSimulation_mode())
+		{
+			Realtime MinMaxRealTime =  RealtimeLocalServiceUtil.findMinMaxRealTime(_FromIniMarket, _ToIniMarket, _share.getShareId(), _share.getCompanyId(), _share.getGroupId());
+			Realtime oShareLastRTime =  RealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(),_ToNow);
+			lastRealtime = Validator.isNull(oShareLastRTime) ? null : oShareLastRTime.getValue();
+			MaxRealtime  = Validator.isNull(MinMaxRealTime) ? null : MinMaxRealTime.getMax_value();
+			MinRealtime  = Validator.isNull(MinMaxRealTime) ? null : MinMaxRealTime.getMin_value();
+
+		}					
+		else
+		{
+			HistoricalRealtime MinMaxRealTime =  HistoricalRealtimeLocalServiceUtil.findMinMaxRealTime(_FromIniMarket, _ToIniMarket, _share.getShareId(), _share.getCompanyId(), _share.getGroupId());
+			HistoricalRealtime oShareLastRTime =  HistoricalRealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(),_ToNow);
+			lastRealtime = Validator.isNull(oShareLastRTime) ? null : oShareLastRTime.getValue();
+			MaxRealtime  = Validator.isNull(MinMaxRealTime) ? null : MinMaxRealTime.getMax_value();
+			MinRealtime  = Validator.isNull(MinMaxRealTime) ? null : MinMaxRealTime.getMin_value();
+			
+		}
+		
+		
 		
 		/* TIENE QUE HABER UNA LISTA DE MINIMO Y MAXIMO */
-		if (MinMaxRealTime!=null && oShareLastRTime!=null && oShareLastRTime.getValue()>0 && MinMaxRealTime.getMax_value()>0 && MinMaxRealTime.getMin_value()>0)
+		if (MaxRealtime!=null && MinRealtime!=null && lastRealtime!=null && lastRealtime.doubleValue()>0 && MaxRealtime.doubleValue()>0 && MinRealtime.doubleValue()>0)
 		{	
 			/* double ValueToBuy =0.0; */
 			/* estos son los dos limites que debe rotar la accion para comprar */
 			
 			
 			
-			double MaxValue =  MinMaxRealTime.getMax_value();
-			double MinValue = MinMaxRealTime.getMin_value();
+			double MaxValue =  MaxRealtime.doubleValue();
+			double MinValue = MinRealtime.doubleValue();
 					
 			double MaxValueWithGap = (MaxValue * this.getJsonStrategyShareParams().getDouble(_EXPANDO_PERCENTUAL_GAP) / 100) +  MaxValue ;
 			double MinValueWithGap = MinValue  - (MinValue  * this.getJsonStrategyShareParams().getDouble(_EXPANDO_PERCENTUAL_GAP) / 100) ;
@@ -389,8 +413,8 @@ public class IBStrategyMinMax extends StrategyImpl {
 			operationfilter = this.getJsonStrategyShareParams().getString(_EXPANDO_MOBILE_AVERAGE_TRADE_OPERATIONS_TYPE,"ALL").trim();
 
 			
-			bReachedMax = ((oShareLastRTime.getValue() > MaxValueWithGap) &&  (oShareLastRTime.getValue() < MaxValueWithGapAndLimit));
-			bReachedMin = ((oShareLastRTime.getValue()  < MinValueWithGap)  &&  (oShareLastRTime.getValue()> MinValueWithGapAndLimit));
+			bReachedMax = ((lastRealtime.doubleValue() > MaxValueWithGap) &&  (lastRealtime.doubleValue() < MaxValueWithGapAndLimit));
+			bReachedMin = ((lastRealtime.doubleValue()  < MinValueWithGap)  &&  (lastRealtime.doubleValue()> MinValueWithGapAndLimit));
 			/* filtro por operacion */
 			bReachedMax = bReachedMax &&  
 					(operationfilter.equals("ALL") || operationfilter.equals(PositionStates.statusTWSFire.BUY.toString())); 
@@ -401,7 +425,7 @@ public class IBStrategyMinMax extends StrategyImpl {
 			if (bReachedMax || bReachedMin )					
 			{
 				
-			    this.setValueIn(oShareLastRTime.getValue());
+			    this.setValueIn(lastRealtime.doubleValue());
 				this.setValueLimitIn(MaxValueWithGapAndLimit);
 				
 				_tradeDescription = JSONFactoryUtil.createJSONObject();
@@ -415,7 +439,7 @@ public class IBStrategyMinMax extends StrategyImpl {
 				_tradeDescription.put("MaxValueWithGapAndLimit", MaxValueWithGapAndLimit);
 				_tradeDescription.put("operationfilter", operationfilter);				
 				_tradeDescription.put("MinValueWithGapAndLimit", MinValueWithGapAndLimit);
-				_tradeDescription.put("oShareLastRTime.getValue()", oShareLastRTime.getValue());
+				_tradeDescription.put("oShareLastRTime.getValue()", lastRealtime.doubleValue());
 				_tradeDescription.put("_FromIniMarket", _FromIniMarket);
 				_tradeDescription.put("_ToIniMarket", _ToIniMarket);
 				

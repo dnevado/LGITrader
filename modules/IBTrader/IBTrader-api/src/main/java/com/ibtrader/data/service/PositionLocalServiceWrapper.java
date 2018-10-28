@@ -207,9 +207,9 @@ public class PositionLocalServiceWrapper implements PositionLocalService,
 	@Override
 	public com.liferay.portal.kernel.json.JSONArray findPositionClosedResults(
 		java.util.Date from, java.util.Date to, long groupId, long companyId,
-		java.lang.String positionMode) {
+		java.lang.String positionMode, long backtestingId) {
 		return _positionLocalService.findPositionClosedResults(from, to,
-			groupId, companyId, positionMode);
+			groupId, companyId, positionMode, backtestingId);
 	}
 
 	@Override

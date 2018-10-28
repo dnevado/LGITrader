@@ -84,7 +84,7 @@ public class BackTestingModelImpl extends BaseModelImpl<BackTesting>
 			{ "profitordersBUY", Types.DOUBLE },
 			{ "profitordersSELL", Types.DOUBLE },
 			{ "status", Types.VARCHAR },
-			{ "description", Types.VARCHAR }
+			{ "description", Types.CLOB }
 		};
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP = new HashMap<String, Integer>();
 
@@ -103,10 +103,10 @@ public class BackTestingModelImpl extends BaseModelImpl<BackTesting>
 		TABLE_COLUMNS_MAP.put("profitordersBUY", Types.DOUBLE);
 		TABLE_COLUMNS_MAP.put("profitordersSELL", Types.DOUBLE);
 		TABLE_COLUMNS_MAP.put("status", Types.VARCHAR);
-		TABLE_COLUMNS_MAP.put("description", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("description", Types.CLOB);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table ibtrader_BackTesting (uuid_ VARCHAR(75) null,backTId LONG not null primary key,groupId LONG,companyId LONG,createDate DATE null,modifiedDate DATE null,fromDate DATE null,toDate DATE null,shareId LONG,countordersBUY LONG,countordersSELL LONG,profitordersBUY DOUBLE,profitordersSELL DOUBLE,status VARCHAR(75) null,description VARCHAR(75) null)";
+	public static final String TABLE_SQL_CREATE = "create table ibtrader_BackTesting (uuid_ VARCHAR(75) null,backTId LONG not null primary key,groupId LONG,companyId LONG,createDate DATE null,modifiedDate DATE null,fromDate DATE null,toDate DATE null,shareId LONG,countordersBUY LONG,countordersSELL LONG,profitordersBUY DOUBLE,profitordersSELL DOUBLE,status VARCHAR(75) null,description TEXT null)";
 	public static final String TABLE_SQL_DROP = "drop table ibtrader_BackTesting";
 	public static final String ORDER_BY_JPQL = " ORDER BY backTesting.backTId DESC";
 	public static final String ORDER_BY_SQL = " ORDER BY ibtrader_BackTesting.backTId DESC";

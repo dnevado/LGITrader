@@ -146,7 +146,7 @@ public class IBStrategyClosePosition extends StrategyImpl {
 	List<Position> lToClose = null;
 	try
     {
-		String position_mode = Utilities.getPositionModeType(null, _share.getCompanyId(),_share.getGroupId());
+		String position_mode = Utilities.getPositionModeType(backtestingdDate, _share.getCompanyId(),_share.getGroupId());
 
 		/* cancelada y abierta */
 		lToClose = PositionLocalServiceUtil.findByCloseCompanyGroup(_share.getCompanyId(), _share.getGroupId(), Boolean.TRUE,position_mode); 
