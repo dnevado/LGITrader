@@ -2064,55 +2064,58 @@ public class BackTestingPersistenceImpl extends BasePersistenceImpl<BackTesting>
 	private static final String _FINDER_COLUMN_SHARECOMPANYGROUP_SHAREID_2 = "backTesting.shareId = ? AND ";
 	private static final String _FINDER_COLUMN_SHARECOMPANYGROUP_COMPANYID_2 = "backTesting.companyId = ? AND ";
 	private static final String _FINDER_COLUMN_SHARECOMPANYGROUP_GROUPID_2 = "backTesting.groupId = ?";
-	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_STATUSCOMPANYGROUP =
+	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_STATUSSHARECOMPANYGROUP =
 		new FinderPath(BackTestingModelImpl.ENTITY_CACHE_ENABLED,
 			BackTestingModelImpl.FINDER_CACHE_ENABLED, BackTestingImpl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByStatusCompanyGroup",
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+			"findByStatusShareCompanyGroup",
 			new String[] {
 				String.class.getName(), Long.class.getName(),
-				Long.class.getName(),
+				Long.class.getName(), Long.class.getName(),
 				
 			Integer.class.getName(), Integer.class.getName(),
 				OrderByComparator.class.getName()
 			});
-	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_STATUSCOMPANYGROUP =
+	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_STATUSSHARECOMPANYGROUP =
 		new FinderPath(BackTestingModelImpl.ENTITY_CACHE_ENABLED,
 			BackTestingModelImpl.FINDER_CACHE_ENABLED, BackTestingImpl.class,
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"findByStatusCompanyGroup",
+			"findByStatusShareCompanyGroup",
 			new String[] {
 				String.class.getName(), Long.class.getName(),
-				Long.class.getName()
+				Long.class.getName(), Long.class.getName()
 			},
 			BackTestingModelImpl.STATUS_COLUMN_BITMASK |
 			BackTestingModelImpl.COMPANYID_COLUMN_BITMASK |
-			BackTestingModelImpl.GROUPID_COLUMN_BITMASK);
-	public static final FinderPath FINDER_PATH_COUNT_BY_STATUSCOMPANYGROUP = new FinderPath(BackTestingModelImpl.ENTITY_CACHE_ENABLED,
+			BackTestingModelImpl.GROUPID_COLUMN_BITMASK |
+			BackTestingModelImpl.SHAREID_COLUMN_BITMASK);
+	public static final FinderPath FINDER_PATH_COUNT_BY_STATUSSHARECOMPANYGROUP = new FinderPath(BackTestingModelImpl.ENTITY_CACHE_ENABLED,
 			BackTestingModelImpl.FINDER_CACHE_ENABLED, Long.class,
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"countByStatusCompanyGroup",
+			"countByStatusShareCompanyGroup",
 			new String[] {
 				String.class.getName(), Long.class.getName(),
-				Long.class.getName()
+				Long.class.getName(), Long.class.getName()
 			});
 
 	/**
-	 * Returns all the back testings where status = &#63; and companyId = &#63; and groupId = &#63;.
+	 * Returns all the back testings where status = &#63; and companyId = &#63; and groupId = &#63; and shareId = &#63;.
 	 *
 	 * @param status the status
 	 * @param companyId the company ID
 	 * @param groupId the group ID
+	 * @param shareId the share ID
 	 * @return the matching back testings
 	 */
 	@Override
-	public List<BackTesting> findByStatusCompanyGroup(String status,
-		long companyId, long groupId) {
-		return findByStatusCompanyGroup(status, companyId, groupId,
-			QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	public List<BackTesting> findByStatusShareCompanyGroup(String status,
+		long companyId, long groupId, long shareId) {
+		return findByStatusShareCompanyGroup(status, companyId, groupId,
+			shareId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 	}
 
 	/**
-	 * Returns a range of all the back testings where status = &#63; and companyId = &#63; and groupId = &#63;.
+	 * Returns a range of all the back testings where status = &#63; and companyId = &#63; and groupId = &#63; and shareId = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link BackTestingModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -2121,19 +2124,20 @@ public class BackTestingPersistenceImpl extends BasePersistenceImpl<BackTesting>
 	 * @param status the status
 	 * @param companyId the company ID
 	 * @param groupId the group ID
+	 * @param shareId the share ID
 	 * @param start the lower bound of the range of back testings
 	 * @param end the upper bound of the range of back testings (not inclusive)
 	 * @return the range of matching back testings
 	 */
 	@Override
-	public List<BackTesting> findByStatusCompanyGroup(String status,
-		long companyId, long groupId, int start, int end) {
-		return findByStatusCompanyGroup(status, companyId, groupId, start, end,
-			null);
+	public List<BackTesting> findByStatusShareCompanyGroup(String status,
+		long companyId, long groupId, long shareId, int start, int end) {
+		return findByStatusShareCompanyGroup(status, companyId, groupId,
+			shareId, start, end, null);
 	}
 
 	/**
-	 * Returns an ordered range of all the back testings where status = &#63; and companyId = &#63; and groupId = &#63;.
+	 * Returns an ordered range of all the back testings where status = &#63; and companyId = &#63; and groupId = &#63; and shareId = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link BackTestingModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -2142,21 +2146,22 @@ public class BackTestingPersistenceImpl extends BasePersistenceImpl<BackTesting>
 	 * @param status the status
 	 * @param companyId the company ID
 	 * @param groupId the group ID
+	 * @param shareId the share ID
 	 * @param start the lower bound of the range of back testings
 	 * @param end the upper bound of the range of back testings (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching back testings
 	 */
 	@Override
-	public List<BackTesting> findByStatusCompanyGroup(String status,
-		long companyId, long groupId, int start, int end,
+	public List<BackTesting> findByStatusShareCompanyGroup(String status,
+		long companyId, long groupId, long shareId, int start, int end,
 		OrderByComparator<BackTesting> orderByComparator) {
-		return findByStatusCompanyGroup(status, companyId, groupId, start, end,
-			orderByComparator, true);
+		return findByStatusShareCompanyGroup(status, companyId, groupId,
+			shareId, start, end, orderByComparator, true);
 	}
 
 	/**
-	 * Returns an ordered range of all the back testings where status = &#63; and companyId = &#63; and groupId = &#63;.
+	 * Returns an ordered range of all the back testings where status = &#63; and companyId = &#63; and groupId = &#63; and shareId = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link BackTestingModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -2165,6 +2170,7 @@ public class BackTestingPersistenceImpl extends BasePersistenceImpl<BackTesting>
 	 * @param status the status
 	 * @param companyId the company ID
 	 * @param groupId the group ID
+	 * @param shareId the share ID
 	 * @param start the lower bound of the range of back testings
 	 * @param end the upper bound of the range of back testings (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
@@ -2172,8 +2178,8 @@ public class BackTestingPersistenceImpl extends BasePersistenceImpl<BackTesting>
 	 * @return the ordered range of matching back testings
 	 */
 	@Override
-	public List<BackTesting> findByStatusCompanyGroup(String status,
-		long companyId, long groupId, int start, int end,
+	public List<BackTesting> findByStatusShareCompanyGroup(String status,
+		long companyId, long groupId, long shareId, int start, int end,
 		OrderByComparator<BackTesting> orderByComparator,
 		boolean retrieveFromCache) {
 		boolean pagination = true;
@@ -2183,13 +2189,13 @@ public class BackTestingPersistenceImpl extends BasePersistenceImpl<BackTesting>
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
 				(orderByComparator == null)) {
 			pagination = false;
-			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_STATUSCOMPANYGROUP;
-			finderArgs = new Object[] { status, companyId, groupId };
+			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_STATUSSHARECOMPANYGROUP;
+			finderArgs = new Object[] { status, companyId, groupId, shareId };
 		}
 		else {
-			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_STATUSCOMPANYGROUP;
+			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_STATUSSHARECOMPANYGROUP;
 			finderArgs = new Object[] {
-					status, companyId, groupId,
+					status, companyId, groupId, shareId,
 					
 					start, end, orderByComparator
 				};
@@ -2205,7 +2211,8 @@ public class BackTestingPersistenceImpl extends BasePersistenceImpl<BackTesting>
 				for (BackTesting backTesting : list) {
 					if (!Objects.equals(status, backTesting.getStatus()) ||
 							(companyId != backTesting.getCompanyId()) ||
-							(groupId != backTesting.getGroupId())) {
+							(groupId != backTesting.getGroupId()) ||
+							(shareId != backTesting.getShareId())) {
 						list = null;
 
 						break;
@@ -2218,11 +2225,11 @@ public class BackTestingPersistenceImpl extends BasePersistenceImpl<BackTesting>
 			StringBundler query = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(5 +
+				query = new StringBundler(6 +
 						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
-				query = new StringBundler(5);
+				query = new StringBundler(6);
 			}
 
 			query.append(_SQL_SELECT_BACKTESTING_WHERE);
@@ -2230,20 +2237,22 @@ public class BackTestingPersistenceImpl extends BasePersistenceImpl<BackTesting>
 			boolean bindStatus = false;
 
 			if (status == null) {
-				query.append(_FINDER_COLUMN_STATUSCOMPANYGROUP_STATUS_1);
+				query.append(_FINDER_COLUMN_STATUSSHARECOMPANYGROUP_STATUS_1);
 			}
 			else if (status.equals(StringPool.BLANK)) {
-				query.append(_FINDER_COLUMN_STATUSCOMPANYGROUP_STATUS_3);
+				query.append(_FINDER_COLUMN_STATUSSHARECOMPANYGROUP_STATUS_3);
 			}
 			else {
 				bindStatus = true;
 
-				query.append(_FINDER_COLUMN_STATUSCOMPANYGROUP_STATUS_2);
+				query.append(_FINDER_COLUMN_STATUSSHARECOMPANYGROUP_STATUS_2);
 			}
 
-			query.append(_FINDER_COLUMN_STATUSCOMPANYGROUP_COMPANYID_2);
+			query.append(_FINDER_COLUMN_STATUSSHARECOMPANYGROUP_COMPANYID_2);
 
-			query.append(_FINDER_COLUMN_STATUSCOMPANYGROUP_GROUPID_2);
+			query.append(_FINDER_COLUMN_STATUSSHARECOMPANYGROUP_GROUPID_2);
+
+			query.append(_FINDER_COLUMN_STATUSSHARECOMPANYGROUP_SHAREID_2);
 
 			if (orderByComparator != null) {
 				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
@@ -2272,6 +2281,8 @@ public class BackTestingPersistenceImpl extends BasePersistenceImpl<BackTesting>
 				qPos.add(companyId);
 
 				qPos.add(groupId);
+
+				qPos.add(shareId);
 
 				if (!pagination) {
 					list = (List<BackTesting>)QueryUtil.list(q, getDialect(),
@@ -2304,28 +2315,29 @@ public class BackTestingPersistenceImpl extends BasePersistenceImpl<BackTesting>
 	}
 
 	/**
-	 * Returns the first back testing in the ordered set where status = &#63; and companyId = &#63; and groupId = &#63;.
+	 * Returns the first back testing in the ordered set where status = &#63; and companyId = &#63; and groupId = &#63; and shareId = &#63;.
 	 *
 	 * @param status the status
 	 * @param companyId the company ID
 	 * @param groupId the group ID
+	 * @param shareId the share ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching back testing
 	 * @throws NoSuchBackTestingException if a matching back testing could not be found
 	 */
 	@Override
-	public BackTesting findByStatusCompanyGroup_First(String status,
-		long companyId, long groupId,
+	public BackTesting findByStatusShareCompanyGroup_First(String status,
+		long companyId, long groupId, long shareId,
 		OrderByComparator<BackTesting> orderByComparator)
 		throws NoSuchBackTestingException {
-		BackTesting backTesting = fetchByStatusCompanyGroup_First(status,
-				companyId, groupId, orderByComparator);
+		BackTesting backTesting = fetchByStatusShareCompanyGroup_First(status,
+				companyId, groupId, shareId, orderByComparator);
 
 		if (backTesting != null) {
 			return backTesting;
 		}
 
-		StringBundler msg = new StringBundler(8);
+		StringBundler msg = new StringBundler(10);
 
 		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
 
@@ -2338,26 +2350,30 @@ public class BackTestingPersistenceImpl extends BasePersistenceImpl<BackTesting>
 		msg.append(", groupId=");
 		msg.append(groupId);
 
+		msg.append(", shareId=");
+		msg.append(shareId);
+
 		msg.append(StringPool.CLOSE_CURLY_BRACE);
 
 		throw new NoSuchBackTestingException(msg.toString());
 	}
 
 	/**
-	 * Returns the first back testing in the ordered set where status = &#63; and companyId = &#63; and groupId = &#63;.
+	 * Returns the first back testing in the ordered set where status = &#63; and companyId = &#63; and groupId = &#63; and shareId = &#63;.
 	 *
 	 * @param status the status
 	 * @param companyId the company ID
 	 * @param groupId the group ID
+	 * @param shareId the share ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching back testing, or <code>null</code> if a matching back testing could not be found
 	 */
 	@Override
-	public BackTesting fetchByStatusCompanyGroup_First(String status,
-		long companyId, long groupId,
+	public BackTesting fetchByStatusShareCompanyGroup_First(String status,
+		long companyId, long groupId, long shareId,
 		OrderByComparator<BackTesting> orderByComparator) {
-		List<BackTesting> list = findByStatusCompanyGroup(status, companyId,
-				groupId, 0, 1, orderByComparator);
+		List<BackTesting> list = findByStatusShareCompanyGroup(status,
+				companyId, groupId, shareId, 0, 1, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -2367,28 +2383,29 @@ public class BackTestingPersistenceImpl extends BasePersistenceImpl<BackTesting>
 	}
 
 	/**
-	 * Returns the last back testing in the ordered set where status = &#63; and companyId = &#63; and groupId = &#63;.
+	 * Returns the last back testing in the ordered set where status = &#63; and companyId = &#63; and groupId = &#63; and shareId = &#63;.
 	 *
 	 * @param status the status
 	 * @param companyId the company ID
 	 * @param groupId the group ID
+	 * @param shareId the share ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching back testing
 	 * @throws NoSuchBackTestingException if a matching back testing could not be found
 	 */
 	@Override
-	public BackTesting findByStatusCompanyGroup_Last(String status,
-		long companyId, long groupId,
+	public BackTesting findByStatusShareCompanyGroup_Last(String status,
+		long companyId, long groupId, long shareId,
 		OrderByComparator<BackTesting> orderByComparator)
 		throws NoSuchBackTestingException {
-		BackTesting backTesting = fetchByStatusCompanyGroup_Last(status,
-				companyId, groupId, orderByComparator);
+		BackTesting backTesting = fetchByStatusShareCompanyGroup_Last(status,
+				companyId, groupId, shareId, orderByComparator);
 
 		if (backTesting != null) {
 			return backTesting;
 		}
 
-		StringBundler msg = new StringBundler(8);
+		StringBundler msg = new StringBundler(10);
 
 		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
 
@@ -2401,32 +2418,37 @@ public class BackTestingPersistenceImpl extends BasePersistenceImpl<BackTesting>
 		msg.append(", groupId=");
 		msg.append(groupId);
 
+		msg.append(", shareId=");
+		msg.append(shareId);
+
 		msg.append(StringPool.CLOSE_CURLY_BRACE);
 
 		throw new NoSuchBackTestingException(msg.toString());
 	}
 
 	/**
-	 * Returns the last back testing in the ordered set where status = &#63; and companyId = &#63; and groupId = &#63;.
+	 * Returns the last back testing in the ordered set where status = &#63; and companyId = &#63; and groupId = &#63; and shareId = &#63;.
 	 *
 	 * @param status the status
 	 * @param companyId the company ID
 	 * @param groupId the group ID
+	 * @param shareId the share ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching back testing, or <code>null</code> if a matching back testing could not be found
 	 */
 	@Override
-	public BackTesting fetchByStatusCompanyGroup_Last(String status,
-		long companyId, long groupId,
+	public BackTesting fetchByStatusShareCompanyGroup_Last(String status,
+		long companyId, long groupId, long shareId,
 		OrderByComparator<BackTesting> orderByComparator) {
-		int count = countByStatusCompanyGroup(status, companyId, groupId);
+		int count = countByStatusShareCompanyGroup(status, companyId, groupId,
+				shareId);
 
 		if (count == 0) {
 			return null;
 		}
 
-		List<BackTesting> list = findByStatusCompanyGroup(status, companyId,
-				groupId, count - 1, count, orderByComparator);
+		List<BackTesting> list = findByStatusShareCompanyGroup(status,
+				companyId, groupId, shareId, count - 1, count, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -2436,20 +2458,21 @@ public class BackTestingPersistenceImpl extends BasePersistenceImpl<BackTesting>
 	}
 
 	/**
-	 * Returns the back testings before and after the current back testing in the ordered set where status = &#63; and companyId = &#63; and groupId = &#63;.
+	 * Returns the back testings before and after the current back testing in the ordered set where status = &#63; and companyId = &#63; and groupId = &#63; and shareId = &#63;.
 	 *
 	 * @param backTId the primary key of the current back testing
 	 * @param status the status
 	 * @param companyId the company ID
 	 * @param groupId the group ID
+	 * @param shareId the share ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next back testing
 	 * @throws NoSuchBackTestingException if a back testing with the primary key could not be found
 	 */
 	@Override
-	public BackTesting[] findByStatusCompanyGroup_PrevAndNext(long backTId,
-		String status, long companyId, long groupId,
-		OrderByComparator<BackTesting> orderByComparator)
+	public BackTesting[] findByStatusShareCompanyGroup_PrevAndNext(
+		long backTId, String status, long companyId, long groupId,
+		long shareId, OrderByComparator<BackTesting> orderByComparator)
 		throws NoSuchBackTestingException {
 		BackTesting backTesting = findByPrimaryKey(backTId);
 
@@ -2460,15 +2483,15 @@ public class BackTestingPersistenceImpl extends BasePersistenceImpl<BackTesting>
 
 			BackTesting[] array = new BackTestingImpl[3];
 
-			array[0] = getByStatusCompanyGroup_PrevAndNext(session,
-					backTesting, status, companyId, groupId, orderByComparator,
-					true);
+			array[0] = getByStatusShareCompanyGroup_PrevAndNext(session,
+					backTesting, status, companyId, groupId, shareId,
+					orderByComparator, true);
 
 			array[1] = backTesting;
 
-			array[2] = getByStatusCompanyGroup_PrevAndNext(session,
-					backTesting, status, companyId, groupId, orderByComparator,
-					false);
+			array[2] = getByStatusShareCompanyGroup_PrevAndNext(session,
+					backTesting, status, companyId, groupId, shareId,
+					orderByComparator, false);
 
 			return array;
 		}
@@ -2480,18 +2503,19 @@ public class BackTestingPersistenceImpl extends BasePersistenceImpl<BackTesting>
 		}
 	}
 
-	protected BackTesting getByStatusCompanyGroup_PrevAndNext(Session session,
-		BackTesting backTesting, String status, long companyId, long groupId,
+	protected BackTesting getByStatusShareCompanyGroup_PrevAndNext(
+		Session session, BackTesting backTesting, String status,
+		long companyId, long groupId, long shareId,
 		OrderByComparator<BackTesting> orderByComparator, boolean previous) {
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
+			query = new StringBundler(7 +
 					(orderByComparator.getOrderByConditionFields().length * 3) +
 					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
-			query = new StringBundler(5);
+			query = new StringBundler(6);
 		}
 
 		query.append(_SQL_SELECT_BACKTESTING_WHERE);
@@ -2499,20 +2523,22 @@ public class BackTestingPersistenceImpl extends BasePersistenceImpl<BackTesting>
 		boolean bindStatus = false;
 
 		if (status == null) {
-			query.append(_FINDER_COLUMN_STATUSCOMPANYGROUP_STATUS_1);
+			query.append(_FINDER_COLUMN_STATUSSHARECOMPANYGROUP_STATUS_1);
 		}
 		else if (status.equals(StringPool.BLANK)) {
-			query.append(_FINDER_COLUMN_STATUSCOMPANYGROUP_STATUS_3);
+			query.append(_FINDER_COLUMN_STATUSSHARECOMPANYGROUP_STATUS_3);
 		}
 		else {
 			bindStatus = true;
 
-			query.append(_FINDER_COLUMN_STATUSCOMPANYGROUP_STATUS_2);
+			query.append(_FINDER_COLUMN_STATUSSHARECOMPANYGROUP_STATUS_2);
 		}
 
-		query.append(_FINDER_COLUMN_STATUSCOMPANYGROUP_COMPANYID_2);
+		query.append(_FINDER_COLUMN_STATUSSHARECOMPANYGROUP_COMPANYID_2);
 
-		query.append(_FINDER_COLUMN_STATUSCOMPANYGROUP_GROUPID_2);
+		query.append(_FINDER_COLUMN_STATUSSHARECOMPANYGROUP_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_STATUSSHARECOMPANYGROUP_SHAREID_2);
 
 		if (orderByComparator != null) {
 			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
@@ -2590,6 +2616,8 @@ public class BackTestingPersistenceImpl extends BasePersistenceImpl<BackTesting>
 
 		qPos.add(groupId);
 
+		qPos.add(shareId);
+
 		if (orderByComparator != null) {
 			Object[] values = orderByComparator.getOrderByConditionValues(backTesting);
 
@@ -2609,60 +2637,65 @@ public class BackTestingPersistenceImpl extends BasePersistenceImpl<BackTesting>
 	}
 
 	/**
-	 * Removes all the back testings where status = &#63; and companyId = &#63; and groupId = &#63; from the database.
+	 * Removes all the back testings where status = &#63; and companyId = &#63; and groupId = &#63; and shareId = &#63; from the database.
 	 *
 	 * @param status the status
 	 * @param companyId the company ID
 	 * @param groupId the group ID
+	 * @param shareId the share ID
 	 */
 	@Override
-	public void removeByStatusCompanyGroup(String status, long companyId,
-		long groupId) {
-		for (BackTesting backTesting : findByStatusCompanyGroup(status,
-				companyId, groupId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+	public void removeByStatusShareCompanyGroup(String status, long companyId,
+		long groupId, long shareId) {
+		for (BackTesting backTesting : findByStatusShareCompanyGroup(status,
+				companyId, groupId, shareId, QueryUtil.ALL_POS,
+				QueryUtil.ALL_POS, null)) {
 			remove(backTesting);
 		}
 	}
 
 	/**
-	 * Returns the number of back testings where status = &#63; and companyId = &#63; and groupId = &#63;.
+	 * Returns the number of back testings where status = &#63; and companyId = &#63; and groupId = &#63; and shareId = &#63;.
 	 *
 	 * @param status the status
 	 * @param companyId the company ID
 	 * @param groupId the group ID
+	 * @param shareId the share ID
 	 * @return the number of matching back testings
 	 */
 	@Override
-	public int countByStatusCompanyGroup(String status, long companyId,
-		long groupId) {
-		FinderPath finderPath = FINDER_PATH_COUNT_BY_STATUSCOMPANYGROUP;
+	public int countByStatusShareCompanyGroup(String status, long companyId,
+		long groupId, long shareId) {
+		FinderPath finderPath = FINDER_PATH_COUNT_BY_STATUSSHARECOMPANYGROUP;
 
-		Object[] finderArgs = new Object[] { status, companyId, groupId };
+		Object[] finderArgs = new Object[] { status, companyId, groupId, shareId };
 
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
-			StringBundler query = new StringBundler(4);
+			StringBundler query = new StringBundler(5);
 
 			query.append(_SQL_COUNT_BACKTESTING_WHERE);
 
 			boolean bindStatus = false;
 
 			if (status == null) {
-				query.append(_FINDER_COLUMN_STATUSCOMPANYGROUP_STATUS_1);
+				query.append(_FINDER_COLUMN_STATUSSHARECOMPANYGROUP_STATUS_1);
 			}
 			else if (status.equals(StringPool.BLANK)) {
-				query.append(_FINDER_COLUMN_STATUSCOMPANYGROUP_STATUS_3);
+				query.append(_FINDER_COLUMN_STATUSSHARECOMPANYGROUP_STATUS_3);
 			}
 			else {
 				bindStatus = true;
 
-				query.append(_FINDER_COLUMN_STATUSCOMPANYGROUP_STATUS_2);
+				query.append(_FINDER_COLUMN_STATUSSHARECOMPANYGROUP_STATUS_2);
 			}
 
-			query.append(_FINDER_COLUMN_STATUSCOMPANYGROUP_COMPANYID_2);
+			query.append(_FINDER_COLUMN_STATUSSHARECOMPANYGROUP_COMPANYID_2);
 
-			query.append(_FINDER_COLUMN_STATUSCOMPANYGROUP_GROUPID_2);
+			query.append(_FINDER_COLUMN_STATUSSHARECOMPANYGROUP_GROUPID_2);
+
+			query.append(_FINDER_COLUMN_STATUSSHARECOMPANYGROUP_SHAREID_2);
 
 			String sql = query.toString();
 
@@ -2683,6 +2716,8 @@ public class BackTestingPersistenceImpl extends BasePersistenceImpl<BackTesting>
 
 				qPos.add(groupId);
 
+				qPos.add(shareId);
+
 				count = (Long)q.uniqueResult();
 
 				finderCache.putResult(finderPath, finderArgs, count);
@@ -2700,11 +2735,15 @@ public class BackTestingPersistenceImpl extends BasePersistenceImpl<BackTesting>
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_STATUSCOMPANYGROUP_STATUS_1 = "backTesting.status IS NULL AND ";
-	private static final String _FINDER_COLUMN_STATUSCOMPANYGROUP_STATUS_2 = "backTesting.status = ? AND ";
-	private static final String _FINDER_COLUMN_STATUSCOMPANYGROUP_STATUS_3 = "(backTesting.status IS NULL OR backTesting.status = '') AND ";
-	private static final String _FINDER_COLUMN_STATUSCOMPANYGROUP_COMPANYID_2 = "backTesting.companyId = ? AND ";
-	private static final String _FINDER_COLUMN_STATUSCOMPANYGROUP_GROUPID_2 = "backTesting.groupId = ?";
+	private static final String _FINDER_COLUMN_STATUSSHARECOMPANYGROUP_STATUS_1 = "backTesting.status IS NULL AND ";
+	private static final String _FINDER_COLUMN_STATUSSHARECOMPANYGROUP_STATUS_2 = "backTesting.status = ? AND ";
+	private static final String _FINDER_COLUMN_STATUSSHARECOMPANYGROUP_STATUS_3 = "(backTesting.status IS NULL OR backTesting.status = '') AND ";
+	private static final String _FINDER_COLUMN_STATUSSHARECOMPANYGROUP_COMPANYID_2 =
+		"backTesting.companyId = ? AND ";
+	private static final String _FINDER_COLUMN_STATUSSHARECOMPANYGROUP_GROUPID_2 =
+		"backTesting.groupId = ? AND ";
+	private static final String _FINDER_COLUMN_STATUSSHARECOMPANYGROUP_SHAREID_2 =
+		"backTesting.shareId = ?";
 
 	public BackTestingPersistenceImpl() {
 		setModelClass(BackTesting.class);
@@ -3078,27 +3117,29 @@ public class BackTestingPersistenceImpl extends BasePersistenceImpl<BackTesting>
 			}
 
 			if ((backTestingModelImpl.getColumnBitmask() &
-					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_STATUSCOMPANYGROUP.getColumnBitmask()) != 0) {
+					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_STATUSSHARECOMPANYGROUP.getColumnBitmask()) != 0) {
 				Object[] args = new Object[] {
 						backTestingModelImpl.getOriginalStatus(),
 						backTestingModelImpl.getOriginalCompanyId(),
-						backTestingModelImpl.getOriginalGroupId()
+						backTestingModelImpl.getOriginalGroupId(),
+						backTestingModelImpl.getOriginalShareId()
 					};
 
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_STATUSCOMPANYGROUP,
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_STATUSSHARECOMPANYGROUP,
 					args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_STATUSCOMPANYGROUP,
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_STATUSSHARECOMPANYGROUP,
 					args);
 
 				args = new Object[] {
 						backTestingModelImpl.getStatus(),
 						backTestingModelImpl.getCompanyId(),
-						backTestingModelImpl.getGroupId()
+						backTestingModelImpl.getGroupId(),
+						backTestingModelImpl.getShareId()
 					};
 
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_STATUSCOMPANYGROUP,
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_STATUSSHARECOMPANYGROUP,
 					args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_STATUSCOMPANYGROUP,
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_STATUSSHARECOMPANYGROUP,
 					args);
 			}
 		}
@@ -3133,6 +3174,7 @@ public class BackTestingPersistenceImpl extends BasePersistenceImpl<BackTesting>
 		backTestingImpl.setModifiedDate(backTesting.getModifiedDate());
 		backTestingImpl.setFromDate(backTesting.getFromDate());
 		backTestingImpl.setToDate(backTesting.getToDate());
+		backTestingImpl.setLastRunDate(backTesting.getLastRunDate());
 		backTestingImpl.setShareId(backTesting.getShareId());
 		backTestingImpl.setCountordersBUY(backTesting.getCountordersBUY());
 		backTestingImpl.setCountordersSELL(backTesting.getCountordersSELL());
@@ -3140,6 +3182,8 @@ public class BackTestingPersistenceImpl extends BasePersistenceImpl<BackTesting>
 		backTestingImpl.setProfitordersSELL(backTesting.getProfitordersSELL());
 		backTestingImpl.setStatus(backTesting.getStatus());
 		backTestingImpl.setDescription(backTesting.getDescription());
+		backTestingImpl.setStartDate(backTesting.getStartDate());
+		backTestingImpl.setEndDate(backTesting.getEndDate());
 
 		return backTestingImpl;
 	}

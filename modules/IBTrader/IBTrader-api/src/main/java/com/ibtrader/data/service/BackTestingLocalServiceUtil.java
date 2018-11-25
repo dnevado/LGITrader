@@ -41,6 +41,11 @@ public class BackTestingLocalServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to {@link com.ibtrader.data.service.impl.BackTestingLocalServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
+	public static boolean removeBackTestingId(long companyId, long groupId,
+		long backtestingId) {
+		return getService()
+				   .removeBackTestingId(companyId, groupId, backtestingId);
+	}
 
 	/**
 	* Adds the back testing to the database. Also notifies the appropriate model listeners.
@@ -297,6 +302,13 @@ public class BackTestingLocalServiceUtil {
 		return getService()
 				   .getBackTestingsByUuidAndCompanyId(uuid, companyId, start,
 			end, orderByComparator);
+	}
+
+	public static long countBackTestingShareStatus(long shareId,
+		long companyId, long groupId, java.lang.String status) {
+		return getService()
+				   .countBackTestingShareStatus(shareId, companyId, groupId,
+			status);
 	}
 
 	/**

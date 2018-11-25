@@ -27,6 +27,7 @@ import com.ibtrader.data.model.StrategyShare;
 import com.ibtrader.data.model.impl.StrategyImpl;
 import com.ibtrader.data.service.BackTestingLocalServiceUtil;
 import com.ibtrader.data.service.ConfigLocalServiceUtil;
+import com.ibtrader.data.service.HistoricalRealtimeLocalServiceUtil;
 import com.ibtrader.data.service.IBOrderLocalServiceUtil;
 import com.ibtrader.data.service.MarketLocalServiceUtil;
 import com.ibtrader.data.service.PositionLocalServiceUtil;
@@ -34,6 +35,7 @@ import com.ibtrader.data.service.ShareLocalServiceUtil;
 import com.ibtrader.data.service.StrategyLocalServiceUtil;
 import com.ibtrader.data.service.StrategyShareLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
@@ -80,13 +82,15 @@ public class CronUtil {
 		SimpleDateFormat sdf = new SimpleDateFormat ("yyyyMM");
 		LocalDateTime  _now =  LocalDateTime .now();  
 		
+		BackTesting _freshBackTesting = null;
 	/* 	while (true)
 		{
 		*/
 		List<Organization> lOrganization = OrganizationLocalServiceUtil.getOrganizations(companyId, OrganizationConstants.DEFAULT_PARENT_ORGANIZATION_ID, 0, OrganizationLocalServiceUtil.getOrganizationsCount()+1);
 		if (lOrganization.isEmpty())
 			return;	
-			
+		
+		
 		for (Organization _Organization : lOrganization )
 		{
 			try
@@ -104,25 +108,34 @@ public class CronUtil {
 			{
 				
 				
-				Share oShare = ShareLocalServiceUtil.getShare(backtesting.getShareId()); 
+				Share oShare = ShareLocalServiceUtil.fetchShare(backtesting.getShareId()); 
 				Market oMarket = MarketLocalServiceUtil.getMarket(oShare.getMarketId());
+				
 				
 				Calendar DateFromSimulation = Calendar.getInstance();
 		    	Calendar DateToSimulation =Calendar.getInstance();
 				
 		    	Date fromDate = backtesting.getFromDate();
-		    	if (backtesting.getFromDate().before(backtesting.getModifiedDate()))
-		    		fromDate = backtesting.getModifiedDate();
+		    	if (backtesting.getFromDate().before(backtesting.getLastRunDate()))
+		    		fromDate = backtesting.getLastRunDate();
 		    	
 		    	/* corte entre medias, acabóp  */
-		    	if (backtesting.getModifiedDate().after(backtesting.getToDate()))
+		    	if (backtesting.getLastRunDate().after(backtesting.getToDate()) || (Validator.isNull(oShare) || Validator.isNull(oMarket)))
 		    	{
 		    		
 		    		backtesting.setStatus(IBTraderConstants.statusSimulation.Processed.toString());
+		    		backtesting.setEndDate(new Date());
 					BackTestingLocalServiceUtil.updateBackTesting(backtesting);
+					break;
 		    		
 		    	}
-		    		
+		    	/* arranque del proceso */
+		    	if (Validator.isNull(backtesting.getStartDate()))
+		    	{		    	
+	    			backtesting.setStartDate(new Date());	
+	    			BackTestingLocalServiceUtil.updateBackTesting(backtesting);
+		    	}
+	
 		    	
 		    	
 		    	DateToSimulation.setTimeInMillis(backtesting.getToDate().getTime());
@@ -164,7 +177,7 @@ public class CronUtil {
 	    				StrategyImpl _strategyImpl= (StrategyImpl) Utilities.getContextClassLoader().loadClass(oStrategyShare.getClassName()).newInstance();
 	    				StrategyShare strategyShare =  StrategyShareLocalServiceUtil.getByCommpanyShareStrategyId(backtesting.getGroupId(), backtesting.getCompanyId(), backtesting.getShareId(), oStrategyShare.getStrategyID());
     					_strategyImpl.init(backtesting.getCompanyId());   // verify if custom fields are created and filled
-    					_strategyImpl.init_simulation();   // verify if custom fields are created and filled
+    					_strategyImpl.init_simulation(backtesting);   // verify if custom fields are created and filled
     				
     					if (_strategyImpl.verify(oShare, oMarket,strategyShare,DateDayIni.getTime()))
     					{		
@@ -183,14 +196,59 @@ public class CronUtil {
 	    				
 	    			}
 	    			
-	    			backtesting.setModifiedDate(DateDayIni.getTime());
-					BackTestingLocalServiceUtil.updateBackTesting(backtesting);
+	    			/* ANTES DE ACTUALIZAR, VERIFICAMOS SI SE HA PARADO O ELIMINADO EL BACKTESTING A TRAVES DE LA ADMINISTRACION */
+	    			_freshBackTesting = BackTestingLocalServiceUtil.fetchBackTesting(backtesting.getBackTId());
+	    			if (Validator.isNull(_freshBackTesting) || !_freshBackTesting.getStatus().equals(backtesting.getStatus()))
+	    					break;
+	    			_freshBackTesting.setLastRunDate(DateDayIni.getTime());
+					BackTestingLocalServiceUtil.updateBackTesting(_freshBackTesting);
 	    			 
 	    		} // for (int jDAY=0;jDAY<=NUM_DAYS_;jDAY++)
 				
+				_freshBackTesting = BackTestingLocalServiceUtil.fetchBackTesting(backtesting.getBackTId());
+    			if (Validator.isNull(_freshBackTesting) || !_freshBackTesting.getStatus().equals(backtesting.getStatus()))
+    					break;
+    			
 				
-				backtesting.setStatus(IBTraderConstants.statusSimulation.Processed.toString());
-				BackTestingLocalServiceUtil.updateBackTesting(backtesting);
+    			_freshBackTesting.setEndDate(new Date());
+    			_freshBackTesting.setStatus(IBTraderConstants.statusSimulation.Processed.toString());
+				
+				
+				/* llamamos al servicio para actualizar los totales */
+				String position_mode = Utilities.getPositionModeType(_freshBackTesting.getFromDate(), _freshBackTesting.getCompanyId(),_freshBackTesting.getGroupId()); 
+				JSONArray results = PositionLocalServiceUtil.findPositionClosedResults(_freshBackTesting.getFromDate(), _freshBackTesting.getToDate(), _freshBackTesting.getGroupId(), _freshBackTesting.getCompanyId(), position_mode, _freshBackTesting.getBackTId());
+				long totalpositions_buy=0;
+				long totalpositions_sell=0;
+				String  type  = "";
+				double totalprofit_buy=0;
+				double totalprofit_sell=0;
+					
+				if (results != null && results.length() > 0) {
+					for (int i = 0; i < results.length(); i++) {
+						JSONObject result = results.getJSONObject(i);						
+						type = result.getString("TIPO").replace("\"","");
+						if (type.equals(PositionStates.statusTWSFire.BUY.toString()))
+						{
+								totalprofit_buy    += result.getDouble("MARGENBENEFICIO");
+								totalpositions_buy +=  result.getLong("OPERACIONES");
+						}
+						if (type.equals(PositionStates.statusTWSFire.SELL.toString()))
+						{
+							totalprofit_sell    += result.getDouble("MARGENBENEFICIO");
+							totalpositions_sell +=  result.getLong("OPERACIONES");
+						}
+
+					}
+					
+					_freshBackTesting.setCountordersBUY(totalpositions_buy);
+					_freshBackTesting.setCountordersSELL(totalpositions_sell);
+					_freshBackTesting.setProfitordersBUY(totalprofit_buy);
+					_freshBackTesting.setProfitordersSELL(totalprofit_sell);
+					_freshBackTesting.setStatus(IBTraderConstants.statusSimulation.Processed.toString());
+					
+				}
+				
+				BackTestingLocalServiceUtil.updateBackTesting(_freshBackTesting);
 				
 			} //BackTesting backtesting : lBackTesting
 			
@@ -968,66 +1026,63 @@ public class CronUtil {
 				    			 	if (!oShare.IsTradeable()) 
 				    			 		continue;
 				    			 	
-					    			List<Strategy> _lStrategies = StrategyLocalServiceUtil.findByActiveCompanyId(Boolean.TRUE, oShare.getCompanyId());
-					    			List<StrategyShare> _lStrategiesOfShare = StrategyShareLocalServiceUtil.getByGroupCompanyShareId(oShare.getGroupId(), 
-					    						oShare.getCompanyId(), oShare.getShareId());
-					    			
-					    			for (Strategy oStrategy :_lStrategies)
+				    			 	
+				    			 	
+				    			 	List<Strategy> _lStrategiesOfShare = StrategyShareLocalServiceUtil.findByActiveStrategies(Boolean.TRUE,
+				    			 			oShare.getShareId(),oShare.getCompanyId(), oShare.getGroupId());
+				    				
+				    				for (Strategy oStrategyShare :_lStrategiesOfShare)
 					    			{
-					    				
-					    				for (StrategyShare oStrategyShare :_lStrategiesOfShare)
-						    			{
-					    					// salimos si no es la misma 
-					    					if (oStrategyShare.getStrategyId()!=oStrategy.getStrategyID())
-					    						continue;
-					    					
-					    					
-					    					if (!oStrategyShare.isActive()) continue;  // si no esta activa, no se trata 
-					    					StrategyImpl _strategyImpl= (StrategyImpl) Utilities.getContextClassLoader().loadClass(oStrategy.getClassName()).newInstance();
-					    					_strategyImpl.init(oShare.getCompanyId());   // verify if custom fields are created and filled
-					    					//if (_strategyImpl.verify(oShare, oMarket,oStrategyShare) && wrapper.isConnected())
+				    				
+				    				if (!oStrategyShare.isActive()) continue;  // si no esta activa, no se trata 
 
-					    					if (_strategyImpl.verify(oShare, oMarket,oStrategyShare,null) && wrapper.isConnected())
-					    					{		
-					    											    							
-					    							long positionId = _strategyImpl.execute(oShare, oMarket,null);
-					    							// 1. ESTABLECEMOS EL CONTEXTO 
-					    							if (positionId!=-1) // no hay error 
-					    							{	
-					    								if (!wrapper.isConnected()) // si se produce un error, salimos, eliminando order.
-					    								{
-					    									Position _position = PositionLocalServiceUtil.fetchPosition(positionId);
-					    									/* borramos ordenes y posicion */
-					    									if (_position!=null)
-					    									{
-					    										if (_position.getPositionId_tws_in()>0)	
-						    										IBOrderLocalServiceUtil.deleteByOrderCompanyGroup(_position.getPositionId_tws_in(), _Organization.getCompanyId(), _Organization.getGroupId(),_position.getClientId_in(),-1);
-						    									if (_position.getPositionId_tws_out()>0)	
-						    										IBOrderLocalServiceUtil.deleteByOrderCompanyGroup(_position.getPositionId_tws_out(), _Organization.getCompanyId(), _Organization.getGroupId(),_position.getClientId_out(),-1);
-					    										PositionLocalServiceUtil.deletePosition(positionId);
-					    									}
-						    								continue;
-					    								} // fin de wrapper.isConnected()
-					    								_log.debug("Opening order CronUTIL,threadID:" + Thread.currentThread().getId()  +",wrapper:" + wrapper.getClient().connectedHost() + "," + _PORT + ",group:" + _Organization.getGroupId() + ",_CLIENT_ID:" + _CLIENT_ID);
-					    								wrapper.set_ibtarget_share(oShare);
-					    								//	wrapper.setStrategyshare(oStrategyShare);
-					    								//  1. ABRIMOS CANCELACION EN SU CASO 
-					    							    //  2. ABRIMOS OPERACION CON EL ORDER ESPECIFICAADO EN EL METHOD execute
-					    								if (_strategyImpl.getClass().getName().equals(IBStrategyCancelPosition.class.getName()))
-					    									wrapper.cancelOrder(_strategyImpl.getTargetContract(), _strategyImpl.getTargetOrder(),_strategyImpl.getChildsOrder(),null,positionId);
-					    								else						    									
-					    									wrapper.openOrder(_strategyImpl.getTargetContract(), _strategyImpl.getTargetOrder(),_strategyImpl.getChildsOrder(),null,positionId);
+				    					
+				    				StrategyImpl _strategyImpl= (StrategyImpl) Utilities.getContextClassLoader().loadClass(oStrategyShare.getClassName()).newInstance();
+				    				StrategyShare strategyShare =  StrategyShareLocalServiceUtil.getByCommpanyShareStrategyId(oShare.getGroupId(), oShare.getCompanyId(), oShare.getShareId(), oStrategyShare.getStrategyID());
+			    					_strategyImpl.init(oShare.getCompanyId());   // verify if custom fields are created and filled
+			    				
+			    					if (_strategyImpl.verify(oShare, oMarket,strategyShare,null) && wrapper.isConnected())
+			    					{		
+			    											    							
+			    							long positionId = _strategyImpl.execute(oShare, oMarket,null);
+			    							// 1. ESTABLECEMOS EL CONTEXTO 
+			    							if (positionId!=-1) // no hay error 
+			    							{	
+			    								if (!wrapper.isConnected()) // si se produce un error, salimos, eliminando order.
+			    								{
+			    									Position _position = PositionLocalServiceUtil.fetchPosition(positionId);
+			    									/* borramos ordenes y posicion */
+			    									if (_position!=null)
+			    									{
+			    										if (_position.getPositionId_tws_in()>0)	
+				    										IBOrderLocalServiceUtil.deleteByOrderCompanyGroup(_position.getPositionId_tws_in(), _Organization.getCompanyId(), _Organization.getGroupId(),_position.getClientId_in(),-1);
+				    									if (_position.getPositionId_tws_out()>0)	
+				    										IBOrderLocalServiceUtil.deleteByOrderCompanyGroup(_position.getPositionId_tws_out(), _Organization.getCompanyId(), _Organization.getGroupId(),_position.getClientId_out(),-1);
+			    										PositionLocalServiceUtil.deletePosition(positionId);
+			    									}
+				    								continue;
+			    								} // fin de wrapper.isConnected()
+			    								_log.debug("Opening order CronUTIL,threadID:" + Thread.currentThread().getId()  +",wrapper:" + wrapper.getClient().connectedHost() + "," + _PORT + ",group:" + _Organization.getGroupId() + ",_CLIENT_ID:" + _CLIENT_ID);
+			    								wrapper.set_ibtarget_share(oShare);
+			    								//	wrapper.setStrategyshare(oStrategyShare);
+			    								//  1. ABRIMOS CANCELACION EN SU CASO 
+			    							    //  2. ABRIMOS OPERACION CON EL ORDER ESPECIFICAADO EN EL METHOD execute
+			    								if (_strategyImpl.getClass().getName().equals(IBStrategyCancelPosition.class.getName()))
+			    									wrapper.cancelOrder(_strategyImpl.getTargetContract(), _strategyImpl.getTargetOrder(),_strategyImpl.getChildsOrder(),null,positionId);
+			    								else						    									
+			    									wrapper.openOrder(_strategyImpl.getTargetContract(), _strategyImpl.getTargetOrder(),_strategyImpl.getChildsOrder(),null,positionId);
 
-					    								/* LA RAZON ES QUE ES QUE METE DOS O TRES OPERACIONES A LA VEZ A PESAR DE TENER LAS VALIDACIONES 
-					    								 * SEGUNDO PARO */
-					    							//	Thread.sleep(1000);
-					    							}
-					    							
-					    							
-					    					}
-					    					
-					    				}
+			    								/* LA RAZON ES QUE ES QUE METE DOS O TRES OPERACIONES A LA VEZ A PESAR DE TENER LAS VALIDACIONES 
+			    								 * SEGUNDO PARO */
+			    							//	Thread.sleep(1000);
+			    							}
+			    							
+			    							
+			    					} // end if (_strategyImpl.verify(oShare, oMarket,strategyShare,null) && wrapper.isConnected())
+					    			
 					    			}  // for (Strategy oStrategy :_lStrategies)
+				    			 	
+					    		
 				    		 }  //  for (Share oShare :lShare)
 				    	} // for (Market oMarket : lActiveMarkets)							    							
 			   		} // en try 

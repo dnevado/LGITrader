@@ -172,23 +172,24 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.service.foo.service.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.ibtrader.data.model.Position"),
 			true);
-	public static final long CLIENTID_IN_COLUMN_BITMASK = 1L;
-	public static final long CLIENTID_OUT_COLUMN_BITMASK = 2L;
-	public static final long COMPANYID_COLUMN_BITMASK = 4L;
-	public static final long DATE_IN_COLUMN_BITMASK = 8L;
-	public static final long DATE_OUT_COLUMN_BITMASK = 16L;
-	public static final long DATE_REAL_IN_COLUMN_BITMASK = 32L;
-	public static final long DATE_REAL_OUT_COLUMN_BITMASK = 64L;
-	public static final long GROUPID_COLUMN_BITMASK = 128L;
-	public static final long PENDINGCANCELLED_COLUMN_BITMASK = 256L;
-	public static final long POSITIONID_TWS_IN_COLUMN_BITMASK = 512L;
-	public static final long POSITIONID_TWS_OUT_COLUMN_BITMASK = 1024L;
-	public static final long POSITION_MODE_COLUMN_BITMASK = 2048L;
-	public static final long SHAREID_COLUMN_BITMASK = 4096L;
-	public static final long STATE_COLUMN_BITMASK = 8192L;
-	public static final long STATE_IN_COLUMN_BITMASK = 16384L;
-	public static final long STATE_OUT_COLUMN_BITMASK = 32768L;
-	public static final long UUID_COLUMN_BITMASK = 65536L;
+	public static final long BACKTESTINGID_COLUMN_BITMASK = 1L;
+	public static final long CLIENTID_IN_COLUMN_BITMASK = 2L;
+	public static final long CLIENTID_OUT_COLUMN_BITMASK = 4L;
+	public static final long COMPANYID_COLUMN_BITMASK = 8L;
+	public static final long DATE_IN_COLUMN_BITMASK = 16L;
+	public static final long DATE_OUT_COLUMN_BITMASK = 32L;
+	public static final long DATE_REAL_IN_COLUMN_BITMASK = 64L;
+	public static final long DATE_REAL_OUT_COLUMN_BITMASK = 128L;
+	public static final long GROUPID_COLUMN_BITMASK = 256L;
+	public static final long PENDINGCANCELLED_COLUMN_BITMASK = 512L;
+	public static final long POSITIONID_TWS_IN_COLUMN_BITMASK = 1024L;
+	public static final long POSITIONID_TWS_OUT_COLUMN_BITMASK = 2048L;
+	public static final long POSITION_MODE_COLUMN_BITMASK = 4096L;
+	public static final long SHAREID_COLUMN_BITMASK = 8192L;
+	public static final long STATE_COLUMN_BITMASK = 16384L;
+	public static final long STATE_IN_COLUMN_BITMASK = 32768L;
+	public static final long STATE_OUT_COLUMN_BITMASK = 65536L;
+	public static final long UUID_COLUMN_BITMASK = 131072L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -1282,7 +1283,19 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 
 	@Override
 	public void setBacktestingId(long backtestingId) {
+		_columnBitmask |= BACKTESTINGID_COLUMN_BITMASK;
+
+		if (!_setOriginalBacktestingId) {
+			_setOriginalBacktestingId = true;
+
+			_originalBacktestingId = _backtestingId;
+		}
+
 		_backtestingId = backtestingId;
+	}
+
+	public long getOriginalBacktestingId() {
+		return _originalBacktestingId;
 	}
 
 	@Override
@@ -1483,6 +1496,10 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 		positionModelImpl._setOriginalPendingcancelled = false;
 
 		positionModelImpl._originalPosition_mode = positionModelImpl._position_mode;
+
+		positionModelImpl._originalBacktestingId = positionModelImpl._backtestingId;
+
+		positionModelImpl._setOriginalBacktestingId = false;
 
 		positionModelImpl._columnBitmask = 0;
 	}
@@ -2003,6 +2020,8 @@ public class PositionModelImpl extends BaseModelImpl<Position>
 	private double _totalcommision;
 	private boolean _forceclose;
 	private long _backtestingId;
+	private long _originalBacktestingId;
+	private boolean _setOriginalBacktestingId;
 	private long _columnBitmask;
 	private Position _escapedModel;
 }

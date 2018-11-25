@@ -532,18 +532,19 @@ public interface BackTestingPersistence extends BasePersistence<BackTesting> {
 		long groupId);
 
 	/**
-	* Returns all the back testings where status = &#63; and companyId = &#63; and groupId = &#63;.
+	* Returns all the back testings where status = &#63; and companyId = &#63; and groupId = &#63; and shareId = &#63;.
 	*
 	* @param status the status
 	* @param companyId the company ID
 	* @param groupId the group ID
+	* @param shareId the share ID
 	* @return the matching back testings
 	*/
-	public java.util.List<BackTesting> findByStatusCompanyGroup(
-		java.lang.String status, long companyId, long groupId);
+	public java.util.List<BackTesting> findByStatusShareCompanyGroup(
+		java.lang.String status, long companyId, long groupId, long shareId);
 
 	/**
-	* Returns a range of all the back testings where status = &#63; and companyId = &#63; and groupId = &#63;.
+	* Returns a range of all the back testings where status = &#63; and companyId = &#63; and groupId = &#63; and shareId = &#63;.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link BackTestingModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -552,16 +553,17 @@ public interface BackTestingPersistence extends BasePersistence<BackTesting> {
 	* @param status the status
 	* @param companyId the company ID
 	* @param groupId the group ID
+	* @param shareId the share ID
 	* @param start the lower bound of the range of back testings
 	* @param end the upper bound of the range of back testings (not inclusive)
 	* @return the range of matching back testings
 	*/
-	public java.util.List<BackTesting> findByStatusCompanyGroup(
-		java.lang.String status, long companyId, long groupId, int start,
-		int end);
+	public java.util.List<BackTesting> findByStatusShareCompanyGroup(
+		java.lang.String status, long companyId, long groupId, long shareId,
+		int start, int end);
 
 	/**
-	* Returns an ordered range of all the back testings where status = &#63; and companyId = &#63; and groupId = &#63;.
+	* Returns an ordered range of all the back testings where status = &#63; and companyId = &#63; and groupId = &#63; and shareId = &#63;.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link BackTestingModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -570,18 +572,19 @@ public interface BackTestingPersistence extends BasePersistence<BackTesting> {
 	* @param status the status
 	* @param companyId the company ID
 	* @param groupId the group ID
+	* @param shareId the share ID
 	* @param start the lower bound of the range of back testings
 	* @param end the upper bound of the range of back testings (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching back testings
 	*/
-	public java.util.List<BackTesting> findByStatusCompanyGroup(
-		java.lang.String status, long companyId, long groupId, int start,
-		int end,
+	public java.util.List<BackTesting> findByStatusShareCompanyGroup(
+		java.lang.String status, long companyId, long groupId, long shareId,
+		int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<BackTesting> orderByComparator);
 
 	/**
-	* Returns an ordered range of all the back testings where status = &#63; and companyId = &#63; and groupId = &#63;.
+	* Returns an ordered range of all the back testings where status = &#63; and companyId = &#63; and groupId = &#63; and shareId = &#63;.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link BackTestingModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -590,110 +593,119 @@ public interface BackTestingPersistence extends BasePersistence<BackTesting> {
 	* @param status the status
 	* @param companyId the company ID
 	* @param groupId the group ID
+	* @param shareId the share ID
 	* @param start the lower bound of the range of back testings
 	* @param end the upper bound of the range of back testings (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @param retrieveFromCache whether to retrieve from the finder cache
 	* @return the ordered range of matching back testings
 	*/
-	public java.util.List<BackTesting> findByStatusCompanyGroup(
-		java.lang.String status, long companyId, long groupId, int start,
-		int end,
+	public java.util.List<BackTesting> findByStatusShareCompanyGroup(
+		java.lang.String status, long companyId, long groupId, long shareId,
+		int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<BackTesting> orderByComparator,
 		boolean retrieveFromCache);
 
 	/**
-	* Returns the first back testing in the ordered set where status = &#63; and companyId = &#63; and groupId = &#63;.
+	* Returns the first back testing in the ordered set where status = &#63; and companyId = &#63; and groupId = &#63; and shareId = &#63;.
 	*
 	* @param status the status
 	* @param companyId the company ID
 	* @param groupId the group ID
+	* @param shareId the share ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching back testing
 	* @throws NoSuchBackTestingException if a matching back testing could not be found
 	*/
-	public BackTesting findByStatusCompanyGroup_First(java.lang.String status,
-		long companyId, long groupId,
+	public BackTesting findByStatusShareCompanyGroup_First(
+		java.lang.String status, long companyId, long groupId, long shareId,
 		com.liferay.portal.kernel.util.OrderByComparator<BackTesting> orderByComparator)
 		throws NoSuchBackTestingException;
 
 	/**
-	* Returns the first back testing in the ordered set where status = &#63; and companyId = &#63; and groupId = &#63;.
+	* Returns the first back testing in the ordered set where status = &#63; and companyId = &#63; and groupId = &#63; and shareId = &#63;.
 	*
 	* @param status the status
 	* @param companyId the company ID
 	* @param groupId the group ID
+	* @param shareId the share ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching back testing, or <code>null</code> if a matching back testing could not be found
 	*/
-	public BackTesting fetchByStatusCompanyGroup_First(
-		java.lang.String status, long companyId, long groupId,
+	public BackTesting fetchByStatusShareCompanyGroup_First(
+		java.lang.String status, long companyId, long groupId, long shareId,
 		com.liferay.portal.kernel.util.OrderByComparator<BackTesting> orderByComparator);
 
 	/**
-	* Returns the last back testing in the ordered set where status = &#63; and companyId = &#63; and groupId = &#63;.
+	* Returns the last back testing in the ordered set where status = &#63; and companyId = &#63; and groupId = &#63; and shareId = &#63;.
 	*
 	* @param status the status
 	* @param companyId the company ID
 	* @param groupId the group ID
+	* @param shareId the share ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching back testing
 	* @throws NoSuchBackTestingException if a matching back testing could not be found
 	*/
-	public BackTesting findByStatusCompanyGroup_Last(java.lang.String status,
-		long companyId, long groupId,
+	public BackTesting findByStatusShareCompanyGroup_Last(
+		java.lang.String status, long companyId, long groupId, long shareId,
 		com.liferay.portal.kernel.util.OrderByComparator<BackTesting> orderByComparator)
 		throws NoSuchBackTestingException;
 
 	/**
-	* Returns the last back testing in the ordered set where status = &#63; and companyId = &#63; and groupId = &#63;.
+	* Returns the last back testing in the ordered set where status = &#63; and companyId = &#63; and groupId = &#63; and shareId = &#63;.
 	*
 	* @param status the status
 	* @param companyId the company ID
 	* @param groupId the group ID
+	* @param shareId the share ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching back testing, or <code>null</code> if a matching back testing could not be found
 	*/
-	public BackTesting fetchByStatusCompanyGroup_Last(java.lang.String status,
-		long companyId, long groupId,
+	public BackTesting fetchByStatusShareCompanyGroup_Last(
+		java.lang.String status, long companyId, long groupId, long shareId,
 		com.liferay.portal.kernel.util.OrderByComparator<BackTesting> orderByComparator);
 
 	/**
-	* Returns the back testings before and after the current back testing in the ordered set where status = &#63; and companyId = &#63; and groupId = &#63;.
+	* Returns the back testings before and after the current back testing in the ordered set where status = &#63; and companyId = &#63; and groupId = &#63; and shareId = &#63;.
 	*
 	* @param backTId the primary key of the current back testing
 	* @param status the status
 	* @param companyId the company ID
 	* @param groupId the group ID
+	* @param shareId the share ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next back testing
 	* @throws NoSuchBackTestingException if a back testing with the primary key could not be found
 	*/
-	public BackTesting[] findByStatusCompanyGroup_PrevAndNext(long backTId,
-		java.lang.String status, long companyId, long groupId,
+	public BackTesting[] findByStatusShareCompanyGroup_PrevAndNext(
+		long backTId, java.lang.String status, long companyId, long groupId,
+		long shareId,
 		com.liferay.portal.kernel.util.OrderByComparator<BackTesting> orderByComparator)
 		throws NoSuchBackTestingException;
 
 	/**
-	* Removes all the back testings where status = &#63; and companyId = &#63; and groupId = &#63; from the database.
+	* Removes all the back testings where status = &#63; and companyId = &#63; and groupId = &#63; and shareId = &#63; from the database.
 	*
 	* @param status the status
 	* @param companyId the company ID
 	* @param groupId the group ID
+	* @param shareId the share ID
 	*/
-	public void removeByStatusCompanyGroup(java.lang.String status,
-		long companyId, long groupId);
+	public void removeByStatusShareCompanyGroup(java.lang.String status,
+		long companyId, long groupId, long shareId);
 
 	/**
-	* Returns the number of back testings where status = &#63; and companyId = &#63; and groupId = &#63;.
+	* Returns the number of back testings where status = &#63; and companyId = &#63; and groupId = &#63; and shareId = &#63;.
 	*
 	* @param status the status
 	* @param companyId the company ID
 	* @param groupId the group ID
+	* @param shareId the share ID
 	* @return the number of matching back testings
 	*/
-	public int countByStatusCompanyGroup(java.lang.String status,
-		long companyId, long groupId);
+	public int countByStatusShareCompanyGroup(java.lang.String status,
+		long companyId, long groupId, long shareId);
 
 	/**
 	* Caches the back testing in the entity cache if it is enabled.

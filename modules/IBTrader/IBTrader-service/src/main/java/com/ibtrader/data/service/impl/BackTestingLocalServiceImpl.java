@@ -20,7 +20,10 @@ import java.util.List;
 
 import com.ibtrader.constants.IBTraderConstants;
 import com.ibtrader.data.model.BackTesting;
+import com.ibtrader.data.model.Position;
+import com.ibtrader.data.service.PositionLocalServiceUtil;
 import com.ibtrader.data.service.base.BackTestingLocalServiceBaseImpl;
+import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 
@@ -46,6 +49,46 @@ public class BackTestingLocalServiceImpl extends BackTestingLocalServiceBaseImpl
 	 *
 	 * Never reference this class directly. Always use {@link com.ibtrader.data.service.BackTestingLocalServiceUtil} to access the back testing local service.
 	 */
+	
+	public boolean removeBackTestingId(long companyId, long groupId, long backtestingId)
+	{
+		ActionableDynamicQuery adq = PositionLocalServiceUtil.getActionableDynamicQuery();
+
+	    adq.setAddCriteriaMethod(new ActionableDynamicQuery.AddCriteriaMethod() {
+
+	       @Override
+	       public void addCriteria(DynamicQuery dynamicQuery) {
+	         dynamicQuery.add(RestrictionsFactoryUtil.eq("backtestingId", backtestingId));
+	         dynamicQuery.add(RestrictionsFactoryUtil.eq("companyId", companyId));
+	         dynamicQuery.add(RestrictionsFactoryUtil.eq("groupId", groupId));
+	       }
+
+	    });
+
+	    adq.setPerformActionMethod(new ActionableDynamicQuery.PerformActionMethod<Position>() {
+
+	       @Override
+	       public void performAction(Position position) {
+	        
+	         PositionLocalServiceUtil.deletePosition(position);
+	       }
+
+	    });
+
+	    try {
+	       adq.performActions();
+	       backTestingLocalService.deleteBackTesting(backtestingId);
+	       return true;
+	    }
+	    catch (Exception e) {
+	       e.printStackTrace();
+	       return false;
+	    }
+	}
+	public long  countBackTestingShareStatus(long shareId, long companyId, long groupId, String status)
+	{
+		return getBackTestingPersistence().countByStatusShareCompanyGroup(status,companyId, groupId, shareId); 
+	}
 	public List<BackTesting> findByShareCompanyGroup(long shareId, long companyId, long groupId)
 	{
 		return getBackTestingPersistence().findByShareCompanyGroup(shareId,companyId, groupId);

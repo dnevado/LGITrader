@@ -68,6 +68,7 @@ public class BackTestingWrapper implements BackTesting,
 		attributes.put("modifiedDate", getModifiedDate());
 		attributes.put("fromDate", getFromDate());
 		attributes.put("toDate", getToDate());
+		attributes.put("lastRunDate", getLastRunDate());
 		attributes.put("shareId", getShareId());
 		attributes.put("countordersBUY", getCountordersBUY());
 		attributes.put("countordersSELL", getCountordersSELL());
@@ -75,6 +76,8 @@ public class BackTestingWrapper implements BackTesting,
 		attributes.put("profitordersSELL", getProfitordersSELL());
 		attributes.put("status", getStatus());
 		attributes.put("description", getDescription());
+		attributes.put("startDate", getStartDate());
+		attributes.put("endDate", getEndDate());
 
 		return attributes;
 	}
@@ -129,6 +132,12 @@ public class BackTestingWrapper implements BackTesting,
 			setToDate(toDate);
 		}
 
+		Date lastRunDate = (Date)attributes.get("lastRunDate");
+
+		if (lastRunDate != null) {
+			setLastRunDate(lastRunDate);
+		}
+
 		Long shareId = (Long)attributes.get("shareId");
 
 		if (shareId != null) {
@@ -170,6 +179,18 @@ public class BackTestingWrapper implements BackTesting,
 		if (description != null) {
 			setDescription(description);
 		}
+
+		Date startDate = (Date)attributes.get("startDate");
+
+		if (startDate != null) {
+			setStartDate(startDate);
+		}
+
+		Date endDate = (Date)attributes.get("endDate");
+
+		if (endDate != null) {
+			setEndDate(endDate);
+		}
 	}
 
 	@Override
@@ -195,6 +216,21 @@ public class BackTestingWrapper implements BackTesting,
 	@Override
 	public boolean isNew() {
 		return _backTesting.isNew();
+	}
+
+	@Override
+	public boolean isRemovable() {
+		return _backTesting.isRemovable();
+	}
+
+	@Override
+	public boolean isStartable() {
+		return _backTesting.isStartable();
+	}
+
+	@Override
+	public boolean isStoppable() {
+		return _backTesting.isStoppable();
 	}
 
 	@Override
@@ -298,6 +334,16 @@ public class BackTestingWrapper implements BackTesting,
 	}
 
 	/**
+	* Returns the end date of this back testing.
+	*
+	* @return the end date of this back testing
+	*/
+	@Override
+	public Date getEndDate() {
+		return _backTesting.getEndDate();
+	}
+
+	/**
 	* Returns the from date of this back testing.
 	*
 	* @return the from date of this back testing
@@ -308,6 +354,16 @@ public class BackTestingWrapper implements BackTesting,
 	}
 
 	/**
+	* Returns the last run date of this back testing.
+	*
+	* @return the last run date of this back testing
+	*/
+	@Override
+	public Date getLastRunDate() {
+		return _backTesting.getLastRunDate();
+	}
+
+	/**
 	* Returns the modified date of this back testing.
 	*
 	* @return the modified date of this back testing
@@ -315,6 +371,16 @@ public class BackTestingWrapper implements BackTesting,
 	@Override
 	public Date getModifiedDate() {
 		return _backTesting.getModifiedDate();
+	}
+
+	/**
+	* Returns the start date of this back testing.
+	*
+	* @return the start date of this back testing
+	*/
+	@Override
+	public Date getStartDate() {
+		return _backTesting.getStartDate();
 	}
 
 	/**
@@ -467,6 +533,16 @@ public class BackTestingWrapper implements BackTesting,
 		_backTesting.setDescription(description);
 	}
 
+	/**
+	* Sets the end date of this back testing.
+	*
+	* @param endDate the end date of this back testing
+	*/
+	@Override
+	public void setEndDate(Date endDate) {
+		_backTesting.setEndDate(endDate);
+	}
+
 	@Override
 	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
 		_backTesting.setExpandoBridgeAttributes(expandoBridge);
@@ -501,6 +577,16 @@ public class BackTestingWrapper implements BackTesting,
 	@Override
 	public void setGroupId(long groupId) {
 		_backTesting.setGroupId(groupId);
+	}
+
+	/**
+	* Sets the last run date of this back testing.
+	*
+	* @param lastRunDate the last run date of this back testing
+	*/
+	@Override
+	public void setLastRunDate(Date lastRunDate) {
+		_backTesting.setLastRunDate(lastRunDate);
 	}
 
 	/**
@@ -561,6 +647,16 @@ public class BackTestingWrapper implements BackTesting,
 	@Override
 	public void setShareId(long shareId) {
 		_backTesting.setShareId(shareId);
+	}
+
+	/**
+	* Sets the start date of this back testing.
+	*
+	* @param startDate the start date of this back testing
+	*/
+	@Override
+	public void setStartDate(Date startDate) {
+		_backTesting.setStartDate(startDate);
 	}
 
 	/**

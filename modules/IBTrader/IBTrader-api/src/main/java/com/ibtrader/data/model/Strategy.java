@@ -76,7 +76,7 @@ public interface Strategy extends StrategyModel, PersistedModel {
 
 	public void init(long companyId);
 
-	public void init_simulation();
+	public void init_simulation(BackTesting _current_backtesting);
 
 	public boolean activated();
 
@@ -140,4 +140,6 @@ public interface Strategy extends StrategyModel, PersistedModel {
 	* @return the simulation_mode
 	*/
 	public boolean isSimulation_mode();
+
+	public BackTesting getCurrentBackTesting();
 }

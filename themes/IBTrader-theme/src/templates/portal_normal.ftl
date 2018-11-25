@@ -48,28 +48,19 @@
 
 <@liferay_util["include"] page=body_top_include />
 
-<#if is_signed_in>
-        <@liferay.control_menu />
+
+
+
+<#if themeDisplay.getPermissionChecker().isOmniadmin()>
+	<@liferay.control_menu />
 </#if>
+
 
 <div id="wrapper" class="container-fluid">
 		<header>
-			<div id="top">
-					<a class="${logo_css_class}" href="${site_default_url}" title="<@liferay.language_format arguments="${site_name}" key="go-to-x" />">
-						<#if logo_profi == 'true' >
-							<img class="topLogo" alt="IBTrader-theme Logo" src="${images_folder}/profi/site_logo.png"/>
-						<#else>
-							<img class="topLogo" alt="${logo_description}" height="${site_logo_height}" src="${site_logo}" width="${site_logo_width}" />
-						</#if>
-						
-					</a>
-					<nav id="navigation" class="navbar navbar-expand-lg navbar-light bg-light">
-						<#if has_navigation || is_signed_in>
-							<#include "${full_templates_path}/navigation.ftl" />
-						</#if>
-					</nav>
-				<div class="clear"></div>
-			</div>		
+			<#if has_navigation || is_signed_in>
+							<#include "${full_templates_path}/menu.ftl" />
+		   </#if>
 		</header>
 		<div id="content">
 			<div id="main-content">

@@ -1,5 +1,5 @@
 create index IX_A4DA9DB5 on ibtrader_BackTesting (shareId, companyId, groupId);
-create index IX_26DA991F on ibtrader_BackTesting (status[$COLUMN_LENGTH:75$], companyId, groupId);
+create index IX_48457CB on ibtrader_BackTesting (status[$COLUMN_LENGTH:75$], companyId, groupId, shareId);
 create index IX_3325966B on ibtrader_BackTesting (uuid_[$COLUMN_LENGTH:75$], companyId);
 create unique index IX_AB66BBAD on ibtrader_BackTesting (uuid_[$COLUMN_LENGTH:75$], groupId);
 
@@ -41,7 +41,7 @@ create index IX_B316CC76 on ibtrader_Position (groupId, companyId, shareId, date
 create index IX_1F62F1F7 on ibtrader_Position (groupId, companyId, shareId, date_real_in, date_real_out, date_in, date_out);
 create index IX_89A86F04 on ibtrader_Position (groupId, companyId, shareId, position_mode[$COLUMN_LENGTH:75$]);
 create index IX_62F7B2D8 on ibtrader_Position (groupId, companyId, shareId, state_[$COLUMN_LENGTH:75$], date_out);
-create index IX_2A49BBF1 on ibtrader_Position (groupId, companyId, shareId, state_[$COLUMN_LENGTH:75$], date_real_out, date_out, position_mode[$COLUMN_LENGTH:75$]);
+create index IX_51DC01E3 on ibtrader_Position (groupId, companyId, shareId, state_[$COLUMN_LENGTH:75$], date_real_out, date_out, position_mode[$COLUMN_LENGTH:75$], backtestingId);
 create index IX_BB6FD65B on ibtrader_Position (uuid_[$COLUMN_LENGTH:75$], companyId);
 create unique index IX_7C20379D on ibtrader_Position (uuid_[$COLUMN_LENGTH:75$], groupId);
 

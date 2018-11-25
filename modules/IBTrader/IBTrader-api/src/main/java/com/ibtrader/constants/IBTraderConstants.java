@@ -92,8 +92,7 @@ public class IBTraderConstants {
 	public static String   keyPAPER_PATH_TO_CONFIGURATION_FILE = "PAPER_PATH_TO_CONFIGURATION_FILE";
 	public static String   keyPAPER_PATH_TO_EXECUTABLE_FILE = "PAPER_PATH_TO_EXECUTABLE_FILE";  
 	
-	public enum statusSimulation {
-	    Started ("Started"),
+	public enum statusSimulation {	    
 	    Pending  ("Pending"),
 	    Processed  ("Processed");
 	    

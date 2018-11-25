@@ -14,6 +14,9 @@
 
 package com.ibtrader.data.model.impl;
 
+import com.ibtrader.constants.IBTraderConstants;
+import com.ibtrader.util.ConfigKeys;
+
 import aQute.bnd.annotation.ProviderType;
 
 /**
@@ -34,4 +37,19 @@ public class BackTestingImpl extends BackTestingBaseImpl {
 	 */
 	public BackTestingImpl() {
 	}
+	/* PROCESSED Y QUEDAN FECHAS POR TRATAR */
+	public boolean isStartable() {
+
+		return this.getStatus().equals(IBTraderConstants.statusSimulation.Processed.toString()) && 				
+				(this.getLastRunDate().before(this.getToDate()) || this.getLastRunDate().equals(this.getToDate()));
+	}
+	public boolean isStoppable() {
+
+		return this.getStatus().equals(IBTraderConstants.statusSimulation.Pending.toString());
+	}
+	public boolean isRemovable() {
+
+		return this.getStatus().equals(IBTraderConstants.statusSimulation.Processed.toString());
+	}
+	
 }

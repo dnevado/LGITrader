@@ -7,13 +7,16 @@ create table ibtrader_BackTesting (
 	modifiedDate DATE null,
 	fromDate DATE null,
 	toDate DATE null,
+	lastRunDate DATE null,
 	shareId LONG,
 	countordersBUY LONG,
 	countordersSELL LONG,
 	profitordersBUY DOUBLE,
 	profitordersSELL DOUBLE,
 	status VARCHAR(75) null,
-	description TEXT null
+	description TEXT null,
+	startDate DATE null,
+	endDate DATE null
 );
 
 create table ibtrader_Config (

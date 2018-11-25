@@ -35,16 +35,16 @@ public class PositionLocalServiceWrapper implements PositionLocalService,
 
 	@Override
 	public boolean ExistsOpenPosition(long groupId, long companyId,
-		long shareId, java.lang.String positionMode) {
+		long shareId, java.lang.String positionMode, long backtestingId) {
 		return _positionLocalService.ExistsOpenPosition(groupId, companyId,
-			shareId, positionMode);
+			shareId, positionMode, backtestingId);
 	}
 
 	@Override
 	public boolean ExistsPositionToExit(long groupId, long companyId,
-		long shareId, java.lang.String positionMode) {
+		long shareId, java.lang.String positionMode, long backtestingId) {
 		return _positionLocalService.ExistsPositionToExit(groupId, companyId,
-			shareId, positionMode);
+			shareId, positionMode, backtestingId);
 	}
 
 	/**
@@ -138,9 +138,10 @@ public class PositionLocalServiceWrapper implements PositionLocalService,
 
 	@Override
 	public com.ibtrader.data.model.Position findPositionToExit(long groupId,
-		long companyId, long shareId, java.lang.String positionMode) {
+		long companyId, long shareId, java.lang.String positionMode,
+		long backtestingId) {
 		return _positionLocalService.findPositionToExit(groupId, companyId,
-			shareId, positionMode);
+			shareId, positionMode, backtestingId);
 	}
 
 	/**

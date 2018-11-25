@@ -20,6 +20,7 @@ import java.util.Map;
 
 import com.ib.client.Contract;
 import com.ib.client.Order;
+import com.ibtrader.data.model.BackTesting;
 import com.ibtrader.data.model.Market;
 import com.ibtrader.data.model.Share;
 import com.ibtrader.data.model.Strategy;
@@ -78,7 +79,8 @@ public class StrategyImpl extends StrategyBaseImpl {
 	/* nos sirve para devolver los session errors de la funciona validatPara	ms*/
 	private String validateParamsKeysError = "";
 	
-	private boolean simulation_mode = Boolean.FALSE;	
+	private boolean simulation_mode = Boolean.FALSE;
+	private BackTesting current_backtesting = null;
 
 
 	/* COMPORTAMIENTO DE LOS PARAMETROS DE ENTRADA EN CUANTO A TIPOS */
@@ -113,8 +115,9 @@ public class StrategyImpl extends StrategyBaseImpl {
 	
 	/* CREATE THE REQUERIMENT EXPANDOS PARAMETERS */
 	public void init(long companyId) {}
-	public void init_simulation() {
+	public void init_simulation(BackTesting _current_backtesting) {
 		simulation_mode = Boolean.TRUE;
+		current_backtesting = _current_backtesting;
 	}
 	
 	public boolean activated() {return Boolean.TRUE;}
@@ -156,6 +159,7 @@ public class StrategyImpl extends StrategyBaseImpl {
 		this.validateParamsKeysError = validateParamsKeysError;
 	}
 
+	
 	@Override
 	public double getValueIn() {
 		// TODO Auto-generated method stub
@@ -244,6 +248,9 @@ public class StrategyImpl extends StrategyBaseImpl {
 	 */
 	public boolean isSimulation_mode() {
 		return simulation_mode;
+	}
+	public BackTesting getCurrentBackTesting() {
+		return current_backtesting;
 	}
 
 		

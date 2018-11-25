@@ -774,7 +774,7 @@ public interface PositionPersistence extends BasePersistence<Position> {
 		long shareId, java.lang.String state, Date date_out);
 
 	/**
-	* Returns all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63; and date_out = &#63; and position_mode = &#63;.
+	* Returns all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63; and date_out = &#63; and position_mode = &#63; and backtestingId = &#63;.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
@@ -783,14 +783,16 @@ public interface PositionPersistence extends BasePersistence<Position> {
 	* @param date_real_out the date_real_out
 	* @param date_out the date_out
 	* @param position_mode the position_mode
+	* @param backtestingId the backtesting ID
 	* @return the matching positions
 	*/
 	public java.util.List<Position> findByPositionShareStateDatesRealOut(
 		long groupId, long companyId, long shareId, java.lang.String state,
-		Date date_real_out, Date date_out, java.lang.String position_mode);
+		Date date_real_out, Date date_out, java.lang.String position_mode,
+		long backtestingId);
 
 	/**
-	* Returns a range of all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63; and date_out = &#63; and position_mode = &#63;.
+	* Returns a range of all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63; and date_out = &#63; and position_mode = &#63; and backtestingId = &#63;.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -803,6 +805,7 @@ public interface PositionPersistence extends BasePersistence<Position> {
 	* @param date_real_out the date_real_out
 	* @param date_out the date_out
 	* @param position_mode the position_mode
+	* @param backtestingId the backtesting ID
 	* @param start the lower bound of the range of positions
 	* @param end the upper bound of the range of positions (not inclusive)
 	* @return the range of matching positions
@@ -810,10 +813,10 @@ public interface PositionPersistence extends BasePersistence<Position> {
 	public java.util.List<Position> findByPositionShareStateDatesRealOut(
 		long groupId, long companyId, long shareId, java.lang.String state,
 		Date date_real_out, Date date_out, java.lang.String position_mode,
-		int start, int end);
+		long backtestingId, int start, int end);
 
 	/**
-	* Returns an ordered range of all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63; and date_out = &#63; and position_mode = &#63;.
+	* Returns an ordered range of all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63; and date_out = &#63; and position_mode = &#63; and backtestingId = &#63;.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -826,6 +829,7 @@ public interface PositionPersistence extends BasePersistence<Position> {
 	* @param date_real_out the date_real_out
 	* @param date_out the date_out
 	* @param position_mode the position_mode
+	* @param backtestingId the backtesting ID
 	* @param start the lower bound of the range of positions
 	* @param end the upper bound of the range of positions (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
@@ -834,11 +838,11 @@ public interface PositionPersistence extends BasePersistence<Position> {
 	public java.util.List<Position> findByPositionShareStateDatesRealOut(
 		long groupId, long companyId, long shareId, java.lang.String state,
 		Date date_real_out, Date date_out, java.lang.String position_mode,
-		int start, int end,
+		long backtestingId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator);
 
 	/**
-	* Returns an ordered range of all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63; and date_out = &#63; and position_mode = &#63;.
+	* Returns an ordered range of all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63; and date_out = &#63; and position_mode = &#63; and backtestingId = &#63;.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -851,6 +855,7 @@ public interface PositionPersistence extends BasePersistence<Position> {
 	* @param date_real_out the date_real_out
 	* @param date_out the date_out
 	* @param position_mode the position_mode
+	* @param backtestingId the backtesting ID
 	* @param start the lower bound of the range of positions
 	* @param end the upper bound of the range of positions (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
@@ -860,12 +865,12 @@ public interface PositionPersistence extends BasePersistence<Position> {
 	public java.util.List<Position> findByPositionShareStateDatesRealOut(
 		long groupId, long companyId, long shareId, java.lang.String state,
 		Date date_real_out, Date date_out, java.lang.String position_mode,
-		int start, int end,
+		long backtestingId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator,
 		boolean retrieveFromCache);
 
 	/**
-	* Returns the first position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63; and date_out = &#63; and position_mode = &#63;.
+	* Returns the first position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63; and date_out = &#63; and position_mode = &#63; and backtestingId = &#63;.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
@@ -874,6 +879,7 @@ public interface PositionPersistence extends BasePersistence<Position> {
 	* @param date_real_out the date_real_out
 	* @param date_out the date_out
 	* @param position_mode the position_mode
+	* @param backtestingId the backtesting ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching position
 	* @throws NoSuchPositionException if a matching position could not be found
@@ -881,11 +887,12 @@ public interface PositionPersistence extends BasePersistence<Position> {
 	public Position findByPositionShareStateDatesRealOut_First(long groupId,
 		long companyId, long shareId, java.lang.String state,
 		Date date_real_out, Date date_out, java.lang.String position_mode,
+		long backtestingId,
 		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator)
 		throws NoSuchPositionException;
 
 	/**
-	* Returns the first position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63; and date_out = &#63; and position_mode = &#63;.
+	* Returns the first position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63; and date_out = &#63; and position_mode = &#63; and backtestingId = &#63;.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
@@ -894,16 +901,18 @@ public interface PositionPersistence extends BasePersistence<Position> {
 	* @param date_real_out the date_real_out
 	* @param date_out the date_out
 	* @param position_mode the position_mode
+	* @param backtestingId the backtesting ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching position, or <code>null</code> if a matching position could not be found
 	*/
 	public Position fetchByPositionShareStateDatesRealOut_First(long groupId,
 		long companyId, long shareId, java.lang.String state,
 		Date date_real_out, Date date_out, java.lang.String position_mode,
+		long backtestingId,
 		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator);
 
 	/**
-	* Returns the last position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63; and date_out = &#63; and position_mode = &#63;.
+	* Returns the last position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63; and date_out = &#63; and position_mode = &#63; and backtestingId = &#63;.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
@@ -912,6 +921,7 @@ public interface PositionPersistence extends BasePersistence<Position> {
 	* @param date_real_out the date_real_out
 	* @param date_out the date_out
 	* @param position_mode the position_mode
+	* @param backtestingId the backtesting ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching position
 	* @throws NoSuchPositionException if a matching position could not be found
@@ -919,11 +929,12 @@ public interface PositionPersistence extends BasePersistence<Position> {
 	public Position findByPositionShareStateDatesRealOut_Last(long groupId,
 		long companyId, long shareId, java.lang.String state,
 		Date date_real_out, Date date_out, java.lang.String position_mode,
+		long backtestingId,
 		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator)
 		throws NoSuchPositionException;
 
 	/**
-	* Returns the last position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63; and date_out = &#63; and position_mode = &#63;.
+	* Returns the last position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63; and date_out = &#63; and position_mode = &#63; and backtestingId = &#63;.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
@@ -932,16 +943,18 @@ public interface PositionPersistence extends BasePersistence<Position> {
 	* @param date_real_out the date_real_out
 	* @param date_out the date_out
 	* @param position_mode the position_mode
+	* @param backtestingId the backtesting ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching position, or <code>null</code> if a matching position could not be found
 	*/
 	public Position fetchByPositionShareStateDatesRealOut_Last(long groupId,
 		long companyId, long shareId, java.lang.String state,
 		Date date_real_out, Date date_out, java.lang.String position_mode,
+		long backtestingId,
 		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator);
 
 	/**
-	* Returns the positions before and after the current position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63; and date_out = &#63; and position_mode = &#63;.
+	* Returns the positions before and after the current position in the ordered set where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63; and date_out = &#63; and position_mode = &#63; and backtestingId = &#63;.
 	*
 	* @param positionId the primary key of the current position
 	* @param groupId the group ID
@@ -951,6 +964,7 @@ public interface PositionPersistence extends BasePersistence<Position> {
 	* @param date_real_out the date_real_out
 	* @param date_out the date_out
 	* @param position_mode the position_mode
+	* @param backtestingId the backtesting ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next position
 	* @throws NoSuchPositionException if a position with the primary key could not be found
@@ -958,12 +972,12 @@ public interface PositionPersistence extends BasePersistence<Position> {
 	public Position[] findByPositionShareStateDatesRealOut_PrevAndNext(
 		long positionId, long groupId, long companyId, long shareId,
 		java.lang.String state, Date date_real_out, Date date_out,
-		java.lang.String position_mode,
+		java.lang.String position_mode, long backtestingId,
 		com.liferay.portal.kernel.util.OrderByComparator<Position> orderByComparator)
 		throws NoSuchPositionException;
 
 	/**
-	* Removes all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63; and date_out = &#63; and position_mode = &#63; from the database.
+	* Removes all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63; and date_out = &#63; and position_mode = &#63; and backtestingId = &#63; from the database.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
@@ -972,13 +986,15 @@ public interface PositionPersistence extends BasePersistence<Position> {
 	* @param date_real_out the date_real_out
 	* @param date_out the date_out
 	* @param position_mode the position_mode
+	* @param backtestingId the backtesting ID
 	*/
 	public void removeByPositionShareStateDatesRealOut(long groupId,
 		long companyId, long shareId, java.lang.String state,
-		Date date_real_out, Date date_out, java.lang.String position_mode);
+		Date date_real_out, Date date_out, java.lang.String position_mode,
+		long backtestingId);
 
 	/**
-	* Returns the number of positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63; and date_out = &#63; and position_mode = &#63;.
+	* Returns the number of positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63; and date_out = &#63; and position_mode = &#63; and backtestingId = &#63;.
 	*
 	* @param groupId the group ID
 	* @param companyId the company ID
@@ -987,11 +1003,13 @@ public interface PositionPersistence extends BasePersistence<Position> {
 	* @param date_real_out the date_real_out
 	* @param date_out the date_out
 	* @param position_mode the position_mode
+	* @param backtestingId the backtesting ID
 	* @return the number of matching positions
 	*/
 	public int countByPositionShareStateDatesRealOut(long groupId,
 		long companyId, long shareId, java.lang.String state,
-		Date date_real_out, Date date_out, java.lang.String position_mode);
+		Date date_real_out, Date date_out, java.lang.String position_mode,
+		long backtestingId);
 
 	/**
 	* Returns all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and date_in = &#63;.

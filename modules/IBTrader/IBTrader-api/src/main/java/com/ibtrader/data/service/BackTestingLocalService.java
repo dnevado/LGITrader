@@ -63,6 +63,8 @@ public interface BackTestingLocalService extends BaseLocalService,
 	 *
 	 * Never modify or reference this interface directly. Always use {@link BackTestingLocalServiceUtil} to access the back testing local service. Add custom service methods to {@link com.ibtrader.data.service.impl.BackTestingLocalServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
+	public boolean removeBackTestingId(long companyId, long groupId,
+		long backtestingId);
 
 	/**
 	* Adds the back testing to the database. Also notifies the appropriate model listeners.
@@ -269,6 +271,9 @@ public interface BackTestingLocalService extends BaseLocalService,
 	public List<BackTesting> getBackTestingsByUuidAndCompanyId(
 		java.lang.String uuid, long companyId, int start, int end,
 		OrderByComparator<BackTesting> orderByComparator);
+
+	public long countBackTestingShareStatus(long shareId, long companyId,
+		long groupId, java.lang.String status);
 
 	/**
 	* Returns the number of rows matching the dynamic query.

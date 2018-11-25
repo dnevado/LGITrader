@@ -23,6 +23,7 @@
 		<property name="modifiedDate" type="org.hibernate.type.TimestampType" />
 		<property name="fromDate" type="org.hibernate.type.TimestampType" />
 		<property name="toDate" type="org.hibernate.type.TimestampType" />
+		<property name="lastRunDate" type="org.hibernate.type.TimestampType" />
 		<property name="shareId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 		<property name="countordersBUY" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 		<property name="countordersSELL" type="com.liferay.portal.dao.orm.hibernate.LongType" />
@@ -30,6 +31,8 @@
 		<property name="profitordersSELL" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
 		<property name="status" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="description" type="com.liferay.portal.dao.orm.hibernate.StringClobType" />
+		<property name="startDate" type="org.hibernate.type.TimestampType" />
+		<property name="endDate" type="org.hibernate.type.TimestampType" />
 	</class>
 	<class name="com.ibtrader.data.model.impl.ConfigImpl" table="ibtrader_Config">
 		<id name="configId" type="long">

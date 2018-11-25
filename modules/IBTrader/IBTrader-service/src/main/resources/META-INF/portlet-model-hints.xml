@@ -10,6 +10,7 @@
 		<field name="modifiedDate" type="Date" />
 		<field name="fromDate" type="Date" />
 		<field name="toDate" type="Date" />
+		<field name="lastRunDate" type="Date" />
 		<field name="shareId" type="long" />
 		<field name="countordersBUY" type="long" />
 		<field name="countordersSELL" type="long" />
@@ -19,6 +20,8 @@
 		<field name="description" type="String">
 			<hint-collection name="CLOB" />
 		</field>
+		<field name="startDate" type="Date" />
+		<field name="endDate" type="Date" />
 	</model>
 	<model name="com.ibtrader.data.model.Config">
 		<field name="uuid" type="String" />

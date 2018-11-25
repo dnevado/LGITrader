@@ -42,16 +42,17 @@ public class PositionLocalServiceUtil {
 	 * Never modify this class directly. Add custom service methods to {@link com.ibtrader.data.service.impl.PositionLocalServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
 	public static boolean ExistsOpenPosition(long groupId, long companyId,
-		long shareId, java.lang.String positionMode) {
+		long shareId, java.lang.String positionMode, long backtestingId) {
 		return getService()
-				   .ExistsOpenPosition(groupId, companyId, shareId, positionMode);
+				   .ExistsOpenPosition(groupId, companyId, shareId,
+			positionMode, backtestingId);
 	}
 
 	public static boolean ExistsPositionToExit(long groupId, long companyId,
-		long shareId, java.lang.String positionMode) {
+		long shareId, java.lang.String positionMode, long backtestingId) {
 		return getService()
 				   .ExistsPositionToExit(groupId, companyId, shareId,
-			positionMode);
+			positionMode, backtestingId);
 	}
 
 	/**
@@ -140,9 +141,10 @@ public class PositionLocalServiceUtil {
 
 	public static com.ibtrader.data.model.Position findPositionToExit(
 		long groupId, long companyId, long shareId,
-		java.lang.String positionMode) {
+		java.lang.String positionMode, long backtestingId) {
 		return getService()
-				   .findPositionToExit(groupId, companyId, shareId, positionMode);
+				   .findPositionToExit(groupId, companyId, shareId,
+			positionMode, backtestingId);
 	}
 
 	/**

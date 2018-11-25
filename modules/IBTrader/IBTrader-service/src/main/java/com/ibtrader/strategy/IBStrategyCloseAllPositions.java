@@ -183,7 +183,7 @@ public class IBStrategyCloseAllPositions extends StrategyImpl {
 		return false;
 	
 	calFechaActualWithDeadLine.add(Calendar.MINUTE, this.getJsonStrategyShareParams().getInt(_EXPANDO_DEADLINE_UNTIL_CLOSEMARKET));
-	currentPosition = PositionLocalServiceUtil.findPositionToExit(_share.getGroupId(), _share.getCompanyId(), _share.getShareId(),position_mode);
+	currentPosition = PositionLocalServiceUtil.findPositionToExit(_share.getGroupId(), _share.getCompanyId(), _share.getShareId(),position_mode, Validator.isNotNull(this.getCurrentBackTesting()) ?  this.getCurrentBackTesting().getBackTId() : ConfigKeys.DEFAULT_BACKTESTINGID_VALUE);
 	if (calFechaActualWithDeadLine.after(calFechaFinMercado) && currentPosition!=null) 		  // ya esta en el limite 
 	{		    		
 			/* TIMEZONE AJUSTADO */

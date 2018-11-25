@@ -66,10 +66,10 @@ public interface PositionLocalService extends BaseLocalService,
 	 * Never modify or reference this interface directly. Always use {@link PositionLocalServiceUtil} to access the position local service. Add custom service methods to {@link com.ibtrader.data.service.impl.PositionLocalServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
 	public boolean ExistsOpenPosition(long groupId, long companyId,
-		long shareId, java.lang.String positionMode);
+		long shareId, java.lang.String positionMode, long backtestingId);
 
 	public boolean ExistsPositionToExit(long groupId, long companyId,
-		long shareId, java.lang.String positionMode);
+		long shareId, java.lang.String positionMode, long backtestingId);
 
 	/**
 	* Adds the position to the database. Also notifies the appropriate model listeners.
@@ -131,7 +131,7 @@ public interface PositionLocalService extends BaseLocalService,
 		long _PositionIDTWS, long clientId_out, java.lang.String positionMode);
 
 	public Position findPositionToExit(long groupId, long companyId,
-		long shareId, java.lang.String positionMode);
+		long shareId, java.lang.String positionMode, long backtestingId);
 
 	/**
 	* Returns the position with the primary key.

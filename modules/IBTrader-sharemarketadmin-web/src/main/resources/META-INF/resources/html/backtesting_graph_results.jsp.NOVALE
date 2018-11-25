@@ -1,0 +1,38 @@
+<%@ include file="/init.jsp" %>
+
+<%
+String mvcPath = ParamUtil.getString(request, "mvcPath");
+
+ResultRow row = (ResultRow)request.getAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW);
+
+//System.out.println(row.getObject());
+BackTesting backtesting = (BackTesting) row.getObject();
+
+long BackTestingId = backtesting.getBackTId();
+
+
+%>
+
+
+<div class="chart-container text-center">
+    <canvas id="test${canvaId}" width="140" height="100"></canvas>
+</div>
+
+
+
+<style>
+	canvas {
+		-moz-user-select: none;
+		-webkit-user-select: none;
+		-ms-user-select: none;
+	}
+	</style>
+
+<script>
+AUI().ready(function() {    
+		showBackTestingResults("test${canvaId}", "${graph_value}"); 
+		
+});
+
+</script>
+ 

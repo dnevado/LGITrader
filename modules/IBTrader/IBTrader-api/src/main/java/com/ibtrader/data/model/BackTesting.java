@@ -53,4 +53,10 @@ public interface BackTesting extends BackTestingModel, PersistedModel {
 				return BackTesting.class;
 			}
 		};
+
+	public boolean isStartable();
+
+	public boolean isStoppable();
+
+	public boolean isRemovable();
 }

@@ -1,5 +1,6 @@
 package IBTrader.sharemarketadmin.web.portlet;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -7,6 +8,7 @@ import java.util.Enumeration;
 import java.util.List;
 
 import javax.portlet.PortletException;
+import javax.portlet.PortletMode;
 import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
@@ -15,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.ibtrader.constants.IBTraderConstants;
 import com.ibtrader.data.model.BackTesting;
 import com.ibtrader.data.model.Market;
 import com.ibtrader.data.model.Realtime;
@@ -22,6 +25,7 @@ import com.ibtrader.data.model.Share;
 import com.ibtrader.data.model.Strategy;
 import com.ibtrader.data.model.StrategyShare;
 import com.ibtrader.data.model.impl.StrategyImpl;
+import com.ibtrader.data.service.BackTestingLocalService;
 import com.ibtrader.data.service.BackTestingLocalServiceUtil;
 import com.ibtrader.data.service.MarketLocalService;
 import com.ibtrader.data.service.MarketLocalServiceUtil;
@@ -46,6 +50,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
+import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -62,10 +67,12 @@ import IBTrader.sharemarketadmin.web.constants.IBTraderSharemarketadminWebPortle
 	       "javax.portlet.name=" + IBTraderSharemarketadminWebPortletKeys.IBTraderSharemarketadminWeb,
 	       "mvc.command.name=/html/add_edit_share",
 	       "mvc.command.name=/html/add_edit_strategyshare",
+	       "mvc.command.name=/html/add_edit_backtesting",	   
 	       "mvc.command.name=/html/add_edit_market",	       
 	       "mvc.command.name=/html/view_market",	       
 	       "mvc.command.name=/html/view_strategyshare",
 	       "mvc.command.name=/html/backtesting_view",	       
+	       "mvc.command.name=/html/view",
 	    },
 	    service = MVCRenderCommand.class
 	)
@@ -74,6 +81,7 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
 	ThemeDisplay themeDisplay;
 	private static final Log   _log = LogFactoryUtil.getLog(IBTraderSharemarketadminWebPortlet.class);
     private ShareLocalService _shareLocalService;
+    private BackTestingLocalService _backtestingLocalService;
     private MarketLocalService _marketLocalService; 
     private StrategyLocalService _strategyLocalService;
     private StrategyShareLocalService _strategyshareLocalService;
@@ -84,13 +92,21 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
     private static String  _JSP_COMMAND_EDIT_SHARE_STRATEGIES = "/html/add_edit_strategyshare.jsp";
     private static String  _JSP_COMMAND_LIST_SHARE_STRATEGIES = "/html/view_strategyshare.jsp";
     private static String  _JSP_COMMAND_EDIT_MARKET = "/html/add_edit_market.jsp";
+    private static String  _JSP_COMMAND_EDIT_BACKTESTING = "/html/add_edit_backtesting.jsp";
     private static String  _JSP_COMMAND_LIST_MARKETS = "/html/view_market.jsp";
     private static String  _JSP_COMMAND_LIST_BACKTESTING = "/html/view_backtesting.jsp";
+    private static String  _JSP_COMMAND_LIST_DEFAULT = "/html/view.jsp";
+    
     
     
     @Reference(unbind = "-")
     protected void setRealtimeLocalService(RealtimeLocalService realtimLocalService) {
     	_realtimLocalService = realtimLocalService;
+    }
+    
+    @Reference(unbind = "-")
+    protected void setBackTestingLocalService(BackTestingLocalService backtestingLocalService) {
+    	_backtestingLocalService = backtestingLocalService;
     }
     
     
@@ -126,6 +142,11 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
 			jspPage=_JSP_COMMAND_LIST_MARKETS;
     	if (mvcCommand.equals("/html/backtesting_view"))
 			jspPage=_JSP_COMMAND_LIST_BACKTESTING;
+    	if (mvcCommand.equals("/html/add_edit_backtesting"))
+			jspPage=_JSP_COMMAND_EDIT_BACKTESTING;
+    	if (mvcCommand.equals("/html/view"))
+			jspPage=_JSP_COMMAND_LIST_DEFAULT;
+    	
     	return jspPage; 
 	}
 
@@ -148,6 +169,7 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
         Strategy Strategy = null;
         StrategyImpl _strategyImpl = null;
         Share share = null;
+        BackTesting backtesting = null;
         JSONObject  jsonStrategyShareParams = null;
         JSONObject  jsonFutureParams = null;
         
@@ -162,7 +184,7 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
 	        long shareAddedId = ParamUtil.getLong(renderRequest, "shareAddedId",-1);
 	        long strategyId = ParamUtil.getLong(renderRequest, "strategyId");
 	        long marketId = ParamUtil.getLong(renderRequest, "marketId");
-	        
+	        long backtestingId = ParamUtil.getLong(renderRequest, "backtestingId");
 			String strategyselected = ParamUtil.getString(renderRequest, "strategyselected", "SELECTED");
 			
 			
@@ -218,6 +240,7 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
 			  * */	 
 	        if (_mvcCommand.equals("/html/view_strategyshare"))	  
 	        {	
+	        		
 	        	
 	        		 if (strategyselected.equals("SELECTED"))	    		
 	        			 _lStrategies = _strategyshareLocalService.findByActiveStrategies(Boolean.TRUE, shareId, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
@@ -254,10 +277,25 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
 	        	
 	        }
 	        
+	        if (_mvcCommand.equals("/html/add_edit_backtesting"))	  
+	        {	        		
+		    	backtesting = _backtestingLocalService.fetchBackTesting(backtestingId);
+	        }
+	        
+	       
+	        
 	        if (_mvcCommand.equals("/html/backtesting_view"))	  
 	        {	        		
 	        
-	        	 lBackTesting = BackTestingLocalServiceUtil.findByShareCompanyGroup(shareId, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
+	        	 lBackTesting = _backtestingLocalService.findByShareCompanyGroup(shareId, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
+	        
+	        	 boolean bShareBelongsToCompany =  (share!=null && share.getGroupId()==themeDisplay.getScopeGroupId());
+	        	 if (!bShareBelongsToCompany)
+	        	 {
+	        		 	SessionErrors.add(renderRequest, "share.error.exists");
+	        		 	return _JSP_COMMAND_LIST_DEFAULT;
+
+	        	 }
 	        	 
 	        	 
 	        	 PortletURL iteratorURL = renderResponse.createRenderURL();
@@ -269,6 +307,10 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
 	       		 searchContainer.setTotal(lBackTesting.size());
 	       		 renderRequest.setAttribute("searchBackTesting" , searchContainer); 
 	       		 renderRequest.setAttribute("iteratorURL" , iteratorURL);	 
+
+	       		long totalExecuting =  _backtestingLocalService.countBackTestingShareStatus(shareId, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId(), IBTraderConstants.statusSimulation.Pending.toString());
+	       		renderRequest.setAttribute("totalExecuting" , totalExecuting);	 
+				
 	        	
 	        }
 	        
@@ -282,7 +324,7 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
 	
 	       		 SearchContainer<Market> searchContainer = null;
 	       		 searchContainer  = new SearchContainer<Market>(renderRequest, null, null, SearchContainer.DEFAULT_CUR_PARAM, SearchContainer.DEFAULT_DELTA, iteratorURL, null, StringPool.BLANK);
-	       		 searchContainer.setEmptyResultsMessage("Estrategias  no encontradas");        
+	       		 searchContainer.setEmptyResultsMessage("Mercados  no encontrada");        
 	       		 searchContainer.setResults(ListUtil.subList(_lMarket, searchContainer.getStart(), searchContainer.getEnd()));
 	       		 searchContainer.setTotal(_lMarket.size());
 	       		 renderRequest.setAttribute("searchMarket" , searchContainer); 
@@ -311,11 +353,13 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
 	        renderRequest.setAttribute("readonlyStopLost", (strategyshare_stoplost==null || (strategyshare_stoplost!=null && !strategyshare_stoplost.isActive()) ? "readonly"  : ""));
 	        renderRequest.setAttribute("readonlyStopProfit",(strategyshare_stopprofit==null || (strategyshare_stopprofit!=null && !strategyshare_stopprofit.isActive()) ? "readonly"  : "")); 
 	        renderRequest.setAttribute("readonlyTrailingStopLost",(strategyshare_traillingstoplost==null || (strategyshare_traillingstoplost!=null && !strategyshare_traillingstoplost.isActive()) ? "readonly"  : ""));
-	        
+
+	        renderRequest.setAttribute("shareId", shareId);
 	        renderRequest.setAttribute("share", share);
 	        renderRequest.setAttribute("strategy", Strategy);
 	        renderRequest.setAttribute("_lMarket", _lMarket);
 	        renderRequest.setAttribute("market", Market);
+	        renderRequest.setAttribute("backtesting", backtesting);
 	        
 	        /* HORAS ADAPTADAS DE UTC A LOCAL DE USUARIO */
 	        renderRequest.setAttribute("marketStart", starthour);

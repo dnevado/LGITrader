@@ -24,7 +24,7 @@ function updateAssetType() {
 
 /* RENDERIZA LOS GRAFICOS DEL BACKTESTING */
 
-function showBackTestingResults(canvaId, data) {	
+function showBackTestingResults(canvaId, dataValue) {	
 	require ('Chart', function (jquery) {
 	Chart.pluginService.register({
 	    beforeDraw: function (chart) {
@@ -32,8 +32,8 @@ function showBackTestingResults(canvaId, data) {
 	            height = chart.chart.height,
 	            ctx = chart.chart.ctx;
 	        ctx.restore();
-	        var fontSize = (height / 114).toFixed(2);
-	        ctx.font = fontSize + "em sans-serif";
+	        var fontSize = (height / 75).toFixed(2);
+	        ctx.font = fontSize + "em Work Sans,sans-serif";
 	        ctx.textBaseline = "middle";
 	        var text = chart.config.options.elements.center.text,
 	            textX = Math.round((width - ctx.measureText(text).width) / 2),
@@ -43,22 +43,31 @@ function showBackTestingResults(canvaId, data) {
 	    }
 	});
 		// chart1
+	
+	var backgroundcolor = "#FF4500" // rojo		
+	if (dataValue>0)
+			backgroundcolor = "#81B758" // verde
+	
 	var data = {		    
 	    datasets: [{
-	        data: [data],
-	        backgroundColor: "#668cff"		       
+	        data: [dataValue],
+	        backgroundColor: [backgroundcolor]		     
 	    }]
 	};
+	
+	
 	var promisedDeliveryChart = new Chart(document.getElementById(canvaId), {
 	    type: 'doughnut',
 	    data: data,
 	    options: {
 	        elements: {
 	            center: {
-	                text: data   //set as you wish
+	                text: dataValue   //set as you wish
 	            }
 	        },
 	        cutoutPercentage: 75,
+	        responsive:true,
+	        maintainAspectRatio: false,
 	        legend: {
 	            display: false
 	        }

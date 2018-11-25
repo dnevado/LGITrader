@@ -33,6 +33,13 @@ public class BackTestingLocalServiceWrapper implements BackTestingLocalService,
 		_backTestingLocalService = backTestingLocalService;
 	}
 
+	@Override
+	public boolean removeBackTestingId(long companyId, long groupId,
+		long backtestingId) {
+		return _backTestingLocalService.removeBackTestingId(companyId, groupId,
+			backtestingId);
+	}
+
 	/**
 	* Adds the back testing to the database. Also notifies the appropriate model listeners.
 	*
@@ -313,6 +320,13 @@ public class BackTestingLocalServiceWrapper implements BackTestingLocalService,
 		com.liferay.portal.kernel.util.OrderByComparator<com.ibtrader.data.model.BackTesting> orderByComparator) {
 		return _backTestingLocalService.getBackTestingsByUuidAndCompanyId(uuid,
 			companyId, start, end, orderByComparator);
+	}
+
+	@Override
+	public long countBackTestingShareStatus(long shareId, long companyId,
+		long groupId, java.lang.String status) {
+		return _backTestingLocalService.countBackTestingShareStatus(shareId,
+			companyId, groupId, status);
 	}
 
 	/**

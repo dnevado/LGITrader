@@ -79,8 +79,8 @@ function <portlet:namespace/>showResults(data) {
 		            height = chart.chart.height,
 		            ctx = chart.chart.ctx;
 		        ctx.restore();
-		        var fontSize = (height / 114).toFixed(2);
-		        ctx.font = fontSize + "em sans-serif";
+		        var fontSize = (height / 100).toFixed(2);
+		        ctx.font = fontSize + "em Work Sans,sans-serif";
 		        ctx.textBaseline = "middle";
 		        var text = chart.config.options.elements.center.text,
 		            textX = Math.round((width - ctx.measureText(text).width) / 2),
@@ -94,7 +94,7 @@ function <portlet:namespace/>showResults(data) {
 		    labels: ['<liferay-ui:message key="profitrate"/>',''],
 		    datasets: [{
 		        data: [profitrate,remaining],
-		        backgroundColor: [backgroundcolor, "#668cff"]		       
+		        backgroundColor: [backgroundcolor, "#8cb29d"]		       
 		    }]
 		};
 		var promisedDeliveryChart = new Chart(document.getElementById('percentageprofit'), {

@@ -219,7 +219,7 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 	}
 	
 	/* FECHA  SALIDA   Y REAL DE SALIDA A  NULL , SI PODEMOS LA  REAL  ENTRADA, PUEDE VOLVOER A ENTRAR HASTA QUE NO ESTE FILLED */
-	public boolean  ExistsOpenPosition(long groupId, long companyId, long shareId, String positionMode)
+	public boolean  ExistsOpenPosition(long groupId, long companyId, long shareId, String positionMode, long backtestingId )
 	{		
 		
 		
@@ -233,7 +233,7 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 		_DQ.add(RestrictionsFactoryUtil.eq("shareId", shareId));
 		_DQ.add(RestrictionsFactoryUtil.eq("position_mode", positionMode));		
 		_DQ.add(RestrictionsFactoryUtil.ne("state", com.ibtrader.util.PositionStates.status.SELL_OK.toString()));
-		
+		_DQ.add(RestrictionsFactoryUtil.eq("backtestingId", backtestingId));
 		
 		_lPosition =  PositionLocalServiceUtil.dynamicQuery(_DQ);
 		
@@ -243,16 +243,16 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 				
 	}
 	/* BUY_OK  y no fecha de salida real */
-	public boolean  ExistsPositionToExit(long groupId, long companyId, long shareId,String positionMode)
+	public boolean  ExistsPositionToExit(long groupId, long companyId, long shareId,String positionMode, long backtestingId )
 	{		
-		int total = getPositionPersistence().countByPositionShareStateDatesRealOut(groupId, companyId, shareId, com.ibtrader.util.PositionStates.status.BUY_OK.toString(),null, null, positionMode);
+		int total = getPositionPersistence().countByPositionShareStateDatesRealOut(groupId, companyId, shareId, com.ibtrader.util.PositionStates.status.BUY_OK.toString(),null, null, positionMode,backtestingId);
 		return (total>0);
 	}
 	/* BUY_OK  y no fecha de salida */
-	public Position  findPositionToExit(long groupId, long companyId, long shareId, String positionMode)
+	public Position  findPositionToExit(long groupId, long companyId, long shareId, String positionMode, long backtestingId )
 	{	
 		Position _rPosition = null; 
-		List<Position> _lPosition = getPositionPersistence().findByPositionShareStateDatesRealOut(groupId, companyId, shareId, com.ibtrader.util.PositionStates.status.BUY_OK.toString(),null,null, positionMode);		
+		List<Position> _lPosition = getPositionPersistence().findByPositionShareStateDatesRealOut(groupId, companyId, shareId, com.ibtrader.util.PositionStates.status.BUY_OK.toString(),null,null, positionMode,backtestingId);	
 		if (!_lPosition.isEmpty() && _lPosition.size()>0)
 		{
 			_rPosition = _lPosition.get(0);

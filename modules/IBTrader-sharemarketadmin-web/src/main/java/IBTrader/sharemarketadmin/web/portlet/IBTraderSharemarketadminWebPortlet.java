@@ -6,6 +6,7 @@ import com.ib.client.Contract;
 import com.ib.contracts.FutContract;
 import com.ib.contracts.StkContract;
 import com.ibtrader.constants.IBTraderConstants;
+import com.ibtrader.data.model.BackTesting;
 import com.ibtrader.data.model.Config;
 import com.ibtrader.data.model.IBOrder;
 import com.ibtrader.data.model.Market;
@@ -15,6 +16,7 @@ import com.ibtrader.data.model.ShareModel;
 import com.ibtrader.data.model.Strategy;
 import com.ibtrader.data.model.StrategyShare;
 import com.ibtrader.data.model.impl.StrategyImpl;
+import com.ibtrader.data.service.BackTestingLocalService;
 import com.ibtrader.data.service.IBOrderLocalServiceUtil;
 import com.ibtrader.data.service.MarketLocalService;
 import com.ibtrader.data.service.MarketLocalServiceUtil;
@@ -26,6 +28,7 @@ import com.ibtrader.data.service.StrategyShareLocalService;
 import com.ibtrader.data.service.StrategyShareLocalServiceUtil;
 import com.ibtrader.interactive.TIMApiGITrader_NOVALE;
 import com.ibtrader.util.ConfigKeys;
+import com.ibtrader.util.PositionStates;
 import com.ibtrader.util.Utilities;
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
@@ -52,6 +55,7 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.upload.UploadPortletRequest;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -62,7 +66,10 @@ import com.liferay.portal.kernel.util.WebKeys;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
@@ -115,11 +122,18 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
     private StrategyShareLocalService _strategyshareLocalService;
     private StrategyLocalService _strategyLocalService;
     private MarketLocalService _marketLocalService;
+    private BackTestingLocalService _backtestingLocalService;
+
     
     private Market market;
-    
+    private BackTesting backtesting;
     Share share=null;
     StrategyShare strategyshare =null;
+    
+    @Reference(unbind = "-")
+    protected void setBackTestingLocalService(BackTestingLocalService backtestingLocalService) {
+    	_backtestingLocalService = backtestingLocalService;
+    }
     
     @Reference(unbind = "-")
     protected void setStrategyService(StrategyLocalService strategyLocalService) {
@@ -156,7 +170,7 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 
 	 SearchContainer<Share> searchContainer = null;
 	 searchContainer  = new SearchContainer<Share>(renderRequest, null, null, SearchContainer.DEFAULT_CUR_PARAM, SearchContainer.DEFAULT_DELTA, iteratorURL, null, StringPool.BLANK);
-	 searchContainer.setEmptyResultsMessage("Posiciones no encontradas");        
+	 searchContainer.setEmptyResultsMessage("Activos no encontrados");        
 	 searchContainer.setResults(ListUtil.subList(_lShares, searchContainer.getStart(), searchContainer.getEnd()));
 	 searchContainer.setTotal(_lShares.size());
 	 renderRequest.setAttribute("searchShare" , searchContainer); 
@@ -262,7 +276,7 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 					boolean bShareFoundByName =   ShareFoundByName!=null && (editShare==null || (editShare!=null && !name.equals(editShare.getName())));
 					Share ShareFoundBySymbol = _shareLocalService.findBySymbolCompanyGroup(themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId(), symbol);
 					boolean bShareFoundBySymbol =   ShareFoundBySymbol!=null &&  (editShare==null || editShare!=null && !symbol.equals(editShare.getSymbol()));
-					boolean bShareBelongsToCompany =  (editShare==null || (editShare!=null && editShare.getCompanyId()==themeDisplay.getCompanyId()));
+					boolean bShareBelongsToCompany =  (editShare==null || (editShare!=null && editShare.getGroupId()==themeDisplay.getScopeGroupId()));
 					if (bShareFoundByName  || bShareFoundBySymbol || !bShareBelongsToCompany)
 					{
 						validated=false;
@@ -469,6 +483,144 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 		return validated;
 		
 	}
+	
+	private boolean ValidateDataBackTesting(ActionRequest actionRequest)
+	{
+	
+		boolean validated = true;	
+	  		// add / edit
+		String mvcPath = actionRequest.getParameter("javax.portlet.action");
+		BackTesting editBackTesting=null; 	
+		SimpleDateFormat sdfSHORT = new SimpleDateFormat();
+    	sdfSHORT.applyPattern(Utilities._IBTRADER_FUTURE_LONG_DATE);
+		String description = ParamUtil.getString(actionRequest,"editor","");		
+		Date start = ParamUtil.getDate(actionRequest,"start",sdfSHORT);
+		Date end = ParamUtil.getDate(actionRequest,"end",sdfSHORT);			
+		
+		long backtestingId =  ParamUtil.getLong(actionRequest,"backtestingId",0);
+		long shareId =  ParamUtil.getLong(actionRequest,"shareId",0);
+		boolean bEditMode=	(backtestingId !=0);
+		boolean bDescriptionOK = Validator.isContent(description)  && description.length()<=4000;			
+		
+		
+		
+		String fromDay = ParamUtil.getString(actionRequest,"fromDay","");
+		String fromMonth = ParamUtil.getString(actionRequest,"fromMonth","");
+		String fromYear = ParamUtil.getString(actionRequest,"fromYear","");
+		String toDay = ParamUtil.getString(actionRequest,"toDay","");
+		String toMonth = ParamUtil.getString(actionRequest,"toMonth","");
+		String toYear = ParamUtil.getString(actionRequest,"toYear","");
+		
+		StringBuilder from = new StringBuilder();
+		StringBuilder to = new StringBuilder();
+		
+
+		
+		try 
+		{
+			
+		if ((!bEditMode) && (description.equals("") || start.equals("") || end.equals("") 
+				|| fromDay.equals("") || fromMonth.equals("") || fromYear.equals("") || toDay.equals("") 
+					|| toMonth.equals("") || toYear.equals("")))
+		{
+			
+			validated=false;
+			SessionErrors.add(actionRequest, "backtesting.error.missingparameters");
+		}
+		else
+		{
+		
+		
+			boolean RangeDateNow1OK = Boolean.TRUE;
+			boolean RangeDateNow2OK = Boolean.TRUE;
+			LocalDate datefrom = LocalDate.now();
+			LocalDate dateto = LocalDate.now();
+			boolean RangeDateOK = Boolean.TRUE;	
+			if (!bEditMode)
+			{
+				fromDay   = String.format("%02d", Long.valueOf(fromDay));
+				fromMonth = String.format("%02d", Long.valueOf(fromMonth)+1);
+				fromYear  = String.format("%04d", Long.valueOf(fromYear));
+				toDay     = String.format("%02d", Long.valueOf(toDay));
+				toMonth   = String.format("%02d", Long.valueOf(toMonth)+1);
+				toYear    = String.format("%04d", Long.valueOf(toYear));
+				
+				from.append(fromDay + StringPool.SLASH + fromMonth + StringPool.SLASH + fromYear);
+				to.append(toDay + StringPool.SLASH + toMonth + StringPool.SLASH + toYear);
+				
+				DateTimeFormatter formatter =DateTimeFormatter.ofPattern(Utilities._IBTRADER_FUTURE_LONG_DATE);
+				datefrom = LocalDate.parse(from.toString(), formatter);
+				dateto = LocalDate.parse(to.toString(), formatter);
+				RangeDateNow1OK = datefrom.isBefore(LocalDate.now());
+				RangeDateNow2OK = dateto.isBefore(LocalDate.now());
+
+				RangeDateOK = datefrom.isBefore(dateto);
+				
+
+				
+			}
+						
+			if ((!bEditMode) &&  (!bDescriptionOK || !RangeDateOK || !RangeDateNow1OK  || !RangeDateNow2OK))
+			{
+				validated=false;			
+				SessionErrors.add(actionRequest, "backtesting.error.formatparameters");
+			}
+			else
+			{
+				/* shareid belongs to company? */				
+				/* exists by name or by simbol */
+				if (bEditMode)
+				{
+					editBackTesting = _backtestingLocalService.fetchBackTesting(backtestingId);
+					
+				}				
+				boolean bBackTestingBelongsToCompany =  (editBackTesting==null || (editBackTesting!=null && editBackTesting.getCompanyId()==themeDisplay.getCompanyId()));
+	       		long totalExecuting =  _backtestingLocalService.countBackTestingShareStatus(shareId, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId(), IBTraderConstants.statusSimulation.Pending.toString());
+
+	       		// solo permitimos uno en ejecución
+				if (!bEditMode && (!bBackTestingBelongsToCompany || totalExecuting>0))
+				{
+					validated=false;
+					SessionErrors.add(actionRequest, "backtesting.error.exists");
+				}
+				else
+				{
+					if (!bEditMode)
+					{
+						backtesting = _backtestingLocalService.createBackTesting(CounterLocalServiceUtil.increment(BackTesting.class.getName()));
+						backtesting.setCompanyId(themeDisplay.getCompanyId());
+						backtesting.setGroupId(themeDisplay.getScopeGroupId());						
+						backtesting.setFromDate(Date.from(datefrom.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+						backtesting.setToDate(Date.from(dateto.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+						backtesting.setCreateDate(new Date());
+						backtesting.setShareId(shareId);
+						backtesting.setModifiedDate(new Date()); // modified es el start para llevar cuenta
+						backtesting.setStatus(IBTraderConstants.statusSimulation.Pending.toString());
+						backtesting.setLastRunDate(Date.from(datefrom.atStartOfDay(ZoneId.systemDefault()).toInstant())); // modified es el start para llevar cuenta
+
+					}
+					else
+						backtesting = _backtestingLocalService.fetchBackTesting(backtestingId);
+					
+				
+					backtesting.setDescription(description);					
+
+				//	_backtestingLocalService.up	
+										
+				}
+			}
+		}  // end if inicialA
+		
+		} // end try 
+		catch (Exception e)
+		{
+			_log.info("ValidateDataBackTesting:" + e.getMessage());
+			validated=false;
+		}
+		return validated;
+		
+	}
+	
 	
 	public void editStrategyShareParams(ActionRequest actionRequest, ActionResponse actionResponse)
 	{
@@ -704,6 +856,128 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 		
 		 
 	}
+	
+
+	
+	public void RemoveBackTesting(ActionRequest actionRequest, ActionResponse actionResponse)
+	{
+		themeDisplay = (ThemeDisplay)actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
+		
+	
+		long backtestingId =  ParamUtil.getLong(actionRequest,"backtestingId",0);	
+		BackTesting backtesting = _backtestingLocalService.fetchBackTesting(backtestingId);
+		long shareId =  backtesting.getShareId();	
+		
+		if (backtesting.isRemovable())
+		{
+			_backtestingLocalService.removeBackTestingId(themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId(),backtestingId);
+			SessionMessages.add(actionRequest, "backtesting.success");			
+		}
+		else
+			SessionErrors.add(actionRequest, "backtesting.notremovable");
+		
+		actionResponse.setRenderParameter("mvcRenderCommandName", "/html/backtesting_view");
+		actionResponse.setRenderParameter("shareId", String.valueOf(shareId));	
+	}
+	public void StopBackTesting(ActionRequest actionRequest, ActionResponse actionResponse)
+	{
+		themeDisplay = (ThemeDisplay)actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
+		
+		long backtestingId =  ParamUtil.getLong(actionRequest,"backtestingId",0);	
+
+		BackTesting backtesting = _backtestingLocalService.fetchBackTesting(backtestingId);
+		long shareId =  backtesting.getShareId();	
+		if (backtesting.isStoppable())
+		{
+			backtesting.setStatus(IBTraderConstants.statusSimulation.Processed.toString());
+			_backtestingLocalService.updateBackTesting(backtesting);
+			SessionMessages.add(actionRequest, "backtesting.success");			
+		}
+		else
+			SessionErrors.add(actionRequest, "backtesting.notstoppable");
+		
+		actionResponse.setRenderParameter("mvcRenderCommandName", "/html/backtesting_view");
+		actionResponse.setRenderParameter("backtestingId", String.valueOf(backtestingId));		
+		actionResponse.setRenderParameter("shareId", String.valueOf(shareId));	
+		
+	}
+	public void StartBackTesting(ActionRequest actionRequest, ActionResponse actionResponse)
+	{
+		themeDisplay = (ThemeDisplay)actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
+		
+		
+		long backtestingId =  ParamUtil.getLong(actionRequest,"backtestingId",0);	
+		BackTesting backtesting = _backtestingLocalService.fetchBackTesting(backtestingId);
+		long shareId =  backtesting.getShareId();	
+
+		if (backtesting.isStartable())
+		{
+			backtesting.setStatus(IBTraderConstants.statusSimulation.Pending.toString());
+			_backtestingLocalService.updateBackTesting(backtesting);
+			SessionMessages.add(actionRequest, "backtesting.success");			
+		}
+		else
+			SessionErrors.add(actionRequest, "backtesting.notstartable");
+
+		actionResponse.setRenderParameter("mvcRenderCommandName", "/html/backtesting_view");
+		actionResponse.setRenderParameter("backtestingId", String.valueOf(backtestingId));		
+		actionResponse.setRenderParameter("shareId", String.valueOf(shareId));	
+		
+	}
+	
+	
+	public void addeditBackTesting(ActionRequest actionRequest, ActionResponse actionResponse)
+	{
+		themeDisplay = (ThemeDisplay)actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
+		
+		ServiceContext serviceContext = null;
+		try {
+			serviceContext = ServiceContextFactory.getInstance(BackTesting.class.getName(), actionRequest);
+		} catch (PortalException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		long backtestingId =  ParamUtil.getLong(actionRequest,"backtestingId",0);	
+		long shareId =  ParamUtil.getLong(actionRequest,"shareId",0);	
+		String redirect =  ParamUtil.getString(actionRequest,"redirect","");
+		
+		boolean bEditMode=	(backtestingId !=0);
+
+		boolean validated = ValidateDataBackTesting(actionRequest);
+		
+		try 
+		{
+			if (validated)
+			{
+				backtesting = _backtestingLocalService.updateBackTesting(backtesting);							
+				SessionMessages.add(actionRequest, "backtesting.success");
+				
+				backtestingId =  backtesting.getBackTId();
+				shareId = backtesting.getShareId();
+			}
+			
+			
+		}				
+		catch (Exception e)
+		{
+			SessionErrors.add(actionRequest, "backtesting.error.missingparameters");
+		}
+		
+		if (bEditMode)
+			actionResponse.setRenderParameter("mvcRenderCommandName", "/html/add_edit_backtesting");
+		else
+			actionResponse.setRenderParameter("mvcRenderCommandName", "/html/backtesting_view");
+
+		actionResponse.setRenderParameter("backtestingId", String.valueOf(backtestingId));		
+		actionResponse.setRenderParameter("shareId", String.valueOf(shareId));	
+		actionResponse.setRenderParameter("redirect", redirect);
+		
+		
+	}
+	
+	
+	
 	public void addeditMarket(ActionRequest actionRequest, ActionResponse actionResponse)
 	{
 		themeDisplay = (ThemeDisplay)actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
@@ -871,7 +1145,7 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 		String position_mode = Utilities.getPositionModeType(null, themeDisplay.getCompanyId(),themeDisplay.getScopeGroupId()); 
 
 		
-		boolean _bOpenPosition =  PositionLocalServiceUtil.ExistsOpenPosition(themeDisplay.getScopeGroupId(), themeDisplay.getCompanyId(), shareId, position_mode);
+		boolean _bOpenPosition =  PositionLocalServiceUtil.ExistsOpenPosition(themeDisplay.getScopeGroupId(), themeDisplay.getCompanyId(), shareId, position_mode, ConfigKeys.DEFAULT_BACKTESTINGID_VALUE);
 		try 
 		{		
 				if (validated)

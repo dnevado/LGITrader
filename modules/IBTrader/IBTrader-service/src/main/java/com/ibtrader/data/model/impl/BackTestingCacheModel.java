@@ -66,7 +66,7 @@ public class BackTestingCacheModel implements CacheModel<BackTesting>,
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(31);
+		StringBundler sb = new StringBundler(37);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -84,6 +84,8 @@ public class BackTestingCacheModel implements CacheModel<BackTesting>,
 		sb.append(fromDate);
 		sb.append(", toDate=");
 		sb.append(toDate);
+		sb.append(", lastRunDate=");
+		sb.append(lastRunDate);
 		sb.append(", shareId=");
 		sb.append(shareId);
 		sb.append(", countordersBUY=");
@@ -98,6 +100,10 @@ public class BackTestingCacheModel implements CacheModel<BackTesting>,
 		sb.append(status);
 		sb.append(", description=");
 		sb.append(description);
+		sb.append(", startDate=");
+		sb.append(startDate);
+		sb.append(", endDate=");
+		sb.append(endDate);
 		sb.append("}");
 
 		return sb.toString();
@@ -146,6 +152,13 @@ public class BackTestingCacheModel implements CacheModel<BackTesting>,
 			backTestingImpl.setToDate(new Date(toDate));
 		}
 
+		if (lastRunDate == Long.MIN_VALUE) {
+			backTestingImpl.setLastRunDate(null);
+		}
+		else {
+			backTestingImpl.setLastRunDate(new Date(lastRunDate));
+		}
+
 		backTestingImpl.setShareId(shareId);
 		backTestingImpl.setCountordersBUY(countordersBUY);
 		backTestingImpl.setCountordersSELL(countordersSELL);
@@ -166,6 +179,20 @@ public class BackTestingCacheModel implements CacheModel<BackTesting>,
 			backTestingImpl.setDescription(description);
 		}
 
+		if (startDate == Long.MIN_VALUE) {
+			backTestingImpl.setStartDate(null);
+		}
+		else {
+			backTestingImpl.setStartDate(new Date(startDate));
+		}
+
+		if (endDate == Long.MIN_VALUE) {
+			backTestingImpl.setEndDate(null);
+		}
+		else {
+			backTestingImpl.setEndDate(new Date(endDate));
+		}
+
 		backTestingImpl.resetOriginalValues();
 
 		return backTestingImpl;
@@ -184,6 +211,7 @@ public class BackTestingCacheModel implements CacheModel<BackTesting>,
 		modifiedDate = objectInput.readLong();
 		fromDate = objectInput.readLong();
 		toDate = objectInput.readLong();
+		lastRunDate = objectInput.readLong();
 
 		shareId = objectInput.readLong();
 
@@ -196,6 +224,8 @@ public class BackTestingCacheModel implements CacheModel<BackTesting>,
 		profitordersSELL = objectInput.readDouble();
 		status = objectInput.readUTF();
 		description = objectInput.readUTF();
+		startDate = objectInput.readLong();
+		endDate = objectInput.readLong();
 	}
 
 	@Override
@@ -217,6 +247,7 @@ public class BackTestingCacheModel implements CacheModel<BackTesting>,
 		objectOutput.writeLong(modifiedDate);
 		objectOutput.writeLong(fromDate);
 		objectOutput.writeLong(toDate);
+		objectOutput.writeLong(lastRunDate);
 
 		objectOutput.writeLong(shareId);
 
@@ -241,6 +272,9 @@ public class BackTestingCacheModel implements CacheModel<BackTesting>,
 		else {
 			objectOutput.writeUTF(description);
 		}
+
+		objectOutput.writeLong(startDate);
+		objectOutput.writeLong(endDate);
 	}
 
 	public String uuid;
@@ -251,6 +285,7 @@ public class BackTestingCacheModel implements CacheModel<BackTesting>,
 	public long modifiedDate;
 	public long fromDate;
 	public long toDate;
+	public long lastRunDate;
 	public long shareId;
 	public long countordersBUY;
 	public long countordersSELL;
@@ -258,4 +293,6 @@ public class BackTestingCacheModel implements CacheModel<BackTesting>,
 	public double profitordersSELL;
 	public String status;
 	public String description;
+	public long startDate;
+	public long endDate;
 }

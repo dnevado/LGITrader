@@ -187,6 +187,20 @@ public interface BackTestingModel extends BaseModel<BackTesting>, ShardedModel,
 	public void setToDate(Date toDate);
 
 	/**
+	 * Returns the last run date of this back testing.
+	 *
+	 * @return the last run date of this back testing
+	 */
+	public Date getLastRunDate();
+
+	/**
+	 * Sets the last run date of this back testing.
+	 *
+	 * @param lastRunDate the last run date of this back testing
+	 */
+	public void setLastRunDate(Date lastRunDate);
+
+	/**
 	 * Returns the share ID of this back testing.
 	 *
 	 * @return the share ID of this back testing
@@ -285,6 +299,34 @@ public interface BackTestingModel extends BaseModel<BackTesting>, ShardedModel,
 	 * @param description the description of this back testing
 	 */
 	public void setDescription(String description);
+
+	/**
+	 * Returns the start date of this back testing.
+	 *
+	 * @return the start date of this back testing
+	 */
+	public Date getStartDate();
+
+	/**
+	 * Sets the start date of this back testing.
+	 *
+	 * @param startDate the start date of this back testing
+	 */
+	public void setStartDate(Date startDate);
+
+	/**
+	 * Returns the end date of this back testing.
+	 *
+	 * @return the end date of this back testing
+	 */
+	public Date getEndDate();
+
+	/**
+	 * Sets the end date of this back testing.
+	 *
+	 * @param endDate the end date of this back testing
+	 */
+	public void setEndDate(Date endDate);
 
 	@Override
 	public boolean isNew();

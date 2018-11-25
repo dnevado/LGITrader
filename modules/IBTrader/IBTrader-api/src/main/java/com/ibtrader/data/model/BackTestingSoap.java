@@ -42,6 +42,7 @@ public class BackTestingSoap implements Serializable {
 		soapModel.setModifiedDate(model.getModifiedDate());
 		soapModel.setFromDate(model.getFromDate());
 		soapModel.setToDate(model.getToDate());
+		soapModel.setLastRunDate(model.getLastRunDate());
 		soapModel.setShareId(model.getShareId());
 		soapModel.setCountordersBUY(model.getCountordersBUY());
 		soapModel.setCountordersSELL(model.getCountordersSELL());
@@ -49,6 +50,8 @@ public class BackTestingSoap implements Serializable {
 		soapModel.setProfitordersSELL(model.getProfitordersSELL());
 		soapModel.setStatus(model.getStatus());
 		soapModel.setDescription(model.getDescription());
+		soapModel.setStartDate(model.getStartDate());
+		soapModel.setEndDate(model.getEndDate());
 
 		return soapModel;
 	}
@@ -165,6 +168,14 @@ public class BackTestingSoap implements Serializable {
 		_toDate = toDate;
 	}
 
+	public Date getLastRunDate() {
+		return _lastRunDate;
+	}
+
+	public void setLastRunDate(Date lastRunDate) {
+		_lastRunDate = lastRunDate;
+	}
+
 	public long getShareId() {
 		return _shareId;
 	}
@@ -221,6 +232,22 @@ public class BackTestingSoap implements Serializable {
 		_description = description;
 	}
 
+	public Date getStartDate() {
+		return _startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		_startDate = startDate;
+	}
+
+	public Date getEndDate() {
+		return _endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		_endDate = endDate;
+	}
+
 	private String _uuid;
 	private long _backTId;
 	private long _groupId;
@@ -229,6 +256,7 @@ public class BackTestingSoap implements Serializable {
 	private Date _modifiedDate;
 	private Date _fromDate;
 	private Date _toDate;
+	private Date _lastRunDate;
 	private long _shareId;
 	private long _countordersBUY;
 	private long _countordersSELL;
@@ -236,4 +264,6 @@ public class BackTestingSoap implements Serializable {
 	private double _profitordersSELL;
 	private String _status;
 	private String _description;
+	private Date _startDate;
+	private Date _endDate;
 }

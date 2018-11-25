@@ -94,6 +94,7 @@ public class Utilities {
    
    
    public final static String _IBTRADER_WEB_FORMAT_DATE="dd-MM-yyyy HH:mm";
+   public final static String _IBTRADER_WEB_FORMAT_SHORTDATE="dd-MM-yyyy";
    
    
    public final static String _IBTRADER_STRATEGY_CUSTOM_FIELDS_="exp_";
@@ -252,6 +253,21 @@ public class Utilities {
     catch (Exception e) {}
     }
     
+    
+    public static String  getWebFormattedShortDate(Date _date)
+   	{       	
+    	SimpleDateFormat _Format = new SimpleDateFormat(_IBTRADER_WEB_FORMAT_SHORTDATE);   	
+    	return  _Format.format(_date);
+   		
+   	}
+    
+    
+    public static String  getWebFormattedShortDate(Date _date, User user)
+   	{       	
+    	SimpleDateFormat _Format = new SimpleDateFormat(_IBTRADER_WEB_FORMAT_SHORTDATE);   	
+    	return  _Format.format(getIBDateByUserDate(user,_date));
+   		
+   	}
     
     public static String  getWebFormattedDate(Date _date, User user)
    	{       	

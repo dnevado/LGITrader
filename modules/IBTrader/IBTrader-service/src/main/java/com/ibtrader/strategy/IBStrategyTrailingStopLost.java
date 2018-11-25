@@ -46,7 +46,7 @@ public class IBStrategyTrailingStopLost extends StrategyImpl {
 		String position_mode = Utilities.getPositionModeType(backtestingdDate, _share.getCompanyId(),_share.getGroupId());
 
 		
-		boolean existsPositionToExit = PositionLocalServiceUtil.ExistsPositionToExit(_share.getGroupId(),_share.getCompanyId(),_share.getShareId(),position_mode);
+		boolean existsPositionToExit = PositionLocalServiceUtil.ExistsPositionToExit(_share.getGroupId(),_share.getCompanyId(),_share.getShareId(),position_mode, Validator.isNotNull(this.getCurrentBackTesting()) ?  this.getCurrentBackTesting().getBackTId() : ConfigKeys.DEFAULT_BACKTESTINGID_VALUE);
 		if (!existsPositionToExit)
 			return -1;
 		
@@ -130,7 +130,7 @@ public class IBStrategyTrailingStopLost extends StrategyImpl {
     {		
 	String position_mode = Utilities.getPositionModeType(backtestingdDate, _share.getCompanyId(),_share.getGroupId());
 	
-	existsPositionToExit = PositionLocalServiceUtil.ExistsPositionToExit(_share.getGroupId(),_share.getCompanyId(),_share.getShareId(),position_mode);
+	existsPositionToExit = PositionLocalServiceUtil.ExistsPositionToExit(_share.getGroupId(),_share.getCompanyId(),_share.getShareId(),position_mode, Validator.isNotNull(this.getCurrentBackTesting()) ?  this.getCurrentBackTesting().getBackTId() : -1);
 	if (existsPositionToExit)		
 	{	
 		/* CAMBIAMOS POR EL ULTIMO VALOR MENOR QUE AHORA PARA QUE SE PUEDAN METER VALORES FUTURES COMO CONJUNTO DE PRUEBAS */
@@ -151,7 +151,7 @@ public class IBStrategyTrailingStopLost extends StrategyImpl {
 		}
 		
 
-		currentPosition = PositionLocalServiceUtil.findPositionToExit(_share.getGroupId(),_share.getCompanyId(),_share.getShareId(),position_mode);
+		currentPosition = PositionLocalServiceUtil.findPositionToExit(_share.getGroupId(),_share.getCompanyId(),_share.getShareId(),position_mode, Validator.isNotNull(this.getCurrentBackTesting()) ?  this.getCurrentBackTesting().getBackTId() : -1);
 		
 		if (lastRealtime!=null && currentPosition!=null && currentPosition.getPercentual_trailling_stop_lost()>0)
 		{	

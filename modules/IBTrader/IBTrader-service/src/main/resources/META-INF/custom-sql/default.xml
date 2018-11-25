@@ -224,7 +224,8 @@
 						AND (IBTrader_Position.companyid=?)
 	            		AND (IBTrader_Position.groupid=?)        
 	            		AND	 (IBTrader_Position.shareId=SHARE.shareId) 	
-	            		AND (IBTrader_Position.position_mode=?)         	
+	            		AND (IBTrader_Position.position_mode=?)  
+	            		AND (IBTrader_Position.backtestingId=?)       	
 	            		
 				)	 rt 
 				GROUP BY tipo
@@ -690,6 +691,7 @@
 	            		
 				)	 rt 
 				GROUP BY tipo
+				ORDER BY tipo 
 	 
      ]]>
     </sql>

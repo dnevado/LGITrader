@@ -2,8 +2,19 @@
 <%@page import="com.ibtrader.util.Utilities"%>
 <%@ include file="/init.jsp" %>		
 
-<div id="shares_list" class="container-fluid-1280">
+<portlet:renderURL var="viewMarketURL">
+    <portlet:param name="mvcRenderCommandName" value="/html/view_market"></portlet:param>
+    <portlet:param name="redirect" value="<%=themeDisplay.getURLCurrent()%>"/>    
+</portlet:renderURL>
 
+<div id="shares_list" class="container-fluid-1280">
+<aui:row>
+<aui:col span="12">
+	<aui:button-row>    
+	    <aui:button   cssClass="btn btn-lg btn-primary btn-default" onClick="${viewMarketURL}" value="market.view_market"></aui:button>
+	</aui:button-row>
+</aui:col>
+</aui:row>
 <liferay-ui:success key="share.delete.success" message="share.delete.success"/>
 <liferay-ui:error key="share.error.positionexists" message="share.error.positionexists"/>
 <liferay-ui:error key="share.error.missingparameters" message="share.error.missingparameters"/>
@@ -24,10 +35,7 @@
     <portlet:param name="redirect" value="<%=themeDisplay.getURLCurrent()%>"/>
     <portlet:param name="marketId" value="0"></portlet:param>
 </portlet:renderURL>
-<portlet:renderURL var="viewMarketURL">
-    <portlet:param name="mvcRenderCommandName" value="/html/view_market"></portlet:param>
-    <portlet:param name="redirect" value="<%=themeDisplay.getURLCurrent()%>"/>    
-</portlet:renderURL>
+
 
 
 
@@ -35,9 +43,7 @@
     <liferay-frontend:add-menu-item title='<%= LanguageUtil.get(request,"share.addshare") %>' url="<%= addShareURL.toString() %>" />    
 </liferay-frontend:add-menu>
 
-<aui:button-row>    
-    <aui:button   cssClass="btn btn-lg btn-primary btn-default" onClick="${viewMarketURL}" value="market.view_market"></aui:button>
-</aui:button-row>
+
 
 
 <liferay-ui:search-container cssClass="table table-responsive table-striped table-bordered table-hover"  searchContainer="${searchShare}" iteratorURL="${iteratorURL}"> 

@@ -78,13 +78,16 @@ public class BackTestingModelImpl extends BaseModelImpl<BackTesting>
 			{ "modifiedDate", Types.TIMESTAMP },
 			{ "fromDate", Types.TIMESTAMP },
 			{ "toDate", Types.TIMESTAMP },
+			{ "lastRunDate", Types.TIMESTAMP },
 			{ "shareId", Types.BIGINT },
 			{ "countordersBUY", Types.BIGINT },
 			{ "countordersSELL", Types.BIGINT },
 			{ "profitordersBUY", Types.DOUBLE },
 			{ "profitordersSELL", Types.DOUBLE },
 			{ "status", Types.VARCHAR },
-			{ "description", Types.CLOB }
+			{ "description", Types.CLOB },
+			{ "startDate", Types.TIMESTAMP },
+			{ "endDate", Types.TIMESTAMP }
 		};
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP = new HashMap<String, Integer>();
 
@@ -97,6 +100,7 @@ public class BackTestingModelImpl extends BaseModelImpl<BackTesting>
 		TABLE_COLUMNS_MAP.put("modifiedDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("fromDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("toDate", Types.TIMESTAMP);
+		TABLE_COLUMNS_MAP.put("lastRunDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("shareId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("countordersBUY", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("countordersSELL", Types.BIGINT);
@@ -104,9 +108,11 @@ public class BackTestingModelImpl extends BaseModelImpl<BackTesting>
 		TABLE_COLUMNS_MAP.put("profitordersSELL", Types.DOUBLE);
 		TABLE_COLUMNS_MAP.put("status", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("description", Types.CLOB);
+		TABLE_COLUMNS_MAP.put("startDate", Types.TIMESTAMP);
+		TABLE_COLUMNS_MAP.put("endDate", Types.TIMESTAMP);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table ibtrader_BackTesting (uuid_ VARCHAR(75) null,backTId LONG not null primary key,groupId LONG,companyId LONG,createDate DATE null,modifiedDate DATE null,fromDate DATE null,toDate DATE null,shareId LONG,countordersBUY LONG,countordersSELL LONG,profitordersBUY DOUBLE,profitordersSELL DOUBLE,status VARCHAR(75) null,description TEXT null)";
+	public static final String TABLE_SQL_CREATE = "create table ibtrader_BackTesting (uuid_ VARCHAR(75) null,backTId LONG not null primary key,groupId LONG,companyId LONG,createDate DATE null,modifiedDate DATE null,fromDate DATE null,toDate DATE null,lastRunDate DATE null,shareId LONG,countordersBUY LONG,countordersSELL LONG,profitordersBUY DOUBLE,profitordersSELL DOUBLE,status VARCHAR(75) null,description TEXT null,startDate DATE null,endDate DATE null)";
 	public static final String TABLE_SQL_DROP = "drop table ibtrader_BackTesting";
 	public static final String ORDER_BY_JPQL = " ORDER BY backTesting.backTId DESC";
 	public static final String ORDER_BY_SQL = " ORDER BY ibtrader_BackTesting.backTId DESC";
@@ -115,10 +121,10 @@ public class BackTestingModelImpl extends BaseModelImpl<BackTesting>
 	public static final String TX_MANAGER = "liferayTransactionManager";
 	public static final boolean ENTITY_CACHE_ENABLED = GetterUtil.getBoolean(com.liferay.service.foo.service.util.PropsUtil.get(
 				"value.object.entity.cache.enabled.com.ibtrader.data.model.BackTesting"),
-			true);
+			false);
 	public static final boolean FINDER_CACHE_ENABLED = GetterUtil.getBoolean(com.liferay.service.foo.service.util.PropsUtil.get(
 				"value.object.finder.cache.enabled.com.ibtrader.data.model.BackTesting"),
-			true);
+			false);
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.service.foo.service.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.ibtrader.data.model.BackTesting"),
 			true);
@@ -150,6 +156,7 @@ public class BackTestingModelImpl extends BaseModelImpl<BackTesting>
 		model.setModifiedDate(soapModel.getModifiedDate());
 		model.setFromDate(soapModel.getFromDate());
 		model.setToDate(soapModel.getToDate());
+		model.setLastRunDate(soapModel.getLastRunDate());
 		model.setShareId(soapModel.getShareId());
 		model.setCountordersBUY(soapModel.getCountordersBUY());
 		model.setCountordersSELL(soapModel.getCountordersSELL());
@@ -157,6 +164,8 @@ public class BackTestingModelImpl extends BaseModelImpl<BackTesting>
 		model.setProfitordersSELL(soapModel.getProfitordersSELL());
 		model.setStatus(soapModel.getStatus());
 		model.setDescription(soapModel.getDescription());
+		model.setStartDate(soapModel.getStartDate());
+		model.setEndDate(soapModel.getEndDate());
 
 		return model;
 	}
@@ -229,6 +238,7 @@ public class BackTestingModelImpl extends BaseModelImpl<BackTesting>
 		attributes.put("modifiedDate", getModifiedDate());
 		attributes.put("fromDate", getFromDate());
 		attributes.put("toDate", getToDate());
+		attributes.put("lastRunDate", getLastRunDate());
 		attributes.put("shareId", getShareId());
 		attributes.put("countordersBUY", getCountordersBUY());
 		attributes.put("countordersSELL", getCountordersSELL());
@@ -236,6 +246,8 @@ public class BackTestingModelImpl extends BaseModelImpl<BackTesting>
 		attributes.put("profitordersSELL", getProfitordersSELL());
 		attributes.put("status", getStatus());
 		attributes.put("description", getDescription());
+		attributes.put("startDate", getStartDate());
+		attributes.put("endDate", getEndDate());
 
 		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
 		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
@@ -293,6 +305,12 @@ public class BackTestingModelImpl extends BaseModelImpl<BackTesting>
 			setToDate(toDate);
 		}
 
+		Date lastRunDate = (Date)attributes.get("lastRunDate");
+
+		if (lastRunDate != null) {
+			setLastRunDate(lastRunDate);
+		}
+
 		Long shareId = (Long)attributes.get("shareId");
 
 		if (shareId != null) {
@@ -333,6 +351,18 @@ public class BackTestingModelImpl extends BaseModelImpl<BackTesting>
 
 		if (description != null) {
 			setDescription(description);
+		}
+
+		Date startDate = (Date)attributes.get("startDate");
+
+		if (startDate != null) {
+			setStartDate(startDate);
+		}
+
+		Date endDate = (Date)attributes.get("endDate");
+
+		if (endDate != null) {
+			setEndDate(endDate);
 		}
 	}
 
@@ -471,6 +501,17 @@ public class BackTestingModelImpl extends BaseModelImpl<BackTesting>
 
 	@JSON
 	@Override
+	public Date getLastRunDate() {
+		return _lastRunDate;
+	}
+
+	@Override
+	public void setLastRunDate(Date lastRunDate) {
+		_lastRunDate = lastRunDate;
+	}
+
+	@JSON
+	@Override
 	public long getShareId() {
 		return _shareId;
 	}
@@ -578,6 +619,28 @@ public class BackTestingModelImpl extends BaseModelImpl<BackTesting>
 		_description = description;
 	}
 
+	@JSON
+	@Override
+	public Date getStartDate() {
+		return _startDate;
+	}
+
+	@Override
+	public void setStartDate(Date startDate) {
+		_startDate = startDate;
+	}
+
+	@JSON
+	@Override
+	public Date getEndDate() {
+		return _endDate;
+	}
+
+	@Override
+	public void setEndDate(Date endDate) {
+		_endDate = endDate;
+	}
+
 	@Override
 	public StagedModelType getStagedModelType() {
 		return new StagedModelType(PortalUtil.getClassNameId(
@@ -623,6 +686,7 @@ public class BackTestingModelImpl extends BaseModelImpl<BackTesting>
 		backTestingImpl.setModifiedDate(getModifiedDate());
 		backTestingImpl.setFromDate(getFromDate());
 		backTestingImpl.setToDate(getToDate());
+		backTestingImpl.setLastRunDate(getLastRunDate());
 		backTestingImpl.setShareId(getShareId());
 		backTestingImpl.setCountordersBUY(getCountordersBUY());
 		backTestingImpl.setCountordersSELL(getCountordersSELL());
@@ -630,6 +694,8 @@ public class BackTestingModelImpl extends BaseModelImpl<BackTesting>
 		backTestingImpl.setProfitordersSELL(getProfitordersSELL());
 		backTestingImpl.setStatus(getStatus());
 		backTestingImpl.setDescription(getDescription());
+		backTestingImpl.setStartDate(getStartDate());
+		backTestingImpl.setEndDate(getEndDate());
 
 		backTestingImpl.resetOriginalValues();
 
@@ -775,6 +841,15 @@ public class BackTestingModelImpl extends BaseModelImpl<BackTesting>
 			backTestingCacheModel.toDate = Long.MIN_VALUE;
 		}
 
+		Date lastRunDate = getLastRunDate();
+
+		if (lastRunDate != null) {
+			backTestingCacheModel.lastRunDate = lastRunDate.getTime();
+		}
+		else {
+			backTestingCacheModel.lastRunDate = Long.MIN_VALUE;
+		}
+
 		backTestingCacheModel.shareId = getShareId();
 
 		backTestingCacheModel.countordersBUY = getCountordersBUY();
@@ -801,12 +876,30 @@ public class BackTestingModelImpl extends BaseModelImpl<BackTesting>
 			backTestingCacheModel.description = null;
 		}
 
+		Date startDate = getStartDate();
+
+		if (startDate != null) {
+			backTestingCacheModel.startDate = startDate.getTime();
+		}
+		else {
+			backTestingCacheModel.startDate = Long.MIN_VALUE;
+		}
+
+		Date endDate = getEndDate();
+
+		if (endDate != null) {
+			backTestingCacheModel.endDate = endDate.getTime();
+		}
+		else {
+			backTestingCacheModel.endDate = Long.MIN_VALUE;
+		}
+
 		return backTestingCacheModel;
 	}
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(31);
+		StringBundler sb = new StringBundler(37);
 
 		sb.append("{uuid=");
 		sb.append(getUuid());
@@ -824,6 +917,8 @@ public class BackTestingModelImpl extends BaseModelImpl<BackTesting>
 		sb.append(getFromDate());
 		sb.append(", toDate=");
 		sb.append(getToDate());
+		sb.append(", lastRunDate=");
+		sb.append(getLastRunDate());
 		sb.append(", shareId=");
 		sb.append(getShareId());
 		sb.append(", countordersBUY=");
@@ -838,6 +933,10 @@ public class BackTestingModelImpl extends BaseModelImpl<BackTesting>
 		sb.append(getStatus());
 		sb.append(", description=");
 		sb.append(getDescription());
+		sb.append(", startDate=");
+		sb.append(getStartDate());
+		sb.append(", endDate=");
+		sb.append(getEndDate());
 		sb.append("}");
 
 		return sb.toString();
@@ -845,7 +944,7 @@ public class BackTestingModelImpl extends BaseModelImpl<BackTesting>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(49);
+		StringBundler sb = new StringBundler(58);
 
 		sb.append("<model><model-name>");
 		sb.append("com.ibtrader.data.model.BackTesting");
@@ -884,6 +983,10 @@ public class BackTestingModelImpl extends BaseModelImpl<BackTesting>
 		sb.append(getToDate());
 		sb.append("]]></column-value></column>");
 		sb.append(
+			"<column><column-name>lastRunDate</column-name><column-value><![CDATA[");
+		sb.append(getLastRunDate());
+		sb.append("]]></column-value></column>");
+		sb.append(
 			"<column><column-name>shareId</column-name><column-value><![CDATA[");
 		sb.append(getShareId());
 		sb.append("]]></column-value></column>");
@@ -911,6 +1014,14 @@ public class BackTestingModelImpl extends BaseModelImpl<BackTesting>
 			"<column><column-name>description</column-name><column-value><![CDATA[");
 		sb.append(getDescription());
 		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>startDate</column-name><column-value><![CDATA[");
+		sb.append(getStartDate());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>endDate</column-name><column-value><![CDATA[");
+		sb.append(getEndDate());
+		sb.append("]]></column-value></column>");
 
 		sb.append("</model>");
 
@@ -935,6 +1046,7 @@ public class BackTestingModelImpl extends BaseModelImpl<BackTesting>
 	private boolean _setModifiedDate;
 	private Date _fromDate;
 	private Date _toDate;
+	private Date _lastRunDate;
 	private long _shareId;
 	private long _originalShareId;
 	private boolean _setOriginalShareId;
@@ -945,6 +1057,8 @@ public class BackTestingModelImpl extends BaseModelImpl<BackTesting>
 	private String _status;
 	private String _originalStatus;
 	private String _description;
+	private Date _startDate;
+	private Date _endDate;
 	private long _columnBitmask;
 	private BackTesting _escapedModel;
 }

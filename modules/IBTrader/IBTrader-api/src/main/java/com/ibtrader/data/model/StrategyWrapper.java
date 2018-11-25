@@ -194,6 +194,11 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 	}
 
 	@Override
+	public BackTesting getCurrentBackTesting() {
+		return _strategy.getCurrentBackTesting();
+	}
+
+	@Override
 	public Strategy toEscapedModel() {
 		return new StrategyWrapper(_strategy.toEscapedModel());
 	}
@@ -703,8 +708,8 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 	}
 
 	@Override
-	public void init_simulation() {
-		_strategy.init_simulation();
+	public void init_simulation(BackTesting _current_backtesting) {
+		_strategy.init_simulation(_current_backtesting);
 	}
 
 	@Override
