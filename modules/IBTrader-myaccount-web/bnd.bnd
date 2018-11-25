@@ -1,0 +1,18 @@
+Bundle-Name:  IBTrader-myaccount-web
+Bundle-SymbolicName: com.ibtrader.custom.my.account.web
+Bundle-Version: 1.0.13
+Import-Package:\
+	javax.net.ssl,\
+	\
+	*
+Liferay-Releng-Module-Group-Description:
+Liferay-Releng-Module-Group-Title:
+-dsannotations-options: inherit
+Export-Package: \
+	com.ibtrader.my.account.web.internal.constants,\
+	com.ibtrader.my.account.web.internal.portlet,\
+	com.ibtrader.my.account.web.internal.portlet.action,\
+	com.ibtrader.my.account.web.internal.upgrade
+Include-Resource:\
+    @com.liferay.petra.string-1.0.0.jar,\
+    @com.liferay.petra.lang-1.0.0.jar,\

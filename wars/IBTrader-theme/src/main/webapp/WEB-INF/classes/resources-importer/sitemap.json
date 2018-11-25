@@ -1,0 +1,22 @@
+{
+	"layoutTemplateId": "2_columns_ii",
+	"privatePages": [
+		{
+			"columns": [
+				[
+					{
+						"portletId": "com_liferay_login_web_portlet_LoginPortlet"
+					}
+				],
+				[
+					{
+						"portletId": "com_liferay_hello_world_web_portlet_HelloWorldPortlet"
+					}
+				]
+			],
+			"friendlyURL": "/home",
+			"name": "Welcome",
+			"title": "Welcome"
+		}
+	]
+}

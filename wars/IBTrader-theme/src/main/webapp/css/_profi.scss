@@ -1,0 +1,285 @@
+@font-face {
+    font-family: "dosislight";
+    font-style: normal;
+    font-weight: normal;
+    src: url("fonts/dosis-light-webfont.eot?#iefix") format("embedded-opentype"), url("fonts/dosis-light-webfont.woff") format("woff"), url("fonts/dosis-light-webfont.ttf") format("truetype");
+}
+@font-face {
+    font-family: "dosisbold";
+    font-style: normal;
+    font-weight: bold;
+    src: url("fonts/dosis-bold-webfont.eot?#iefix") format("embedded-opentype"), url("fonts/dosis-bold-webfont.woff") format("woff"), url("fonts/dosis-bold-webfont.ttf") format("truetype");
+}
+@font-face {
+    font-family: "dosisregular";
+    font-style: normal;
+    font-weight: normal;
+    src: url("fonts/dosis-regular-webfont.eot?#iefix") format("embedded-opentype"), url("fonts/dosis-regular-webfont.woff") format("woff"), url("fonts/dosis-regular-webfont.ttf") format("truetype");
+}
+@font-face {
+    font-family: "dosismedium";
+    font-style: normal;
+    font-weight: normal;
+    src: url("fonts/dosis-medium-webfont.eot?#iefix") format("embedded-opentype"), url("fonts/dosis-medium-webfont.woff") format("woff"), url("fonts/dosis-medium-webfont.ttf") format("truetype");
+}
+@font-face {
+    font-family: "dosissemibold";
+    font-style: normal;
+    font-weight: normal;
+    src: url("fonts/dosis-semibold-webfont.eot?#iefix") format("embedded-opentype"), url("fonts/dosis-semibold-webfont.woff") format("woff"), url("fonts/dosis-semibold-webfont.ttf") format("truetype"), url("fonts/dosis-semibold-webfont.svg#dosissemibold") format("svg");
+}
+@font-face {
+    font-family: "dosisextrabold";
+    font-style: normal;
+    font-weight: normal;
+    src: url("fonts/dosis-extrabold-webfont.eot?#iefix") format("embedded-opentype"), url("fonts/dosis-extrabold-webfont.woff") format("woff"), url("fonts/dosis-extrabold-webfont.ttf") format("truetype"), url("fonts/dosis-extrabold-webfont.svg#dosisextrabold") format("svg");
+}
+
+html {
+	body {
+	    background-color: white;
+	    color: #808080;
+	    font-family: "dosisregular";
+	    font-size: 14px;
+	    line-height: 20px;
+	}
+	
+	#wrapper {
+	    position: relative;
+	}
+	
+	#wrapper {
+	    padding: 2em 5em 0;
+	}
+	
+	#content {
+		margin-top: 50px;
+		margin-bottom: 50px;
+		padding-left: 40px;
+		padding-right: 40px;
+	}
+	
+	.clear {
+		clear: both;
+	}
+	
+	#top {
+		position: relative;
+	}
+	
+	.container-fluid:before, .container-fluid:after {
+	    content: "";
+	    display: table;
+	    line-height: 0;
+	}
+	
+	#top img.topLogo {
+		float: left;
+	}
+	
+	#top a.logo {
+		display: block;
+	}
+	
+	#top-menu {
+		background: none repeat scroll 0 0 white;
+		height: 52px;
+		font-size: 16px;
+		position: absolute;
+		z-index: 1;
+		float: right;
+		top: 30%;
+		right: 0;		
+	}
+	
+	#top-menu ul {
+		float: right;
+	}
+	
+	#top-menu li {
+	    float: left;
+		padding-top: 5px;
+		padding-bottom: 5px;
+	}
+	
+	#top-menu li a {
+	    color: #9A9A9A;
+	    display: block;
+	    margin-left: 20px;
+	    margin-right: 20px;
+	    text-decoration: none;
+	}
+	
+	#top-menu li.active a {
+		border-bottom: 1px solid #424242;
+		color: #424242;
+	}
+	
+	#top-menu li:hover.active a {
+		border-bottom: 1px solid #FFFFFF;
+		color: #FFFFFF;
+	}
+	
+	#top-menu li:hover.active .child-menu li a {
+		color: #424242;
+	}
+	
+	#top-menu li:hover.active .child-menu li a:hover {
+		color: #ffffff;
+	}
+	
+	#top-menu li:hover, #top-menu .child-menu li:hover {
+		background: #DB726D;
+		color: #FFFFFF;
+	}
+	
+	#top-menu li:hover, #top-menu .child-menu li.active a {
+		border-bottom: 1px solid #424242;
+		color: #424242;
+	}
+	
+	#top-menu li:hover, #top-menu .child-menu li:hover.active a {
+		border-bottom: 1px solid #FFFFFF;
+		color: #FFFFFF;
+	}
+	
+	#top-menu li:hover, #top-menu .child-menu li:hover.active {
+		color: #FFFFFF;
+	}
+	
+	#top-menu li:hover a, #top-menu .child-menu li:hover a {
+		color: #FFFFFF;
+	}
+	
+	#top-menu .child-menu li a {
+		border: none;
+		color: #424242;
+	}
+	
+	#top-menu .child-menu li:hover a{
+		border: none;
+		color: #FFFFFF !important;
+	}
+	
+	#top-menu .child-menu li:hover{
+		background: #DB726D;
+		color: #FFFFFF;
+	}
+	
+	#top-menu li .child-menu {
+	    display: none;
+		background: #ffffff;
+		text-align: left;
+		margin-top: 5px;
+	}
+	
+	#top-menu li:hover .child-menu {
+		display: block;
+		position: absolute;
+		padding: 10px;
+	}
+	
+	#top-menu li:hover .child-menu ul {
+		margin: 0;
+	}	
+	
+	#top-menu .child-menu li {
+		display: block;
+		float: none;
+		min-width: 120px;
+	}
+	
+	ol, ul {
+	    list-style: outside none none;
+		padding: 0;
+	}
+	
+	.main-content-left {
+		width: 35%;
+		float: left;
+	}
+	
+	.main-content-left p {
+		padding-top: 10px;
+	}
+	
+	.main-content-right {
+		width: 65%;
+		float: left;
+		text-align: right;
+	}
+	
+	.red {
+		color: #EC1D25;
+	}
+	
+	#footer {
+		border-top: 6px solid #EC1D25;
+		background: none repeat scroll 0 0 #333333;
+		padding: 0 5em 0;
+		position: absolute;
+		right: 0;
+		left: 0;
+		text-align: left;
+	}
+	
+	#footer-content {
+		background: none repeat scroll 0 0 #333333;
+		color: #C5C5C5;
+		padding-bottom: 40px;
+		padding-left: 40px;
+		padding-right: 40px;
+	}
+	
+	.foter-content-row-line {
+		font-size: 16px;
+		border-top: 1px solid #5B5B5B;
+		border-bottom: 1px solid #5B5B5B;
+		padding-top: 5px;
+		padding-bottom: 5px;
+		margin-bottom: 20px;
+	}
+	
+	.foter-content-row .col-left {
+		float: left;
+		width: 30%;
+		word-wrap:break-word;
+		max-width:100%;
+	}
+	
+	.foter-content-row .col-right {
+		float: left;
+		text-align: right;
+		width: 70%;
+		font-size: 12px;
+	}
+	
+	.foter-content-row-line .phoneNumber {
+	    background: url(../images/profi/phoneIcon.svg) no-repeat scroll left center / 22px 27px rgba(0, 0, 0, 0);
+	    cursor: default;
+	    margin-left: 3px;
+	    padding-left: 35px;
+	    margin-right: 48px;
+	}
+	
+	.foter-content-row-line .email {
+	    background: url(../images/profi/envelopIcon.svg) no-repeat scroll left center / 27px 18px rgba(0, 0, 0, 0);
+	    padding-left: 43px;
+	    margin-right: 38px;
+	}
+	
+	.foter-content-row-line .email, .foter-content-row-line .phoneNumber, .foter-content-row-line a {
+		color: #ccc;
+	    display: block;
+	    float: left;
+	    font-size: 18px;
+	    height: 55px;
+	    line-height: 55px;
+	    transition: color 0.3s ease-out 0s;
+	}
+	
+	.footer-icon {
+		margin-left: 10px;
+	}
+}
+
