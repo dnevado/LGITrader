@@ -244,9 +244,9 @@ public class BackTestingWrapper implements BackTesting,
 	}
 
 	/**
-	* Returns the profitorders b u y of this back testing.
+	* Returns the profitorders buy of this back testing.
 	*
-	* @return the profitorders b u y of this back testing
+	* @return the profitorders buy of this back testing
 	*/
 	@Override
 	public double getProfitordersBUY() {
@@ -254,9 +254,9 @@ public class BackTestingWrapper implements BackTesting,
 	}
 
 	/**
-	* Returns the profitorders s e l l of this back testing.
+	* Returns the profitorders sell of this back testing.
 	*
-	* @return the profitorders s e l l of this back testing
+	* @return the profitorders sell of this back testing
 	*/
 	@Override
 	public double getProfitordersSELL() {
@@ -414,9 +414,9 @@ public class BackTestingWrapper implements BackTesting,
 	}
 
 	/**
-	* Returns the countorders b u y of this back testing.
+	* Returns the countorders buy of this back testing.
 	*
-	* @return the countorders b u y of this back testing
+	* @return the countorders buy of this back testing
 	*/
 	@Override
 	public long getCountordersBUY() {
@@ -424,9 +424,9 @@ public class BackTestingWrapper implements BackTesting,
 	}
 
 	/**
-	* Returns the countorders s e l l of this back testing.
+	* Returns the countorders sell of this back testing.
 	*
-	* @return the countorders s e l l of this back testing
+	* @return the countorders sell of this back testing
 	*/
 	@Override
 	public long getCountordersSELL() {
@@ -494,9 +494,9 @@ public class BackTestingWrapper implements BackTesting,
 	}
 
 	/**
-	* Sets the countorders b u y of this back testing.
+	* Sets the countorders buy of this back testing.
 	*
-	* @param countordersBUY the countorders b u y of this back testing
+	* @param countordersBUY the countorders buy of this back testing
 	*/
 	@Override
 	public void setCountordersBUY(long countordersBUY) {
@@ -504,9 +504,9 @@ public class BackTestingWrapper implements BackTesting,
 	}
 
 	/**
-	* Sets the countorders s e l l of this back testing.
+	* Sets the countorders sell of this back testing.
 	*
-	* @param countordersSELL the countorders s e l l of this back testing
+	* @param countordersSELL the countorders sell of this back testing
 	*/
 	@Override
 	public void setCountordersSELL(long countordersSELL) {
@@ -620,9 +620,9 @@ public class BackTestingWrapper implements BackTesting,
 	}
 
 	/**
-	* Sets the profitorders b u y of this back testing.
+	* Sets the profitorders buy of this back testing.
 	*
-	* @param profitordersBUY the profitorders b u y of this back testing
+	* @param profitordersBUY the profitorders buy of this back testing
 	*/
 	@Override
 	public void setProfitordersBUY(double profitordersBUY) {
@@ -630,9 +630,9 @@ public class BackTestingWrapper implements BackTesting,
 	}
 
 	/**
-	* Sets the profitorders s e l l of this back testing.
+	* Sets the profitorders sell of this back testing.
 	*
-	* @param profitordersSELL the profitorders s e l l of this back testing
+	* @param profitordersSELL the profitorders sell of this back testing
 	*/
 	@Override
 	public void setProfitordersSELL(double profitordersSELL) {

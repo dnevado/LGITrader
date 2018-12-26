@@ -36,7 +36,7 @@ public class IBTraderConstants {
 	public static long   	vCRON_TRADING_CLIENT_INITIAL = 3;  // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
 	public static long  	vCRON_READING_CLIENT_INITIAL = 4;  // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
 	public static long  	vCRON_FILLHISTORICALDATA = 6;  // para saber si esta ejecutando o no , ojo a las caidas y exceptiones	
-	public static String    vUSER_TWS = "edemo";  // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
+	public static String    vUSER_TWS = "pmdemo";  // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
 	public static String    vUSER_PWD = "demouser";   // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
 	public static long   	vENABLE_DESKTOP_NOTIFICATIONS = 1;  // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
 	public static long   	vENABLE_MAIL_NOTIFICATIONS = 1;  // para saber si esta ejecutando o no , ojo a las caidas y exceptiones

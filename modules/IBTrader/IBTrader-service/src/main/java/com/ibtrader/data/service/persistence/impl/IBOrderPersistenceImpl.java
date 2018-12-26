@@ -59,7 +59,7 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * The persistence implementation for the i b order service.
+ * The persistence implementation for the ib order service.
  *
  * <p>
  * Caching information and settings can be found in <code>portal.properties</code>
@@ -76,7 +76,7 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this class directly. Always use {@link IBOrderUtil} to access the i b order persistence. Modify <code>service.xml</code> and rerun ServiceBuilder to regenerate this class.
+	 * Never modify or reference this class directly. Always use {@link IBOrderUtil} to access the ib order persistence. Modify <code>service.xml</code> and rerun ServiceBuilder to regenerate this class.
 	 */
 	public static final String FINDER_CLASS_NAME_ENTITY = IBOrderImpl.class.getName();
 	public static final String FINDER_CLASS_NAME_LIST_WITH_PAGINATION = FINDER_CLASS_NAME_ENTITY +
@@ -112,10 +112,10 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 			new String[] { String.class.getName() });
 
 	/**
-	 * Returns all the i b orders where uuid = &#63;.
+	 * Returns all the ib orders where uuid = &#63;.
 	 *
 	 * @param uuid the uuid
-	 * @return the matching i b orders
+	 * @return the matching ib orders
 	 */
 	@Override
 	public List<IBOrder> findByUuid(String uuid) {
@@ -123,16 +123,16 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns a range of all the i b orders where uuid = &#63;.
+	 * Returns a range of all the ib orders where uuid = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param uuid the uuid
-	 * @param start the lower bound of the range of i b orders
-	 * @param end the upper bound of the range of i b orders (not inclusive)
-	 * @return the range of matching i b orders
+	 * @param start the lower bound of the range of ib orders
+	 * @param end the upper bound of the range of ib orders (not inclusive)
+	 * @return the range of matching ib orders
 	 */
 	@Override
 	public List<IBOrder> findByUuid(String uuid, int start, int end) {
@@ -140,17 +140,17 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns an ordered range of all the i b orders where uuid = &#63;.
+	 * Returns an ordered range of all the ib orders where uuid = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param uuid the uuid
-	 * @param start the lower bound of the range of i b orders
-	 * @param end the upper bound of the range of i b orders (not inclusive)
+	 * @param start the lower bound of the range of ib orders
+	 * @param end the upper bound of the range of ib orders (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching i b orders
+	 * @return the ordered range of matching ib orders
 	 */
 	@Override
 	public List<IBOrder> findByUuid(String uuid, int start, int end,
@@ -159,18 +159,18 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns an ordered range of all the i b orders where uuid = &#63;.
+	 * Returns an ordered range of all the ib orders where uuid = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param uuid the uuid
-	 * @param start the lower bound of the range of i b orders
-	 * @param end the upper bound of the range of i b orders (not inclusive)
+	 * @param start the lower bound of the range of ib orders
+	 * @param end the upper bound of the range of ib orders (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @param retrieveFromCache whether to retrieve from the finder cache
-	 * @return the ordered range of matching i b orders
+	 * @return the ordered range of matching ib orders
 	 */
 	@Override
 	public List<IBOrder> findByUuid(String uuid, int start, int end,
@@ -289,12 +289,12 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the first i b order in the ordered set where uuid = &#63;.
+	 * Returns the first ib order in the ordered set where uuid = &#63;.
 	 *
 	 * @param uuid the uuid
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the first matching i b order
-	 * @throws NoSuchIBOrderException if a matching i b order could not be found
+	 * @return the first matching ib order
+	 * @throws NoSuchIBOrderException if a matching ib order could not be found
 	 */
 	@Override
 	public IBOrder findByUuid_First(String uuid,
@@ -319,11 +319,11 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the first i b order in the ordered set where uuid = &#63;.
+	 * Returns the first ib order in the ordered set where uuid = &#63;.
 	 *
 	 * @param uuid the uuid
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the first matching i b order, or <code>null</code> if a matching i b order could not be found
+	 * @return the first matching ib order, or <code>null</code> if a matching ib order could not be found
 	 */
 	@Override
 	public IBOrder fetchByUuid_First(String uuid,
@@ -338,12 +338,12 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the last i b order in the ordered set where uuid = &#63;.
+	 * Returns the last ib order in the ordered set where uuid = &#63;.
 	 *
 	 * @param uuid the uuid
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching i b order
-	 * @throws NoSuchIBOrderException if a matching i b order could not be found
+	 * @return the last matching ib order
+	 * @throws NoSuchIBOrderException if a matching ib order could not be found
 	 */
 	@Override
 	public IBOrder findByUuid_Last(String uuid,
@@ -368,11 +368,11 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the last i b order in the ordered set where uuid = &#63;.
+	 * Returns the last ib order in the ordered set where uuid = &#63;.
 	 *
 	 * @param uuid the uuid
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching i b order, or <code>null</code> if a matching i b order could not be found
+	 * @return the last matching ib order, or <code>null</code> if a matching ib order could not be found
 	 */
 	@Override
 	public IBOrder fetchByUuid_Last(String uuid,
@@ -394,13 +394,13 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the i b orders before and after the current i b order in the ordered set where uuid = &#63;.
+	 * Returns the ib orders before and after the current ib order in the ordered set where uuid = &#63;.
 	 *
-	 * @param orderIdPk the primary key of the current i b order
+	 * @param orderIdPk the primary key of the current ib order
 	 * @param uuid the uuid
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the previous, current, and next i b order
-	 * @throws NoSuchIBOrderException if a i b order with the primary key could not be found
+	 * @return the previous, current, and next ib order
+	 * @throws NoSuchIBOrderException if a ib order with the primary key could not be found
 	 */
 	@Override
 	public IBOrder[] findByUuid_PrevAndNext(long orderIdPk, String uuid,
@@ -554,7 +554,7 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Removes all the i b orders where uuid = &#63; from the database.
+	 * Removes all the ib orders where uuid = &#63; from the database.
 	 *
 	 * @param uuid the uuid
 	 */
@@ -567,10 +567,10 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the number of i b orders where uuid = &#63;.
+	 * Returns the number of ib orders where uuid = &#63;.
 	 *
 	 * @param uuid the uuid
-	 * @return the number of matching i b orders
+	 * @return the number of matching ib orders
 	 */
 	@Override
 	public int countByUuid(String uuid) {
@@ -646,12 +646,12 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 			new String[] { String.class.getName(), Long.class.getName() });
 
 	/**
-	 * Returns the i b order where uuid = &#63; and groupId = &#63; or throws a {@link NoSuchIBOrderException} if it could not be found.
+	 * Returns the ib order where uuid = &#63; and groupId = &#63; or throws a {@link NoSuchIBOrderException} if it could not be found.
 	 *
 	 * @param uuid the uuid
 	 * @param groupId the group ID
-	 * @return the matching i b order
-	 * @throws NoSuchIBOrderException if a matching i b order could not be found
+	 * @return the matching ib order
+	 * @throws NoSuchIBOrderException if a matching ib order could not be found
 	 */
 	@Override
 	public IBOrder findByUUID_G(String uuid, long groupId)
@@ -682,11 +682,11 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the i b order where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 * Returns the ib order where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
 	 * @param uuid the uuid
 	 * @param groupId the group ID
-	 * @return the matching i b order, or <code>null</code> if a matching i b order could not be found
+	 * @return the matching ib order, or <code>null</code> if a matching ib order could not be found
 	 */
 	@Override
 	public IBOrder fetchByUUID_G(String uuid, long groupId) {
@@ -694,12 +694,12 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the i b order where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	 * Returns the ib order where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param uuid the uuid
 	 * @param groupId the group ID
 	 * @param retrieveFromCache whether to retrieve from the finder cache
-	 * @return the matching i b order, or <code>null</code> if a matching i b order could not be found
+	 * @return the matching ib order, or <code>null</code> if a matching ib order could not be found
 	 */
 	@Override
 	public IBOrder fetchByUUID_G(String uuid, long groupId,
@@ -800,11 +800,11 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Removes the i b order where uuid = &#63; and groupId = &#63; from the database.
+	 * Removes the ib order where uuid = &#63; and groupId = &#63; from the database.
 	 *
 	 * @param uuid the uuid
 	 * @param groupId the group ID
-	 * @return the i b order that was removed
+	 * @return the ib order that was removed
 	 */
 	@Override
 	public IBOrder removeByUUID_G(String uuid, long groupId)
@@ -815,11 +815,11 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the number of i b orders where uuid = &#63; and groupId = &#63;.
+	 * Returns the number of ib orders where uuid = &#63; and groupId = &#63;.
 	 *
 	 * @param uuid the uuid
 	 * @param groupId the group ID
-	 * @return the number of matching i b orders
+	 * @return the number of matching ib orders
 	 */
 	@Override
 	public int countByUUID_G(String uuid, long groupId) {
@@ -910,11 +910,11 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 			new String[] { String.class.getName(), Long.class.getName() });
 
 	/**
-	 * Returns all the i b orders where uuid = &#63; and companyId = &#63;.
+	 * Returns all the ib orders where uuid = &#63; and companyId = &#63;.
 	 *
 	 * @param uuid the uuid
 	 * @param companyId the company ID
-	 * @return the matching i b orders
+	 * @return the matching ib orders
 	 */
 	@Override
 	public List<IBOrder> findByUuid_C(String uuid, long companyId) {
@@ -923,7 +923,7 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns a range of all the i b orders where uuid = &#63; and companyId = &#63;.
+	 * Returns a range of all the ib orders where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -931,9 +931,9 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	 *
 	 * @param uuid the uuid
 	 * @param companyId the company ID
-	 * @param start the lower bound of the range of i b orders
-	 * @param end the upper bound of the range of i b orders (not inclusive)
-	 * @return the range of matching i b orders
+	 * @param start the lower bound of the range of ib orders
+	 * @param end the upper bound of the range of ib orders (not inclusive)
+	 * @return the range of matching ib orders
 	 */
 	@Override
 	public List<IBOrder> findByUuid_C(String uuid, long companyId, int start,
@@ -942,7 +942,7 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns an ordered range of all the i b orders where uuid = &#63; and companyId = &#63;.
+	 * Returns an ordered range of all the ib orders where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -950,10 +950,10 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	 *
 	 * @param uuid the uuid
 	 * @param companyId the company ID
-	 * @param start the lower bound of the range of i b orders
-	 * @param end the upper bound of the range of i b orders (not inclusive)
+	 * @param start the lower bound of the range of ib orders
+	 * @param end the upper bound of the range of ib orders (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching i b orders
+	 * @return the ordered range of matching ib orders
 	 */
 	@Override
 	public List<IBOrder> findByUuid_C(String uuid, long companyId, int start,
@@ -962,7 +962,7 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns an ordered range of all the i b orders where uuid = &#63; and companyId = &#63;.
+	 * Returns an ordered range of all the ib orders where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -970,11 +970,11 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	 *
 	 * @param uuid the uuid
 	 * @param companyId the company ID
-	 * @param start the lower bound of the range of i b orders
-	 * @param end the upper bound of the range of i b orders (not inclusive)
+	 * @param start the lower bound of the range of ib orders
+	 * @param end the upper bound of the range of ib orders (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @param retrieveFromCache whether to retrieve from the finder cache
-	 * @return the ordered range of matching i b orders
+	 * @return the ordered range of matching ib orders
 	 */
 	@Override
 	public List<IBOrder> findByUuid_C(String uuid, long companyId, int start,
@@ -1103,13 +1103,13 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the first i b order in the ordered set where uuid = &#63; and companyId = &#63;.
+	 * Returns the first ib order in the ordered set where uuid = &#63; and companyId = &#63;.
 	 *
 	 * @param uuid the uuid
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the first matching i b order
-	 * @throws NoSuchIBOrderException if a matching i b order could not be found
+	 * @return the first matching ib order
+	 * @throws NoSuchIBOrderException if a matching ib order could not be found
 	 */
 	@Override
 	public IBOrder findByUuid_C_First(String uuid, long companyId,
@@ -1137,12 +1137,12 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the first i b order in the ordered set where uuid = &#63; and companyId = &#63;.
+	 * Returns the first ib order in the ordered set where uuid = &#63; and companyId = &#63;.
 	 *
 	 * @param uuid the uuid
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the first matching i b order, or <code>null</code> if a matching i b order could not be found
+	 * @return the first matching ib order, or <code>null</code> if a matching ib order could not be found
 	 */
 	@Override
 	public IBOrder fetchByUuid_C_First(String uuid, long companyId,
@@ -1158,13 +1158,13 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the last i b order in the ordered set where uuid = &#63; and companyId = &#63;.
+	 * Returns the last ib order in the ordered set where uuid = &#63; and companyId = &#63;.
 	 *
 	 * @param uuid the uuid
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching i b order
-	 * @throws NoSuchIBOrderException if a matching i b order could not be found
+	 * @return the last matching ib order
+	 * @throws NoSuchIBOrderException if a matching ib order could not be found
 	 */
 	@Override
 	public IBOrder findByUuid_C_Last(String uuid, long companyId,
@@ -1192,12 +1192,12 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the last i b order in the ordered set where uuid = &#63; and companyId = &#63;.
+	 * Returns the last ib order in the ordered set where uuid = &#63; and companyId = &#63;.
 	 *
 	 * @param uuid the uuid
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching i b order, or <code>null</code> if a matching i b order could not be found
+	 * @return the last matching ib order, or <code>null</code> if a matching ib order could not be found
 	 */
 	@Override
 	public IBOrder fetchByUuid_C_Last(String uuid, long companyId,
@@ -1219,14 +1219,14 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the i b orders before and after the current i b order in the ordered set where uuid = &#63; and companyId = &#63;.
+	 * Returns the ib orders before and after the current ib order in the ordered set where uuid = &#63; and companyId = &#63;.
 	 *
-	 * @param orderIdPk the primary key of the current i b order
+	 * @param orderIdPk the primary key of the current ib order
 	 * @param uuid the uuid
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the previous, current, and next i b order
-	 * @throws NoSuchIBOrderException if a i b order with the primary key could not be found
+	 * @return the previous, current, and next ib order
+	 * @throws NoSuchIBOrderException if a ib order with the primary key could not be found
 	 */
 	@Override
 	public IBOrder[] findByUuid_C_PrevAndNext(long orderIdPk, String uuid,
@@ -1384,7 +1384,7 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Removes all the i b orders where uuid = &#63; and companyId = &#63; from the database.
+	 * Removes all the ib orders where uuid = &#63; and companyId = &#63; from the database.
 	 *
 	 * @param uuid the uuid
 	 * @param companyId the company ID
@@ -1398,11 +1398,11 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the number of i b orders where uuid = &#63; and companyId = &#63;.
+	 * Returns the number of ib orders where uuid = &#63; and companyId = &#63;.
 	 *
 	 * @param uuid the uuid
 	 * @param companyId the company ID
-	 * @return the number of matching i b orders
+	 * @return the number of matching ib orders
 	 */
 	@Override
 	public int countByUuid_C(String uuid, long companyId) {
@@ -1502,12 +1502,12 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 			});
 
 	/**
-	 * Returns all the i b orders where shareID = &#63; and companyId = &#63; and groupId = &#63;.
+	 * Returns all the ib orders where shareID = &#63; and companyId = &#63; and groupId = &#63;.
 	 *
-	 * @param shareID the share i d
+	 * @param shareID the share ID
 	 * @param companyId the company ID
 	 * @param groupId the group ID
-	 * @return the matching i b orders
+	 * @return the matching ib orders
 	 */
 	@Override
 	public List<IBOrder> findByShareIdCompanyGroup(long shareID,
@@ -1517,18 +1517,18 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns a range of all the i b orders where shareID = &#63; and companyId = &#63; and groupId = &#63;.
+	 * Returns a range of all the ib orders where shareID = &#63; and companyId = &#63; and groupId = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @param shareID the share i d
+	 * @param shareID the share ID
 	 * @param companyId the company ID
 	 * @param groupId the group ID
-	 * @param start the lower bound of the range of i b orders
-	 * @param end the upper bound of the range of i b orders (not inclusive)
-	 * @return the range of matching i b orders
+	 * @param start the lower bound of the range of ib orders
+	 * @param end the upper bound of the range of ib orders (not inclusive)
+	 * @return the range of matching ib orders
 	 */
 	@Override
 	public List<IBOrder> findByShareIdCompanyGroup(long shareID,
@@ -1538,19 +1538,19 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns an ordered range of all the i b orders where shareID = &#63; and companyId = &#63; and groupId = &#63;.
+	 * Returns an ordered range of all the ib orders where shareID = &#63; and companyId = &#63; and groupId = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @param shareID the share i d
+	 * @param shareID the share ID
 	 * @param companyId the company ID
 	 * @param groupId the group ID
-	 * @param start the lower bound of the range of i b orders
-	 * @param end the upper bound of the range of i b orders (not inclusive)
+	 * @param start the lower bound of the range of ib orders
+	 * @param end the upper bound of the range of ib orders (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching i b orders
+	 * @return the ordered range of matching ib orders
 	 */
 	@Override
 	public List<IBOrder> findByShareIdCompanyGroup(long shareID,
@@ -1561,20 +1561,20 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns an ordered range of all the i b orders where shareID = &#63; and companyId = &#63; and groupId = &#63;.
+	 * Returns an ordered range of all the ib orders where shareID = &#63; and companyId = &#63; and groupId = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @param shareID the share i d
+	 * @param shareID the share ID
 	 * @param companyId the company ID
 	 * @param groupId the group ID
-	 * @param start the lower bound of the range of i b orders
-	 * @param end the upper bound of the range of i b orders (not inclusive)
+	 * @param start the lower bound of the range of ib orders
+	 * @param end the upper bound of the range of ib orders (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @param retrieveFromCache whether to retrieve from the finder cache
-	 * @return the ordered range of matching i b orders
+	 * @return the ordered range of matching ib orders
 	 */
 	@Override
 	public List<IBOrder> findByShareIdCompanyGroup(long shareID,
@@ -1694,14 +1694,14 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the first i b order in the ordered set where shareID = &#63; and companyId = &#63; and groupId = &#63;.
+	 * Returns the first ib order in the ordered set where shareID = &#63; and companyId = &#63; and groupId = &#63;.
 	 *
-	 * @param shareID the share i d
+	 * @param shareID the share ID
 	 * @param companyId the company ID
 	 * @param groupId the group ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the first matching i b order
-	 * @throws NoSuchIBOrderException if a matching i b order could not be found
+	 * @return the first matching ib order
+	 * @throws NoSuchIBOrderException if a matching ib order could not be found
 	 */
 	@Override
 	public IBOrder findByShareIdCompanyGroup_First(long shareID,
@@ -1734,13 +1734,13 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the first i b order in the ordered set where shareID = &#63; and companyId = &#63; and groupId = &#63;.
+	 * Returns the first ib order in the ordered set where shareID = &#63; and companyId = &#63; and groupId = &#63;.
 	 *
-	 * @param shareID the share i d
+	 * @param shareID the share ID
 	 * @param companyId the company ID
 	 * @param groupId the group ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the first matching i b order, or <code>null</code> if a matching i b order could not be found
+	 * @return the first matching ib order, or <code>null</code> if a matching ib order could not be found
 	 */
 	@Override
 	public IBOrder fetchByShareIdCompanyGroup_First(long shareID,
@@ -1757,14 +1757,14 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the last i b order in the ordered set where shareID = &#63; and companyId = &#63; and groupId = &#63;.
+	 * Returns the last ib order in the ordered set where shareID = &#63; and companyId = &#63; and groupId = &#63;.
 	 *
-	 * @param shareID the share i d
+	 * @param shareID the share ID
 	 * @param companyId the company ID
 	 * @param groupId the group ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching i b order
-	 * @throws NoSuchIBOrderException if a matching i b order could not be found
+	 * @return the last matching ib order
+	 * @throws NoSuchIBOrderException if a matching ib order could not be found
 	 */
 	@Override
 	public IBOrder findByShareIdCompanyGroup_Last(long shareID, long companyId,
@@ -1796,13 +1796,13 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the last i b order in the ordered set where shareID = &#63; and companyId = &#63; and groupId = &#63;.
+	 * Returns the last ib order in the ordered set where shareID = &#63; and companyId = &#63; and groupId = &#63;.
 	 *
-	 * @param shareID the share i d
+	 * @param shareID the share ID
 	 * @param companyId the company ID
 	 * @param groupId the group ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching i b order, or <code>null</code> if a matching i b order could not be found
+	 * @return the last matching ib order, or <code>null</code> if a matching ib order could not be found
 	 */
 	@Override
 	public IBOrder fetchByShareIdCompanyGroup_Last(long shareID,
@@ -1825,15 +1825,15 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the i b orders before and after the current i b order in the ordered set where shareID = &#63; and companyId = &#63; and groupId = &#63;.
+	 * Returns the ib orders before and after the current ib order in the ordered set where shareID = &#63; and companyId = &#63; and groupId = &#63;.
 	 *
-	 * @param orderIdPk the primary key of the current i b order
-	 * @param shareID the share i d
+	 * @param orderIdPk the primary key of the current ib order
+	 * @param shareID the share ID
 	 * @param companyId the company ID
 	 * @param groupId the group ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the previous, current, and next i b order
-	 * @throws NoSuchIBOrderException if a i b order with the primary key could not be found
+	 * @return the previous, current, and next ib order
+	 * @throws NoSuchIBOrderException if a ib order with the primary key could not be found
 	 */
 	@Override
 	public IBOrder[] findByShareIdCompanyGroup_PrevAndNext(long orderIdPk,
@@ -1982,9 +1982,9 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Removes all the i b orders where shareID = &#63; and companyId = &#63; and groupId = &#63; from the database.
+	 * Removes all the ib orders where shareID = &#63; and companyId = &#63; and groupId = &#63; from the database.
 	 *
-	 * @param shareID the share i d
+	 * @param shareID the share ID
 	 * @param companyId the company ID
 	 * @param groupId the group ID
 	 */
@@ -1998,12 +1998,12 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the number of i b orders where shareID = &#63; and companyId = &#63; and groupId = &#63;.
+	 * Returns the number of ib orders where shareID = &#63; and companyId = &#63; and groupId = &#63;.
 	 *
-	 * @param shareID the share i d
+	 * @param shareID the share ID
 	 * @param companyId the company ID
 	 * @param groupId the group ID
-	 * @return the number of matching i b orders
+	 * @return the number of matching ib orders
 	 */
 	@Override
 	public int countByShareIdCompanyGroup(long shareID, long companyId,
@@ -2092,12 +2092,12 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 			});
 
 	/**
-	 * Returns all the i b orders where shareID = &#63; and companyId = &#63; and ordersId = &#63;.
+	 * Returns all the ib orders where shareID = &#63; and companyId = &#63; and ordersId = &#63;.
 	 *
-	 * @param shareID the share i d
+	 * @param shareID the share ID
 	 * @param companyId the company ID
 	 * @param ordersId the orders ID
-	 * @return the matching i b orders
+	 * @return the matching ib orders
 	 */
 	@Override
 	public List<IBOrder> findByOrderGroupCompany(long shareID, long companyId,
@@ -2107,18 +2107,18 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns a range of all the i b orders where shareID = &#63; and companyId = &#63; and ordersId = &#63;.
+	 * Returns a range of all the ib orders where shareID = &#63; and companyId = &#63; and ordersId = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @param shareID the share i d
+	 * @param shareID the share ID
 	 * @param companyId the company ID
 	 * @param ordersId the orders ID
-	 * @param start the lower bound of the range of i b orders
-	 * @param end the upper bound of the range of i b orders (not inclusive)
-	 * @return the range of matching i b orders
+	 * @param start the lower bound of the range of ib orders
+	 * @param end the upper bound of the range of ib orders (not inclusive)
+	 * @return the range of matching ib orders
 	 */
 	@Override
 	public List<IBOrder> findByOrderGroupCompany(long shareID, long companyId,
@@ -2128,19 +2128,19 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns an ordered range of all the i b orders where shareID = &#63; and companyId = &#63; and ordersId = &#63;.
+	 * Returns an ordered range of all the ib orders where shareID = &#63; and companyId = &#63; and ordersId = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @param shareID the share i d
+	 * @param shareID the share ID
 	 * @param companyId the company ID
 	 * @param ordersId the orders ID
-	 * @param start the lower bound of the range of i b orders
-	 * @param end the upper bound of the range of i b orders (not inclusive)
+	 * @param start the lower bound of the range of ib orders
+	 * @param end the upper bound of the range of ib orders (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching i b orders
+	 * @return the ordered range of matching ib orders
 	 */
 	@Override
 	public List<IBOrder> findByOrderGroupCompany(long shareID, long companyId,
@@ -2151,20 +2151,20 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns an ordered range of all the i b orders where shareID = &#63; and companyId = &#63; and ordersId = &#63;.
+	 * Returns an ordered range of all the ib orders where shareID = &#63; and companyId = &#63; and ordersId = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @param shareID the share i d
+	 * @param shareID the share ID
 	 * @param companyId the company ID
 	 * @param ordersId the orders ID
-	 * @param start the lower bound of the range of i b orders
-	 * @param end the upper bound of the range of i b orders (not inclusive)
+	 * @param start the lower bound of the range of ib orders
+	 * @param end the upper bound of the range of ib orders (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @param retrieveFromCache whether to retrieve from the finder cache
-	 * @return the ordered range of matching i b orders
+	 * @return the ordered range of matching ib orders
 	 */
 	@Override
 	public List<IBOrder> findByOrderGroupCompany(long shareID, long companyId,
@@ -2284,14 +2284,14 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the first i b order in the ordered set where shareID = &#63; and companyId = &#63; and ordersId = &#63;.
+	 * Returns the first ib order in the ordered set where shareID = &#63; and companyId = &#63; and ordersId = &#63;.
 	 *
-	 * @param shareID the share i d
+	 * @param shareID the share ID
 	 * @param companyId the company ID
 	 * @param ordersId the orders ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the first matching i b order
-	 * @throws NoSuchIBOrderException if a matching i b order could not be found
+	 * @return the first matching ib order
+	 * @throws NoSuchIBOrderException if a matching ib order could not be found
 	 */
 	@Override
 	public IBOrder findByOrderGroupCompany_First(long shareID, long companyId,
@@ -2323,13 +2323,13 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the first i b order in the ordered set where shareID = &#63; and companyId = &#63; and ordersId = &#63;.
+	 * Returns the first ib order in the ordered set where shareID = &#63; and companyId = &#63; and ordersId = &#63;.
 	 *
-	 * @param shareID the share i d
+	 * @param shareID the share ID
 	 * @param companyId the company ID
 	 * @param ordersId the orders ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the first matching i b order, or <code>null</code> if a matching i b order could not be found
+	 * @return the first matching ib order, or <code>null</code> if a matching ib order could not be found
 	 */
 	@Override
 	public IBOrder fetchByOrderGroupCompany_First(long shareID, long companyId,
@@ -2345,14 +2345,14 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the last i b order in the ordered set where shareID = &#63; and companyId = &#63; and ordersId = &#63;.
+	 * Returns the last ib order in the ordered set where shareID = &#63; and companyId = &#63; and ordersId = &#63;.
 	 *
-	 * @param shareID the share i d
+	 * @param shareID the share ID
 	 * @param companyId the company ID
 	 * @param ordersId the orders ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching i b order
-	 * @throws NoSuchIBOrderException if a matching i b order could not be found
+	 * @return the last matching ib order
+	 * @throws NoSuchIBOrderException if a matching ib order could not be found
 	 */
 	@Override
 	public IBOrder findByOrderGroupCompany_Last(long shareID, long companyId,
@@ -2384,13 +2384,13 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the last i b order in the ordered set where shareID = &#63; and companyId = &#63; and ordersId = &#63;.
+	 * Returns the last ib order in the ordered set where shareID = &#63; and companyId = &#63; and ordersId = &#63;.
 	 *
-	 * @param shareID the share i d
+	 * @param shareID the share ID
 	 * @param companyId the company ID
 	 * @param ordersId the orders ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching i b order, or <code>null</code> if a matching i b order could not be found
+	 * @return the last matching ib order, or <code>null</code> if a matching ib order could not be found
 	 */
 	@Override
 	public IBOrder fetchByOrderGroupCompany_Last(long shareID, long companyId,
@@ -2412,15 +2412,15 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the i b orders before and after the current i b order in the ordered set where shareID = &#63; and companyId = &#63; and ordersId = &#63;.
+	 * Returns the ib orders before and after the current ib order in the ordered set where shareID = &#63; and companyId = &#63; and ordersId = &#63;.
 	 *
-	 * @param orderIdPk the primary key of the current i b order
-	 * @param shareID the share i d
+	 * @param orderIdPk the primary key of the current ib order
+	 * @param shareID the share ID
 	 * @param companyId the company ID
 	 * @param ordersId the orders ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the previous, current, and next i b order
-	 * @throws NoSuchIBOrderException if a i b order with the primary key could not be found
+	 * @return the previous, current, and next ib order
+	 * @throws NoSuchIBOrderException if a ib order with the primary key could not be found
 	 */
 	@Override
 	public IBOrder[] findByOrderGroupCompany_PrevAndNext(long orderIdPk,
@@ -2569,9 +2569,9 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Removes all the i b orders where shareID = &#63; and companyId = &#63; and ordersId = &#63; from the database.
+	 * Removes all the ib orders where shareID = &#63; and companyId = &#63; and ordersId = &#63; from the database.
 	 *
-	 * @param shareID the share i d
+	 * @param shareID the share ID
 	 * @param companyId the company ID
 	 * @param ordersId the orders ID
 	 */
@@ -2585,12 +2585,12 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the number of i b orders where shareID = &#63; and companyId = &#63; and ordersId = &#63;.
+	 * Returns the number of ib orders where shareID = &#63; and companyId = &#63; and ordersId = &#63;.
 	 *
-	 * @param shareID the share i d
+	 * @param shareID the share ID
 	 * @param companyId the company ID
 	 * @param ordersId the orders ID
-	 * @return the number of matching i b orders
+	 * @return the number of matching ib orders
 	 */
 	@Override
 	public int countByOrderGroupCompany(long shareID, long companyId,
@@ -2684,13 +2684,13 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 			});
 
 	/**
-	 * Returns all the i b orders where ordersId = &#63; and companyId = &#63; and groupId = &#63; and ibclientId = &#63;.
+	 * Returns all the ib orders where ordersId = &#63; and companyId = &#63; and groupId = &#63; and ibclientId = &#63;.
 	 *
 	 * @param ordersId the orders ID
 	 * @param companyId the company ID
 	 * @param groupId the group ID
 	 * @param ibclientId the ibclient ID
-	 * @return the matching i b orders
+	 * @return the matching ib orders
 	 */
 	@Override
 	public List<IBOrder> findByOrderClientGroupCompany(long ordersId,
@@ -2700,7 +2700,7 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns a range of all the i b orders where ordersId = &#63; and companyId = &#63; and groupId = &#63; and ibclientId = &#63;.
+	 * Returns a range of all the ib orders where ordersId = &#63; and companyId = &#63; and groupId = &#63; and ibclientId = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -2710,9 +2710,9 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	 * @param companyId the company ID
 	 * @param groupId the group ID
 	 * @param ibclientId the ibclient ID
-	 * @param start the lower bound of the range of i b orders
-	 * @param end the upper bound of the range of i b orders (not inclusive)
-	 * @return the range of matching i b orders
+	 * @param start the lower bound of the range of ib orders
+	 * @param end the upper bound of the range of ib orders (not inclusive)
+	 * @return the range of matching ib orders
 	 */
 	@Override
 	public List<IBOrder> findByOrderClientGroupCompany(long ordersId,
@@ -2722,7 +2722,7 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns an ordered range of all the i b orders where ordersId = &#63; and companyId = &#63; and groupId = &#63; and ibclientId = &#63;.
+	 * Returns an ordered range of all the ib orders where ordersId = &#63; and companyId = &#63; and groupId = &#63; and ibclientId = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -2732,10 +2732,10 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	 * @param companyId the company ID
 	 * @param groupId the group ID
 	 * @param ibclientId the ibclient ID
-	 * @param start the lower bound of the range of i b orders
-	 * @param end the upper bound of the range of i b orders (not inclusive)
+	 * @param start the lower bound of the range of ib orders
+	 * @param end the upper bound of the range of ib orders (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching i b orders
+	 * @return the ordered range of matching ib orders
 	 */
 	@Override
 	public List<IBOrder> findByOrderClientGroupCompany(long ordersId,
@@ -2746,7 +2746,7 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns an ordered range of all the i b orders where ordersId = &#63; and companyId = &#63; and groupId = &#63; and ibclientId = &#63;.
+	 * Returns an ordered range of all the ib orders where ordersId = &#63; and companyId = &#63; and groupId = &#63; and ibclientId = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -2756,11 +2756,11 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	 * @param companyId the company ID
 	 * @param groupId the group ID
 	 * @param ibclientId the ibclient ID
-	 * @param start the lower bound of the range of i b orders
-	 * @param end the upper bound of the range of i b orders (not inclusive)
+	 * @param start the lower bound of the range of ib orders
+	 * @param end the upper bound of the range of ib orders (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @param retrieveFromCache whether to retrieve from the finder cache
-	 * @return the ordered range of matching i b orders
+	 * @return the ordered range of matching ib orders
 	 */
 	@Override
 	public List<IBOrder> findByOrderClientGroupCompany(long ordersId,
@@ -2885,15 +2885,15 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the first i b order in the ordered set where ordersId = &#63; and companyId = &#63; and groupId = &#63; and ibclientId = &#63;.
+	 * Returns the first ib order in the ordered set where ordersId = &#63; and companyId = &#63; and groupId = &#63; and ibclientId = &#63;.
 	 *
 	 * @param ordersId the orders ID
 	 * @param companyId the company ID
 	 * @param groupId the group ID
 	 * @param ibclientId the ibclient ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the first matching i b order
-	 * @throws NoSuchIBOrderException if a matching i b order could not be found
+	 * @return the first matching ib order
+	 * @throws NoSuchIBOrderException if a matching ib order could not be found
 	 */
 	@Override
 	public IBOrder findByOrderClientGroupCompany_First(long ordersId,
@@ -2929,14 +2929,14 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the first i b order in the ordered set where ordersId = &#63; and companyId = &#63; and groupId = &#63; and ibclientId = &#63;.
+	 * Returns the first ib order in the ordered set where ordersId = &#63; and companyId = &#63; and groupId = &#63; and ibclientId = &#63;.
 	 *
 	 * @param ordersId the orders ID
 	 * @param companyId the company ID
 	 * @param groupId the group ID
 	 * @param ibclientId the ibclient ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the first matching i b order, or <code>null</code> if a matching i b order could not be found
+	 * @return the first matching ib order, or <code>null</code> if a matching ib order could not be found
 	 */
 	@Override
 	public IBOrder fetchByOrderClientGroupCompany_First(long ordersId,
@@ -2953,15 +2953,15 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the last i b order in the ordered set where ordersId = &#63; and companyId = &#63; and groupId = &#63; and ibclientId = &#63;.
+	 * Returns the last ib order in the ordered set where ordersId = &#63; and companyId = &#63; and groupId = &#63; and ibclientId = &#63;.
 	 *
 	 * @param ordersId the orders ID
 	 * @param companyId the company ID
 	 * @param groupId the group ID
 	 * @param ibclientId the ibclient ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching i b order
-	 * @throws NoSuchIBOrderException if a matching i b order could not be found
+	 * @return the last matching ib order
+	 * @throws NoSuchIBOrderException if a matching ib order could not be found
 	 */
 	@Override
 	public IBOrder findByOrderClientGroupCompany_Last(long ordersId,
@@ -2997,14 +2997,14 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the last i b order in the ordered set where ordersId = &#63; and companyId = &#63; and groupId = &#63; and ibclientId = &#63;.
+	 * Returns the last ib order in the ordered set where ordersId = &#63; and companyId = &#63; and groupId = &#63; and ibclientId = &#63;.
 	 *
 	 * @param ordersId the orders ID
 	 * @param companyId the company ID
 	 * @param groupId the group ID
 	 * @param ibclientId the ibclient ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching i b order, or <code>null</code> if a matching i b order could not be found
+	 * @return the last matching ib order, or <code>null</code> if a matching ib order could not be found
 	 */
 	@Override
 	public IBOrder fetchByOrderClientGroupCompany_Last(long ordersId,
@@ -3028,16 +3028,16 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the i b orders before and after the current i b order in the ordered set where ordersId = &#63; and companyId = &#63; and groupId = &#63; and ibclientId = &#63;.
+	 * Returns the ib orders before and after the current ib order in the ordered set where ordersId = &#63; and companyId = &#63; and groupId = &#63; and ibclientId = &#63;.
 	 *
-	 * @param orderIdPk the primary key of the current i b order
+	 * @param orderIdPk the primary key of the current ib order
 	 * @param ordersId the orders ID
 	 * @param companyId the company ID
 	 * @param groupId the group ID
 	 * @param ibclientId the ibclient ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the previous, current, and next i b order
-	 * @throws NoSuchIBOrderException if a i b order with the primary key could not be found
+	 * @return the previous, current, and next ib order
+	 * @throws NoSuchIBOrderException if a ib order with the primary key could not be found
 	 */
 	@Override
 	public IBOrder[] findByOrderClientGroupCompany_PrevAndNext(long orderIdPk,
@@ -3193,7 +3193,7 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Removes all the i b orders where ordersId = &#63; and companyId = &#63; and groupId = &#63; and ibclientId = &#63; from the database.
+	 * Removes all the ib orders where ordersId = &#63; and companyId = &#63; and groupId = &#63; and ibclientId = &#63; from the database.
 	 *
 	 * @param ordersId the orders ID
 	 * @param companyId the company ID
@@ -3211,13 +3211,13 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the number of i b orders where ordersId = &#63; and companyId = &#63; and groupId = &#63; and ibclientId = &#63;.
+	 * Returns the number of ib orders where ordersId = &#63; and companyId = &#63; and groupId = &#63; and ibclientId = &#63;.
 	 *
 	 * @param ordersId the orders ID
 	 * @param companyId the company ID
 	 * @param groupId the group ID
 	 * @param ibclientId the ibclient ID
-	 * @return the number of matching i b orders
+	 * @return the number of matching ib orders
 	 */
 	@Override
 	public int countByOrderClientGroupCompany(long ordersId, long companyId,
@@ -3323,13 +3323,13 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 			});
 
 	/**
-	 * Returns all the i b orders where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
+	 * Returns all the ib orders where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
 	 *
 	 * @param removable_on_reboot the removable_on_reboot
 	 * @param companyId the company ID
 	 * @param groupId the group ID
 	 * @param createDate the create date
-	 * @return the matching i b orders
+	 * @return the matching ib orders
 	 */
 	@Override
 	public List<IBOrder> findByRemovableDateGroupCompany(
@@ -3340,7 +3340,7 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns a range of all the i b orders where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
+	 * Returns a range of all the ib orders where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -3350,9 +3350,9 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	 * @param companyId the company ID
 	 * @param groupId the group ID
 	 * @param createDate the create date
-	 * @param start the lower bound of the range of i b orders
-	 * @param end the upper bound of the range of i b orders (not inclusive)
-	 * @return the range of matching i b orders
+	 * @param start the lower bound of the range of ib orders
+	 * @param end the upper bound of the range of ib orders (not inclusive)
+	 * @return the range of matching ib orders
 	 */
 	@Override
 	public List<IBOrder> findByRemovableDateGroupCompany(
@@ -3363,7 +3363,7 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns an ordered range of all the i b orders where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
+	 * Returns an ordered range of all the ib orders where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -3373,10 +3373,10 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	 * @param companyId the company ID
 	 * @param groupId the group ID
 	 * @param createDate the create date
-	 * @param start the lower bound of the range of i b orders
-	 * @param end the upper bound of the range of i b orders (not inclusive)
+	 * @param start the lower bound of the range of ib orders
+	 * @param end the upper bound of the range of ib orders (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching i b orders
+	 * @return the ordered range of matching ib orders
 	 */
 	@Override
 	public List<IBOrder> findByRemovableDateGroupCompany(
@@ -3388,7 +3388,7 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns an ordered range of all the i b orders where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
+	 * Returns an ordered range of all the ib orders where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -3398,11 +3398,11 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	 * @param companyId the company ID
 	 * @param groupId the group ID
 	 * @param createDate the create date
-	 * @param start the lower bound of the range of i b orders
-	 * @param end the upper bound of the range of i b orders (not inclusive)
+	 * @param start the lower bound of the range of ib orders
+	 * @param end the upper bound of the range of ib orders (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @param retrieveFromCache whether to retrieve from the finder cache
-	 * @return the ordered range of matching i b orders
+	 * @return the ordered range of matching ib orders
 	 */
 	@Override
 	public List<IBOrder> findByRemovableDateGroupCompany(
@@ -3541,15 +3541,15 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the first i b order in the ordered set where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
+	 * Returns the first ib order in the ordered set where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
 	 *
 	 * @param removable_on_reboot the removable_on_reboot
 	 * @param companyId the company ID
 	 * @param groupId the group ID
 	 * @param createDate the create date
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the first matching i b order
-	 * @throws NoSuchIBOrderException if a matching i b order could not be found
+	 * @return the first matching ib order
+	 * @throws NoSuchIBOrderException if a matching ib order could not be found
 	 */
 	@Override
 	public IBOrder findByRemovableDateGroupCompany_First(
@@ -3585,14 +3585,14 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the first i b order in the ordered set where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
+	 * Returns the first ib order in the ordered set where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
 	 *
 	 * @param removable_on_reboot the removable_on_reboot
 	 * @param companyId the company ID
 	 * @param groupId the group ID
 	 * @param createDate the create date
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the first matching i b order, or <code>null</code> if a matching i b order could not be found
+	 * @return the first matching ib order, or <code>null</code> if a matching ib order could not be found
 	 */
 	@Override
 	public IBOrder fetchByRemovableDateGroupCompany_First(
@@ -3609,15 +3609,15 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the last i b order in the ordered set where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
+	 * Returns the last ib order in the ordered set where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
 	 *
 	 * @param removable_on_reboot the removable_on_reboot
 	 * @param companyId the company ID
 	 * @param groupId the group ID
 	 * @param createDate the create date
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching i b order
-	 * @throws NoSuchIBOrderException if a matching i b order could not be found
+	 * @return the last matching ib order
+	 * @throws NoSuchIBOrderException if a matching ib order could not be found
 	 */
 	@Override
 	public IBOrder findByRemovableDateGroupCompany_Last(
@@ -3653,14 +3653,14 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the last i b order in the ordered set where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
+	 * Returns the last ib order in the ordered set where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
 	 *
 	 * @param removable_on_reboot the removable_on_reboot
 	 * @param companyId the company ID
 	 * @param groupId the group ID
 	 * @param createDate the create date
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching i b order, or <code>null</code> if a matching i b order could not be found
+	 * @return the last matching ib order, or <code>null</code> if a matching ib order could not be found
 	 */
 	@Override
 	public IBOrder fetchByRemovableDateGroupCompany_Last(
@@ -3685,16 +3685,16 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the i b orders before and after the current i b order in the ordered set where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
+	 * Returns the ib orders before and after the current ib order in the ordered set where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
 	 *
-	 * @param orderIdPk the primary key of the current i b order
+	 * @param orderIdPk the primary key of the current ib order
 	 * @param removable_on_reboot the removable_on_reboot
 	 * @param companyId the company ID
 	 * @param groupId the group ID
 	 * @param createDate the create date
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the previous, current, and next i b order
-	 * @throws NoSuchIBOrderException if a i b order with the primary key could not be found
+	 * @return the previous, current, and next ib order
+	 * @throws NoSuchIBOrderException if a ib order with the primary key could not be found
 	 */
 	@Override
 	public IBOrder[] findByRemovableDateGroupCompany_PrevAndNext(
@@ -3862,7 +3862,7 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Removes all the i b orders where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63; from the database.
+	 * Removes all the ib orders where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63; from the database.
 	 *
 	 * @param removable_on_reboot the removable_on_reboot
 	 * @param companyId the company ID
@@ -3880,13 +3880,13 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the number of i b orders where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
+	 * Returns the number of ib orders where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
 	 *
 	 * @param removable_on_reboot the removable_on_reboot
 	 * @param companyId the company ID
 	 * @param groupId the group ID
 	 * @param createDate the create date
-	 * @return the number of matching i b orders
+	 * @return the number of matching ib orders
 	 */
 	@Override
 	public int countByRemovableDateGroupCompany(boolean removable_on_reboot,
@@ -3992,11 +3992,11 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 			new String[] { Long.class.getName(), Long.class.getName() });
 
 	/**
-	 * Returns all the i b orders where ordersId = &#63; and ibclientId = &#63;.
+	 * Returns all the ib orders where ordersId = &#63; and ibclientId = &#63;.
 	 *
 	 * @param ordersId the orders ID
 	 * @param ibclientId the ibclient ID
-	 * @return the matching i b orders
+	 * @return the matching ib orders
 	 */
 	@Override
 	public List<IBOrder> findByOrderClient(long ordersId, long ibclientId) {
@@ -4005,7 +4005,7 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns a range of all the i b orders where ordersId = &#63; and ibclientId = &#63;.
+	 * Returns a range of all the ib orders where ordersId = &#63; and ibclientId = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -4013,9 +4013,9 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	 *
 	 * @param ordersId the orders ID
 	 * @param ibclientId the ibclient ID
-	 * @param start the lower bound of the range of i b orders
-	 * @param end the upper bound of the range of i b orders (not inclusive)
-	 * @return the range of matching i b orders
+	 * @param start the lower bound of the range of ib orders
+	 * @param end the upper bound of the range of ib orders (not inclusive)
+	 * @return the range of matching ib orders
 	 */
 	@Override
 	public List<IBOrder> findByOrderClient(long ordersId, long ibclientId,
@@ -4024,7 +4024,7 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns an ordered range of all the i b orders where ordersId = &#63; and ibclientId = &#63;.
+	 * Returns an ordered range of all the ib orders where ordersId = &#63; and ibclientId = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -4032,10 +4032,10 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	 *
 	 * @param ordersId the orders ID
 	 * @param ibclientId the ibclient ID
-	 * @param start the lower bound of the range of i b orders
-	 * @param end the upper bound of the range of i b orders (not inclusive)
+	 * @param start the lower bound of the range of ib orders
+	 * @param end the upper bound of the range of ib orders (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching i b orders
+	 * @return the ordered range of matching ib orders
 	 */
 	@Override
 	public List<IBOrder> findByOrderClient(long ordersId, long ibclientId,
@@ -4045,7 +4045,7 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns an ordered range of all the i b orders where ordersId = &#63; and ibclientId = &#63;.
+	 * Returns an ordered range of all the ib orders where ordersId = &#63; and ibclientId = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -4053,11 +4053,11 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	 *
 	 * @param ordersId the orders ID
 	 * @param ibclientId the ibclient ID
-	 * @param start the lower bound of the range of i b orders
-	 * @param end the upper bound of the range of i b orders (not inclusive)
+	 * @param start the lower bound of the range of ib orders
+	 * @param end the upper bound of the range of ib orders (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @param retrieveFromCache whether to retrieve from the finder cache
-	 * @return the ordered range of matching i b orders
+	 * @return the ordered range of matching ib orders
 	 */
 	@Override
 	public List<IBOrder> findByOrderClient(long ordersId, long ibclientId,
@@ -4172,13 +4172,13 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the first i b order in the ordered set where ordersId = &#63; and ibclientId = &#63;.
+	 * Returns the first ib order in the ordered set where ordersId = &#63; and ibclientId = &#63;.
 	 *
 	 * @param ordersId the orders ID
 	 * @param ibclientId the ibclient ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the first matching i b order
-	 * @throws NoSuchIBOrderException if a matching i b order could not be found
+	 * @return the first matching ib order
+	 * @throws NoSuchIBOrderException if a matching ib order could not be found
 	 */
 	@Override
 	public IBOrder findByOrderClient_First(long ordersId, long ibclientId,
@@ -4207,12 +4207,12 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the first i b order in the ordered set where ordersId = &#63; and ibclientId = &#63;.
+	 * Returns the first ib order in the ordered set where ordersId = &#63; and ibclientId = &#63;.
 	 *
 	 * @param ordersId the orders ID
 	 * @param ibclientId the ibclient ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the first matching i b order, or <code>null</code> if a matching i b order could not be found
+	 * @return the first matching ib order, or <code>null</code> if a matching ib order could not be found
 	 */
 	@Override
 	public IBOrder fetchByOrderClient_First(long ordersId, long ibclientId,
@@ -4228,13 +4228,13 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the last i b order in the ordered set where ordersId = &#63; and ibclientId = &#63;.
+	 * Returns the last ib order in the ordered set where ordersId = &#63; and ibclientId = &#63;.
 	 *
 	 * @param ordersId the orders ID
 	 * @param ibclientId the ibclient ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching i b order
-	 * @throws NoSuchIBOrderException if a matching i b order could not be found
+	 * @return the last matching ib order
+	 * @throws NoSuchIBOrderException if a matching ib order could not be found
 	 */
 	@Override
 	public IBOrder findByOrderClient_Last(long ordersId, long ibclientId,
@@ -4263,12 +4263,12 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the last i b order in the ordered set where ordersId = &#63; and ibclientId = &#63;.
+	 * Returns the last ib order in the ordered set where ordersId = &#63; and ibclientId = &#63;.
 	 *
 	 * @param ordersId the orders ID
 	 * @param ibclientId the ibclient ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching i b order, or <code>null</code> if a matching i b order could not be found
+	 * @return the last matching ib order, or <code>null</code> if a matching ib order could not be found
 	 */
 	@Override
 	public IBOrder fetchByOrderClient_Last(long ordersId, long ibclientId,
@@ -4290,14 +4290,14 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the i b orders before and after the current i b order in the ordered set where ordersId = &#63; and ibclientId = &#63;.
+	 * Returns the ib orders before and after the current ib order in the ordered set where ordersId = &#63; and ibclientId = &#63;.
 	 *
-	 * @param orderIdPk the primary key of the current i b order
+	 * @param orderIdPk the primary key of the current ib order
 	 * @param ordersId the orders ID
 	 * @param ibclientId the ibclient ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the previous, current, and next i b order
-	 * @throws NoSuchIBOrderException if a i b order with the primary key could not be found
+	 * @return the previous, current, and next ib order
+	 * @throws NoSuchIBOrderException if a ib order with the primary key could not be found
 	 */
 	@Override
 	public IBOrder[] findByOrderClient_PrevAndNext(long orderIdPk,
@@ -4442,7 +4442,7 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Removes all the i b orders where ordersId = &#63; and ibclientId = &#63; from the database.
+	 * Removes all the ib orders where ordersId = &#63; and ibclientId = &#63; from the database.
 	 *
 	 * @param ordersId the orders ID
 	 * @param ibclientId the ibclient ID
@@ -4456,11 +4456,11 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the number of i b orders where ordersId = &#63; and ibclientId = &#63;.
+	 * Returns the number of ib orders where ordersId = &#63; and ibclientId = &#63;.
 	 *
 	 * @param ordersId the orders ID
 	 * @param ibclientId the ibclient ID
-	 * @return the number of matching i b orders
+	 * @return the number of matching ib orders
 	 */
 	@Override
 	public int countByOrderClient(long ordersId, long ibclientId) {
@@ -4519,9 +4519,9 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Caches the i b order in the entity cache if it is enabled.
+	 * Caches the ib order in the entity cache if it is enabled.
 	 *
-	 * @param ibOrder the i b order
+	 * @param ibOrder the ib order
 	 */
 	@Override
 	public void cacheResult(IBOrder ibOrder) {
@@ -4535,9 +4535,9 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Caches the i b orders in the entity cache if it is enabled.
+	 * Caches the ib orders in the entity cache if it is enabled.
 	 *
-	 * @param ibOrders the i b orders
+	 * @param ibOrders the ib orders
 	 */
 	@Override
 	public void cacheResult(List<IBOrder> ibOrders) {
@@ -4553,7 +4553,7 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Clears the cache for all i b orders.
+	 * Clears the cache for all ib orders.
 	 *
 	 * <p>
 	 * The {@link EntityCache} and {@link FinderCache} are both cleared by this method.
@@ -4569,7 +4569,7 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Clears the cache for the i b order.
+	 * Clears the cache for the ib order.
 	 *
 	 * <p>
 	 * The {@link EntityCache} and {@link FinderCache} are both cleared by this method.
@@ -4583,7 +4583,7 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
-		clearUniqueFindersCache((IBOrderModelImpl)ibOrder);
+		clearUniqueFindersCache((IBOrderModelImpl)ibOrder, true);
 	}
 
 	@Override
@@ -4595,49 +4595,35 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 			entityCache.removeResult(IBOrderModelImpl.ENTITY_CACHE_ENABLED,
 				IBOrderImpl.class, ibOrder.getPrimaryKey());
 
-			clearUniqueFindersCache((IBOrderModelImpl)ibOrder);
+			clearUniqueFindersCache((IBOrderModelImpl)ibOrder, true);
 		}
 	}
 
-	protected void cacheUniqueFindersCache(IBOrderModelImpl ibOrderModelImpl,
-		boolean isNew) {
-		if (isNew) {
-			Object[] args = new Object[] {
-					ibOrderModelImpl.getUuid(), ibOrderModelImpl.getGroupId()
-				};
-
-			finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
-				Long.valueOf(1));
-			finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
-				ibOrderModelImpl);
-		}
-		else {
-			if ((ibOrderModelImpl.getColumnBitmask() &
-					FINDER_PATH_FETCH_BY_UUID_G.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						ibOrderModelImpl.getUuid(),
-						ibOrderModelImpl.getGroupId()
-					};
-
-				finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
-					Long.valueOf(1));
-				finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
-					ibOrderModelImpl);
-			}
-		}
-	}
-
-	protected void clearUniqueFindersCache(IBOrderModelImpl ibOrderModelImpl) {
+	protected void cacheUniqueFindersCache(IBOrderModelImpl ibOrderModelImpl) {
 		Object[] args = new Object[] {
 				ibOrderModelImpl.getUuid(), ibOrderModelImpl.getGroupId()
 			};
 
-		finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
-		finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
+		finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
+			Long.valueOf(1), false);
+		finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
+			ibOrderModelImpl, false);
+	}
+
+	protected void clearUniqueFindersCache(IBOrderModelImpl ibOrderModelImpl,
+		boolean clearCurrent) {
+		if (clearCurrent) {
+			Object[] args = new Object[] {
+					ibOrderModelImpl.getUuid(), ibOrderModelImpl.getGroupId()
+				};
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
+			finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
+		}
 
 		if ((ibOrderModelImpl.getColumnBitmask() &
 				FINDER_PATH_FETCH_BY_UUID_G.getColumnBitmask()) != 0) {
-			args = new Object[] {
+			Object[] args = new Object[] {
 					ibOrderModelImpl.getOriginalUuid(),
 					ibOrderModelImpl.getOriginalGroupId()
 				};
@@ -4648,10 +4634,10 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Creates a new i b order with the primary key. Does not add the i b order to the database.
+	 * Creates a new ib order with the primary key. Does not add the ib order to the database.
 	 *
-	 * @param orderIdPk the primary key for the new i b order
-	 * @return the new i b order
+	 * @param orderIdPk the primary key for the new ib order
+	 * @return the new ib order
 	 */
 	@Override
 	public IBOrder create(long orderIdPk) {
@@ -4670,11 +4656,11 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Removes the i b order with the primary key from the database. Also notifies the appropriate model listeners.
+	 * Removes the ib order with the primary key from the database. Also notifies the appropriate model listeners.
 	 *
-	 * @param orderIdPk the primary key of the i b order
-	 * @return the i b order that was removed
-	 * @throws NoSuchIBOrderException if a i b order with the primary key could not be found
+	 * @param orderIdPk the primary key of the ib order
+	 * @return the ib order that was removed
+	 * @throws NoSuchIBOrderException if a ib order with the primary key could not be found
 	 */
 	@Override
 	public IBOrder remove(long orderIdPk) throws NoSuchIBOrderException {
@@ -4682,11 +4668,11 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Removes the i b order with the primary key from the database. Also notifies the appropriate model listeners.
+	 * Removes the ib order with the primary key from the database. Also notifies the appropriate model listeners.
 	 *
-	 * @param primaryKey the primary key of the i b order
-	 * @return the i b order that was removed
-	 * @throws NoSuchIBOrderException if a i b order with the primary key could not be found
+	 * @param primaryKey the primary key of the ib order
+	 * @return the ib order that was removed
+	 * @throws NoSuchIBOrderException if a ib order with the primary key could not be found
 	 */
 	@Override
 	public IBOrder remove(Serializable primaryKey)
@@ -4981,8 +4967,8 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 		entityCache.putResult(IBOrderModelImpl.ENTITY_CACHE_ENABLED,
 			IBOrderImpl.class, ibOrder.getPrimaryKey(), ibOrder, false);
 
-		clearUniqueFindersCache(ibOrderModelImpl);
-		cacheUniqueFindersCache(ibOrderModelImpl, isNew);
+		clearUniqueFindersCache(ibOrderModelImpl, false);
+		cacheUniqueFindersCache(ibOrderModelImpl);
 
 		ibOrder.resetOriginalValues();
 
@@ -5015,11 +5001,11 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the i b order with the primary key or throws a {@link com.liferay.portal.kernel.exception.NoSuchModelException} if it could not be found.
+	 * Returns the ib order with the primary key or throws a {@link com.liferay.portal.kernel.exception.NoSuchModelException} if it could not be found.
 	 *
-	 * @param primaryKey the primary key of the i b order
-	 * @return the i b order
-	 * @throws NoSuchIBOrderException if a i b order with the primary key could not be found
+	 * @param primaryKey the primary key of the ib order
+	 * @return the ib order
+	 * @throws NoSuchIBOrderException if a ib order with the primary key could not be found
 	 */
 	@Override
 	public IBOrder findByPrimaryKey(Serializable primaryKey)
@@ -5039,11 +5025,11 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the i b order with the primary key or throws a {@link NoSuchIBOrderException} if it could not be found.
+	 * Returns the ib order with the primary key or throws a {@link NoSuchIBOrderException} if it could not be found.
 	 *
-	 * @param orderIdPk the primary key of the i b order
-	 * @return the i b order
-	 * @throws NoSuchIBOrderException if a i b order with the primary key could not be found
+	 * @param orderIdPk the primary key of the ib order
+	 * @return the ib order
+	 * @throws NoSuchIBOrderException if a ib order with the primary key could not be found
 	 */
 	@Override
 	public IBOrder findByPrimaryKey(long orderIdPk)
@@ -5052,10 +5038,10 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the i b order with the primary key or returns <code>null</code> if it could not be found.
+	 * Returns the ib order with the primary key or returns <code>null</code> if it could not be found.
 	 *
-	 * @param primaryKey the primary key of the i b order
-	 * @return the i b order, or <code>null</code> if a i b order with the primary key could not be found
+	 * @param primaryKey the primary key of the ib order
+	 * @return the ib order, or <code>null</code> if a ib order with the primary key could not be found
 	 */
 	@Override
 	public IBOrder fetchByPrimaryKey(Serializable primaryKey) {
@@ -5099,10 +5085,10 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the i b order with the primary key or returns <code>null</code> if it could not be found.
+	 * Returns the ib order with the primary key or returns <code>null</code> if it could not be found.
 	 *
-	 * @param orderIdPk the primary key of the i b order
-	 * @return the i b order, or <code>null</code> if a i b order with the primary key could not be found
+	 * @param orderIdPk the primary key of the ib order
+	 * @return the ib order, or <code>null</code> if a ib order with the primary key could not be found
 	 */
 	@Override
 	public IBOrder fetchByPrimaryKey(long orderIdPk) {
@@ -5204,9 +5190,9 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns all the i b orders.
+	 * Returns all the ib orders.
 	 *
-	 * @return the i b orders
+	 * @return the ib orders
 	 */
 	@Override
 	public List<IBOrder> findAll() {
@@ -5214,15 +5200,15 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns a range of all the i b orders.
+	 * Returns a range of all the ib orders.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @param start the lower bound of the range of i b orders
-	 * @param end the upper bound of the range of i b orders (not inclusive)
-	 * @return the range of i b orders
+	 * @param start the lower bound of the range of ib orders
+	 * @param end the upper bound of the range of ib orders (not inclusive)
+	 * @return the range of ib orders
 	 */
 	@Override
 	public List<IBOrder> findAll(int start, int end) {
@@ -5230,16 +5216,16 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns an ordered range of all the i b orders.
+	 * Returns an ordered range of all the ib orders.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @param start the lower bound of the range of i b orders
-	 * @param end the upper bound of the range of i b orders (not inclusive)
+	 * @param start the lower bound of the range of ib orders
+	 * @param end the upper bound of the range of ib orders (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of i b orders
+	 * @return the ordered range of ib orders
 	 */
 	@Override
 	public List<IBOrder> findAll(int start, int end,
@@ -5248,17 +5234,17 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns an ordered range of all the i b orders.
+	 * Returns an ordered range of all the ib orders.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @param start the lower bound of the range of i b orders
-	 * @param end the upper bound of the range of i b orders (not inclusive)
+	 * @param start the lower bound of the range of ib orders
+	 * @param end the upper bound of the range of ib orders (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @param retrieveFromCache whether to retrieve from the finder cache
-	 * @return the ordered range of i b orders
+	 * @return the ordered range of ib orders
 	 */
 	@Override
 	public List<IBOrder> findAll(int start, int end,
@@ -5346,7 +5332,7 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Removes all the i b orders from the database.
+	 * Removes all the ib orders from the database.
 	 *
 	 */
 	@Override
@@ -5357,9 +5343,9 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Returns the number of i b orders.
+	 * Returns the number of ib orders.
 	 *
-	 * @return the number of i b orders
+	 * @return the number of ib orders
 	 */
 	@Override
 	public int countAll() {
@@ -5404,7 +5390,7 @@ public class IBOrderPersistenceImpl extends BasePersistenceImpl<IBOrder>
 	}
 
 	/**
-	 * Initializes the i b order persistence.
+	 * Initializes the ib order persistence.
 	 */
 	public void afterPropertiesSet() {
 	}

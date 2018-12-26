@@ -62,41 +62,41 @@ public interface IBOrderLocalService extends BaseLocalService,
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this interface directly. Always use {@link IBOrderLocalServiceUtil} to access the i b order local service. Add custom service methods to {@link com.ibtrader.data.service.impl.IBOrderLocalServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
+	 * Never modify or reference this interface directly. Always use {@link IBOrderLocalServiceUtil} to access the ib order local service. Add custom service methods to {@link com.ibtrader.data.service.impl.IBOrderLocalServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
 
 	/**
-	* Adds the i b order to the database. Also notifies the appropriate model listeners.
+	* Adds the ib order to the database. Also notifies the appropriate model listeners.
 	*
-	* @param ibOrder the i b order
-	* @return the i b order that was added
+	* @param ibOrder the ib order
+	* @return the ib order that was added
 	*/
 	@Indexable(type = IndexableType.REINDEX)
 	public IBOrder addIBOrder(IBOrder ibOrder);
 
 	/**
-	* Creates a new i b order with the primary key. Does not add the i b order to the database.
+	* Creates a new ib order with the primary key. Does not add the ib order to the database.
 	*
-	* @param orderIdPk the primary key for the new i b order
-	* @return the new i b order
+	* @param orderIdPk the primary key for the new ib order
+	* @return the new ib order
 	*/
 	public IBOrder createIBOrder(long orderIdPk);
 
 	/**
-	* Deletes the i b order from the database. Also notifies the appropriate model listeners.
+	* Deletes the ib order from the database. Also notifies the appropriate model listeners.
 	*
-	* @param ibOrder the i b order
-	* @return the i b order that was removed
+	* @param ibOrder the ib order
+	* @return the ib order that was removed
 	*/
 	@Indexable(type = IndexableType.DELETE)
 	public IBOrder deleteIBOrder(IBOrder ibOrder);
 
 	/**
-	* Deletes the i b order with the primary key from the database. Also notifies the appropriate model listeners.
+	* Deletes the ib order with the primary key from the database. Also notifies the appropriate model listeners.
 	*
-	* @param orderIdPk the primary key of the i b order
-	* @return the i b order that was removed
-	* @throws PortalException if a i b order with the primary key could not be found
+	* @param orderIdPk the primary key of the ib order
+	* @return the ib order that was removed
+	* @throws PortalException if a ib order with the primary key could not be found
 	*/
 	@Indexable(type = IndexableType.DELETE)
 	public IBOrder deleteIBOrder(long orderIdPk) throws PortalException;
@@ -105,11 +105,11 @@ public interface IBOrderLocalService extends BaseLocalService,
 	public IBOrder fetchIBOrder(long orderIdPk);
 
 	/**
-	* Returns the i b order matching the UUID and group.
+	* Returns the ib order matching the UUID and group.
 	*
-	* @param uuid the i b order's UUID
+	* @param uuid the ib order's UUID
 	* @param groupId the primary key of the group
-	* @return the matching i b order, or <code>null</code> if a matching i b order could not be found
+	* @return the matching ib order, or <code>null</code> if a matching ib order could not be found
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public IBOrder fetchIBOrderByUuidAndGroupId(java.lang.String uuid,
@@ -119,32 +119,32 @@ public interface IBOrderLocalService extends BaseLocalService,
 		long companyId, long groupId);
 
 	/**
-	* Returns the i b order with the primary key.
+	* Returns the ib order with the primary key.
 	*
-	* @param orderIdPk the primary key of the i b order
-	* @return the i b order
-	* @throws PortalException if a i b order with the primary key could not be found
+	* @param orderIdPk the primary key of the ib order
+	* @return the ib order
+	* @throws PortalException if a ib order with the primary key could not be found
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public IBOrder getIBOrder(long orderIdPk) throws PortalException;
 
 	/**
-	* Returns the i b order matching the UUID and group.
+	* Returns the ib order matching the UUID and group.
 	*
-	* @param uuid the i b order's UUID
+	* @param uuid the ib order's UUID
 	* @param groupId the primary key of the group
-	* @return the matching i b order
-	* @throws PortalException if a matching i b order could not be found
+	* @return the matching ib order
+	* @throws PortalException if a matching ib order could not be found
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public IBOrder getIBOrderByUuidAndGroupId(java.lang.String uuid,
 		long groupId) throws PortalException;
 
 	/**
-	* Updates the i b order in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	* Updates the ib order in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*
-	* @param ibOrder the i b order
-	* @return the i b order that was updated
+	* @param ibOrder the ib order
+	* @return the ib order that was updated
 	*/
 	@Indexable(type = IndexableType.REINDEX)
 	public IBOrder updateIBOrder(IBOrder ibOrder);
@@ -174,9 +174,9 @@ public interface IBOrderLocalService extends BaseLocalService,
 		throws PortalException;
 
 	/**
-	* Returns the number of i b orders.
+	* Returns the number of ib orders.
 	*
-	* @return the number of i b orders
+	* @return the number of ib orders
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getIBOrdersCount();
@@ -236,39 +236,39 @@ public interface IBOrderLocalService extends BaseLocalService,
 		long companyId, long groupId);
 
 	/**
-	* Returns a range of all the i b orders.
+	* Returns a range of all the ib orders.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.ibtrader.data.model.impl.IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
-	* @param start the lower bound of the range of i b orders
-	* @param end the upper bound of the range of i b orders (not inclusive)
-	* @return the range of i b orders
+	* @param start the lower bound of the range of ib orders
+	* @param end the upper bound of the range of ib orders (not inclusive)
+	* @return the range of ib orders
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<IBOrder> getIBOrders(int start, int end);
 
 	/**
-	* Returns all the i b orders matching the UUID and company.
+	* Returns all the ib orders matching the UUID and company.
 	*
-	* @param uuid the UUID of the i b orders
+	* @param uuid the UUID of the ib orders
 	* @param companyId the primary key of the company
-	* @return the matching i b orders, or an empty list if no matches were found
+	* @return the matching ib orders, or an empty list if no matches were found
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<IBOrder> getIBOrdersByUuidAndCompanyId(java.lang.String uuid,
 		long companyId);
 
 	/**
-	* Returns a range of i b orders matching the UUID and company.
+	* Returns a range of ib orders matching the UUID and company.
 	*
-	* @param uuid the UUID of the i b orders
+	* @param uuid the UUID of the ib orders
 	* @param companyId the primary key of the company
-	* @param start the lower bound of the range of i b orders
-	* @param end the upper bound of the range of i b orders (not inclusive)
+	* @param start the lower bound of the range of ib orders
+	* @param end the upper bound of the range of ib orders (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	* @return the range of matching i b orders, or an empty list if no matches were found
+	* @return the range of matching ib orders, or an empty list if no matches were found
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<IBOrder> getIBOrdersByUuidAndCompanyId(java.lang.String uuid,

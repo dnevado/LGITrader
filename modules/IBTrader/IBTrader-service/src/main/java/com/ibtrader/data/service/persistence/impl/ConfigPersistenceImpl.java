@@ -3024,11 +3024,15 @@ public class ConfigPersistenceImpl extends BasePersistenceImpl<Config>
 						finderArgs, list);
 				}
 				else {
-					if ((list.size() > 1) && _log.isWarnEnabled()) {
-						_log.warn(
-							"ConfigPersistenceImpl.fetchByIsCronValue(boolean, String, boolean) with parameters (" +
-							StringUtil.merge(finderArgs) +
-							") yields a result set with more than 1 result. This violates the logical unique restriction. There is no order guarantee on which result is returned by this finder.");
+					if (list.size() > 1) {
+						Collections.sort(list, Collections.reverseOrder());
+
+						if (_log.isWarnEnabled()) {
+							_log.warn(
+								"ConfigPersistenceImpl.fetchByIsCronValue(boolean, String, boolean) with parameters (" +
+								StringUtil.merge(finderArgs) +
+								") yields a result set with more than 1 result. This violates the logical unique restriction. There is no order guarantee on which result is returned by this finder.");
+						}
 					}
 
 					Config config = list.get(0);
@@ -3232,7 +3236,7 @@ public class ConfigPersistenceImpl extends BasePersistenceImpl<Config>
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
-		clearUniqueFindersCache((ConfigModelImpl)config);
+		clearUniqueFindersCache((ConfigModelImpl)config, true);
 	}
 
 	@Override
@@ -3244,93 +3248,54 @@ public class ConfigPersistenceImpl extends BasePersistenceImpl<Config>
 			entityCache.removeResult(ConfigModelImpl.ENTITY_CACHE_ENABLED,
 				ConfigImpl.class, config.getPrimaryKey());
 
-			clearUniqueFindersCache((ConfigModelImpl)config);
+			clearUniqueFindersCache((ConfigModelImpl)config, true);
 		}
 	}
 
-	protected void cacheUniqueFindersCache(ConfigModelImpl configModelImpl,
-		boolean isNew) {
-		if (isNew) {
-			Object[] args = new Object[] {
-					configModelImpl.getUuid(), configModelImpl.getGroupId()
-				};
-
-			finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
-				Long.valueOf(1));
-			finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
-				configModelImpl);
-
-			args = new Object[] {
-					configModelImpl.getCompanyId(), configModelImpl.getGroupId(),
-					configModelImpl.getConfig_key()
-				};
-
-			finderCache.putResult(FINDER_PATH_COUNT_BY_KEYCOMPANYGROUP, args,
-				Long.valueOf(1));
-			finderCache.putResult(FINDER_PATH_FETCH_BY_KEYCOMPANYGROUP, args,
-				configModelImpl);
-
-			args = new Object[] {
-					configModelImpl.getIscron(), configModelImpl.getValue()
-				};
-
-			finderCache.putResult(FINDER_PATH_COUNT_BY_ISCRONVALUE, args,
-				Long.valueOf(1));
-			finderCache.putResult(FINDER_PATH_FETCH_BY_ISCRONVALUE, args,
-				configModelImpl);
-		}
-		else {
-			if ((configModelImpl.getColumnBitmask() &
-					FINDER_PATH_FETCH_BY_UUID_G.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						configModelImpl.getUuid(), configModelImpl.getGroupId()
-					};
-
-				finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
-					Long.valueOf(1));
-				finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
-					configModelImpl);
-			}
-
-			if ((configModelImpl.getColumnBitmask() &
-					FINDER_PATH_FETCH_BY_KEYCOMPANYGROUP.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						configModelImpl.getCompanyId(),
-						configModelImpl.getGroupId(),
-						configModelImpl.getConfig_key()
-					};
-
-				finderCache.putResult(FINDER_PATH_COUNT_BY_KEYCOMPANYGROUP,
-					args, Long.valueOf(1));
-				finderCache.putResult(FINDER_PATH_FETCH_BY_KEYCOMPANYGROUP,
-					args, configModelImpl);
-			}
-
-			if ((configModelImpl.getColumnBitmask() &
-					FINDER_PATH_FETCH_BY_ISCRONVALUE.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						configModelImpl.getIscron(), configModelImpl.getValue()
-					};
-
-				finderCache.putResult(FINDER_PATH_COUNT_BY_ISCRONVALUE, args,
-					Long.valueOf(1));
-				finderCache.putResult(FINDER_PATH_FETCH_BY_ISCRONVALUE, args,
-					configModelImpl);
-			}
-		}
-	}
-
-	protected void clearUniqueFindersCache(ConfigModelImpl configModelImpl) {
+	protected void cacheUniqueFindersCache(ConfigModelImpl configModelImpl) {
 		Object[] args = new Object[] {
 				configModelImpl.getUuid(), configModelImpl.getGroupId()
 			};
 
-		finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
-		finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
+		finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
+			Long.valueOf(1), false);
+		finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
+			configModelImpl, false);
+
+		args = new Object[] {
+				configModelImpl.getCompanyId(), configModelImpl.getGroupId(),
+				configModelImpl.getConfig_key()
+			};
+
+		finderCache.putResult(FINDER_PATH_COUNT_BY_KEYCOMPANYGROUP, args,
+			Long.valueOf(1), false);
+		finderCache.putResult(FINDER_PATH_FETCH_BY_KEYCOMPANYGROUP, args,
+			configModelImpl, false);
+
+		args = new Object[] {
+				configModelImpl.getIscron(), configModelImpl.getValue()
+			};
+
+		finderCache.putResult(FINDER_PATH_COUNT_BY_ISCRONVALUE, args,
+			Long.valueOf(1), false);
+		finderCache.putResult(FINDER_PATH_FETCH_BY_ISCRONVALUE, args,
+			configModelImpl, false);
+	}
+
+	protected void clearUniqueFindersCache(ConfigModelImpl configModelImpl,
+		boolean clearCurrent) {
+		if (clearCurrent) {
+			Object[] args = new Object[] {
+					configModelImpl.getUuid(), configModelImpl.getGroupId()
+				};
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
+			finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
+		}
 
 		if ((configModelImpl.getColumnBitmask() &
 				FINDER_PATH_FETCH_BY_UUID_G.getColumnBitmask()) != 0) {
-			args = new Object[] {
+			Object[] args = new Object[] {
 					configModelImpl.getOriginalUuid(),
 					configModelImpl.getOriginalGroupId()
 				};
@@ -3339,17 +3304,19 @@ public class ConfigPersistenceImpl extends BasePersistenceImpl<Config>
 			finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
 		}
 
-		args = new Object[] {
-				configModelImpl.getCompanyId(), configModelImpl.getGroupId(),
-				configModelImpl.getConfig_key()
-			};
+		if (clearCurrent) {
+			Object[] args = new Object[] {
+					configModelImpl.getCompanyId(), configModelImpl.getGroupId(),
+					configModelImpl.getConfig_key()
+				};
 
-		finderCache.removeResult(FINDER_PATH_COUNT_BY_KEYCOMPANYGROUP, args);
-		finderCache.removeResult(FINDER_PATH_FETCH_BY_KEYCOMPANYGROUP, args);
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_KEYCOMPANYGROUP, args);
+			finderCache.removeResult(FINDER_PATH_FETCH_BY_KEYCOMPANYGROUP, args);
+		}
 
 		if ((configModelImpl.getColumnBitmask() &
 				FINDER_PATH_FETCH_BY_KEYCOMPANYGROUP.getColumnBitmask()) != 0) {
-			args = new Object[] {
+			Object[] args = new Object[] {
 					configModelImpl.getOriginalCompanyId(),
 					configModelImpl.getOriginalGroupId(),
 					configModelImpl.getOriginalConfig_key()
@@ -3359,16 +3326,18 @@ public class ConfigPersistenceImpl extends BasePersistenceImpl<Config>
 			finderCache.removeResult(FINDER_PATH_FETCH_BY_KEYCOMPANYGROUP, args);
 		}
 
-		args = new Object[] {
-				configModelImpl.getIscron(), configModelImpl.getValue()
-			};
+		if (clearCurrent) {
+			Object[] args = new Object[] {
+					configModelImpl.getIscron(), configModelImpl.getValue()
+				};
 
-		finderCache.removeResult(FINDER_PATH_COUNT_BY_ISCRONVALUE, args);
-		finderCache.removeResult(FINDER_PATH_FETCH_BY_ISCRONVALUE, args);
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_ISCRONVALUE, args);
+			finderCache.removeResult(FINDER_PATH_FETCH_BY_ISCRONVALUE, args);
+		}
 
 		if ((configModelImpl.getColumnBitmask() &
 				FINDER_PATH_FETCH_BY_ISCRONVALUE.getColumnBitmask()) != 0) {
-			args = new Object[] {
+			Object[] args = new Object[] {
 					configModelImpl.getOriginalIscron(),
 					configModelImpl.getOriginalValue()
 				};
@@ -3630,8 +3599,8 @@ public class ConfigPersistenceImpl extends BasePersistenceImpl<Config>
 		entityCache.putResult(ConfigModelImpl.ENTITY_CACHE_ENABLED,
 			ConfigImpl.class, config.getPrimaryKey(), config, false);
 
-		clearUniqueFindersCache(configModelImpl);
-		cacheUniqueFindersCache(configModelImpl, isNew);
+		clearUniqueFindersCache(configModelImpl, false);
+		cacheUniqueFindersCache(configModelImpl);
 
 		config.resetOriginalValues();
 

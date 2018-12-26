@@ -11138,11 +11138,15 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 						finderArgs, list);
 				}
 				else {
-					if ((list.size() > 1) && _log.isWarnEnabled()) {
-						_log.warn(
-							"PositionPersistenceImpl.fetchByPositionOutGroupCompany(long, long, long, long, String, boolean) with parameters (" +
-							StringUtil.merge(finderArgs) +
-							") yields a result set with more than 1 result. This violates the logical unique restriction. There is no order guarantee on which result is returned by this finder.");
+					if (list.size() > 1) {
+						Collections.sort(list, Collections.reverseOrder());
+
+						if (_log.isWarnEnabled()) {
+							_log.warn(
+								"PositionPersistenceImpl.fetchByPositionOutGroupCompany(long, long, long, long, String, boolean) with parameters (" +
+								StringUtil.merge(finderArgs) +
+								") yields a result set with more than 1 result. This violates the logical unique restriction. There is no order guarantee on which result is returned by this finder.");
+						}
 					}
 
 					Position position = list.get(0);
@@ -11488,11 +11492,15 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 						finderArgs, list);
 				}
 				else {
-					if ((list.size() > 1) && _log.isWarnEnabled()) {
-						_log.warn(
-							"PositionPersistenceImpl.fetchByPositionInGroupCompany(long, long, long, long, String, boolean) with parameters (" +
-							StringUtil.merge(finderArgs) +
-							") yields a result set with more than 1 result. This violates the logical unique restriction. There is no order guarantee on which result is returned by this finder.");
+					if (list.size() > 1) {
+						Collections.sort(list, Collections.reverseOrder());
+
+						if (_log.isWarnEnabled()) {
+							_log.warn(
+								"PositionPersistenceImpl.fetchByPositionInGroupCompany(long, long, long, long, String, boolean) with parameters (" +
+								StringUtil.merge(finderArgs) +
+								") yields a result set with more than 1 result. This violates the logical unique restriction. There is no order guarantee on which result is returned by this finder.");
+						}
 					}
 
 					Position position = list.get(0);
@@ -11737,7 +11745,7 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
-		clearUniqueFindersCache((PositionModelImpl)position);
+		clearUniqueFindersCache((PositionModelImpl)position, true);
 	}
 
 	@Override
@@ -11749,114 +11757,19 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 			entityCache.removeResult(PositionModelImpl.ENTITY_CACHE_ENABLED,
 				PositionImpl.class, position.getPrimaryKey());
 
-			clearUniqueFindersCache((PositionModelImpl)position);
+			clearUniqueFindersCache((PositionModelImpl)position, true);
 		}
 	}
 
-	protected void cacheUniqueFindersCache(
-		PositionModelImpl positionModelImpl, boolean isNew) {
-		if (isNew) {
-			Object[] args = new Object[] {
-					positionModelImpl.getUuid(), positionModelImpl.getGroupId()
-				};
-
-			finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
-				Long.valueOf(1));
-			finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
-				positionModelImpl);
-
-			args = new Object[] {
-					positionModelImpl.getGroupId(),
-					positionModelImpl.getCompanyId(),
-					positionModelImpl.getPositionId_tws_out(),
-					positionModelImpl.getClientId_out(),
-					positionModelImpl.getPosition_mode()
-				};
-
-			finderCache.putResult(FINDER_PATH_COUNT_BY_POSITIONOUTGROUPCOMPANY,
-				args, Long.valueOf(1));
-			finderCache.putResult(FINDER_PATH_FETCH_BY_POSITIONOUTGROUPCOMPANY,
-				args, positionModelImpl);
-
-			args = new Object[] {
-					positionModelImpl.getGroupId(),
-					positionModelImpl.getCompanyId(),
-					positionModelImpl.getPositionId_tws_in(),
-					positionModelImpl.getClientId_in(),
-					positionModelImpl.getPosition_mode()
-				};
-
-			finderCache.putResult(FINDER_PATH_COUNT_BY_POSITIONINGROUPCOMPANY,
-				args, Long.valueOf(1));
-			finderCache.putResult(FINDER_PATH_FETCH_BY_POSITIONINGROUPCOMPANY,
-				args, positionModelImpl);
-		}
-		else {
-			if ((positionModelImpl.getColumnBitmask() &
-					FINDER_PATH_FETCH_BY_UUID_G.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						positionModelImpl.getUuid(),
-						positionModelImpl.getGroupId()
-					};
-
-				finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
-					Long.valueOf(1));
-				finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
-					positionModelImpl);
-			}
-
-			if ((positionModelImpl.getColumnBitmask() &
-					FINDER_PATH_FETCH_BY_POSITIONOUTGROUPCOMPANY.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						positionModelImpl.getGroupId(),
-						positionModelImpl.getCompanyId(),
-						positionModelImpl.getPositionId_tws_out(),
-						positionModelImpl.getClientId_out(),
-						positionModelImpl.getPosition_mode()
-					};
-
-				finderCache.putResult(FINDER_PATH_COUNT_BY_POSITIONOUTGROUPCOMPANY,
-					args, Long.valueOf(1));
-				finderCache.putResult(FINDER_PATH_FETCH_BY_POSITIONOUTGROUPCOMPANY,
-					args, positionModelImpl);
-			}
-
-			if ((positionModelImpl.getColumnBitmask() &
-					FINDER_PATH_FETCH_BY_POSITIONINGROUPCOMPANY.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						positionModelImpl.getGroupId(),
-						positionModelImpl.getCompanyId(),
-						positionModelImpl.getPositionId_tws_in(),
-						positionModelImpl.getClientId_in(),
-						positionModelImpl.getPosition_mode()
-					};
-
-				finderCache.putResult(FINDER_PATH_COUNT_BY_POSITIONINGROUPCOMPANY,
-					args, Long.valueOf(1));
-				finderCache.putResult(FINDER_PATH_FETCH_BY_POSITIONINGROUPCOMPANY,
-					args, positionModelImpl);
-			}
-		}
-	}
-
-	protected void clearUniqueFindersCache(PositionModelImpl positionModelImpl) {
+	protected void cacheUniqueFindersCache(PositionModelImpl positionModelImpl) {
 		Object[] args = new Object[] {
 				positionModelImpl.getUuid(), positionModelImpl.getGroupId()
 			};
 
-		finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
-		finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
-
-		if ((positionModelImpl.getColumnBitmask() &
-				FINDER_PATH_FETCH_BY_UUID_G.getColumnBitmask()) != 0) {
-			args = new Object[] {
-					positionModelImpl.getOriginalUuid(),
-					positionModelImpl.getOriginalGroupId()
-				};
-
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
-			finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
-		}
+		finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
+			Long.valueOf(1), false);
+		finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
+			positionModelImpl, false);
 
 		args = new Object[] {
 				positionModelImpl.getGroupId(), positionModelImpl.getCompanyId(),
@@ -11865,14 +11778,64 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 				positionModelImpl.getPosition_mode()
 			};
 
-		finderCache.removeResult(FINDER_PATH_COUNT_BY_POSITIONOUTGROUPCOMPANY,
-			args);
-		finderCache.removeResult(FINDER_PATH_FETCH_BY_POSITIONOUTGROUPCOMPANY,
-			args);
+		finderCache.putResult(FINDER_PATH_COUNT_BY_POSITIONOUTGROUPCOMPANY,
+			args, Long.valueOf(1), false);
+		finderCache.putResult(FINDER_PATH_FETCH_BY_POSITIONOUTGROUPCOMPANY,
+			args, positionModelImpl, false);
+
+		args = new Object[] {
+				positionModelImpl.getGroupId(), positionModelImpl.getCompanyId(),
+				positionModelImpl.getPositionId_tws_in(),
+				positionModelImpl.getClientId_in(),
+				positionModelImpl.getPosition_mode()
+			};
+
+		finderCache.putResult(FINDER_PATH_COUNT_BY_POSITIONINGROUPCOMPANY,
+			args, Long.valueOf(1), false);
+		finderCache.putResult(FINDER_PATH_FETCH_BY_POSITIONINGROUPCOMPANY,
+			args, positionModelImpl, false);
+	}
+
+	protected void clearUniqueFindersCache(
+		PositionModelImpl positionModelImpl, boolean clearCurrent) {
+		if (clearCurrent) {
+			Object[] args = new Object[] {
+					positionModelImpl.getUuid(), positionModelImpl.getGroupId()
+				};
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
+			finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
+		}
+
+		if ((positionModelImpl.getColumnBitmask() &
+				FINDER_PATH_FETCH_BY_UUID_G.getColumnBitmask()) != 0) {
+			Object[] args = new Object[] {
+					positionModelImpl.getOriginalUuid(),
+					positionModelImpl.getOriginalGroupId()
+				};
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
+			finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
+		}
+
+		if (clearCurrent) {
+			Object[] args = new Object[] {
+					positionModelImpl.getGroupId(),
+					positionModelImpl.getCompanyId(),
+					positionModelImpl.getPositionId_tws_out(),
+					positionModelImpl.getClientId_out(),
+					positionModelImpl.getPosition_mode()
+				};
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_POSITIONOUTGROUPCOMPANY,
+				args);
+			finderCache.removeResult(FINDER_PATH_FETCH_BY_POSITIONOUTGROUPCOMPANY,
+				args);
+		}
 
 		if ((positionModelImpl.getColumnBitmask() &
 				FINDER_PATH_FETCH_BY_POSITIONOUTGROUPCOMPANY.getColumnBitmask()) != 0) {
-			args = new Object[] {
+			Object[] args = new Object[] {
 					positionModelImpl.getOriginalGroupId(),
 					positionModelImpl.getOriginalCompanyId(),
 					positionModelImpl.getOriginalPositionId_tws_out(),
@@ -11886,21 +11849,24 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 				args);
 		}
 
-		args = new Object[] {
-				positionModelImpl.getGroupId(), positionModelImpl.getCompanyId(),
-				positionModelImpl.getPositionId_tws_in(),
-				positionModelImpl.getClientId_in(),
-				positionModelImpl.getPosition_mode()
-			};
+		if (clearCurrent) {
+			Object[] args = new Object[] {
+					positionModelImpl.getGroupId(),
+					positionModelImpl.getCompanyId(),
+					positionModelImpl.getPositionId_tws_in(),
+					positionModelImpl.getClientId_in(),
+					positionModelImpl.getPosition_mode()
+				};
 
-		finderCache.removeResult(FINDER_PATH_COUNT_BY_POSITIONINGROUPCOMPANY,
-			args);
-		finderCache.removeResult(FINDER_PATH_FETCH_BY_POSITIONINGROUPCOMPANY,
-			args);
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_POSITIONINGROUPCOMPANY,
+				args);
+			finderCache.removeResult(FINDER_PATH_FETCH_BY_POSITIONINGROUPCOMPANY,
+				args);
+		}
 
 		if ((positionModelImpl.getColumnBitmask() &
 				FINDER_PATH_FETCH_BY_POSITIONINGROUPCOMPANY.getColumnBitmask()) != 0) {
-			args = new Object[] {
+			Object[] args = new Object[] {
 					positionModelImpl.getOriginalGroupId(),
 					positionModelImpl.getOriginalCompanyId(),
 					positionModelImpl.getOriginalPositionId_tws_in(),
@@ -12488,8 +12454,8 @@ public class PositionPersistenceImpl extends BasePersistenceImpl<Position>
 		entityCache.putResult(PositionModelImpl.ENTITY_CACHE_ENABLED,
 			PositionImpl.class, position.getPrimaryKey(), position, false);
 
-		clearUniqueFindersCache(positionModelImpl);
-		cacheUniqueFindersCache(positionModelImpl, isNew);
+		clearUniqueFindersCache(positionModelImpl, false);
+		cacheUniqueFindersCache(positionModelImpl);
 
 		position.resetOriginalValues();
 

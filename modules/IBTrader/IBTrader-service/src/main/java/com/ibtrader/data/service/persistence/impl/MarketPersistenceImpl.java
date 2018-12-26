@@ -3515,11 +3515,15 @@ public class MarketPersistenceImpl extends BasePersistenceImpl<Market>
 						finderArgs, list);
 				}
 				else {
-					if ((list.size() > 1) && _log.isWarnEnabled()) {
-						_log.warn(
-							"MarketPersistenceImpl.fetchByNameCompanyGroup(long, long, String, boolean) with parameters (" +
-							StringUtil.merge(finderArgs) +
-							") yields a result set with more than 1 result. This violates the logical unique restriction. There is no order guarantee on which result is returned by this finder.");
+					if (list.size() > 1) {
+						Collections.sort(list, Collections.reverseOrder());
+
+						if (_log.isWarnEnabled()) {
+							_log.warn(
+								"MarketPersistenceImpl.fetchByNameCompanyGroup(long, long, String, boolean) with parameters (" +
+								StringUtil.merge(finderArgs) +
+								") yields a result set with more than 1 result. This violates the logical unique restriction. There is no order guarantee on which result is returned by this finder.");
+						}
 					}
 
 					Market market = list.get(0);
@@ -3807,11 +3811,15 @@ public class MarketPersistenceImpl extends BasePersistenceImpl<Market>
 						finderArgs, list);
 				}
 				else {
-					if ((list.size() > 1) && _log.isWarnEnabled()) {
-						_log.warn(
-							"MarketPersistenceImpl.fetchByIdentifierCompanyGroup(long, long, String, boolean) with parameters (" +
-							StringUtil.merge(finderArgs) +
-							") yields a result set with more than 1 result. This violates the logical unique restriction. There is no order guarantee on which result is returned by this finder.");
+					if (list.size() > 1) {
+						Collections.sort(list, Collections.reverseOrder());
+
+						if (_log.isWarnEnabled()) {
+							_log.warn(
+								"MarketPersistenceImpl.fetchByIdentifierCompanyGroup(long, long, String, boolean) with parameters (" +
+								StringUtil.merge(finderArgs) +
+								") yields a result set with more than 1 result. This violates the logical unique restriction. There is no order guarantee on which result is returned by this finder.");
+						}
 					}
 
 					Market market = list.get(0);
@@ -4031,7 +4039,7 @@ public class MarketPersistenceImpl extends BasePersistenceImpl<Market>
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
-		clearUniqueFindersCache((MarketModelImpl)market);
+		clearUniqueFindersCache((MarketModelImpl)market, true);
 	}
 
 	@Override
@@ -4043,95 +4051,55 @@ public class MarketPersistenceImpl extends BasePersistenceImpl<Market>
 			entityCache.removeResult(MarketModelImpl.ENTITY_CACHE_ENABLED,
 				MarketImpl.class, market.getPrimaryKey());
 
-			clearUniqueFindersCache((MarketModelImpl)market);
+			clearUniqueFindersCache((MarketModelImpl)market, true);
 		}
 	}
 
-	protected void cacheUniqueFindersCache(MarketModelImpl marketModelImpl,
-		boolean isNew) {
-		if (isNew) {
-			Object[] args = new Object[] {
-					marketModelImpl.getUuid(), marketModelImpl.getGroupId()
-				};
-
-			finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
-				Long.valueOf(1));
-			finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
-				marketModelImpl);
-
-			args = new Object[] {
-					marketModelImpl.getCompanyId(), marketModelImpl.getGroupId(),
-					marketModelImpl.getName()
-				};
-
-			finderCache.putResult(FINDER_PATH_COUNT_BY_NAMECOMPANYGROUP, args,
-				Long.valueOf(1));
-			finderCache.putResult(FINDER_PATH_FETCH_BY_NAMECOMPANYGROUP, args,
-				marketModelImpl);
-
-			args = new Object[] {
-					marketModelImpl.getCompanyId(), marketModelImpl.getGroupId(),
-					marketModelImpl.getIdentifier()
-				};
-
-			finderCache.putResult(FINDER_PATH_COUNT_BY_IDENTIFIERCOMPANYGROUP,
-				args, Long.valueOf(1));
-			finderCache.putResult(FINDER_PATH_FETCH_BY_IDENTIFIERCOMPANYGROUP,
-				args, marketModelImpl);
-		}
-		else {
-			if ((marketModelImpl.getColumnBitmask() &
-					FINDER_PATH_FETCH_BY_UUID_G.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						marketModelImpl.getUuid(), marketModelImpl.getGroupId()
-					};
-
-				finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
-					Long.valueOf(1));
-				finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
-					marketModelImpl);
-			}
-
-			if ((marketModelImpl.getColumnBitmask() &
-					FINDER_PATH_FETCH_BY_NAMECOMPANYGROUP.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						marketModelImpl.getCompanyId(),
-						marketModelImpl.getGroupId(), marketModelImpl.getName()
-					};
-
-				finderCache.putResult(FINDER_PATH_COUNT_BY_NAMECOMPANYGROUP,
-					args, Long.valueOf(1));
-				finderCache.putResult(FINDER_PATH_FETCH_BY_NAMECOMPANYGROUP,
-					args, marketModelImpl);
-			}
-
-			if ((marketModelImpl.getColumnBitmask() &
-					FINDER_PATH_FETCH_BY_IDENTIFIERCOMPANYGROUP.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						marketModelImpl.getCompanyId(),
-						marketModelImpl.getGroupId(),
-						marketModelImpl.getIdentifier()
-					};
-
-				finderCache.putResult(FINDER_PATH_COUNT_BY_IDENTIFIERCOMPANYGROUP,
-					args, Long.valueOf(1));
-				finderCache.putResult(FINDER_PATH_FETCH_BY_IDENTIFIERCOMPANYGROUP,
-					args, marketModelImpl);
-			}
-		}
-	}
-
-	protected void clearUniqueFindersCache(MarketModelImpl marketModelImpl) {
+	protected void cacheUniqueFindersCache(MarketModelImpl marketModelImpl) {
 		Object[] args = new Object[] {
 				marketModelImpl.getUuid(), marketModelImpl.getGroupId()
 			};
 
-		finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
-		finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
+		finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
+			Long.valueOf(1), false);
+		finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
+			marketModelImpl, false);
+
+		args = new Object[] {
+				marketModelImpl.getCompanyId(), marketModelImpl.getGroupId(),
+				marketModelImpl.getName()
+			};
+
+		finderCache.putResult(FINDER_PATH_COUNT_BY_NAMECOMPANYGROUP, args,
+			Long.valueOf(1), false);
+		finderCache.putResult(FINDER_PATH_FETCH_BY_NAMECOMPANYGROUP, args,
+			marketModelImpl, false);
+
+		args = new Object[] {
+				marketModelImpl.getCompanyId(), marketModelImpl.getGroupId(),
+				marketModelImpl.getIdentifier()
+			};
+
+		finderCache.putResult(FINDER_PATH_COUNT_BY_IDENTIFIERCOMPANYGROUP,
+			args, Long.valueOf(1), false);
+		finderCache.putResult(FINDER_PATH_FETCH_BY_IDENTIFIERCOMPANYGROUP,
+			args, marketModelImpl, false);
+	}
+
+	protected void clearUniqueFindersCache(MarketModelImpl marketModelImpl,
+		boolean clearCurrent) {
+		if (clearCurrent) {
+			Object[] args = new Object[] {
+					marketModelImpl.getUuid(), marketModelImpl.getGroupId()
+				};
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
+			finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
+		}
 
 		if ((marketModelImpl.getColumnBitmask() &
 				FINDER_PATH_FETCH_BY_UUID_G.getColumnBitmask()) != 0) {
-			args = new Object[] {
+			Object[] args = new Object[] {
 					marketModelImpl.getOriginalUuid(),
 					marketModelImpl.getOriginalGroupId()
 				};
@@ -4140,17 +4108,19 @@ public class MarketPersistenceImpl extends BasePersistenceImpl<Market>
 			finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
 		}
 
-		args = new Object[] {
-				marketModelImpl.getCompanyId(), marketModelImpl.getGroupId(),
-				marketModelImpl.getName()
-			};
+		if (clearCurrent) {
+			Object[] args = new Object[] {
+					marketModelImpl.getCompanyId(), marketModelImpl.getGroupId(),
+					marketModelImpl.getName()
+				};
 
-		finderCache.removeResult(FINDER_PATH_COUNT_BY_NAMECOMPANYGROUP, args);
-		finderCache.removeResult(FINDER_PATH_FETCH_BY_NAMECOMPANYGROUP, args);
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_NAMECOMPANYGROUP, args);
+			finderCache.removeResult(FINDER_PATH_FETCH_BY_NAMECOMPANYGROUP, args);
+		}
 
 		if ((marketModelImpl.getColumnBitmask() &
 				FINDER_PATH_FETCH_BY_NAMECOMPANYGROUP.getColumnBitmask()) != 0) {
-			args = new Object[] {
+			Object[] args = new Object[] {
 					marketModelImpl.getOriginalCompanyId(),
 					marketModelImpl.getOriginalGroupId(),
 					marketModelImpl.getOriginalName()
@@ -4160,19 +4130,21 @@ public class MarketPersistenceImpl extends BasePersistenceImpl<Market>
 			finderCache.removeResult(FINDER_PATH_FETCH_BY_NAMECOMPANYGROUP, args);
 		}
 
-		args = new Object[] {
-				marketModelImpl.getCompanyId(), marketModelImpl.getGroupId(),
-				marketModelImpl.getIdentifier()
-			};
+		if (clearCurrent) {
+			Object[] args = new Object[] {
+					marketModelImpl.getCompanyId(), marketModelImpl.getGroupId(),
+					marketModelImpl.getIdentifier()
+				};
 
-		finderCache.removeResult(FINDER_PATH_COUNT_BY_IDENTIFIERCOMPANYGROUP,
-			args);
-		finderCache.removeResult(FINDER_PATH_FETCH_BY_IDENTIFIERCOMPANYGROUP,
-			args);
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_IDENTIFIERCOMPANYGROUP,
+				args);
+			finderCache.removeResult(FINDER_PATH_FETCH_BY_IDENTIFIERCOMPANYGROUP,
+				args);
+		}
 
 		if ((marketModelImpl.getColumnBitmask() &
 				FINDER_PATH_FETCH_BY_IDENTIFIERCOMPANYGROUP.getColumnBitmask()) != 0) {
-			args = new Object[] {
+			Object[] args = new Object[] {
 					marketModelImpl.getOriginalCompanyId(),
 					marketModelImpl.getOriginalGroupId(),
 					marketModelImpl.getOriginalIdentifier()
@@ -4468,8 +4440,8 @@ public class MarketPersistenceImpl extends BasePersistenceImpl<Market>
 		entityCache.putResult(MarketModelImpl.ENTITY_CACHE_ENABLED,
 			MarketImpl.class, market.getPrimaryKey(), market, false);
 
-		clearUniqueFindersCache(marketModelImpl);
-		cacheUniqueFindersCache(marketModelImpl, isNew);
+		clearUniqueFindersCache(marketModelImpl, false);
+		cacheUniqueFindersCache(marketModelImpl);
 
 		market.resetOriginalValues();
 

@@ -84,6 +84,8 @@ import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.messaging.Message;
+import com.liferay.portal.kernel.messaging.MessageBusUtil;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.Organization;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
@@ -496,7 +498,7 @@ public class TIMApiWrapper implements EWrapper {
 	//! [nextvalidid]
 	@Override
 	public void nextValidId(int orderId) {
-		_log.info("Next Valid Id: ["+orderId+"]");
+		_log.debug("Next Valid Id: ["+orderId+"]");
 		currentOrderId = orderId;
 	}
 	//! [nextvalidid]
@@ -504,6 +506,9 @@ public class TIMApiWrapper implements EWrapper {
 	//! [contractdetails]
 	@Override
 	public void contractDetails(int reqId, ContractDetails contractDetails) {
+	
+	try
+	{
 		_log.debug("TIMApiWrapper ContractDetails. ReqId: ["+reqId+"] - ["+contractDetails.contract().symbol()+"], ["+contractDetails.contract().secType()+"], ConId: ["+contractDetails.contract().conid()+"] @ ["+contractDetails.contract().exchange()+"]");
 		
 		 IBOrder _ibOrder;		 	
@@ -518,6 +523,11 @@ public class TIMApiWrapper implements EWrapper {
 			_log.debug("Updating contractDetails share:" + share.getSymbol());
 			ShareLocalServiceUtil.updateShare(share);	
 		 }
+	}
+	catch (Exception e)
+	{
+		_log.debug(e.getMessage());
+	}
 		
 	}
 	//! [contractdetails]
@@ -529,6 +539,8 @@ public class TIMApiWrapper implements EWrapper {
 	@Override
 	public void contractDetailsEnd(int reqId)
     {
+	try 
+	{
 		 _log.debug("contractDetailsEnd:" + reqId);
 		 IBOrder _ibOrder;		 	
 		 //_ibOrder = IBOrderLocalServiceUtil.fetchIBOrder(reqId);
@@ -546,22 +558,30 @@ public class TIMApiWrapper implements EWrapper {
 			
 			
 		}
-		 
     }
+	catch (Exception e)
+	{
+		_log.debug(e.getMessage());
+	}
+		
+	}
+
 	//! [contractdetailsend]
 	
 	//! [execdetails]
 	
 	/* VERIFICAMOS ORDENES COMPLETEADAS Y NO VERIFICADAS DEBIDO A DESCONEXIONES, 
 	 * 
-	 *  reqId orderId, aqui no aplica 
+	 *  reqId orderId, aqui no aplica ñ
+	 *  
 	 *  execution.orderId() es el order de position de la tabla 
 	 *  */
 	@Override
 	public void execDetails(int reqId, Contract contract, Execution execution) {
-		
+	try
+	{
 		//_log.info("ExecDetails. "+reqId+" - ["+contract.symbol()+"], ["+contract.secType()+"], ["+contract.currency()+"], ["+execution.execId()+"], ["+execution.orderId()+"], ["+execution.shares()+"]");
-		String position_mode = Utilities.getPositionModeType(null, _ibtarget_organization.getCompanyId(),_ibtarget_share.getGroupId()); 
+		String position_mode = Utilities.getPositionModeType(null, _ibtarget_organization.getCompanyId(),_ibtarget_organization.getGroupId()); 
 
 		
 		Position _oPosition = PositionLocalServiceUtil.findByPositionID_In_TWS(_ibtarget_organization.getGroupId(), _ibtarget_organization.getCompanyId(),execution.orderId(),execution.clientId(), position_mode);
@@ -610,7 +630,11 @@ public class TIMApiWrapper implements EWrapper {
 		/* si hay cambios, actualizamos */
 		if (bChanged)
 				PositionLocalServiceUtil.updatePosition(_oPosition);
-
+	}
+	catch (Exception e)
+	{
+		_log.debug(e.getMessage());
+	}	
 	}
 	//! [execdetails]
 	
@@ -923,6 +947,8 @@ public class TIMApiWrapper implements EWrapper {
 	/* introducimos el modo_fake para usar una misma TWS */
 	@Override
 	public void tickPrice(int tickerId, int field, double price, TickAttr attrib) {
+	try
+	{
     	 //  TODO Auto-generated method stub
 	    _log.debug("Impl tickPrice : + " + tickerId + ",prices:" + price + ",field" + field);
 		// TODO Auto-generated method stub
@@ -1006,12 +1032,20 @@ public class TIMApiWrapper implements EWrapper {
 			}
 		
 		}
-			
+	
+	}
+	catch (Exception e)
+	{
+		_log.debug(e.getMessage());
+	}	
+		
 	}
 	@Override
 	public void orderStatus(int orderId, String status, double filled, double remaining, double avgFillPrice,
 			int permId, int parentId, double lastFillPrice, int clientId, String whyHeld, double mktCapPrice) {
 
+	try
+	{
 			
 		double priceStopLost = 0;
 		double priceStopProfit = 0;
@@ -1121,9 +1155,20 @@ public class TIMApiWrapper implements EWrapper {
 			if (!isDelete)  // compras canceladas se borran.
 			{	
 				PositionLocalServiceUtil.updatePosition(_oPosition);
+				/* ENVIAMOS NOTIFICACION, SI TIENE LA PREFERENCIA ACTIVADA */
+				Message message = new Message();
+				message.put("position", _oPosition);
+				MessageBusUtil.sendMessage("position/update", message);
+				/* ENVIAMOS NOTIFICACION, SI TIENE LA PREFERENCIA ACTIVADA */
+				
 			}
 		}	
-		
+	
+	}
+	catch (Exception e)
+	{
+		_log.debug(e.getMessage());
+	}	
 		
 	}
 	@Override

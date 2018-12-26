@@ -514,15 +514,7 @@ public class CronUtil {
 				    			
 								IBOrderLocalServiceUtil.deleteByOrderCompanyGroup(_INCREMENT_ORDER_ID, _Organization.getCompanyId(), _Organization.getGroupId(),_CLIENT_ID,oShare.getShareId());
 
-				    			 IBOrder _order = IBOrderLocalServiceUtil.createIBOrder(_INCREMENT_ORDER_ID);
-				    			_order.setCompanyId(oMarket.getCompanyId());
-				    			_order.setGroupId(oMarket.getGroupId());
-				    			_order.setShareID(oShare.getShareId());	
-				    			_order.setOrdersId(_INCREMENT_ORDER_ID);
-				    			_order.setIbclientId(_CLIENT_ID);
-				    			_order.setRemovable_on_reboot(Boolean.TRUE);	 /* los requestid  se borran */
-				    			/* pedimos tiempo real */
-				    			IBOrderLocalServiceUtil.updateIBOrder(_order);
+				    			
 				    			
 				    			Calendar calSimulatedDate = Calendar.getInstance();
 				    			if (Validator.isNull(oShare.getSimulation_end_date())) // no hay, por error, cogemos la fecha de creación y generamos un año para atras
@@ -536,6 +528,17 @@ public class CronUtil {
 				    			/* solamente hasta el dia de ayer  */
 				    			if (!oShare.isValidated_trader_provider() ||  calSimulatedDate.after(_yesterday))
 									continue;
+				    			
+				    			
+				    			IBOrder _order = IBOrderLocalServiceUtil.createIBOrder(_INCREMENT_ORDER_ID);
+				    			_order.setCompanyId(oMarket.getCompanyId());
+				    			_order.setGroupId(oMarket.getGroupId());
+				    			_order.setShareID(oShare.getShareId());	
+				    			_order.setOrdersId(_INCREMENT_ORDER_ID);
+				    			_order.setIbclientId(_CLIENT_ID);
+				    			_order.setRemovable_on_reboot(Boolean.TRUE);	 /* los requestid  se borran */
+				    			/* pedimos tiempo real */
+				    			IBOrderLocalServiceUtil.updateIBOrder(_order);
 				    			
 				    			calSimulatedDate.set(Calendar.HOUR_OF_DAY, 23);
 				    			calSimulatedDate.set(Calendar.MILLISECOND, 0);
@@ -1287,7 +1290,8 @@ public class CronUtil {
 	 * */
 	public static void StartVerifyFuturesDatesCron(Message _message) throws Exception {					
 		
-	    
+	try
+	{	
 	    List<Share> lFutures = ShareLocalServiceUtil.findByActiveFuturesDates(Boolean.TRUE);
 	    SimpleDateFormat sdfSHORT = new SimpleDateFormat();
     	sdfSHORT.applyPattern(Utilities._IBTRADER_FUTURE_LONG_DATE);
@@ -1300,7 +1304,11 @@ public class CronUtil {
 			oShare.setExpiry_date(sdfSHORT.parse(Utilities.getActiveFutureDate(expirationmonth, expirationdayweek, expirationweek)));
 			ShareLocalServiceUtil.updateShare(oShare);
 		}
-			
+	}
+	catch (Exception e)
+	{
+		_log.debug(e.getMessage());
+	}
 		
 		
 

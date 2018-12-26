@@ -1322,7 +1322,7 @@ public class StrategyUtil {
 	* Returns all the strategies where groupId = &#63; and strategyID = &#63;.
 	*
 	* @param groupId the group ID
-	* @param strategyID the strategy i d
+	* @param strategyID the strategy ID
 	* @return the matching strategies
 	*/
 	public static List<Strategy> findByG_G(long groupId, long strategyID) {
@@ -1337,7 +1337,7 @@ public class StrategyUtil {
 	* </p>
 	*
 	* @param groupId the group ID
-	* @param strategyID the strategy i d
+	* @param strategyID the strategy ID
 	* @param start the lower bound of the range of strategies
 	* @param end the upper bound of the range of strategies (not inclusive)
 	* @return the range of matching strategies
@@ -1355,7 +1355,7 @@ public class StrategyUtil {
 	* </p>
 	*
 	* @param groupId the group ID
-	* @param strategyID the strategy i d
+	* @param strategyID the strategy ID
 	* @param start the lower bound of the range of strategies
 	* @param end the upper bound of the range of strategies (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
@@ -1375,7 +1375,7 @@ public class StrategyUtil {
 	* </p>
 	*
 	* @param groupId the group ID
-	* @param strategyID the strategy i d
+	* @param strategyID the strategy ID
 	* @param start the lower bound of the range of strategies
 	* @param end the upper bound of the range of strategies (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
@@ -1394,7 +1394,7 @@ public class StrategyUtil {
 	* Returns the first strategy in the ordered set where groupId = &#63; and strategyID = &#63;.
 	*
 	* @param groupId the group ID
-	* @param strategyID the strategy i d
+	* @param strategyID the strategy ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching strategy
 	* @throws NoSuchStrategyException if a matching strategy could not be found
@@ -1410,7 +1410,7 @@ public class StrategyUtil {
 	* Returns the first strategy in the ordered set where groupId = &#63; and strategyID = &#63;.
 	*
 	* @param groupId the group ID
-	* @param strategyID the strategy i d
+	* @param strategyID the strategy ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching strategy, or <code>null</code> if a matching strategy could not be found
 	*/
@@ -1424,7 +1424,7 @@ public class StrategyUtil {
 	* Returns the last strategy in the ordered set where groupId = &#63; and strategyID = &#63;.
 	*
 	* @param groupId the group ID
-	* @param strategyID the strategy i d
+	* @param strategyID the strategy ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching strategy
 	* @throws NoSuchStrategyException if a matching strategy could not be found
@@ -1440,7 +1440,7 @@ public class StrategyUtil {
 	* Returns the last strategy in the ordered set where groupId = &#63; and strategyID = &#63;.
 	*
 	* @param groupId the group ID
-	* @param strategyID the strategy i d
+	* @param strategyID the strategy ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching strategy, or <code>null</code> if a matching strategy could not be found
 	*/
@@ -1454,7 +1454,7 @@ public class StrategyUtil {
 	* Removes all the strategies where groupId = &#63; and strategyID = &#63; from the database.
 	*
 	* @param groupId the group ID
-	* @param strategyID the strategy i d
+	* @param strategyID the strategy ID
 	*/
 	public static void removeByG_G(long groupId, long strategyID) {
 		getPersistence().removeByG_G(groupId, strategyID);
@@ -1464,7 +1464,7 @@ public class StrategyUtil {
 	* Returns the number of strategies where groupId = &#63; and strategyID = &#63;.
 	*
 	* @param groupId the group ID
-	* @param strategyID the strategy i d
+	* @param strategyID the strategy ID
 	* @return the number of matching strategies
 	*/
 	public static int countByG_G(long groupId, long strategyID) {

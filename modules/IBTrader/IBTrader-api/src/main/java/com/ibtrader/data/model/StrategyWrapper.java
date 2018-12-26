@@ -683,9 +683,9 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 	}
 
 	/**
-	* Returns the strategy i d of this strategy.
+	* Returns the strategy ID of this strategy.
 	*
-	* @return the strategy i d of this strategy
+	* @return the strategy ID of this strategy
 	*/
 	@Override
 	public long getStrategyID() {
@@ -927,9 +927,9 @@ public class StrategyWrapper implements Strategy, ModelWrapper<Strategy> {
 	}
 
 	/**
-	* Sets the strategy i d of this strategy.
+	* Sets the strategy ID of this strategy.
 	*
-	* @param strategyID the strategy i d of this strategy
+	* @param strategyID the strategy ID of this strategy
 	*/
 	@Override
 	public void setStrategyID(long strategyID) {

@@ -2601,11 +2601,15 @@ public class SharePersistenceImpl extends BasePersistenceImpl<Share>
 						finderArgs, list);
 				}
 				else {
-					if ((list.size() > 1) && _log.isWarnEnabled()) {
-						_log.warn(
-							"SharePersistenceImpl.fetchByNameMarketCompanyGroup(long, long, String, long, boolean) with parameters (" +
-							StringUtil.merge(finderArgs) +
-							") yields a result set with more than 1 result. This violates the logical unique restriction. There is no order guarantee on which result is returned by this finder.");
+					if (list.size() > 1) {
+						Collections.sort(list, Collections.reverseOrder());
+
+						if (_log.isWarnEnabled()) {
+							_log.warn(
+								"SharePersistenceImpl.fetchByNameMarketCompanyGroup(long, long, String, long, boolean) with parameters (" +
+								StringUtil.merge(finderArgs) +
+								") yields a result set with more than 1 result. This violates the logical unique restriction. There is no order guarantee on which result is returned by this finder.");
+						}
 					}
 
 					Share share = list.get(0);
@@ -2903,11 +2907,15 @@ public class SharePersistenceImpl extends BasePersistenceImpl<Share>
 						finderArgs, list);
 				}
 				else {
-					if ((list.size() > 1) && _log.isWarnEnabled()) {
-						_log.warn(
-							"SharePersistenceImpl.fetchBySymbolCompanyGroup(long, long, String, boolean) with parameters (" +
-							StringUtil.merge(finderArgs) +
-							") yields a result set with more than 1 result. This violates the logical unique restriction. There is no order guarantee on which result is returned by this finder.");
+					if (list.size() > 1) {
+						Collections.sort(list, Collections.reverseOrder());
+
+						if (_log.isWarnEnabled()) {
+							_log.warn(
+								"SharePersistenceImpl.fetchBySymbolCompanyGroup(long, long, String, boolean) with parameters (" +
+								StringUtil.merge(finderArgs) +
+								") yields a result set with more than 1 result. This violates the logical unique restriction. There is no order guarantee on which result is returned by this finder.");
+						}
 					}
 
 					Share share = list.get(0);
@@ -4341,7 +4349,7 @@ public class SharePersistenceImpl extends BasePersistenceImpl<Share>
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
-		clearUniqueFindersCache((ShareModelImpl)share);
+		clearUniqueFindersCache((ShareModelImpl)share, true);
 	}
 
 	@Override
@@ -4353,95 +4361,55 @@ public class SharePersistenceImpl extends BasePersistenceImpl<Share>
 			entityCache.removeResult(ShareModelImpl.ENTITY_CACHE_ENABLED,
 				ShareImpl.class, share.getPrimaryKey());
 
-			clearUniqueFindersCache((ShareModelImpl)share);
+			clearUniqueFindersCache((ShareModelImpl)share, true);
 		}
 	}
 
-	protected void cacheUniqueFindersCache(ShareModelImpl shareModelImpl,
-		boolean isNew) {
-		if (isNew) {
-			Object[] args = new Object[] {
-					shareModelImpl.getUuid(), shareModelImpl.getGroupId()
-				};
-
-			finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
-				Long.valueOf(1));
-			finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
-				shareModelImpl);
-
-			args = new Object[] {
-					shareModelImpl.getCompanyId(), shareModelImpl.getGroupId(),
-					shareModelImpl.getName(), shareModelImpl.getMarketId()
-				};
-
-			finderCache.putResult(FINDER_PATH_COUNT_BY_NAMEMARKETCOMPANYGROUP,
-				args, Long.valueOf(1));
-			finderCache.putResult(FINDER_PATH_FETCH_BY_NAMEMARKETCOMPANYGROUP,
-				args, shareModelImpl);
-
-			args = new Object[] {
-					shareModelImpl.getCompanyId(), shareModelImpl.getGroupId(),
-					shareModelImpl.getSymbol()
-				};
-
-			finderCache.putResult(FINDER_PATH_COUNT_BY_SYMBOLCOMPANYGROUP,
-				args, Long.valueOf(1));
-			finderCache.putResult(FINDER_PATH_FETCH_BY_SYMBOLCOMPANYGROUP,
-				args, shareModelImpl);
-		}
-		else {
-			if ((shareModelImpl.getColumnBitmask() &
-					FINDER_PATH_FETCH_BY_UUID_G.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						shareModelImpl.getUuid(), shareModelImpl.getGroupId()
-					};
-
-				finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
-					Long.valueOf(1));
-				finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
-					shareModelImpl);
-			}
-
-			if ((shareModelImpl.getColumnBitmask() &
-					FINDER_PATH_FETCH_BY_NAMEMARKETCOMPANYGROUP.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						shareModelImpl.getCompanyId(),
-						shareModelImpl.getGroupId(), shareModelImpl.getName(),
-						shareModelImpl.getMarketId()
-					};
-
-				finderCache.putResult(FINDER_PATH_COUNT_BY_NAMEMARKETCOMPANYGROUP,
-					args, Long.valueOf(1));
-				finderCache.putResult(FINDER_PATH_FETCH_BY_NAMEMARKETCOMPANYGROUP,
-					args, shareModelImpl);
-			}
-
-			if ((shareModelImpl.getColumnBitmask() &
-					FINDER_PATH_FETCH_BY_SYMBOLCOMPANYGROUP.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						shareModelImpl.getCompanyId(),
-						shareModelImpl.getGroupId(), shareModelImpl.getSymbol()
-					};
-
-				finderCache.putResult(FINDER_PATH_COUNT_BY_SYMBOLCOMPANYGROUP,
-					args, Long.valueOf(1));
-				finderCache.putResult(FINDER_PATH_FETCH_BY_SYMBOLCOMPANYGROUP,
-					args, shareModelImpl);
-			}
-		}
-	}
-
-	protected void clearUniqueFindersCache(ShareModelImpl shareModelImpl) {
+	protected void cacheUniqueFindersCache(ShareModelImpl shareModelImpl) {
 		Object[] args = new Object[] {
 				shareModelImpl.getUuid(), shareModelImpl.getGroupId()
 			};
 
-		finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
-		finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
+		finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
+			Long.valueOf(1), false);
+		finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
+			shareModelImpl, false);
+
+		args = new Object[] {
+				shareModelImpl.getCompanyId(), shareModelImpl.getGroupId(),
+				shareModelImpl.getName(), shareModelImpl.getMarketId()
+			};
+
+		finderCache.putResult(FINDER_PATH_COUNT_BY_NAMEMARKETCOMPANYGROUP,
+			args, Long.valueOf(1), false);
+		finderCache.putResult(FINDER_PATH_FETCH_BY_NAMEMARKETCOMPANYGROUP,
+			args, shareModelImpl, false);
+
+		args = new Object[] {
+				shareModelImpl.getCompanyId(), shareModelImpl.getGroupId(),
+				shareModelImpl.getSymbol()
+			};
+
+		finderCache.putResult(FINDER_PATH_COUNT_BY_SYMBOLCOMPANYGROUP, args,
+			Long.valueOf(1), false);
+		finderCache.putResult(FINDER_PATH_FETCH_BY_SYMBOLCOMPANYGROUP, args,
+			shareModelImpl, false);
+	}
+
+	protected void clearUniqueFindersCache(ShareModelImpl shareModelImpl,
+		boolean clearCurrent) {
+		if (clearCurrent) {
+			Object[] args = new Object[] {
+					shareModelImpl.getUuid(), shareModelImpl.getGroupId()
+				};
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
+			finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
+		}
 
 		if ((shareModelImpl.getColumnBitmask() &
 				FINDER_PATH_FETCH_BY_UUID_G.getColumnBitmask()) != 0) {
-			args = new Object[] {
+			Object[] args = new Object[] {
 					shareModelImpl.getOriginalUuid(),
 					shareModelImpl.getOriginalGroupId()
 				};
@@ -4450,19 +4418,21 @@ public class SharePersistenceImpl extends BasePersistenceImpl<Share>
 			finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
 		}
 
-		args = new Object[] {
-				shareModelImpl.getCompanyId(), shareModelImpl.getGroupId(),
-				shareModelImpl.getName(), shareModelImpl.getMarketId()
-			};
+		if (clearCurrent) {
+			Object[] args = new Object[] {
+					shareModelImpl.getCompanyId(), shareModelImpl.getGroupId(),
+					shareModelImpl.getName(), shareModelImpl.getMarketId()
+				};
 
-		finderCache.removeResult(FINDER_PATH_COUNT_BY_NAMEMARKETCOMPANYGROUP,
-			args);
-		finderCache.removeResult(FINDER_PATH_FETCH_BY_NAMEMARKETCOMPANYGROUP,
-			args);
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_NAMEMARKETCOMPANYGROUP,
+				args);
+			finderCache.removeResult(FINDER_PATH_FETCH_BY_NAMEMARKETCOMPANYGROUP,
+				args);
+		}
 
 		if ((shareModelImpl.getColumnBitmask() &
 				FINDER_PATH_FETCH_BY_NAMEMARKETCOMPANYGROUP.getColumnBitmask()) != 0) {
-			args = new Object[] {
+			Object[] args = new Object[] {
 					shareModelImpl.getOriginalCompanyId(),
 					shareModelImpl.getOriginalGroupId(),
 					shareModelImpl.getOriginalName(),
@@ -4475,17 +4445,21 @@ public class SharePersistenceImpl extends BasePersistenceImpl<Share>
 				args);
 		}
 
-		args = new Object[] {
-				shareModelImpl.getCompanyId(), shareModelImpl.getGroupId(),
-				shareModelImpl.getSymbol()
-			};
+		if (clearCurrent) {
+			Object[] args = new Object[] {
+					shareModelImpl.getCompanyId(), shareModelImpl.getGroupId(),
+					shareModelImpl.getSymbol()
+				};
 
-		finderCache.removeResult(FINDER_PATH_COUNT_BY_SYMBOLCOMPANYGROUP, args);
-		finderCache.removeResult(FINDER_PATH_FETCH_BY_SYMBOLCOMPANYGROUP, args);
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_SYMBOLCOMPANYGROUP,
+				args);
+			finderCache.removeResult(FINDER_PATH_FETCH_BY_SYMBOLCOMPANYGROUP,
+				args);
+		}
 
 		if ((shareModelImpl.getColumnBitmask() &
 				FINDER_PATH_FETCH_BY_SYMBOLCOMPANYGROUP.getColumnBitmask()) != 0) {
-			args = new Object[] {
+			Object[] args = new Object[] {
 					shareModelImpl.getOriginalCompanyId(),
 					shareModelImpl.getOriginalGroupId(),
 					shareModelImpl.getOriginalSymbol()
@@ -4801,8 +4775,8 @@ public class SharePersistenceImpl extends BasePersistenceImpl<Share>
 		entityCache.putResult(ShareModelImpl.ENTITY_CACHE_ENABLED,
 			ShareImpl.class, share.getPrimaryKey(), share, false);
 
-		clearUniqueFindersCache(shareModelImpl);
-		cacheUniqueFindersCache(shareModelImpl, isNew);
+		clearUniqueFindersCache(shareModelImpl, false);
+		cacheUniqueFindersCache(shareModelImpl);
 
 		share.resetOriginalValues();
 

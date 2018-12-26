@@ -1,20 +1,33 @@
 Bundle-Name: IBTrader-service
 Bundle-SymbolicName: com.ibtrader.data.service
-Bundle-Version: 1.0.0
-Liferay-Require-SchemaVersion: 1.0.0
 Liferay-Service: true
+Bundle-Version: 1.0.0
+-check: all 
+Import-Package: \
+	com.liferay.portal.kernel.security.*,\
+	com.liferay.portal.kernel.messaging.BaseSchedulerEntryMessageListener.*,\
+	com.liferay.portal.kernel.security.permission.*,\
+	com.liferay.portal.kernel.messaging.*,\
+	com.liferay.asset.kernel.model.*,\
+	com.liferay.asset.kernel.service.*,\
+	com.liferay.asset.kernel.service.persistence.*,\
+	com.liferay.portal.kernel.scheduler.*,\
+	com.liferay.portal.messaging.*,\
+	!com.liferay.portal.kernel.log.LogFactoryUtil,\
+	!org.apache.log,\
+	!org.apache.log.format,\
+	!org.apache.log.util,\
+	!sun.security.util,\
+	*
 Export-Package: \
-	com.ibtrader.service.data.permission,\
 	com.ibtrader.constants,\
 	com.ibtrader.interactive,\
+	com.ibtrader.data.service,\
 	com.ibtrader.util,\
-	com.ibtrader.data.model.impl,\
-	com.ibtrader.strategy
+	com.ibtrader.strategy,\
 	com.ibtrader.data.service.impl,\
-	com.ibtrader.service.data.permission,\	
-	com.ibtrader.data.model.impl,\
-	com.ibtrader.service.data.model			
-Import-Package: \
-	com.ibtrader.data.service.persistence,\
-	*
-Include-Resource:\@ta4j-core-0.11.jar
+	com.ibtrader.service.data.permission,\
+	com.ibtrader.data.model.impl
+Include-Resource:\
+ 	@ta4j-core-0.11.jar
+
