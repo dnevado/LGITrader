@@ -53,6 +53,7 @@ public class IBTraderConstants {
 	public static long      vPAPER_TWS_PORT = 7498;
 	public static String    vPAPER_PATH_TO_CONFIGURATION_FILE = "{PLATFORM_PATH}/IbController_paper/IBController.ini";  // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
 	public static String    vPAPER_PATH_TO_EXECUTABLE_FILE = "{PLATFORM_PATH}/IbController_paper/IBControllerStart";  // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
+	
 	/* keys */
 	
 	public static String    keyNUM_DAYS_PAST_REALTIME ="NUM_DAYS_PAST_REALTIME";
@@ -71,6 +72,7 @@ public class IBTraderConstants {
 	
 	public static String    keyFAKE_MODE = "FAKE_MODE";
 	
+
 	
 	
 	

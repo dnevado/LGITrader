@@ -5,6 +5,7 @@ dependencies {
 	compile group: "com.liferay", name: "com.liferay.osgi.util", version: "3.0.0"
 	compile group: "com.liferay", name: "com.liferay.portal.spring.extender", version: "2.0.0"
 	compile group: "com.liferay.portal", name: "com.liferay.portal.kernel", version: "2.6.0"
+	compile group: "com.liferay", name: "com.liferay.portal.security.sso.google", version: "1.0.0" 
 	compileOnly project(":modules:IBTrader:IBTrader-api")
 	compileOnly  group: "com.interactivebrokers.tws", name: "tws-api", version: "9.72.05"
 	compile "com.liferay:com.liferay.portal.dao.orm.custom.sql:1.0.5"
@@ -13,8 +14,7 @@ dependencies {
 	compile group: "org.osgi", name: "osgi.cmpn", version: "6.0.0"
 	compile group: "org.osgi", name: "org.osgi.core", version: "6.0.0" 	
 	compileOnly group: 'javax.mail', name: 'mail', version: '1.4' 
-
-	/*
+/*
 	 compileOnly group: 'com.google.api-client', name: 'google-api-client', version: '1.20.0'
 	compileOnly group: 'com.google.apis', name: 'google-api-services-gmail', version: 'v1-rev96-1.25.0'
 	compileOnly group: 'com.google.http-client', name: 'google-http-client', version: '1.20.0'
