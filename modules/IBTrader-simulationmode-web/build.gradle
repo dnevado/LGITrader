@@ -7,5 +7,5 @@ dependencies {
 	compileOnly group: "org.osgi", name: "osgi.cmpn", version: "6.0.0"	
 	compileOnly project(":modules:IBTrader:IBTrader-api")		
 	compileOnly project(":modules:IBTrader:IBTrader-service")
-	
+
 }

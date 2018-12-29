@@ -262,18 +262,18 @@ public abstract class StrategyServiceBaseImpl extends BaseServiceImpl
 	}
 
 	/**
-	 * Returns the i b order local service.
+	 * Returns the ib order local service.
 	 *
-	 * @return the i b order local service
+	 * @return the ib order local service
 	 */
 	public com.ibtrader.data.service.IBOrderLocalService getIBOrderLocalService() {
 		return ibOrderLocalService;
 	}
 
 	/**
-	 * Sets the i b order local service.
+	 * Sets the ib order local service.
 	 *
-	 * @param ibOrderLocalService the i b order local service
+	 * @param ibOrderLocalService the ib order local service
 	 */
 	public void setIBOrderLocalService(
 		com.ibtrader.data.service.IBOrderLocalService ibOrderLocalService) {
@@ -281,18 +281,18 @@ public abstract class StrategyServiceBaseImpl extends BaseServiceImpl
 	}
 
 	/**
-	 * Returns the i b order remote service.
+	 * Returns the ib order remote service.
 	 *
-	 * @return the i b order remote service
+	 * @return the ib order remote service
 	 */
 	public com.ibtrader.data.service.IBOrderService getIBOrderService() {
 		return ibOrderService;
 	}
 
 	/**
-	 * Sets the i b order remote service.
+	 * Sets the ib order remote service.
 	 *
-	 * @param ibOrderService the i b order remote service
+	 * @param ibOrderService the ib order remote service
 	 */
 	public void setIBOrderService(
 		com.ibtrader.data.service.IBOrderService ibOrderService) {
@@ -300,18 +300,18 @@ public abstract class StrategyServiceBaseImpl extends BaseServiceImpl
 	}
 
 	/**
-	 * Returns the i b order persistence.
+	 * Returns the ib order persistence.
 	 *
-	 * @return the i b order persistence
+	 * @return the ib order persistence
 	 */
 	public IBOrderPersistence getIBOrderPersistence() {
 		return ibOrderPersistence;
 	}
 
 	/**
-	 * Sets the i b order persistence.
+	 * Sets the ib order persistence.
 	 *
-	 * @param ibOrderPersistence the i b order persistence
+	 * @param ibOrderPersistence the ib order persistence
 	 */
 	public void setIBOrderPersistence(IBOrderPersistence ibOrderPersistence) {
 		this.ibOrderPersistence = ibOrderPersistence;

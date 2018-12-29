@@ -6,8 +6,8 @@ dependencies {
 	compileOnly group: "jstl", name: "jstl", version: "1.2"
 	compileOnly group: "org.osgi", name: "osgi.cmpn", version: "6.0.0"			
 	compileOnly project(":modules:IBTrader:IBTrader-api")		
-	compileOnly project(":modules:IBTrader:IBTrader-service")
-	
+	compileOnly project(":modules:IBTrader:IBTrader-service")	
 	compileOnly  group: "org.ta4j", name: "ta4j-core", version: "0.11" 
+
 		
 }

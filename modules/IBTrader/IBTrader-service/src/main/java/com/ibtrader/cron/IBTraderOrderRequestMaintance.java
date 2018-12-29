@@ -1,28 +1,13 @@
 package com.ibtrader.cron;
 
-import com.ib.client.Contract;
-import com.ib.contracts.FutContract;
-import com.ib.contracts.StkContract;
-import com.ibtrader.constants.IBTraderConstants;
-import com.ibtrader.data.model.Config;
 import com.ibtrader.data.model.IBOrder;
-import com.ibtrader.data.model.Market;
-import com.ibtrader.data.model.Share;
-import com.ibtrader.data.service.ConfigLocalServiceUtil;
 import com.ibtrader.data.service.IBOrderLocalServiceUtil;
-import com.ibtrader.data.service.MarketLocalServiceUtil;
-import com.ibtrader.data.service.ShareLocalServiceUtil;
-import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.BaseSchedulerEntryMessageListener;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.concurrent.Semaphore;
-
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -30,26 +15,13 @@ import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
 
-import com.liferay.portal.kernel.messaging.BaseSchedulerEntryMessageListener;
 import com.liferay.portal.kernel.messaging.DestinationNames;
 import com.liferay.portal.kernel.messaging.Message;
-import com.liferay.portal.kernel.model.Company;
-import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
 import com.liferay.portal.kernel.scheduler.SchedulerEngineHelper;
-import com.liferay.portal.kernel.scheduler.StorageType;
 import com.liferay.portal.kernel.scheduler.TimeUnit;
 import com.liferay.portal.kernel.scheduler.TriggerFactory;
 import com.liferay.portal.kernel.scheduler.TriggerFactoryUtil;
-import com.liferay.portal.kernel.scheduler.TriggerState;
-import com.liferay.portal.kernel.scheduler.messaging.SchedulerResponse;
-import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.kernel.util.StringPool;
-import com.ibtrader.interactive.TIMApiGITrader_NOVALE;
 import com.ibtrader.util.CronUtil;
-import com.ibtrader.util.Utilities;
-
-
-import com.liferay.portal.kernel.scheduler.SchedulerEngineHelper;
 
 
 /* CADA 1 MINUTO VERIFICAMOS LOS VENCIMIENTOS FUTUROS EN UTC / CET */

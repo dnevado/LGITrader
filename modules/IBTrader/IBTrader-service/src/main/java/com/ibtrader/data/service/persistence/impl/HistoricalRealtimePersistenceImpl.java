@@ -4695,7 +4695,8 @@ public class HistoricalRealtimePersistenceImpl extends BasePersistenceImpl<Histo
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
-		clearUniqueFindersCache((HistoricalRealtimeModelImpl)historicalRealtime);
+		clearUniqueFindersCache((HistoricalRealtimeModelImpl)historicalRealtime,
+			true);
 	}
 
 	@Override
@@ -4707,52 +4708,40 @@ public class HistoricalRealtimePersistenceImpl extends BasePersistenceImpl<Histo
 			entityCache.removeResult(HistoricalRealtimeModelImpl.ENTITY_CACHE_ENABLED,
 				HistoricalRealtimeImpl.class, historicalRealtime.getPrimaryKey());
 
-			clearUniqueFindersCache((HistoricalRealtimeModelImpl)historicalRealtime);
+			clearUniqueFindersCache((HistoricalRealtimeModelImpl)historicalRealtime,
+				true);
 		}
 	}
 
 	protected void cacheUniqueFindersCache(
-		HistoricalRealtimeModelImpl historicalRealtimeModelImpl, boolean isNew) {
-		if (isNew) {
-			Object[] args = new Object[] {
-					historicalRealtimeModelImpl.getUuid(),
-					historicalRealtimeModelImpl.getGroupId()
-				};
-
-			finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
-				Long.valueOf(1));
-			finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
-				historicalRealtimeModelImpl);
-		}
-		else {
-			if ((historicalRealtimeModelImpl.getColumnBitmask() &
-					FINDER_PATH_FETCH_BY_UUID_G.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						historicalRealtimeModelImpl.getUuid(),
-						historicalRealtimeModelImpl.getGroupId()
-					};
-
-				finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
-					Long.valueOf(1));
-				finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
-					historicalRealtimeModelImpl);
-			}
-		}
-	}
-
-	protected void clearUniqueFindersCache(
 		HistoricalRealtimeModelImpl historicalRealtimeModelImpl) {
 		Object[] args = new Object[] {
 				historicalRealtimeModelImpl.getUuid(),
 				historicalRealtimeModelImpl.getGroupId()
 			};
 
-		finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
-		finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
+		finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
+			Long.valueOf(1), false);
+		finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
+			historicalRealtimeModelImpl, false);
+	}
+
+	protected void clearUniqueFindersCache(
+		HistoricalRealtimeModelImpl historicalRealtimeModelImpl,
+		boolean clearCurrent) {
+		if (clearCurrent) {
+			Object[] args = new Object[] {
+					historicalRealtimeModelImpl.getUuid(),
+					historicalRealtimeModelImpl.getGroupId()
+				};
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
+			finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
+		}
 
 		if ((historicalRealtimeModelImpl.getColumnBitmask() &
 				FINDER_PATH_FETCH_BY_UUID_G.getColumnBitmask()) != 0) {
-			args = new Object[] {
+			Object[] args = new Object[] {
 					historicalRealtimeModelImpl.getOriginalUuid(),
 					historicalRealtimeModelImpl.getOriginalGroupId()
 				};
@@ -5098,8 +5087,8 @@ public class HistoricalRealtimePersistenceImpl extends BasePersistenceImpl<Histo
 			HistoricalRealtimeImpl.class, historicalRealtime.getPrimaryKey(),
 			historicalRealtime, false);
 
-		clearUniqueFindersCache(historicalRealtimeModelImpl);
-		cacheUniqueFindersCache(historicalRealtimeModelImpl, isNew);
+		clearUniqueFindersCache(historicalRealtimeModelImpl, false);
+		cacheUniqueFindersCache(historicalRealtimeModelImpl);
 
 		historicalRealtime.resetOriginalValues();
 

@@ -32,7 +32,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-
+import org.osgi.service.component.annotations.Reference;
 import org.w3c.dom.Document;
 
 import org.w3c.dom.NodeList;
@@ -63,7 +63,9 @@ import com.ibtrader.cron.IBTraderTrade;
 import com.ibtrader.data.model.Config;
 import com.ibtrader.data.model.Position;
 import com.ibtrader.data.model.StrategyShare;
+import com.ibtrader.data.service.ConfigLocalService;
 import com.ibtrader.data.service.ConfigLocalServiceUtil;
+import com.ibtrader.data.service.PositionLocalService;
 import com.ibtrader.data.service.PositionLocalServiceUtil;
 import com.ibtrader.interactive.TIMApiGITrader_NOVALE;
 
@@ -103,8 +105,21 @@ public class Utilities {
    
    private static final String TIME24HOURS_PATTERN ="([01]?[0-9]|2[0-3]):[0-5][0-9]";
    
-	private final static Log _log = LogFactoryUtil.getLog(Utilities.class);
+   private final static Log _log = LogFactoryUtil.getLog(Utilities.class);
+   
+   
+   private static ConfigLocalService _configLocalService;
+
+
+	@Reference(unbind = "-")
+	protected void setConfigService(ConfigLocalService configLocalService) {
+		_configLocalService = configLocalService;
+	}
+
+   
  
+
+  
    public static boolean isNumber (String amount){
 	    try {
 	        Double.parseDouble(amount);             

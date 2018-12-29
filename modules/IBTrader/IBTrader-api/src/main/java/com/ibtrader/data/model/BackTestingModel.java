@@ -215,58 +215,58 @@ public interface BackTestingModel extends BaseModel<BackTesting>, ShardedModel,
 	public void setShareId(long shareId);
 
 	/**
-	 * Returns the countorders b u y of this back testing.
+	 * Returns the countorders buy of this back testing.
 	 *
-	 * @return the countorders b u y of this back testing
+	 * @return the countorders buy of this back testing
 	 */
 	public long getCountordersBUY();
 
 	/**
-	 * Sets the countorders b u y of this back testing.
+	 * Sets the countorders buy of this back testing.
 	 *
-	 * @param countordersBUY the countorders b u y of this back testing
+	 * @param countordersBUY the countorders buy of this back testing
 	 */
 	public void setCountordersBUY(long countordersBUY);
 
 	/**
-	 * Returns the countorders s e l l of this back testing.
+	 * Returns the countorders sell of this back testing.
 	 *
-	 * @return the countorders s e l l of this back testing
+	 * @return the countorders sell of this back testing
 	 */
 	public long getCountordersSELL();
 
 	/**
-	 * Sets the countorders s e l l of this back testing.
+	 * Sets the countorders sell of this back testing.
 	 *
-	 * @param countordersSELL the countorders s e l l of this back testing
+	 * @param countordersSELL the countorders sell of this back testing
 	 */
 	public void setCountordersSELL(long countordersSELL);
 
 	/**
-	 * Returns the profitorders b u y of this back testing.
+	 * Returns the profitorders buy of this back testing.
 	 *
-	 * @return the profitorders b u y of this back testing
+	 * @return the profitorders buy of this back testing
 	 */
 	public double getProfitordersBUY();
 
 	/**
-	 * Sets the profitorders b u y of this back testing.
+	 * Sets the profitorders buy of this back testing.
 	 *
-	 * @param profitordersBUY the profitorders b u y of this back testing
+	 * @param profitordersBUY the profitorders buy of this back testing
 	 */
 	public void setProfitordersBUY(double profitordersBUY);
 
 	/**
-	 * Returns the profitorders s e l l of this back testing.
+	 * Returns the profitorders sell of this back testing.
 	 *
-	 * @return the profitorders s e l l of this back testing
+	 * @return the profitorders sell of this back testing
 	 */
 	public double getProfitordersSELL();
 
 	/**
-	 * Sets the profitorders s e l l of this back testing.
+	 * Sets the profitorders sell of this back testing.
 	 *
-	 * @param profitordersSELL the profitorders s e l l of this back testing
+	 * @param profitordersSELL the profitorders sell of this back testing
 	 */
 	public void setProfitordersSELL(double profitordersSELL);
 

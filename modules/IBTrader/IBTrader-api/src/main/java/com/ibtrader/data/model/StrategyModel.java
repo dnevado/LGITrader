@@ -84,16 +84,16 @@ public interface StrategyModel extends BaseModel<Strategy>, ShardedModel,
 	public void setUuid(String uuid);
 
 	/**
-	 * Returns the strategy i d of this strategy.
+	 * Returns the strategy ID of this strategy.
 	 *
-	 * @return the strategy i d of this strategy
+	 * @return the strategy ID of this strategy
 	 */
 	public long getStrategyID();
 
 	/**
-	 * Sets the strategy i d of this strategy.
+	 * Sets the strategy ID of this strategy.
 	 *
-	 * @param strategyID the strategy i d of this strategy
+	 * @param strategyID the strategy ID of this strategy
 	 */
 	public void setStrategyID(long strategyID);
 

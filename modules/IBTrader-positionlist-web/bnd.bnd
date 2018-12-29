@@ -8,6 +8,5 @@ Import-Package: \
 	com.ibtrader.strategy,\
 	com.ibtrader.util,\
 	*
-	
-	
-Include-Resource:\@ta4j-core-0.11.jar		
+Include-Resource:\
+			@ta4j-core-0.11.jar

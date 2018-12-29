@@ -4076,7 +4076,7 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 	 * Returns all the strategies where groupId = &#63; and strategyID = &#63;.
 	 *
 	 * @param groupId the group ID
-	 * @param strategyID the strategy i d
+	 * @param strategyID the strategy ID
 	 * @return the matching strategies
 	 */
 	@Override
@@ -4093,7 +4093,7 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 	 * </p>
 	 *
 	 * @param groupId the group ID
-	 * @param strategyID the strategy i d
+	 * @param strategyID the strategy ID
 	 * @param start the lower bound of the range of strategies
 	 * @param end the upper bound of the range of strategies (not inclusive)
 	 * @return the range of matching strategies
@@ -4112,7 +4112,7 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 	 * </p>
 	 *
 	 * @param groupId the group ID
-	 * @param strategyID the strategy i d
+	 * @param strategyID the strategy ID
 	 * @param start the lower bound of the range of strategies
 	 * @param end the upper bound of the range of strategies (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
@@ -4133,7 +4133,7 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 	 * </p>
 	 *
 	 * @param groupId the group ID
-	 * @param strategyID the strategy i d
+	 * @param strategyID the strategy ID
 	 * @param start the lower bound of the range of strategies
 	 * @param end the upper bound of the range of strategies (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
@@ -4256,7 +4256,7 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 	 * Returns the first strategy in the ordered set where groupId = &#63; and strategyID = &#63;.
 	 *
 	 * @param groupId the group ID
-	 * @param strategyID the strategy i d
+	 * @param strategyID the strategy ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching strategy
 	 * @throws NoSuchStrategyException if a matching strategy could not be found
@@ -4291,7 +4291,7 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 	 * Returns the first strategy in the ordered set where groupId = &#63; and strategyID = &#63;.
 	 *
 	 * @param groupId the group ID
-	 * @param strategyID the strategy i d
+	 * @param strategyID the strategy ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching strategy, or <code>null</code> if a matching strategy could not be found
 	 */
@@ -4312,7 +4312,7 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 	 * Returns the last strategy in the ordered set where groupId = &#63; and strategyID = &#63;.
 	 *
 	 * @param groupId the group ID
-	 * @param strategyID the strategy i d
+	 * @param strategyID the strategy ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching strategy
 	 * @throws NoSuchStrategyException if a matching strategy could not be found
@@ -4347,7 +4347,7 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 	 * Returns the last strategy in the ordered set where groupId = &#63; and strategyID = &#63;.
 	 *
 	 * @param groupId the group ID
-	 * @param strategyID the strategy i d
+	 * @param strategyID the strategy ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching strategy, or <code>null</code> if a matching strategy could not be found
 	 */
@@ -4374,7 +4374,7 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 	 * Removes all the strategies where groupId = &#63; and strategyID = &#63; from the database.
 	 *
 	 * @param groupId the group ID
-	 * @param strategyID the strategy i d
+	 * @param strategyID the strategy ID
 	 */
 	@Override
 	public void removeByG_G(long groupId, long strategyID) {
@@ -4388,7 +4388,7 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 	 * Returns the number of strategies where groupId = &#63; and strategyID = &#63;.
 	 *
 	 * @param groupId the group ID
-	 * @param strategyID the strategy i d
+	 * @param strategyID the strategy ID
 	 * @return the number of matching strategies
 	 */
 	@Override
@@ -4596,11 +4596,15 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 						finderArgs, list);
 				}
 				else {
-					if ((list.size() > 1) && _log.isWarnEnabled()) {
-						_log.warn(
-							"StrategyPersistenceImpl.fetchByCompanyClassName(long, String, long, boolean) with parameters (" +
-							StringUtil.merge(finderArgs) +
-							") yields a result set with more than 1 result. This violates the logical unique restriction. There is no order guarantee on which result is returned by this finder.");
+					if (list.size() > 1) {
+						Collections.sort(list, Collections.reverseOrder());
+
+						if (_log.isWarnEnabled()) {
+							_log.warn(
+								"StrategyPersistenceImpl.fetchByCompanyClassName(long, String, long, boolean) with parameters (" +
+								StringUtil.merge(finderArgs) +
+								") yields a result set with more than 1 result. This violates the logical unique restriction. There is no order guarantee on which result is returned by this finder.");
+						}
 					}
 
 					Strategy strategy = list.get(0);
@@ -4810,7 +4814,7 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
-		clearUniqueFindersCache((StrategyModelImpl)strategy);
+		clearUniqueFindersCache((StrategyModelImpl)strategy, true);
 	}
 
 	@Override
@@ -4822,74 +4826,45 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 			entityCache.removeResult(StrategyModelImpl.ENTITY_CACHE_ENABLED,
 				StrategyImpl.class, strategy.getPrimaryKey());
 
-			clearUniqueFindersCache((StrategyModelImpl)strategy);
+			clearUniqueFindersCache((StrategyModelImpl)strategy, true);
 		}
 	}
 
-	protected void cacheUniqueFindersCache(
-		StrategyModelImpl strategyModelImpl, boolean isNew) {
-		if (isNew) {
-			Object[] args = new Object[] {
-					strategyModelImpl.getUuid(), strategyModelImpl.getGroupId()
-				};
-
-			finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
-				Long.valueOf(1));
-			finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
-				strategyModelImpl);
-
-			args = new Object[] {
-					strategyModelImpl.getCompanyId(),
-					strategyModelImpl.getClassName(),
-					strategyModelImpl.getGroupId()
-				};
-
-			finderCache.putResult(FINDER_PATH_COUNT_BY_COMPANYCLASSNAME, args,
-				Long.valueOf(1));
-			finderCache.putResult(FINDER_PATH_FETCH_BY_COMPANYCLASSNAME, args,
-				strategyModelImpl);
-		}
-		else {
-			if ((strategyModelImpl.getColumnBitmask() &
-					FINDER_PATH_FETCH_BY_UUID_G.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						strategyModelImpl.getUuid(),
-						strategyModelImpl.getGroupId()
-					};
-
-				finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
-					Long.valueOf(1));
-				finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
-					strategyModelImpl);
-			}
-
-			if ((strategyModelImpl.getColumnBitmask() &
-					FINDER_PATH_FETCH_BY_COMPANYCLASSNAME.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						strategyModelImpl.getCompanyId(),
-						strategyModelImpl.getClassName(),
-						strategyModelImpl.getGroupId()
-					};
-
-				finderCache.putResult(FINDER_PATH_COUNT_BY_COMPANYCLASSNAME,
-					args, Long.valueOf(1));
-				finderCache.putResult(FINDER_PATH_FETCH_BY_COMPANYCLASSNAME,
-					args, strategyModelImpl);
-			}
-		}
-	}
-
-	protected void clearUniqueFindersCache(StrategyModelImpl strategyModelImpl) {
+	protected void cacheUniqueFindersCache(StrategyModelImpl strategyModelImpl) {
 		Object[] args = new Object[] {
 				strategyModelImpl.getUuid(), strategyModelImpl.getGroupId()
 			};
 
-		finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
-		finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
+		finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
+			Long.valueOf(1), false);
+		finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
+			strategyModelImpl, false);
+
+		args = new Object[] {
+				strategyModelImpl.getCompanyId(),
+				strategyModelImpl.getClassName(), strategyModelImpl.getGroupId()
+			};
+
+		finderCache.putResult(FINDER_PATH_COUNT_BY_COMPANYCLASSNAME, args,
+			Long.valueOf(1), false);
+		finderCache.putResult(FINDER_PATH_FETCH_BY_COMPANYCLASSNAME, args,
+			strategyModelImpl, false);
+	}
+
+	protected void clearUniqueFindersCache(
+		StrategyModelImpl strategyModelImpl, boolean clearCurrent) {
+		if (clearCurrent) {
+			Object[] args = new Object[] {
+					strategyModelImpl.getUuid(), strategyModelImpl.getGroupId()
+				};
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
+			finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
+		}
 
 		if ((strategyModelImpl.getColumnBitmask() &
 				FINDER_PATH_FETCH_BY_UUID_G.getColumnBitmask()) != 0) {
-			args = new Object[] {
+			Object[] args = new Object[] {
 					strategyModelImpl.getOriginalUuid(),
 					strategyModelImpl.getOriginalGroupId()
 				};
@@ -4898,17 +4873,20 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 			finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
 		}
 
-		args = new Object[] {
-				strategyModelImpl.getCompanyId(),
-				strategyModelImpl.getClassName(), strategyModelImpl.getGroupId()
-			};
+		if (clearCurrent) {
+			Object[] args = new Object[] {
+					strategyModelImpl.getCompanyId(),
+					strategyModelImpl.getClassName(),
+					strategyModelImpl.getGroupId()
+				};
 
-		finderCache.removeResult(FINDER_PATH_COUNT_BY_COMPANYCLASSNAME, args);
-		finderCache.removeResult(FINDER_PATH_FETCH_BY_COMPANYCLASSNAME, args);
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_COMPANYCLASSNAME, args);
+			finderCache.removeResult(FINDER_PATH_FETCH_BY_COMPANYCLASSNAME, args);
+		}
 
 		if ((strategyModelImpl.getColumnBitmask() &
 				FINDER_PATH_FETCH_BY_COMPANYCLASSNAME.getColumnBitmask()) != 0) {
-			args = new Object[] {
+			Object[] args = new Object[] {
 					strategyModelImpl.getOriginalCompanyId(),
 					strategyModelImpl.getOriginalClassName(),
 					strategyModelImpl.getOriginalGroupId()
@@ -5245,8 +5223,8 @@ public class StrategyPersistenceImpl extends BasePersistenceImpl<Strategy>
 		entityCache.putResult(StrategyModelImpl.ENTITY_CACHE_ENABLED,
 			StrategyImpl.class, strategy.getPrimaryKey(), strategy, false);
 
-		clearUniqueFindersCache(strategyModelImpl);
-		cacheUniqueFindersCache(strategyModelImpl, isNew);
+		clearUniqueFindersCache(strategyModelImpl, false);
+		cacheUniqueFindersCache(strategyModelImpl);
 
 		strategy.resetOriginalValues();
 

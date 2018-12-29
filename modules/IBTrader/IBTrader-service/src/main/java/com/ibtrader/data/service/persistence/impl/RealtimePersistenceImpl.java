@@ -4626,7 +4626,7 @@ public class RealtimePersistenceImpl extends BasePersistenceImpl<Realtime>
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
-		clearUniqueFindersCache((RealtimeModelImpl)realtime);
+		clearUniqueFindersCache((RealtimeModelImpl)realtime, true);
 	}
 
 	@Override
@@ -4638,49 +4638,35 @@ public class RealtimePersistenceImpl extends BasePersistenceImpl<Realtime>
 			entityCache.removeResult(RealtimeModelImpl.ENTITY_CACHE_ENABLED,
 				RealtimeImpl.class, realtime.getPrimaryKey());
 
-			clearUniqueFindersCache((RealtimeModelImpl)realtime);
+			clearUniqueFindersCache((RealtimeModelImpl)realtime, true);
 		}
 	}
 
-	protected void cacheUniqueFindersCache(
-		RealtimeModelImpl realtimeModelImpl, boolean isNew) {
-		if (isNew) {
-			Object[] args = new Object[] {
-					realtimeModelImpl.getUuid(), realtimeModelImpl.getGroupId()
-				};
-
-			finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
-				Long.valueOf(1));
-			finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
-				realtimeModelImpl);
-		}
-		else {
-			if ((realtimeModelImpl.getColumnBitmask() &
-					FINDER_PATH_FETCH_BY_UUID_G.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						realtimeModelImpl.getUuid(),
-						realtimeModelImpl.getGroupId()
-					};
-
-				finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
-					Long.valueOf(1));
-				finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
-					realtimeModelImpl);
-			}
-		}
-	}
-
-	protected void clearUniqueFindersCache(RealtimeModelImpl realtimeModelImpl) {
+	protected void cacheUniqueFindersCache(RealtimeModelImpl realtimeModelImpl) {
 		Object[] args = new Object[] {
 				realtimeModelImpl.getUuid(), realtimeModelImpl.getGroupId()
 			};
 
-		finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
-		finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
+		finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
+			Long.valueOf(1), false);
+		finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
+			realtimeModelImpl, false);
+	}
+
+	protected void clearUniqueFindersCache(
+		RealtimeModelImpl realtimeModelImpl, boolean clearCurrent) {
+		if (clearCurrent) {
+			Object[] args = new Object[] {
+					realtimeModelImpl.getUuid(), realtimeModelImpl.getGroupId()
+				};
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
+			finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
+		}
 
 		if ((realtimeModelImpl.getColumnBitmask() &
 				FINDER_PATH_FETCH_BY_UUID_G.getColumnBitmask()) != 0) {
-			args = new Object[] {
+			Object[] args = new Object[] {
 					realtimeModelImpl.getOriginalUuid(),
 					realtimeModelImpl.getOriginalGroupId()
 				};
@@ -5019,8 +5005,8 @@ public class RealtimePersistenceImpl extends BasePersistenceImpl<Realtime>
 		entityCache.putResult(RealtimeModelImpl.ENTITY_CACHE_ENABLED,
 			RealtimeImpl.class, realtime.getPrimaryKey(), realtime, false);
 
-		clearUniqueFindersCache(realtimeModelImpl);
-		cacheUniqueFindersCache(realtimeModelImpl, isNew);
+		clearUniqueFindersCache(realtimeModelImpl, false);
+		cacheUniqueFindersCache(realtimeModelImpl);
 
 		realtime.resetOriginalValues();
 

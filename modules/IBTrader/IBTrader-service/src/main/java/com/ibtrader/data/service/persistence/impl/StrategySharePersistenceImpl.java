@@ -2228,11 +2228,15 @@ public class StrategySharePersistenceImpl extends BasePersistenceImpl<StrategySh
 						finderArgs, list);
 				}
 				else {
-					if ((list.size() > 1) && _log.isWarnEnabled()) {
-						_log.warn(
-							"StrategySharePersistenceImpl.fetchByCommpanyShareStrategyId(long, long, long, long, boolean) with parameters (" +
-							StringUtil.merge(finderArgs) +
-							") yields a result set with more than 1 result. This violates the logical unique restriction. There is no order guarantee on which result is returned by this finder.");
+					if (list.size() > 1) {
+						Collections.sort(list, Collections.reverseOrder());
+
+						if (_log.isWarnEnabled()) {
+							_log.warn(
+								"StrategySharePersistenceImpl.fetchByCommpanyShareStrategyId(long, long, long, long, boolean) with parameters (" +
+								StringUtil.merge(finderArgs) +
+								") yields a result set with more than 1 result. This violates the logical unique restriction. There is no order guarantee on which result is returned by this finder.");
+						}
 					}
 
 					StrategyShare strategyShare = list.get(0);
@@ -3082,7 +3086,7 @@ public class StrategySharePersistenceImpl extends BasePersistenceImpl<StrategySh
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
-		clearUniqueFindersCache((StrategyShareModelImpl)strategyShare);
+		clearUniqueFindersCache((StrategyShareModelImpl)strategyShare, true);
 	}
 
 	@Override
@@ -3094,86 +3098,21 @@ public class StrategySharePersistenceImpl extends BasePersistenceImpl<StrategySh
 			entityCache.removeResult(StrategyShareModelImpl.ENTITY_CACHE_ENABLED,
 				StrategyShareImpl.class, strategyShare.getPrimaryKey());
 
-			clearUniqueFindersCache((StrategyShareModelImpl)strategyShare);
+			clearUniqueFindersCache((StrategyShareModelImpl)strategyShare, true);
 		}
 	}
 
 	protected void cacheUniqueFindersCache(
-		StrategyShareModelImpl strategyShareModelImpl, boolean isNew) {
-		if (isNew) {
-			Object[] args = new Object[] {
-					strategyShareModelImpl.getUuid(),
-					strategyShareModelImpl.getGroupId()
-				};
-
-			finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
-				Long.valueOf(1));
-			finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
-				strategyShareModelImpl);
-
-			args = new Object[] {
-					strategyShareModelImpl.getShareId(),
-					strategyShareModelImpl.getStrategyId(),
-					strategyShareModelImpl.getGroupId(),
-					strategyShareModelImpl.getCompanyId()
-				};
-
-			finderCache.putResult(FINDER_PATH_COUNT_BY_COMMPANYSHARESTRATEGYID,
-				args, Long.valueOf(1));
-			finderCache.putResult(FINDER_PATH_FETCH_BY_COMMPANYSHARESTRATEGYID,
-				args, strategyShareModelImpl);
-		}
-		else {
-			if ((strategyShareModelImpl.getColumnBitmask() &
-					FINDER_PATH_FETCH_BY_UUID_G.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						strategyShareModelImpl.getUuid(),
-						strategyShareModelImpl.getGroupId()
-					};
-
-				finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
-					Long.valueOf(1));
-				finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
-					strategyShareModelImpl);
-			}
-
-			if ((strategyShareModelImpl.getColumnBitmask() &
-					FINDER_PATH_FETCH_BY_COMMPANYSHARESTRATEGYID.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						strategyShareModelImpl.getShareId(),
-						strategyShareModelImpl.getStrategyId(),
-						strategyShareModelImpl.getGroupId(),
-						strategyShareModelImpl.getCompanyId()
-					};
-
-				finderCache.putResult(FINDER_PATH_COUNT_BY_COMMPANYSHARESTRATEGYID,
-					args, Long.valueOf(1));
-				finderCache.putResult(FINDER_PATH_FETCH_BY_COMMPANYSHARESTRATEGYID,
-					args, strategyShareModelImpl);
-			}
-		}
-	}
-
-	protected void clearUniqueFindersCache(
 		StrategyShareModelImpl strategyShareModelImpl) {
 		Object[] args = new Object[] {
 				strategyShareModelImpl.getUuid(),
 				strategyShareModelImpl.getGroupId()
 			};
 
-		finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
-		finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
-
-		if ((strategyShareModelImpl.getColumnBitmask() &
-				FINDER_PATH_FETCH_BY_UUID_G.getColumnBitmask()) != 0) {
-			args = new Object[] {
-					strategyShareModelImpl.getOriginalUuid(),
-					strategyShareModelImpl.getOriginalGroupId()
-				};
-
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
-			finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
-		}
+		finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
+			Long.valueOf(1), false);
+		finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
+			strategyShareModelImpl, false);
 
 		args = new Object[] {
 				strategyShareModelImpl.getShareId(),
@@ -3182,14 +3121,52 @@ public class StrategySharePersistenceImpl extends BasePersistenceImpl<StrategySh
 				strategyShareModelImpl.getCompanyId()
 			};
 
-		finderCache.removeResult(FINDER_PATH_COUNT_BY_COMMPANYSHARESTRATEGYID,
-			args);
-		finderCache.removeResult(FINDER_PATH_FETCH_BY_COMMPANYSHARESTRATEGYID,
-			args);
+		finderCache.putResult(FINDER_PATH_COUNT_BY_COMMPANYSHARESTRATEGYID,
+			args, Long.valueOf(1), false);
+		finderCache.putResult(FINDER_PATH_FETCH_BY_COMMPANYSHARESTRATEGYID,
+			args, strategyShareModelImpl, false);
+	}
+
+	protected void clearUniqueFindersCache(
+		StrategyShareModelImpl strategyShareModelImpl, boolean clearCurrent) {
+		if (clearCurrent) {
+			Object[] args = new Object[] {
+					strategyShareModelImpl.getUuid(),
+					strategyShareModelImpl.getGroupId()
+				};
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
+			finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
+		}
+
+		if ((strategyShareModelImpl.getColumnBitmask() &
+				FINDER_PATH_FETCH_BY_UUID_G.getColumnBitmask()) != 0) {
+			Object[] args = new Object[] {
+					strategyShareModelImpl.getOriginalUuid(),
+					strategyShareModelImpl.getOriginalGroupId()
+				};
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
+			finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
+		}
+
+		if (clearCurrent) {
+			Object[] args = new Object[] {
+					strategyShareModelImpl.getShareId(),
+					strategyShareModelImpl.getStrategyId(),
+					strategyShareModelImpl.getGroupId(),
+					strategyShareModelImpl.getCompanyId()
+				};
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_COMMPANYSHARESTRATEGYID,
+				args);
+			finderCache.removeResult(FINDER_PATH_FETCH_BY_COMMPANYSHARESTRATEGYID,
+				args);
+		}
 
 		if ((strategyShareModelImpl.getColumnBitmask() &
 				FINDER_PATH_FETCH_BY_COMMPANYSHARESTRATEGYID.getColumnBitmask()) != 0) {
-			args = new Object[] {
+			Object[] args = new Object[] {
 					strategyShareModelImpl.getOriginalShareId(),
 					strategyShareModelImpl.getOriginalStrategyId(),
 					strategyShareModelImpl.getOriginalGroupId(),
@@ -3470,8 +3447,8 @@ public class StrategySharePersistenceImpl extends BasePersistenceImpl<StrategySh
 			StrategyShareImpl.class, strategyShare.getPrimaryKey(),
 			strategyShare, false);
 
-		clearUniqueFindersCache(strategyShareModelImpl);
-		cacheUniqueFindersCache(strategyShareModelImpl, isNew);
+		clearUniqueFindersCache(strategyShareModelImpl, false);
+		cacheUniqueFindersCache(strategyShareModelImpl);
 
 		strategyShare.resetOriginalValues();
 

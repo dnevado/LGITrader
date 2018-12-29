@@ -155,9 +155,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Returns the checked of this i b order.
+	* Returns the checked of this ib order.
 	*
-	* @return the checked of this i b order
+	* @return the checked of this ib order
 	*/
 	@Override
 	public boolean getChecked() {
@@ -165,9 +165,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Returns the removable_on_reboot of this i b order.
+	* Returns the removable_on_reboot of this ib order.
 	*
-	* @return the removable_on_reboot of this i b order
+	* @return the removable_on_reboot of this ib order
 	*/
 	@Override
 	public boolean getRemovable_on_reboot() {
@@ -180,9 +180,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Returns <code>true</code> if this i b order is checked.
+	* Returns <code>true</code> if this ib order is checked.
 	*
-	* @return <code>true</code> if this i b order is checked; <code>false</code> otherwise
+	* @return <code>true</code> if this ib order is checked; <code>false</code> otherwise
 	*/
 	@Override
 	public boolean isChecked() {
@@ -200,9 +200,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Returns <code>true</code> if this i b order is removable_on_reboot.
+	* Returns <code>true</code> if this ib order is removable_on_reboot.
 	*
-	* @return <code>true</code> if this i b order is removable_on_reboot; <code>false</code> otherwise
+	* @return <code>true</code> if this ib order is removable_on_reboot; <code>false</code> otherwise
 	*/
 	@Override
 	public boolean isRemovable_on_reboot() {
@@ -240,9 +240,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Returns the uuid of this i b order.
+	* Returns the uuid of this ib order.
 	*
-	* @return the uuid of this i b order
+	* @return the uuid of this ib order
 	*/
 	@Override
 	public java.lang.String getUuid() {
@@ -260,9 +260,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Returns the create date of this i b order.
+	* Returns the create date of this ib order.
 	*
-	* @return the create date of this i b order
+	* @return the create date of this ib order
 	*/
 	@Override
 	public Date getCreateDate() {
@@ -270,9 +270,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Returns the modified date of this i b order.
+	* Returns the modified date of this ib order.
 	*
-	* @return the modified date of this i b order
+	* @return the modified date of this ib order
 	*/
 	@Override
 	public Date getModifiedDate() {
@@ -280,9 +280,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Returns the company ID of this i b order.
+	* Returns the company ID of this ib order.
 	*
-	* @return the company ID of this i b order
+	* @return the company ID of this ib order
 	*/
 	@Override
 	public long getCompanyId() {
@@ -290,9 +290,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Returns the group ID of this i b order.
+	* Returns the group ID of this ib order.
 	*
-	* @return the group ID of this i b order
+	* @return the group ID of this ib order
 	*/
 	@Override
 	public long getGroupId() {
@@ -300,9 +300,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Returns the ibclient ID of this i b order.
+	* Returns the ibclient ID of this ib order.
 	*
-	* @return the ibclient ID of this i b order
+	* @return the ibclient ID of this ib order
 	*/
 	@Override
 	public long getIbclientId() {
@@ -310,9 +310,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Returns the order ID pk of this i b order.
+	* Returns the order ID pk of this ib order.
 	*
-	* @return the order ID pk of this i b order
+	* @return the order ID pk of this ib order
 	*/
 	@Override
 	public long getOrderIdPk() {
@@ -320,9 +320,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Returns the orders ID of this i b order.
+	* Returns the orders ID of this ib order.
 	*
-	* @return the orders ID of this i b order
+	* @return the orders ID of this ib order
 	*/
 	@Override
 	public long getOrdersId() {
@@ -330,9 +330,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Returns the primary key of this i b order.
+	* Returns the primary key of this ib order.
 	*
-	* @return the primary key of this i b order
+	* @return the primary key of this ib order
 	*/
 	@Override
 	public long getPrimaryKey() {
@@ -340,9 +340,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Returns the share i d of this i b order.
+	* Returns the share ID of this ib order.
 	*
-	* @return the share i d of this i b order
+	* @return the share ID of this ib order
 	*/
 	@Override
 	public long getShareID() {
@@ -360,9 +360,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Sets whether this i b order is checked.
+	* Sets whether this ib order is checked.
 	*
-	* @param checked the checked of this i b order
+	* @param checked the checked of this ib order
 	*/
 	@Override
 	public void setChecked(boolean checked) {
@@ -370,9 +370,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Sets the company ID of this i b order.
+	* Sets the company ID of this ib order.
 	*
-	* @param companyId the company ID of this i b order
+	* @param companyId the company ID of this ib order
 	*/
 	@Override
 	public void setCompanyId(long companyId) {
@@ -380,9 +380,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Sets the create date of this i b order.
+	* Sets the create date of this ib order.
 	*
-	* @param createDate the create date of this i b order
+	* @param createDate the create date of this ib order
 	*/
 	@Override
 	public void setCreateDate(Date createDate) {
@@ -406,9 +406,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Sets the group ID of this i b order.
+	* Sets the group ID of this ib order.
 	*
-	* @param groupId the group ID of this i b order
+	* @param groupId the group ID of this ib order
 	*/
 	@Override
 	public void setGroupId(long groupId) {
@@ -416,9 +416,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Sets the ibclient ID of this i b order.
+	* Sets the ibclient ID of this ib order.
 	*
-	* @param ibclientId the ibclient ID of this i b order
+	* @param ibclientId the ibclient ID of this ib order
 	*/
 	@Override
 	public void setIbclientId(long ibclientId) {
@@ -426,9 +426,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Sets the modified date of this i b order.
+	* Sets the modified date of this ib order.
 	*
-	* @param modifiedDate the modified date of this i b order
+	* @param modifiedDate the modified date of this ib order
 	*/
 	@Override
 	public void setModifiedDate(Date modifiedDate) {
@@ -441,9 +441,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Sets the order ID pk of this i b order.
+	* Sets the order ID pk of this ib order.
 	*
-	* @param orderIdPk the order ID pk of this i b order
+	* @param orderIdPk the order ID pk of this ib order
 	*/
 	@Override
 	public void setOrderIdPk(long orderIdPk) {
@@ -451,9 +451,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Sets the orders ID of this i b order.
+	* Sets the orders ID of this ib order.
 	*
-	* @param ordersId the orders ID of this i b order
+	* @param ordersId the orders ID of this ib order
 	*/
 	@Override
 	public void setOrdersId(long ordersId) {
@@ -461,9 +461,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Sets the primary key of this i b order.
+	* Sets the primary key of this ib order.
 	*
-	* @param primaryKey the primary key of this i b order
+	* @param primaryKey the primary key of this ib order
 	*/
 	@Override
 	public void setPrimaryKey(long primaryKey) {
@@ -476,9 +476,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Sets whether this i b order is removable_on_reboot.
+	* Sets whether this ib order is removable_on_reboot.
 	*
-	* @param removable_on_reboot the removable_on_reboot of this i b order
+	* @param removable_on_reboot the removable_on_reboot of this ib order
 	*/
 	@Override
 	public void setRemovable_on_reboot(boolean removable_on_reboot) {
@@ -486,9 +486,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Sets the share i d of this i b order.
+	* Sets the share ID of this ib order.
 	*
-	* @param shareID the share i d of this i b order
+	* @param shareID the share ID of this ib order
 	*/
 	@Override
 	public void setShareID(long shareID) {
@@ -496,9 +496,9 @@ public class IBOrderWrapper implements IBOrder, ModelWrapper<IBOrder> {
 	}
 
 	/**
-	* Sets the uuid of this i b order.
+	* Sets the uuid of this ib order.
 	*
-	* @param uuid the uuid of this i b order
+	* @param uuid the uuid of this ib order
 	*/
 	@Override
 	public void setUuid(java.lang.String uuid) {

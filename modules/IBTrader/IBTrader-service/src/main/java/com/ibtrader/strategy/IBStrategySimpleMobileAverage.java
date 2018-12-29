@@ -26,7 +26,6 @@ y B/ Además, el precio cierre de la barra será => que el 75% del rango.
 
 package com.ibtrader.strategy;
 
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -44,14 +43,11 @@ import com.ibtrader.data.model.Market;
 import com.ibtrader.data.model.Position;
 import com.ibtrader.data.model.Realtime;
 import com.ibtrader.data.model.Share;
-import com.ibtrader.data.model.Strategy;
 import com.ibtrader.data.model.StrategyShare;
 import com.ibtrader.data.model.impl.StrategyImpl;
 import com.ibtrader.data.service.HistoricalRealtimeLocalServiceUtil;
 import com.ibtrader.data.service.PositionLocalServiceUtil;
 import com.ibtrader.data.service.RealtimeLocalServiceUtil;
-import com.ibtrader.data.service.StrategyLocalServiceUtil;
-import com.ibtrader.data.service.StrategyShareLocalServiceUtil;
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.expando.kernel.model.ExpandoColumn;
 import com.liferay.expando.kernel.model.ExpandoColumnConstants;

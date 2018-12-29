@@ -2816,7 +2816,7 @@ public class BackTestingPersistenceImpl extends BasePersistenceImpl<BackTesting>
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
-		clearUniqueFindersCache((BackTestingModelImpl)backTesting);
+		clearUniqueFindersCache((BackTestingModelImpl)backTesting, true);
 	}
 
 	@Override
@@ -2828,52 +2828,38 @@ public class BackTestingPersistenceImpl extends BasePersistenceImpl<BackTesting>
 			entityCache.removeResult(BackTestingModelImpl.ENTITY_CACHE_ENABLED,
 				BackTestingImpl.class, backTesting.getPrimaryKey());
 
-			clearUniqueFindersCache((BackTestingModelImpl)backTesting);
+			clearUniqueFindersCache((BackTestingModelImpl)backTesting, true);
 		}
 	}
 
 	protected void cacheUniqueFindersCache(
-		BackTestingModelImpl backTestingModelImpl, boolean isNew) {
-		if (isNew) {
-			Object[] args = new Object[] {
-					backTestingModelImpl.getUuid(),
-					backTestingModelImpl.getGroupId()
-				};
-
-			finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
-				Long.valueOf(1));
-			finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
-				backTestingModelImpl);
-		}
-		else {
-			if ((backTestingModelImpl.getColumnBitmask() &
-					FINDER_PATH_FETCH_BY_UUID_G.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						backTestingModelImpl.getUuid(),
-						backTestingModelImpl.getGroupId()
-					};
-
-				finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
-					Long.valueOf(1));
-				finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
-					backTestingModelImpl);
-			}
-		}
-	}
-
-	protected void clearUniqueFindersCache(
 		BackTestingModelImpl backTestingModelImpl) {
 		Object[] args = new Object[] {
 				backTestingModelImpl.getUuid(),
 				backTestingModelImpl.getGroupId()
 			};
 
-		finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
-		finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
+		finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
+			Long.valueOf(1), false);
+		finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
+			backTestingModelImpl, false);
+	}
+
+	protected void clearUniqueFindersCache(
+		BackTestingModelImpl backTestingModelImpl, boolean clearCurrent) {
+		if (clearCurrent) {
+			Object[] args = new Object[] {
+					backTestingModelImpl.getUuid(),
+					backTestingModelImpl.getGroupId()
+				};
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
+			finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
+		}
 
 		if ((backTestingModelImpl.getColumnBitmask() &
 				FINDER_PATH_FETCH_BY_UUID_G.getColumnBitmask()) != 0) {
-			args = new Object[] {
+			Object[] args = new Object[] {
 					backTestingModelImpl.getOriginalUuid(),
 					backTestingModelImpl.getOriginalGroupId()
 				};
@@ -3148,8 +3134,8 @@ public class BackTestingPersistenceImpl extends BasePersistenceImpl<BackTesting>
 			BackTestingImpl.class, backTesting.getPrimaryKey(), backTesting,
 			false);
 
-		clearUniqueFindersCache(backTestingModelImpl);
-		cacheUniqueFindersCache(backTestingModelImpl, isNew);
+		clearUniqueFindersCache(backTestingModelImpl, false);
+		cacheUniqueFindersCache(backTestingModelImpl);
 
 		backTesting.resetOriginalValues();
 

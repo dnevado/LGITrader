@@ -8,4 +8,8 @@ dependencies {
 	compileOnly project(":modules:IBTrader:IBTrader-api")		
 	compileOnly project(":modules:IBTrader:IBTrader-service")
 	
+	compileOnly group: 'com.google.api-client', name: 'google-api-client', version: '1.25.0'
+	compileOnly group: 'com.google.apis', name: 'google-api-services-gmail', version: 'v1-rev96-1.25.0'
+	compileOnly group: 'com.google.oauth-client', name: 'google-oauth-client-jetty', version: '1.25.0'
+	
 }

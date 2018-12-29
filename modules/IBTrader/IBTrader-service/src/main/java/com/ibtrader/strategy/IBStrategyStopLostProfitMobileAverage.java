@@ -31,7 +31,6 @@ y B/ Además, el precio cierre de la barra será => que el 75% del rango.
 
 package com.ibtrader.strategy;
 
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -44,9 +43,7 @@ import com.ib.client.Order;
 import com.ib.contracts.FutContract;
 import com.ib.contracts.StkContract;
 import com.ibtrader.constants.IBTraderConstants;
-import com.ibtrader.data.model.Config;
 import com.ibtrader.data.model.HistoricalRealtime;
-import com.ibtrader.data.model.IBOrder;
 import com.ibtrader.data.model.Market;
 import com.ibtrader.data.model.Position;
 import com.ibtrader.data.model.Realtime;
