@@ -82,6 +82,17 @@ public final class GmailServiceImpl implements GmailService {
                 .execute()
                 .getLabelIds().contains("SENT");
     }
+    @Override
+    public void  sendMessage(InternetAddress[] recipientAddress, String subject, String body) throws MessagingException,
+            IOException {
+    	
+    	@SuppressWarnings("unused")
+		boolean returnValue=Boolean.FALSE;
+    	for  (int j=0;j<recipientAddress.length;j++)
+    	{
+    		returnValue = this.sendMessage(String.valueOf(recipientAddress[j]),subject, body);
+    	}
+    }
 
     private Gmail createGmail()  {
 		    Credential credential = null;

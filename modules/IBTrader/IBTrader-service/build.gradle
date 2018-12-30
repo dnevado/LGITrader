@@ -5,47 +5,23 @@ dependencies {
 	compile group: "com.liferay", name: "com.liferay.osgi.util", version: "3.0.0"
 	compile group: "com.liferay", name: "com.liferay.portal.spring.extender", version: "2.0.0"
 	compile group: "com.liferay.portal", name: "com.liferay.portal.kernel", version: "2.6.0"
-	compile group: "com.liferay", name: "com.liferay.portal.security.sso.google", version: "1.0.0" 
+	compile group: "com.liferay", name: "com.liferay.portal.security.sso.google", version: "1.0.0"
 	compileOnly project(":modules:IBTrader:IBTrader-api")
 	compileOnly  group: "com.interactivebrokers.tws", name: "tws-api", version: "9.72.05"
 	compile "com.liferay:com.liferay.portal.dao.orm.custom.sql:1.0.5"
 	compileOnly  group: "org.ta4j", name: "ta4j-core", version: "0.11" 
-/* 	compile group: 'javax.mail', name: 'mail', version: '1.4.1' */
 	compile group: "org.osgi", name: "osgi.cmpn", version: "6.0.0"
 	compile group: "org.osgi", name: "org.osgi.core", version: "6.0.0" 	
 	compileOnly group: 'javax.mail', name: 'mail', version: '1.4' 
-/*
-	 compileOnly group: 'com.google.api-client', name: 'google-api-client', version: '1.20.0'
-	compileOnly group: 'com.google.apis', name: 'google-api-services-gmail', version: 'v1-rev96-1.25.0'
-	compileOnly group: 'com.google.http-client', name: 'google-http-client', version: '1.20.0'
-	compileOnly group: 'com.google.api-client', name: 'google-api-client-java6', version: '1.20.0'
-	compileOnly group: 'com.google.http-client', name: 'google-http-client-jackson2', version: '1.20.0'
-	compileOnly group: 'com.google.http-client', name: 'google-http-client-gson', version: '1.20.0'
-	compileOnly group: 'com.google.oauth-client', name: 'google-oauth-client', version: '1.20.0'
-	compileOnly group: 'com.google.oauth-client', name: 'google-oauth-client-java6', version: '1.20.0' 
-	
-	compileOnly 'com.google.api-client:google-api-client:1.23.0'
-    compileOnly 'com.google.apis:google-api-services-gmail:v1-rev82-1.23.0'
-    compileOnly 'com.google.oauth-client:google-oauth-client-jetty:1.23.0'*/
-	
 	compileInclude   group: 'com.google.api-client', name: 'google-api-client', version: '1.25.0' 
 	compileInclude   group: 'com.google.apis', name: 'google-api-services-gmail', version: 'v1-rev82-1.23.0' 
 	compileInclude   group: 'com.google.oauth-client', name: 'google-oauth-client', version: '1.25.0' 
 	compileInclude  group: 'com.google.apis', name: 'google-api-services-oauth2', version: 'v2-rev140-1.25.0'
 	compileInclude  group: 'com.google.guava', name: 'guava', version: '27.0.1-jre'
-	compileInclude  group: 'com.google.http-client', name: 'google-http-client-jackson2', version: '1.25.0'
-	/* compileInclude  group: 'javax.mail', name: 'mail', version: '1.4.7' */
+	compileInclude  group: 'com.google.http-client', name: 'google-http-client-jackson2', version: '1.25.0'	
 	compileInclude group: 'org.apache.avalon.framework', name: 'avalon-framework-impl', version: '4.3.1'
-	
-	
 	compileInclude group: 'com.google.api-client', name: 'google-api-client-java6', version: '1.20.0'
 	compileInclude   group: 'com.google.oauth-client', name: 'google-oauth-client-jetty', version: '1.25.0' 
-
-	
-	
-	
-
-	
 }
 
 buildService {
