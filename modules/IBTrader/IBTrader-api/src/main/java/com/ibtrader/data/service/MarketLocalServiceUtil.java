@@ -275,12 +275,18 @@ public class MarketLocalServiceUtil {
 		return getService().findByActiveCompanyGroup(companyId, groupId, active);
 	}
 
-	public static java.util.List<com.ibtrader.data.model.Market> findByActiveStartEndHour(
-		java.lang.String _Start, java.lang.String _End, boolean active,
-		long companyId, long groupId) {
+	public static java.util.List<com.ibtrader.data.model.Market> findByActiveStartEndMarketHour(
+		boolean active, long companyId, long groupId) {
 		return getService()
-				   .findByActiveStartEndHour(_Start, _End, active, companyId,
-			groupId);
+				   .findByActiveStartEndMarketHour(active, companyId, groupId);
+	}
+
+	public static java.util.List<com.ibtrader.data.model.Market> findByActiveStartEndMarketHour(
+		boolean active, long companyId, long groupId,
+		java.util.Date backTestingDate) {
+		return getService()
+				   .findByActiveStartEndMarketHour(active, companyId, groupId,
+			backTestingDate);
 	}
 
 	public static java.util.List<com.ibtrader.data.model.Market> findByCompanyGroup(

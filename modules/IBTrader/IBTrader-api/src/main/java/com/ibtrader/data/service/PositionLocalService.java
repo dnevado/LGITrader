@@ -254,7 +254,7 @@ public interface PositionLocalService extends BaseLocalService,
 		java.lang.String positionMode);
 
 	public List<Position> findByCloseCompanyGroup(long companyId, long groupId,
-		boolean forceclose, java.lang.String positionMode);
+		long shareId, boolean forceclose, java.lang.String positionMode);
 
 	public List<Position> findByCompanyGroupDate(long companyId, long groupId,
 		Date start_date_in, Date end_date_in, java.lang.String positionMode);

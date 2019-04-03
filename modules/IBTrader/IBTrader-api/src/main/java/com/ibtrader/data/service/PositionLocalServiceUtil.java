@@ -308,11 +308,11 @@ public class PositionLocalServiceUtil {
 	}
 
 	public static java.util.List<com.ibtrader.data.model.Position> findByCloseCompanyGroup(
-		long companyId, long groupId, boolean forceclose,
+		long companyId, long groupId, long shareId, boolean forceclose,
 		java.lang.String positionMode) {
 		return getService()
-				   .findByCloseCompanyGroup(companyId, groupId, forceclose,
-			positionMode);
+				   .findByCloseCompanyGroup(companyId, groupId, shareId,
+			forceclose, positionMode);
 	}
 
 	public static java.util.List<com.ibtrader.data.model.Position> findByCompanyGroupDate(

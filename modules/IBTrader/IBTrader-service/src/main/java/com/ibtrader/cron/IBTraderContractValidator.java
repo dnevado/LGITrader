@@ -53,9 +53,9 @@ public class IBTraderContractValidator  extends BaseSchedulerEntryMessageListene
 		schedulerEntryImpl.setTrigger(TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(),
 				calendar.getTime(),cron.toString())); */
 	 
-	     schedulerEntryImpl.setTrigger(TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(),15, TimeUnit.SECOND));  
+	    schedulerEntryImpl.setTrigger(TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(),15, TimeUnit.SECOND));  
 		_log.info("Activating CRON..."  + schedulerEntryImpl.getTrigger());
-		 _schedulerEngineHelper.register(this, schedulerEntryImpl, DestinationNames.SCHEDULER_DISPATCH);
+		_schedulerEngineHelper.register(this, schedulerEntryImpl, DestinationNames.SCHEDULER_DISPATCH);
 		
 	}
 	

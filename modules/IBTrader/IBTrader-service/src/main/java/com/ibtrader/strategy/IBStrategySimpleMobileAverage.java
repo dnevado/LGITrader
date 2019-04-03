@@ -188,30 +188,38 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 			
 			
 			
-			Double _avgMobileSimple = MobileAvgUtil.getSimpleAvgMobile(_calendarFromNow.getTime(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_macdP, isSimulation_mode(), _market);
+			//Double _avgMobileSimple = MobileAvgUtil.getSimpleAvgMobile(_calendarFromNow.getTime(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_macdP, isSimulation_mode(), _market);
 			
-			if (_log.isDebugEnabled())
-				_log.debug("_avgMobileSimple for :" + _share.getSymbol() + ":" +  _avgMobileSimple.doubleValue() + " " + Utilities.getWebFormattedDate(_calendarFromNow.getTime(), _IBUser));
-			
-			if (_avgMobileSimple!=null)
+				
+			Double vRealtime = null;
+			if (!isSimulation_mode())
+			{
+				Realtime oRTimeEnTramo =  RealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _calendarFromNow.getTime());
+				vRealtime  = Validator.isNull(oRTimeEnTramo) ? null : oRTimeEnTramo.getValue();
+			}
+			else
+			{
+				HistoricalRealtime oRTimeEnTramo =  HistoricalRealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _calendarFromNow.getTime());
+				vRealtime  = Validator.isNull(oRTimeEnTramo) ? null : oRTimeEnTramo.getValue();
+			}
+				
+
+			if (vRealtime!=null)
 			{
 				// todo fue bien, tenemos media movil y de los periodos solicitados.
 				// buscamos el cierre de la barra, ultimo valor < que el MINUTE.00  (15.00, 20,00, 25.00)
-				Double vRealtime = null;
-				if (!isSimulation_mode())
-				{
-					Realtime oRTimeEnTramo =  RealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _calendarFromNow.getTime());
-					vRealtime  = Validator.isNull(oRTimeEnTramo) ? null : oRTimeEnTramo.getValue();
-				}
-				else
-				{
-					HistoricalRealtime oRTimeEnTramo =  HistoricalRealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _calendarFromNow.getTime());
-					vRealtime  = Validator.isNull(oRTimeEnTramo) ? null : oRTimeEnTramo.getValue();
-				}
+				
+				Double _avgMobileSimple = MobileAvgUtil.getExponentialAvgMobile(_calendarFromNow.getTime(), vRealtime.doubleValue(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_macdP , isSimulation_mode(), _market);
+
+				
 				if (_log.isDebugEnabled())
 					_log.debug("oRTimeEnTramo for :" + _share.getSymbol() + ":" +  vRealtime);
 				
-				if (Validator.isNotNull(vRealtime))
+
+				if (_log.isDebugEnabled())
+					_log.debug("_avgMobileSimple for :" + _share.getSymbol() + ":" +   (Validator.isNotNull(_avgMobileSimple) ? _avgMobileSimple.doubleValue() : 0)   + " " + Utilities.getWebFormattedDate(_calendarFromNow.getTime(), _IBUser));
+				
+				if (Validator.isNotNull(_avgMobileSimple))
 				{
 					/* PERIODO CERO , JUSTAMENTE LA BARRA ANTERIOR */
 					double max_value = 0;

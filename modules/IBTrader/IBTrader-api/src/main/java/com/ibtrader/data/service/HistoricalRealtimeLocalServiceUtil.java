@@ -112,6 +112,11 @@ public class HistoricalRealtimeLocalServiceUtil {
 				   .findCloseRealTime(shareId, companyId, groupId, closeDate);
 	}
 
+	public static com.ibtrader.data.model.HistoricalRealtime findFirstRealTime(
+		long shareId, long companyId, long groupId) {
+		return getService().findFirstRealTime(shareId, companyId, groupId);
+	}
+
 	public static com.ibtrader.data.model.HistoricalRealtime findLastCompanyShare(
 		long companyId, long shareId, long groupId) {
 		return getService().findLastCompanyShare(companyId, shareId, groupId);

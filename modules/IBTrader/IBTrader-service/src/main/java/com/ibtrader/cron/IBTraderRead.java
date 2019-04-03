@@ -14,6 +14,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.liferay.portal.kernel.messaging.DestinationNames;
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.scheduler.SchedulerEngineHelper;
+import com.liferay.portal.kernel.scheduler.SchedulerException;
 import com.liferay.portal.kernel.scheduler.TimeUnit;
 import com.liferay.portal.kernel.scheduler.TriggerFactory;
 import com.liferay.portal.kernel.scheduler.TriggerFactoryUtil;
@@ -27,7 +28,7 @@ public class IBTraderRead  extends BaseSchedulerEntryMessageListener {
 
 	Log _log = LogFactoryUtil.getLog(IBTraderRead.class);
 	
-    private static boolean runningJob = false;
+    private volatile boolean runningJob = false;
 
 	
 	private SchedulerEngineHelper _schedulerEngineHelper;
@@ -46,7 +47,22 @@ public class IBTraderRead  extends BaseSchedulerEntryMessageListener {
 	
 	@Deactivate
 	protected void deactivate() {
-		_schedulerEngineHelper.unregister(this);
+		
+		 if (runningJob) {
+		      // unschedule the job so it is cleaned up		 
+			 try 
+			 {
+				 _schedulerEngineHelper.unregister(this);	
+				 _log.info("deactivate CRON...runningJob:"  + runningJob);
+				 runningJob = false;
+			 }
+			 catch (Exception e) {	runningJob = false;}
+			 		   		      
+		      // unregister this listener
+		 }		   
+		 // clear the initialized flag
+	
+		    
 	}
 	
 	@Activate
@@ -57,22 +73,23 @@ public class IBTraderRead  extends BaseSchedulerEntryMessageListener {
 		schedulerEntryImpl.setTrigger(TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(),
 				calendar.getTime(),cron.toString())); */
 		
+		   // if we were initialized (i.e. if this is called due to CA modification)
+	    if (runningJob) {
+	      // first deactivate the current job before we schedule.
+	        deactivate();
+	  		runningJob = false;
+	    }
 		
-		
-	     schedulerEntryImpl.setTrigger(TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(),10, TimeUnit.SECOND));  
-		
-	     
+	    schedulerEntryImpl.setTrigger(TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(),10, TimeUnit.SECOND));  
 		_log.info("Activating CRON..."  + schedulerEntryImpl.getTrigger());
-		_schedulerEngineHelper.register(this, schedulerEntryImpl, DestinationNames.SCHEDULER_DISPATCH);
+	 	_schedulerEngineHelper.register(this, schedulerEntryImpl, DestinationNames.SCHEDULER_DISPATCH);
 		
+	 
+	 	
 	}
 	
 	@Override
 	protected void doReceive(Message message) throws Exception {
-		
-	
-	
-		
 		
 	   if(runningJob) 
 	   {

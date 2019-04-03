@@ -867,6 +867,194 @@ public interface IBOrderPersistence extends BasePersistence<IBOrder> {
 		long groupId, long ibclientId);
 
 	/**
+	* Returns all the ib orders where ordersId = &#63; and companyId = &#63; and shareID = &#63; and groupId = &#63; and ibclientId = &#63;.
+	*
+	* @param ordersId the orders ID
+	* @param companyId the company ID
+	* @param shareID the share ID
+	* @param groupId the group ID
+	* @param ibclientId the ibclient ID
+	* @return the matching ib orders
+	*/
+	public java.util.List<IBOrder> findByOrderShareClientGroupCompany(
+		long ordersId, long companyId, long shareID, long groupId,
+		long ibclientId);
+
+	/**
+	* Returns a range of all the ib orders where ordersId = &#63; and companyId = &#63; and shareID = &#63; and groupId = &#63; and ibclientId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param ordersId the orders ID
+	* @param companyId the company ID
+	* @param shareID the share ID
+	* @param groupId the group ID
+	* @param ibclientId the ibclient ID
+	* @param start the lower bound of the range of ib orders
+	* @param end the upper bound of the range of ib orders (not inclusive)
+	* @return the range of matching ib orders
+	*/
+	public java.util.List<IBOrder> findByOrderShareClientGroupCompany(
+		long ordersId, long companyId, long shareID, long groupId,
+		long ibclientId, int start, int end);
+
+	/**
+	* Returns an ordered range of all the ib orders where ordersId = &#63; and companyId = &#63; and shareID = &#63; and groupId = &#63; and ibclientId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param ordersId the orders ID
+	* @param companyId the company ID
+	* @param shareID the share ID
+	* @param groupId the group ID
+	* @param ibclientId the ibclient ID
+	* @param start the lower bound of the range of ib orders
+	* @param end the upper bound of the range of ib orders (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching ib orders
+	*/
+	public java.util.List<IBOrder> findByOrderShareClientGroupCompany(
+		long ordersId, long companyId, long shareID, long groupId,
+		long ibclientId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<IBOrder> orderByComparator);
+
+	/**
+	* Returns an ordered range of all the ib orders where ordersId = &#63; and companyId = &#63; and shareID = &#63; and groupId = &#63; and ibclientId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link IBOrderModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param ordersId the orders ID
+	* @param companyId the company ID
+	* @param shareID the share ID
+	* @param groupId the group ID
+	* @param ibclientId the ibclient ID
+	* @param start the lower bound of the range of ib orders
+	* @param end the upper bound of the range of ib orders (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching ib orders
+	*/
+	public java.util.List<IBOrder> findByOrderShareClientGroupCompany(
+		long ordersId, long companyId, long shareID, long groupId,
+		long ibclientId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<IBOrder> orderByComparator,
+		boolean retrieveFromCache);
+
+	/**
+	* Returns the first ib order in the ordered set where ordersId = &#63; and companyId = &#63; and shareID = &#63; and groupId = &#63; and ibclientId = &#63;.
+	*
+	* @param ordersId the orders ID
+	* @param companyId the company ID
+	* @param shareID the share ID
+	* @param groupId the group ID
+	* @param ibclientId the ibclient ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching ib order
+	* @throws NoSuchIBOrderException if a matching ib order could not be found
+	*/
+	public IBOrder findByOrderShareClientGroupCompany_First(long ordersId,
+		long companyId, long shareID, long groupId, long ibclientId,
+		com.liferay.portal.kernel.util.OrderByComparator<IBOrder> orderByComparator)
+		throws NoSuchIBOrderException;
+
+	/**
+	* Returns the first ib order in the ordered set where ordersId = &#63; and companyId = &#63; and shareID = &#63; and groupId = &#63; and ibclientId = &#63;.
+	*
+	* @param ordersId the orders ID
+	* @param companyId the company ID
+	* @param shareID the share ID
+	* @param groupId the group ID
+	* @param ibclientId the ibclient ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching ib order, or <code>null</code> if a matching ib order could not be found
+	*/
+	public IBOrder fetchByOrderShareClientGroupCompany_First(long ordersId,
+		long companyId, long shareID, long groupId, long ibclientId,
+		com.liferay.portal.kernel.util.OrderByComparator<IBOrder> orderByComparator);
+
+	/**
+	* Returns the last ib order in the ordered set where ordersId = &#63; and companyId = &#63; and shareID = &#63; and groupId = &#63; and ibclientId = &#63;.
+	*
+	* @param ordersId the orders ID
+	* @param companyId the company ID
+	* @param shareID the share ID
+	* @param groupId the group ID
+	* @param ibclientId the ibclient ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching ib order
+	* @throws NoSuchIBOrderException if a matching ib order could not be found
+	*/
+	public IBOrder findByOrderShareClientGroupCompany_Last(long ordersId,
+		long companyId, long shareID, long groupId, long ibclientId,
+		com.liferay.portal.kernel.util.OrderByComparator<IBOrder> orderByComparator)
+		throws NoSuchIBOrderException;
+
+	/**
+	* Returns the last ib order in the ordered set where ordersId = &#63; and companyId = &#63; and shareID = &#63; and groupId = &#63; and ibclientId = &#63;.
+	*
+	* @param ordersId the orders ID
+	* @param companyId the company ID
+	* @param shareID the share ID
+	* @param groupId the group ID
+	* @param ibclientId the ibclient ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching ib order, or <code>null</code> if a matching ib order could not be found
+	*/
+	public IBOrder fetchByOrderShareClientGroupCompany_Last(long ordersId,
+		long companyId, long shareID, long groupId, long ibclientId,
+		com.liferay.portal.kernel.util.OrderByComparator<IBOrder> orderByComparator);
+
+	/**
+	* Returns the ib orders before and after the current ib order in the ordered set where ordersId = &#63; and companyId = &#63; and shareID = &#63; and groupId = &#63; and ibclientId = &#63;.
+	*
+	* @param orderIdPk the primary key of the current ib order
+	* @param ordersId the orders ID
+	* @param companyId the company ID
+	* @param shareID the share ID
+	* @param groupId the group ID
+	* @param ibclientId the ibclient ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next ib order
+	* @throws NoSuchIBOrderException if a ib order with the primary key could not be found
+	*/
+	public IBOrder[] findByOrderShareClientGroupCompany_PrevAndNext(
+		long orderIdPk, long ordersId, long companyId, long shareID,
+		long groupId, long ibclientId,
+		com.liferay.portal.kernel.util.OrderByComparator<IBOrder> orderByComparator)
+		throws NoSuchIBOrderException;
+
+	/**
+	* Removes all the ib orders where ordersId = &#63; and companyId = &#63; and shareID = &#63; and groupId = &#63; and ibclientId = &#63; from the database.
+	*
+	* @param ordersId the orders ID
+	* @param companyId the company ID
+	* @param shareID the share ID
+	* @param groupId the group ID
+	* @param ibclientId the ibclient ID
+	*/
+	public void removeByOrderShareClientGroupCompany(long ordersId,
+		long companyId, long shareID, long groupId, long ibclientId);
+
+	/**
+	* Returns the number of ib orders where ordersId = &#63; and companyId = &#63; and shareID = &#63; and groupId = &#63; and ibclientId = &#63;.
+	*
+	* @param ordersId the orders ID
+	* @param companyId the company ID
+	* @param shareID the share ID
+	* @param groupId the group ID
+	* @param ibclientId the ibclient ID
+	* @return the number of matching ib orders
+	*/
+	public int countByOrderShareClientGroupCompany(long ordersId,
+		long companyId, long shareID, long groupId, long ibclientId);
+
+	/**
 	* Returns all the ib orders where removable_on_reboot = &#63; and companyId = &#63; and groupId = &#63; and createDate = &#63;.
 	*
 	* @param removable_on_reboot the removable_on_reboot

@@ -59,9 +59,7 @@ public class IBTraderFillHistoricalData  extends BaseSchedulerEntryMessageListen
 		
 		
 		
-	     schedulerEntryImpl.setTrigger(TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(),5, TimeUnit.SECOND));  
-		
-	     
+	    schedulerEntryImpl.setTrigger(TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(),5, TimeUnit.SECOND));  			   
 		_log.info("Activating CRON..."  + schedulerEntryImpl.getTrigger());
 		_schedulerEngineHelper.register(this, schedulerEntryImpl, DestinationNames.SCHEDULER_DISPATCH);
 		

@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDateTime ;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -72,13 +73,7 @@ public class CronUtil {
 		List<Company> lCompanies = CompanyLocalServiceUtil.getCompanies();
 		Company _company = lCompanies.get(0); // tiene que existir
 		long companyId =  _company.getCompanyId();
-		long guestGroupId = 0;
-		try {
-			guestGroupId = GroupLocalServiceUtil.getGroup(_company.getCompanyId(), GroupConstants.GUEST).getGroupId();
-		} catch (PortalException e) {
-		// TODO Auto-generated catch block
-			e.printStackTrace();			
-		}
+		
 		SimpleDateFormat sdf = new SimpleDateFormat ("yyyyMM");
 		LocalDateTime  _now =  LocalDateTime .now();  
 		
@@ -96,6 +91,8 @@ public class CronUtil {
 			try
 			{			
 			
+			if (_Organization.getOrganizationId()==20165) continue;  // LIFERAY 	 EXCEPTION
+
 			/* backtesting no acabadas por modifieddate */
 			List<BackTesting> lBackTesting = BackTestingLocalServiceUtil.findByPendingCompanyGroup(_Organization.getCompanyId(), _Organization.getGroupId());
 			
@@ -288,7 +285,8 @@ public class CronUtil {
 		{
 			for (Organization _Organization : lOrganization )
 			{
-				  
+				 
+				if (_Organization.getOrganizationId()==20165) continue;  // LIFERAY 	 EXCEPTION
 				try
 				{
 				
@@ -344,7 +342,7 @@ public class CronUtil {
 						return;
 					}
 					wrapper.getCurrentTwsTime();
-					_log.debug("Connected, StartOrdersValidator, connecting to TWS,currentOrderId:");
+					_log.trace("Connected, StartOrdersValidator, connecting to TWS,currentOrderId:");
 					
 					long  _INCREMENT_ORDER_ID = wrapper.getNextOrderId();
 					IBOrderLocalServiceUtil.deleteByOrderCompanyGroup(_INCREMENT_ORDER_ID, _Organization.getCompanyId(), _Organization.getGroupId(),_CLIENT_ID,-1);
@@ -411,7 +409,7 @@ public class CronUtil {
 			{
 				for (Organization _Organization : lOrganization )
 				{
-					 
+					if (_Organization.getOrganizationId()==20165) continue;  // LIFERAY 	 EXCEPTION
 					try
 					{
 					
@@ -479,7 +477,7 @@ public class CronUtil {
 				    		lShare =  ShareLocalServiceUtil.findByMarketGroupCompany(oMarket.getMarketId(), oMarket.getGroupId(), oMarket.getCompanyId());			         
 							for (Share oShare : lShare)
 				        	{
-								/* el historical data va hacia delante, la creacion de la accion mete un año para la simulacion
+								/* el historical data va hacia delante, la creacion de la accion mete 4  meses  para la simulacion
 								 * en el campo simulation_end_date 
 								 * 
 								 * 
@@ -490,37 +488,13 @@ public class CronUtil {
 								_yesterday.set(Calendar.SECOND,0);
 								_yesterday.set(Calendar.MINUTE, 0);
 								_yesterday.add(Calendar.DATE,-1);
-								
-								
-									
-								
-				    			String _Expiration = "";
-				    			
-				    		    if (oShare.getExpiry_date()!=null) _Expiration = sdf.format(oShare.getExpiry_date());			    					    		
-				    			if (oShare.getSecurity_type().equals(ConfigKeys.SECURITY_TYPE_FUTUROS))
-								{
-									oContrat = new FutContract( oShare.getSymbol(), _Expiration);		    			
-									oContrat.exchange(oShare.getExchange());
-									oContrat.currency(oMarket.getCurrency());
-								}
-								else		    					
-									oContrat = new StkContract( oShare.getSymbol());
-				    			
-				    												    		
-				    			_log.debug("FillHistoricalDataCron de :" + sdf.format(oShare.getDate_validated_trader_provider()));
+																	    		
 				    			wrapper.set_ibtarget_share(oShare);
-				    			/* insertamos control de ordenes de peticion */		
-			    				long  _INCREMENT_ORDER_ID = wrapper.getNextOrderId();
-				    			
-								IBOrderLocalServiceUtil.deleteByOrderCompanyGroup(_INCREMENT_ORDER_ID, _Organization.getCompanyId(), _Organization.getGroupId(),_CLIENT_ID,oShare.getShareId());
-
-				    			
-				    			
 				    			Calendar calSimulatedDate = Calendar.getInstance();
 				    			if (Validator.isNull(oShare.getSimulation_end_date())) // no hay, por error, cogemos la fecha de creación y generamos un año para atras
 				    			{
 				    				calSimulatedDate.setTimeInMillis(oShare.getCreateDate().getTime());
-				    				calSimulatedDate.add(Calendar.MONTH, -12); // trece meses para que haya un año de simulacion 
+				    				calSimulatedDate.add(Calendar.MONTH, -4); // 4 meses  meses para que haya un año de simulacion 
 				    			}
 				    			else
 				    				calSimulatedDate.setTimeInMillis(oShare.getSimulation_end_date().getTime());
@@ -529,6 +503,11 @@ public class CronUtil {
 				    			if (!oShare.isValidated_trader_provider() ||  calSimulatedDate.after(_yesterday))
 									continue;
 				    			
+				    			
+				    			/* insertamos control de ordenes de peticion */		
+			    				long  _INCREMENT_ORDER_ID = wrapper.getNextOrderId();
+				    			
+								IBOrderLocalServiceUtil.deleteByOrderCompanyGroup(_INCREMENT_ORDER_ID, _Organization.getCompanyId(), _Organization.getGroupId(),_CLIENT_ID,oShare.getShareId());
 				    			
 				    			IBOrder _order = IBOrderLocalServiceUtil.createIBOrder(_INCREMENT_ORDER_ID);
 				    			_order.setCompanyId(oMarket.getCompanyId());
@@ -540,21 +519,59 @@ public class CronUtil {
 				    			/* pedimos tiempo real */
 				    			IBOrderLocalServiceUtil.updateIBOrder(_order);
 				    			
+				    			
+				    			
+				    			SimpleDateFormat form = new SimpleDateFormat(Utilities.__IBTRADER_HISTORICAL_DATE_FORMAT);
+				    			String _from =  form.format(calSimulatedDate.getTime());
+				    			
+				    			/* HASTA UNA SEMANA ADELANTE, YA QUE LAS BARRAS  ADELANTE SI NO SOBREPASA DEL DIA ACTUAL */				    			
+				    			calSimulatedDate.add(Calendar.DATE, 7);
+				    			if (calSimulatedDate.after(_yesterday))
+				    				calSimulatedDate.setTime(_yesterday.getTime());
+				    				
+				    			
+				    				
+				    			String _to = form.format(calSimulatedDate.getTime());
+				    			
+				    			Date _Expiration;
+				    			Calendar cExpirationDate = Calendar.getInstance();
+				    		
+				    			if (oShare.getSecurity_type().equals(ConfigKeys.SECURITY_TYPE_FUTUROS))
+								{
+				    				if (Validator.isNotNull(oShare.getExpiry_date()))
+				    				{
+				    					SimpleDateFormat sdfSHORT = new SimpleDateFormat();
+				    					sdfSHORT.applyPattern(Utilities._IBTRADER_FUTURE_LONG_DATE);
+				    			
+				    					// "dd/MM/yyyy";
+				    					_Expiration = sdfSHORT.parse(Utilities.getActiveFutureDateByDate(Arrays.asList(oShare.getExpiry_expression().split(",")), calSimulatedDate)); 
+				    					cExpirationDate.setTimeInMillis(_Expiration.getTime());		
+				    					
+				    					/* LA FECHA HASTA FIN DEL FUTURO, CAMBIAMOS A LA FECHA FIN DEL CONTRATO */
+				    					if (calSimulatedDate.after(cExpirationDate))
+				    						calSimulatedDate.setTime(cExpirationDate.getTime());
+				    					
+				    					oContrat = new FutContract( oShare.getSymbol(), sdf.format(calSimulatedDate.getTime()));		    			
+										oContrat.exchange(oShare.getExchange());
+										oContrat.currency(oMarket.getCurrency());
+										oContrat.includeExpired(Boolean.TRUE);
+										 
+				    				}
+									
+								}
+								else		    					
+									oContrat = new StkContract( oShare.getSymbol());				    			
+				    			
+				    			
 				    			calSimulatedDate.set(Calendar.HOUR_OF_DAY, 23);
 				    			calSimulatedDate.set(Calendar.MILLISECOND, 0);
 				    			calSimulatedDate.set(Calendar.SECOND,59);
 				    			calSimulatedDate.set(Calendar.MINUTE, 59);
 				    			
-				    			
-				    			SimpleDateFormat form = new SimpleDateFormat(Utilities.__IBTRADER_HISTORICAL_DATE_FORMAT);
-				    			/* HASTA UN DIA ADELANTE */
-				    			calSimulatedDate.add(Calendar.DATE, 1);
-				    			String formattedDate = form.format(calSimulatedDate.getTime());
-				    			
 				    			try {
-				    				_log.debug("getHistoricalData for " + oShare.getSymbol() + ",date:" + formattedDate);	
-				    				
-				    				wrapper.getHistoricalData(new Long(_INCREMENT_ORDER_ID).intValue(),oContrat,formattedDate);			
+				    				_log.debug("getHistoricalData for " + oShare.getSymbol() + ",from:" + _from + ",to:" + _to + ",iborder:" + _INCREMENT_ORDER_ID);	
+				    				wrapper.set_ibtarget_share(oShare);
+				    				wrapper.getHistoricalData(new Long(_INCREMENT_ORDER_ID).intValue(),oContrat,_to);			
 				    				Thread.sleep(1000);
 				    				
 				    				/* HYA QUE PONER UN TIMEOUT DE SEGUNDOS MAXIMO */
@@ -571,12 +588,13 @@ public class CronUtil {
 				    				}
 				    				if (wrapper.isHistorialDataEnd()) // acaba, actualizamos la fecha del share y cerramos el thread 
 				    				{
-				    					_log.debug("updating  for " + oShare.getSymbol() + ",date:" + formattedDate);
+				    					_log.debug("updating  for " + oShare.getSymbol() + ",date:" + _to);
 				    					
 				    					oShare.setSimulation_end_date(calSimulatedDate.getTime());
 				    					ShareLocalServiceUtil.updateShare(oShare);				    					
 				    				}
-				    				wrapper.cancelHistoricalData(new Long(_INCREMENT_ORDER_ID).intValue());
+				    				else // psaado el tiempo no acabo, lo cancelamos.				    					
+				    					wrapper.cancelHistoricalData(new Long(_INCREMENT_ORDER_ID).intValue());
 				    				if (wrapper!=null && wrapper.isConnected()) wrapper.disconnect();				    					
 									return;
 				    				
@@ -599,7 +617,8 @@ public class CronUtil {
 			}
 			catch (Exception e)
 			{
-				if (wrapper!=null && wrapper.isConnected()) wrapper.disconnect();		 
+				if (wrapper!=null && wrapper.isConnected()) wrapper.disconnect();
+				_log.error(e.getMessage());
 			}
 			
 	}
@@ -612,7 +631,7 @@ public class CronUtil {
 	String  _HOST = "127.0.0.1";
 	int     _PORT = ConfigKeys.TWS_CONNECTION_PORT;	
 	
-	int _CRON_RUNNING = -1;	  // el dos
+	
 	List<Company> lCompanies = CompanyLocalServiceUtil.getCompanies();
 	
 	Company _company = lCompanies.get(0); // tiene que existir
@@ -624,10 +643,6 @@ public class CronUtil {
 	// TODO Auto-generated catch block
 		e.printStackTrace();			
 	}
-	
-	 
-	_CRON_RUNNING = Long.valueOf(Utilities.getConfigurationValue(IBTraderConstants.keyCRON_READING_STATUS, companyId, guestGroupId)).intValue();
-	
 	
 	
 	SimpleDateFormat sdf = new SimpleDateFormat ("yyyyMM");
@@ -651,7 +666,7 @@ public class CronUtil {
 	for (Organization _Organization : lOrganization )
 		{
 		 
-		  
+		if (_Organization.getOrganizationId()==20165) continue;  // LIFERAY 	 EXCEPTION
 		try
 		{
 		
@@ -681,17 +696,12 @@ public class CronUtil {
 		 TIMApiWrapper wrapper;
 		 if (!clientspool.containsKey(_Organization.getOrganizationId()))
 		 {
-			 wrapper = new TIMApiWrapper(_CLIENT_ID);	
-			 //wrapper = new TIMApiWrapper(_CLIENT_ID);				
-			/*  if (wrapper.isConnected()) wrapper.disconnect();
-			 
+			 wrapper = new TIMApiWrapper(_CLIENT_ID);			
 			 wrapper.connect(_HOST, _PORT,_CLIENT_ID);
-			 if (wrapper.isConnected()) wrapper.disconnect();*/
-			 wrapper.connect(_HOST, _PORT,_CLIENT_ID);
-			 
-			 _log.info("Connected, StartReadingCron for " + _Organization.getName() + ", connecting to TWS for " + _Organization.getName() + ",threadID:" + Thread.currentThread().getId());
-			 
-			 clientspool.put(_Organization.getOrganizationId(),wrapper);
+			 			
+			 if (wrapper.isConnected()) 				 
+				 clientspool.put(_Organization.getOrganizationId(),wrapper);
+			
 		 }
 		 else
 		 {
@@ -715,6 +725,8 @@ public class CronUtil {
 		// if (oTWS.GITraderTWSIsConnected() )
 		if (wrapper.isConnected())
 	    {
+		
+			 	_log.trace("Connected, StartReadingCron for " + _Organization.getName() + ", connecting to TWS for " + _Organization.getName() + ",threadID:" + Thread.currentThread().getId());
 			
 				/* VERIFICACION DE LA CONECTIVIDAD, SIEMPRE NECESARIO */
 				wrapper.reqNextId(); 
@@ -756,35 +768,46 @@ public class CronUtil {
 				try
 				{			   				    	 
 				    	 // empezamos a contar desde 5 o 10 minutos antes de la apertura para contar precios
-				    	String _HORACTUAL = Utilities.getActualHourFormatPlusMinutes(Utilities.getGlobalIBDateNowFormat(),10); 
+					     /*String _HORACTUAL = Utilities.getActualHourFormatPlusMinutes(Utilities.getGlobalIBDateNowFormat(),10); 
 				    	
-				    	List<Market> lActiveMarkets = MarketLocalServiceUtil.findByActiveStartEndHour(_HORACTUAL, _HORACTUAL,Boolean.TRUE,_Organization.getCompanyId(), _Organization.getGroupId());
-					    
+				    	 OJO, ESTOS SON MERCADOS ACTIVOS 
+				    	 * List<Market> lActiveMarkets = MarketLocalServiceUtil.findByActiveStartEndHour(_HORACTUAL, _HORACTUAL,Boolean.TRUE,_Organization.getCompanyId(), _Organization.getGroupId());
+				    	 * */
+				    	List<Market> lActiveMarkets = MarketLocalServiceUtil.findByActiveStartEndMarketHour(Boolean.TRUE,_Organization.getCompanyId(), _Organization.getGroupId());
 				    	for (Market oMarket : lActiveMarkets)
 				    	{
-				    						    		
-				    		lShare =  ShareLocalServiceUtil.findByActiveMarketGroupCompany(oMarket.getMarketId(), Boolean.TRUE, oMarket.getGroupId(), oMarket.getCompanyId());
+				    		
+				    		//lShare =  ShareLocalServiceUtil.findByActiveMarketGroupCompany(oMarket.getMarketId(), Boolean.TRUE, oMarket.getGroupId(), oMarket.getCompanyId());
+				    		
+				    		/* 20190319 --> si se cancela o desactiva un activo, debe salir por aqui para quitarlo de la lista de control, sacamos todas, indepe
+				    		 * pendiente si estan activas o no  */
+				    		lShare =  ShareLocalServiceUtil.findByMarketGroupCompany(oMarket.getMarketId(), oMarket.getGroupId(), oMarket.getCompanyId());
+				    		
 				    		for (Share oShare : lShare)
 					    	{				    		
-				    				
-				    			
-				    			/* METEMOS UN CASO DE MULTIPLES CLIENTES CON UNA TRADESTAATION  */
-				    			
-				    			boolean bToRequest=true;
-				    			String _Expiration = "";
-				      		    if (oShare.getExpiry_date()!=null) _Expiration = sdf.format(oShare.getExpiry_date());		
+				    			String _Expiration = "";	
+				    			if (oShare.getExpiry_date()!=null) _Expiration = sdf.format(oShare.getExpiry_date());		
 				    			String _uniqueShare = oShare.getSymbol() + "|" + _Expiration + "|" + oShare.getGroupId() + "|" + oShare.getCompanyId();
 
-				    			/* cancelar el mkt si esta pedido */
-				    			
-				    			if  (!oShare.IsTradeable())
+				    			/* METEMOS UN CASO DE MULTIPLES CLIENTES CON UNA TRADESTAATION  */
+				    			/* YA NO ESTA ACTIVA, LA QUITAMOS DE LA LISTA DE CONTROL Y CANCELAMOS rktmake */
+				    			if ((!oShare.getActive()  || !oShare.IsTradeable()) && lShareRequested!=null && lShareRequested.contains(_uniqueShare))
 				    			{
 				    				
+				    				/* SI HAY QUE QUITARLO Y ESTABA PEDIDO, CANCELAMOS SU rekmktData */
+				    				long existingOrderMktData = IBOrderLocalServiceUtil.findMaxOrderClientShareCompanyGroup(oShare.getCompanyId(),oShare.getGroupId(),_CLIENT_ID, oShare.getShareId());
+				    				if (existingOrderMktData>0)
+				    				{
+				    					_log.debug("Share " + oShare.getSymbol() + " not active and previous requested, to cancel data : iborderId: " + existingOrderMktData);				    				
+				    					wrapper.cancelMarketData(Long.valueOf(existingOrderMktData).intValue());
+				    				}
 				    				lShareRequested.remove(_uniqueShare);
+				    				continue;
 				    			}
-				    			/* PEDIMOS SI SYMBOL + GROUP NO ESTA  */
-				    			
-				    			if (!oShare.IsTradeable() || (lShareRequested!=null && lShareRequested.contains(_uniqueShare)))
+				    			boolean bToRequest=true;
+				    						    			/* cancelar el mkt si esta pedido */
+				    			/* PEDIMOS SI SYMBOL + GROUP NO ESTA  */				    			
+				    			if (!oShare.getActive() || (lShareRequested!=null && lShareRequested.contains(_uniqueShare)))
 				    			{
 				    				bToRequest = false; 
 				    				
@@ -810,8 +833,10 @@ public class CronUtil {
 
 					    			/* insertamos control de ordenes de peticion */		
 				    				long  _INCREMENT_ORDER_ID = wrapper.getNextOrderId();
+				    				_log.info("Se borran las ordendes y cancela market request para :" +_INCREMENT_ORDER_ID + ",groupId:" + _Organization.getGroupId() + ",clientId:" + _CLIENT_ID);
+				    				wrapper.cancelMarketData(Long.valueOf(_INCREMENT_ORDER_ID).intValue());
 				    				IBOrderLocalServiceUtil.deleteByOrderCompanyGroup(_INCREMENT_ORDER_ID, _Organization.getCompanyId(), _Organization.getGroupId(), _CLIENT_ID,oShare.getShareId());
-
+				    				_log.info("Next Valid OrderId for :" +  _INCREMENT_ORDER_ID + "," + _uniqueShare);
 					    			 IBOrder _order = IBOrderLocalServiceUtil.createIBOrder(_INCREMENT_ORDER_ID);
 					    			_order.setCompanyId(oMarket.getCompanyId());
 					    			_order.setGroupId(oMarket.getGroupId());
@@ -921,9 +946,14 @@ public class CronUtil {
 		
 		for (Organization _Organization : lOrganization )
 		{
+			
+			if (_Organization.getOrganizationId()==20165) continue;  // LIFERAY 	 EXCEPTION
+			
 			try
 			{
 			
+			if (_Organization.getOrganizationId()==20165) continue;  // LIFERAY 	 EXCEPTION
+				
 			_CLIENT_ID = Long.valueOf(Utilities.getConfigurationValue(IBTraderConstants.keyCRON_TRADING_CLIENT_INITIAL, companyId, _Organization.getGroupId())).intValue();;	  // el dos para leer, el 3 para escribir	
 
 			/* CUERNTA PAPER */
@@ -965,7 +995,7 @@ public class CronUtil {
 				 // lo obtenemos 
 				 wrapper = clientspool.get(_Organization.getOrganizationId());
 				 
-				_log.debug("threadID:" + Thread.currentThread().getId() + ",Wrapper obtained from pool:" + wrapper.getClient().connectedHost() + "," + _PORT + ",group:" + _Organization.getGroupId() + ",_CLIENT_ID:" + _CLIENT_ID);
+				_log.trace("threadID:" + Thread.currentThread().getId() + ",Wrapper obtained from pool:" + wrapper.getClient().connectedHost() + "," + _PORT + ",group:" + _Organization.getGroupId() + ",_CLIENT_ID:" + _CLIENT_ID);
 				 
 				 if (!wrapper.isConnected()) 
 				   wrapper.connect(_HOST, _PORT,_CLIENT_ID);
@@ -1011,7 +1041,7 @@ public class CronUtil {
 				    	 
 				    } 
 				 	String _HORACTUAL = Utilities.getActualHourFormatPlusMinutes(Utilities.getGlobalIBDateNowFormat(),10); 				   	 
-			   	 	List<Market> lActiveMarkets = MarketLocalServiceUtil.findByActiveStartEndHour(_HORACTUAL, _HORACTUAL,Boolean.TRUE,_Organization.getCompanyId(), _Organization.getGroupId());				   	 	
+			   	 	List<Market> lActiveMarkets = MarketLocalServiceUtil.findByActiveStartEndMarketHour(Boolean.TRUE,_Organization.getCompanyId(), _Organization.getGroupId());				   	 	
 			   	  
 			   	    try
 			   	    {
@@ -1156,7 +1186,7 @@ public class CronUtil {
 			for (Organization _Organization : lOrganization )
 			{
 				 
-
+				if (_Organization.getOrganizationId()==20165) continue;  // LIFERAY 	 EXCEPTION
 				try
 				{
 				
@@ -1240,11 +1270,11 @@ public class CronUtil {
 								//oTWS.GITraderCancelRealTimeContract((new Long(rkMktData.getPrimaryKey()).intValue()));
 			    				m_client.cancelMktData(new Long(rkMktData.getPrimaryKey()).intValue());
 							}												    		*/
-			    			_log.info("Verifyng de :" + oShare.getSymbol() + ":" +  oShare.getSecurity_type() + ":" + oShare.getExchange() + ":" + oMarket.getCurrency());
 			    			wrapper.set_ibtarget_share(oShare);
 			    			/* insertamos control de ordenes de peticion */		
 		    				long  _INCREMENT_ORDER_ID = wrapper.getNextOrderId();
-			    			
+			    			_log.info("Verifyng de :" + oShare.getSymbol() + ":" +  oShare.getSecurity_type() + ":" + oShare.getExchange() + ":" + oMarket.getCurrency() + " y orderId:" + _INCREMENT_ORDER_ID);
+
 							IBOrderLocalServiceUtil.deleteByOrderCompanyGroup(_INCREMENT_ORDER_ID, _Organization.getCompanyId(), _Organization.getGroupId(),_CLIENT_ID,oShare.getShareId());
 
 			    			 IBOrder _order = IBOrderLocalServiceUtil.createIBOrder(_INCREMENT_ORDER_ID);
@@ -1296,12 +1326,8 @@ public class CronUtil {
 	    SimpleDateFormat sdfSHORT = new SimpleDateFormat();
     	sdfSHORT.applyPattern(Utilities._IBTRADER_FUTURE_LONG_DATE);
 		for (Share oShare : lFutures)
-		{
-			JSONObject  jsonFutureShareParams = JSONFactoryUtil.createJSONObject(oShare.getExpiry_expression());
-			String  expirationmonth = jsonFutureShareParams.get("expirationmonth").toString();
-			String expirationweek = jsonFutureShareParams.get("expirationweek").toString();;	
-			String expirationdayweek = jsonFutureShareParams.get("expirationdayweek").toString();;
-			oShare.setExpiry_date(sdfSHORT.parse(Utilities.getActiveFutureDate(expirationmonth, expirationdayweek, expirationweek)));
+		{			
+			oShare.setExpiry_date(sdfSHORT.parse(Utilities.getActiveFutureDate(Arrays.asList(oShare.getExpiry_expression().split(",")))));
 			ShareLocalServiceUtil.updateShare(oShare);
 		}
 	}

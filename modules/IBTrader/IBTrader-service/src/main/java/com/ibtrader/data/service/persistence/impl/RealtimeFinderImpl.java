@@ -96,6 +96,9 @@ public class RealtimeFinderImpl extends RealtimeFinderBaseImpl  implements Realt
 	        
 	        lRealtime = (List<Realtime>) QueryUtil.list(q, getDialect(), 0, 10000);
 	        
+	        if (_log.isDebugEnabled())
+	        	_log.info(sql);
+	        
 	        if (!lRealtime.isEmpty())
 	        		return lRealtime;
 	        else

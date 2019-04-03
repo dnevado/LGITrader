@@ -72,6 +72,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
@@ -106,7 +108,7 @@ import org.osgi.service.component.annotations.Reference;
 		"javax.portlet.init-param.template-path=/",
 		"javax.portlet.init-param.view-template=/html/view.jsp",		
 		"javax.portlet.name=" + IBTraderSharemarketadminWebPortletKeys.IBTraderSharemarketadminWeb,
-        "com.liferay.portlet.footer-portlet-javascript=/js/main.js",
+        "com.liferay.portlet.header-portlet-javascript=/js/main.js",
         "com.liferay.portlet.header-portlet-css=/css/main.css",
 		"javax.portlet.resource-bundle=content.Language",
 		"javax.portlet.init-param.add-process-action-success-action=false",
@@ -208,7 +210,7 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 		double percentual_trailling_stop_lost =  ParamUtil.getDouble(actionRequest,ConfigKeys._FIELD_TRAILLING_STOP_LOST,0);
 		
 		
-		Date expiry_date = ParamUtil.getDate(actionRequest,"expiry_date",null, null);
+		//Date expiry_date = ParamUtil.getDate(actionRequest,"expiry_date",null, null);
 		double tick_futures=  ParamUtil.getDouble(actionRequest,"tick_futures",0);
 		long multiplier =  ParamUtil.getLong(actionRequest,"multiplier",1); // ponemos uno para que valga para todas al multiplicar el beneficio 
 		String security_type = ParamUtil.getString(actionRequest,"security_type","");
@@ -216,20 +218,23 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 		String exchange = ParamUtil.getString(actionRequest,"exchange","");
 		long marketId =  ParamUtil.getLong(actionRequest,"marketId",-1);
 		long shareId =  ParamUtil.getLong(actionRequest,"shareId",-1);
-		String[]  _expirationmonth = ParamUtil.getStringValues(actionRequest, "expirationmonth");
+	
+		/* String[]  _expirationmonth = ParamUtil.getStringValues(actionRequest, "expirationmonth");
 		
 		String expirationweek =  ParamUtil.getString(actionRequest,"expirationweek","");
 		String  expirationdayweek =  ParamUtil.getString(actionRequest,"expirationdayweek","");
 		
+		expirationdate
+		String  expirationmonth = String.join(",", _expirationmonth); */
 		
-		String  expirationmonth = String.join(",", _expirationmonth);
+		String expirationdate = ParamUtil.getString(actionRequest,"expirationdate","");
+		
 		boolean bNameOK = Validator.isContent(name) && name.length()<=75;
 		boolean bSymbolOK = Validator.isAlphanumericName(symbol)  && symbol.length()<=75;
 		boolean bExchangeOK = _shareLocalService.ExistsExchange(exchange);
 		boolean bPrimaryExchangeOK = _shareLocalService.ExistsPrimaryExchange(primary_exchange);		
 		boolean bSecurityOK = _shareLocalService.ExistsSecurityType(security_type);
-		boolean bFutureOK = security_type.equals(ConfigKeys.SECURITY_TYPE_STOCK) || (security_type.equals(ConfigKeys.SECURITY_TYPE_FUTUROS) && !expirationmonth.equals("")
-								&& !expirationweek.equals("") && !expirationdayweek.equals(""));
+		boolean bFutureOK = security_type.equals(ConfigKeys.SECURITY_TYPE_STOCK) || (security_type.equals(ConfigKeys.SECURITY_TYPE_FUTUROS) && !expirationdate.equals(""));
 		
 		boolean bNumberParamsOK = numbertopurchase>=1 && 
 						percentual_limit_buy>=0 && percentual_limit_buy<=100  && 
@@ -300,7 +305,7 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 						share.setGroupId(themeDisplay.getScopeGroupId());
 					//	share.setPercentual_stop_profit(percentual_stop_profit);
 						
-						share.setExpiry_date(expiry_date);
+					
 						share.setMultiplier(multiplier);
 						share.setTick_futures(tick_futures);
 						share.setSecurity_type(security_type);					
@@ -308,38 +313,44 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 						share.setExchange(exchange);
 						share.setMarketId(marketId);
 						
-						JSONObject  jsonFutureShareParams = JSONFactoryUtil.createJSONObject();
+			
 						if (security_type.equals(ConfigKeys.SECURITY_TYPE_FUTUROS))						
-						{					
-							jsonFutureShareParams.put("expirationmonth", expirationmonth.toString());
-							jsonFutureShareParams.put("expirationweek", expirationweek);	
-							jsonFutureShareParams.put("expirationdayweek", expirationdayweek);
-							share.setExpiry_expression(jsonFutureShareParams.toString());
-							share.setExpiry_date(sdfSHORT.parse(Utilities.getActiveFutureDate(expirationmonth.toString(), expirationdayweek, expirationweek)));
+						{												
+							share.setExpiry_expression(expirationdate);							
+							//11-02-2019,01-01-2019
+							String[] expirationsDates = expirationdate.split(",");
+							if (expirationsDates.length>0)		
+							{
+								List<String> lFuturesDates=   Arrays.asList(expirationsDates);  								
+								share.setExpiry_date(sdfSHORT.parse(Utilities.getActiveFutureDate(lFuturesDates)));
+							}
 							
 						}
 						else
 							share.setExpiry_expression(null);
 						/* GENERAMOS EL JSON CON LOS DATOS DEL FUTURO   */
-						Calendar yearMinusOne = Calendar.getInstance();
-						yearMinusOne.add(Calendar.YEAR, -1);
+					
+						Calendar backTime = Calendar.getInstance();
+						backTime.add(Calendar.MONTH, -4);
 						
 						if (!bEditMode)
 						{
 							share.setCreateDate(new Date());
-							share.setSimulation_end_date(yearMinusOne.getTime());
+							share.setSimulation_end_date(backTime.getTime());
 						}
 						else
 						{
-							Calendar _Now = Calendar.getInstance();
-							_Now.add(Calendar.DATE, -2);  // para que lo valide el sistema, coge aquellos no validados hoy.
+							LocalDate now = LocalDate.now();
+							now = now.minus(2, ChronoUnit.DAYS); // para que lo valide el sistema, coge aquellos no validados hoy.
 							
-							share.setDate_validated_trader_provider(_Now.getTime());
+							ZoneId UTCZone = ZoneId.systemDefault(); // UTC 	
+					   		ZonedDateTime zonedDateTime = now.atStartOfDay(UTCZone);   		
+					   		share.setDate_validated_trader_provider(Date.from(zonedDateTime.toInstant()));
 							
 							//share.setDate_validated_trader_provider(null);  // para verificarlo de nuevo
 							share.setValidated_trader_provider(Boolean.FALSE);
 							if (Validator.isNull(share.getSimulation_end_date()))
-									share.setSimulation_end_date(yearMinusOne.getTime());
+									share.setSimulation_end_date(backTime.getTime());
 
 									
 						}
@@ -434,7 +445,7 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 						market = _marketLocalService.createMarket(CounterLocalServiceUtil.increment(Market.class.getName()));
 					else
 						market = _marketLocalService.fetchMarket(marketId);
-					market.setActive(active.equals("") ? Boolean.FALSE : Boolean.TRUE);
+					market.setActive(active.equals("") || active.equals("false") ? Boolean.FALSE : Boolean.TRUE);
 					market.setName(name);
 					market.setDescription(description);
 					market.setIdentifier(identifier);				
@@ -442,15 +453,19 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 					market.setGroupId(themeDisplay.getScopeGroupId());
 					
 					
-					/* ZONA YA DEL USUARIO */
-				
-					
-				
-					
 					starthour = starthour.replaceAll(":", "");
 					endhour = endhour.replaceAll(":", "");
 					
-					/* USUARIO */
+					/* 20190106 
+					 * 
+					 *  NO PODEMOS CONVERTIR A ZONA  UTC LOS HORARIOS DE MERCADOS. EN LAS ESTRATEGIAS, SE ESTAN COMPARANDO LAS HORAS ACTUALES DEL USUARIO EN SU HUSO HORARIO
+					 *  CON LOS INICIO Y FIN DE MERCADO  
+					 */
+					
+					/* ZONA YA DEL USUARIO
+					starthour = starthour.replaceAll(":", "");
+					endhour = endhour.replaceAll(":", "");
+					 USUARIO  
 					ZonedDateTime dOpen = Utilities.getLocalDate(themeDisplay.getUser(),starthour);
 					ZonedDateTime dClose= Utilities.getLocalDate(themeDisplay.getUser(),endhour);
 					
@@ -463,6 +478,8 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 					
 					starthour =  dOpenUTC.toLocalTime().format(formatter); 
 					endhour =  dCloseUTC.toLocalTime().format(formatter); 
+					
+					 */
 					
 					market.setStart_hour(starthour);
 					market.setEnd_hour(endhour);
@@ -493,7 +510,8 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 		BackTesting editBackTesting=null; 	
 		SimpleDateFormat sdfSHORT = new SimpleDateFormat();
     	sdfSHORT.applyPattern(Utilities._IBTRADER_FUTURE_LONG_DATE);
-		String description = ParamUtil.getString(actionRequest,"editor","");		
+		String description = ParamUtil.getString(actionRequest,"editor","");
+		if (description.equals("")) description = "No Description";
 		Date start = ParamUtil.getDate(actionRequest,"start",sdfSHORT);
 		Date end = ParamUtil.getDate(actionRequest,"end",sdfSHORT);			
 		
@@ -551,8 +569,8 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 				DateTimeFormatter formatter =DateTimeFormatter.ofPattern(Utilities._IBTRADER_FUTURE_LONG_DATE);
 				datefrom = LocalDate.parse(from.toString(), formatter);
 				dateto = LocalDate.parse(to.toString(), formatter);
-				RangeDateNow1OK = datefrom.isBefore(LocalDate.now());
-				RangeDateNow2OK = dateto.isBefore(LocalDate.now());
+				RangeDateNow1OK = datefrom.isBefore(LocalDate.now()) || datefrom.isEqual(LocalDate.now());
+				RangeDateNow2OK = dateto.isBefore(LocalDate.now()) || dateto.isEqual(LocalDate.now());
 
 				RangeDateOK = datefrom.isBefore(dateto);
 				

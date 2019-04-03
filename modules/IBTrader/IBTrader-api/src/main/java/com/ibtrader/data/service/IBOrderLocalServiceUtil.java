@@ -109,6 +109,14 @@ public class IBOrderLocalServiceUtil {
 			companyId, groupId);
 	}
 
+	public static com.ibtrader.data.model.IBOrder findByOrderShareClientGroupCompany(
+		long iborderId, long shareId, long clientId, long companyId,
+		long groupId) {
+		return getService()
+				   .findByOrderShareClientGroupCompany(iborderId, shareId,
+			clientId, companyId, groupId);
+	}
+
 	/**
 	* Returns the ib order with the primary key.
 	*
@@ -336,6 +344,13 @@ public class IBOrderLocalServiceUtil {
 		long groupId, long clientId) {
 		return getService()
 				   .findMaxOrderClientCompanyGroup(companyId, groupId, clientId);
+	}
+
+	public static long findMaxOrderClientShareCompanyGroup(long companyId,
+		long groupId, long clientId, long shareId) {
+		return getService()
+				   .findMaxOrderClientShareCompanyGroup(companyId, groupId,
+			clientId, shareId);
 	}
 
 	public static void deleteByOrderCompanyGroup(long iborderId,

@@ -15,6 +15,7 @@ create index IX_4110BD87 on ibtrader_HistoricalRealtime (uuid_[$COLUMN_LENGTH:75
 create unique index IX_10E8F9C9 on ibtrader_HistoricalRealtime (uuid_[$COLUMN_LENGTH:75$], groupId);
 
 create index IX_F327818C on ibtrader_IBOrder (ordersId, companyId, groupId, ibclientId);
+create index IX_BEE53524 on ibtrader_IBOrder (ordersId, companyId, shareID, groupId, ibclientId);
 create index IX_7227788A on ibtrader_IBOrder (ordersId, ibclientId);
 create index IX_5CF57ACE on ibtrader_IBOrder (removable_on_reboot, companyId, groupId, createDate);
 create index IX_C752A169 on ibtrader_IBOrder (shareID, companyId, groupId);

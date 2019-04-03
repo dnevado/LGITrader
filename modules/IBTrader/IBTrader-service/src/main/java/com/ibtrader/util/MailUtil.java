@@ -128,11 +128,9 @@ public class MailUtil {
 	    if (group.isOrganization())    	
 	    	  organizationId = group.getClassPK();
         
-		Organization org = OrganizationLocalServiceUtil.getOrganization(organizationId);
+		//Organization org = OrganizationLocalServiceUtil.getOrganization(organizationId);
 	
-
-		
-		List<User> users =  UserLocalServiceUtil.getOrganizationUsers(org.getOrganizationId());
+		List<User> users =  UserLocalServiceUtil.getOrganizationUsers(organizationId);
 		
 		List<EmailAddress> addresslist = EmailAddressLocalServiceUtil.getEmailAddresses(position.getCompanyId(), Organization.class.getName(), organizationId);
 

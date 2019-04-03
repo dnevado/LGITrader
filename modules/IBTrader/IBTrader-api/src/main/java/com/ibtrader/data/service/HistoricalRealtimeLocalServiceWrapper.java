@@ -112,6 +112,13 @@ public class HistoricalRealtimeLocalServiceWrapper
 	}
 
 	@Override
+	public com.ibtrader.data.model.HistoricalRealtime findFirstRealTime(
+		long shareId, long companyId, long groupId) {
+		return _historicalRealtimeLocalService.findFirstRealTime(shareId,
+			companyId, groupId);
+	}
+
+	@Override
 	public com.ibtrader.data.model.HistoricalRealtime findLastCompanyShare(
 		long companyId, long shareId, long groupId) {
 		return _historicalRealtimeLocalService.findLastCompanyShare(companyId,

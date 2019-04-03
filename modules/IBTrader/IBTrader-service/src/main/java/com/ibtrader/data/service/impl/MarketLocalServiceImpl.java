@@ -14,20 +14,36 @@
 
 package com.ibtrader.data.service.impl;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.ibtrader.data.exception.NoSuchMarketException;
 import com.ibtrader.data.model.Market;
 import com.ibtrader.data.model.Share;
 import com.ibtrader.data.service.MarketLocalServiceUtil;
+import com.ibtrader.data.service.ShareLocalServiceUtil;
 import com.ibtrader.data.service.base.MarketLocalServiceBaseImpl;
+import com.ibtrader.util.Utilities;
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.dao.orm.Criterion;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.Role;
+import com.liferay.portal.kernel.model.RoleConstants;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.model.UserGroupRole;
+import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
+import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.UserGroupRoleLocalServiceUtil;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.Validator;
 
 /**
  * The implementation of the market local service.
@@ -48,23 +64,97 @@ public class MarketLocalServiceImpl extends MarketLocalServiceBaseImpl {
 	 * NOTE FOR DEVELOPERS:
 	 *
 	 * Never reference this class directly. Always use {@link com.ibtrader.data.service.MarketLocalServiceUtil} to access the market local service.
-	 */ 
-	public List<Market> findByActiveStartEndHour(String _Start,String _End, boolean active, long companyId, long groupId)
+	 */
+	public List<Market> findByActiveStartEndMarketHour(boolean active, long companyId, long groupId, Date backTestingDate)
 	{
-		DynamicQuery _DQ = MarketLocalServiceUtil.dynamicQuery();
-
-		/* LAS HORAS HAY QUE SACARLAS CON LA HORA LOCAL DEL USUARIO */
-		_DQ.add(RestrictionsFactoryUtil.eq("active", active));
-		_DQ.add(RestrictionsFactoryUtil.le("start_hour", _Start));
-		_DQ.add(RestrictionsFactoryUtil.ge("end_hour", _End));
-		_DQ.add(RestrictionsFactoryUtil.eq("companyId", companyId));
-		_DQ.add(RestrictionsFactoryUtil.eq("groupId", groupId));
-		
-		
-		//List<Market>  = MarketLocalServiceUtil.dynamicQuery(_DQ);
-		
-		return marketLocalService.dynamicQuery(_DQ);
+		return getByActiveStartEndMarketHour(active, companyId, groupId,backTestingDate);
 				
+							
+	}
+	public List<Market> findByActiveStartEndMarketHour(boolean active, long companyId, long groupId)
+	{
+		return getByActiveStartEndMarketHour(active, companyId, groupId, null);
+				
+							
+	}
+	private List<Market> getByActiveStartEndMarketHour(boolean active, long companyId, long groupId, Date backTestingDate)
+	{
+		
+		
+		/* PARA SACAR EL OWNER, NO VALE CON EL USERID DE LA ORGANIZACION, PODRIA CREARLA EL MISMO TEST O ADMINISTRADOR */
+		
+		/* PODRIAMOS COGER LOS USUARIOS DE LA ORGANIZACION. PERO PODRIAN SALIR VARIOS, DEPENDIENDO DEL PERFIL */
+		
+		/* SACAMOS OWNERS O ADMINISTRADORES  */
+		
+		List<User> administrators = new LinkedList<>();
+		
+		Role org_admin;
+		try 
+		{
+			
+			org_admin = RoleLocalServiceUtil.getRole(companyId, RoleConstants.ORGANIZATION_ADMINISTRATOR);
+			Role org_owner = RoleLocalServiceUtil.getRole(companyId, RoleConstants.ORGANIZATION_OWNER);
+			Role org_member= RoleLocalServiceUtil.getRole(companyId, RoleConstants.ORGANIZATION_USER);
+	
+			List<UserGroupRole> allOrganizationAdministrators = UserGroupRoleLocalServiceUtil.getUserGroupRolesByGroupAndRole(groupId, org_admin.getRoleId());
+			for (UserGroupRole userGroupRoleTemp : allOrganizationAdministrators) {
+				if (!PortalUtil.isOmniadmin(userGroupRoleTemp.getUser()))
+				{
+					administrators.add(userGroupRoleTemp.getUser());
+					break;
+				}
+			}
+			if (allOrganizationAdministrators.size()==0)
+			{
+				List<UserGroupRole> allOrganizationOwners = UserGroupRoleLocalServiceUtil.getUserGroupRolesByGroupAndRole(groupId, org_owner.getRoleId());
+				for (UserGroupRole userGroupRoleTemp2 : allOrganizationOwners) {
+					// quitamos a los test o superadministradores para que no confundan 
+					if (!PortalUtil.isOmniadmin(userGroupRoleTemp2.getUser()))
+					{
+						administrators.add(userGroupRoleTemp2.getUser());
+				    	break;
+					}
+				}
+				if (allOrganizationOwners.size()==0)
+				{
+					List<UserGroupRole> allOrganizationMembers         = UserGroupRoleLocalServiceUtil.getUserGroupRolesByGroupAndRole(groupId, org_member.getRoleId());
+					for (UserGroupRole userGroupRoleTemp3 : allOrganizationMembers) {
+						if (!PortalUtil.isOmniadmin(userGroupRoleTemp3.getUser()))
+						{
+							administrators.add(userGroupRoleTemp3.getUser());
+							break;
+						}
+					}
+					
+				}			
+			}
+			/* NO HAY ADMNISTRAADORES */
+			if (administrators.size()==0)
+				return null;
+			
+			/* DEBERIA HABER AL MENOS UN ADMINISTRADAOR */
+			User _IBUser = UserLocalServiceUtil.fetchUser(administrators.get(0).getUserId());
+			String HoraActual = "";		
+			if (Validator.isNull(backTestingDate))
+				HoraActual = Utilities.getHourNowFormat(_IBUser);					
+			else
+			
+				HoraActual = Utilities.getHourNowFormat(_IBUser,backTestingDate);		/* HORA ACTUAL DEL USUARIO TOMADA DE LA FECHA DE BACKTESTING */
+			
+			DynamicQuery _DQ = MarketLocalServiceUtil.dynamicQuery();	
+			/* LAS HORAS HAY QUE SACARLAS CON LA HORA LOCAL DEL USUARIO */
+			_DQ.add(RestrictionsFactoryUtil.eq("active", active));
+			_DQ.add(RestrictionsFactoryUtil.le("start_hour", HoraActual));
+			_DQ.add(RestrictionsFactoryUtil.ge("end_hour", HoraActual));
+			_DQ.add(RestrictionsFactoryUtil.eq("companyId", companyId));
+			_DQ.add(RestrictionsFactoryUtil.eq("groupId", groupId));
+	
+			return marketLocalService.dynamicQuery(_DQ);
+		} catch (PortalException e) {
+			// TODO Auto-generated catch block
+			return null;
+		}		
 							
 	}
 	public List<Market> findByActive(boolean active)
@@ -84,6 +174,7 @@ public class MarketLocalServiceImpl extends MarketLocalServiceBaseImpl {
 				
 							
 	}
+	
 	public List<Market> findByActiveCompanyGroup(long companyId, long groupId, boolean active)
 	{
 	
@@ -91,6 +182,8 @@ public class MarketLocalServiceImpl extends MarketLocalServiceBaseImpl {
 				
 							
 	}
+	
+
 	public Market findByNameMarketCompanyGroup(long companyId, long groupId, String name)
 	{
 			Market market =null;

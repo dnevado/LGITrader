@@ -175,6 +175,7 @@ public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
 			//currentPosition.setState_out(PositionStates.statusTWSCallBack.PendingSubmit.toString());
 			/* si metemos el date sell en las parciales, no entran las siguientes */
 			/* acumulo las acciones vendidas y a vender en la operativa */
+			currentPosition.setPrice_out(this.getValueIn());
 			currentPosition.setDate_out(!isSimulation_mode() ?  new Date() : backtestingdDate);
 			currentPosition.setDescription(this.getClass().getName());
 			currentPosition.setStrategy_out(this.getClass().getName());		 		
@@ -314,24 +315,28 @@ public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
 		if (!calFechaActualWithDeadLine.after(_calendarFromDate_In))
 			return Boolean.FALSE;
 		
-		Double _avgMobileSimple = MobileAvgUtil.getSimpleAvgMobile(_calendarFromNow.getTime(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_macdP, isSimulation_mode(), _market);
+		Double vRealtime = null;
+		if (!isSimulation_mode())
+		{
+			Realtime oRTimeEnTramo =  RealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _calendarFromNow.getTime());
+			vRealtime  = Validator.isNull(oRTimeEnTramo) ? null : oRTimeEnTramo.getValue();
+		}
+		else
+		{
+			HistoricalRealtime oRTimeEnTramo =  HistoricalRealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _calendarFromNow.getTime());
+			vRealtime  = Validator.isNull(oRTimeEnTramo) ? null : oRTimeEnTramo.getValue();
+		}
 		
-		if (_avgMobileSimple!=null)
+		
+		
+		if (vRealtime!=null)
 		{
 			// todo fue bien, tenemos media movil y de los periodos solicitados.
 			// buscamos el cierre de la barra, ultimo valor < que el MINUTE.00  (15.00, 20,00, 25.00)
-			Double vRealtime = null;
-			if (!isSimulation_mode())
-			{
-				Realtime oRTimeEnTramo =  RealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _calendarFromNow.getTime());
-				vRealtime  = Validator.isNull(oRTimeEnTramo) ? null : oRTimeEnTramo.getValue();
-			}
-			else
-			{
-				HistoricalRealtime oRTimeEnTramo =  HistoricalRealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _calendarFromNow.getTime());
-				vRealtime  = Validator.isNull(oRTimeEnTramo) ? null : oRTimeEnTramo.getValue();
-			}
-			if (Validator.isNotNull(vRealtime))
+//			Double _avgMobileSimple = MobileAvgUtil.getSimpleAvgMobile(_calendarFromNow.getTime(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_macdP, isSimulation_mode(), _market);
+			Double _avgMobileSimple = MobileAvgUtil.getExponentialAvgMobile(_calendarFromNow.getTime(), vRealtime.doubleValue(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_macdP , isSimulation_mode(), _market);
+
+			if (Validator.isNotNull(_avgMobileSimple))
 			{
 				/* PERIODO CERO , JUSTAMENTE LA BARRA ANTERIOR */
 				

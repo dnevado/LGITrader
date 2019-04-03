@@ -297,18 +297,18 @@
     <sql id="com.ibtrader.data.service.persistence.HistoricalRealtimeFinder.findMinMaxRealTimesBars">
     <![CDATA[ 
         SELECT 
-        		FROM_UNIXTIME(floor((unix_timestamp(createdate))/(?*60))*(?*60)) as barDate,
+        		FROM_UNIXTIME(floor((unix_timestamp(createDate))/(?*60))*(?*60)) as barDate,
         		max(value) as max_value , min(value) as min_value 
         FROM 
         		IBTrader_HistoricalRealtime      
         WHERE
-	            (IBTrader_HistoricalRealtime.createDate>=?) AND
-	            (IBTrader_HistoricalRealtime.createDate<?) AND
-	            (IBTrader_HistoricalRealtime.shareId=?)
-	            AND (IBTrader_HistoricalRealtime.companyid=?)
-	            AND (IBTrader_HistoricalRealtime.groupid=?)
-	            AND (TIME_FORMAT(IBTrader_HistoricalRealtime.createDate,'%H%i')>=?) AND 
-				(TIME_FORMAT(IBTrader_HistoricalRealtime.createDate,'%H%i')<=?)
+	            (createDate>=?) AND
+	            (createDate<?) AND
+	            (shareId=?) AND
+	            (companyid=?) AND 
+	            (groupid=?) AND 
+	            (TIME_FORMAT(createDate,'%H%i')>=?) AND 
+				(TIME_FORMAT(createDate,'%H%i')<=?)
         GROUP BY 
         		barDate 
         ORDER BY 
@@ -345,6 +345,26 @@
             AND (IBTrader_HistoricalRealtime.companyid=?)
             AND (IBTrader_HistoricalRealtime.groupid=?)
          	AND (IBTrader_HistoricalRealtime.createDate)=  (SELECT  max(IBTrader_HistoricalRealtime.createDate) FROM 
+					         			IBTrader_HistoricalRealtime      
+					      	  		WHERE            
+					           			 (IBTrader_HistoricalRealtime.shareId=?)
+					          		  AND (IBTrader_HistoricalRealtime.companyid=?)
+					          		  AND (IBTrader_HistoricalRealtime.groupid=?))
+            
+            
+     ]]>
+    </sql>
+    <sql id="com.ibtrader.data.service.persistence.HistoricalRealtimeFinder.findFirstRealTime">
+    <![CDATA[ 
+        SELECT 
+        		*
+        FROM 
+        		IBTrader_HistoricalRealtime      
+        WHERE            
+            (IBTrader_HistoricalRealtime.shareId=?)
+            AND (IBTrader_HistoricalRealtime.companyid=?)
+            AND (IBTrader_HistoricalRealtime.groupid=?)
+         	AND (IBTrader_HistoricalRealtime.createDate)=  (SELECT  min(IBTrader_HistoricalRealtime.createDate) FROM 
 					         			IBTrader_HistoricalRealtime      
 					      	  		WHERE            
 					           			 (IBTrader_HistoricalRealtime.shareId=?)

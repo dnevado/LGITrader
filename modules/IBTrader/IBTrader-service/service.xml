@@ -423,6 +423,13 @@
 			<finder-column name="groupId"/>
 			<finder-column name="ibclientId"/>									
 		</finder>
+		<finder name="OrderShareClientGroupCompany" return-type="Collection">
+			<finder-column name="ordersId"/>		
+			<finder-column name="companyId"/>		
+			<finder-column name="shareID"/>			
+			<finder-column name="groupId"/>
+			<finder-column name="ibclientId"/>									
+		</finder>
 		<finder name="RemovableDateGroupCompany" return-type="Collection"> <!--  PARA ELIMINAR TODO  -->
 			<finder-column name="removable_on_reboot"/>		
 			<finder-column name="companyId"/>		
@@ -460,7 +467,7 @@
 			<column name="multiplier" type="long" />					
 			<column name="security_type" type="String" />
 			<column name="exchange" type="String" /> 
-			<column name="primary_exchange" type="String" />
+			<column name="primary_exchange" type="String" />			
 			<!-- <column name="date_contract_verified" type="Date" /> -->
 			<column name="userCreatedId" type="long" />	
 	        <column name="marketId" type="long"></column>
@@ -468,6 +475,7 @@
 	        <column name="date_validated_trader_provider" type="Date"></column> <!--  si esta validado contra interactive brokers -->
 	        <column name="last_error_trader_provider" type="String"></column> <!--  si esta validado contra interactive brokers -->
 	        <column name="simulation_end_date" type="Date"></column> <!--  ultimo dia de datos historicos almacenados   -->
+	        <column name="trading_hours" type="String"></column> <!--  FECHAS HORAS DEL SIGUIENTE MES    -->
 	        
 	        
     <!--    	<reference package-path="com.ibtrader.data" entity="Market"></reference>-->

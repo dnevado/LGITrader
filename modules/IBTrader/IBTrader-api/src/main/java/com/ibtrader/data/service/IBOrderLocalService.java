@@ -118,6 +118,9 @@ public interface IBOrderLocalService extends BaseLocalService,
 	public IBOrder findByOrderClientGroupCompany(long iborderId, long clientId,
 		long companyId, long groupId);
 
+	public IBOrder findByOrderShareClientGroupCompany(long iborderId,
+		long shareId, long clientId, long companyId, long groupId);
+
 	/**
 	* Returns the ib order with the primary key.
 	*
@@ -295,6 +298,9 @@ public interface IBOrderLocalService extends BaseLocalService,
 
 	public long findMaxOrderClientCompanyGroup(long companyId, long groupId,
 		long clientId);
+
+	public long findMaxOrderClientShareCompanyGroup(long companyId,
+		long groupId, long clientId, long shareId);
 
 	public void deleteByOrderCompanyGroup(long iborderId, long companyId,
 		long groupId, long ibclientId, long shareId);

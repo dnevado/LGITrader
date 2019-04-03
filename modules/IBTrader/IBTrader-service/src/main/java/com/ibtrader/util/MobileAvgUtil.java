@@ -1,4 +1,4 @@
-package com.ibtrader.util;
+package 	com.ibtrader.util;
 
 
 import java.text.ParseException;
@@ -348,8 +348,8 @@ public class MobileAvgUtil {
 				
 			/* NO ES EN LA BARRA 00, 05, 10, SON PRECIOS DE CIRRE DE CADA BARRA, RESTAMOS UN SEGUNDO */
 			//			
-			lAvgMobileDates.add(_sdf.format(_cPeriodsMinutesMobileAvg.getTime()));
-			_log.debug(_sdfdebug.format(_cPeriodsMinutesMobileAvg.getTime()));
+			lAvgMobileDates.add(_sdf.format(_cPeriodsMinutesMobileAvg.getTime()));			
+			_log.trace(_sdfdebug.format(_cPeriodsMinutesMobileAvg.getTime()));
 			
 		}
 		return lAvgMobileDates;

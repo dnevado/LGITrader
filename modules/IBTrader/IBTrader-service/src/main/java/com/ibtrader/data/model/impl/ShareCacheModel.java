@@ -65,7 +65,7 @@ public class ShareCacheModel implements CacheModel<Share>, Externalizable {
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(57);
+		StringBundler sb = new StringBundler(59);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -123,6 +123,8 @@ public class ShareCacheModel implements CacheModel<Share>, Externalizable {
 		sb.append(last_error_trader_provider);
 		sb.append(", simulation_end_date=");
 		sb.append(simulation_end_date);
+		sb.append(", trading_hours=");
+		sb.append(trading_hours);
 		sb.append("}");
 
 		return sb.toString();
@@ -244,6 +246,13 @@ public class ShareCacheModel implements CacheModel<Share>, Externalizable {
 			shareImpl.setSimulation_end_date(new Date(simulation_end_date));
 		}
 
+		if (trading_hours == null) {
+			shareImpl.setTrading_hours(StringPool.BLANK);
+		}
+		else {
+			shareImpl.setTrading_hours(trading_hours);
+		}
+
 		shareImpl.resetOriginalValues();
 
 		return shareImpl;
@@ -294,6 +303,7 @@ public class ShareCacheModel implements CacheModel<Share>, Externalizable {
 		date_validated_trader_provider = objectInput.readLong();
 		last_error_trader_provider = objectInput.readUTF();
 		simulation_end_date = objectInput.readLong();
+		trading_hours = objectInput.readUTF();
 	}
 
 	@Override
@@ -390,6 +400,13 @@ public class ShareCacheModel implements CacheModel<Share>, Externalizable {
 		}
 
 		objectOutput.writeLong(simulation_end_date);
+
+		if (trading_hours == null) {
+			objectOutput.writeUTF(StringPool.BLANK);
+		}
+		else {
+			objectOutput.writeUTF(trading_hours);
+		}
 	}
 
 	public String uuid;
@@ -420,4 +437,5 @@ public class ShareCacheModel implements CacheModel<Share>, Externalizable {
 	public long date_validated_trader_provider;
 	public String last_error_trader_provider;
 	public long simulation_end_date;
+	public String trading_hours;
 }

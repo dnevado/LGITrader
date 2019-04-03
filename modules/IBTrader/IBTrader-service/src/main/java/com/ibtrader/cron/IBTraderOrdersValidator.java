@@ -56,9 +56,7 @@ public class IBTraderOrdersValidator  extends BaseSchedulerEntryMessageListener 
 		 /* OJO, SI SE NAJA LA FRECUENCIA DE LANZAMIENTO, PUEDEN PRODUCTIRSE HILOS CONCURRENTES, PORQUE LA VERIFICACION DEL CRONRUNNING ESTA CADA 
 		  * 5 SEGUNDOS 
 		  */
-	     schedulerEntryImpl.setTrigger(TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(),5, TimeUnit.SECOND));  
-
-		
+	    schedulerEntryImpl.setTrigger(TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(),5, TimeUnit.SECOND));  
 		_log.info("Activating CRON..."  + schedulerEntryImpl.getTrigger());
 		_schedulerEngineHelper.register(this, schedulerEntryImpl, DestinationNames.SCHEDULER_DISPATCH);
 		

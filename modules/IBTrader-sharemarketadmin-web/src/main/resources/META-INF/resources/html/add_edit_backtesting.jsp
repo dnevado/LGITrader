@@ -38,10 +38,14 @@ BackTesting  _backtesting = (BackTesting) request.getAttribute("backtesting");
  
  
  
- int  D1  = _backtesting!=null  && _backtesting.getFromDate()!=null ? _backtesting.getFromDate().getDate() : Calendar.getInstance().get(Calendar.DATE);
+ int DefaultMaxDay = Calendar.getInstance().get(Calendar.DATE);
+ if (DefaultMaxDay>1) DefaultMaxDay--;   
+ 
+ 
+ int  D1  = _backtesting!=null  && _backtesting.getFromDate()!=null ? _backtesting.getFromDate().getDate() : DefaultMaxDay;
  int  M1  = _backtesting!=null  && _backtesting.getFromDate()!=null ? _backtesting.getFromDate().getMonth() : Calendar.getInstance().get(Calendar.MONTH);
  int  Y1  = _backtesting!=null  && _backtesting.getFromDate()!=null ? cFrom.get(Calendar.YEAR) : Calendar.getInstance().get(Calendar.YEAR);
- int  D2  = _backtesting!=null  && _backtesting.getToDate()!=null ? _backtesting.getToDate().getDate() :  Calendar.getInstance().get(Calendar.DATE);
+ int  D2  = _backtesting!=null  && _backtesting.getToDate()!=null ? _backtesting.getToDate().getDate() :  DefaultMaxDay;
  int  M2  = _backtesting!=null  && _backtesting.getToDate()!=null ? _backtesting.getToDate().getMonth() : Calendar.getInstance().get(Calendar.MONTH);
  int  Y2  = _backtesting!=null  && _backtesting.getToDate()!=null ? c.get(Calendar.YEAR) : Calendar.getInstance().get(Calendar.YEAR);
 
@@ -71,7 +75,7 @@ BackTesting  _backtesting = (BackTesting) request.getAttribute("backtesting");
 
 <div class="container-fluid-1280">
 <aui:form action="<%=addeditBackTestingURL%>"   name="fm" method="POST" onsubmit="<portlet:namespace />extractCodeFromEditor()">	
-	<liferay-ui:success key="backtesting.success" message="backtesting.success"/>
+	<liferay-ui:success key="backtesting.success" message="backtesting.success"/>	
 	<liferay-ui:error key="backtesting.error.missingparameters" message="backtesting.error.missingparameters"/>
 	<liferay-ui:error key="backTesting.error.exists" message="backTesting.error.exists"/>
 	<liferay-ui:error key="backtesting.error.formatparameters" message="backtesting.error.formatparameters"/>

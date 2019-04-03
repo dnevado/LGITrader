@@ -1,4 +1,4 @@
-/* So the simple fact is that if an order is fully filled while the client application is not connected to TWS, or TWS is not connected to the IB servers, the client will never receive an orderStatus with a status of ‘Filled’.
+/* So the simple fact is that if an order is fully filled while the client application is not connected to TWS, or TWS is not connected to the IB servers, the client will never receive an orderStatus with a status of ï¿½Filledï¿½.
 
 
 
@@ -10,7 +10,7 @@ To deal with this situation, there are three things that need to be done:
 
 
 
-2.       When the client application connects to TWS it must call reqExecutions and reqOpenOrders. The combination of the saved order information and the information received via execDetails and openOrder is enough to reconstruct exactly what the current state is. (Note that there is a TWS API configuration option for open orders to be notified automatically when a client connects, but it’s better to call reqOpenOrders as you cannot guarantee that this option will be set.)
+2.       When the client application connects to TWS it must call reqExecutions and reqOpenOrders. The combination of the saved order information and the information received via execDetails and openOrder is enough to reconstruct exactly what the current state is. (Note that there is a TWS API configuration option for open orders to be notified automatically when a client connects, but itï¿½s better to call reqOpenOrders as you cannot guarantee that this option will be set.)
 
 
 
@@ -29,6 +29,14 @@ package com.ibtrader.interactive;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -68,12 +76,15 @@ import com.ibtrader.constants.IBTraderConstants;
 import com.ibtrader.data.model.Config;
 import com.ibtrader.data.model.HistoricalRealtime;
 import com.ibtrader.data.model.IBOrder;
+import com.ibtrader.data.model.Market;
 import com.ibtrader.data.model.Position;
 import com.ibtrader.data.model.Realtime;
 import com.ibtrader.data.model.Share;
+import com.ibtrader.data.model.ShareModel;
 import com.ibtrader.data.service.ConfigLocalServiceUtil;
 import com.ibtrader.data.service.HistoricalRealtimeLocalServiceUtil;
 import com.ibtrader.data.service.IBOrderLocalServiceUtil;
+import com.ibtrader.data.service.MarketLocalServiceUtil;
 import com.ibtrader.data.service.PositionLocalServiceUtil;
 import com.ibtrader.data.service.RealtimeLocalServiceUtil;
 import com.ibtrader.data.service.ShareLocalServiceUtil;
@@ -82,6 +93,9 @@ import com.ibtrader.util.PositionStates;
 import com.ibtrader.util.Utilities;
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.Message;
@@ -90,6 +104,7 @@ import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.Organization;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 
 
@@ -112,7 +127,7 @@ public class TIMApiWrapper implements EWrapper {
 	
 	private boolean _sendDisconnectEvent = false; 
 	
-	
+	/* ATRIBUTOS */
 	private Share _ibtarget_share= null;
 	private Organization _ibtarget_organization= null;
 	
@@ -173,6 +188,10 @@ public class TIMApiWrapper implements EWrapper {
 		clientSocket.cancelHistoricalData(requestId);
 	}
 	
+	public void cancelMarketData(int requestId)
+	{
+		clientSocket.cancelMktData(requestId);
+	}
 	
 	public void getHistoricalData(int requestId, Contract contract, String EndTime){
 		
@@ -180,9 +199,9 @@ public class TIMApiWrapper implements EWrapper {
 		
 		// CONTROL
 		if (this.getUserTWS().equalsIgnoreCase(Utilities._DEFAULT_USER_DEMO_))
-			clientSocket.reqHistoricalData(requestId, contract, "", "1 D", ConfigKeys.SIMULATION_MINUTES_BAR_SIZE + " mins", "TRADES", 1, 1, false, null);
+			clientSocket.reqHistoricalData(requestId, contract, "", ConfigKeys.SIMULATION_INTERVAL_PERIOD, ConfigKeys.SIMULATION_MINUTES_BAR_SIZE + " mins", "TRADES", 1, 1, false, null);
 		else
-			clientSocket.reqHistoricalData(requestId, contract, EndTime, "1 D", ConfigKeys.SIMULATION_MINUTES_BAR_SIZE + " mins", "TRADES", 1, 1, false, null);
+			clientSocket.reqHistoricalData(requestId, contract, EndTime, ConfigKeys.SIMULATION_INTERVAL_PERIOD, ConfigKeys.SIMULATION_MINUTES_BAR_SIZE + " mins", "TRADES", 1, 1, false, null);
 		
 	}
 	
@@ -220,7 +239,7 @@ public class TIMApiWrapper implements EWrapper {
 	
 	public void getRealTime(int requestId, Contract contract) throws InterruptedException{
 		Thread.sleep(1000);	
-		clientSocket.reqMarketDataType(ConfigKeys.MARKET_DATA_TYPE_DELAYED_LIVE);
+		clientSocket.reqMarketDataType(ConfigKeys.MARKET_DATA_TYPE_LIVE);
 		clientSocket.reqMktData(requestId, contract,  "", false, false, null); // false
 	}
 	public boolean isConnected() {
@@ -272,7 +291,7 @@ public class TIMApiWrapper implements EWrapper {
 		        	_log.info("Connnect Exception: "+e.getMessage());
 		        }*/
 		    }
-		    _log.debug("_sendDisconnectEvent: "+_sendDisconnectEvent);
+		   // _log.debug("_sendDisconnectEvent: "+_sendDisconnectEvent);
 		 }).start();
 		Thread.sleep(1000);
 		
@@ -306,8 +325,8 @@ public class TIMApiWrapper implements EWrapper {
 		long  _INCREMENT_ORDER_ID   = Math.max(currentOrderId, Math.max(_currentMaxPositionsId, _currentMaxOrderId));
 		
 		/* Entre lo que nos da la tws (se solapan entre clientIds y lo que nos la ultima posicion (hay que guardarlos) , eleigimos el mayor */
-		currentOrderId = (int) _INCREMENT_ORDER_ID;
-		return currentOrderId++;
+		currentOrderId = (int) _INCREMENT_ORDER_ID +1;
+		return currentOrderId;
 	}
 	
 	public int getCurrentOrderId() {
@@ -363,7 +382,7 @@ public class TIMApiWrapper implements EWrapper {
 	//! [orderstatus]
 	
 	/* lOrders
-	 * LISTA DE ORDENES QUE ACOMPAÑAN A LA ORDEN PADRE, SOLO SE APLICA A ORDENES DE TIPO TRAIL PARA AJUSTAR BENEFICIO 
+	 * LISTA DE ORDENES QUE ACOMPAï¿½AN A LA ORDEN PADRE, SOLO SE APLICA A ORDENES DE TIPO TRAIL PARA AJUSTAR BENEFICIO 
 	 */
 	
 	/* thread safe */
@@ -498,7 +517,7 @@ public class TIMApiWrapper implements EWrapper {
 	//! [nextvalidid]
 	@Override
 	public void nextValidId(int orderId) {
-		_log.debug("Next Valid Id: ["+orderId+"]");
+		_log.trace("Next Valid Id: ["+orderId+"]");
 		currentOrderId = orderId;
 	}
 	//! [nextvalidid]
@@ -507,22 +526,146 @@ public class TIMApiWrapper implements EWrapper {
 	@Override
 	public void contractDetails(int reqId, ContractDetails contractDetails) {
 	
+		/* Next Valid Id: [1]
+		TimeZoneTrading: [EST5EDT] - 
+		TradingHours: [20190323:CLOSED;20190324:CLOSED;20190325:0400-20190325:2000;20190326:0400-20190326:2000;20190327:0400-20190327:2000;
+		20190328:0400-20190328:2000;20190329:0400-20190329:2000;20190330:CLOSED;
+		20190331:CLOSED;20190401:0400-20190401:2000;20190402:0400-20190402:2000;20190403:0400-20190403:
+		2000;20190404:0400-20190404:2000;20190405:0400-20190405:2000;20190406:CLOSED;20190407:CLOSED;
+		20190408:0400-20190408:2000;20190409:0400-20190409:2000;20190410:0400-20190410:2000;20190411:0400-20190411:2000;
+		20190412:0400-20190412:2000;20190413:CLOSED;20190414:CLOSED;20190415:0400-20190415:2000;20190416:0400-20190416:2000;
+		20190417:0400-20190417:2000;20190418:0400-20190418:2000;20190419:0400-20190419:2000;20190420:CLOSED;
+		20190421:CLOSED;20190422:0400-20190422:2000;20190423:0400-20190423:2000;20190424:0400-20190424:2000;
+		20190425:0400-20190425:2000;20190426:0400-20190426:2000]   [AAPL], [STK], ConId: [265598] @ [SMART]
+		
+		FUTURO 
+		20190326:1700-20190327:1515;20190327:1530-20190327:1600;20190327:1700-20190328:1515;20190328:1530-20190328:1600;20190328:1700-20190329:1515;20190329:1530-20190329:1600;20190330:CLOSED;20190331:1700-20190401:1515;20190401:1530-20190401:1600;20190401:1700-20190402:1515;20190402:1530-20190402:1600;20190402:1700-20190403:1515;20190403:1530-20190403:1600;20190403:1700-20190404:1515;20190404:1530-20190404:1600;20190404:1700-20190405:1515;20190405:1530-20190405:1600;20190406:CLOSED;20190407:1700-20190408:1515;20190408:1530-20190408:1600;20190408:1700-20190409:1515;20190409:1530-20190409:1600;20190409:1700-20190410:1515;20190410:1530-20190410:1600;20190410:1700-20190411:1515;20190411:1530-20190411:1600;20190411:1700-20190412:1515;20190412:1530-20190412:1600;20190413:CLOSED;20190414:1700-20190415:1515;20190415:1530-20190415:1600;20190415:1700-20190416:1515;20190416:1530-20190416:1600;20190416:1700-20190417:1515;20190417:1530-20190417:1600;20190417:1700-20190418:1515;20190418:1530-20190418:1600;20190418:1700-20190419:1515;20190419:1530-20190419:1600;20190420:CLOSED;20190421:1700-20190422:1515;20190422:1530-20190422:1600;20190422:1700-20190423:1515;20190423:1530-20190423:1600;20190423:1700-20190424:1515;20190424:1530-20190424:1600;20190424:1700-20190425:1515;20190425:1530-20190425:1600;20190425:1700-20190426:1515;20190426:1530-20190426:1600]
+		
+		EST5EDT --> TELEFONICA 
+		EST5EDT --> netflix
+		MET --> EUROSTOXX50 ESTX50 				
+		
+		
+		31032019 : INCLUSO VAMOS A ACTUALIZAR EL INICIO FIN DE MERCADO CON LOS DATOS DEL SHARE.
+		 
+		*/
+		
+		
 	try
 	{
-		_log.debug("TIMApiWrapper ContractDetails. ReqId: ["+reqId+"] - ["+contractDetails.contract().symbol()+"], ["+contractDetails.contract().secType()+"], ConId: ["+contractDetails.contract().conid()+"] @ ["+contractDetails.contract().exchange()+"]");
+		
+		/* GENERAMOS EL JSON CON LOS DATOS DEL HORAS DE TRADING SEGUN UTC */					
+		JSONArray    jsonTradingHours = JSONFactoryUtil.createJSONArray();		
+		
+		
 		
 		 IBOrder _ibOrder;		 	
 		 //_ibOrder = IBOrderLocalServiceUtil.fetchIBOrder(reqId);
-		 _ibOrder = IBOrderLocalServiceUtil.findByOrderClientGroupCompany(reqId, _clientId, _ibtarget_organization.getCompanyId(),_ibtarget_share.getGroupId());
-	 	 if (_ibOrder!=null)  // error en una posicion dada abierta		
-		 { 
-	 		 
-			Share share = ShareLocalServiceUtil.fetchShare(_ibOrder.getShareID());  								
-			share.setDate_validated_trader_provider(new Date());
+		 _ibOrder = IBOrderLocalServiceUtil.findByOrderShareClientGroupCompany(reqId, _ibtarget_share.getShareId(),_clientId, _ibtarget_organization.getCompanyId(),_ibtarget_share.getGroupId());
+	 	 if (_ibOrder==null)  // error en una posicion dada abierta		
+	 		 return;
+		
+	 	 Share oShare = ShareLocalServiceUtil.fetchShare(_ibOrder.getShareID());  					
+
+	 	/* EXTRAï¿½O, PARA APPLE, LAS TRADINHOURS PARECEN INCORRETAS PERO NO PARA LOS FUTURES, QUE SON MAS APROPIADAS Y CERTEREZAS LAS TRADING */
+		/* PARECE UNA ï¿½APA 
+		 * https://www.cmegroup.com/trading/equity-index/us-index/sandp-500_contract_specifications.html
+		 * */			 
+		String _traingHours = contractDetails.tradingHours();
+
+		if (oShare.getSecurity_type().equals(ConfigKeys.SECURITY_TYPE_STOCK))
+		{
+			_traingHours = contractDetails.liquidHours();
+		}
+		if (!_traingHours.isEmpty()) // 					
+		{
+						
+			String[] tradingHours = Arrays.stream(_traingHours.split(StringPool.SEMICOLON)).map(String::trim).toArray(String[]::new);
+			if (tradingHours.length>0)
+			{
+				for (String hour: tradingHours)
+				{
+					if (!hour.contains("CLOSED") && !hour.equals("")) //NO HAY MERCADO, LO IGNORAMOS 
+					{
+						JSONObject  jsonTradingHour = JSONFactoryUtil.createJSONObject();
+						
+						//20190326:1700-20190327:1515
+						String[] tradingHour = Arrays.stream(hour.split(StringPool.DASH)).map(String::trim).toArray(String[]::new);
+						
+						/* ZoneId.getAvailableZoneIds().stream()
+				        .filter(z -> z.length() == 3)
+				        .forEach(System.out::println);
+						*/
+						
+						_log.trace("Trading hour:" + hour);
+						
+						String[] from = Arrays.stream(tradingHour[0].split(StringPool.COLON)).map(String::trim).toArray(String[]::new);
+						String[] to =   Arrays.stream(tradingHour[1].split(StringPool.COLON)).map(String::trim).toArray(String[]::new);
+						
+					
+						// error IB BUG with CST no supported 
+						ZoneId tws_timezone;
+						if (contractDetails.timeZoneId().contains("CST"))														
+							tws_timezone = ZoneId.of("CST6CDT");
+						else
+							tws_timezone = ZoneId.of(contractDetails.timeZoneId());		
+						
+						DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
+						// from 
+						LocalDateTime localtDateAndTime = LocalDateTime.parse(from[0].concat(" ").concat(from[1]), formatter);
+						ZonedDateTime dateAndTimeMarketShare = ZonedDateTime.of(localtDateAndTime, tws_timezone );
+						_log.trace("Current date and time in a particular timezone :" + contractDetails.timeZoneId() + " "  + dateAndTimeMarketShare.toLocalDateTime());
+												
+						ZonedDateTime utcDate = dateAndTimeMarketShare.withZoneSameInstant(ZoneOffset.UTC); 
+						_log.trace("Current date and time in UTTC timezone : " + utcDate.toLocalDateTime());
+						jsonTradingHour.put("fromDate", formatter.format(utcDate));
+										
+						// to 
+						localtDateAndTime = LocalDateTime.parse(to[0].concat(" ").concat(to[1]), formatter);
+						dateAndTimeMarketShare = ZonedDateTime.of(localtDateAndTime, tws_timezone );
+						utcDate = dateAndTimeMarketShare.withZoneSameInstant(ZoneOffset.UTC);
+					
+						_log.trace("Current date and time in a particular timezone :" + contractDetails.timeZoneId() + " "  + dateAndTimeMarketShare.toLocalDateTime());
+						_log.trace("Current date and time in UTTC timezone : " + utcDate.toLocalDateTime());
+
+					
+						jsonTradingHour.put("toDate", formatter.format(utcDate));						
+
+						jsonTradingHours.put(jsonTradingHour);
+						
+					}
+				}
+			}
+								
+			_log.trace("LiquidHours:" + contractDetails.liquidHours());
+			_log.trace("TIMApiWrapper ContractDetails. ReqId: ["+reqId+"] - TimeZoneTrading: ["+contractDetails.timeZoneId()+ "] - ["+contractDetails.contract().symbol()+"], ["+contractDetails.contract().secType()+"], ConId: ["+contractDetails.contract().conid()+"] @ ["+contractDetails.contract().exchange()+"]");		
+		 		 
+			Share share = ShareLocalServiceUtil.fetchShare(_ibOrder.getShareID());  	
+
+			LocalDate now = LocalDate.now();
+			ZoneId UTCZone = ZoneId.systemDefault(); // UTC 	
+	   		ZonedDateTime zonedDateTime = now.atStartOfDay(UTCZone);   	
+	   		zonedDateTime = zonedDateTime.minus(-1, ChronoUnit.SECONDS);
+	   		
+			share.setDate_validated_trader_provider(Date.from(zonedDateTime.toInstant()));			
+			share.setValidated_trader_provider(Boolean.TRUE);
+			share.setLast_error_trader_provider(null);			
+			share.setTrading_hours(jsonTradingHours.toString());
 			/* actualizamos datos error de operativa */
-			_log.debug("Updating contractDetails share:" + share.getSymbol());
-			ShareLocalServiceUtil.updateShare(share);	
-		 }
+			_log.trace("Updating contractDetails share:" + share.getSymbol());			
+			ShareLocalServiceUtil.updateShare(share);			
+			Market updateMarket = Utilities.fillOpenEndHoursMarket(jsonTradingHours.toString());
+			if (Validator.isNotNull(updateMarket))
+			{
+				Market market = MarketLocalServiceUtil.fetchMarket(share.getMarketId());
+				market.setStart_hour(updateMarket.getStart_hour());
+				market.setEnd_hour(updateMarket.getEnd_hour());
+				MarketLocalServiceUtil.updateMarket(market);
+				
+				_log.trace("Updating market " + updateMarket.getName() + "," + updateMarket.getStart_hour() + "," + updateMarket.getEnd_hour());
+			}
+		
+		}
 	}
 	catch (Exception e)
 	{
@@ -538,32 +681,8 @@ public class TIMApiWrapper implements EWrapper {
 	//! [contractdetailsend]
 	@Override
 	public void contractDetailsEnd(int reqId)
-    {
-	try 
-	{
-		 _log.debug("contractDetailsEnd:" + reqId);
-		 IBOrder _ibOrder;		 	
-		 //_ibOrder = IBOrderLocalServiceUtil.fetchIBOrder(reqId);
-		 _ibOrder = IBOrderLocalServiceUtil.findByOrderClientGroupCompany(reqId, _clientId, _ibtarget_organization.getCompanyId(),_ibtarget_share.getGroupId());
-	 	 if (_ibOrder!=null)  // error en una posicion dada abierta		
-		 { 
-	 		 
-			Share share = ShareLocalServiceUtil.fetchShare(_ibOrder.getShareID());  					
-			share.setValidated_trader_provider(Boolean.TRUE);
-			share.setDate_validated_trader_provider(new Date());
-			share.setLast_error_trader_provider(null);							
-			/* actualizamos datos error de operativa */
-			_log.debug("Updating contract share:" + share.getSymbol());
-			ShareLocalServiceUtil.updateShare(share);		
-			
-			
-		}
-    }
-	catch (Exception e)
-	{
-		_log.debug(e.getMessage());
-	}
-		
+    {	
+	
 	}
 
 	//! [contractdetailsend]
@@ -572,7 +691,7 @@ public class TIMApiWrapper implements EWrapper {
 	
 	/* VERIFICAMOS ORDENES COMPLETEADAS Y NO VERIFICADAS DEBIDO A DESCONEXIONES, 
 	 * 
-	 *  reqId orderId, aqui no aplica ñ
+	 *  reqId orderId, aqui no aplica ï¿½
 	 *  
 	 *  execution.orderId() es el order de position de la tabla 
 	 *  */
@@ -806,12 +925,13 @@ public class TIMApiWrapper implements EWrapper {
 	//! [displaygroupupdated]
 	@Override
 	public void error(Exception e) {
-		_log.debug("error Exception: "+e.getMessage());
+		if (Validator.isNotNull(e) && Validator.isNotNull(e.getMessage()))
+			_log.error("error Exception: "+e.getMessage());
 	}
 
 	@Override
 	public void error(String str) {
-		_log.debug("Error STR");
+		_log.error("Error STR");
 	}
 	//! [error]
 	@Override
@@ -824,11 +944,16 @@ public class TIMApiWrapper implements EWrapper {
 		_stbB.append("|");
 		_stbB.append(str);				
 		
-		if (errorCode==507)  // client_id invalidao, buscamos otros 
+		
+		Position _ErrorPosition = null;
+		Share oErrorShare = null;
+		
+		switch (errorCode)
 		{
-			 _log.debug("Error :" + errorCode + ",reqId" + reqId + ",txt:" + str + "clientId:" + _clientId) ;
+		case 587:
+			 _log.error("Error :" + errorCode + ",reqId" + reqId + ",txt:" + str + "clientId:" + _clientId) ;
 			/* OBTENEMOS EL CRON USADO DE LA TABLA  CON EL CLIENTID USADO, COMO TENEMOS 3 CRON, 
-			 * CLIENT_ID SERÁ EL CLIENT_ID MAS EL RESTO DEL CONFIGURATIONID DE LA CLAVE PRIMERARIO, AL SER 
+			 * CLIENT_ID SERï¿½ EL CLIENT_ID MAS EL RESTO DEL CONFIGURATIONID DE LA CLAVE PRIMERARIO, AL SER 
 			 * SECUENCIALES LOS 3 CRON, NOS ASEGURAMOS DE SER DISTINTOS, HASTA UN MAXIMO DE 1024 INICIALMENTE    */
 						
 			if (_ibtarget_organization!=null)
@@ -842,94 +967,78 @@ public class TIMApiWrapper implements EWrapper {
 					ConfigLocalServiceUtil.updateConfig(_conf);
 				}			
 			}
-
-
-		}
-		else
-		{
-			if (errorCode==300)  // An attempt was made to cancel market data for a ticker ID that was not associated with a current subscription. With the DDE API this occurs by clearing the spreadsheet cell.
+			break;
+		case 300: //  // An attempt was made to cancel market data for a ticker ID that was not associated with a current subscription. With the DDE API this occurs by clearing the spreadsheet cell.
+			 _log.error("Error :" + errorCode + ",reqId" + reqId + ",txt:" + str + ",clientid:" + _clientId) ;
+			 break;
+		case 511: // // 511,Cancel Market Data Sending Error
+			 _log.error("Error :" + errorCode + ",reqId" + reqId + ",txt:" + str + ",clientid:" + _clientId) ;
+			 break; 
+		case 366:  //366	No historical data query found for ticker id:	Historical market data request with this ticker id has either been cancelled or is not found.
+				 // historical data, ponemos la variable a true para que pase al siguiente dia
+			historialDataEnd = Boolean.TRUE;
+			_log.error("Finalizado el historical data  a TRUE de " + _ibtarget_share.getSymbol() + " : [reqId:" + reqId + "," + errorCode+ "," + str + "]");
+			 break; 
+		case 162:
+			historialDataEnd = Boolean.TRUE;
+			_log.error("Finalizado el historical data  a TRUE de " + _ibtarget_share.getSymbol()  + " : [reqId:" + reqId + "," + errorCode+ "," + str + "]");
+			 break;
+		case 200:
+			historialDataEnd = Boolean.TRUE;
+			_log.error("Finalizado el historical data  a TRUE de " + _ibtarget_share.getSymbol()  + " : [reqId:" + reqId + "," + errorCode+ "," + str + "]");
+			 break;
+		default:		
+			if (errorCode>=0 && reqId>=0)  // errores operativa - lectura
 			{
-				 _log.debug("Error :" + errorCode + ",reqId" + reqId + ",txt:" + str + ",clientid:" + _clientId) ;			 		
-	
-			}
-			else				
-			{
-				 if (errorCode==511) // 511,Cancel Market Data Sending Error
-					 _log.debug("Error :" + errorCode + ",reqId" + reqId + ",txt:" + str + ",clientid:" + _clientId) ;
-				 else					 						
-				 {	
-					if (errorCode>=0 && reqId>=0)  // errores operativa - lectura
+				_ErrorPosition = PositionLocalServiceUtil.fetchPosition(reqId);							
+				if (_ErrorPosition!=null && _ErrorPosition.IsPendingIn())  // error en una posicion dada abierta /* HAY QUE MANDAR CANCEL A TWS */
+				{ 
+					
+					oErrorShare = ShareLocalServiceUtil.fetchShare(_ErrorPosition.getShareId());  
+					_log.debug("error operativa : [" + reqId + "," + errorCode + "," + str + "]");
+					_log.debug("error order  : " + oErrorShare.getSymbol());
+					oErrorShare.setActive(Boolean.FALSE);// desactivamos lectura.
+					oErrorShare.setValidated_trader_provider(Boolean.FALSE);
+					oErrorShare.setDate_validated_trader_provider(new Date());
+					oErrorShare.setLast_error_trader_provider(_stbB.toString());							
+					/* actualizamos datos error de operativa */
+					ShareLocalServiceUtil.updateShare(oErrorShare);					
+					try {
+						PositionLocalServiceUtil.deletePosition(_ErrorPosition.getPositionId());
+					} catch (PortalException e) {
+						// TODO Auto-generated catch block
+						_log.debug("error operativa PositionLocalServiceUtil.deletePosition : [" + e.getMessage() + "]") ;
+					}							
+						
+				}
+				else
+				{
+					IBOrder _ErrorOrder = null;
+					if (Validator.isNull(_ibtarget_share))
 					{
-									
-						Position _ErrorPosition;
-						Share oErrorShare = null;
-						
-						_ErrorPosition = PositionLocalServiceUtil.fetchPosition(reqId);    			
-						
-						if (_ErrorPosition!=null && _ErrorPosition.IsPendingIn())  // error en una posicion dada abierta
-							/* HAY QUE MANDAR CANCEL A TWS */
-						{ 
-							
-							oErrorShare = ShareLocalServiceUtil.fetchShare(_ErrorPosition.getShareId());  
-							_log.debug("error operativa : [" + reqId + "," + errorCode + "," + str + "]");
-							_log.debug("error order  : " + oErrorShare.getSymbol());
+						_ErrorOrder  = IBOrderLocalServiceUtil.findByOrderClientGroupCompany(reqId, _clientId, _ibtarget_organization.getCompanyId(),_ibtarget_organization.getGroupId());
+						 oErrorShare = Validator.isNotNull(_ErrorOrder)  ?   ShareLocalServiceUtil.fetchShare(_ErrorOrder.getShareID())  : null;
+					}
+					else						
+						oErrorShare = (Share) _ibtarget_share.clone();
+					if (oErrorShare!=null)
+					{																	
+							_log.trace("Error lectura de " + oErrorShare.getSymbol() + " : [reqId:" + reqId + "," + errorCode+ "," + str + "]");
+							_log.trace("Cancelamos el marketData");
+							this.cancelMarketData(reqId);
 							oErrorShare.setActive(Boolean.FALSE);// desactivamos lectura.
 							oErrorShare.setValidated_trader_provider(Boolean.FALSE);
 							oErrorShare.setDate_validated_trader_provider(new Date());
 							oErrorShare.setLast_error_trader_provider(_stbB.toString());							
 							/* actualizamos datos error de operativa */
-							ShareLocalServiceUtil.updateShare(oErrorShare);					
-							try {
-								PositionLocalServiceUtil.deletePosition(_ErrorPosition.getPositionId());
-							} catch (PortalException e) {
-								// TODO Auto-generated catch block
-								_log.debug("error operativa PositionLocalServiceUtil.deletePosition : [" + e.getMessage() + "]") ;
-							}							
-								
-						}
-						else   // supuestamente error lectura de datos en tiempo real.
-							   // METEMOS EL 25-12-2013 un  job verificador que pide el contract detail con variable de estado asociada.		
-						{			
-							 _log.debug("error lectura [HISTORICAL_DATA:  : [" + reqId + "," + errorCode+ "," + str + "]");
-							
-							/* SIEMPRE VA A VER _ErrorOrder con errores de tiempo real.
-							 * TENEMOS UN PROBLEMA DE CONECTIVIDAD EN EL TICK --> PASA POR AQUI.
-							 * EL JOB DE VERIFICACION COMPRUEBA PARA STOCKS SI EL ACTIVO ES VALIDO, PERO
-							 * PARA UN FUTURO VALIDO PERO CON EL EXPIRATION DATE ERRONEO O PASADO, NO LO VERIFICA,
-							 * LO IMPLEMENTAMOS AQUI.
-							 * AQUI CONTROLAMOS DOS COSAS,
-							 * 1. JOB DE VERIFICACION PARA ANULAR LOS STOCKS INVALIDOS.
-							 * 2. DESCARGA DE TIEMPO REAL SOLO PARA FUTUROS POR LA RAZON ANTERIOR,. 
-							 * Filtramos los del CONTRACTDETAILS EXCLUSIVAMENTE. ES DECIR, ESTADO A ARRANCADO.
-							 * [Stopped,Requested, Ended, Received, Executing] y SI ES UN FUTURO.z
-							 * _HISTORICAL_DATA_REQUEST "Executing" para controlar los errores  
-							 * 162	Historical market data Service error message.				
-							 * 165	Historical market Data Service query message.
-							 * 
-							 *   */															
-							 
-							//IBOrder _ErrorOrder = IBOrderLocalServiceUtil.fetchIBOrder(reqId);
-							 IBOrder _ErrorOrder  = IBOrderLocalServiceUtil.findByOrderClientGroupCompany(reqId, _clientId, _ibtarget_organization.getCompanyId(),_ibtarget_organization.getGroupId());
-							if (_ErrorOrder!=null && reqId!=-1)
-							{						
-								oErrorShare = ShareLocalServiceUtil.fetchShare(_ErrorOrder.getShareID());  					
-								if (oErrorShare!=null) 						
-								{						
-									_log.debug("error order  : " + oErrorShare.getSymbol());
-									oErrorShare.setActive(Boolean.FALSE);// desactivamos lectura.
-									oErrorShare.setValidated_trader_provider(Boolean.FALSE);
-									oErrorShare.setDate_validated_trader_provider(new Date());
-									oErrorShare.setLast_error_trader_provider(_stbB.toString());							
-									/* actualizamos datos error de operativa */
-									ShareLocalServiceUtil.updateShare(oErrorShare);											
-								}
-							} // fin one <> -1										
-						}
-					}
-				 }
-			}
-		}		
-	 }
+							ShareLocalServiceUtil.updateShare(oErrorShare);						
+					} // fin one <> -1		
+				}
+			
+			}  // end default
+			
+			} // end switch 				
+		}			 
 	//! [error]
 	@Override
 	public void connectionClosed() {
@@ -945,12 +1054,23 @@ public class TIMApiWrapper implements EWrapper {
 		}
 	}
 	/* introducimos el modo_fake para usar una misma TWS */
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see com.ib.client.EWrapper#tickPrice(int, int, double, com.ib.client.TickAttr)
+	 * 
+	 * Close Price	9	The last available closing price for the previous day. For US Equities, 
+	 * we use corporate action processing to get the closing price, 
+	 * so the close price is adjusted to reflect forward and reverse splits and cash and stock dividends.
+	 * 
+	 */
+	
 	@Override
 	public void tickPrice(int tickerId, int field, double price, TickAttr attrib) {
 	try
 	{
     	 //  TODO Auto-generated method stub
-	    _log.debug("Impl tickPrice : + " + tickerId + ",prices:" + price + ",field" + field);
+	    //_log.debug("Impl tickPrice : + " + tickerId + ",prices:" + price + ",field" + field);		
 		// TODO Auto-generated method stub
 		IBOrder MyOrder = null;
 		
@@ -972,58 +1092,50 @@ public class TIMApiWrapper implements EWrapper {
 			// verificamos si esta en modo simulation con precios introducidos a mano 
 			Share share = ShareLocalServiceUtil.fetchShare(MyOrder.getShareID());
 			if (share!=null) 
-			{
-					if (share.getSimulation_end_date()==null)
+			{			
+						
+					Realtime  oReal = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));
+					oReal.setGroupId(MyOrder.getGroupId());
+					oReal.setCompanyId(MyOrder.getCompanyId());
+					oReal.setShareId(MyOrder.getShareID());
+					oReal.setValue(price);					
+					oReal.setCloseprice(field==ConfigKeys. _TICKTYPE_CLOSE ? Boolean.TRUE : Boolean.FALSE);
+					
+					/* PRECIO CIERRE ES EL DIA ANTERIOR SEGUN DOCUM DE IB */
+					if (oReal.getCloseprice())
 					{
-						
-						_log.debug("share : " + share.getSymbol() + "," + share.getShareId() + "Impl tickPrice : + " + tickerId + ",prices:" + price + ",field" + field + ",_clientId" + _clientId);
-						
-						Realtime  oReal = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));
-						oReal.setGroupId(MyOrder.getGroupId());
-						oReal.setCompanyId(MyOrder.getCompanyId());
-						oReal.setShareId(MyOrder.getShareID());
-						oReal.setValue(price);
-						oReal.setCreateDate(_calNow.getTime());
-						oReal.setModifiedDate(_calNow.getTime());
-						oReal.setCloseprice(field==ConfigKeys. _TICKTYPE_CLOSE ? Boolean.TRUE : Boolean.FALSE);
-						
-						
-						RealtimeLocalServiceUtil.updateRealtime(oReal);
-						
-						/* MODO FAKE, UN SOLO TWS, REPLICAMOS REALTIME PARA CADA SYMBOL IGUAL  */
-						if (standalone_mode)
+						_calNow.add(-1, Calendar.DATE);
+						_calNow.set(Calendar.HOUR, 23);
+						_calNow.set(Calendar.MINUTE, 59);
+						_calNow.set(Calendar.SECOND, 59);
+					}
+					
+					oReal.setCreateDate(_calNow.getTime());
+					oReal.setModifiedDate(_calNow.getTime());
+					
+					RealtimeLocalServiceUtil.updateRealtime(oReal);
+					
+					/* MODO FAKE, UN SOLO TWS, REPLICAMOS REALTIME PARA CADA SYMBOL IGUAL  */
+					if (standalone_mode)
+					{
+						List<Share> fakesharelist = ShareLocalServiceUtil.findBySymbolExcludingId(share.getSymbol(), share.getShareId());
+						for (Share fakeshare : fakesharelist)
 						{
-							List<Share> fakesharelist = ShareLocalServiceUtil.findBySymbolExcludingId(share.getSymbol(), share.getShareId());
-							for (Share fakeshare : fakesharelist)
-							{
-								oReal = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));
-								oReal.setGroupId(fakeshare.getGroupId());
-								oReal.setCompanyId(fakeshare.getCompanyId());
-								oReal.setShareId(fakeshare.getShareId());
-								oReal.setCloseprice(field==ConfigKeys. _TICKTYPE_CLOSE ? Boolean.TRUE : Boolean.FALSE);
-								oReal.setValue(price);
-								oReal.setCreateDate(_calNow.getTime());
-								oReal.setModifiedDate(_calNow.getTime());
-								RealtimeLocalServiceUtil.updateRealtime(oReal);
-							}
-							
-							
-							
+							oReal = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));
+							oReal.setGroupId(fakeshare.getGroupId());
+							oReal.setCompanyId(fakeshare.getCompanyId());
+							oReal.setShareId(fakeshare.getShareId());
+							oReal.setCloseprice(field==ConfigKeys. _TICKTYPE_CLOSE ? Boolean.TRUE : Boolean.FALSE);
+							oReal.setValue(price);
+							oReal.setCreateDate(_calNow.getTime());
+							oReal.setModifiedDate(_calNow.getTime());
+							RealtimeLocalServiceUtil.updateRealtime(oReal);
 						}
 						
 						
-						/* MyOrder.setChecked(true);
-						IBOrderLocalServiceUtil.updateIBOrder(MyOrder);*/
-					}
-					else
-					{
-						if (cNow.after(share.getSimulation_end_date())) 				 // pasada la simulación?
-						{
-							share.setSimulation_end_date(null);
-							ShareLocalServiceUtil.updateShare(share);
-						}
 						
-					}
+					}						
+						
 			}
 			else
 			{
@@ -1196,15 +1308,15 @@ public class TIMApiWrapper implements EWrapper {
 	SimpleDateFormat fDateHistorical = new SimpleDateFormat(Utilities.__IBTRADER_HISTORICAL_DATE_FORMAT);
 	Calendar _barDate = Calendar.getInstance();
 	 
-	IBOrder MyOrder = null;
+	
 	
 	//MyOrder =  IBOrderLocalServiceUtil.fetchIBOrder(tickerId);
-	MyOrder =  IBOrderLocalServiceUtil.findByOrderClientGroupCompany(reqId, _clientId, _ibtarget_organization.getCompanyId(),_ibtarget_organization.getGroupId());
+	/* MyOrder =  = IBOrderLocalServiceUtil.findByOrderShareClientGroupCompany(reqId, _ibtarget_share.getShareId(),_clientId, _ibtarget_organization.getCompanyId(),_ibtarget_share.getGroupId());
 	if (MyOrder == null) {
 		
 		_log.debug("No se encuentra el ID " + reqId);
 		return;
-	}
+	}*/
 	
 	/* CIERRE */
 	/* MAXIMO  */
@@ -1245,9 +1357,9 @@ public class TIMApiWrapper implements EWrapper {
 	HistoricalRealtime historicalrealtime = HistoricalRealtimeLocalServiceUtil.createHistoricalRealtime(CounterLocalServiceUtil.increment(HistoricalRealtime.class.getName()));
 	
 	historicalrealtime.setCreateDate(_barDate.getTime());
-	historicalrealtime.setGroupId(MyOrder.getGroupId());
-	historicalrealtime.setCompanyId(MyOrder.getCompanyId());
-	historicalrealtime.setShareId(MyOrder.getShareID());
+	historicalrealtime.setGroupId(this.get_ibtarget_share().getGroupId());
+	historicalrealtime.setCompanyId(this.get_ibtarget_share().getCompanyId());
+	historicalrealtime.setShareId(this.get_ibtarget_share().getShareId());
 	historicalrealtime.setValue(bar.close());
 	
 	HistoricalRealtimeLocalServiceUtil.updateHistoricalRealtime(historicalrealtime);
@@ -1257,9 +1369,9 @@ public class TIMApiWrapper implements EWrapper {
 	_barDate.add(Calendar.SECOND, -1);
 	historicalrealtime = HistoricalRealtimeLocalServiceUtil.createHistoricalRealtime(CounterLocalServiceUtil.increment(HistoricalRealtime.class.getName()));
 	historicalrealtime.setCreateDate(_barDate.getTime());
-	historicalrealtime.setGroupId(MyOrder.getGroupId());
-	historicalrealtime.setCompanyId(MyOrder.getCompanyId());
-	historicalrealtime.setShareId(MyOrder.getShareID());
+	historicalrealtime.setGroupId(this.get_ibtarget_share().getGroupId());
+	historicalrealtime.setCompanyId(this.get_ibtarget_share().getCompanyId());
+	historicalrealtime.setShareId(this.get_ibtarget_share().getShareId());
 	historicalrealtime.setValue(bar.low());
 	
 	HistoricalRealtimeLocalServiceUtil.updateHistoricalRealtime(historicalrealtime);
@@ -1267,9 +1379,9 @@ public class TIMApiWrapper implements EWrapper {
 	
 	historicalrealtime = HistoricalRealtimeLocalServiceUtil.createHistoricalRealtime(CounterLocalServiceUtil.increment(HistoricalRealtime.class.getName()));	
 	historicalrealtime.setCreateDate(_barDate.getTime());
-	historicalrealtime.setGroupId(MyOrder.getGroupId());
-	historicalrealtime.setCompanyId(MyOrder.getCompanyId());
-	historicalrealtime.setShareId(MyOrder.getShareID());
+	historicalrealtime.setGroupId(this.get_ibtarget_share().getGroupId());
+	historicalrealtime.setCompanyId(this.get_ibtarget_share().getCompanyId());
+	historicalrealtime.setShareId(this.get_ibtarget_share().getShareId());
 	historicalrealtime.setValue(bar.high());
 
 	HistoricalRealtimeLocalServiceUtil.updateHistoricalRealtime(historicalrealtime);

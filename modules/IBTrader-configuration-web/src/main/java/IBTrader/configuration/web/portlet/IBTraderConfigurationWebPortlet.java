@@ -6,12 +6,8 @@ import com.ibtrader.constants.IBTraderConstants;
 import com.ibtrader.data.model.Config;
 import com.ibtrader.data.model.Share;
 import com.ibtrader.data.service.ConfigLocalService;
-import com.ibtrader.data.service.ConfigLocalServiceUtil;
-import com.ibtrader.data.service.MarketLocalService;
-import com.ibtrader.data.service.StrategyLocalService;
 import com.ibtrader.util.PositionStates;
 import com.ibtrader.util.Utilities;
-import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.Message;
@@ -31,9 +27,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Properties;
 
 import javax.portlet.ActionRequest;
@@ -151,7 +144,7 @@ public class IBTraderConfigurationWebPortlet extends MVCPortlet {
 		}
 
 
-	private void sendRebootMessage(ActionRequest actionRequest, ActionResponse actionResponse) {
+	/* private void sendRebootMessage(ActionRequest actionRequest, ActionResponse actionResponse) {
 			
         if (_log.isInfoEnabled()) {
             _log.info("Sending message to DE Echo service");
@@ -165,7 +158,7 @@ public class IBTraderConfigurationWebPortlet extends MVCPortlet {
 
         _messageBus.sendMessage(message.getDestinationName(), message);
     }
-				
+			*/	
 			
 			   
 	
@@ -184,6 +177,10 @@ public class IBTraderConfigurationWebPortlet extends MVCPortlet {
 			email_notifications
 			simulation_mode
 		 */
+		
+		themeDisplay = (ThemeDisplay)actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
+		boolean isOmniAdmin = themeDisplay.getPermissionChecker().isOmniadmin();
+		
 		String ip = ParamUtil.get(actionRequest, "ip", "");
 		long  port = ParamUtil.get(actionRequest, "port", -1);
 		String ibcontrollerpath = ParamUtil.get(actionRequest, "ibcontrollerpath", "");
@@ -213,18 +210,24 @@ public class IBTraderConfigurationWebPortlet extends MVCPortlet {
 		
 		
 		boolean bOK = Boolean.TRUE;
-		if (ip.equals("") || port==-1 || ibcontrollerpath.equals("") || user.equals("") || password.equals("") || ibcontrollerexe.equals("") ||
-				paper_ip.equals("") || paper_port==-1 || paper_ibcontrollerpath.equals("") || paper_ibcontrollerexe.equals("") || paper_user.equals("") || paper_password.equals("") )
+		// separamos omniadmin de user administrador de su organizacion 
+		if (isOmniAdmin &&  (ip.equals("") || port==-1 || ibcontrollerpath.equals("") || ibcontrollerexe.equals("") ||
+				paper_ip.equals("") || paper_port==-1 || paper_ibcontrollerpath.equals("") || paper_ibcontrollerexe.equals("")))
 		{
 			SessionErrors.add(actionRequest, "configuration.error.formatparameters");
 			bOK = false;
 		}
-		if (!Validator.isIPAddress(ip) || !Validator.isIPAddress(paper_ip))
+		if (!isOmniAdmin &&  (user.equals("") || password.equals("") || user.equals("") || password.equals("")))
+		{
+			SessionErrors.add(actionRequest, "configuration.error.formatparameters");
+			bOK = false;
+		}		
+		if (isOmniAdmin && (!Validator.isIPAddress(ip) || !Validator.isIPAddress(paper_ip)))
 		{
 			SessionErrors.add(actionRequest, "configuration.user.ipinvalid");
 			bOK = false;
 		}
-		if (port>65536 || port<1 || paper_port>65536 || paper_port<1)
+		if (isOmniAdmin && ( port>65536 || port<1 || paper_port>65536 || paper_port<1))
 		{
 			SessionErrors.add(actionRequest, "configuration.user.portinvalid");
 			bOK = false;
@@ -243,48 +246,118 @@ public class IBTraderConfigurationWebPortlet extends MVCPortlet {
 		Path p = Paths.get(ibcontrollerpath);
 		boolean exists = Files.exists(p);		
 		*/
+		File f = null;
+		File fExe = null;
+		File fpaper = null;
+		File fPaperExe = null;
 		
-		File f = new File(ibcontrollerpath);
+		if (!isOmniAdmin)
+		{
+			String  _PATH_TO_CONFIGURATION_FILE = Utilities.getConfigurationValue(IBTraderConstants.keyPATH_TO_CONFIGURATION_FILE, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());	    	
+	    	String  _PAPER_PATH_TO_CONFIGURATION_FILE = Utilities.getConfigurationValue(IBTraderConstants.keyPAPER_PATH_TO_CONFIGURATION_FILE, themeDisplay.getCompanyId(),  themeDisplay.getScopeGroupId());
+			ibcontrollerpath = _PATH_TO_CONFIGURATION_FILE;
+			paper_ibcontrollerpath = _PAPER_PATH_TO_CONFIGURATION_FILE;
+		}
+		f = new File(ibcontrollerpath);
 		if(!f.exists() ||  f.isDirectory() || !f.canWrite()) { 
 			SessionErrors.add(actionRequest, "configuration.user.invalidfilename");
 			bOK = false;
-		}		
+		}	
 		/* existe el fichero y tiene permisos */
-		File fExe = new File(ibcontrollerexe);
-		if(!fExe.exists() ||  fExe.isDirectory() || !fExe.canWrite()) { 
-			SessionErrors.add(actionRequest, "configuration.user.invalidexefilename");
-			bOK = false;
-		}		
-		/* existe el fichero y tiene permisos */
-		File fpaper = new File(paper_ibcontrollerpath);
+		fpaper = new File(paper_ibcontrollerpath);
 		if(!fpaper.exists() ||  fpaper.isDirectory() || !fpaper.canWrite()) { 
 			SessionErrors.add(actionRequest, "configuration.user.invalidfilename");
 			bOK = false;
-		}		
-		/* existe el fichero y tiene permisos */
-		File fPaperExe = new File(paper_ibcontrollerexe);
-		if(!fPaperExe.exists() ||  fPaperExe.isDirectory() || !fPaperExe.canWrite()) { 
-			SessionErrors.add(actionRequest, "configuration.user.invalidexefilename");
-			bOK = false;
-		}		
+		}				
+		if (isOmniAdmin)
+		{			
+			/* existe el fichero y tiene permisos */
+			fExe = new File(ibcontrollerexe);
+			if(!fExe.exists() ||  fExe.isDirectory() || !fExe.canWrite()) { 
+				SessionErrors.add(actionRequest, "configuration.user.invalidexefilename");
+				bOK = false;
+			}		
+			
+			/* existe el fichero y tiene permisos */
+			fPaperExe = new File(paper_ibcontrollerexe);
+			if(!fPaperExe.exists() ||  fPaperExe.isDirectory() || !fPaperExe.canWrite()) { 
+				SessionErrors.add(actionRequest, "configuration.user.invalidexefilename");
+				bOK = false;
+			}	
+		}
 		if (bOK)
 		{
+			Config _config =  null;
 			/* IP */
-			Config _config = _configLocalService.findByKeyCompanyGroup(IBTraderConstants.keyTWS_HOST, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
-			if (_config!=null)
+			if (isOmniAdmin)
 			{
-				_config.setValue(ip);
-				_configLocalService.updateConfig(_config);
-				
+				_config = _configLocalService.findByKeyCompanyGroup(IBTraderConstants.keyTWS_HOST, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
+				if (_config!=null)
+				{
+					_config.setValue(ip);
+					_configLocalService.updateConfig(_config);
+					
+				}
+				/* HOST */
+				_config = _configLocalService.findByKeyCompanyGroup(IBTraderConstants.keyTWS_PORT, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
+				if (_config!=null)
+				{
+					_config.setValue(String.valueOf(port));
+					_configLocalService.updateConfig(_config);
+					
+				}
+				/* ibcontrollerpath */ 
+				_config = _configLocalService.findByKeyCompanyGroup(IBTraderConstants.keyPATH_TO_CONFIGURATION_FILE, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
+				if (_config!=null)
+				{
+					_config.setValue(String.valueOf(ibcontrollerpath));
+					_configLocalService.updateConfig(_config);
+					
+				}
+				/* ibcontrollerexe */ 
+				_config = _configLocalService.findByKeyCompanyGroup(IBTraderConstants.keyPATH_TO_EXECUTABLE_FILE, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
+				if (_config!=null)
+				{
+					
+					_config.setValue(String.valueOf(ibcontrollerexe));
+					_configLocalService.updateConfig(_config);
+					
+				}
+				/* PAPER DATA */
+				/* IP */
+				_config = _configLocalService.findByKeyCompanyGroup(IBTraderConstants.keyPAPER_TWS_HOST, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
+				if (_config!=null)
+				{
+					_config.setValue(paper_ip);
+					_configLocalService.updateConfig(_config);
+					
+				}
+				/* HOST */
+				_config = _configLocalService.findByKeyCompanyGroup(IBTraderConstants.keyPAPER_TWS_PORT, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
+				if (_config!=null)
+				{
+					_config.setValue(String.valueOf(paper_port));
+					_configLocalService.updateConfig(_config);
+					
+				}
+				/* ibcontrollerpath */ 
+				_config = _configLocalService.findByKeyCompanyGroup(IBTraderConstants.keyPAPER_PATH_TO_CONFIGURATION_FILE, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
+				if (_config!=null)
+				{
+					_config.setValue(String.valueOf(paper_ibcontrollerpath));
+					_configLocalService.updateConfig(_config);
+					
+				}
+				/* ibcontrollerexe */ 
+				_config = _configLocalService.findByKeyCompanyGroup(IBTraderConstants.keyPAPER_PATH_TO_EXECUTABLE_FILE, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
+				if (_config!=null)
+				{
+					_config.setValue(String.valueOf(paper_ibcontrollerexe));
+					_configLocalService.updateConfig(_config);
+					
+				}
 			}
-			/* HOST */
-			_config = _configLocalService.findByKeyCompanyGroup(IBTraderConstants.keyTWS_PORT, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
-			if (_config!=null)
-			{
-				_config.setValue(String.valueOf(port));
-				_configLocalService.updateConfig(_config);
 				
-			}
 			/* USER */
 			_config = _configLocalService.findByKeyCompanyGroup(IBTraderConstants.keyUSER_TWS, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
 			if (_config!=null)
@@ -305,14 +378,7 @@ public class IBTraderConfigurationWebPortlet extends MVCPortlet {
 				_configLocalService.updateConfig(_config);
 				
 			}
-			/* ibcontrollerpath */ 
-			_config = _configLocalService.findByKeyCompanyGroup(IBTraderConstants.keyPATH_TO_CONFIGURATION_FILE, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
-			if (_config!=null)
-			{
-				_config.setValue(String.valueOf(ibcontrollerpath));
-				_configLocalService.updateConfig(_config);
-				
-			}
+			
 			/* keyENABLE_DESKTOP_NOTIFICATIONS */
 			_config = _configLocalService.findByKeyCompanyGroup(IBTraderConstants.keyENABLE_MAIL_NOTIFICATIONS, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
 			if (_config!=null)
@@ -331,8 +397,7 @@ public class IBTraderConfigurationWebPortlet extends MVCPortlet {
 				_configLocalService.updateConfig(_config);
 				
 			}
-			/* keySIMULATION_MODE */
-			
+			/* keySIMULATION_MODE */			
 			_config = _configLocalService.findByKeyCompanyGroup(IBTraderConstants.keySIMULATION_MODE, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
 			if (_config!=null)
 			{
@@ -341,35 +406,10 @@ public class IBTraderConfigurationWebPortlet extends MVCPortlet {
 				_configLocalService.updateConfig(_config);
 				
 			}
-			/* ibcontrollerexe */ 
-			_config = _configLocalService.findByKeyCompanyGroup(IBTraderConstants.keyPATH_TO_EXECUTABLE_FILE, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
-			if (_config!=null)
-			{
-				
-				_config.setValue(String.valueOf(ibcontrollerexe));
-				_configLocalService.updateConfig(_config);
-				
-			}
+			
 			/* MANTENEMOS DOS TWS ABIERTAS */
 			//sendRebootMessage(actionRequest,actionResponse);
-			
-			/* PAPER DATA */
-			/* IP */
-			_config = _configLocalService.findByKeyCompanyGroup(IBTraderConstants.keyPAPER_TWS_HOST, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
-			if (_config!=null)
-			{
-				_config.setValue(paper_ip);
-				_configLocalService.updateConfig(_config);
-				
-			}
-			/* HOST */
-			_config = _configLocalService.findByKeyCompanyGroup(IBTraderConstants.keyPAPER_TWS_PORT, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
-			if (_config!=null)
-			{
-				_config.setValue(String.valueOf(paper_port));
-				_configLocalService.updateConfig(_config);
-				
-			}
+						
 			/* USER */
 			_config = _configLocalService.findByKeyCompanyGroup(IBTraderConstants.keyPAPER_USER_TWS, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
 			if (_config!=null)
@@ -390,22 +430,7 @@ public class IBTraderConfigurationWebPortlet extends MVCPortlet {
 				_configLocalService.updateConfig(_config);
 				
 			}
-			/* ibcontrollerpath */ 
-			_config = _configLocalService.findByKeyCompanyGroup(IBTraderConstants.keyPAPER_PATH_TO_CONFIGURATION_FILE, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
-			if (_config!=null)
-			{
-				_config.setValue(String.valueOf(paper_ibcontrollerpath));
-				_configLocalService.updateConfig(_config);
-				
-			}
-			/* ibcontrollerexe */ 
-			_config = _configLocalService.findByKeyCompanyGroup(IBTraderConstants.keyPAPER_PATH_TO_EXECUTABLE_FILE, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
-			if (_config!=null)
-			{
-				_config.setValue(String.valueOf(paper_ibcontrollerexe));
-				_configLocalService.updateConfig(_config);
-				
-			}
+			
 			
 			/* ALMACENAMOS EL USUARIO Y PASSWORD, SI HAN CAMBIADO */
 			Properties p;
