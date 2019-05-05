@@ -135,13 +135,23 @@ if (_share!=null)
 			
 		 </div>
       </aui:fieldset>
-      <aui:fieldset> 
-		<aui:input type="number" label="share.number" name="numbertopurchase"  value="${share.numbertopurchase}">
-			  <aui:validator  name="required"  />	
-			  <aui:validator name="min">1</aui:validator>
-			  <aui:validator name="digits"/>
-		 </aui:input>
-    </aui:fieldset>
+       <aui:row>    
+    		<aui:col span="3">
+		      <aui:fieldset> 
+				<aui:input type="number" label="share.number" name="numbertopurchase"  value="${share.numbertopurchase}">
+					  <aui:validator  name="required"  />	
+					  <aui:validator name="min">1</aui:validator>
+					  <aui:validator name="digits"/>
+				 </aui:input>
+			 </aui:fieldset>
+		   </aui:col>
+				<aui:col span="3">
+		        <aui:fieldset> 
+		  			   <!--  html5 versus liferay debido a los numbers con dcecimales  -->    
+		     			 <label class="control-label" for="<%=portletId%>_tick_futures"><liferay-ui:message key="share.tickfutures"/></label><input  id="<%=portletId%>_tick_futures" class="field form-control"  min="0"  type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_tick_futures"  value="${share.tick_futures gt 0 ? share.tick_futures : '0.01'}"/>			    	
+			     </aui:fieldset>
+		   </aui:col>
+		</aui:row>	 
     <aui:row>    
     	<aui:col span="6">
 	    	 <aui:fieldset>		         
@@ -167,11 +177,7 @@ if (_share!=null)
 	   	     <aui:fieldset>  	  
 	   	       <aui:input  class="field form-control" label="data.expirationdate" name="expirationdate" id="expirationdate" type="text"/>	   	     			
 			</aui:fieldset>	     		  				
-  			</aui:col>   		 		    			
-    		<aui:col span="3">
-  			   <!--  html5 versus liferay debido a los numbers con dcecimales  -->    
-     			 <label class="control-label" for="<%=portletId%>_tick_futures"><liferay-ui:message key="share.tickfutures"/></label><input  id="<%=portletId%>_tick_futures" class="field form-control"  min="0"  type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_tick_futures"  value="${share.tick_futures gt 0 ? share.tick_futures : ''}"/>			    	
-	        </aui:col>  	
+  			</aui:col>   		 		    			    		  
 		     <aui:col span="3">
 			     <label class="control-label" for="<%=portletId%>_share.multiplier"><liferay-ui:message key="share.multiplier"/></label><input  id="<%=portletId%>_multiplier" class="field form-control"  min="0"  type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_multiplier"  value="${share.multiplier gt 0 ? share.multiplier : ''}"/>
 			 </aui:col>

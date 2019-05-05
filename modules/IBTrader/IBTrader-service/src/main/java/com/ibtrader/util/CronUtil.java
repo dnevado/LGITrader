@@ -1,5 +1,6 @@
 package com.ibtrader.util;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import java.time.Duration;
@@ -16,7 +17,6 @@ import com.ib.client.Contract;
 import com.ib.contracts.FutContract;
 import com.ib.contracts.StkContract;
 import com.ibtrader.constants.IBTraderConstants;
-import com.ibtrader.cron.IBTraderTrade;
 import com.ibtrader.data.model.BackTesting;
 import com.ibtrader.data.model.Config;
 import com.ibtrader.data.model.IBOrder;
@@ -64,9 +64,9 @@ import com.ibtrader.strategy.IBStrategyCancelPosition;
 
 public class CronUtil {
 
-	private final static Log _log = LogFactoryUtil.getLog(CronUtil.class);
+	private final  Log _log = LogFactoryUtil.getLog(CronUtil.class);
 	
-	public static void StartSimulationCron(Message _message)  throws Exception 	
+	public  void StartSimulationCron(Message _message)  throws Exception 	
 	{
 
 		
@@ -260,7 +260,7 @@ public class CronUtil {
 	}
 
 	/* VALIDA CONFIRMACIONES DE ORDENES COMPLETADAS Y NO ENVIADAS A LA API POR DESCONEXIONES  */
-	public static void StartOrdersValidator(Message _message) throws Exception 	{
+	public  void StartOrdersValidator(Message _message) throws Exception 	{
 		
 		int 	_CLIENT_ID = 4;	  // el dos para leer, el 3 para escribir			
 		String  _HOST = "127.0.0.1";
@@ -287,50 +287,55 @@ public class CronUtil {
 			{
 				 
 				if (_Organization.getOrganizationId()==20165) continue;  // LIFERAY 	 EXCEPTION
-				try
-				{
-				
-				_CLIENT_ID = Long.valueOf(Utilities.getConfigurationValue(IBTraderConstants.keyCRON_ORDERSCHECKER_CLIENT_INITIAL, companyId, _Organization.getGroupId())).intValue();;	  // el dos para leer, el 3 para escribir	
-
-				/* CUERNTA PAPER */
-				boolean bSIMULATED_TRADING = Utilities.getSimulatedTrading(companyId, _Organization.getGroupId());
-				
-				String _keyHOST  = IBTraderConstants.keyTWS_HOST;
-				String _keyPORT  = IBTraderConstants.keyTWS_PORT;
-				if (bSIMULATED_TRADING)
-				{
-					 _keyHOST  = IBTraderConstants.keyPAPER_TWS_HOST;
-					 _keyPORT  = IBTraderConstants.keyPAPER_TWS_PORT;
-				}
-				
-			    _HOST = Utilities.getConfigurationValue(_keyHOST, _Organization.getCompanyId(), _Organization.getGroupId());
-				
-				_PORT = Integer.valueOf(Utilities.getConfigurationValue(_keyPORT, _Organization.getCompanyId(), _Organization.getGroupId()));
-				}
-				catch (Exception e)
-			    {
+					try
+					{
 					
-					//					_log.info("Error conectandose a la organización : " + _Organization.getName() + " por parámetros de configuración inexistentes" + e.getMessage());
-					continue;// no dispone de los parameteros necesarios por error 
-				}
-				
-			     wrapper = new TIMApiWrapper(_CLIENT_ID);				
-				 if (wrapper.isConnected()) wrapper.disconnect();
-				 wrapper.connect(_HOST, _PORT,_CLIENT_ID); 	 	
-				 
-				if (!wrapper.isConnected()) // si no se conecta, lo intentamos con otro clienid , aunque pudiera ser que no tenga configuracion o tws activa 
-				{
-					Config _conf = ConfigLocalServiceUtil.findByKeyCompanyGroup(IBTraderConstants.keyCRON_ORDERSCHECKER_CLIENT_INITIAL,_Organization.getCompanyId(), _Organization.getGroupId());
-										
-					Long  NewClientID = ConfigLocalServiceUtil.findByFreeCronClientId(_Organization.getCompanyId(), _Organization.getGroupId());
-					_conf.setValue(String.valueOf(NewClientID));
-					ConfigLocalServiceUtil.updateConfig(_conf);
+					_CLIENT_ID = Long.valueOf(Utilities.getConfigurationValue(IBTraderConstants.keyCRON_ORDERSCHECKER_CLIENT_INITIAL, companyId, _Organization.getGroupId())).intValue();;	  // el dos para leer, el 3 para escribir	
+	
+					/* CUERNTA PAPER */
+					boolean bSIMULATED_TRADING = Utilities.getSimulatedTrading(companyId, _Organization.getGroupId());
 					
-				}
-				 
-				 if (wrapper.isConnected())
-			     {
+					String _keyHOST  = IBTraderConstants.keyTWS_HOST;
+					String _keyPORT  = IBTraderConstants.keyTWS_PORT;
+					if (bSIMULATED_TRADING)
+					{
+						 _keyHOST  = IBTraderConstants.keyPAPER_TWS_HOST;
+						 _keyPORT  = IBTraderConstants.keyPAPER_TWS_PORT;
+					}
 					
+				    _HOST = Utilities.getConfigurationValue(_keyHOST, _Organization.getCompanyId(), _Organization.getGroupId());
+					
+					_PORT = Integer.valueOf(Utilities.getConfigurationValue(_keyPORT, _Organization.getCompanyId(), _Organization.getGroupId()));
+					}
+					catch (Exception e)
+				    {
+						
+						//					_log.info("Error conectandose a la organización : " + _Organization.getName() + " por parámetros de configuración inexistentes" + e.getMessage());
+						continue;// no dispone de los parameteros necesarios por error 
+					}
+					if (Validator.isNull(wrapper))		
+	    			{
+    					wrapper = new TIMApiWrapper(_CLIENT_ID);
+    					wrapper.connect(_HOST, _PORT,_CLIENT_ID);
+	    			}
+					else    				
+						if (Validator.isNotNull(wrapper) && !wrapper.isConnected())
+						{
+							wrapper.disconnect();
+							wrapper.connect(_HOST, _PORT,_CLIENT_ID);
+						}				 	
+					 
+					if (!wrapper.isConnected()) // si no se conecta, lo intentamos con otro clienid , aunque pudiera ser que no tenga configuracion o tws activa 
+					{
+						Config _conf = ConfigLocalServiceUtil.findByKeyCompanyGroup(IBTraderConstants.keyCRON_ORDERSCHECKER_CLIENT_INITIAL,_Organization.getCompanyId(), _Organization.getGroupId());
+											
+						Long  NewClientID = ConfigLocalServiceUtil.findByFreeCronClientId(_Organization.getCompanyId(), _Organization.getGroupId());
+						_conf.setValue(String.valueOf(NewClientID));
+						ConfigLocalServiceUtil.updateConfig(_conf);
+						return;
+						
+					}
+		
 					 /* VERIFICACION DE LA CONECTIVIDAD, SIEMPRE NECESARIO */
 					wrapper.reqNextId(); 
 					wrapper.set_ibtarget_organization(_Organization);
@@ -372,7 +377,7 @@ public class CronUtil {
 					}			    						 
 			     }  // 		 if (oTWS.GITraderTWSIsConnected() )
 				 if (wrapper!=null && wrapper.isConnected()) wrapper.disconnect();
-			}  // 		for (Organization _Organization : lOrganization )
+		
 			//if (m_client.isConnected()) m_client.eDisconnect();
 		
 		}
@@ -385,11 +390,234 @@ public class CronUtil {
 		
 	}
 	
-	/* CONEXIONES POR ORGANIZACION */
-	public static void StartFillHistoricalDataCron(Message _message) throws Exception 	{
+	/*RELLENAMOS DIA ACTUAL y ANTERIORES SI NO HAY DATOS CON BARRAS NECESARIAS PARA MEDIA MOVIL ESPONENENCIA, 
+	 * UNOS 100 PERIODOS   */
+	public  void StartFillRequiredRealtime(Message _message) throws Exception 	{
 		
 
 			int 	_CLIENT_ID = 13;	  // el dos para leer, el 3 para escribir			
+			String  _HOST = "127.0.0.1";
+			String  _USERTWS  = "edemo";
+			int     _PORT = ConfigKeys.TWS_CONNECTION_PORT;	
+			List<Company> lCompanies = CompanyLocalServiceUtil.getCompanies();
+			Company _company = lCompanies.get(0); // tiene que existir
+			long companyId =  _company.getCompanyId();		
+			Contract oContrat = null;
+			/* VERIFICAMOS MERCADOS ACTIVOS */
+		    java.util.List<Share> lShare = null;
+		    SimpleDateFormat sdf = new SimpleDateFormat();
+		    sdf.applyPattern(Utilities._IBTRADER_FUTURE_SHORT_DATE);
+		    
+			TIMApiWrapper wrapper = null;
+			
+			System.out.println("Entering StartFillRequiredRealtime method ");
+			
+			
+		    List<Organization> lOrganization = OrganizationLocalServiceUtil.getOrganizations(companyId, OrganizationConstants.DEFAULT_PARENT_ORGANIZATION_ID, 0, OrganizationLocalServiceUtil.getOrganizationsCount()+1);
+			try
+			{
+				for (Organization _Organization : lOrganization )
+				{
+					if (_Organization.getOrganizationId()==20165) continue;  // LIFERAY 	 EXCEPTION
+											 
+						List<Market> lActiveMarkets = MarketLocalServiceUtil.findByActiveCompanyGroup(_Organization.getCompanyId(), _Organization.getGroupId(), Boolean.TRUE);
+				    	for (Market oMarket : lActiveMarkets)
+				    	{
+
+				    		lShare =  ShareLocalServiceUtil.findByMarketGroupCompany(oMarket.getMarketId(), oMarket.getGroupId(), oMarket.getCompanyId());			         
+							for (Share oShare : lShare)
+				        	{
+								if (!oShare.isValidated_trader_provider() )
+									continue;
+				    			/* insertamos control de ordenes de peticion */	
+				    			
+				    			try
+								{
+								
+								_CLIENT_ID = Long.valueOf(Utilities.getConfigurationValue(IBTraderConstants.keyCRON_FILLHISTORICALDATA, companyId, _Organization.getGroupId())).intValue();;	  // el dos para leer, el 3 para escribir	
+
+								/* CUERNTA PAPER */
+								boolean bSIMULATED_TRADING = Utilities.getSimulatedTrading(companyId, _Organization.getGroupId());
+								String _keyUSER  = IBTraderConstants.keyUSER_TWS;
+								String _keyHOST  = IBTraderConstants.keyTWS_HOST;
+								String _keyPORT  = IBTraderConstants.keyTWS_PORT;
+								if (bSIMULATED_TRADING)
+								{
+									 _keyHOST  = IBTraderConstants.keyPAPER_TWS_HOST;
+									 _keyPORT  = IBTraderConstants.keyPAPER_TWS_PORT;
+									 _keyUSER  = IBTraderConstants.keyPAPER_USER_TWS;
+								}
+								
+							    _HOST = Utilities.getConfigurationValue(_keyHOST, _Organization.getCompanyId(), _Organization.getGroupId());
+								_PORT = Integer.valueOf(Utilities.getConfigurationValue(_keyPORT, _Organization.getCompanyId(), _Organization.getGroupId()));
+								_USERTWS  = Utilities.getConfigurationValue(_keyUSER, _Organization.getCompanyId(), _Organization.getGroupId());
+								}
+								catch (Exception e)
+							    {
+									
+									//_log.info("Error conectandose a la organización : " + _Organization.getName() + " por parámetros de configuración inexistentes" + e.getMessage());
+									continue;// no dispone de los parameteros necesarios por error 
+								}	
+				    			if (Validator.isNull(wrapper))		
+				    			{
+			    					wrapper = new TIMApiWrapper(_CLIENT_ID);
+			    					wrapper.connect(_HOST, _PORT,_CLIENT_ID);
+				    			}
+								else    				
+									if (Validator.isNotNull(wrapper) && !wrapper.isConnected())
+									{
+										wrapper.disconnect();
+										wrapper.connect(_HOST, _PORT,_CLIENT_ID);
+									}								 							
+								 if (!wrapper.isConnected()) // si no se conecta, lo intentamos con otro clienid , aunque pudiera ser que no tenga configuracion o tws activa 
+									{
+										Config _conf = ConfigLocalServiceUtil.findByKeyCompanyGroup(IBTraderConstants.keyCRON_FILLHISTORICALDATA,_Organization.getCompanyId(), _Organization.getGroupId());
+															
+										Long  NewClientID = ConfigLocalServiceUtil.findByFreeCronClientId(_Organization.getCompanyId(), _Organization.getGroupId());
+										_conf.setValue(String.valueOf(NewClientID));
+										ConfigLocalServiceUtil.updateConfig(_conf);
+										continue;
+										
+								 }
+							 	/* VERIFICACION DE LA CONECTIVIDAD, SIEMPRE NECESARIO */
+								wrapper.set_ibtarget_share(oShare);
+								wrapper.reqNextId(); 
+								wrapper.set_ibtarget_organization(_Organization);
+								wrapper.setCronId(IBTraderConstants.keyCRON_FILLHISTORICALDATA);
+								wrapper.setUserTWS(_USERTWS);
+								if (wrapper.getCurrentOrderId()==-1)
+								{
+									wrapper.disconnect();
+									return;
+								}
+				    			
+			    				long  _INCREMENT_ORDER_ID = wrapper.getNextOrderId();
+				    			
+								IBOrderLocalServiceUtil.deleteByOrderCompanyGroup(_INCREMENT_ORDER_ID, _Organization.getCompanyId(), _Organization.getGroupId(),_CLIENT_ID,oShare.getShareId());
+				    			
+				    			IBOrder _order = IBOrderLocalServiceUtil.createIBOrder(_INCREMENT_ORDER_ID);
+				    			_order.setCompanyId(oMarket.getCompanyId());
+				    			_order.setGroupId(oMarket.getGroupId());
+				    			_order.setShareID(oShare.getShareId());	
+				    			_order.setOrdersId(_INCREMENT_ORDER_ID);
+				    			_order.setIbclientId(_CLIENT_ID);
+				    			_order.setRemovable_on_reboot(Boolean.TRUE);	 /* los requestid  se borran */
+				    			/* pedimos tiempo real */
+				    			IBOrderLocalServiceUtil.updateIBOrder(_order);
+				    			
+				    			/* 	CALCULAMOS LA SERIE DE BARRAS (5 minutos)  FROM Y TO SEGUN APERTURAS DE MERCADOS Y ACCIONES */
+				    			List<String> lPeriods = new ArrayList<String>();
+
+				    			Calendar hoyOpenMarket = Calendar.getInstance();
+				    			
+				    			/* REDONDEMOS A LA BARRA MAS CERCANA */				    		
+				    		    int minute = hoyOpenMarket.get(Calendar.MINUTE);
+				    		    minute = minute % 5;
+				    		    if (minute != 0) {
+				    		        int minuteToAdd = 5 - minute;
+				    		        hoyOpenMarket.add(Calendar.MINUTE, minuteToAdd);
+				    		    }
+				    			
+				    			/* MODIFICACION, MEDIAS MOVILES HASTA EL PERIDO N, N-1, N-2 */
+				    			/* SUMAMOS UN PERIOD */
+				    			
+				    			lPeriods = BaseIndicatorUtil.getPeriodsMinutesMobileAvg(hoyOpenMarket.getTime(), ConfigKeys.INDICATORS_MIN_SERIE_COUNT + 1 ,ConfigKeys.DEFAULT_TIMEBAR_MINUTES, Boolean.TRUE, oMarket);
+				    			
+				    			SimpleDateFormat _sdf = new SimpleDateFormat(Utilities.__IBTRADER_SQL_DATE_);
+					    	    Date toWithOpenMarketsTimes  =null;
+					    	    toWithOpenMarketsTimes = _sdf.parse(lPeriods.get(0));
+					    							    							    			
+				    			hoyOpenMarket.setTime(toWithOpenMarketsTimes);				    			
+				    			SimpleDateFormat form = new SimpleDateFormat(Utilities.__IBTRADER_HISTORICAL_DATE_FORMAT);				    		   		
+				    			String _to = form.format(hoyOpenMarket.getTime());
+				    			
+				    			Date _Expiration;
+				    			Calendar cExpirationDate = Calendar.getInstance();
+				    		
+				    			if (oShare.getSecurity_type().equals(ConfigKeys.SECURITY_TYPE_FUTUROS))
+								{
+				    				if (Validator.isNotNull(oShare.getExpiry_date()))
+				    				{
+				    					SimpleDateFormat sdfSHORT = new SimpleDateFormat();
+				    					sdfSHORT.applyPattern(Utilities._IBTRADER_FUTURE_LONG_DATE);
+				    			
+				    					// "dd/MM/yyyy";
+				    					_Expiration = sdfSHORT.parse(Utilities.getActiveFutureDateByDate(Arrays.asList(oShare.getExpiry_expression().split(",")), hoyOpenMarket)); 
+				    					cExpirationDate.setTimeInMillis(_Expiration.getTime());		
+				    					
+				    					/* LA FECHA HASTA FIN DEL FUTURO, CAMBIAMOS A LA FECHA FIN DEL CONTRATO */
+				    					oContrat = new FutContract( oShare.getSymbol(), sdf.format(cExpirationDate.getTime()));		    			
+										oContrat.exchange(oShare.getExchange());
+										oContrat.currency(oMarket.getCurrency());
+										oContrat.includeExpired(Boolean.TRUE);
+										 
+				    				} 
+									
+								}
+								else		    					
+									oContrat = new StkContract( oShare.getSymbol());				    			
+				    			
+				    			try {
+				    				
+				    				/* METEMOS UN STOP ENTRE PETICION Y PETICION */
+				    			   //	Thread.sleep(2000);
+				    				_log.debug("get required realtime  (1  WEEK)   for " + oShare.getSymbol() + ",to:" + _to + ",iborder:" + _INCREMENT_ORDER_ID);	
+				    				System.out.println("get required realtime  (1  WEEK)   for " + oShare.getSymbol() + ",to:" + _to + ",iborder:" + _INCREMENT_ORDER_ID);
+				    				wrapper.set_ibtarget_share(oShare);
+				    				wrapper.setFilledData(Boolean.TRUE);
+				    				wrapper.getHistoricalData(new Long(_INCREMENT_ORDER_ID).intValue(),oContrat,_to);			
+				    				Thread.sleep(1000);
+				    				
+				    				/* HYA QUE PONER UN TIMEOUT DE SEGUNDOS MAXIMO */
+				    				int MAX_SECONDS_WAIT = 20;
+				    				int execution_time=0;
+				    				
+				    				Calendar DateIni = Calendar.getInstance();				    				
+				    				while (!wrapper.isHistorialDataEnd() &&  execution_time < MAX_SECONDS_WAIT )				   
+				    				{
+				    					 	Calendar DateEnd = Calendar.getInstance();
+				    					 	execution_time = Utilities.secondsDiff(DateIni.getTime(),DateEnd.getTime());
+//				    						 	LogTWM.log(Priority.INFO, "oContrat.m_symbol:" + ":" + oContrat.m_symbol + "," + "_HISTORICAL_DATA_REQUEST:" + oTWS._HISTORICAL_DATA_REQUEST + ",Execution Time:"  + execution_time);
+				    				
+				    				}
+				    				if (!wrapper.isHistorialDataEnd()) // acaba, actualizamos la fecha del share y cerramos el thread 				    			
+				    						wrapper.cancelHistoricalData(new Long(_INCREMENT_ORDER_ID).intValue());
+				    				//if (wrapper!=null && wrapper.isConnected()) wrapper.disconnect();				    													
+				    				
+								//	oTWS.GITradergetContractDetails(new Long(_INCREMENT_ORDER_ID).intValue(),oContrat);							
+								} catch (InterruptedException e) {
+									// TODO Auto-generated catch block
+								     e.printStackTrace();							
+									//if (oTWS.GITraderTWSIsConnected())
+									 if (wrapper.isConnected()) wrapper.disconnect();
+
+								}
+				    		} // OVER SHARES 
+					        		
+					    } // OVER MARKETS
+						if (wrapper!=null && wrapper.isConnected()) wrapper.disconnect();
+						 				
+				}  // 		for (Organization _Organization : lOrganization )
+				//if (m_client.isConnected()) m_client.eDisconnect();
+			}
+			catch (Exception e)
+			{
+				
+				System.out.println("Error IBTraderFillRequiredPastRealtime " + e.getMessage());
+				if (wrapper!=null && wrapper.isConnected()) wrapper.disconnect();
+				_log.error(e.getMessage());
+			}
+			if (wrapper!=null && wrapper.isConnected()) wrapper.disconnect();
+	}
+	
+	
+	
+	
+	/*RELLENAMOS UNA SEMANA HACIA A TRAS LOS CLOSE PRICES  */
+	public  void StartFillClosePrices(Message _message) throws Exception 	{
+		
+
+			int 	_CLIENT_ID = 14;	  // el dos para leer, el 3 para escribir			
 			String  _HOST = "127.0.0.1";
 			String  _USERTWS  = "edemo";
 			int     _PORT = ConfigKeys.TWS_CONNECTION_PORT;	
@@ -410,63 +638,224 @@ public class CronUtil {
 				for (Organization _Organization : lOrganization )
 				{
 					if (_Organization.getOrganizationId()==20165) continue;  // LIFERAY 	 EXCEPTION
-					try
-					{
 					
-					_CLIENT_ID = Long.valueOf(Utilities.getConfigurationValue(IBTraderConstants.keyCRON_FILLHISTORICALDATA, companyId, _Organization.getGroupId())).intValue();;	  // el dos para leer, el 3 para escribir	
-
-					/* CUERNTA PAPER */
-					boolean bSIMULATED_TRADING = Utilities.getSimulatedTrading(companyId, _Organization.getGroupId());
-					String _keyUSER  = IBTraderConstants.keyUSER_TWS;
-					String _keyHOST  = IBTraderConstants.keyTWS_HOST;
-					String _keyPORT  = IBTraderConstants.keyTWS_PORT;
-					if (bSIMULATED_TRADING)
-					{
-						 _keyHOST  = IBTraderConstants.keyPAPER_TWS_HOST;
-						 _keyPORT  = IBTraderConstants.keyPAPER_TWS_PORT;
-						 _keyUSER  = IBTraderConstants.keyPAPER_USER_TWS;
-					}
-					
-				    _HOST = Utilities.getConfigurationValue(_keyHOST, _Organization.getCompanyId(), _Organization.getGroupId());
-					_PORT = Integer.valueOf(Utilities.getConfigurationValue(_keyPORT, _Organization.getCompanyId(), _Organization.getGroupId()));
-					_USERTWS  = Utilities.getConfigurationValue(_keyUSER, _Organization.getCompanyId(), _Organization.getGroupId());
-					}
-					catch (Exception e)
-				    {
-						
-						//_log.info("Error conectandose a la organización : " + _Organization.getName() + " por parámetros de configuración inexistentes" + e.getMessage());
-						continue;// no dispone de los parameteros necesarios por error 
-					}	
-				     wrapper = new TIMApiWrapper(_CLIENT_ID);				
-					 if (wrapper.isConnected()) wrapper.disconnect();
-					 wrapper.connect(_HOST, _PORT,_CLIENT_ID); 	 	
-					
-					 if (!wrapper.isConnected()) // si no se conecta, lo intentamos con otro clienid , aunque pudiera ser que no tenga configuracion o tws activa 
-						{
-							Config _conf = ConfigLocalServiceUtil.findByKeyCompanyGroup(IBTraderConstants.keyCRON_FILLHISTORICALDATA,_Organization.getCompanyId(), _Organization.getGroupId());
-												
-							Long  NewClientID = ConfigLocalServiceUtil.findByFreeCronClientId(_Organization.getCompanyId(), _Organization.getGroupId());
-							_conf.setValue(String.valueOf(NewClientID));
-							ConfigLocalServiceUtil.updateConfig(_conf);
+					List<Market> lActiveMarkets = MarketLocalServiceUtil.findByActiveCompanyGroup(_Organization.getCompanyId(), _Organization.getGroupId(), Boolean.TRUE);
+			    	for (Market oMarket : lActiveMarkets)
+			    	{
+			    	     /* TODAS LAS DESACTIVADAS 
+			    		 * 1 . SE VERIFICAN 
+			    		 * 2. SE CANCELA EL MARKETDATA SI LO TUVIERA  	
+			    		 * */
+			    		lShare =  ShareLocalServiceUtil.findByMarketGroupCompany(oMarket.getMarketId(), oMarket.getGroupId(), oMarket.getCompanyId());			         
+						for (Share oShare : lShare)
+			        	{
+							/* el historical data va hacia delante, la creacion de la accion mete 4  meses  para la simulacion
+							 * en el campo simulation_end_date 
+							 * 
+							 * 
+							 * 1. Buscamos la simulacion hasta el dia de ayer */
+							Calendar _yesterday = Calendar.getInstance();
+							_yesterday.set(Calendar.HOUR_OF_DAY, 0);
+							_yesterday.set(Calendar.MILLISECOND, 0);
+							_yesterday.set(Calendar.SECOND,0);
+							_yesterday.set(Calendar.MINUTE, 0);
+							_yesterday.add(Calendar.DATE,-1); // SITE DIAS ATRAS, HOY NO DEBERIA ESTAR CERRADO  
 							
-					 }
-					 if (wrapper.isConnected())
-				     {
+							Calendar _closeperiod = Calendar.getInstance();
+							_closeperiod.set(Calendar.HOUR_OF_DAY, 0);
+							_closeperiod.set(Calendar.MILLISECOND, 0);
+							_closeperiod.set(Calendar.SECOND,0);
+							_closeperiod.set(Calendar.MINUTE, 0);
+							_closeperiod.add(Calendar.DATE,-16); // 15  DIAS ATRAS, HOY NO DEBERIA ESTAR CERRADO  
+							
+			    			if (!oShare.isValidated_trader_provider() )
+								continue;
+			    			
+			    			try
+							{
+							
+							_CLIENT_ID = Long.valueOf(Utilities.getConfigurationValue(IBTraderConstants.keyCRON_FILLHISTORICALDATA, companyId, _Organization.getGroupId())).intValue();;	  // el dos para leer, el 3 para escribir	
 
-						 /* VERIFICACION DE LA CONECTIVIDAD, SIEMPRE NECESARIO */
-						wrapper.reqNextId(); 
-						wrapper.set_ibtarget_organization(_Organization);
-						wrapper.setCronId(IBTraderConstants.keyCRON_FILLHISTORICALDATA);
-						wrapper.setUserTWS(_USERTWS);
-						if (wrapper.getCurrentOrderId()==-1)
-						{
-							wrapper.disconnect();
-							return;
-						}
-						
-					//	_log.info("Connected, StartVerifyContractsCron, connecting to TWS");
+							/* CUERNTA PAPER */
+							boolean bSIMULATED_TRADING = Utilities.getSimulatedTrading(companyId, _Organization.getGroupId());
+							String _keyUSER  = IBTraderConstants.keyUSER_TWS;
+							String _keyHOST  = IBTraderConstants.keyTWS_HOST;
+							String _keyPORT  = IBTraderConstants.keyTWS_PORT;
+							if (bSIMULATED_TRADING)
+							{
+								 _keyHOST  = IBTraderConstants.keyPAPER_TWS_HOST;
+								 _keyPORT  = IBTraderConstants.keyPAPER_TWS_PORT;
+								 _keyUSER  = IBTraderConstants.keyPAPER_USER_TWS;
+							}
+							
+						    _HOST = Utilities.getConfigurationValue(_keyHOST, _Organization.getCompanyId(), _Organization.getGroupId());
+							_PORT = Integer.valueOf(Utilities.getConfigurationValue(_keyPORT, _Organization.getCompanyId(), _Organization.getGroupId()));
+							_USERTWS  = Utilities.getConfigurationValue(_keyUSER, _Organization.getCompanyId(), _Organization.getGroupId());
+							}
+							catch (Exception e)
+						    {
+								
+								//_log.info("Error conectandose a la organización : " + _Organization.getName() + " por parámetros de configuración inexistentes" + e.getMessage());
+								continue;// no dispone de los parameteros necesarios por error 
+							}	
+			    			if (Validator.isNull(wrapper))		
+			    			{
+		    					wrapper = new TIMApiWrapper(_CLIENT_ID);
+		    					wrapper.connect(_HOST, _PORT,_CLIENT_ID);
+			    			}
+							else    				
+								if (Validator.isNotNull(wrapper) && !wrapper.isConnected())
+								{
+									wrapper.disconnect();
+									wrapper.connect(_HOST, _PORT,_CLIENT_ID);
+								}				
+							
+							 if (!wrapper.isConnected()) // si no se conecta, lo intentamos con otro clienid , aunque pudiera ser que no tenga configuracion o tws activa 
+							{
+									Config _conf = ConfigLocalServiceUtil.findByKeyCompanyGroup(IBTraderConstants.keyCRON_FILLHISTORICALDATA,_Organization.getCompanyId(), _Organization.getGroupId());
+														
+									Long  NewClientID = ConfigLocalServiceUtil.findByFreeCronClientId(_Organization.getCompanyId(), _Organization.getGroupId());
+									_conf.setValue(String.valueOf(NewClientID));
+									ConfigLocalServiceUtil.updateConfig(_conf);
+									continue;
+									
+							 }
+							 
+							 /* VERIFICACION DE LA CONECTIVIDAD, SIEMPRE NECESARIO */
+							 wrapper.set_ibtarget_share(oShare);
+							 wrapper.reqNextId(); 
+							 wrapper.set_ibtarget_organization(_Organization);
+							 wrapper.setCronId(IBTraderConstants.keyCRON_FILLHISTORICALDATA);
+							 wrapper.setUserTWS(_USERTWS);
+							 if (wrapper.getCurrentOrderId()==-1)
+							 {
+								wrapper.disconnect();
+								return;
+							 }
+			    						    			
+			    			/* insertamos control de ordenes de peticion */		
+		    				long  _INCREMENT_ORDER_ID = wrapper.getNextOrderId();
+			    			
+							IBOrderLocalServiceUtil.deleteByOrderCompanyGroup(_INCREMENT_ORDER_ID, _Organization.getCompanyId(), _Organization.getGroupId(),_CLIENT_ID,oShare.getShareId());
+			    			
+			    			IBOrder _order = IBOrderLocalServiceUtil.createIBOrder(_INCREMENT_ORDER_ID);
+			    			_order.setCompanyId(oMarket.getCompanyId());
+			    			_order.setGroupId(oMarket.getGroupId());
+			    			_order.setShareID(oShare.getShareId());	
+			    			_order.setOrdersId(_INCREMENT_ORDER_ID);
+			    			_order.setIbclientId(_CLIENT_ID);
+			    			_order.setRemovable_on_reboot(Boolean.TRUE);	 /* los requestid  se borran */
+			    			/* pedimos tiempo real */
+			    			IBOrderLocalServiceUtil.updateIBOrder(_order);
+			    			
+			    			
+			    			
+			    			SimpleDateFormat form = new SimpleDateFormat(Utilities.__IBTRADER_HISTORICAL_DATE_FORMAT);
+			    			String _from =  form.format(_closeperiod.getTime());				    			
+			    			String _to = form.format(_yesterday.getTime());
+			    			
+			    			Date _Expiration;
+			    			Calendar cExpirationDate = Calendar.getInstance();
+			    		
+			    			if (oShare.getSecurity_type().equals(ConfigKeys.SECURITY_TYPE_FUTUROS))
+							{
+			    				if (Validator.isNotNull(oShare.getExpiry_date()))
+			    				{
+			    					SimpleDateFormat sdfSHORT = new SimpleDateFormat();
+			    					sdfSHORT.applyPattern(Utilities._IBTRADER_FUTURE_LONG_DATE);
+			    			
+			    					// "dd/MM/yyyy";
+			    					_Expiration = sdfSHORT.parse(Utilities.getActiveFutureDateByDate(Arrays.asList(oShare.getExpiry_expression().split(",")), _yesterday)); 
+			    					cExpirationDate.setTimeInMillis(_Expiration.getTime());		
+			    					
+			    					/* LA FECHA HASTA FIN DEL FUTURO, CAMBIAMOS A LA FECHA FIN DEL CONTRATO */
+			    					oContrat = new FutContract( oShare.getSymbol(), sdf.format(cExpirationDate.getTime()));		    			
+									oContrat.exchange(oShare.getExchange());
+									oContrat.currency(oMarket.getCurrency());
+									oContrat.includeExpired(Boolean.TRUE);
+									 
+			    				}
+								
+							}
+							else		    					
+								oContrat = new StkContract( oShare.getSymbol());				    			
+			    			
+			    			try {
+			    				/* METEMOS UN STOP ENTRE PETICION Y PETICION */
+			    				//Thread.sleep(2000);
+			    				_log.debug("get Closing Dates  for " + oShare.getSymbol() + ",from:" + _from + ",to:" + _to + ",iborder:" + _INCREMENT_ORDER_ID);	
+			    				wrapper.set_ibtarget_share(oShare);
+			    				wrapper.getHClosingPricesData(new Long(_INCREMENT_ORDER_ID).intValue(),oContrat,_to);			
+			    				Thread.sleep(1000);
+			    				
+			    				/* HYA QUE PONER UN TIMEOUT DE SEGUNDOS MAXIMO */
+			    				int MAX_SECONDS_WAIT = 20;
+			    				int execution_time=0;
+			    				
+			    				Calendar DateIni = Calendar.getInstance();				    				
+			    				while (!wrapper.isHistorialDataEnd() &&  execution_time < MAX_SECONDS_WAIT )				   
+			    				{
+			    					 	Calendar DateEnd = Calendar.getInstance();
+			    					 	execution_time = Utilities.secondsDiff(DateIni.getTime(),DateEnd.getTime());
+//				    						 	LogTWM.log(Priority.INFO, "oContrat.m_symbol:" + ":" + oContrat.m_symbol + "," + "_HISTORICAL_DATA_REQUEST:" + oTWS._HISTORICAL_DATA_REQUEST + ",Execution Time:"  + execution_time);
+			    				
+			    				}
+			    				if (!wrapper.isHistorialDataEnd()) // acaba, actualizamos la fecha del share y cerramos el thread 				    			
+			    						wrapper.cancelHistoricalData(new Long(_INCREMENT_ORDER_ID).intValue());
+			    			//	if (wrapper!=null && wrapper.isConnected()) wrapper.disconnect();				    													
+			    				
+							//	oTWS.GITradergetContractDetails(new Long(_INCREMENT_ORDER_ID).intValue(),oContrat);							
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+							     e.printStackTrace();							
+								//if (oTWS.GITraderTWSIsConnected())
+								 if (wrapper.isConnected()) wrapper.disconnect();
 
-						 
+							}
+			    		} // OVER SHARES 
+				        		
+				    } // OVER MARKETS
+					if (wrapper!=null && wrapper.isConnected()) wrapper.disconnect();
+						 				   
+				}  // 		for (Organization _Organization : lOrganization )
+				//if (m_client.isConnected()) m_client.eDisconnect();
+			}
+			catch (Exception e)
+			{
+				if (wrapper!=null && wrapper.isConnected()) wrapper.disconnect();
+				_log.error(e.getMessage());
+			}
+			if (wrapper!=null && wrapper.isConnected()) wrapper.disconnect();
+			
+	}
+	
+	
+	/* CONEXIONES POR ORGANIZACION */
+	public  void StartFillHistoricalDataCron(Message _message) throws Exception 	{
+		
+
+			int 	_CLIENT_ID = 15;	  // el dos para leer, el 3 para escribir			
+			String  _HOST = "127.0.0.1";
+			String  _USERTWS  = "edemo";
+			int     _PORT = ConfigKeys.TWS_CONNECTION_PORT;	
+			List<Company> lCompanies = CompanyLocalServiceUtil.getCompanies();
+			Company _company = lCompanies.get(0); // tiene que existir
+			long companyId =  _company.getCompanyId();		
+			Contract oContrat = null;
+			/* VERIFICAMOS MERCADOS ACTIVOS */
+		    java.util.List<Share> lShare = null;
+		    SimpleDateFormat sdf = new SimpleDateFormat();
+		    sdf.applyPattern(Utilities._IBTRADER_FUTURE_SHORT_DATE);
+		    
+			TIMApiWrapper wrapper = null;
+			
+		    List<Organization> lOrganization = OrganizationLocalServiceUtil.getOrganizations(companyId, OrganizationConstants.DEFAULT_PARENT_ORGANIZATION_ID, 0, OrganizationLocalServiceUtil.getOrganizationsCount()+1);
+			try
+			{
+				for (Organization _Organization : lOrganization )
+				{
+					if (_Organization.getOrganizationId()==20165) continue;  // LIFERAY 	 EXCEPTION
+											 
 						List<Market> lActiveMarkets = MarketLocalServiceUtil.findByActiveCompanyGroup(_Organization.getCompanyId(), _Organization.getGroupId(), Boolean.TRUE);
 				    	for (Market oMarket : lActiveMarkets)
 				    	{
@@ -489,7 +878,7 @@ public class CronUtil {
 								_yesterday.set(Calendar.MINUTE, 0);
 								_yesterday.add(Calendar.DATE,-1);
 																	    		
-				    			wrapper.set_ibtarget_share(oShare);
+				    			
 				    			Calendar calSimulatedDate = Calendar.getInstance();
 				    			if (Validator.isNull(oShare.getSimulation_end_date())) // no hay, por error, cogemos la fecha de creación y generamos un año para atras
 				    			{
@@ -503,6 +892,68 @@ public class CronUtil {
 				    			if (!oShare.isValidated_trader_provider() ||  calSimulatedDate.after(_yesterday))
 									continue;
 				    			
+				    			
+				    			try
+								{
+								
+								_CLIENT_ID = Long.valueOf(Utilities.getConfigurationValue(IBTraderConstants.keyCRON_FILLHISTORICALDATA, companyId, _Organization.getGroupId())).intValue();;	  // el dos para leer, el 3 para escribir	
+
+								/* CUERNTA PAPER */
+								boolean bSIMULATED_TRADING = Utilities.getSimulatedTrading(companyId, _Organization.getGroupId());
+								String _keyUSER  = IBTraderConstants.keyUSER_TWS;
+								String _keyHOST  = IBTraderConstants.keyTWS_HOST;
+								String _keyPORT  = IBTraderConstants.keyTWS_PORT;
+								if (bSIMULATED_TRADING)
+								{
+									 _keyHOST  = IBTraderConstants.keyPAPER_TWS_HOST;
+									 _keyPORT  = IBTraderConstants.keyPAPER_TWS_PORT;
+									 _keyUSER  = IBTraderConstants.keyPAPER_USER_TWS;
+								}
+								
+							    _HOST = Utilities.getConfigurationValue(_keyHOST, _Organization.getCompanyId(), _Organization.getGroupId());
+								_PORT = Integer.valueOf(Utilities.getConfigurationValue(_keyPORT, _Organization.getCompanyId(), _Organization.getGroupId()));
+								_USERTWS  = Utilities.getConfigurationValue(_keyUSER, _Organization.getCompanyId(), _Organization.getGroupId());
+								}
+								catch (Exception e)
+							    {
+									
+									//_log.info("Error conectandose a la organización : " + _Organization.getName() + " por parámetros de configuración inexistentes" + e.getMessage());
+									continue;// no dispone de los parameteros necesarios por error 
+								}	
+				    			if (Validator.isNull(wrapper))		
+				    			{
+			    					wrapper = new TIMApiWrapper(_CLIENT_ID);
+			    					wrapper.connect(_HOST, _PORT,_CLIENT_ID);
+				    			}
+								else    				
+									if (Validator.isNotNull(wrapper) && !wrapper.isConnected())
+									{
+										wrapper.disconnect();
+										wrapper.connect(_HOST, _PORT,_CLIENT_ID);
+									}				
+								
+								 if (!wrapper.isConnected()) // si no se conecta, lo intentamos con otro clienid , aunque pudiera ser que no tenga configuracion o tws activa 
+									{
+										Config _conf = ConfigLocalServiceUtil.findByKeyCompanyGroup(IBTraderConstants.keyCRON_FILLHISTORICALDATA,_Organization.getCompanyId(), _Organization.getGroupId());
+															
+										Long  NewClientID = ConfigLocalServiceUtil.findByFreeCronClientId(_Organization.getCompanyId(), _Organization.getGroupId());
+										_conf.setValue(String.valueOf(NewClientID));
+										ConfigLocalServiceUtil.updateConfig(_conf);
+										continue;
+										
+								 }			    
+
+								 /* VERIFICACION DE LA CONECTIVIDAD, SIEMPRE NECESARIO */
+								wrapper.set_ibtarget_share(oShare);
+								wrapper.reqNextId(); 
+								wrapper.set_ibtarget_organization(_Organization);
+								wrapper.setCronId(IBTraderConstants.keyCRON_FILLHISTORICALDATA);
+								wrapper.setUserTWS(_USERTWS);
+								if (wrapper.getCurrentOrderId()==-1)
+								{
+									wrapper.disconnect();
+									return;
+								}
 				    			
 				    			/* insertamos control de ordenes de peticion */		
 			    				long  _INCREMENT_ORDER_ID = wrapper.getNextOrderId();
@@ -528,8 +979,7 @@ public class CronUtil {
 				    			calSimulatedDate.add(Calendar.DATE, 7);
 				    			if (calSimulatedDate.after(_yesterday))
 				    				calSimulatedDate.setTime(_yesterday.getTime());
-				    				
-				    			
+				    								    		
 				    				
 				    			String _to = form.format(calSimulatedDate.getTime());
 				    			
@@ -569,6 +1019,8 @@ public class CronUtil {
 				    			calSimulatedDate.set(Calendar.MINUTE, 59);
 				    			
 				    			try {
+				    				/* METEMOS UN STOP ENTRE PETICION Y PETICION */
+				    				//Thread.sleep(2000);
 				    				_log.debug("getHistoricalData for " + oShare.getSymbol() + ",from:" + _from + ",to:" + _to + ",iborder:" + _INCREMENT_ORDER_ID);	
 				    				wrapper.set_ibtarget_share(oShare);
 				    				wrapper.getHistoricalData(new Long(_INCREMENT_ORDER_ID).intValue(),oContrat,_to);			
@@ -595,7 +1047,7 @@ public class CronUtil {
 				    				}
 				    				else // psaado el tiempo no acabo, lo cancelamos.				    					
 				    					wrapper.cancelHistoricalData(new Long(_INCREMENT_ORDER_ID).intValue());
-				    				if (wrapper!=null && wrapper.isConnected()) wrapper.disconnect();				    					
+				    				//if (wrapper!=null && wrapper.isConnected()) wrapper.disconnect();				    					
 									return;
 				    				
 								//	oTWS.GITradergetContractDetails(new Long(_INCREMENT_ORDER_ID).intValue(),oContrat);							
@@ -610,8 +1062,7 @@ public class CronUtil {
 					        		
 					    } // OVER MARKETS
 						if (wrapper!=null && wrapper.isConnected()) wrapper.disconnect();
-						 
-				     }  // 		 if (oTWS.GITraderTWSIsConnected() )
+						 			
 				}  // 		for (Organization _Organization : lOrganization )
 				//if (m_client.isConnected()) m_client.eDisconnect();
 			}
@@ -620,18 +1071,19 @@ public class CronUtil {
 				if (wrapper!=null && wrapper.isConnected()) wrapper.disconnect();
 				_log.error(e.getMessage());
 			}
+			if (wrapper!=null && wrapper.isConnected()) wrapper.disconnect();
 			
 	}
-	
+
 	
 	/* CONEXIONES POR ORGANIZACION */
-	public static void StartReadingCron(Message _message) throws Exception 	{
+	public   void StartReadingCron(Message _message) throws Exception 	{
 	
 	int 	_CLIENT_ID = 1;	  // el dos para leer, el 3 para escribir			
 	String  _HOST = "127.0.0.1";
 	int     _PORT = ConfigKeys.TWS_CONNECTION_PORT;	
 	
-	
+
 	List<Company> lCompanies = CompanyLocalServiceUtil.getCompanies();
 	
 	Company _company = lCompanies.get(0); // tiene que existir
@@ -807,7 +1259,7 @@ public class CronUtil {
 				    			boolean bToRequest=true;
 				    						    			/* cancelar el mkt si esta pedido */
 				    			/* PEDIMOS SI SYMBOL + GROUP NO ESTA  */				    			
-				    			if (!oShare.getActive() || (lShareRequested!=null && lShareRequested.contains(_uniqueShare)))
+				    			if (!oShare.IsTradeable() || (lShareRequested!=null && lShareRequested.contains(_uniqueShare)))
 				    			{
 				    				bToRequest = false; 
 				    				
@@ -830,6 +1282,7 @@ public class CronUtil {
 				    				else		    					
 				    					oContrat = new StkContract( oShare.getSymbol());
 				    				_log.info("TradingRead de :" + _uniqueShare + ":" +  oShare.getSecurity_type() + ":" + oShare.getExchange() + ":" + oMarket.getCurrency());
+				    				System.out.println("TradingRead de :" + _uniqueShare + ":" +  oShare.getSecurity_type() + ":" + oShare.getExchange() + ":" + oMarket.getCurrency());
 
 					    			/* insertamos control de ordenes de peticion */		
 				    				long  _INCREMENT_ORDER_ID = wrapper.getNextOrderId();
@@ -901,7 +1354,7 @@ public class CronUtil {
 	
 	}
 	@SuppressWarnings("deprecation")
-	public static void StartTradingCron(Message _message) throws Exception {
+	public  void StartTradingCron(Message _message) throws Exception {
 
 		/* TENEMOS TAREAS CON EL TIEMPO REAL DE CADA ACCION 
 		 * 
@@ -996,6 +1449,7 @@ public class CronUtil {
 				 wrapper = clientspool.get(_Organization.getOrganizationId());
 				 
 				_log.trace("threadID:" + Thread.currentThread().getId() + ",Wrapper obtained from pool:" + wrapper.getClient().connectedHost() + "," + _PORT + ",group:" + _Organization.getGroupId() + ",_CLIENT_ID:" + _CLIENT_ID);
+				_log.trace("threadID:" + Thread.currentThread().getId() + ",Wrapper obtained from pool:" + wrapper.getClient().connectedHost() + "," + _PORT + ",group:" + _Organization.getGroupId() + ",_CLIENT_ID:" + _CLIENT_ID);
 				 
 				 if (!wrapper.isConnected()) 
 				   wrapper.connect(_HOST, _PORT,_CLIENT_ID);
@@ -1038,6 +1492,7 @@ public class CronUtil {
 				    	// _confRunning.setValue(String.valueOf(1));
 				    	 ConfigLocalServiceUtil.updateConfig(_confRunning);
 				    	_log.info("Updating  TradingCron to database connecting to TWS clientID:" +_CLIENT_ID);
+				    	System.out.println("Updating  TradingCron to database connecting to TWS clientID:" +_CLIENT_ID);
 				    	 
 				    } 
 				 	String _HORACTUAL = Utilities.getActualHourFormatPlusMinutes(Utilities.getGlobalIBDateNowFormat(),10); 				   	 
@@ -1154,7 +1609,7 @@ public class CronUtil {
 		
 
 	/* ESTE PUEDE EJECUTARSE POR VECES */
-	public static void StartVerifyContractsCron(Message _message) throws Exception {		
+	public  void StartVerifyContractsCron(Message _message) throws Exception {		
 		List<Config> lConfig=null;
 		int 	_CLIENT_ID = 3;	  // el dos para leer, el 3 para escribir			
 		String  _HOST = "127.0.0.1";
@@ -1187,60 +1642,7 @@ public class CronUtil {
 			{
 				 
 				if (_Organization.getOrganizationId()==20165) continue;  // LIFERAY 	 EXCEPTION
-				try
-				{
-				
-				_CLIENT_ID = Long.valueOf(Utilities.getConfigurationValue(IBTraderConstants.keyCRON_CONTRACTCHECKER_CLIENT_INITIAL, companyId, _Organization.getGroupId())).intValue();;	  // el dos para leer, el 3 para escribir	
-
-				/* CUERNTA PAPER */
-				boolean bSIMULATED_TRADING = Utilities.getSimulatedTrading(companyId, _Organization.getGroupId());
-				String _keyHOST  = IBTraderConstants.keyTWS_HOST;
-				String _keyPORT  = IBTraderConstants.keyTWS_PORT;
-				if (bSIMULATED_TRADING)
-				{
-					 _keyHOST  = IBTraderConstants.keyPAPER_TWS_HOST;
-					 _keyPORT  = IBTraderConstants.keyPAPER_TWS_PORT;
-				}
-				
-			    _HOST = Utilities.getConfigurationValue(_keyHOST, _Organization.getCompanyId(), _Organization.getGroupId());
-				
-				_PORT = Integer.valueOf(Utilities.getConfigurationValue(_keyPORT, _Organization.getCompanyId(), _Organization.getGroupId()));
-				}
-				catch (Exception e)
-			    {
-					
-					//_log.info("Error conectandose a la organización : " + _Organization.getName() + " por parámetros de configuración inexistentes" + e.getMessage());
-					continue;// no dispone de los parameteros necesarios por error 
-				}	
-			     wrapper = new TIMApiWrapper(_CLIENT_ID);				
-				 if (wrapper.isConnected()) wrapper.disconnect();
-				 wrapper.connect(_HOST, _PORT,_CLIENT_ID); 	 	
-				
-				 if (!wrapper.isConnected()) // si no se conecta, lo intentamos con otro clienid , aunque pudiera ser que no tenga configuracion o tws activa 
-					{
-						Config _conf = ConfigLocalServiceUtil.findByKeyCompanyGroup(IBTraderConstants.keyCRON_CONTRACTCHECKER_CLIENT_INITIAL,_Organization.getCompanyId(), _Organization.getGroupId());
-											
-						Long  NewClientID = ConfigLocalServiceUtil.findByFreeCronClientId(_Organization.getCompanyId(), _Organization.getGroupId());
-						_conf.setValue(String.valueOf(NewClientID));
-						ConfigLocalServiceUtil.updateConfig(_conf);
-						
-				 }
-				 if (wrapper.isConnected())
-			     {
-
-					 /* VERIFICACION DE LA CONECTIVIDAD, SIEMPRE NECESARIO */
-					wrapper.reqNextId(); 
-					wrapper.set_ibtarget_organization(_Organization);
-					wrapper.setCronId(IBTraderConstants.keyCRON_CONTRACTCHECKER_CLIENT_INITIAL);
-					if (wrapper.getCurrentOrderId()==-1)
-					{
-						wrapper.disconnect();
-						return;
-					}
-					
-				//	_log.info("Connected, StartVerifyContractsCron, connecting to TWS");
-
-					 
+									 
 					List<Market> lActiveMarkets = MarketLocalServiceUtil.findByActive(Boolean.TRUE);
 			    	for (Market oMarket : lActiveMarkets)
 			    	{
@@ -1262,14 +1664,63 @@ public class CronUtil {
 							}
 							else		    					
 								oContrat = new StkContract( oShare.getSymbol());
-			    			
-			    			
-			    			/* por si se hubiera colado mas peticiones de realtime que 1, las borramos al arrancar los cron  
-			    			List<IBOrder> _lrkMktData = IBOrderLocalServiceUtil.findByShareIdCompanyGroup(oShare.getShareId(), oShare.getCompanyId(), oShare.getGroupId());
-			    			for (IBOrder rkMktData  : _lrkMktData)	{	 					
-								//oTWS.GITraderCancelRealTimeContract((new Long(rkMktData.getPrimaryKey()).intValue()));
-			    				m_client.cancelMktData(new Long(rkMktData.getPrimaryKey()).intValue());
-							}												    		*/
+
+			    			try
+							{
+							
+							_CLIENT_ID = Long.valueOf(Utilities.getConfigurationValue(IBTraderConstants.keyCRON_CONTRACTCHECKER_CLIENT_INITIAL, companyId, _Organization.getGroupId())).intValue();;	  // el dos para leer, el 3 para escribir	
+
+							/* CUERNTA PAPER */
+							boolean bSIMULATED_TRADING = Utilities.getSimulatedTrading(companyId, _Organization.getGroupId());
+							String _keyHOST  = IBTraderConstants.keyTWS_HOST;
+							String _keyPORT  = IBTraderConstants.keyTWS_PORT;
+							if (bSIMULATED_TRADING)
+							{
+								 _keyHOST  = IBTraderConstants.keyPAPER_TWS_HOST;
+								 _keyPORT  = IBTraderConstants.keyPAPER_TWS_PORT;
+							}
+							
+						    _HOST = Utilities.getConfigurationValue(_keyHOST, _Organization.getCompanyId(), _Organization.getGroupId());
+							_PORT = Integer.valueOf(Utilities.getConfigurationValue(_keyPORT, _Organization.getCompanyId(), _Organization.getGroupId()));
+							}
+							catch (Exception e)
+						    {
+								
+								//_log.info("Error conectandose a la organización : " + _Organization.getName() + " por parámetros de configuración inexistentes" + e.getMessage());
+								continue;// no dispone de los parameteros necesarios por error 
+							}	
+			    			if (Validator.isNull(wrapper))		
+			    			{
+		    					wrapper = new TIMApiWrapper(_CLIENT_ID);
+		    					wrapper.connect(_HOST, _PORT,_CLIENT_ID);
+			    			}
+							else    				
+								if (Validator.isNotNull(wrapper) && !wrapper.isConnected())
+								{
+									wrapper.disconnect();
+									wrapper.connect(_HOST, _PORT,_CLIENT_ID);
+								}				
+							
+							 if (!wrapper.isConnected()) // si no se conecta, lo intentamos con otro clienid , aunque pudiera ser que no tenga configuracion o tws activa 
+								{
+									Config _conf = ConfigLocalServiceUtil.findByKeyCompanyGroup(IBTraderConstants.keyCRON_CONTRACTCHECKER_CLIENT_INITIAL,_Organization.getCompanyId(), _Organization.getGroupId());
+														
+									Long  NewClientID = ConfigLocalServiceUtil.findByFreeCronClientId(_Organization.getCompanyId(), _Organization.getGroupId());
+									_conf.setValue(String.valueOf(NewClientID));
+									ConfigLocalServiceUtil.updateConfig(_conf);
+									continue;
+									
+							 }
+							
+							 /* VERIFICACION DE LA CONECTIVIDAD, SIEMPRE NECESARIO */
+							wrapper.reqNextId(); 
+							wrapper.set_ibtarget_organization(_Organization);
+							wrapper.setCronId(IBTraderConstants.keyCRON_CONTRACTCHECKER_CLIENT_INITIAL);
+							if (wrapper.getCurrentOrderId()==-1)
+							{
+								wrapper.disconnect();
+								return;
+							}
 			    			wrapper.set_ibtarget_share(oShare);
 			    			/* insertamos control de ordenes de peticion */		
 		    				long  _INCREMENT_ORDER_ID = wrapper.getNextOrderId();
@@ -1301,8 +1752,7 @@ public class CronUtil {
 				        		
 				    } // OVER MARKETS
 					if (wrapper!=null && wrapper.isConnected()) wrapper.disconnect();
-					 
-			     }  // 		 if (oTWS.GITraderTWSIsConnected() )
+					 			 
 			}  // 		for (Organization _Organization : lOrganization )
 			//if (m_client.isConnected()) m_client.eDisconnect();
 		}
@@ -1310,6 +1760,7 @@ public class CronUtil {
 		{
 			if (wrapper!=null && wrapper.isConnected()) wrapper.disconnect();		 
 		}
+		if (wrapper!=null && wrapper.isConnected()) wrapper.disconnect();
 		
 
 	}	
@@ -1318,7 +1769,7 @@ public class CronUtil {
 	 * 
 	 *  EXPIRAN HOY, SE LES CAMBIA LA FECHA. 
 	 * */
-	public static void StartVerifyFuturesDatesCron(Message _message) throws Exception {					
+	public  void StartVerifyFuturesDatesCron(Message _message) throws Exception {					
 		
 	try
 	{	
@@ -1341,7 +1792,7 @@ public class CronUtil {
 	}		
 	
 	/* BORRA ORDENDES MYT ANTIGUAS DE REALTIME, TODAS MENOS DE POSICIONES, 7 DIAS PARA ATRAS   */
-	public static void StartDeletingOldOrderRequestCron(Message _message) throws Exception {					
+	public  void StartDeletingOldOrderRequestCron(Message _message) throws Exception {					
 		
 	    
 		/* DEJAMOS 7 DIAS PARA LOS REINICIOS PREVENTIVOS */

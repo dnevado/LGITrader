@@ -38,7 +38,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.ibtrader.util.MobileAvgUtil;
+import com.ibtrader.util.BaseIndicatorUtil;
 import com.ibtrader.util.AroonIndicatorUtil;
 import com.ibtrader.util.ConfigKeys;
 import com.ibtrader.util.DirectionalMovementADXRUtil;
@@ -356,7 +356,7 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 				if  (Validator.isNotNull(lastRealtime))
 				{
 				//_ActualDateBar, TimeBars, shareId, companyId, groupId, PeriodN)
-				Double _avgMobileExponential = MobileAvgUtil.getExponentialAvgMobile(_calendarFromNow.getTime(), lastRealtime.doubleValue(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_macdP , isSimulation_mode(), _market);
+				Double _avgMobileExponential = BaseIndicatorUtil.getExponentialAvgMobile(_calendarFromNow.getTime(), lastRealtime.doubleValue(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_macdP , isSimulation_mode(), _market);
 				
 				if (_log.isDebugEnabled())
 					_log.debug("_avgMobileSimple for :" + _share.getSymbol() + ":" +  (Validator.isNotNull(_avgMobileExponential) ? _avgMobileExponential.doubleValue() : 0) + " " + Utilities.getWebFormattedDate(_calendarFromNow.getTime(), _IBUser));
@@ -399,12 +399,12 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 					//if ()
 					
 					
-					MACD 		  = MobileAvgUtil.getMACD(_calendarFromNow.getTime(),  _num_macdT , _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_shortAvgMACD_P,_num_longAvgMACD_P ,isSimulation_mode(),_market);
-					previousMACD  = MobileAvgUtil.getMACDPrevious(_calendarFromNow.getTime(), _num_macdT , _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_shortAvgMACD_P, _num_longAvgMACD_P,isSimulation_mode(),_market);
+					MACD 		  = BaseIndicatorUtil.getMACD(_calendarFromNow.getTime(),  _num_macdT , _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_shortAvgMACD_P,_num_longAvgMACD_P ,isSimulation_mode(),_market);
+					previousMACD  = BaseIndicatorUtil.getMACDPrevious(_calendarFromNow.getTime(), _num_macdT , _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_shortAvgMACD_P, _num_longAvgMACD_P,isSimulation_mode(),_market);
 										
 					
-					Double _macd_SignalAvgMobileExponential  		 = MobileAvgUtil.getMACDSignal(_calendarFromNow.getTime(),  _num_macdT , _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_shortAvgMACD_P,_num_longAvgMACD_P,_num_signalLineMACD_P,isSimulation_mode(),_market);
-					Double _macd_PreviousSignalAvgMobileExponential  = MobileAvgUtil.getMACDSignalPrevious(_calendarFromNow.getTime(),  _num_macdT , _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_shortAvgMACD_P,_num_longAvgMACD_P,_num_signalLineMACD_P,isSimulation_mode(),_market);
+					Double _macd_SignalAvgMobileExponential  		 = BaseIndicatorUtil.getMACDSignal(_calendarFromNow.getTime(),  _num_macdT , _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_shortAvgMACD_P,_num_longAvgMACD_P,_num_signalLineMACD_P,isSimulation_mode(),_market);
+					Double _macd_PreviousSignalAvgMobileExponential  = BaseIndicatorUtil.getMACDSignalPrevious(_calendarFromNow.getTime(),  _num_macdT , _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_shortAvgMACD_P,_num_longAvgMACD_P,_num_signalLineMACD_P,isSimulation_mode(),_market);
 					
 										
 					boolean _BuySuccess = false;

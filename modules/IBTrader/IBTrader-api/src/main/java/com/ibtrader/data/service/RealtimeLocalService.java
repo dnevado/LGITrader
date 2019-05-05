@@ -117,7 +117,7 @@ public interface RealtimeLocalService extends BaseLocalService,
 		long groupId);
 
 	public Realtime findCloseRealTime(long shareId, long companyId,
-		long groupId, Date closeDate);
+		long groupId, Date closeDate, boolean isClosedDate);
 
 	public Realtime findLastCompanyShare(long companyId, long shareId,
 		long groupId);

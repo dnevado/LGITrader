@@ -1,22 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <custom-sql>
 	<!--  https://community.liferay.com/zh/forums/-/message_boards/message/104997092 -->
-	<sql id="com.ibtrader.data.service.persistence.RealtimeFinder.findCloseRealTimeDate">
-    <![CDATA[ 
-        SELECT 
-        		*
-        FROM 
-        		IBTrader_Realtime      
-        WHERE            
-            (IBTrader_Realtime.shareId=?)
-            AND (IBTrader_Realtime.companyid=?)
-            AND (IBTrader_Realtime.groupid=?)
-         	AND (date(IBTrader_Realtime.createDate))=date(?)  
-         	AND  (IBTrader_Realtime.closprice=1)
-     ]]>
-    </sql>
-
-	
 	<sql id="com.ibtrader.data.service.persistence.RealtimeFinder.findLastRealTimeLessThanDate">
     <![CDATA[ 
         SELECT 
@@ -297,18 +281,18 @@
     <sql id="com.ibtrader.data.service.persistence.HistoricalRealtimeFinder.findMinMaxRealTimesBars">
     <![CDATA[ 
         SELECT 
-        		FROM_UNIXTIME(floor((unix_timestamp(createDate))/(?*60))*(?*60)) as barDate,
+        		FROM_UNIXTIME(floor((unix_timestamp(IBTrader_HistoricalRealtime.createDate>))/(?*60))*(?*60)) as barDate,
         		max(value) as max_value , min(value) as min_value 
         FROM 
         		IBTrader_HistoricalRealtime      
         WHERE
-	            (createDate>=?) AND
-	            (createDate<?) AND
-	            (shareId=?) AND
-	            (companyid=?) AND 
-	            (groupid=?) AND 
-	            (TIME_FORMAT(createDate,'%H%i')>=?) AND 
-				(TIME_FORMAT(createDate,'%H%i')<=?)
+	            (IBTrader_HistoricalRealtime.createDate>=?) AND
+	            (IBTrader_HistoricalRealtime.createDate<?) AND
+	            (IBTrader_HistoricalRealtime.shareId=?) AND
+	            (IBTrader_HistoricalRealtime.companyid=?) AND 
+	            (IBTrader_HistoricalRealtime.groupid=?) AND 
+	            (TIME_FORMAT(IBTrader_HistoricalRealtime.createDate,'%H%i')>=?) AND 
+				(TIME_FORMAT(IBTrader_HistoricalRealtime.createDate,'%H%i')<=?)
         GROUP BY 
         		barDate 
         ORDER BY 
@@ -468,9 +452,9 @@
         WHERE            
             (IBTrader_Realtime.shareId=?)
             AND (IBTrader_Realtime.companyid=?)
-            AND (IBTrader_Realtime.groupid=?)
-         	AND (date(IBTrader_Realtime.createDate))=date(?)  
-         	AND  (IBTrader_Realtime.closprice=1)
+            AND (IBTrader_Realtime.groupid=?)            
+         	AND (IBTrader_Realtime.createDate = ?)  
+         	AND  (IBTrader_Realtime.closeprice=?)
      ]]>
     </sql>
 
@@ -509,8 +493,8 @@
 	            (IBTrader_Realtime.shareId=?)
 	            AND (IBTrader_Realtime.companyid=?)
 	            AND (IBTrader_Realtime.groupid=?)
-	    		AND (TIME_FORMAT(IBTrader_HistoricalRealtime.createDate,'%H%i')>=?) AND 
-				(TIME_FORMAT(IBTrader_HistoricalRealtime.createDate,'%H%i')<=?)
+	    		AND (TIME_FORMAT(IBTrader_Realtime.createDate,'%H%i')>=?) AND 
+				(TIME_FORMAT(IBTrader_Realtime.createDate,'%H%i')<=?)
         GROUP BY 
         		barDate 
         ORDER BY 

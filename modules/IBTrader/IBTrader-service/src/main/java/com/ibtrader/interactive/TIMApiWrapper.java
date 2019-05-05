@@ -131,6 +131,17 @@ public class TIMApiWrapper implements EWrapper {
 	private Share _ibtarget_share= null;
 	private Organization _ibtarget_organization= null;
 	
+	private boolean isFilledData = Boolean.FALSE; // DISTINGUIMOS CUANDO PEDIMOS EL HISTORICAL PARA RELLENAR LAS BARRAS DE TIEMPO REAL NECESARIAS 
+	
+	
+	public boolean isFilledData() {
+		return isFilledData;
+	}
+
+	public void setFilledData(boolean isFilledData) {
+		this.isFilledData = isFilledData;
+	}
+
 	private boolean standalone_mode = false; // si solo hay una TWS para todos   
 	
 	private String  cronId = "";  // nos sirve para cambiar el value del clientId en su caso en la BBDD
@@ -204,6 +215,13 @@ public class TIMApiWrapper implements EWrapper {
 			clientSocket.reqHistoricalData(requestId, contract, EndTime, ConfigKeys.SIMULATION_INTERVAL_PERIOD, ConfigKeys.SIMULATION_MINUTES_BAR_SIZE + " mins", "TRADES", 1, 1, false, null);
 		
 	}
+	
+	public void getHClosingPricesData(int requestId, Contract contract, String EndTime){
+				
+		clientSocket.reqHistoricalData(requestId, contract, EndTime, ConfigKeys.SIMULATION_INTERVAL_PERIOD, ConfigKeys.CLOSE_BAR_SIZE, "TRADES", 1, 1, false, null);
+		
+	}
+	
 	
 	
 	
@@ -517,7 +535,7 @@ public class TIMApiWrapper implements EWrapper {
 	//! [nextvalidid]
 	@Override
 	public void nextValidId(int orderId) {
-		_log.trace("Next Valid Id: ["+orderId+"]");
+		//_log.trace("Next Valid Id: ["+orderId+"]");
 		currentOrderId = orderId;
 	}
 	//! [nextvalidid]
@@ -1074,7 +1092,7 @@ public class TIMApiWrapper implements EWrapper {
 		// TODO Auto-generated method stub
 		IBOrder MyOrder = null;
 		
-		if (price>0 && (field==ConfigKeys._TICKTYPE_LAST || field==ConfigKeys. _TICKTYPE_DELAYED_LAST || field==ConfigKeys. _TICKTYPE_CLOSE)) {
+		if (price>0 && (field==ConfigKeys._TICKTYPE_LAST || field==ConfigKeys. _TICKTYPE_DELAYED_LAST)) { //|| field==ConfigKeys. _TICKTYPE_CLOSE)
 
 			//MyOrder =  IBOrderLocalServiceUtil.fetchIBOrder(tickerId);
 			MyOrder =  IBOrderLocalServiceUtil.findByOrderClientGroupCompany(tickerId, _clientId, _ibtarget_organization.getCompanyId(),_ibtarget_organization.getGroupId());
@@ -1296,6 +1314,21 @@ public class TIMApiWrapper implements EWrapper {
 	id=1 date = 20131023  19:30:00 open=5.14 high=5.14 low=5.14 close=5.14 volume=0 count=0 WAP=5.14 hasGaps=false
 	id=1 date = finished-20131023  19:15:01-20131023  19:30:01 o
 	 */
+	
+	/* ************** CLOSING PRICES****************************************************************************** 
+	/* 	id=1 date = 20190306 open=171.66 high=173.57 low=171.27 close=171.99 volume=182468 count=90072 WAP=172.358
+		id=1 date = 20190307 open=172.01 high=172.64 low=167.61 close=168.3 volume=156127 count=73540 WAP=169.478
+		id=1 date = 20190308 open=167.61 high=169.92 low=165.79 close=169.76 volume=109017 count=54566 WAP=168.268
+		id=1 date = 20190311 open=171.0 high=174.3 low=171.0 close=172.48 volume=153642 count=70039 WAP=172.866
+		id=1 date = 20190312 open=172.95 high=173.8 low=171.21 close=172.0 volume=100118 count=47496 WAP=172.153
+	*/
+	/* ************** REALTIME ****************************************************************************** 
+	/* 	id=1 date = 20131023  19:15:00 open=5.04 high=5.05 low=4.88 close=4.94 volume=33 count=31 WAP=4.973 hasGaps=false
+	id=1 date = 20131023  19:20:00 open=4.99 high=5.26 low=4.99 close=5.19 volume=44 count=40 WAP=5.163 hasGaps=false
+	id=1 date = 20131023  19:25:00 open=5.2 high=5.21 low=5.07 close=5.14 volume=27 count=24 WAP=5.148 hasGaps=false
+	id=1 date = 20131023  19:30:00 open=5.14 high=5.14 low=5.14 close=5.14 volume=0 count=0 WAP=5.14 hasGaps=false
+	id=1 date = finished-20131023  19:15:01-20131023  19:30:01 o
+
 
 	/* PARA DATOS HISTORICOS DE VARIOS DIAS, PUEDE SER QUE ME DE DATOS DEL DIA ANTERIOR EN CASO DE QUE SEA LA PRIMERA HORA O UN SABADO
 * 	PROVOCANDO DUPLICIDADES, CONTROLO QUE LO SOLICITADO, ES DE LA MISMA FECHA PEDIDA */
@@ -1306,36 +1339,36 @@ public class TIMApiWrapper implements EWrapper {
 	//_log.debug("historicalData , reqId: + " + reqId);	
 	
 	SimpleDateFormat fDateHistorical = new SimpleDateFormat(Utilities.__IBTRADER_HISTORICAL_DATE_FORMAT);
+	SimpleDateFormat fDateClosePrice = new SimpleDateFormat(Utilities.__IBTRADER_LONG_DATE_FORMAT);
+
 	Calendar _barDate = Calendar.getInstance();
-	 
-	
-	
-	//MyOrder =  IBOrderLocalServiceUtil.fetchIBOrder(tickerId);
-	/* MyOrder =  = IBOrderLocalServiceUtil.findByOrderShareClientGroupCompany(reqId, _ibtarget_share.getShareId(),_clientId, _ibtarget_organization.getCompanyId(),_ibtarget_share.getGroupId());
-	if (MyOrder == null) {
-		
-		_log.debug("No se encuentra el ID " + reqId);
-		return;
-	}*/
-	
 	/* CIERRE */
 	/* MAXIMO  */
 	/* MINIMO  */
-	
+	Date parsedDate = null;
+	boolean IsClosePrice = Boolean.FALSE;
+	try
+	{
+		parsedDate = fDateHistorical.parse(bar.time());		
+	}
+	catch (Exception e){}
+	if (Validator.isNull(parsedDate)) // son cierres 
+	{
+		try {
+			parsedDate = fDateClosePrice.parse(bar.time());
+			IsClosePrice = Boolean.TRUE;
+		} catch (ParseException e1) {}		
+	}
 	try {
-		
-		Date parsedDate = fDateHistorical.parse(bar.time());
-		Date simulatedDate = fDateHistorical.parse(historicalDataRequest);		
-		// CONTROL de usuarios edemo, simulo fecha actual de historical data, ya que me da solo la actual 
 		
 		Calendar _cSim = Calendar.getInstance();
 		Calendar _cParsed = Calendar.getInstance();
-		
-		_cSim.setTimeInMillis(simulatedDate.getTime());
 		_cParsed.setTimeInMillis(parsedDate.getTime());
-		
+		// CONTROL de usuarios edemo, simulo fecha actual de historical data, ya que me da solo la actual 
 		if (this.getUserTWS().equalsIgnoreCase(Utilities._DEFAULT_USER_DEMO_))
 		{
+			Date simulatedDate = fDateHistorical.parse(historicalDataRequest);		
+			_cSim.setTimeInMillis(simulatedDate.getTime());
 			_cParsed.set(Calendar.DAY_OF_MONTH,_cSim.get(Calendar.DAY_OF_MONTH));
 			_cParsed.set(Calendar.MONTH,_cSim.get(Calendar.MONTH));
 			_cParsed.set(Calendar.YEAR,_cSim.get(Calendar.YEAR));
@@ -1353,38 +1386,86 @@ public class TIMApiWrapper implements EWrapper {
 	if (Validator.isNull(_barDate))
 		return;
 	
-	/* CIERRE */
-	HistoricalRealtime historicalrealtime = HistoricalRealtimeLocalServiceUtil.createHistoricalRealtime(CounterLocalServiceUtil.increment(HistoricalRealtime.class.getName()));
-	
-	historicalrealtime.setCreateDate(_barDate.getTime());
-	historicalrealtime.setGroupId(this.get_ibtarget_share().getGroupId());
-	historicalrealtime.setCompanyId(this.get_ibtarget_share().getCompanyId());
-	historicalrealtime.setShareId(this.get_ibtarget_share().getShareId());
-	historicalrealtime.setValue(bar.close());
-	
-	HistoricalRealtimeLocalServiceUtil.updateHistoricalRealtime(historicalrealtime);
-	
-	
-	/* MINIMO  */
-	_barDate.add(Calendar.SECOND, -1);
-	historicalrealtime = HistoricalRealtimeLocalServiceUtil.createHistoricalRealtime(CounterLocalServiceUtil.increment(HistoricalRealtime.class.getName()));
-	historicalrealtime.setCreateDate(_barDate.getTime());
-	historicalrealtime.setGroupId(this.get_ibtarget_share().getGroupId());
-	historicalrealtime.setCompanyId(this.get_ibtarget_share().getCompanyId());
-	historicalrealtime.setShareId(this.get_ibtarget_share().getShareId());
-	historicalrealtime.setValue(bar.low());
-	
-	HistoricalRealtimeLocalServiceUtil.updateHistoricalRealtime(historicalrealtime);
-	/* MAXIMO  */
-	
-	historicalrealtime = HistoricalRealtimeLocalServiceUtil.createHistoricalRealtime(CounterLocalServiceUtil.increment(HistoricalRealtime.class.getName()));	
-	historicalrealtime.setCreateDate(_barDate.getTime());
-	historicalrealtime.setGroupId(this.get_ibtarget_share().getGroupId());
-	historicalrealtime.setCompanyId(this.get_ibtarget_share().getCompanyId());
-	historicalrealtime.setShareId(this.get_ibtarget_share().getShareId());
-	historicalrealtime.setValue(bar.high());
+	/* CONTROLAMOS LOS CIERRE QUE VAN AL REALTIME O LOS REALTIME PARA RELLLENAR HUECOS ANTERIORES */
+	if (!IsClosePrice && !this.isFilledData())
+	{
+		HistoricalRealtime historicalrealtime = HistoricalRealtimeLocalServiceUtil.createHistoricalRealtime(CounterLocalServiceUtil.increment(HistoricalRealtime.class.getName()));
+		
+		_log.debug("Adding historicalData for " +  this.get_ibtarget_share().getSymbol() + " " + _barDate.getTime());
 
-	HistoricalRealtimeLocalServiceUtil.updateHistoricalRealtime(historicalrealtime);
+		
+		historicalrealtime.setCreateDate(_barDate.getTime());
+		historicalrealtime.setGroupId(this.get_ibtarget_share().getGroupId());
+		historicalrealtime.setCompanyId(this.get_ibtarget_share().getCompanyId());
+		historicalrealtime.setShareId(this.get_ibtarget_share().getShareId());
+		historicalrealtime.setValue(bar.close());
+		
+		HistoricalRealtimeLocalServiceUtil.updateHistoricalRealtime(historicalrealtime);
+		
+		
+		/* MINIMO  */
+		_barDate.add(Calendar.SECOND, -1);
+		historicalrealtime = HistoricalRealtimeLocalServiceUtil.createHistoricalRealtime(CounterLocalServiceUtil.increment(HistoricalRealtime.class.getName()));
+		historicalrealtime.setCreateDate(_barDate.getTime());
+		historicalrealtime.setGroupId(this.get_ibtarget_share().getGroupId());
+		historicalrealtime.setCompanyId(this.get_ibtarget_share().getCompanyId());
+		historicalrealtime.setShareId(this.get_ibtarget_share().getShareId());
+		historicalrealtime.setValue(bar.low());
+		
+		HistoricalRealtimeLocalServiceUtil.updateHistoricalRealtime(historicalrealtime);
+		/* MAXIMO  */
+		
+		historicalrealtime = HistoricalRealtimeLocalServiceUtil.createHistoricalRealtime(CounterLocalServiceUtil.increment(HistoricalRealtime.class.getName()));	
+		historicalrealtime.setCreateDate(_barDate.getTime());
+		historicalrealtime.setGroupId(this.get_ibtarget_share().getGroupId());
+		historicalrealtime.setCompanyId(this.get_ibtarget_share().getCompanyId());
+		historicalrealtime.setShareId(this.get_ibtarget_share().getShareId());
+		historicalrealtime.setValue(bar.high());
+	
+		HistoricalRealtimeLocalServiceUtil.updateHistoricalRealtime(historicalrealtime);
+	}
+	else // los cierres van en  Realtime, hay que verificar  si existe  
+	{
+		
+		Calendar _calNow = Calendar.getInstance();
+		/* PRECIO CIERRE ES EL DIA ANTERIOR SEGUN DOCUM DE IB */
+		_calNow.setTimeInMillis(parsedDate.getTime());
+		_calNow.set(Calendar.MILLISECOND, 0);		
+		if (IsClosePrice)
+		{			
+			_calNow.set(Calendar.HOUR, 23);
+			_calNow.set(Calendar.MINUTE, 59);
+			_calNow.set(Calendar.MILLISECOND, 59);							
+		}
+		else // si no, son los historical que rellenan los huecos del Realtime
+		{
+			// las medias moviles o exponenciales se hacen en los minutos 5,10, 15, los precios de cierre son los ultimos anteriores por barra
+			// 55.59, 50.59, 45.59, 40.59, por eso resto un segundo 			
+			_calNow.add(Calendar.SECOND, -1);
+		}
+		Realtime existsClosePrice = RealtimeLocalServiceUtil.findCloseRealTime(this.get_ibtarget_share().getShareId(), this.get_ibtarget_share().getCompanyId(), this.get_ibtarget_share().getGroupId(), _calNow.getTime(), IsClosePrice);
+		
+		_log.debug("Exists Realtime for  " +  this.get_ibtarget_share().getSymbol() + " " + _calNow.getTime() + "?:" + Validator.isNotNull(existsClosePrice));
+
+		
+		if (Validator.isNull(existsClosePrice)) // no duplicamos 
+		{
+			
+			_log.debug("Adding Required Realtime for  " +  this.get_ibtarget_share().getSymbol() + " " + parsedDate);
+			
+
+			
+			Realtime  oReal = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));
+			oReal.setGroupId(this.get_ibtarget_share().getGroupId());
+			oReal.setCompanyId(this.get_ibtarget_share().getCompanyId());
+			oReal.setShareId(this.get_ibtarget_share().getShareId());
+			oReal.setValue(bar.close());					
+			oReal.setCloseprice(IsClosePrice);
+			oReal.setCreateDate(_calNow.getTime());
+			oReal.setModifiedDate(_calNow.getTime());		
+			RealtimeLocalServiceUtil.updateRealtime(oReal);
+		}
+	}
 
 		
 	}

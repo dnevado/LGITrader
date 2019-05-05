@@ -68,7 +68,7 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
-import com.ibtrader.util.MobileAvgUtil;
+import com.ibtrader.util.BaseIndicatorUtil;
 import com.ibtrader.util.ConfigKeys;
 import com.ibtrader.util.PositionStates;
 import com.ibtrader.util.Utilities;
@@ -334,7 +334,7 @@ public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
 			// todo fue bien, tenemos media movil y de los periodos solicitados.
 			// buscamos el cierre de la barra, ultimo valor < que el MINUTE.00  (15.00, 20,00, 25.00)
 //			Double _avgMobileSimple = MobileAvgUtil.getSimpleAvgMobile(_calendarFromNow.getTime(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_macdP, isSimulation_mode(), _market);
-			Double _avgMobileSimple = MobileAvgUtil.getExponentialAvgMobile(_calendarFromNow.getTime(), vRealtime.doubleValue(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_macdP , isSimulation_mode(), _market);
+			Double _avgMobileSimple = BaseIndicatorUtil.getExponentialAvgMobile(_calendarFromNow.getTime(), vRealtime.doubleValue(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_macdP , isSimulation_mode(), _market);
 
 			if (Validator.isNotNull(_avgMobileSimple))
 			{
@@ -347,13 +347,13 @@ public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
 				
 				if (!isSimulation_mode())
 				{
-					Realtime oRTimeWidthRange = MobileAvgUtil.getMinMaxBarFromShare(_calendarFromNow,  _num_macdT, 0,_share.getShareId(), _share.getCompanyId(), _share.getGroupId()) ;
+					Realtime oRTimeWidthRange = BaseIndicatorUtil.getMinMaxBarFromShare(_calendarFromNow,  _num_macdT, 0,_share.getShareId(), _share.getCompanyId(), _share.getGroupId()) ;
 					max_value  = oRTimeWidthRange!=null && oRTimeWidthRange.getMax_value()>0 ? oRTimeWidthRange.getMax_value() : 0; 
 					min_value  = oRTimeWidthRange!=null && oRTimeWidthRange.getMin_value()>0 ? oRTimeWidthRange.getMin_value() : 0;
 				}
 				else
 				{
-					HistoricalRealtime oRTimeWidthRange = MobileAvgUtil.getHistoricalMinMaxBarFromShare(_calendarFromNow,  _num_macdT, 0,_share.getShareId(), _share.getCompanyId(), _share.getGroupId()) ;
+					HistoricalRealtime oRTimeWidthRange = BaseIndicatorUtil.getHistoricalMinMaxBarFromShare(_calendarFromNow,  _num_macdT, 0,_share.getShareId(), _share.getCompanyId(), _share.getGroupId()) ;
 					max_value  = oRTimeWidthRange!=null && oRTimeWidthRange.getMax_value()>0 ? oRTimeWidthRange.getMax_value() : 0; 
 					min_value  = oRTimeWidthRange!=null && oRTimeWidthRange.getMin_value()>0 ? oRTimeWidthRange.getMin_value() : 0;
 				}				
@@ -395,10 +395,10 @@ public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
 					
 					/* 2- La particularidad de este caso afecta a la primera sentencia, el cierre de la barra se sitúa en su 100% por encima de la MM, con lo cual debe comprar, el filtro B aquí no afecta.
 					 * */
-					_BuySuccess = MobileAvgUtil._IsBuySignalMM8_5MINBar(_avgMobileSimple, max_value,min_value, _WidthBarRangePercent, vRealtime);
+					_BuySuccess = BaseIndicatorUtil._IsBuySignalMM8_5MINBar(_avgMobileSimple, max_value,min_value, _WidthBarRangePercent, vRealtime);
 					_BuySuccess =  (_BuySuccess && currentPosition.getType().equals(PositionStates.statusTWSFire.SELL.toString()));
 
-					_SellSuccess = MobileAvgUtil._IsSellSignalMM8_5MINBar(_avgMobileSimple, max_value,min_value, _WidthBarRangePercent, vRealtime);
+					_SellSuccess = BaseIndicatorUtil._IsSellSignalMM8_5MINBar(_avgMobileSimple, max_value,min_value, _WidthBarRangePercent, vRealtime);
 					_SellSuccess = (_SellSuccess && currentPosition.getType().equals(PositionStates.statusTWSFire.BUY.toString()));
 
 					/*_BuySuccess = _BuySuccess &&  

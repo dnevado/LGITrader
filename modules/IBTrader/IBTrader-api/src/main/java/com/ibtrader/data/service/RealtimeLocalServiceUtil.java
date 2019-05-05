@@ -106,9 +106,11 @@ public class RealtimeLocalServiceUtil {
 	}
 
 	public static com.ibtrader.data.model.Realtime findCloseRealTime(
-		long shareId, long companyId, long groupId, java.util.Date closeDate) {
+		long shareId, long companyId, long groupId, java.util.Date closeDate,
+		boolean isClosedDate) {
 		return getService()
-				   .findCloseRealTime(shareId, companyId, groupId, closeDate);
+				   .findCloseRealTime(shareId, companyId, groupId, closeDate,
+			isClosedDate);
 	}
 
 	public static com.ibtrader.data.model.Realtime findLastCompanyShare(

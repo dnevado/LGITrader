@@ -379,7 +379,12 @@ public class IBTraderUnitintegrationTestsWebPortlet extends MVCPortlet {
 		realtime  = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));barTime.add(Calendar.SECOND, -1); realtime.setValue(	165	);realtime.setGroupId(groupId);realtime.setCompanyId(companyId);realtime.setShareId(shareId); realtime.setCreateDate(barTime.getTime());realtime.setModifiedDate(barTime.getTime());RealtimeLocalServiceUtil.updateRealtime(realtime);realtime  = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));realtime.setValue(	140	);realtime.setGroupId(groupId);realtime.setCompanyId(companyId);realtime.setShareId(shareId); realtime.setCreateDate(barTime.getTime()); realtime.setModifiedDate(barTime.getTime());RealtimeLocalServiceUtil.updateRealtime(realtime);barTime.add(Calendar.SECOND, +1);realtime  = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));realtime.setValue(	165	);realtime.setGroupId(groupId);realtime.setCompanyId(companyId);realtime.setShareId(shareId); realtime.setCreateDate(barTime.getTime()); realtime.setModifiedDate(barTime.getTime());RealtimeLocalServiceUtil.updateRealtime(realtime);barTime.add(Calendar.MINUTE, +timebar);
 		realtime  = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));barTime.add(Calendar.SECOND, -1); realtime.setValue(	170	);realtime.setGroupId(groupId);realtime.setCompanyId(companyId);realtime.setShareId(shareId); realtime.setCreateDate(barTime.getTime());realtime.setModifiedDate(barTime.getTime());RealtimeLocalServiceUtil.updateRealtime(realtime);realtime  = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));realtime.setValue(	150	);realtime.setGroupId(groupId);realtime.setCompanyId(companyId);realtime.setShareId(shareId); realtime.setCreateDate(barTime.getTime()); realtime.setModifiedDate(barTime.getTime());RealtimeLocalServiceUtil.updateRealtime(realtime);barTime.add(Calendar.SECOND, +1);realtime  = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));realtime.setValue(	170	);realtime.setGroupId(groupId);realtime.setCompanyId(companyId);realtime.setShareId(shareId); realtime.setCreateDate(barTime.getTime()); realtime.setModifiedDate(barTime.getTime());RealtimeLocalServiceUtil.updateRealtime(realtime);barTime.add(Calendar.MINUTE, +timebar);
 
-
+		
+		Calendar calendario = Calendar.getInstance(); 
+		
+		calendario.add(Calendar.MINUTE, 60);
+		share.setSimulation_end_date(calendario.getTime());
+		ShareLocalServiceUtil.updateShare(share);
 
 	}
 	

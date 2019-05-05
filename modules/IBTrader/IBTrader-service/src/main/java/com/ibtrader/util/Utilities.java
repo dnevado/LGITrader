@@ -70,7 +70,6 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.ibtrader.constants.IBTraderConstants;
-import com.ibtrader.cron.IBTraderTrade;
 import com.ibtrader.data.model.Config;
 import com.ibtrader.data.model.Market;
 import com.ibtrader.data.model.Position;
@@ -80,7 +79,7 @@ import com.ibtrader.data.service.ConfigLocalServiceUtil;
 import com.ibtrader.data.service.MarketLocalServiceUtil;
 import com.ibtrader.data.service.PositionLocalService;
 import com.ibtrader.data.service.PositionLocalServiceUtil;
-import com.ibtrader.interactive.TIMApiGITrader_NOVALE;
+
 
 
 public class Utilities {
@@ -390,17 +389,6 @@ public class Utilities {
 	
 	}
   
-    public static void closeTWSConnection(TIMApiGITrader_NOVALE oTWS)
-    {
-    try
-    {
-		if (oTWS.GITraderTWSIsConnected())
-		{
-			oTWS.GITraderDisconnectFromTWS();
-		}
-    }
-    catch (Exception e) {}
-    }
     
     
     public static String  getWebFormattedShortDate(Date _date)

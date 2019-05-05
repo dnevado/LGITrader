@@ -241,7 +241,7 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 								percentual_stop_lost>=0 && percentual_stop_lost<=100 && 
 										percentual_stop_profit>=0 && percentual_stop_profit<=100 && 
 												percentual_trailling_stop_lost>=0 && percentual_trailling_stop_lost<=100 &&												
-														tick_futures>=0  && multiplier>=0;
+														tick_futures>0  && multiplier>=0;
 						
 
 		try 

@@ -116,7 +116,7 @@ public class RealtimeLocalServiceImpl extends RealtimeLocalServiceBaseImpl {
 	/* OBTIENE EL MIN Y MAX de una periodo de tiempo  */	
 	public List<Realtime> findMinMaxRealTimesGroupedByBars(Date from, Date to, long shareId, long companyId, long groupId, long timebars, Market market)
 	{
-		SimpleDateFormat sf = new SimpleDateFormat(Utilities.__IBTRADER_SQL_DATE_);
+		SimpleDateFormat sf = new SimpleDateFormat(Utilities.__IBTRADER_SHORT_HOUR_FORMAT);
 		
 		Calendar _openMarket = Utilities.getNewCalendarWithHour(to,market.getStart_hour());
 		Calendar _closeMarket = Utilities.getNewCalendarWithHour(to,market.getEnd_hour());
@@ -163,9 +163,9 @@ public class RealtimeLocalServiceImpl extends RealtimeLocalServiceBaseImpl {
 
 	}
 	
-	public Realtime findCloseRealTime(long shareId, long companyId, long groupId, Date closeDate)
+	public Realtime findCloseRealTime(long shareId, long companyId, long groupId, Date closeDate,boolean isClosedDate)
 	{
-		return realtimeFinder.findCloseRealTimeDate(shareId, companyId, groupId,closeDate);
+		return realtimeFinder.findCloseRealTimeDate(shareId, companyId, groupId,closeDate, isClosedDate);
 	}
 	public List<Realtime> findCloseRealTimes( long shareId, long companyId, long groupId,Date from, Date to, List<String> closingDates)
 	{

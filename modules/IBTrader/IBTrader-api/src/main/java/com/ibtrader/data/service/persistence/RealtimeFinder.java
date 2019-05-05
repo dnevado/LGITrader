@@ -34,7 +34,8 @@ public interface RealtimeFinder {
 		long companyId, long groupId);
 
 	public com.ibtrader.data.model.Realtime findCloseRealTimeDate(
-		long shareId, long companyId, long groupId, java.util.Date date);
+		long shareId, long companyId, long groupId, java.util.Date date,
+		boolean isClosePrice);
 
 	public com.ibtrader.data.model.Realtime findLastRealTimeLessThanDate(
 		long shareId, long companyId, long groupId, java.util.Date To);

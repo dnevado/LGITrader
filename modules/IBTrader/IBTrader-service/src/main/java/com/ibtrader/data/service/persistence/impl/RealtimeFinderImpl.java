@@ -166,7 +166,7 @@ public class RealtimeFinderImpl extends RealtimeFinderBaseImpl  implements Realt
 	
 	
 	@SuppressWarnings("unchecked")
-	public Realtime findCloseRealTimeDate(long shareId, long companyId, long groupId, Date date)
+	public Realtime findCloseRealTimeDate(long shareId, long companyId, long groupId, Date date, boolean isClosePrice)
 	{
 	 List<Realtime> lRealtime = null;
 	 Session session = null;
@@ -182,9 +182,9 @@ public class RealtimeFinderImpl extends RealtimeFinderBaseImpl  implements Realt
 	        QueryPos qPos = QueryPos.getInstance(q);	    
 	        qPos.add(shareId);
 	        qPos.add(companyId);
-	        qPos.add(groupId);
-	        qPos.add(shareId);	   
+	        qPos.add(groupId);	      
 	        qPos.add(date);
+	        qPos.add(isClosePrice);
 
 	        lRealtime = (List<Realtime>) QueryUtil.list(q, getDialect(), 0, 10);
 	        if (!lRealtime.isEmpty())

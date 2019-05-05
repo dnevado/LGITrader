@@ -47,7 +47,7 @@ import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.ibtrader.util.ConfigKeys;
 import com.ibtrader.util.DirectionalMovementADXRUtil;
-import com.ibtrader.util.MobileAvgUtil;
+import com.ibtrader.util.BaseIndicatorUtil;
 import com.ibtrader.util.PositionStates;
 import com.ibtrader.util.Utilities;
 import com.ibtrader.constants.IBTraderConstants;
