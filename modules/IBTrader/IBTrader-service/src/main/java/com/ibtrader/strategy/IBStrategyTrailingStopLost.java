@@ -173,14 +173,20 @@ public class IBStrategyTrailingStopLost extends StrategyImpl {
 			}
 			else // ajustamos el trailing dinámicamente 
 			{
-				
 				double new_trailling_stop;
+				boolean bPriceIncreased = Boolean.FALSE;				/* AJUSTAMOS EL PRECIO SIEMPRE Y CUANDO EL PRECIO VAYA AUMENTANDO */
+						
 				if (currentPosition.getType().equals(PositionStates.statusTWSFire.BUY.toString()))  // operacion de compra normal..??
+				{
 					new_trailling_stop 	=  (current_price -  (current_price * percentual_trailling_stop_lost /100));
+					bPriceIncreased = new_trailling_stop > trailling_stop_lost; // vamos protegiendo mejor el beneficio 
+				}
 				else
+				{
 					new_trailling_stop  =  (current_price +  (current_price * percentual_trailling_stop_lost /100));
-				
-				if (new_trailling_stop!=trailling_stop_lost) // son distintos, actualizamos 
+					bPriceIncreased = new_trailling_stop < trailling_stop_lost;
+				}
+				if (bPriceIncreased) // son distintos, actualizamos 
 				{
 					currentPosition.setPricetrailling_stop_lost(new_trailling_stop);
 					PositionLocalServiceUtil.updatePosition(currentPosition);

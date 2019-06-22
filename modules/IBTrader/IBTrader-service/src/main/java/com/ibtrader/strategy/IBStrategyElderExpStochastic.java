@@ -291,7 +291,10 @@ public class IBStrategyElderExpStochastic extends StrategyImpl {
 		/* TIMEZONE AJUSTADO */
 		Date _FromNow =  !isSimulation_mode() ?   Utilities.getDate(_IBUser) : backtestingdDate;
 		Calendar _calendarFromNow = Calendar.getInstance();
-		_calendarFromNow.setTime(_FromNow);		
+		_calendarFromNow.setTime(_FromNow);
+	
+		long currentSeconds = _calendarFromNow.get(Calendar.SECOND);
+		
 		_calendarFromNow.set(Calendar.SECOND, 0);
 		_calendarFromNow.set(Calendar.MILLISECOND, 0);
 		
@@ -369,9 +372,7 @@ public class IBStrategyElderExpStochastic extends StrategyImpl {
 				//_ActualDateBar, TimeBars, shareId, companyId, groupId, PeriodN)
 					Double _avgMobileExponential = BaseIndicatorUtil.getExponentialAvgMobile(_calendarFromNow.getTime(), lastRealtime.doubleValue(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_macdP , isSimulation_mode(), _market);
 					
-					if (_log.isDebugEnabled())
-					_log.debug("_avgMobileSimple for :" + _share.getSymbol() + ":" +  (Validator.isNotNull(_avgMobileExponential) ? _avgMobileExponential.doubleValue() : 0) + " " + Utilities.getWebFormattedDate(_calendarFromNow.getTime(), _IBUser));
-				
+					
 					if (_avgMobileExponential!=null)
 					{
 								
@@ -390,8 +391,12 @@ public class IBStrategyElderExpStochastic extends StrategyImpl {
 					boolean bBuyStochasticSignal =  Validator.isNotNull(stochasticD) && stochasticD>0 && stochasticD <=_num_stochastic_rate_oversold;
 				    boolean bSellStochasticSignal = Validator.isNotNull(stochasticD) && stochasticD>0 && stochasticD >=_num_stochastic_rate_overbought;
 				    
-			
+				    /* Si la primera pantalla tiene tendencia alcista y en la segunda pantalla los osciladores indican sobre venta, abrimos una posición de compra si en la tercera pantalla  el oscilador está en sobre venta y el precio supera el máximo del día o el de la sesión anterior.
+				    Si en la primera pantalla se identifica un movimiento de tendencia a la baja y el oscilador en la segunda pantalla se mueve al alza, hay que estar listos para abrir una posición corta una vez que la tercera pantalla de la señal.
 				    
+				    * Valores menores de 20 en el oscilador indican condiciones de sobre venta que pueden anticipar un rebote y alza del precio
+				    *
+				    */
 				    boolean bBuyEntryBasedLastBarTicks  =  Boolean.FALSE;
 				    boolean bSellEntryBasedLastBarTicks  =  Boolean.FALSE;
 				    
@@ -414,7 +419,18 @@ public class IBStrategyElderExpStochastic extends StrategyImpl {
 
 					_SellSuccess = _SellSuccess  &&  
 							(operationfilter.equals("ALL") || operationfilter.equals(PositionStates.statusTWSFire.SELL.toString()));
-					
+
+					/*  SACAMOS DEPURACION EN DURANTE LOS TRES PRIMEROS SEGUNDOS EN LOS CORTES DE BARRAS */
+					if (currentSeconds<3)						
+					{
+						_log.debug("_avgMobileExponential for :" + _share.getSymbol() + ":" +  (Validator.isNotNull(_avgMobileExponential) ? _avgMobileExponential.doubleValue() : 0) + " " + Utilities.getWebFormattedDate(_calendarFromNow.getTime(), _IBUser));
+						_log.debug("stochasticD:" + stochasticD + ",previousmax_value:" +  previousmax_value + "_num_ticks_fromLastbar:" + _num_ticks_fromLastbar + ",lastRealtime>=previousmax_value + Ticks*nticks:" +  bBuyEntryBasedLastBarTicks );
+						_log.debug("stochasticD:" + stochasticD + ",previousmin_value:" +  previousmin_value + "_num_ticks_fromLastbar:" + _num_ticks_fromLastbar + ",lastRealtime<=previousmax_value - Ticks*nticks:" +  bSellEntryBasedLastBarTicks );
+						_log.debug("lastRealtime.doubleValue() >_avgMobileExponential.doubleValue() && bBuyStochasticSignal && bBuyEntryBasedLastBarTicks:" + _BuySuccess);
+						_log.debug("lastRealtime.doubleValue() <_avgMobileExponential.doubleValue() && bSellStochasticSignal && bSellEntryBasedLastBarTick:" + _SellSuccess);
+
+
+					}
 					
 					if (_BuySuccess || _SellSuccess)
 					{
@@ -430,10 +446,12 @@ public class IBStrategyElderExpStochastic extends StrategyImpl {
 						_tradeDescription.put("_avgMobileExponential", _avgMobileExponential);	
 						_tradeDescription.put("_num_macdP", _num_macdP);
 						_tradeDescription.put("_num_macdT", _num_macdT);
-						_tradeDescription.put("_num_stochastic_rate_overbought", _num_stochastic_rate_overbought);
+						_tradeDescription.put("_num_stochastic_rate_overbought" , _num_stochastic_rate_overbought);
 						_tradeDescription.put("_num_stochastic_rate_oversold", _num_stochastic_rate_oversold);
-						_tradeDescription.put("bBuyStochasticSignal", bBuyStochasticSignal);
-						_tradeDescription.put("bSellStochasticSignal", bSellStochasticSignal);						
+						_tradeDescription.put("bBuyStochasticSignal stochasticD <=_num_stochastic_rate_oversold", bBuyStochasticSignal);
+						_tradeDescription.put("bSellStochasticSignal stochasticD >=_num_stochastic_rate_overbought", bSellStochasticSignal);		
+						_tradeDescription.put("bBuyEntryBasedLastBarTicks previousmax_value > 0 &&  lastRealtime.doubleValue()  >= previousmax_value  + (_share.getTick_futures() * _num_ticks_fromLastbar)", bBuyEntryBasedLastBarTicks);
+						_tradeDescription.put("bSellEntryBasedLastBarTicks previousmin_value > 0 &&  lastRealtime.doubleValue()  <= previousmin_value  - (_share.getTick_futures() * _num_ticks_fromLastbar)", bSellEntryBasedLastBarTicks);
 						_tradeDescription.put("operationfilter", operationfilter);						
 						_tradeDescription.put("stochasticD", stochasticD);												
 					

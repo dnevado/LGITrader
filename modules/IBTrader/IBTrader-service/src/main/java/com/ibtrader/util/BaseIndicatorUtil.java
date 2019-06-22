@@ -567,8 +567,19 @@ public class BaseIndicatorUtil {
 		
 		ClosePriceIndicator closePrice = new ClosePriceIndicator(series);
         EMAIndicator emea = new EMAIndicator(closePrice, (int) PeriodN);
-        exponentialAvgMobile = emea.getValue(Long.valueOf(PeriodN).intValue()).doubleValue();
-
+      
+        if (_log.isDebugEnabled())
+        {
+			for (int j=0;j<PeriodN;j++)
+			{ 
+				try 
+				{
+					_log.debug("getExponentialAvgMobile:" + j + ":" +  emea.getValue(Long.valueOf(PeriodN).intValue()).doubleValue());
+				} 
+				catch (Exception e) {}	
+			}
+        }
+        exponentialAvgMobile = emea.getValue(Long.valueOf(PeriodN-1).intValue()).doubleValue();
 		}
 	    catch (Exception e)
 		{

@@ -146,9 +146,13 @@ if (_share!=null)
 			 </aui:fieldset>
 		   </aui:col>
 				<aui:col span="3">
-		        <aui:fieldset> 
-		  			   <!--  html5 versus liferay debido a los numbers con dcecimales  -->    
-		     			 <label class="control-label" for="<%=portletId%>_tick_futures"><liferay-ui:message key="share.tickfutures"/></label><input  id="<%=portletId%>_tick_futures" class="field form-control"  min="0"  type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_tick_futures"  value="${share.tick_futures gt 0 ? share.tick_futures : '0.01'}"/>			    	
+		        <aui:fieldset>
+		        			<aui:input type="text" label="share.tickfutures" name="tick_futures"  value="${share.tick_futures gt 0 ? share.tick_futures : '0.01'}">
+							  <aui:validator  name="required"  />								
+						 </aui:input>
+		  			   <!--  html5 versus liferay debido a los numbers con dcecimales      
+		     			 <label class="control-label" for="<%=portletId%>_tick_futures"><liferay-ui:message key="share.tickfutures"/></label><input  id="<%=portletId%>_tick_futures" class="field form-control"  min="0"  type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_tick_futures"  value="${share.tick_futures gt 0 ? share.tick_futures : '0.01'}"/>
+		     			 -->			    	
 			     </aui:fieldset>
 		   </aui:col>
 		</aui:row>	 

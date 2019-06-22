@@ -24,16 +24,17 @@ import com.ibtrader.scheduler.impl.StorageTypeAwareSchedulerEntryImpl;
 import com.ibtrader.util.CronUtil;
 
 
-/* CADA 1 MINUTO VERIFICAMOS LOS VENCIMIENTOS FUTUROS EN UTC / CET */
 
 /* property = {"cron.expression=0 0 0 * * ?"}, */
-@Component(  immediate = true,  service = IBTraderFuturesDates.class)
-public class IBTraderFuturesDates  extends BaseSchedulerEntryMessageListener {
+@Component(  immediate = true,  service = IBTraderRemovePastRealTime.class)
+public class IBTraderRemovePastRealTime  extends BaseSchedulerEntryMessageListener {
 
-	Log _log = LogFactoryUtil.getLog(IBTraderFuturesDates.class);
-	private SchedulerEngineHelper _schedulerEngineHelper;
+	Log _log = LogFactoryUtil.getLog(IBTraderRemovePastRealTime.class);
 	private volatile boolean runningJob = false;
 	private volatile boolean _initialized = false;
+
+
+	private SchedulerEngineHelper _schedulerEngineHelper;
 
 	
 	@Reference(unbind = "-")
@@ -46,42 +47,41 @@ public class IBTraderFuturesDates  extends BaseSchedulerEntryMessageListener {
 	protected void setTriggerFactory(TriggerFactory triggerFactory) {
 	}
 
-	
-	 protected StorageType getStorageType() {
-		    if (schedulerEntryImpl instanceof StorageTypeAware) {
-		      return ((StorageTypeAware) schedulerEntryImpl).getStorageType();
-		    }
-		    
-		    return StorageType.MEMORY_CLUSTERED;
-		  }
-		@Deactivate
-		protected void deactivate() {
-			
-			System.out.println("IBTraderFuturesDates deactivate runningJob:" + runningJob); 
-
-			
-			// if we previously were initialized
-		    if (_initialized) {
-		      // unschedule the job so it is cleaned up
-		      try {
-		        _schedulerEngineHelper.unschedule(schedulerEntryImpl, getStorageType());
-		      } catch (SchedulerException se) {
-		        if (_log.isWarnEnabled()) {
-		          _log.warn("Unable to unschedule trigger", se);
-		        }
-		      }
-
-		      // unregister this listener
-		      _schedulerEngineHelper.unregister(this);
-		    }
-		    
-		    // clear the initialized flag
-		    _initialized = false;
-		   
-			 // clear the initialized flag
+   protected StorageType getStorageType() {
+	    if (schedulerEntryImpl instanceof StorageTypeAware) {
+	      return ((StorageTypeAware) schedulerEntryImpl).getStorageType();
+	    }
+	    
+	    return StorageType.MEMORY_CLUSTERED;
+	  }
+	@Deactivate
+	protected void deactivate() {
 		
-			    
-		}
+		System.out.println("IBTraderRemovePastRealTime deactivate runningJob:" + runningJob); 
+
+		
+		// if we previously were initialized
+	    if (_initialized) {
+	      // unschedule the job so it is cleaned up
+	      try {
+	        _schedulerEngineHelper.unschedule(schedulerEntryImpl, getStorageType());
+	      } catch (SchedulerException se) {
+	        if (_log.isWarnEnabled()) {
+	          _log.warn("Unable to unschedule trigger", se);
+	        }
+	      }
+
+	      // unregister this listener
+	      _schedulerEngineHelper.unregister(this);
+	    }
+	    
+	    // clear the initialized flag
+	    _initialized = false;
+	   
+		 // clear the initialized flag
+	
+		    
+	}
 	
 	@Activate
 	@Modified
@@ -91,12 +91,12 @@ public class IBTraderFuturesDates  extends BaseSchedulerEntryMessageListener {
 		schedulerEntryImpl.setTrigger(TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(),
 				calendar.getTime(),cron.toString())); */
 		
-		   // if we were initialized (i.e. if this is called due to CA modification)
+				
 	    schedulerEntryImpl = new StorageTypeAwareSchedulerEntryImpl(schedulerEntryImpl, StorageType.PERSISTED);
 	    // update the trigger for the scheduled job.
 		
-	    schedulerEntryImpl.setTrigger(TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(),60, TimeUnit.SECOND));  
-		_log.info("Activating CRON..."  + schedulerEntryImpl.getTrigger());
+	    schedulerEntryImpl.setTrigger(TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(),1, TimeUnit.DAY));  
+	
 		
 		if (_initialized) {
 		      // first deactivate the current job before we schedule.
@@ -107,18 +107,32 @@ public class IBTraderFuturesDates  extends BaseSchedulerEntryMessageListener {
 		_initialized = true;
 		
 	   _schedulerEngineHelper.register(this, schedulerEntryImpl, DestinationNames.SCHEDULER_DISPATCH);
+		
 	 
 	 	
 	}
 	
 	@Override
 	protected void doReceive(Message message) throws Exception {
-				
-		CronUtil cronThread = new CronUtil();			
-		_log.debug(" Start StartVerifyFuturesDatesCron doReceive");
-		cronThread.StartVerifyFuturesDatesCron(message);
-	
-	 	 
+		
+		_log.info("IBTraderRemovePastRealTime doReceive runningJob:" + runningJob); 
+	   if(runningJob) 
+	   {
+		   		_log.debug("IBTraderRemovePastRealTime already running, not starting again");
+		        return;
+	   }	
+		try
+		{
+			runningJob = true;					
+			CronUtil cronThread = new CronUtil();			
+			cronThread.StartRemovePastRealTime(message);
+		}
+		catch (Exception e)
+		{
+			runningJob = false;
+			_log.debug("IBTraderRemovePastRealTime doReceive" + e.getMessage());
+		}
+		runningJob = false; 
 			
 } // END RECEIVER
 }// END CLASS

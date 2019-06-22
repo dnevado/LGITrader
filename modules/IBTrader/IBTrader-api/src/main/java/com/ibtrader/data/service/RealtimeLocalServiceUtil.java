@@ -374,6 +374,10 @@ public class RealtimeLocalServiceUtil {
 			.removeRealtimeFromToDate(from, to, shareId, companyId, groupId);
 	}
 
+	public static void removeScheduledRealTimes(long companyId, long groupId) {
+		getService().removeScheduledRealTimes(companyId, groupId);
+	}
+
 	public static RealtimeLocalService getService() {
 		return _serviceTracker.getService();
 	}

@@ -24,6 +24,7 @@ import com.ibtrader.scheduler.impl.StorageTypeAwareSchedulerEntryImpl;
 import com.ibtrader.util.CronUtil;
 
 
+/* https://dimon.ca/dmitrys-tws-api-faq/#h.hlpf51kokql8 */
 
 /* property = {"cron.expression=0 0 0 * * ?"}, */
 @Component(  immediate = true,  service = IBTraderRead.class)

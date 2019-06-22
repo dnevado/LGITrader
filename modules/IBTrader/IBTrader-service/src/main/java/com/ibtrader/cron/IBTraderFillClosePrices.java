@@ -24,16 +24,20 @@ import com.ibtrader.scheduler.impl.StorageTypeAwareSchedulerEntryImpl;
 import com.ibtrader.util.CronUtil;
 
 
-/* CADA 1 MINUTO VERIFICAMOS LOS VENCIMIENTOS FUTUROS EN UTC / CET */
 
 /* property = {"cron.expression=0 0 0 * * ?"}, */
-@Component(  immediate = true,  service = IBTraderFuturesDates.class)
-public class IBTraderFuturesDates  extends BaseSchedulerEntryMessageListener {
+@Component(  immediate = true,  service = IBTraderFillClosePrices.class)
+public class IBTraderFillClosePrices  extends BaseSchedulerEntryMessageListener {
 
-	Log _log = LogFactoryUtil.getLog(IBTraderFuturesDates.class);
-	private SchedulerEngineHelper _schedulerEngineHelper;
+	Log _log = LogFactoryUtil.getLog(IBTraderFillClosePrices.class);
+	
+	
 	private volatile boolean runningJob = false;
 	private volatile boolean _initialized = false;
+
+
+	
+	private SchedulerEngineHelper _schedulerEngineHelper;
 
 	
 	@Reference(unbind = "-")
@@ -57,7 +61,7 @@ public class IBTraderFuturesDates  extends BaseSchedulerEntryMessageListener {
 		@Deactivate
 		protected void deactivate() {
 			
-			System.out.println("IBTraderFuturesDates deactivate runningJob:" + runningJob); 
+			
 
 			
 			// if we previously were initialized
@@ -95,7 +99,7 @@ public class IBTraderFuturesDates  extends BaseSchedulerEntryMessageListener {
 	    schedulerEntryImpl = new StorageTypeAwareSchedulerEntryImpl(schedulerEntryImpl, StorageType.PERSISTED);
 	    // update the trigger for the scheduled job.
 		
-	    schedulerEntryImpl.setTrigger(TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(),60, TimeUnit.SECOND));  
+	    schedulerEntryImpl.setTrigger(TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(),60, TimeUnit.MINUTE));  
 		_log.info("Activating CRON..."  + schedulerEntryImpl.getTrigger());
 		
 		if (_initialized) {
@@ -113,12 +117,29 @@ public class IBTraderFuturesDates  extends BaseSchedulerEntryMessageListener {
 	
 	@Override
 	protected void doReceive(Message message) throws Exception {
-				
-		CronUtil cronThread = new CronUtil();			
-		_log.debug(" Start StartVerifyFuturesDatesCron doReceive");
-		cronThread.StartVerifyFuturesDatesCron(message);
+		
 	
-	 	 
+	
+		
+		
+	   if(runningJob) 
+	   {
+		   		_log.debug("IBTraderFillClosePrices already running, not starting again");
+		        return;
+	   }
+		
+		try
+		{		
+			runningJob = true;					
+			CronUtil cronThread = new CronUtil();
+			_log.debug(" Start IBTraderFillClosePrices doReceive");
+	//		cronThread.StartFillClosePrices(message);
+		}
+		catch (Exception e)
+		{
+			runningJob = false;
+		}
+		runningJob = false; 
 			
 } // END RECEIVER
 }// END CLASS

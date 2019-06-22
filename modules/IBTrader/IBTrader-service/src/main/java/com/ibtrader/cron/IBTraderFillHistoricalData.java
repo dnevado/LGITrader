@@ -90,7 +90,7 @@ public class IBTraderFillHistoricalData  extends BaseSchedulerEntryMessageListen
 		 schedulerEntryImpl = new StorageTypeAwareSchedulerEntryImpl(schedulerEntryImpl, StorageType.PERSISTED);
 		    // update the trigger for the scheduled job.
 			
-		    schedulerEntryImpl.setTrigger(TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(),60, TimeUnit.SECOND));  
+		    schedulerEntryImpl.setTrigger(TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(),30, TimeUnit.SECOND));  
 			_log.info("Activating CRON..."  + schedulerEntryImpl.getTrigger());
 			
 			if (_initialized) {
@@ -121,17 +121,15 @@ public class IBTraderFillHistoricalData  extends BaseSchedulerEntryMessageListen
 		try
 		{
 			runningJob = true;					
-			CronUtil cronThread = new CronUtil();
-			System.out.println(" Start IBTraderFillClosePrices doReceive");
+			CronUtil cronThread = new CronUtil();			
 			cronThread.StartFillHistoricalDataCron(message);
 		
 		}
 		catch (Exception e)
 		{
 			runningJob = false;
-			System.out.println("Exception runningJob = false;");
+			_log.debug("Exception runningJob = false;");
 		}
-		System.out.println("runningJob = false");
 		runningJob = false; 
 			
 } // END RECEIVER

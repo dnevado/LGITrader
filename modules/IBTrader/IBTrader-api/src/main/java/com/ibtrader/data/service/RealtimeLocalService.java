@@ -309,4 +309,6 @@ public interface RealtimeLocalService extends BaseLocalService,
 
 	public void removeRealtimeFromToDate(Date from, Date to, long shareId,
 		long companyId, long groupId);
+
+	public void removeScheduledRealTimes(long companyId, long groupId);
 }

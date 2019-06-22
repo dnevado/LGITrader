@@ -90,15 +90,13 @@ public class IBTraderFillRequiredPastRealtime  extends BaseSchedulerEntryMessage
 	/* 	 que se dispare en el proximo minuto y el dia +28   
 		schedulerEntryImpl.setTrigger(TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(),
 				calendar.getTime(),cron.toString())); */
-		_log.info("StartFillRequiredRealtime activate runningJob:" + runningJob); 
-		System.out.println("StartFillRequiredRealtime activate runningJob:" + runningJob); 
-
-		
+		_log.info("NO LO EJECUTAMOS PÀRA VER LOS ESTOCASTICOS StartFillRequiredRealtime activate runningJob:" + runningJob); 
+				
 	    schedulerEntryImpl = new StorageTypeAwareSchedulerEntryImpl(schedulerEntryImpl, StorageType.PERSISTED);
 	    // update the trigger for the scheduled job.
 		
 	    schedulerEntryImpl.setTrigger(TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(),120, TimeUnit.SECOND));  
-		_log.info("Activating CRON..."  + schedulerEntryImpl.getTrigger());
+		_log.info("NO LO EJECUTAMOS PÀRA VER LOS ESTOCASTICOS Activating CRON..."  + schedulerEntryImpl.getTrigger());
 		
 		if (_initialized) {
 		      // first deactivate the current job before we schedule.
@@ -118,24 +116,21 @@ public class IBTraderFillRequiredPastRealtime  extends BaseSchedulerEntryMessage
 	protected void doReceive(Message message) throws Exception {
 		
 		_log.info("IBTraderFillRequiredPastRealtime doReceive runningJob:" + runningJob); 
-		System.out.println("IBTraderFillRequiredPastRealtime doReceive runningJob:" + runningJob); 
 	   if(runningJob) 
 	   {
 		   		_log.debug("IBTraderFillRequiredPastRealtime already running, not starting again");
-		   		System.out.println("IBTraderFillRequiredPastRealtime already running, not starting again");
 		        return;
 	   }	
 		try
 		{
 			runningJob = true;					
-			CronUtil cronThread = new CronUtil();
-			System.out.println(" Start IBTraderFillRequiredPastRealtime doReceive");
-			cronThread.StartFillRequiredRealtime(message);
+			CronUtil cronThread = new CronUtil();			
+		//	cronThread.StartFillRequiredRealtime(message);
 		}
 		catch (Exception e)
 		{
 			runningJob = false;
-			System.out.println("IBTraderFillRequiredPastRealtime doReceive" + e.getMessage());
+			_log.debug("IBTraderFillRequiredPastRealtime doReceive" + e.getMessage());
 		}
 		runningJob = false; 
 			

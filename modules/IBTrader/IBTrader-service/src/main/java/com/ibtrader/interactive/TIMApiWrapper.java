@@ -29,6 +29,7 @@ package com.ibtrader.interactive;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -39,12 +40,14 @@ import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 
 import java.util.Set;
+import java.util.TimeZone;
 
 import com.ib.client.Bar;
 import com.ib.client.CommissionReport;
@@ -83,6 +86,7 @@ import com.ibtrader.data.model.Share;
 import com.ibtrader.data.model.ShareModel;
 import com.ibtrader.data.service.ConfigLocalServiceUtil;
 import com.ibtrader.data.service.HistoricalRealtimeLocalServiceUtil;
+import com.ibtrader.data.service.HistoricalRealtimeServiceUtil;
 import com.ibtrader.data.service.IBOrderLocalServiceUtil;
 import com.ibtrader.data.service.MarketLocalServiceUtil;
 import com.ibtrader.data.service.PositionLocalServiceUtil;
@@ -102,7 +106,9 @@ import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.messaging.MessageBusUtil;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.Organization;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
@@ -210,15 +216,17 @@ public class TIMApiWrapper implements EWrapper {
 		
 		// CONTROL
 		if (this.getUserTWS().equalsIgnoreCase(Utilities._DEFAULT_USER_DEMO_))
-			clientSocket.reqHistoricalData(requestId, contract, "", ConfigKeys.SIMULATION_INTERVAL_PERIOD, ConfigKeys.SIMULATION_MINUTES_BAR_SIZE + " mins", "TRADES", 1, 1, false, null);
+			clientSocket.reqHistoricalData(requestId, contract, "", ConfigKeys.SIMULATION_INTERVAL_PERIOD, ConfigKeys.SIMULATION_MINUTES_BAR_SIZE + " mins", "TRADES", 0, 1, false, null);
 		else
-			clientSocket.reqHistoricalData(requestId, contract, EndTime, ConfigKeys.SIMULATION_INTERVAL_PERIOD, ConfigKeys.SIMULATION_MINUTES_BAR_SIZE + " mins", "TRADES", 1, 1, false, null);
+			clientSocket.reqHistoricalData(requestId, contract, EndTime, ConfigKeys.SIMULATION_INTERVAL_PERIOD, ConfigKeys.SIMULATION_MINUTES_BAR_SIZE + " mins", "TRADES", 0, 1, false, null);
 		
 	}
 	
+	// formatted  = "20190511 23:59:59";
+	//client.reqHistoricalData(4002, contract, formatted, "7 D", "5 mins", "TRADES", 0, 1, false, null);
 	public void getHClosingPricesData(int requestId, Contract contract, String EndTime){
 				
-		clientSocket.reqHistoricalData(requestId, contract, EndTime, ConfigKeys.SIMULATION_INTERVAL_PERIOD, ConfigKeys.CLOSE_BAR_SIZE, "TRADES", 1, 1, false, null);
+		clientSocket.reqHistoricalData(requestId, contract, EndTime, ConfigKeys.SIMULATION_INTERVAL_PERIOD, ConfigKeys.CLOSE_BAR_SIZE, "TRADES", 0, 1, false, null);
 		
 	}
 	
@@ -1131,7 +1139,8 @@ public class TIMApiWrapper implements EWrapper {
 					oReal.setCreateDate(_calNow.getTime());
 					oReal.setModifiedDate(_calNow.getTime());
 					
-					RealtimeLocalServiceUtil.updateRealtime(oReal);
+					/* CAMBIO ADD  EN VEZ DE UPDATE PARA QUE NO INCLUYA EL SELECT PREVIO DE VERIFICACION */
+					RealtimeLocalServiceUtil.addRealtime(oReal);
 					
 					/* MODO FAKE, UN SOLO TWS, REPLICAMOS REALTIME PARA CADA SYMBOL IGUAL  */
 					if (standalone_mode)
@@ -1170,6 +1179,13 @@ public class TIMApiWrapper implements EWrapper {
 	}	
 		
 	}
+	
+	/* Inactive - indicates an order is not working, possible reasons include:
+		it is invalid or triggered an error. A corresponding error code is expected to the error() function.
+		the order is to short shares but the order is being held while shares are being located.
+		an order is placed manually in TWS while the exchange is closed.
+		an order is blocked by TWS due to a precautionary setting and appears there in an untransmitted state
+	*/
 	@Override
 	public void orderStatus(int orderId, String status, double filled, double remaining, double avgFillPrice,
 			int permId, int parentId, double lastFillPrice, int clientId, String whyHeld, double mktCapPrice) {
@@ -1336,7 +1352,7 @@ public class TIMApiWrapper implements EWrapper {
 	@Override
 	public void historicalData(int reqId, Bar bar) {
 	
-	//_log.debug("historicalData , reqId: + " + reqId);	
+	_log.debug("historicalData , reqId: + " + reqId + " for " + this.get_ibtarget_share().getSymbol() + ",close:" + bar.close());	
 	
 	SimpleDateFormat fDateHistorical = new SimpleDateFormat(Utilities.__IBTRADER_HISTORICAL_DATE_FORMAT);
 	SimpleDateFormat fDateClosePrice = new SimpleDateFormat(Utilities.__IBTRADER_LONG_DATE_FORMAT);
@@ -1373,10 +1389,12 @@ public class TIMApiWrapper implements EWrapper {
 			_cParsed.set(Calendar.MONTH,_cSim.get(Calendar.MONTH));
 			_cParsed.set(Calendar.YEAR,_cSim.get(Calendar.YEAR));
 			
-		}		
+		}
+		/* LA barra 00:05:00 se corresponde a todo el rango 00:04:59 */
 		_barDate.setTimeInMillis(_cParsed.getTimeInMillis());
-		_barDate.add(Calendar.SECOND, -1);
-		_barDate.set(Calendar.MILLISECOND, 0);
+		_barDate.set(Calendar.MILLISECOND, 0);			
+		_barDate.add(Calendar.SECOND, 59);
+		_barDate.add(Calendar.MINUTE, ConfigKeys.DEFAULT_TIMEBAR_MINUTES-1); 
 		
 	} catch (ParseException e) {
 		// TODO Auto-generated catch block
@@ -1389,59 +1407,94 @@ public class TIMApiWrapper implements EWrapper {
 	/* CONTROLAMOS LOS CIERRE QUE VAN AL REALTIME O LOS REALTIME PARA RELLLENAR HUECOS ANTERIORES */
 	if (!IsClosePrice && !this.isFilledData())
 	{
-		HistoricalRealtime historicalrealtime = HistoricalRealtimeLocalServiceUtil.createHistoricalRealtime(CounterLocalServiceUtil.increment(HistoricalRealtime.class.getName()));
 		
-		_log.debug("Adding historicalData for " +  this.get_ibtarget_share().getSymbol() + " " + _barDate.getTime());
+		HistoricalRealtime existsHistoricalRealtime = HistoricalRealtimeLocalServiceUtil.findCloseRealTime(this.get_ibtarget_share().getShareId(), this.get_ibtarget_share().getCompanyId(), this.get_ibtarget_share().getGroupId(), _barDate.getTime());
+		
+		_log.debug("Exists HistoricalRealtime for  " +  this.get_ibtarget_share().getSymbol() + " " + _barDate.getTime() + "?:" + Validator.isNotNull(existsHistoricalRealtime));
 
 		
-		historicalrealtime.setCreateDate(_barDate.getTime());
-		historicalrealtime.setGroupId(this.get_ibtarget_share().getGroupId());
-		historicalrealtime.setCompanyId(this.get_ibtarget_share().getCompanyId());
-		historicalrealtime.setShareId(this.get_ibtarget_share().getShareId());
-		historicalrealtime.setValue(bar.close());
-		
-		HistoricalRealtimeLocalServiceUtil.updateHistoricalRealtime(historicalrealtime);
+		if (Validator.isNull(existsHistoricalRealtime)) // no duplicamos 
+		{
 		
 		
-		/* MINIMO  */
-		_barDate.add(Calendar.SECOND, -1);
-		historicalrealtime = HistoricalRealtimeLocalServiceUtil.createHistoricalRealtime(CounterLocalServiceUtil.increment(HistoricalRealtime.class.getName()));
-		historicalrealtime.setCreateDate(_barDate.getTime());
-		historicalrealtime.setGroupId(this.get_ibtarget_share().getGroupId());
-		historicalrealtime.setCompanyId(this.get_ibtarget_share().getCompanyId());
-		historicalrealtime.setShareId(this.get_ibtarget_share().getShareId());
-		historicalrealtime.setValue(bar.low());
-		
-		HistoricalRealtimeLocalServiceUtil.updateHistoricalRealtime(historicalrealtime);
-		/* MAXIMO  */
-		
-		historicalrealtime = HistoricalRealtimeLocalServiceUtil.createHistoricalRealtime(CounterLocalServiceUtil.increment(HistoricalRealtime.class.getName()));	
-		historicalrealtime.setCreateDate(_barDate.getTime());
-		historicalrealtime.setGroupId(this.get_ibtarget_share().getGroupId());
-		historicalrealtime.setCompanyId(this.get_ibtarget_share().getCompanyId());
-		historicalrealtime.setShareId(this.get_ibtarget_share().getShareId());
-		historicalrealtime.setValue(bar.high());
+			HistoricalRealtime historicalrealtime = HistoricalRealtimeLocalServiceUtil.createHistoricalRealtime(CounterLocalServiceUtil.increment(HistoricalRealtime.class.getName()));
+			
+			_log.debug("Adding historicalData for " +  this.get_ibtarget_share().getSymbol() + " " + _barDate.getTime());
 	
-		HistoricalRealtimeLocalServiceUtil.updateHistoricalRealtime(historicalrealtime);
+			
+			historicalrealtime.setCreateDate(_barDate.getTime());
+			historicalrealtime.setGroupId(this.get_ibtarget_share().getGroupId());
+			historicalrealtime.setCompanyId(this.get_ibtarget_share().getCompanyId());
+			historicalrealtime.setShareId(this.get_ibtarget_share().getShareId());
+			historicalrealtime.setValue(bar.close());
+			
+			HistoricalRealtimeLocalServiceUtil.updateHistoricalRealtime(historicalrealtime);
+			
+			
+			/* MINIMO  */
+			_barDate.add(Calendar.SECOND, -1);
+			historicalrealtime = HistoricalRealtimeLocalServiceUtil.createHistoricalRealtime(CounterLocalServiceUtil.increment(HistoricalRealtime.class.getName()));
+			historicalrealtime.setCreateDate(_barDate.getTime());
+			historicalrealtime.setGroupId(this.get_ibtarget_share().getGroupId());
+			historicalrealtime.setCompanyId(this.get_ibtarget_share().getCompanyId());
+			historicalrealtime.setShareId(this.get_ibtarget_share().getShareId());
+			historicalrealtime.setValue(bar.low());
+			
+			HistoricalRealtimeLocalServiceUtil.updateHistoricalRealtime(historicalrealtime);
+			/* MAXIMO  */
+			
+			historicalrealtime = HistoricalRealtimeLocalServiceUtil.createHistoricalRealtime(CounterLocalServiceUtil.increment(HistoricalRealtime.class.getName()));	
+			historicalrealtime.setCreateDate(_barDate.getTime());
+			historicalrealtime.setGroupId(this.get_ibtarget_share().getGroupId());
+			historicalrealtime.setCompanyId(this.get_ibtarget_share().getCompanyId());
+			historicalrealtime.setShareId(this.get_ibtarget_share().getShareId());
+			historicalrealtime.setValue(bar.high());
+	
+			HistoricalRealtimeLocalServiceUtil.updateHistoricalRealtime(historicalrealtime);
+		}
 	}
 	else // los cierres van en  Realtime, hay que verificar  si existe  
 	{
-		
+				
 		Calendar _calNow = Calendar.getInstance();
 		/* PRECIO CIERRE ES EL DIA ANTERIOR SEGUN DOCUM DE IB */
-		_calNow.setTimeInMillis(parsedDate.getTime());
-		_calNow.set(Calendar.MILLISECOND, 0);		
+		
 		if (IsClosePrice)
 		{			
+			_calNow.setTimeInMillis(parsedDate.getTime());
+			_calNow.set(Calendar.MILLISECOND, 0);		
 			_calNow.set(Calendar.HOUR, 23);
 			_calNow.set(Calendar.MINUTE, 59);
 			_calNow.set(Calendar.MILLISECOND, 59);							
 		}
 		else // si no, son los historical que rellenan los huecos del Realtime
 		{
-			// las medias moviles o exponenciales se hacen en los minutos 5,10, 15, los precios de cierre son los ultimos anteriores por barra
-			// 55.59, 50.59, 45.59, 40.59, por eso resto un segundo 			
-			_calNow.add(Calendar.SECOND, -1);
+			// sumamos 4.59 para que queden la barra de 17.00 aplicada a la 17.04.59
+			
+			User _user = UserLocalServiceUtil.fetchUser(this.get_ibtarget_share().getUserCreatedId());
+			fDateHistorical.setTimeZone(TimeZone.getTimeZone(_user.getTimeZoneId()));
+			
+			Date utcDate = null;
+			try {
+				utcDate = fDateHistorical.parse(bar.time());
+			} catch (ParseException e1) {
+				// TODO Auto-generated catch block
+				//e1.printStackTrace();
+			}
+			
+			_calNow.setTimeInMillis(utcDate.getTime());
+			_calNow.set(Calendar.MILLISECOND, 0);			
+			_calNow.add(Calendar.SECOND, 59);
+			_calNow.add(Calendar.MINUTE, ConfigKeys.DEFAULT_TIMEBAR_MINUTES-1); 
+			
+			/* BUSCANDO EL REALTIME CON HISTORICAL DATA EN UTC ME LO DEVUELVE EN EL HUSO DEL USUARIO */
+			
+			/* A VECES LA ULTIMA BARRA ESTA POR ENCIMA DEL MOMENTO ACTUAL, ESTA LA IGNORAMOS */
+			Calendar now = Calendar.getInstance();
+			if (_calNow.after(now))
+				return;
+			
+			
 		}
 		Realtime existsClosePrice = RealtimeLocalServiceUtil.findCloseRealTime(this.get_ibtarget_share().getShareId(), this.get_ibtarget_share().getCompanyId(), this.get_ibtarget_share().getGroupId(), _calNow.getTime(), IsClosePrice);
 		
@@ -1451,19 +1504,22 @@ public class TIMApiWrapper implements EWrapper {
 		if (Validator.isNull(existsClosePrice)) // no duplicamos 
 		{
 			
-			_log.debug("Adding Required Realtime for  " +  this.get_ibtarget_share().getSymbol() + " " + parsedDate);
+			_log.debug("Adding Required Realtime for  " +  this.get_ibtarget_share().getSymbol() + " " + parsedDate + ",value:" + bar.close());
 			
 
-			
-			Realtime  oReal = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));
-			oReal.setGroupId(this.get_ibtarget_share().getGroupId());
-			oReal.setCompanyId(this.get_ibtarget_share().getCompanyId());
-			oReal.setShareId(this.get_ibtarget_share().getShareId());
-			oReal.setValue(bar.close());					
-			oReal.setCloseprice(IsClosePrice);
-			oReal.setCreateDate(_calNow.getTime());
-			oReal.setModifiedDate(_calNow.getTime());		
-			RealtimeLocalServiceUtil.updateRealtime(oReal);
+			try // avoid duplicate entry due to milliseconds 
+			{
+				Realtime  oReal = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));
+				oReal.setGroupId(this.get_ibtarget_share().getGroupId());
+				oReal.setCompanyId(this.get_ibtarget_share().getCompanyId());
+				oReal.setShareId(this.get_ibtarget_share().getShareId());
+				oReal.setValue(bar.close());					
+				oReal.setCloseprice(IsClosePrice);
+				oReal.setCreateDate(_calNow.getTime());
+				oReal.setModifiedDate(_calNow.getTime());		
+				RealtimeLocalServiceUtil.updateRealtime(oReal);
+			}
+			catch  (Exception e) {}
 		}
 	}
 
@@ -1661,7 +1717,7 @@ public class TIMApiWrapper implements EWrapper {
 		final EClientSocket m_client = wrapper.getClient();
 		final EReaderSignal m_signal = wrapper.getSignal();
 		//! [connect]
-		m_client.eConnect("127.0.0.1", 7499, 7);
+		m_client.eConnect("127.0.0.1", 7497, 1023);
 		//! [connect]
 		//! [ereader]
 		final EReader reader = new EReader(m_client, m_signal);   
@@ -1683,7 +1739,7 @@ public class TIMApiWrapper implements EWrapper {
 		// In a production application, it would be best to wait for callbacks to confirm the connection is complete
 		Thread.sleep(1000);
 
-		//tickDataOperations(wrapper.getClient());
+	//	tickDataOperations(wrapper.getClient());
 		//orderOperations(wrapper.getClient(), wrapper.getCurrentOrderId());
 		//contractOperations(wrapper.getClient());
 		//hedgeSample(wrapper.getClient(), wrapper.getCurrentOrderId());
@@ -1700,10 +1756,12 @@ public class TIMApiWrapper implements EWrapper {
 				
 		
 		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.DAY_OF_MONTH, -4);
+		cal.add(Calendar.DAY_OF_MONTH, 1);
 		SimpleDateFormat form = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
-		String formatted = form.format(cal.getTime());
-		m_client.reqHistoricalData(4003, _contractAPI3, formatted, "3 D", "5 mins", "TRADES", 0, 1, false, null);
+		String formatted = form.format(cal.getTime()).concat(" GMT");
+		
+		formatted  = "20190509 23:59:59";
+		m_client.reqHistoricalData(4003, _contractAPI3, formatted, "2 D", "5 mins", "TRADES", 0, 0, false, null);
 		Thread.sleep(2000);
 		//accountOperations(wrapper.getClient());
 		//newsOperations(wrapper.getClient());

@@ -225,9 +225,11 @@ public class HistoricalRealtimeFinderImpl extends HistoricalRealtimeFinderBaseIm
 	        QueryPos qPos = QueryPos.getInstance(q);	    
 	        qPos.add(shareId);
 	        qPos.add(companyId);
-	        qPos.add(groupId);
-	        qPos.add(shareId);	   
+	        qPos.add(groupId);	     
 	        qPos.add(date);
+	        qPos.add(Boolean.FALSE);
+	        
+	     
 
 	        lRealtime = (List<HistoricalRealtime>) QueryUtil.list(q, getDialect(), 0, 10);
 	        if (!lRealtime.isEmpty())

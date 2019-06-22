@@ -163,6 +163,11 @@ public class RealtimeLocalServiceImpl extends RealtimeLocalServiceBaseImpl {
 
 	}
 	
+	public void removeScheduledRealTimes(long companyId, long groupId)
+	{
+		 realtimeFinder.removeScheduledRealTimes(companyId, groupId);
+	}
+	
 	public Realtime findCloseRealTime(long shareId, long companyId, long groupId, Date closeDate,boolean isClosedDate)
 	{
 		return realtimeFinder.findCloseRealTimeDate(shareId, companyId, groupId,closeDate, isClosedDate);
@@ -171,10 +176,12 @@ public class RealtimeLocalServiceImpl extends RealtimeLocalServiceBaseImpl {
 	{
 		return realtimeFinder.findCloseRealTimes(shareId, companyId, groupId,from,to, closingDates);
 	}
-	
+	/* DEPRECATED, NO FILTRA LOS VALORES MAYORES DE AHORA POR ERROR  */
 	public Realtime findLastRealTime(long shareId, long companyId, long groupId)
 	{
-		return realtimeFinder.findLastRealTime(shareId, companyId,  groupId);	
+		
+		return findLastRealTimeLessThanDate (shareId, companyId,  groupId, new Date());
+		//return realtimeFinder.findLastRealTime(shareId, companyId,  groupId);	
 	}
 	public Realtime findLastRealTimeLessThanDate(long shareId, long companyId, long groupId, Date _to)
 	{

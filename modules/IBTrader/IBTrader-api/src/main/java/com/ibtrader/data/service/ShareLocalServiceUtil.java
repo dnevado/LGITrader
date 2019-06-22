@@ -277,6 +277,10 @@ public class ShareLocalServiceUtil {
 				   .dynamicQuery(dynamicQuery, start, end, orderByComparator);
 	}
 
+	public static java.util.List<com.ibtrader.data.model.Share> findAllSharesSortbySimulated() {
+		return getService().findAllSharesSortbySimulated();
+	}
+
 	public static java.util.List<com.ibtrader.data.model.Share> findByActiveFuturesDates(
 		boolean _active) {
 		return getService().findByActiveFuturesDates(_active);

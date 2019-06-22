@@ -36,6 +36,8 @@ import com.liferay.asset.kernel.model.AssetLinkConstants;
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.dao.orm.Criterion;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.dao.orm.Order;
+import com.liferay.portal.kernel.dao.orm.OrderFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
@@ -70,6 +72,25 @@ public class ShareLocalServiceImpl extends ShareLocalServiceBaseImpl {
 	{
 		return getSharePersistence().findByMarketGroupCompany(groupId, companyId, _marketId);
 	}
+	
+	
+	/* para el historical data  validadas */
+	public List<Share> findAllSharesSortbySimulated()
+	{
+
+		DynamicQuery _DQ = shareLocalService.dynamicQuery();
+		Order defaultOrder = OrderFactoryUtil.asc("simulation_end_date");
+	
+		
+		_DQ.addOrder(defaultOrder);
+
+		
+		return shareLocalService.dynamicQuery(_DQ);
+
+		
+	}
+	
+	
 	
 	/* PARA EL MODO FAKE DE UNA TWS PARA TODOS, LOS REALTIME PARECEN QUE NO FUNCIONAN DE MISMO SIMBOL */
 	public List<Share> findBySymbolExcludingId(String symbol, long exludingShareId)

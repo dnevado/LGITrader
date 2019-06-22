@@ -250,8 +250,8 @@
             (IBTrader_HistoricalRealtime.shareId=?)
             AND (IBTrader_HistoricalRealtime.companyid=?)
             AND (IBTrader_HistoricalRealtime.groupid=?)
-         	AND (date(IBTrader_HistoricalRealtime.createDate))=date(?)  
-         	AND  (IBTrader_HistoricalRealtime.closprice=1)
+           	AND (IBTrader_HistoricalRealtime.createDate = ?)  
+        	AND  (IBTrader_HistoricalRealtime.closeprice=?)         	
      ]]>
     </sql>
 
@@ -281,7 +281,7 @@
     <sql id="com.ibtrader.data.service.persistence.HistoricalRealtimeFinder.findMinMaxRealTimesBars">
     <![CDATA[ 
         SELECT 
-        		FROM_UNIXTIME(floor((unix_timestamp(IBTrader_HistoricalRealtime.createDate>))/(?*60))*(?*60)) as barDate,
+        		FROM_UNIXTIME(floor((unix_timestamp(IBTrader_HistoricalRealtime.createDate))/(?*60))*(?*60)) as barDate,
         		max(value) as max_value , min(value) as min_value 
         FROM 
         		IBTrader_HistoricalRealtime      
@@ -719,6 +719,31 @@
 	            		AND (IBTrader_Position.position_mode=?)         	
 				
 					ORDER BY date_real_in DESC
+	 
+     ]]>
+    </sql>
+     <!--  BORRADOS DE REALTIME HISTORICOS NO UTILES  -->
+     <sql id="com.ibtrader.data.service.persistence.RealtimeFinder.removeScheduledRealTimes">
+    <![CDATA[
+    
+    				DELETE 
+    				FROM 
+    						IBTrader_Realtime 
+					WHERE  
+							IBTrader_Realtime.closeprice = 0 AND  date(IBTrader_Realtime.createDate) <=
+					(
+					SELECT max(T.fecha) from
+					( 	
+				  			    SELECT 
+				  			    		distinct date(IBTrader_Realtime.createDate) FECHA  
+				  			    FROM 
+				  			    		IBTrader_Realtime 
+								WHERE 
+										date(IBTrader_Realtime.createdate)< date(DATE_ADD(now(), INTERVAL -? DAY))  
+								ORDER BY  
+										IBTrader_Realtime.createDate DESC
+					) T
+					)
 	 
      ]]>
     </sql>

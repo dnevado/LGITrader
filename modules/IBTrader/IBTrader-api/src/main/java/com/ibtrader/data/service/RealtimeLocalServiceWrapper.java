@@ -394,6 +394,11 @@ public class RealtimeLocalServiceWrapper implements RealtimeLocalService,
 	}
 
 	@Override
+	public void removeScheduledRealTimes(long companyId, long groupId) {
+		_realtimeLocalService.removeScheduledRealTimes(companyId, groupId);
+	}
+
+	@Override
 	public RealtimeLocalService getWrappedService() {
 		return _realtimeLocalService;
 	}
