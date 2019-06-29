@@ -134,13 +134,20 @@ if (request.getAttribute("EnabledStrategyCancelPosition")!=null)
         </aui:field-wrapper>
 		</aui:col>   			
 	</aui:row>
-     <aui:button-row>
+	<!--  PONGO ESTO EN VEZ DE BUTTON PORQUE EN LINUX ME DA UN ERROR DE END OF INPUT DE JAVASCRIPT  -->
+	 <aui:button-row>
         <aui:button type="submit" cssClass="btn-lg"></aui:button>
         <%if (_position.IsCloseable() && EnabledStrategyClosePosition) { %>
-        	<aui:button onClick="<%=closePositionURL%>" value="position.exit" cssClass="btn btn-lg btn-primary"></aui:button>
+        	<a class="btn btn-lg btn-primary btn-default" href="${closePositionURL}">
+				<span class="lfr-btn-label"><liferay-ui:message key ="position.exit"/></span>
+    		</a>
+        	<!--<aui:button onClick="<%=closePositionURL%>" value="position.exit" cssClass="btn btn-lg btn-primary"></aui:button> -->
         <%} %>
         <%if (_position.IsCancelable() && EnabledStrategyCancelPosition) { %>
-        	<aui:button onClick="<%=cancelPositionURL%>" value="position.cancel" cssClass="btn btn-lg btn-primary"></aui:button>
+        	<a class="btn btn-lg btn-primary btn-default" href="${cancelPositionURL}">
+				<span class="lfr-btn-label"><liferay-ui:message key ="position.cancel"/></span>
+    		</a>
+        	<!-- <aui:button onClick="<%=cancelPositionURL%>" value="position.cancel" cssClass="btn btn-lg btn-primary"></aui:button>  -->
         <%} %>
         <aui:button type="cancel" cssClass="btn-lg" onClick="<%=redirect%>"></aui:button>
     </aui:button-row>

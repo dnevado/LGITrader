@@ -412,8 +412,12 @@ public class IBStrategyMinMax extends StrategyImpl {
 			{
 				
 			    this.setValueIn(lastRealtime.doubleValue());
-				this.setValueLimitIn(MaxValueWithGapAndLimit);
-				
+			    if (bReachedMax)
+			    	this.setValueLimitIn(MaxValueWithGapAndLimit);
+			     else
+				    this.setValueLimitIn(MinValueWithGapAndLimit);
+
+			    	 
 				_tradeDescription = JSONFactoryUtil.createJSONObject();
 				_tradeDescription.put("bReachedMax", bReachedMax);
 				_tradeDescription.put("bReachedMin", bReachedMin);
