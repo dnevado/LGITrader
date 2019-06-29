@@ -9,17 +9,23 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
@@ -46,7 +52,12 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.GroupConstants;
@@ -59,15 +70,16 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.ibtrader.constants.IBTraderConstants;
-import com.ibtrader.cron.IBTraderTrade;
 import com.ibtrader.data.model.Config;
+import com.ibtrader.data.model.Market;
 import com.ibtrader.data.model.Position;
 import com.ibtrader.data.model.StrategyShare;
 import com.ibtrader.data.service.ConfigLocalService;
 import com.ibtrader.data.service.ConfigLocalServiceUtil;
+import com.ibtrader.data.service.MarketLocalServiceUtil;
 import com.ibtrader.data.service.PositionLocalService;
 import com.ibtrader.data.service.PositionLocalServiceUtil;
-import com.ibtrader.interactive.TIMApiGITrader_NOVALE;
+
 
 
 public class Utilities {
@@ -85,6 +97,7 @@ public class Utilities {
    public final static String __IBTRADER_SQL_DATE_="yyyy-MM-dd HH:mm"; // PARA EL CUSTOM SQL DE MOBILE AVERAGE 
    public final static String __IBTRADER_ORDERS_EXECUTED__DATE_FORMAT ="yyyymmdd hh:mm:ss"; // PARA EL execution time de ordenes de la tws 
    public final static String __IBTRADER_HISTORICAL_DATE_FORMAT ="yyyyMMdd HH:mm:ss"; // PARA EL execution time de ordenes de la tws 
+   public final static String __IBTRADER_TRADINHOURS_DATE_FORMAT ="yyyyMMdd HHmm"; //  
 
    
    //public final static String _IBTRADER_DATE_FORMAT="HHmm";
@@ -109,7 +122,8 @@ public class Utilities {
    
    
    private static ConfigLocalService _configLocalService;
-
+   
+   private static Log log = LogFactoryUtil.getLog(Utilities.class.getName());
 
 	@Reference(unbind = "-")
 	protected void setConfigService(ConfigLocalService configLocalService) {
@@ -117,7 +131,129 @@ public class Utilities {
 	}
 
    
- 
+	/* OBTIENE LA HORA DE INICIO Y FIN ACTUAL SI EXISTE PARA ACTUALIZAR LOS HORARIOS DE LOS MERCADOS EN CUESTION */
+	/* OJO CON LOS FUTUROS QUE PUEDEN ESTAR DE 00 A 23:59 */
+	public static Market fillOpenEndHoursMarket(String _jsonTradingHours)
+	{
+		
+		Market market = null;
+		
+	    /* SHORT */
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Utilities.__IBTRADER_LONG_DATE_FORMAT);
+	    /* LONG */
+	    DateTimeFormatter formatterlong = DateTimeFormatter.ofPattern(Utilities.__IBTRADER_TRADINHOURS_DATE_FORMAT);
+	    /* TIME */
+	    DateTimeFormatter formattertime = DateTimeFormatter.ofPattern(Utilities.__IBTRADER_SHORT_HOUR_FORMAT);
+		
+		/* HOURS IN UTC, BUSCAMOS EL DIA DE HOY  */		
+		try {
+			JSONArray   jsonTradingHours = JSONFactoryUtil.createJSONArray(_jsonTradingHours);			
+		
+		  JSONObject tradingDate = (JSONObject) jsonTradingHours.getJSONObject(0);			      
+		
+	      /* UTC DATES */
+	      LocalDate fromDate = LocalDate.parse(tradingDate.getString("fromDate").split(" ")[0],formatter);	
+	      LocalDate toDate = LocalDate.parse(tradingDate.getString("toDate").split(" ")[0],formatter);			    
+
+	      
+	 
+    	  /* PROBLEMA CON LOS FUTUROS */
+    	  //[{"fromDate":"20190328 2200","toDate":"20190329 2015"},{"fromDate":"20190329 2030","toDate":"20190329 2100"}
+    	  /* 1. SI CAMBIO DE DIA, ENTONCES 00:00 23:59 */
+    	  /* 2. SI HAY VARIOS TRAMOS PARA EL MISMO DIA, ETONCES 00:00 23:59 */			    	 
+    	  /* UTC DATES */
+    	  LocalDateTime fromDateTime = LocalDateTime.parse(tradingDate.getString("fromDate"),formatterlong);
+	      LocalDateTime toTime = LocalDateTime.parse(tradingDate.getString("toDate"),formatterlong);
+    	  /* CONTROLAMOS LA FECHAS DE INICIO Y FIN 
+    	   * SUPONEMOS QUE SIEMPRE HAY UN FROM CON EL DIA DE HOY, SI NO , NO ACTUALIZAMOS */
+    	  String _startHour = fromDate.equals(toDate) ? fromDateTime.format(formattertime) : "0000";
+    	  String _endHour =  fromDate.equals(toDate) ? toTime.format(formattertime) : "2359";		
+    	  
+    	  market = MarketLocalServiceUtil.createMarket(-1); // no persiste 			    	  
+    	  market.setStart_hour(_startHour);
+    	  market.setEnd_hour(_endHour);	
+    	  
+    	  log.debug("Market start / end hour  " + market.getStart_hour() + "," +  market.getEnd_hour() );
+	    	  	    		     
+	
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+		//	e.printStackTrace();
+		}		
+	return market;
+		
+	}
+	
+	public static boolean IsTradingEnabledFromHours(String _jsonTradingHours)
+	{
+		
+		boolean isTradingEnabled = Boolean.FALSE;
+		/* HOURS IN UTC, BUSCAMOS EL DIA DE HOY  */		
+		try {
+			JSONArray   jsonTradingHours = JSONFactoryUtil.createJSONArray(_jsonTradingHours);			
+			for (int i = 0; i < jsonTradingHours.length(); i++) 
+			{
+				  JSONObject tradingDate = (JSONObject) jsonTradingHours.getJSONObject(i);			      
+				  DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Utilities.__IBTRADER_TRADINHOURS_DATE_FORMAT);
+
+			      /* UTC DATES */
+			      LocalDateTime fromDate = LocalDateTime.parse(tradingDate.getString("fromDate"),formatter);
+			      LocalDateTime to = LocalDateTime.parse(tradingDate.getString("toDate"),formatter);
+			      LocalDateTime _now  = LocalDateTime.now();
+			     if (fromDate.isBefore(_now) && to.isAfter(_now))  // es tradeable 
+			     {
+			    	  isTradingEnabled = Boolean.TRUE;
+			    	  break;
+			     }
+
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+		//	e.printStackTrace();
+		}		
+	return isTradingEnabled;
+		
+	}
+	
+	/* OBTIENE LOS 7 PRIMEROS PERIODOS CONVERTIDO  A LA ZONA DEL USUARIO */
+	public static List<String> getCurrentTradingHours(String _jsonTradingHours, User user)
+	{
+		List<String> tradingHours = new ArrayList<String>();
+		/* HOURS IN UTC, BUSCAMOS EL DIA DE HOY  */		
+		try {
+			JSONArray   jsonTradingHours = JSONFactoryUtil.createJSONArray(_jsonTradingHours);			
+			for (int i = 0; i < jsonTradingHours.length();	 i++) 
+			{
+				  if (i<ConfigKeys.MAX_TRADING_PERIODS_TO_SHOW)
+				  {	  
+					  JSONObject tradingDate = (JSONObject) jsonTradingHours.getJSONObject(i);			      
+					  DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Utilities.__IBTRADER_TRADINHOURS_DATE_FORMAT);
+	
+				      /* UTC DATES */
+				      LocalDateTime fromDate = LocalDateTime.parse(tradingDate.getString("fromDate"),formatter);
+				      LocalDateTime to = LocalDateTime.parse(tradingDate.getString("toDate"),formatter);
+				    
+				      
+				      Instant instantFrom = fromDate.toInstant(ZoneOffset.UTC);
+				      Instant instantTo = to.toInstant(ZoneOffset.UTC);
+
+				      String _periodHours = Utilities.getWebFormattedDate(Date.from(instantFrom),user);
+				      _periodHours = _periodHours.concat(" ");
+				      _periodHours = _periodHours.concat(Utilities.getWebFormattedDate(Date.from(instantTo),user));
+				      tradingHours.add( _periodHours);
+				     
+				  }
+
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+		//	e.printStackTrace();
+		}		
+	  return tradingHours;
+		
+	}
+	
+	
 
   
    public static boolean isNumber (String amount){
@@ -253,20 +389,6 @@ public class Utilities {
 	
 	}
   
-   
-   
-  
-    public static void closeTWSConnection(TIMApiGITrader_NOVALE oTWS)
-    {
-    try
-    {
-		if (oTWS.GITraderTWSIsConnected())
-		{
-			oTWS.GITraderDisconnectFromTWS();
-		}
-    }
-    catch (Exception e) {}
-    }
     
     
     public static String  getWebFormattedShortDate(Date _date)
@@ -279,21 +401,28 @@ public class Utilities {
     
     public static String  getWebFormattedShortDate(Date _date, User user)
    	{       	
-    	SimpleDateFormat _Format = new SimpleDateFormat(_IBTRADER_WEB_FORMAT_SHORTDATE);   	
-    	return  _Format.format(getIBDateByUserDate(user,_date));
+    	
+    	/* SHORT */
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Utilities._IBTRADER_WEB_FORMAT_SHORTDATE);	 
+    	return  formatter.format(getIBDateByUserDate(user,_date));
    		
    	}
     
     public static String  getWebFormattedDate(Date _date, User user)
-   	{       	
-    	SimpleDateFormat _Format = new SimpleDateFormat(_IBTRADER_WEB_FORMAT_DATE);   	
-    	return  _Format.format(getIBDateByUserDate(user,_date));
+   	{
+    	
+    	/* SHORT */
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Utilities._IBTRADER_WEB_FORMAT_DATE);
+	  
+    	return  formatter.format(getIBDateByUserDate(user,_date));
    		
    	}
     public static String  getWebFormattedTime(Date _date, User user)
    	{       	
-    	SimpleDateFormat _Format = new SimpleDateFormat(__IBTRADER_LONG_HOUR_FORMAT);   	
-    	return  _Format.format(getIBDateByUserDate(user,_date));
+    	
+    	/* SHORT */
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Utilities.__IBTRADER_LONG_HOUR_FORMAT);
+		return  formatter.format(getIBDateByUserDate(user,_date));
 
    		
    	}
@@ -416,7 +545,7 @@ public class Utilities {
    	}
     public static  String getHourNowFormat(User _user, Date date)
    	{
-    	SimpleDateFormat Format = new SimpleDateFormat(__IBTRADER_LONG_HOUR_FORMAT);   		
+		DateTimeFormatter Format = DateTimeFormatter.ofPattern(Utilities.__IBTRADER_LONG_HOUR_FORMAT);
    		return  Format.format(getIBDateByUserDate(_user,date));
    		
    	}
@@ -441,7 +570,8 @@ public class Utilities {
      *  VIENE SIEMPRE EN UTC POR LA JVM 
      *  LO PASO A GMT DEL USUARIO 
      * */
-    private static  Date getIBDateByUser(User _user) 
+    @SuppressWarnings("static-access")
+	private static  Date getIBDateByUser(User _user) 
     {
     	// UTC 
     	Calendar local =  Calendar.getInstance();	
@@ -501,22 +631,19 @@ public class Utilities {
     	  	
 		return utcZoneDT;
     	
-    	
-   		/* ZoneId zoneId = ZoneId.of(_user.getTimeZoneId());
-   		Date date = new Date();
-   		ZonedDateTime zonedDateTime = date.toInstant().atZone(zoneId);
-   		return Date.to(zonedDateTime.toInstant());
-   		*/
-    	
     }
     
     /* HORA PARA EL USUARIO DEPEDE DE LA HORA DEL SERVIDOR Y SU ZONA UTC */
-    private static  Date getIBDateByUserDate(User _user, Date date)
+    private static  LocalDateTime getIBDateByUserDate(User _user, Date date)
     {
-    	    	
-   		ZoneId zoneId = ZoneId.of(_user.getTimeZoneId());
-   		ZonedDateTime zonedDateTime = date.toInstant().atZone(zoneId);
-   		return Date.from(zonedDateTime.toInstant());
+    	
+    	ZoneId zoneId = ZoneId.systemDefault(); // UTC 
+    	LocalDateTime lct = LocalDateTime.ofInstant(date.toInstant(), zoneId);
+    	ZonedDateTime zonedDateTimeUTC= lct.atZone(zoneId);
+   		 // UTC    	
+   		ZoneId userZoneId = ZoneId.of(_user.getTimeZoneId()); 
+   		ZonedDateTime zonedDateTime = zonedDateTimeUTC.withZoneSameInstant(userZoneId);
+   		return zonedDateTime.toLocalDateTime();
     	
     }
    
@@ -539,16 +666,7 @@ public class Utilities {
     
  
     
-  /*   public static  String getDateNowFormat()
-	{
-    	SimpleDateFormat Format = new SimpleDateFormat("yyyyMMdd");
-//		Format.applyPattern("yyyyMMDD"); 
-		Calendar  oCalendar = Calendar.getInstance();
-		
-		return  Format.format(oCalendar.getTime());
-		
-	}
-    */
+ 
     /* para los stocks que llevan un tick distinto del punto, cuartos, etc..(futuros), aplicamos 
      * el calculo de los valores limitados para ellos acorde
      * 2546.50 --> 2546.75 -->
@@ -573,38 +691,7 @@ public class Utilities {
         return findNearestValue(aTicks, ValueLimit);
     	
     }
-    /* 
-    public static Double GetTickMaxMinValueFromArray(ArrayList<Double> ticksValue, IDENTITY_VALUE_TYPE type)
-    {
-    	double number =0;
-    	number = Double.MAX_VALUE;
-    	if (type.equals(IDENTITY_VALUE_TYPE.MAX))
-    	{	
-    		number = Double.MIN_VALUE;    		
-    	}
-    	double _tmpTick=0;
-    	for(int i = 0; i < ticksValue.size(); i++) 
-    	{
-    		  _tmpTick= ticksValue.get(i).doubleValue();
-    		  if (type.equals(IDENTITY_VALUE_TYPE.MAX))
-    	      {	
-    			   if (_tmpTick > number) {
-    				   number = ticksValue.get(i);
-    			   	}    		
-    	      }
-    		  else
-    		  {
-    			  if (_tmpTick < number) {
-   				   	number = ticksValue.get(i);
-   			   	   }
-    			  
-    		  }
-    	}		  
-    	
-		return number;
-    	
-    	
-    }*/
+   
     
     /* FORMATO HHMM */
 	public static  String getActualHourFormatPlusMinutes(String HourMinutes, Integer Minutes)
@@ -761,18 +848,6 @@ public class Utilities {
 	}
 	
     
-	/* public static  String getActualHourFormat()
-	{
-		SimpleDateFormat Format = new SimpleDateFormat();
-		Format.applyPattern(__IBTRADER_SHORT_HOUR_FORMAT);
-		Calendar  oCalendar = Calendar.getInstance();
-		Date Now = new Date();
-		
-		
-		return  Format.format(Now);
-		
-	}*/
-	
 	public static double _Porcentaje100(double num)
 	{
 		return (num * 100);		
@@ -814,65 +889,7 @@ public class Utilities {
     }
     
     
-    /* POR CADA ESTRATEGIA DE BBDD, DEVOLVEMOS LOS IMPLEMENTATIONS ASOCIADOS A CADA CLASSNAME 
-    public static java.util.List<Strategy>  LoadStrategies(List StrategiesBBDD) throws Exception
-    {
-    	List<Strategy> lFactoryStra = new ArrayList<Strategy>();
-    	for (int i=0;i<StrategiesBBDD.size();i++)	    				
-    	{
-    		
-    		Strategy oStratAbstract =  (Strategy) StrategiesBBDD.get(i);    		
-    		
-    		// cargo la estrategia del classname y ya tengo los datos
-    		Class oFactoryStrat =  Class.forName(oStratAbstract.getClassName());
-    		//Strategy oStrategyFactory = new Strategy(); 
-    		
-    		Strategy oStrategyFactory = (Strategy) oFactoryStrat.newInstance();
-    		// copiamos de la clase abastracta los nuevos valores de la nueva clase implementada
-    		BeanUtils.copyProperties(oStrategyFactory, oStratAbstract);
-//    		oStrategyFactory = copyFields(oStrategyFactory, oStratAbstract);
-    		
-    		lFactoryStra.add(oStrategyFactory);
-    		
-    		
-    	}
-		return lFactoryStra;
-		
-		
-         
-    }*/
-    
-    /* POR CADA REGLA DE BBDD, DEVOLVEMOS LOS IMPLEMENTATIONS ASOCIADOS A CADA CLASSNAME 
-    public static java.util.List<Rule>  LoadRules(List RulesBBDD) throws Exception
-    {
-    	List<Rule> lFactoryStra = new ArrayList<Rule>();
-    	for (int i=0;i<RulesBBDD.size();i++)	    				
-    	{
-    		
-    		Rule oStratAbstract =  (Rule) RulesBBDD.get(i);    		
-    		
-    		// cargo la estrategia del classname y ya tengo los datos
-    		Class oFactoryStrat =  Class.forName(oStratAbstract.getClassName());
-    		//Strategy oStrategyFactory = new Strategy(); 
-    		
-    		Rule oStrategyFactory = (Rule) oFactoryStrat.newInstance();
-    		// copiamos de la clase abastracta los nuevos valores de la nueva clase implementada
-    		BeanUtils.copyProperties(oStrategyFactory, oStratAbstract);
-//    		oStrategyFactory = copyFields(oStrategyFactory, oStratAbstract);
-    		
-    		lFactoryStra.add(oStrategyFactory);
-    		
-    		
-    	}
-		return lFactoryStra;
-		
-		
-         
-    }
-    
-    
    
-	*/
 
 
     public static  boolean IsPar(int Number) { 
@@ -933,79 +950,67 @@ public class Utilities {
 
 
     /* 
-    String Months 1,3,5 jANUARY, mARCH..
-    String DayOfWeek 1 Monday.. 
-    , String WeekMonth 3 Third week of current month
+    lDates --> Lista con las fechas de vencimiento de los futuros, tenemos todos, incluso los pasados. formato dd-MM-yyyy   
+   */
     
-    */
-    
-    public static String getActiveFutureByDate(String Months,String DayOfWeek, String WeekMonth,
+    private static String getActiveFutureByDate(List<String> lExpirationDates,
     		Calendar _FutureDate, String ShortLongFormat)
     
     {
-    	SimpleDateFormat sdfLONG = new SimpleDateFormat();
-    	SimpleDateFormat sdfSHORT = new SimpleDateFormat();
-    	SimpleDateFormat sdfSorted = new SimpleDateFormat();
+    	SimpleDateFormat sdfLONG = new SimpleDateFormat();    	
     	sdfLONG.applyPattern(_IBTRADER_FUTURE_LONG_DATE);
-    	sdfSHORT.applyPattern(_IBTRADER_FUTURE_SHORT_DATE);    	
-    	sdfSorted.applyPattern(_IBTRADER_FUTURE_DATE_SORTED);
-    	Calendar _Today = Calendar.getInstance();
     	
-    	_Today.setTimeInMillis(_FutureDate.getTimeInMillis());    	    
-    	int [] _years = {_Today.get(Calendar.YEAR), _Today.get(Calendar.YEAR) +1}; 
-    	TreeSet<String> _FutDate = new TreeSet<String>();
-    	/* Pregeneramos los intervalos en funcion de los meses que se nos pasa del año actual y del siguiente */
-    	for (int y=0;y<_years.length;y++)
-    	{
-    		String[] aMonths= Months.split(",");
-	    	for (int k=0;k<aMonths.length;k++)
-	    	{
-	    		
-	    		Calendar _fdate = _Today;
-	    		_fdate.setMinimalDaysInFirstWeek(1);
-	    		_fdate.set(Calendar.YEAR, _years[y]);  // SPAIN MONDAY
-	    		_fdate.set(Calendar.DAY_OF_WEEK, Integer.parseInt(DayOfWeek));  // SPAIN MONDAY
-	    		_fdate.set(Calendar.MONTH, Integer.parseInt(aMonths[k].trim()));  // months -1
-	    	    // add +1 to week if first weekday of mounth > dayOfWeek
-	    		int localWeek = Integer.parseInt(WeekMonth);
-	    	    if (_fdate.get(_fdate.DAY_OF_WEEK) > Integer.parseInt(DayOfWeek)-1) {
-	    	        localWeek++;
-	    	    }
-	    		
-	    		_fdate.set(Calendar.WEEK_OF_MONTH, localWeek);  // months -1	    		
-	    		_FutDate.add(sdfSorted.format(_fdate.getTime()));
-	    	}
     	
-    	}
-    	String _DateSortedValue =  _FutDate.higher(sdfSorted.format(_FutureDate.getTime()));
-    	Date  _DateRetValue = new Date();
-    	if (_DateSortedValue!=null)    		
+    	/* esta ordenada */ 
+    	
+    	Date _retExpiredDate  = null;
+    	
+    	Calendar cFutureDate = Calendar.getInstance();
+    	cFutureDate.setTime(_FutureDate.getTime());
+    	cFutureDate.set(Calendar.HOUR, 23);
+    	cFutureDate.set(Calendar.MINUTE, 59);
+    	cFutureDate.set(Calendar.SECOND, 59);
+    	
+    	
+    	for (String dateString : lExpirationDates)
     	{
-    		// from yyyy/mm/dd    		
-    		try {	
-				_DateRetValue = sdfSorted.parse(_DateSortedValue);
-				if (ShortLongFormat.equals("L"))					
-					return sdfLONG.format(_DateRetValue);
-				else
-					return sdfSHORT.format(_DateRetValue);
-					
+    		Date expirationDate;
+			try {
+				expirationDate = sdfLONG.parse(dateString);
+				Calendar cExpiration = Calendar.getInstance();
+	    		cExpiration.setTimeInMillis(expirationDate.getTime());
+	    		cExpiration.set(Calendar.HOUR, 23);
+	    		cExpiration.set(Calendar.MINUTE, 59);
+	    		cExpiration.set(Calendar.SECOND, 59);
+	    		/* si no  ha pasado la fecha  y hay menos dias, la eligo. */
+	    		if (cExpiration.after(_FutureDate) || cExpiration.equals(cFutureDate))
+	    		{
+	    			_retExpiredDate = cExpiration.getTime();
+	    			break;	    			
+	    		}
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				//e.printStackTrace();
-				return "";
-			}
+				log.debug(e.getMessage());				
+			}			
     		
-    	
     	}
+    	if (Validator.isNotNull(_retExpiredDate))
+    		return sdfLONG.format(_retExpiredDate);    	    	
     	else
     		return "";
-  //  	else
-    //		return "";
     }
     
-    public static String getActiveFutureDate(String Months,String DayOfWeek, String WeekMonth )
+    
+    public static String getActiveFutureDateByDate(List<String> lDates, Calendar cDate)
     {
-    	return  getActiveFutureByDate( Months, DayOfWeek, WeekMonth, Calendar.getInstance(), "L");
+    	return  getActiveFutureByDate(lDates, cDate, "L");
+    	
+    }
+    
+    public static String getActiveFutureDate(List<String> lDates)
+    {
+    	return  getActiveFutureByDate( lDates, Calendar.getInstance(), "L");
     	
     }
     
@@ -1057,21 +1062,122 @@ public class Utilities {
     private static ClassLoader _ClassLoader;
     
     
+ 
+
+    private  static  Map<String, String> getAllZoneIds(List<String> zoneList) {
+
+     
+    	   Map<String, String> result = new HashMap<>();
+        LocalDateTime dt = LocalDateTime.now();
+
+        for (String zoneId : zoneList) {
+
+            ZoneId zone = ZoneId.of(zoneId);
+            ZonedDateTime zdt = dt.atZone(zone);
+            ZoneOffset zos = zdt.getOffset();
+
+            //replace Z to +00:00
+            String offset = zos.getId().replaceAll("Z", "+00:00");
+
+            result.put(zone.toString(), offset);
+
+        }
+
+        return result;
+
+    }
+
     public static void main(String[] args) throws Exception {
  		// TODO Auto-generated method stub
     	System.out.println(new Date());
     	Calendar now = Calendar.getInstance();
-        System.out.println(now.getTimeZone());
+        
+    	Date nowDate = new Date();
+    	System.out.println("nowDate" + nowDate);
+    	ZoneId zoneId = ZoneId.of("UTC"); // UTC 
+    	LocalDateTime lct = LocalDateTime.ofInstant(nowDate.toInstant(), zoneId);
+    	System.out.println("lct" + lct);
+    	ZonedDateTime zonedDateTimeUTC= lct.atZone(zoneId);
+    	System.out.println("zonedDateTimeUTC" + zonedDateTimeUTC);
+   		 // UTC    	
+   		ZoneId userZoneId = ZoneId.of("Europe/Paris"); 
+   		ZonedDateTime zonedDateTime = zonedDateTimeUTC.withZoneSameInstant(userZoneId);
+   		System.out.println("zonedDateTime" + zonedDateTime);   	
+   		System.out.println(Date.from(zonedDateTime.toInstant()));
+    	
+    	
+    	
+    	/* LocalDateTime nowLocal = LocalDateTime.now();
+    	System.out.println("nowDate:" + nowDate);
+    	System.out.println("nowLocal:" + nowLocal);
+    	
+    	ZoneId zoneId = ZoneId.of("UTC");    	
+    	ZoneId zoneId2 = ZoneId.of("Europe/Paris");
+    	
+    
+    	ZonedDateTime z2 = ZonedDateTime.of(nowLocal, zoneId );   		
+   		ZonedDateTime zonedDateTime = nowDate.toInstant().atZone(zoneId);
+   		ZonedDateTime zonedDateTime2 = nowLocal.atZone(zoneId);
+
+   		System.out.println("UTC toUserZoneId:" + zonedDateTime);
+   		System.out.println("UTC toUserZoneId2:" + zonedDateTime2);
+   		System.out.println("UTC z2:" + z2);
+   		
+   		ZonedDateTime z12 = ZonedDateTime.of(nowLocal, zoneId2 );   		
+   		ZonedDateTime zonedDateTime1 = nowDate.toInstant().atZone(zoneId2);
+   		ZonedDateTime zonedDateTime12 = nowLocal.atZone(zoneId2);
+   		
+   		System.out.println("Europe toUserZoneId:" + zonedDateTime1);
+   		System.out.println("Europe  toUserZoneId2:" + zonedDateTime12);
+   		System.out.println("Europe  z2:" + z12);
+    	
+    	
+    	LocalDate  now2 = LocalDate.now();	
+		ZoneId UTCZone = ZoneId.systemDefault(); // UTC 	
+   		ZonedDateTime startOfDay = now2.atStartOfDay(UTCZone);
+   		
+   		System.out.println("startOfDay:" + startOfDay);
+    	System.out.println(now.getTimeZone());
         System.out.println(now.getTime());
         System.out.println(	(new Date()));
         
-         ZoneId Paris = ZoneId.of("Europe/Paris"); 
+        ZoneId Paris = ZoneId.of("EET"); 
         ZonedDateTime zParis = ZonedDateTime.now ( Paris );
         ZonedDateTime nowUtc = zParis.withZoneSameInstant( ZoneOffset.UTC );
         
         
-        System.out.println(zParis.toLocalDate());
-        System.out.println(nowUtc.toLocalDate());
+        System.out.println("zParis: " + zParis.toLocalDateTime());
+        System.out.println("zutc: " + nowUtc.toLocalDateTime());
+        */
+      
+
+        Map<String, String> sortedMap = new LinkedHashMap<>();
+
+        List<String> zoneList = new ArrayList<>(ZoneId.getAvailableZoneIds());
+
+        Map<String, String> allZoneIds = getAllZoneIds(zoneList);
+
+        //sort map by key
+        /*allZoneIds.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .forEachOrdered(e -> sortedMap.put(e.getKey(), e.getValue()));*/
+
+        //sort by value, descending order
+        allZoneIds.entrySet().stream()
+                .sorted(Map.Entry.<String, String>comparingByValue().reversed())
+                .forEachOrdered(e -> sortedMap.put(e.getKey(), e.getValue()));
+
+        // print map
+        sortedMap.forEach((k, v) ->
+        {
+            String out = String.format("%35s (UTC%s) %n", k, v);
+        //    System.out.printf(out);
+        });
+
+		System.out.println("\nTotal Zone IDs " + sortedMap.size());
+                
+       Calendar june = Calendar.getInstance();
+       june.set(Calendar.MONTH, 5);
        
         
 		//System.out.println(TickLimit_WithMultiplier(new Double(2750.25), new Double(0.25), new Double(2749.9), true));

@@ -40,7 +40,9 @@ import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
 import com.liferay.portal.kernel.scheduler.SchedulerEngineHelper;
+import com.liferay.portal.kernel.scheduler.SchedulerException;
 import com.liferay.portal.kernel.scheduler.StorageType;
+import com.liferay.portal.kernel.scheduler.StorageTypeAware;
 import com.liferay.portal.kernel.scheduler.TimeUnit;
 import com.liferay.portal.kernel.scheduler.TriggerFactory;
 import com.liferay.portal.kernel.scheduler.TriggerFactoryUtil;
@@ -51,6 +53,7 @@ import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.ibtrader.interactive.TIMApiGITrader_NOVALE;
+import com.ibtrader.scheduler.impl.StorageTypeAwareSchedulerEntryImpl;
 import com.ibtrader.util.ConfigKeys;
 import com.ibtrader.util.CronUtil;
 import com.ibtrader.util.Utilities;
@@ -66,7 +69,8 @@ public class IBTraderSimulation  extends BaseSchedulerEntryMessageListener {
 
 	Log _log = LogFactoryUtil.getLog(IBTraderSimulation.class);
 	
-    private static boolean runningJob = false;
+	private volatile boolean runningJob = false;
+	private volatile boolean _initialized = false;
 
 	
 	private SchedulerEngineHelper _schedulerEngineHelper;
@@ -83,10 +87,41 @@ public class IBTraderSimulation  extends BaseSchedulerEntryMessageListener {
 	}
 
 	
-	@Deactivate
-	protected void deactivate() {
-		_schedulerEngineHelper.unregister(this);
-	}
+	 protected StorageType getStorageType() {
+		    if (schedulerEntryImpl instanceof StorageTypeAware) {
+		      return ((StorageTypeAware) schedulerEntryImpl).getStorageType();
+		    }
+		    
+		    return StorageType.MEMORY_CLUSTERED;
+		  }
+		@Deactivate
+		protected void deactivate() {
+			
+			System.out.println("TradingRead deactivate runningJob:" + runningJob); 
+
+			
+			// if we previously were initialized
+		    if (_initialized) {
+		      // unschedule the job so it is cleaned up
+		      try {
+		        _schedulerEngineHelper.unschedule(schedulerEntryImpl, getStorageType());
+		      } catch (SchedulerException se) {
+		        if (_log.isWarnEnabled()) {
+		          _log.warn("Unable to unschedule trigger", se);
+		        }
+		      }
+
+		      // unregister this listener
+		      _schedulerEngineHelper.unregister(this);
+		    }
+		    
+		    // clear the initialized flag
+		    _initialized = false;
+		   
+			 // clear the initialized flag
+		
+			    
+		}
 	
 	@Activate
 	@Modified
@@ -96,38 +131,52 @@ public class IBTraderSimulation  extends BaseSchedulerEntryMessageListener {
 		schedulerEntryImpl.setTrigger(TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(),
 				calendar.getTime(),cron.toString())); */
 		
+		   // if we were initialized (i.e. if this is called due to CA modification)
+	    schedulerEntryImpl = new StorageTypeAwareSchedulerEntryImpl(schedulerEntryImpl, StorageType.PERSISTED);
+	    // update the trigger for the scheduled job.
 		
-		
-	     schedulerEntryImpl.setTrigger(TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(),10, TimeUnit.SECOND));  
-		
-	     
+	    schedulerEntryImpl.setTrigger(TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(),10, TimeUnit.SECOND));  
 		_log.info("Activating CRON..."  + schedulerEntryImpl.getTrigger());
-		_schedulerEngineHelper.register(this, schedulerEntryImpl, DestinationNames.SCHEDULER_DISPATCH);
 		
+		if (_initialized) {
+		      // first deactivate the current job before we schedule.
+		      deactivate();
+		}
+		
+		 // set the initialized flag.
+		_initialized = true;
+		
+	   _schedulerEngineHelper.register(this, schedulerEntryImpl, DestinationNames.SCHEDULER_DISPATCH);
+	 
+	 	
 	}
 	
 	@Override
 	protected void doReceive(Message message) throws Exception {
 		
 	
+			if(runningJob) 
+		   {
+			   		_log.debug("StartSimulationCron already running, not starting again");
+			        return;
+		   }
+		
+			try
+			{
+				runningJob = true;
+				
+				CronUtil cronThread = new CronUtil();
+				_log.debug("Start StartSimulationCron doReceive");
+				cronThread.StartSimulationCron(message);
+			}
+			catch (Exception e)
+			{
+				runningJob = false;
+			}
+			runningJob = false; 
+		
+		
 	
-		
-		
-	   if(runningJob) 
-	   {
-		   		_log.debug("Trading Simulation already running, not starting again");
-		        return;
-	   }
-		runningJob = true;
-		try
-		{
-			CronUtil.StartSimulationCron(message);
-		}
-		catch (Exception e)
-		{
-			runningJob = false;
-		}
-		runningJob = false; 
 			
 } // END RECEIVER
 }// END CLASS

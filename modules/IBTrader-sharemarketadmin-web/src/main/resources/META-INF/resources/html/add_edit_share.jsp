@@ -7,31 +7,10 @@
 <%@ page import="java.util.Arrays" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.ArrayList" %>
-<script>    
-    var _nameSpace = '<portlet:namespace/>';
-    AUI().ready(function() {    
-    	require ('jquery', function (jquery) {
-    		updateAssetType();
-    	});
-    });
-    
-</script>
+
 <%
 
 Share _share = (Share) request.getAttribute("share");
-JSONObject jsonFutureParams = (JSONObject) request.getAttribute("jsonFutureParams");
-String expirationmonth = "";
-String expirationweek = "";
-String expirationdayweek = "";
-
-if (jsonFutureParams!=null && jsonFutureParams.getString("expirationmonth")!=null && !jsonFutureParams.getString("expirationmonth").equals(""))
-	expirationmonth = jsonFutureParams.getString("expirationmonth");
-if (jsonFutureParams!=null && jsonFutureParams.getString("expirationweek")!=null  &&  !jsonFutureParams.getString("expirationweek").equals(""))
-	expirationweek = jsonFutureParams.getString("expirationweek");
-if (jsonFutureParams!=null && jsonFutureParams.getString("expirationdayweek")!=null && !jsonFutureParams.getString("expirationdayweek").equals(""))
-	expirationdayweek = jsonFutureParams.getString("expirationdayweek");
-
-
 
 
 Calendar cal = Calendar.getInstance();
@@ -46,17 +25,48 @@ int startTimeDay = cal.get(Calendar.DATE);
 int startTimeMonth = cal.get(Calendar.MONTH);
 int startTimeYear = cal.get(Calendar.YEAR);
  
-
-
+ 
 String redirect = ParamUtil.getString(request, "redirect");
 portletDisplay.setShowBackIcon(true);
 portletDisplay.setURLBack(redirect);
 String portletId= "_" + portletDisplay.getId();
 
-
-
 %>
 
+
+<script>
+
+var _nameSpace = '<portlet:namespace/>';
+
+AUI().ready(function() {
+	jQuery.noConflict();
+	(function( $ ) {
+	  $(function() {
+		 	
+		    console.log("entering futureexpirationdays2");	
+			updateAssetType();    	
+			
+			//		https://uxsolutions.github.io/bootstrap-datepicker/?markup=component&format=&weekStart=&startDate=&endDate=&startView=0&minViewMode=0&maxViewMode=4&todayBtn=false&clearBtn=false&language=en&orientation=auto&multidate=&multidateSeparator=&keyboardNavigation=on&forceParse=on#sandbox
+			//      https://bootstrap-datepicker.readthedocs.io/en/latest/
+			console.log($('#' + _nameSpace  +'expirationdate'));
+			jQuery('#' + _nameSpace  +'expirationdate').datepicker({
+					format: "dd/mm/yyyy",
+				    todayBtn: "linked",
+				    clearBtn: true,
+				    multidate: true,
+				    calendarWeeks: true,
+				   // autoclose: true,
+				    todayHighlight: true,
+				//    toggleActive: true,
+				    daysOfWeekHighlighted : [0,6]
+
+			});
+			jQuery('#' + _nameSpace  +'expirationdate').datepicker('setDates',[${expirationDates}]);
+			
+	  });
+	})(jQuery);
+});
+</script>
 
 
 
@@ -86,11 +96,6 @@ String _URL = addShareURL;
 if (_share!=null)
 	_URL = editShareURL;
 
-List<String> _months;
-if (!expirationmonth.equals(""))
-	_months= new ArrayList<String>(Arrays.asList(expirationmonth.split(",")));			    		
-else
-	_months= new ArrayList<String>();
 
 %>
 
@@ -114,21 +119,43 @@ else
 	 <aui:fieldset>
 		 <div class="col col-sm-2">	
 			<aui:input label="share.active" name="active" type="toggle-card" checked="${share.active ? 'true':''}"/>
-		 </div>  
-		 <div class="col col-sm-2">	
 			<aui:input label="share.validated" disabled="true"  name="validated_trader_provider" type="toggle-card" checked="${share.validated_trader_provider ? 'true':''}"/>
-		 </div>
+		 </div>  		 
 		 <div class="col col-sm-2">	
+			<aui:input label="share.firtDateHistorical" disabled="true"  name="firstDateHistorical"  type="text"  value="${_startHistorical}"/>		
+			<aui:input label="share.lastDateHistorical"  disabled="true"  name="lastDateHistorical" type="text"  value="${_endHistorical}"/>
 			<%@include file="/html/add_edit_share_last_realtime.jsp"%>
+		 </div>				 		   	 		 		   	 	   	  	   	     					 		 
+		 <div class="col col-sm-4">			
+		 	 <c:set var="count" value="0" scope="page" />		 		
+			 <c:forEach items="${currentTradingHours}" var="hour">
+      			  <aui:input name="${count}"  type="text" disabled="true" value="${hour}"/>
+      			  <c:set var="count" value="${count + 1}" scope="page"/>      			  
+      		</c:forEach>
+			
 		 </div>
       </aui:fieldset>
-      <aui:fieldset> 
-		<aui:input type="number" label="share.number" name="numbertopurchase"  value="${share.numbertopurchase}">
-			  <aui:validator  name="required"  />	
-			  <aui:validator name="min">1</aui:validator>
-			  <aui:validator name="digits"/>
-		 </aui:input>
-    </aui:fieldset>
+       <aui:row>    
+    		<aui:col span="3">
+		      <aui:fieldset> 
+				<aui:input type="number" label="share.number" name="numbertopurchase"  value="${share.numbertopurchase}">
+					  <aui:validator  name="required"  />	
+					  <aui:validator name="min">1</aui:validator>
+					  <aui:validator name="digits"/>
+				 </aui:input>
+			 </aui:fieldset>
+		   </aui:col>
+				<aui:col span="3">
+		        <aui:fieldset>
+		        			<aui:input type="text" label="share.tickfutures" name="tick_futures"  value="${share.tick_futures gt 0 ? share.tick_futures : '0.01'}">
+							  <aui:validator  name="required"  />								
+						 </aui:input>
+		  			   <!--  html5 versus liferay debido a los numbers con dcecimales      
+		     			 <label class="control-label" for="<%=portletId%>_tick_futures"><liferay-ui:message key="share.tickfutures"/></label><input  id="<%=portletId%>_tick_futures" class="field form-control"  min="0"  type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_tick_futures"  value="${share.tick_futures gt 0 ? share.tick_futures : '0.01'}"/>
+		     			 -->			    	
+			     </aui:fieldset>
+		   </aui:col>
+		</aui:row>	 
     <aui:row>    
     	<aui:col span="6">
 	    	 <aui:fieldset>		         
@@ -148,63 +175,14 @@ else
        </aui:col>
 	</aui:row>	         
    <liferay-ui:panel-container accordion="true" extended="true" id="datafutures">
-		<liferay-ui:panel title="share.datafutures" markupView="lexicon">
-		<aui:row>
-    	<aui:col span="6">    		
-		    <aui:fieldset>	  
-		    	<label class="control-label" for="<%=portletId%>_expirationmonth">
-		    		<liferay-ui:message key="data.expirationmonth"/>
-		    	</label>		    			
-		    	<select class="field form-control" id="<%=portletId%>_expirationmonth" multiple  name="<%=portletId%>_expirationmonth">
-		    	<% int monthCounter=0;				    				    
-			    for (String s: ConfigKeys._FUTURES_MONTHS)  { %>	
-			        <option value="<%=monthCounter%>" <%=(_months.contains(String.valueOf(monthCounter)) ? "selected" :  "")%>><%=s%></option> 
-			    <% monthCounter++;} %>
-		    	</select>	 				
-			</aui:fieldset>
-	     </aui:col> 
-	     <aui:col span="2">
-	      		<aui:fieldset>	  		
-				<aui:select   label="data.expirationweek" name="expirationweek">		
-				   <aui:option  value="1" selected="<%=("1".equals(expirationweek) ? true :  false)%>">1</aui:option>
-				   <aui:option  value="2" selected="<%=("2".equals(expirationweek) ? true :  false)%>">2</aui:option>
-				   <aui:option  value="3" selected="<%=("3".equals(expirationweek) ? true :  false)%>">3</aui:option>
-				   <aui:option  value="4" selected="<%=("4".equals(expirationweek) ? true :  false)%>">4</aui:option>
-				   <aui:option  value="5" selected="<%=("5".equals(expirationweek) ? true :  false)%>">5</aui:option>
-				</aui:select>
-				</aui:fieldset>
-		</aui:col> 
-	     <aui:col span="2">
-	     		<aui:fieldset>	  	
-			    <aui:select label="data.expirationdayweek" name="expirationdayweek">		
-			       <% int dayCounter=1;
-			       	for (String s: ConfigKeys._FUTURES_DAYOFWEEK)  { %>        	    				    	
-				        <aui:option  value="<%=dayCounter%>" selected="<%=(expirationdayweek.equals(String.valueOf(dayCounter)) ? true :  false)%>"><%=s%></aui:option> 
-				    <% dayCounter+=1;} %>		   				    				   		   
-				 </aui:select>
-  				 </aui:fieldset>	      			  					
-  		</aui:col> 
-  		 <aui:col span="2">
-  		 		<aui:fieldset>
-  		 		<liferay-ui:message key="data.expirationdate"/>
-  				<liferay-ui:input-date dayParam="startDateDay"
-					     dayValue="<%= startTimeDay %>"
-					     disabled="true"					     
-					     monthParam="startDateMonth"
-					     monthValue="<%= startTimeMonth %>"
-					     name="expiredate"
-					     yearParam="startDateYear"
-					     yearValue="<%= startTimeYear %>"/>
-  			
-  				 </aui:fieldset>
-  		 </aui:col>
-	    	</aui:row>	 
-  			<aui:row>
-    		<aui:col span="6">
-  			   <!--  html5 versus liferay debido a los numbers con dcecimales  -->    
-     			 <label class="control-label" for="<%=portletId%>_tick_futures"><liferay-ui:message key="share.tickfutures"/></label><input  id="<%=portletId%>_tick_futures" class="field form-control"  min="0"  type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_tick_futures"  value="${share.tick_futures gt 0 ? share.tick_futures : ''}"/>			    	
-	        </aui:col>  	
-		     <aui:col span="6">
+		<liferay-ui:panel title="share.datafutures" markupView="lexicon">		
+		<aui:row>    	
+	   	   <aui:col span="6">		
+	   	     <aui:fieldset>  	  
+	   	       <aui:input  class="field form-control" label="data.expirationdate" name="expirationdate" id="expirationdate" type="text"/>	   	     			
+			</aui:fieldset>	     		  				
+  			</aui:col>   		 		    			    		  
+		     <aui:col span="3">
 			     <label class="control-label" for="<%=portletId%>_share.multiplier"><liferay-ui:message key="share.multiplier"/></label><input  id="<%=portletId%>_multiplier" class="field form-control"  min="0"  type="number"  step="0.01"   formnovalidate="formnovalidate"   pattern="[0-9]+([,][0-9]+)?" placeholder="0,00" name="<%=portletId%>_multiplier"  value="${share.multiplier gt 0 ? share.multiplier : ''}"/>
 			 </aui:col>
 	        </aui:row>	  

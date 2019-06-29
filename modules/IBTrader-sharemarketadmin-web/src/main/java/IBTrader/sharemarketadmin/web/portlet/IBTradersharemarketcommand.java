@@ -1,11 +1,14 @@
 package IBTrader.sharemarketadmin.web.portlet;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.StringJoiner;
 
 import javax.portlet.PortletException;
 import javax.portlet.PortletMode;
@@ -19,6 +22,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.ibtrader.constants.IBTraderConstants;
 import com.ibtrader.data.model.BackTesting;
+import com.ibtrader.data.model.HistoricalRealtime;
 import com.ibtrader.data.model.Market;
 import com.ibtrader.data.model.Realtime;
 import com.ibtrader.data.model.Share;
@@ -27,6 +31,7 @@ import com.ibtrader.data.model.StrategyShare;
 import com.ibtrader.data.model.impl.StrategyImpl;
 import com.ibtrader.data.service.BackTestingLocalService;
 import com.ibtrader.data.service.BackTestingLocalServiceUtil;
+import com.ibtrader.data.service.HistoricalRealtimeLocalService;
 import com.ibtrader.data.service.MarketLocalService;
 import com.ibtrader.data.service.MarketLocalServiceUtil;
 import com.ibtrader.data.service.RealtimeLocalService;
@@ -85,7 +90,8 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
     private MarketLocalService _marketLocalService; 
     private StrategyLocalService _strategyLocalService;
     private StrategyShareLocalService _strategyshareLocalService;
-    private RealtimeLocalService _realtimLocalService;
+    private RealtimeLocalService _realtimLocalService;    
+    private HistoricalRealtimeLocalService _historicalLocalService;
 
 
     private static String _JSP_COMMAND_EDIT_SHARE_DETAIL = "/html/add_edit_share.jsp";
@@ -97,7 +103,10 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
     private static String  _JSP_COMMAND_LIST_BACKTESTING = "/html/view_backtesting.jsp";
     private static String  _JSP_COMMAND_LIST_DEFAULT = "/html/view.jsp";
     
-    
+    @Reference(unbind = "-")
+    protected void setHistoricalRealtimeLocalService(HistoricalRealtimeLocalService historicalLocalService) {
+    	_historicalLocalService = historicalLocalService;
+    }
     
     @Reference(unbind = "-")
     protected void setRealtimeLocalService(RealtimeLocalService realtimLocalService) {
@@ -171,7 +180,15 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
         Share share = null;
         BackTesting backtesting = null;
         JSONObject  jsonStrategyShareParams = null;
-        JSONObject  jsonFutureParams = null;
+        
+        String expirationDates = "";
+        
+        /* FECHAS MIN MAX HISTORICAL */
+        String _startHistorical = "";
+        String _endHistorical = "";
+
+      
+        List<String>  currentTradingHours = new ArrayList<String>();
         
         /* Lastrealtime */
         Realtime realtime  = null; 
@@ -186,8 +203,6 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
 	        long marketId = ParamUtil.getLong(renderRequest, "marketId");
 	        long backtestingId = ParamUtil.getLong(renderRequest, "backtestingId");
 			String strategyselected = ParamUtil.getString(renderRequest, "strategyselected", "SELECTED");
-			
-			
 			
 			
 	        if (shareAddedId!=-1)
@@ -227,10 +242,36 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
 	        		 _lMarket = _marketLocalService.findByActiveCompanyGroup(themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId(), Boolean.TRUE);
 	        		// share = _shareLocalService.fetchShare(shareId);
 		        	 renderResponse.setTitle((share != null) ? share.getName() :  LanguageUtil.get(_hR, "share.addshare"));
+		        	 
+		        	 if (share!=null)
+		        	 {
+		        	 
+			        	 realtime = _realtimLocalService.findLastRealTime(share.getShareId(), share.getCompanyId(), share.getGroupId());
+		        		 
+		        		 HistoricalRealtime _startH = _historicalLocalService.findFirstRealTime(shareId, share.getCompanyId(), share.getGroupId());
+		        		 HistoricalRealtime _endH   = _historicalLocalService.findLastRealTime(shareId, share.getCompanyId(), share.getGroupId());
+	
+		        		 SimpleDateFormat fDateHistorical = new SimpleDateFormat(Utilities._IBTRADER_FUTURE_LONG_DATE);
+		        		 
+		        		 _startHistorical =  Validator.isNotNull(_startH) ? fDateHistorical.format(_startH.getCreateDate()) : "";
+		        	     _endHistorical   =  Validator.isNotNull(_endH) ? fDateHistorical.format(_endH.getCreateDate()) : "";
+		        	     
+		        	     currentTradingHours = Utilities.getCurrentTradingHours(share.getTrading_hours(), themeDisplay.getUser());
+		        	     
+		        	  
+		        	 }
+		        	 
 		        	 if (share!=null &&  share.getExpiry_expression()!=null && !share.getExpiry_expression().equals("")) 
 		        	 {
-		        		 jsonFutureParams = JSONFactoryUtil.createJSONObject(share.getExpiry_expression());
-		        		 realtime = _realtimLocalService.findLastRealTime(share.getShareId(), share.getCompanyId(), share.getGroupId());
+		        				        	
+		        		 StringBuilder strB = new StringBuilder();		        		
+		        		 strB.append("'");
+		        		 strB.append(share.getExpiry_expression().replaceAll(",", "','"));
+		        		 strB.append("'");
+		        		 expirationDates = strB.toString();
+		        		
+		        		 
+		        		 
 		        	 }
 		        	 
 	        }
@@ -334,10 +375,10 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
 	        	
 	        	
 	        	
-	        }
+	       }
 	        
 	        
-	        String starthour  = ""; 
+	      /*   String starthour  = ""; 
 			String endhour =  ""; 
 			
 	        if (Validator.isNotNull(Market))
@@ -347,7 +388,7 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
 			
 	        }
 	        
-	    	
+	    	*/
 	    	
 	        /* se habilitan los parametros si existen las estrategias  y estan activas */
 	        renderRequest.setAttribute("readonlyStopLost", (strategyshare_stoplost==null || (strategyshare_stoplost!=null && !strategyshare_stoplost.isActive()) ? "readonly"  : ""));
@@ -361,21 +402,21 @@ public class IBTradersharemarketcommand implements MVCRenderCommand {
 	        renderRequest.setAttribute("market", Market);
 	        renderRequest.setAttribute("backtesting", backtesting);
 	        
-	        /* HORAS ADAPTADAS DE UTC A LOCAL DE USUARIO */
-	        renderRequest.setAttribute("marketStart", starthour);
+	        /* HORAS ADAPTADAS DE UTC A LOCAL DE USUARIO 
+	        renderRequest.setAttribute("marketStart", starthour);1
 	        renderRequest.setAttribute("marketEnd", endhour);
-	       
+	       */
 	        renderRequest.setAttribute("implemented_strategy", _strategyImpl);
 	        renderRequest.setAttribute("tab_selected", tab_selected);	        
 	        renderRequest.setAttribute("jsonStrategyShareParams", jsonStrategyShareParams);
-	        renderRequest.setAttribute("jsonFutureParams", jsonFutureParams);	        
+	        renderRequest.setAttribute("expirationDates", expirationDates);	        	          
 	        renderRequest.setAttribute("marketId", marketId);
 	        renderRequest.setAttribute("realtime", realtime);
 	        
+	        renderRequest.setAttribute("_startHistorical", _startHistorical);
+	        renderRequest.setAttribute("_endHistorical", _endHistorical);
 	        
-	        
-	        
-	        
+	        renderRequest.setAttribute("currentTradingHours", currentTradingHours);
 	        
 
 	    } catch (Exception e) {

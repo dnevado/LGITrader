@@ -1,29 +1,4 @@
-/*La idea es automatizar este modelo sobre ESZ4, actual vencimiento diciembre del futuro SP500, este campo Symbol cambiará cada trimestre igual que en el anterior desarrollo.
 
-- Se debe capturar el tiempo real tick desde las 15:00 hora España hasta el cierre a 22:00
-  en período temporal 5 minutos, donde la primera captura será el precio que refleje a las 15:00:00,  el segundo 15:05:00, tercero 15:10:00 y sucesivos.
-
-- A estas capturas de 5 minutos le aplicamos una media móvil simple de 8 períodos.
-
-- Cuando al cierre de una barra el precio rompa por encima de la mediamovil de 8 períodos y se sitúe por encima en el 75% del rango de la misma, se genera una orden de compra de 1 Futuro a mercado "Market". Y a al inversa cuando la barra perfore la media, venderá.
-
-- El stop se ejecuta cuando una barra cierre en su 100% por debajo de la media movil.
-
-- Cuando alcance 10 puntos de beneficio se ejecuta stop profit, aquí genera un campo donde el trader pueda modificar esta variable.
-
-- Por ejemplo si se combra a 1980 y se vende a 1990, en este precio haría 2 contratos, 1 para cerrar la compra en 80 y otro abre un corto en 90.
-
-- Es posible que debamos limitar el número de operaci
-ones que realice en el día, tenlo en cuenta para crear un contador.
-
-- No necesitamos base de datos anteriores.
-
-1- Si la barra no cumple los 2 criterios, no compra, eso lo tenemos claro.
- A/ La barra debe cruzar la MM8 y al cierre el 75% de su cuerpo debe ser superior al precio cierre de la MM.
-y B/ Además, el precio cierre de la barra será => que el 75% del rango.
-
-2- La particularidad de este caso afecta a la primera sentencia, el cierre de la barra se sitúa en su 100% por encima de la MM, con lo cual debe comprar, el filtro B aquí no afecta.
-*/
 
 package com.ibtrader.strategy;
 
@@ -63,7 +38,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.ibtrader.util.MobileAvgUtil;
+import com.ibtrader.util.BaseIndicatorUtil;
 import com.ibtrader.util.AroonIndicatorUtil;
 import com.ibtrader.util.ConfigKeys;
 import com.ibtrader.util.DirectionalMovementADXRUtil;
@@ -381,10 +356,10 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 				if  (Validator.isNotNull(lastRealtime))
 				{
 				//_ActualDateBar, TimeBars, shareId, companyId, groupId, PeriodN)
-				Double _avgMobileExponential = MobileAvgUtil.getExponentialAvgMobile(_calendarFromNow.getTime(), lastRealtime.doubleValue(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_macdP , isSimulation_mode(), _market);
+				Double _avgMobileExponential = BaseIndicatorUtil.getExponentialAvgMobile(_calendarFromNow.getTime(), lastRealtime.doubleValue(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_macdP , isSimulation_mode(), _market);
 				
 				if (_log.isDebugEnabled())
-					_log.debug("_avgMobileSimple for :" + _share.getSymbol() + ":" +  _avgMobileExponential.doubleValue() + " " + Utilities.getWebFormattedDate(_calendarFromNow.getTime(), _IBUser));
+					_log.debug("_avgMobileSimple for :" + _share.getSymbol() + ":" +  (Validator.isNotNull(_avgMobileExponential) ? _avgMobileExponential.doubleValue() : 0) + " " + Utilities.getWebFormattedDate(_calendarFromNow.getTime(), _IBUser));
 				
 				if (_avgMobileExponential!=null)
 				{
@@ -424,12 +399,12 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 					//if ()
 					
 					
-					MACD 		  = MobileAvgUtil.getMACD(_calendarFromNow.getTime(),  _num_macdT , _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_shortAvgMACD_P,_num_longAvgMACD_P ,isSimulation_mode(),_market);
-					previousMACD  = MobileAvgUtil.getMACDPrevious(_calendarFromNow.getTime(), _num_macdT , _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_shortAvgMACD_P, _num_longAvgMACD_P,isSimulation_mode(),_market);
+					MACD 		  = BaseIndicatorUtil.getMACD(_calendarFromNow.getTime(),  _num_macdT , _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_shortAvgMACD_P,_num_longAvgMACD_P ,isSimulation_mode(),_market);
+					previousMACD  = BaseIndicatorUtil.getMACDPrevious(_calendarFromNow.getTime(), _num_macdT , _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_shortAvgMACD_P, _num_longAvgMACD_P,isSimulation_mode(),_market);
 										
 					
-					Double _macd_SignalAvgMobileExponential  		 = MobileAvgUtil.getMACDSignal(_calendarFromNow.getTime(),  _num_macdT , _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_shortAvgMACD_P,_num_longAvgMACD_P,_num_signalLineMACD_P,isSimulation_mode(),_market);
-					Double _macd_PreviousSignalAvgMobileExponential  = MobileAvgUtil.getMACDSignalPrevious(_calendarFromNow.getTime(),  _num_macdT , _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_shortAvgMACD_P,_num_longAvgMACD_P,_num_signalLineMACD_P,isSimulation_mode(),_market);
+					Double _macd_SignalAvgMobileExponential  		 = BaseIndicatorUtil.getMACDSignal(_calendarFromNow.getTime(),  _num_macdT , _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_shortAvgMACD_P,_num_longAvgMACD_P,_num_signalLineMACD_P,isSimulation_mode(),_market);
+					Double _macd_PreviousSignalAvgMobileExponential  = BaseIndicatorUtil.getMACDSignalPrevious(_calendarFromNow.getTime(),  _num_macdT , _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_shortAvgMACD_P,_num_longAvgMACD_P,_num_signalLineMACD_P,isSimulation_mode(),_market);
 					
 										
 					boolean _BuySuccess = false;

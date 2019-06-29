@@ -92,6 +92,7 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 		attributes.put("last_error_trader_provider",
 			getLast_error_trader_provider());
 		attributes.put("simulation_end_date", getSimulation_end_date());
+		attributes.put("trading_hours", getTrading_hours());
 
 		return attributes;
 	}
@@ -272,6 +273,12 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 
 		if (simulation_end_date != null) {
 			setSimulation_end_date(simulation_end_date);
+		}
+
+		String trading_hours = (String)attributes.get("trading_hours");
+
+		if (trading_hours != null) {
+			setTrading_hours(trading_hours);
 		}
 	}
 
@@ -503,6 +510,16 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 	@Override
 	public java.lang.String getSymbol() {
 		return _share.getSymbol();
+	}
+
+	/**
+	* Returns the trading_hours of this share.
+	*
+	* @return the trading_hours of this share
+	*/
+	@Override
+	public java.lang.String getTrading_hours() {
+		return _share.getTrading_hours();
 	}
 
 	/**
@@ -953,6 +970,16 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 	@Override
 	public void setTick_futures(double tick_futures) {
 		_share.setTick_futures(tick_futures);
+	}
+
+	/**
+	* Sets the trading_hours of this share.
+	*
+	* @param trading_hours the trading_hours of this share
+	*/
+	@Override
+	public void setTrading_hours(java.lang.String trading_hours) {
+		_share.setTrading_hours(trading_hours);
 	}
 
 	/**

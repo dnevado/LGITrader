@@ -172,35 +172,5 @@ public class GITraderPortlet extends MVCPortlet {
 		/* VALORES PARA CADA EMPRESA */
 	}
 	
-	public  void  CronTrade(ActionRequest actionRequest, ActionResponse actionResponse)
-			throws PortletException {
-		// TODO Auto-generated method stub
-		try {
-			//CronUtil.StartTradingCron(new Message());
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	public  void  CronRead(ActionRequest actionRequest, ActionResponse actionResponse)
-			throws PortletException {
-		// TODO Auto-generated method stub
-		try {
-		//	CronUtil.StartReadingCron(new Message());
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	public  void  CronVerifyContract(ActionRequest actionRequest, ActionResponse actionResponse)
-			throws PortletException {
-		// TODO Auto-generated method stub
-		try {
-			CronUtil.StartVerifyContractsCron(new Message());
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+
 }

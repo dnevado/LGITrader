@@ -14,6 +14,17 @@
 
 package com.ibtrader.data.model.impl;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+
+import com.ibtrader.util.Utilities;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
+
 import aQute.bnd.annotation.ProviderType;
 
 /**
@@ -34,7 +45,13 @@ public class ShareImpl extends ShareBaseImpl {
 	 */
 	public ShareImpl() {
 	}
+	
+	//[{"fromDate":"20190325 0800","toDate":"20190326 0000"},{"fromDate":"20190326 0800","toDate":"20190327 0000"}
+	/* DEBE CUMPLIRSE QUE ESTE ACTIVO, QUE ESTE VALIDADO Y QUE SEA OPERABLE POR LAS HORAS DE LA TWS */
 	public boolean IsTradeable() {
-		return this.isActive() && this.isValidated_trader_provider();
+		
+		boolean  isTradingEnabled = Utilities.IsTradingEnabledFromHours(this.getTrading_hours());
+		
+		return this.isActive() && this.isValidated_trader_provider() && isTradingEnabled;
 	}
 }

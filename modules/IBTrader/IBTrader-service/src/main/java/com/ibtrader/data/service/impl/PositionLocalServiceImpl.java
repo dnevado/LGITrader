@@ -62,13 +62,14 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 	 */
 	
 	
-	public List<Position> findByCloseCompanyGroup(long companyId, long groupId, boolean forceclose, String positionMode)
+	public List<Position> findByCloseCompanyGroup(long companyId, long groupId, long shareId, boolean forceclose, String positionMode)
 	{	
 		
 		DynamicQuery _DQ = PositionLocalServiceUtil.dynamicQuery();
 
 		_DQ.add(RestrictionsFactoryUtil.eq("companyId", companyId));
 		_DQ.add(RestrictionsFactoryUtil.eq("groupId", groupId));
+		_DQ.add(RestrictionsFactoryUtil.eq("shareId", shareId));
 		_DQ.add(RestrictionsFactoryUtil.eq("forceclose", forceclose));		
 		_DQ.add(RestrictionsFactoryUtil.eq("position_mode", positionMode));		
 		_DQ.add(RestrictionsFactoryUtil.ne("state", PositionStates.status.SELL_OK.toString()));		

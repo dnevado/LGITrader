@@ -295,6 +295,11 @@ public class ShareLocalServiceWrapper implements ShareLocalService,
 	}
 
 	@Override
+	public java.util.List<com.ibtrader.data.model.Share> findAllSharesSortbySimulated() {
+		return _shareLocalService.findAllSharesSortbySimulated();
+	}
+
+	@Override
 	public java.util.List<com.ibtrader.data.model.Share> findByActiveFuturesDates(
 		boolean _active) {
 		return _shareLocalService.findByActiveFuturesDates(_active);

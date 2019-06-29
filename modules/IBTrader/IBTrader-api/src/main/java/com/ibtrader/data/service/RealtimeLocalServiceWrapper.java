@@ -101,9 +101,10 @@ public class RealtimeLocalServiceWrapper implements RealtimeLocalService,
 
 	@Override
 	public com.ibtrader.data.model.Realtime findCloseRealTime(long shareId,
-		long companyId, long groupId, java.util.Date closeDate) {
+		long companyId, long groupId, java.util.Date closeDate,
+		boolean isClosedDate) {
 		return _realtimeLocalService.findCloseRealTime(shareId, companyId,
-			groupId, closeDate);
+			groupId, closeDate, isClosedDate);
 	}
 
 	@Override
@@ -390,6 +391,11 @@ public class RealtimeLocalServiceWrapper implements RealtimeLocalService,
 		java.util.Date to, long shareId, long companyId, long groupId) {
 		_realtimeLocalService.removeRealtimeFromToDate(from, to, shareId,
 			companyId, groupId);
+	}
+
+	@Override
+	public void removeScheduledRealTimes(long companyId, long groupId) {
+		_realtimeLocalService.removeScheduledRealTimes(companyId, groupId);
 	}
 
 	@Override

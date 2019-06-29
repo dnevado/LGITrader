@@ -122,6 +122,9 @@ public interface HistoricalRealtimeLocalService extends BaseLocalService,
 	public HistoricalRealtime findCloseRealTime(long shareId, long companyId,
 		long groupId, Date closeDate);
 
+	public HistoricalRealtime findFirstRealTime(long shareId, long companyId,
+		long groupId);
+
 	public HistoricalRealtime findLastCompanyShare(long companyId,
 		long shareId, long groupId);
 

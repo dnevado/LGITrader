@@ -105,6 +105,14 @@ public class IBOrderLocalServiceWrapper implements IBOrderLocalService,
 			clientId, companyId, groupId);
 	}
 
+	@Override
+	public com.ibtrader.data.model.IBOrder findByOrderShareClientGroupCompany(
+		long iborderId, long shareId, long clientId, long companyId,
+		long groupId) {
+		return _ibOrderLocalService.findByOrderShareClientGroupCompany(iborderId,
+			shareId, clientId, companyId, groupId);
+	}
+
 	/**
 	* Returns the ib order with the primary key.
 	*
@@ -356,6 +364,13 @@ public class IBOrderLocalServiceWrapper implements IBOrderLocalService,
 		long clientId) {
 		return _ibOrderLocalService.findMaxOrderClientCompanyGroup(companyId,
 			groupId, clientId);
+	}
+
+	@Override
+	public long findMaxOrderClientShareCompanyGroup(long companyId,
+		long groupId, long clientId, long shareId) {
+		return _ibOrderLocalService.findMaxOrderClientShareCompanyGroup(companyId,
+			groupId, clientId, shareId);
 	}
 
 	@Override

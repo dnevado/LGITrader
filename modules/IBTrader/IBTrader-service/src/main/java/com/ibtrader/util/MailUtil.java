@@ -95,9 +95,9 @@ public class MailUtil {
 		String[] _to = {emailTo}; 
 		try {
 			sendFromGMail(_to, subject, body);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 		
 	}
@@ -109,7 +109,7 @@ public class MailUtil {
 		{
 		
 		fromName    = PrefsPropsUtil.getString(position.getCompanyId(), PropsKeys.ADMIN_EMAIL_FROM_NAME);
-		fromAddress = PrefsPropsUtil.getString(position.getCompanyId(), PropsKeys.ADMIN_EMAIL_FROM_ADDRESS);
+		fromAddress = PrefsPropsUtil.getString(	position.getCompanyId(), PropsKeys.ADMIN_EMAIL_FROM_ADDRESS);
 		
 		Group group = GroupLocalServiceUtil.getGroup(position.getGroupId());
 		long notification_enabled = Long.valueOf(Utilities.getConfigurationValue(IBTraderConstants.keyENABLE_MAIL_NOTIFICATIONS, position.getCompanyId(), group.getGroupId())).intValue();;	  // el dos para leer, el 3 para escribir	
@@ -128,11 +128,9 @@ public class MailUtil {
 	    if (group.isOrganization())    	
 	    	  organizationId = group.getClassPK();
         
-		Organization org = OrganizationLocalServiceUtil.getOrganization(organizationId);
+		//Organization org = OrganizationLocalServiceUtil.getOrganization(organizationId);
 	
-
-		
-		List<User> users =  UserLocalServiceUtil.getOrganizationUsers(org.getOrganizationId());
+		List<User> users =  UserLocalServiceUtil.getOrganizationUsers(organizationId);
 		
 		List<EmailAddress> addresslist = EmailAddressLocalServiceUtil.getEmailAddresses(position.getCompanyId(), Organization.class.getName(), organizationId);
 
@@ -218,7 +216,7 @@ public class MailUtil {
 		
 	}
 	
-	private static void sendFromGMail(String[] to, String subject, String body) throws IOException {
+	private static void sendFromGMail(String[] to, String subject, String body) throws Exception {
 		
 	try 
 	{
@@ -257,12 +255,12 @@ public class MailUtil {
   
        
     } catch (Exception e) {
-        e.printStackTrace();
+        throw new Exception(e);
     }
     }
 	
 	
-	public static void main(String[] args) throws IOException 
+	public static void main(String[] args) throws Exception 
 	{
 		
 		

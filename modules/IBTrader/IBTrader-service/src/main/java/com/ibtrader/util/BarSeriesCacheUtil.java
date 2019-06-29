@@ -155,7 +155,7 @@ public class BarSeriesCacheUtil {
 			
 			Share share =  ShareLocalServiceUtil.fetchShare(shareId);
 			Market market =  MarketLocalServiceUtil.fetchMarket(share.getMarketId());			
-			lClosingPeriods = MobileAvgUtil.getPeriodsMinutesMobileAvg(to, periodsToCalculate , timebars, Boolean.TRUE, market);
+			lClosingPeriods = BaseIndicatorUtil.getPeriodsMinutesMobileAvg(to, periodsToCalculate , timebars, Boolean.TRUE, market);
 
 			double max_value = 0;
 	        double min_value = 0;
@@ -193,20 +193,26 @@ public class BarSeriesCacheUtil {
 	        		  for (int j=0;j<lRcloseValue.size();j++)
 	        		  {
 	        			
+	        			  
+	        			
+	        			  
 	        			  Realtime realtimeMINMAX = lRMinMax.get(j);
-	        			  Realtime realtimeCLOSE = lRMinMax.get(j);
+	        			  Realtime realtimeCLOSE = lRcloseValue.get(j);
 	        			  if (realtimeMINMAX.getMax_value()<=0  || realtimeMINMAX.getMin_value()<=0 || realtimeCLOSE.getValue()<=0)
 							break;
 	        			  
 				          max_value = realtimeMINMAX.getMax_value();
 				          min_value = realtimeMINMAX.getMin_value();
-				          close_value =realtimeCLOSE.getValue();
+				          close_value = realtimeCLOSE.getValue();
 	        			  
 	        			  series.addBar(new BaseBar(endTime.plusMinutes(timebars*j),0.0,max_value ,min_value, close_value,0.0));
+	        			  
+	        			  _log.debug("Periodo:" + j + "from:" + cfromWithOpenMarketsTimes.getTime() + ",to:" + to + ",MinMax:" +  max_value + "," + min_value + ",CloseValue:" + close_value);
 
 	        			  
 	        		  }
 	        	}
+	        	
 	        }
 	        	
 	        else

@@ -34,11 +34,20 @@
 	footer_address_fax = theme_display.getThemeSetting('footer-address-fax')
 	footer_company_logo = theme_display.getThemeSetting('footer-company-logo')
 	>
-
-
+	
+	<script>
+    define._amd = define.amd;
+    define.amd = false;
+	</script>
+	<script src="${javascript_folder}/bootstrap-datepicker.min.js"></script>		
+	<script>
+	    define.amd = define._amd;
+	</script>
 
 	<link href="https://fonts.googleapis.com/css?family=Work+Sans" rel="stylesheet">
-	
+	<link href="${css_folder}/datepicker/bootstrap-datepicker.css" rel="stylesheet">		
+
+
 
 </head>
 
@@ -50,13 +59,15 @@
 
 
 
-
+<#assign ibtrader_profile = "" />
 <#if themeDisplay.getPermissionChecker().isOmniadmin()>
 	<@liferay.control_menu />
+<#else>
+	<#assign ibtrader_profile = " normal_user" />
 </#if>
 
 
-<div id="wrapper" class="container-fluid">
+<div id="wrapper" class="container-fluid${ibtrader_profile}">
 		<header>
 			<#if has_navigation || is_signed_in>
 							<#include "${full_templates_path}/menu.ftl" />

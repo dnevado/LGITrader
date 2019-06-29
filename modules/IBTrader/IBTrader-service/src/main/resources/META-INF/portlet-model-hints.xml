@@ -178,6 +178,9 @@
 			<hint-collection name="CLOB" />
 		</field>
 		<field name="simulation_end_date" type="Date" />
+		<field name="trading_hours" type="String">
+			<hint-collection name="CLOB" />
+		</field>
 	</model>
 	<model name="com.ibtrader.data.model.Strategy">
 		<field name="uuid" type="String" />

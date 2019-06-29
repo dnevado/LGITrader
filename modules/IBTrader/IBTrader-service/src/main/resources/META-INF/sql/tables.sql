@@ -167,7 +167,8 @@ create table ibtrader_Share (
 	validated_trader_provider BOOLEAN,
 	date_validated_trader_provider DATE null,
 	last_error_trader_provider TEXT null,
-	simulation_end_date DATE null
+	simulation_end_date DATE null,
+	trading_hours TEXT null
 );
 
 create table ibtrader_Strategy (

@@ -64,6 +64,19 @@
 <aui:row>
 <aui:col span="12">
 	<aui:container cssClass='super-awesome-container'>
+		 <aui:row>    	
+    	 <aui:fieldset>
+    	 <aui:col span="4">
+    	 		<aui:input  disabled="true"  type="text" label="share.name"  name="name" value="${share.name}"></aui:input>
+		 </aui:col>
+         <aui:col span="4">
+    	 		<aui:input  disabled="true" type="text"  name="symbol" label="share.symbol" value="${share.symbol}"></aui:input>
+		 </aui:col>
+		 </aui:fieldset>
+         </aui:row>                              
+    	
+	
+	
 		<liferay-ui:search-container cssClass="table  table-striped table-bordered table-hover" searchContainer="${searchBackTesting}" iteratorURL="${iteratorURL}"> 
 		<liferay-ui:search-container-results results="${searchBackTesting.getResults()}"/>    
 		<liferay-ui:search-container-row  className="com.ibtrader.data.model.BackTesting" keyProperty="backTId" modelVar="BackTesting">

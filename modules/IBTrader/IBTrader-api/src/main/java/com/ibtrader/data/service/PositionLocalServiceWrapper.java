@@ -321,10 +321,10 @@ public class PositionLocalServiceWrapper implements PositionLocalService,
 
 	@Override
 	public java.util.List<com.ibtrader.data.model.Position> findByCloseCompanyGroup(
-		long companyId, long groupId, boolean forceclose,
+		long companyId, long groupId, long shareId, boolean forceclose,
 		java.lang.String positionMode) {
 		return _positionLocalService.findByCloseCompanyGroup(companyId,
-			groupId, forceclose, positionMode);
+			groupId, shareId, forceclose, positionMode);
 	}
 
 	@Override

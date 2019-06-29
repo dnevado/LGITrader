@@ -40,6 +40,7 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 
 import java.io.Serializable;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -241,8 +242,11 @@ public interface MarketLocalService extends BaseLocalService,
 	public List<Market> findByActiveCompanyGroup(long companyId, long groupId,
 		boolean active);
 
-	public List<Market> findByActiveStartEndHour(java.lang.String _Start,
-		java.lang.String _End, boolean active, long companyId, long groupId);
+	public List<Market> findByActiveStartEndMarketHour(boolean active,
+		long companyId, long groupId);
+
+	public List<Market> findByActiveStartEndMarketHour(boolean active,
+		long companyId, long groupId, Date backTestingDate);
 
 	public List<Market> findByCompanyGroup(long companyId, long groupId);
 

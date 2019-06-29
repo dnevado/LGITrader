@@ -1,13 +1,23 @@
 package com.ibtrader.data.service.persistence.impl;
 
+import java.sql.Connection;
+import java.sql.Statement;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.temporal.TemporalUnit;
 import java.util.Date;
 import java.util.List;
 
+import com.ibtrader.constants.IBTraderConstants;
 import com.ibtrader.data.model.Realtime;
 import com.ibtrader.data.model.impl.RealtimeImpl;
+import com.ibtrader.data.service.ConfigLocalServiceUtil;
 import com.ibtrader.data.service.persistence.RealtimeFinder;
 import com.ibtrader.interactive.TIMApiWrapper;
+import com.ibtrader.util.Utilities;
 import com.liferay.portal.dao.orm.custom.sql.CustomSQLUtil;
+import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.SQLQuery;
@@ -17,11 +27,52 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactory;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 
 public class RealtimeFinderImpl extends RealtimeFinderBaseImpl  implements RealtimeFinder {
 	
 	Log _log = LogFactoryUtil.getLog(RealtimeFinderImpl.class);
+	
+	
+	/* BORRADO DE DATOS DE REALTIME ANTERIORES
+	 DEJAMOS x DIAS DE REALTIME SOLO. EXCEPTO LOS PRECIOS DE CIERRE
+	 */
+	public void  removeScheduledRealTimes( long companyId, long groupId)
+	{
+	
+	 Connection con = null;
+	 Statement st = null;		
+	
+		  
+	    /* DELETE FROM */
+	    try 
+		{
+	 	long daysFrom = Long.valueOf(Utilities.getConfigurationValue(IBTraderConstants.keyNUM_DAYS_PAST_REALTIME, companyId, groupId)).intValue();  // el dos para leer, el 3 para escribir	
+		
+		if (daysFrom>0)
+		{
+			
+		   _log.debug("Executing removeScheduledRealTimes from " + daysFrom + " days ago");
+			String sql = CustomSQLUtil.get(getClass(),REMOVE_SCHEDULED_REALTIME);
+	        sql = StringUtil.replace(sql, "?", String.valueOf(daysFrom));
+			con = DataAccess.getUpgradeOptimizedConnection();
+			st = con.createStatement();
+			int result = st.executeUpdate(sql);
+			_log.debug("Executed removeScheduledRealTimes  code:" +result );
+	    }
+		}
+		catch (Exception e) {
+			_log.debug(e.getMessage());
+		}
+	    finally {
+	    	DataAccess.cleanUp(con, st);
+	    }        
+     
+	    
+	}
+	
+	
 	@SuppressWarnings("unchecked")
 	public List findMinMaxRealTime(Date from, Date to, long shareId, long companyId, long groupId)
 	{
@@ -96,6 +147,9 @@ public class RealtimeFinderImpl extends RealtimeFinderBaseImpl  implements Realt
 	        
 	        lRealtime = (List<Realtime>) QueryUtil.list(q, getDialect(), 0, 10000);
 	        
+	        if (_log.isDebugEnabled())
+	        	_log.info(sql);
+	        
 	        if (!lRealtime.isEmpty())
 	        		return lRealtime;
 	        else
@@ -163,7 +217,7 @@ public class RealtimeFinderImpl extends RealtimeFinderBaseImpl  implements Realt
 	
 	
 	@SuppressWarnings("unchecked")
-	public Realtime findCloseRealTimeDate(long shareId, long companyId, long groupId, Date date)
+	public Realtime findCloseRealTimeDate(long shareId, long companyId, long groupId, Date date, boolean isClosePrice)
 	{
 	 List<Realtime> lRealtime = null;
 	 Session session = null;
@@ -179,9 +233,9 @@ public class RealtimeFinderImpl extends RealtimeFinderBaseImpl  implements Realt
 	        QueryPos qPos = QueryPos.getInstance(q);	    
 	        qPos.add(shareId);
 	        qPos.add(companyId);
-	        qPos.add(groupId);
-	        qPos.add(shareId);	   
+	        qPos.add(groupId);	      
 	        qPos.add(date);
+	        qPos.add(isClosePrice);
 
 	        lRealtime = (List<Realtime>) QueryUtil.list(q, getDialect(), 0, 10);
 	        if (!lRealtime.isEmpty())
@@ -328,6 +382,14 @@ public class RealtimeFinderImpl extends RealtimeFinderBaseImpl  implements Realt
 
         String sql = CustomSQLUtil.get(getClass(),FIND_CLOSE_REALTIMES);
         
+        /* 20190515. A PESAR DE QUE LA QUERY CONTEMPLA  UN < to, parece que las barras de 59.59 no me las coge, le sumo un segundo, no debe 
+         * afectar ya que los IN los obtiene igualmente y filtra por minuto 59 cogiendo el maximo.
+         *    */ 
+         
+        Instant  instanceAddedDate  = to.toInstant();
+        instanceAddedDate = instanceAddedDate.plusSeconds(1);
+        to = Date.from(instanceAddedDate);        
+        
         String Dates_IN = String.join("','", mobileAvgDates);
         StringBuilder sDatesIN = new StringBuilder("'");
         sDatesIN.append(Dates_IN);
@@ -346,13 +408,27 @@ public class RealtimeFinderImpl extends RealtimeFinderBaseImpl  implements Realt
         qPos.add(companyId);
         qPos.add(groupId);        
         
+        
+        
+        
         lExponentialMobile = (List<Realtime>) QueryUtil.list(q, getDialect(), 0, 1000);
         
-        if (_log.isDebugEnabled())
-        	_log.info(sql + ",from:" + from + ",to:" + to + ",share:" + shareId + ",compamy:" + companyId + ",groupid:" + groupId + ",isnull:" + lExponentialMobile.isEmpty());
+       
+        _log.debug(sql + ",periods:" + mobileAvgDates + ",from:" + from + ",to:" + to + ",share:" + shareId + ",compamy:" + companyId + ",groupid:" + groupId + ",results:" + (lExponentialMobile.isEmpty() ? 0 :lExponentialMobile.size()));
         
         if (!lExponentialMobile.isEmpty())
-    		return lExponentialMobile;
+        {
+            if (_log.isDebugEnabled())
+            {
+	        	for (Object  otime : lExponentialMobile)
+	        	{
+	        		
+	        		Realtime rtime = (Realtime)  otime;
+	        		_log.debug("realtime date: " + rtime.getCreateDate() + ",value=" + rtime.getValue());
+	        	}
+            }
+        	return lExponentialMobile;
+        }
         else
     		return null;
 	        
@@ -380,8 +456,7 @@ public class RealtimeFinderImpl extends RealtimeFinderBaseImpl  implements Realt
 		public static final String FIND_CLOSE_REALTIME_DATE = RealtimeFinder.class.getName() + ".findCloseRealTimeDate";
 		public static final String FIND_CLOSE_REALTIMES = RealtimeFinder.class.getName() + ".findCloseRealTimes";
 		public static final String FIND_MINMAX_REALTIME_GROUPED_BY_BARS = RealtimeFinder.class.getName() + ".findMinMaxRealTimesBars";
-		
-		
+		public static final String REMOVE_SCHEDULED_REALTIME = RealtimeFinder.class.getName() + ".removeScheduledRealTimes";
 
 		
 }

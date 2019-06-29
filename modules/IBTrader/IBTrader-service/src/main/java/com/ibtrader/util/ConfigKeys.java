@@ -38,17 +38,24 @@ public class ConfigKeys {
     public static final int ADXR_PERIODS = 14;
     public static final int INDICATORS_MIN_SERIE_COUNT = 125;  // PARA EL CALCULO DEL ADXR / MACD ..., NECESITAMOS PARA TENER PRECISION 125 BARRAS 
     
+    public static final int DEFAULT_TIMEBAR_MINUTES = 5;  // barra por detecto para recargar realtimes 
     
     public static final String ERROR_CODE_PACING_VIOLATION = "162";
     
     public static final long DEFAULT_BACKTESTINGID_VALUE = -1;
     
-    
+    public static final long MAX_TRADING_PERIODS_TO_SHOW = 4;
+
     //http://interactivebrokers.github.io/tws-api/market_data_type.html#gsc.tab=0
     public static final int MARKET_DATA_TYPE_DELAYED_LIVE = 3;
+    public static final int MARKET_DATA_TYPE_LIVE = 1;
+    public static final int MARKET_DATA_TYPE_FROZEM = 2;
     
     public static final int SIMULATION_MINUTES_BAR_SIZE = 5; // 5 MINUTOS DE HISTORICAL DATA 
-    
+    public static final String CLOSE_BAR_SIZE = "1 day"; // PRECIOS DE CIERRE  
+    public static final String  SIMULATION_INTERVAL_PERIOD = "1 W"; // 7 dias, es lo máximo a pedir con una barra de 5 minutos 
+    // https://interactivebrokers.github.io/tws-api/historical_limitations.html
+
     
     
     public static final int _AUDIT_TIME_CRON_READ_IN_MILLISECONDS = 30000;   // 30 SEGUNDOS SE GRABA EL MODIFIED DATABASE 
@@ -73,8 +80,8 @@ public class ConfigKeys {
 	    }
 	}
     
-    public static String[] _MARKET_EXCHANGES = new String[]{"SMART","GLOBEX","DTB","NYMEX","IPE"};
-    public static String[] _PRIMARY_MARKET_EXCHANGES = new String[]{"NASDAQ","GLOBEX","DTB","NYMEX","IPE"};
+    public static String[] _MARKET_EXCHANGES = new String[]{"SMART","GLOBEX","DTB","NYMEX","IPE","BM","MATIF"};
+    public static String[] _PRIMARY_MARKET_EXCHANGES = new String[]{"NASDAQ","GLOBEX","DTB","NYMEX","IPE", "BM","MATIF"};
     
     public static String[] _FUTURES_MONTHS = new String[]{"January","February","March","April","May","June","July","August","September","October","November","December"};
     

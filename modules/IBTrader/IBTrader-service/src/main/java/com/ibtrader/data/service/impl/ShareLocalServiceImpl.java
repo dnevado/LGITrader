@@ -14,6 +14,13 @@
 
 package com.ibtrader.data.service.impl;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -27,7 +34,10 @@ import com.ibtrader.util.ConfigKeys;
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.model.AssetLinkConstants;
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
+import com.liferay.portal.kernel.dao.orm.Criterion;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.dao.orm.Order;
+import com.liferay.portal.kernel.dao.orm.OrderFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
@@ -63,6 +73,25 @@ public class ShareLocalServiceImpl extends ShareLocalServiceBaseImpl {
 		return getSharePersistence().findByMarketGroupCompany(groupId, companyId, _marketId);
 	}
 	
+	
+	/* para el historical data  validadas */
+	public List<Share> findAllSharesSortbySimulated()
+	{
+
+		DynamicQuery _DQ = shareLocalService.dynamicQuery();
+		Order defaultOrder = OrderFactoryUtil.asc("simulation_end_date");
+	
+		
+		_DQ.addOrder(defaultOrder);
+
+		
+		return shareLocalService.dynamicQuery(_DQ);
+
+		
+	}
+	
+	
+	
 	/* PARA EL MODO FAKE DE UNA TWS PARA TODOS, LOS REALTIME PARECEN QUE NO FUNCIONAN DE MISMO SIMBOL */
 	public List<Share> findBySymbolExcludingId(String symbol, long exludingShareId)
 	{
@@ -77,6 +106,9 @@ public class ShareLocalServiceImpl extends ShareLocalServiceBaseImpl {
 
 		
 	}
+	
+	
+	
 	
 	public List<Share> findByActiveMarketGroupCompany(long _marketId, boolean _active, long groupId, long companyId)
 	{
@@ -120,9 +152,19 @@ public class ShareLocalServiceImpl extends ShareLocalServiceBaseImpl {
 		_DQ.add(RestrictionsFactoryUtil.eq("companyId", companyId));
 		_DQ.add(RestrictionsFactoryUtil.eq("groupId", groupId));
 		//_DQ.add(RestrictionsFactoryUtil.isNull("date_validated_trader_provider"));
-		_DQ.add(RestrictionsFactoryUtil.eq("validated_trader_provider",Boolean.FALSE));
-		_DQ.add(RestrictionsFactoryUtil.le("date_validated_trader_provider",new Date()));
 		
+		// AND
+		
+		LocalDate now = LocalDate.now();	
+		ZoneId UTCZone = ZoneId.systemDefault(); // UTC
+   		ZonedDateTime startOfDay = now.atStartOfDay(UTCZone); //00:00:00:00		   		   	
+   		
+		Criterion criteria = null; 
+		criteria = RestrictionsFactoryUtil.eq("validated_trader_provider",Boolean.FALSE);	
+		// OR
+		criteria = RestrictionsFactoryUtil.or(criteria, RestrictionsFactoryUtil.le("date_validated_trader_provider",Date.from(startOfDay.toInstant())));
+		_DQ.add(criteria);
+	
 		
 		/*
 		 * al editarlo, 
@@ -234,12 +276,13 @@ public class ShareLocalServiceImpl extends ShareLocalServiceBaseImpl {
 		_share.setModifiedDate(share.getModifiedDate());
 		_share.setUserCreatedId(share.getUserCreatedId());
 		
-		Calendar _Now = Calendar.getInstance();
-		_Now.add(Calendar.DATE, -2);  // para que lo valide el sistema, coge aquellos no validados hoy.
+			
+		LocalDate now = LocalDate.now();
+		now = now.minus(2, ChronoUnit.DAYS); // para que lo valide el sistema, coge aquellos no validados hoy.
 		
-		_share.setDate_validated_trader_provider(_Now.getTime());
-		
-		
+		ZoneId UTCZone = ZoneId.of("UTC");	
+   		ZonedDateTime zonedDateTime = now.atStartOfDay(UTCZone);   		
+		_share.setDate_validated_trader_provider(Date.from(zonedDateTime.toInstant()));
 		
 		
 		sharePersistence.update(_share);

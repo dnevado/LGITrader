@@ -175,6 +175,10 @@ public class HistoricalRealtimeLocalServiceImpl	extends HistoricalRealtimeLocalS
 	{
 		return historicalRealtimeFinder.findLastRealTime(shareId, companyId,  groupId);	
 	}
+	public HistoricalRealtime findFirstRealTime(long shareId, long companyId, long groupId)
+	{
+		return historicalRealtimeFinder.findFirstRealTime(shareId, companyId,  groupId);	
+	}
 	public HistoricalRealtime findLastRealTimeLessThanDate(long shareId, long companyId, long groupId, Date _to)
 	{
 		return historicalRealtimeFinder.findLastRealTimeLessThanDate(shareId, companyId, groupId, _to);

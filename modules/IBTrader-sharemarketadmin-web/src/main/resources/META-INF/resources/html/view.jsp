@@ -10,9 +10,15 @@
 <div id="shares_list" class="container-fluid-1280">
 <aui:row>
 <aui:col span="12">
-	<aui:button-row>    
+	<!--  PONGO ESTO EN VEZ DE BUTTON PORQUE EN LINUX ME DA UN ERROR DE END OF INPUT DE JAVASCRIPT  -->
+	<aui:button-row>
+	<a class="btn btn-lg btn-primary btn-default" href="${viewMarketURL}">
+		<span class="lfr-btn-label"><liferay-ui:message key ="market.view_market"/></span>
+    </a>
+    </aui:button-row>
+		<!-- <aui:button-row>    
 	    <aui:button   cssClass="btn btn-lg btn-primary btn-default" onClick="${viewMarketURL}" value="market.view_market"></aui:button>
-	</aui:button-row>
+	</aui:button-row> -->
 </aui:col>
 </aui:row>
 <liferay-ui:success key="share.delete.success" message="share.delete.success"/>

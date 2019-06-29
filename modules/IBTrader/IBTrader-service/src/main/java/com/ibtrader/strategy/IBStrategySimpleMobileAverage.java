@@ -62,7 +62,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.ibtrader.util.MobileAvgUtil;
+import com.ibtrader.util.BaseIndicatorUtil;
 import com.ibtrader.util.ConfigKeys;
 import com.ibtrader.util.PositionStates;
 import com.ibtrader.util.Utilities;
@@ -188,30 +188,38 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 			
 			
 			
-			Double _avgMobileSimple = MobileAvgUtil.getSimpleAvgMobile(_calendarFromNow.getTime(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_macdP, isSimulation_mode(), _market);
+			//Double _avgMobileSimple = MobileAvgUtil.getSimpleAvgMobile(_calendarFromNow.getTime(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_macdP, isSimulation_mode(), _market);
 			
-			if (_log.isDebugEnabled())
-				_log.debug("_avgMobileSimple for :" + _share.getSymbol() + ":" +  _avgMobileSimple.doubleValue() + " " + Utilities.getWebFormattedDate(_calendarFromNow.getTime(), _IBUser));
-			
-			if (_avgMobileSimple!=null)
+				
+			Double vRealtime = null;
+			if (!isSimulation_mode())
+			{
+				Realtime oRTimeEnTramo =  RealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _calendarFromNow.getTime());
+				vRealtime  = Validator.isNull(oRTimeEnTramo) ? null : oRTimeEnTramo.getValue();
+			}
+			else
+			{
+				HistoricalRealtime oRTimeEnTramo =  HistoricalRealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _calendarFromNow.getTime());
+				vRealtime  = Validator.isNull(oRTimeEnTramo) ? null : oRTimeEnTramo.getValue();
+			}
+				
+
+			if (vRealtime!=null)
 			{
 				// todo fue bien, tenemos media movil y de los periodos solicitados.
 				// buscamos el cierre de la barra, ultimo valor < que el MINUTE.00  (15.00, 20,00, 25.00)
-				Double vRealtime = null;
-				if (!isSimulation_mode())
-				{
-					Realtime oRTimeEnTramo =  RealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _calendarFromNow.getTime());
-					vRealtime  = Validator.isNull(oRTimeEnTramo) ? null : oRTimeEnTramo.getValue();
-				}
-				else
-				{
-					HistoricalRealtime oRTimeEnTramo =  HistoricalRealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _calendarFromNow.getTime());
-					vRealtime  = Validator.isNull(oRTimeEnTramo) ? null : oRTimeEnTramo.getValue();
-				}
+				
+				Double _avgMobileSimple = BaseIndicatorUtil.getExponentialAvgMobile(_calendarFromNow.getTime(), vRealtime.doubleValue(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_macdP , isSimulation_mode(), _market);
+
+				
 				if (_log.isDebugEnabled())
 					_log.debug("oRTimeEnTramo for :" + _share.getSymbol() + ":" +  vRealtime);
 				
-				if (Validator.isNotNull(vRealtime))
+
+				if (_log.isDebugEnabled())
+					_log.debug("_avgMobileSimple for :" + _share.getSymbol() + ":" +   (Validator.isNotNull(_avgMobileSimple) ? _avgMobileSimple.doubleValue() : 0)   + " " + Utilities.getWebFormattedDate(_calendarFromNow.getTime(), _IBUser));
+				
+				if (Validator.isNotNull(_avgMobileSimple))
 				{
 					/* PERIODO CERO , JUSTAMENTE LA BARRA ANTERIOR */
 					double max_value = 0;
@@ -220,13 +228,13 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 							
 					if (!isSimulation_mode())
 					{
-						Realtime oRTimeWidthRange = MobileAvgUtil.getMinMaxBarFromShare(_calendarFromNow,  _num_macdT, 0,_share.getShareId(), _share.getCompanyId(), _share.getGroupId()) ;
+						Realtime oRTimeWidthRange = BaseIndicatorUtil.getMinMaxBarFromShare(_calendarFromNow,  _num_macdT, 0,_share.getShareId(), _share.getCompanyId(), _share.getGroupId()) ;
 						max_value  = oRTimeWidthRange!=null && oRTimeWidthRange.getMax_value()>0 ? oRTimeWidthRange.getMax_value() : 0; 
 						min_value  = oRTimeWidthRange!=null && oRTimeWidthRange.getMin_value()>0 ? oRTimeWidthRange.getMin_value() : 0;
 					}
 					else
 					{
-						HistoricalRealtime oRTimeWidthRange = MobileAvgUtil.getHistoricalMinMaxBarFromShare(_calendarFromNow,  _num_macdT, 0,_share.getShareId(), _share.getCompanyId(), _share.getGroupId()) ;
+						HistoricalRealtime oRTimeWidthRange = BaseIndicatorUtil.getHistoricalMinMaxBarFromShare(_calendarFromNow,  _num_macdT, 0,_share.getShareId(), _share.getCompanyId(), _share.getGroupId()) ;
 						max_value  = oRTimeWidthRange!=null && oRTimeWidthRange.getMax_value()>0 ? oRTimeWidthRange.getMax_value() : 0; 
 						min_value  = oRTimeWidthRange!=null && oRTimeWidthRange.getMin_value()>0 ? oRTimeWidthRange.getMin_value() : 0;
 					}
@@ -262,8 +270,8 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 						
 						/* 2- La particularidad de este caso afecta a la primera sentencia, el cierre de la barra se sitúa en su 100% por encima de la MM, con lo cual debe comprar, el filtro B aquí no afecta.
 						 * */
-						_BuySuccess = MobileAvgUtil._IsBuySignalMM8_5MINBar(_avgMobileSimple, max_value,min_value, _WidthBarRangePercent, vRealtime);
-						_SellSuccess = MobileAvgUtil._IsSellSignalMM8_5MINBar(_avgMobileSimple, max_value,min_value, _WidthBarRangePercent, vRealtime);
+						_BuySuccess = BaseIndicatorUtil._IsBuySignalMM8_5MINBar(_avgMobileSimple, max_value,min_value, _WidthBarRangePercent, vRealtime);
+						_SellSuccess = BaseIndicatorUtil._IsSellSignalMM8_5MINBar(_avgMobileSimple, max_value,min_value, _WidthBarRangePercent, vRealtime);
 						/* tipos de operacion */
 						_BuySuccess = _BuySuccess &&  
 								(operationfilter.equals("ALL") || operationfilter.equals(PositionStates.statusTWSFire.BUY.toString())); 

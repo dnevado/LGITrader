@@ -33,6 +33,9 @@ public interface HistoricalRealtimeFinder {
 	public com.ibtrader.data.model.HistoricalRealtime findLastRealTime(
 		long shareId, long companyId, long groupId);
 
+	public com.ibtrader.data.model.HistoricalRealtime findFirstRealTime(
+		long shareId, long companyId, long groupId);
+
 	public com.ibtrader.data.model.HistoricalRealtime findCloseRealTimeDate(
 		long shareId, long companyId, long groupId, java.util.Date date);
 

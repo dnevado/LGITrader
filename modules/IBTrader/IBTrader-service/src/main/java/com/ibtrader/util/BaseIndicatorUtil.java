@@ -1,4 +1,4 @@
-package com.ibtrader.util;
+package 	com.ibtrader.util;
 
 
 import java.text.ParseException;
@@ -14,6 +14,10 @@ import org.ta4j.core.BaseTimeSeries;
 import org.ta4j.core.TimeSeries;
 import org.ta4j.core.indicators.EMAIndicator;
 import org.ta4j.core.indicators.MACDIndicator;
+import org.ta4j.core.indicators.SMAIndicator;
+import org.ta4j.core.indicators.StochasticOscillatorDIndicator;
+import org.ta4j.core.indicators.StochasticOscillatorKIndicator;
+import org.ta4j.core.indicators.adx.ADXIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 
 import com.ibtrader.data.model.HistoricalRealtime;
@@ -30,10 +34,10 @@ import com.liferay.portal.kernel.util.Validator;
 
 
 
-public class MobileAvgUtil {
+public class BaseIndicatorUtil {
 
 	
-	private static Log _log = LogFactoryUtil.getLog(MobileAvgUtil.class);
+	private static Log _log = LogFactoryUtil.getLog(BaseIndicatorUtil.class);
 
 	
 	public static void main(String[] args) {
@@ -54,13 +58,89 @@ public class MobileAvgUtil {
 		int groupId = 101213;
 		int shareId = 2702; // appl
 		
-		/* barTime.add(Calendar.SECOND, -2); // maximo y minimo
-		realtime.setValue(value);realtime.setGroupId(groupId);realtime.setCompanyId(companyId);realtime.setShareId(shareId); realtime.setCreateDate(barTime.getTime()); realtime.setModifiedDate(barTime.getTime());RealtimeLocalServiceUtil.updateRealtime(realtime);
-		realtime.setValue(value);realtime.setGroupId(groupId);realtime.setCompanyId(companyId);realtime.setShareId(shareId); realtime.setCreateDate(barTime.getTime()); realtime.setModifiedDate(barTime.getTime());RealtimeLocalServiceUtil.updateRealtime(realtime);
-		barTime.add(Calendar.SECOND, -2); // maximo y minimo
+		TimeSeries series = new BaseTimeSeries("getStochasticOscillatorD");
+		ZonedDateTime endTime = ZonedDateTime.now();
+        int counter = 1;		
 		
 		
-		barTime.add(Calendar.MINUTE, -timebar); */
+		barTime.add(Calendar.SECOND, -1); // maximo y minimo
+		
+		//series.addBar(new BaseBar(endTime.plusMinutes(2),0.0,183,149,160,0.0));	
+		
+
+		
+		series.addBar(new BaseBar(endTime.plusMinutes(3),0.0,197,149,168,0.0));
+		series.addBar(new BaseBar(endTime.plusMinutes(4),0.0,182,132,170,0.0));
+		series.addBar(new BaseBar(endTime.plusMinutes(5),0.0,190,150,171,0.0));
+		series.addBar(new BaseBar(endTime.plusMinutes(6),0.0,183,149,175,0.0));
+		series.addBar(new BaseBar(endTime.plusMinutes(7),0.0,183,149,170,0.0));
+		series.addBar(new BaseBar(endTime.plusMinutes(8),0.0,197,140,172,0.0));
+		series.addBar(new BaseBar(endTime.plusMinutes(9),0.0,190,134,176,0.0));
+		series.addBar(new BaseBar(endTime.plusMinutes(11),0.0,183,140,179,0.0));
+		series.addBar(new BaseBar(endTime.plusMinutes(12),0.0,197,134,178,0.0));
+		series.addBar(new BaseBar(endTime.plusMinutes(13),0.0,182 ,433, 186,0.0));
+		series.addBar(new BaseBar(endTime.plusMinutes(14),0.0,190 ,141, 192,0.0));		
+		series.addBar(new BaseBar(endTime.plusMinutes(15),0.0,183 ,129, 183,0.0));	
+		series.addBar(new BaseBar(endTime.plusMinutes(17),0.0,182 ,136, 177,0.0));
+		series.addBar(new BaseBar(endTime.plusMinutes(18),0.0,190 ,141, 172,0.0));
+		series.addBar(new BaseBar(endTime.plusMinutes(19),0.0,190 ,160, 167,0.0));
+		series.addBar(new BaseBar(endTime.plusMinutes(20),0.0,165 ,140, 177,0.0));
+				
+		
+		
+		
+		long periodsToCalculate = 8;
+		StochasticOscillatorKIndicator _stochasticOscillatorKIndicator = new StochasticOscillatorKIndicator(series, Long.valueOf(15).intValue());
+		
+		for (int j=0;j<periodsToCalculate;j++)
+		{ 
+			try {System.out.println("_stochasticOscillatorKIndicator:" + j + ":" +  _stochasticOscillatorKIndicator.getValue(j).doubleValue());} catch (Exception e) {}	
+		}
+		ClosePriceIndicator closePrice = new ClosePriceIndicator(series);
+
+		SMAIndicator shortSma = new SMAIndicator(closePrice, 5);
+		// Here is the 5-ticks-SMA value at the 42nd index
+		for (int j=0;j<periodsToCalculate;j++)
+		{ 
+			try {System.out.println("SMAIndicator:" + j + ":" +  shortSma.getValue(j).doubleValue());} catch (Exception e) {}	
+		}
+		
+		
+		StochasticOscillatorDIndicator _stochasticOscillatorDIndicator = new StochasticOscillatorDIndicator(_stochasticOscillatorKIndicator);
+
+		for (int j=0;j<periodsToCalculate;j++)
+		{ 
+			try {System.out.println("_stochasticOscillatorDIndicator:" + j + ":" +  _stochasticOscillatorDIndicator.getValue(j).doubleValue());} catch (Exception e) {}	
+		}
+
+        EMAIndicator emea = new EMAIndicator(closePrice, (int) periodsToCalculate);
+
+        
+        for (int j=0;j<periodsToCalculate;j++)
+		{ 
+			try {System.out.println("exponentialAvgMobile:" + j + ":" +  emea.getValue(j).doubleValue());} catch (Exception e) {}	
+		}
+        
+        
+        ADXIndicator ADXIndicator            = new ADXIndicator(series, (int) ConfigKeys.ADXR_PERIODS);
+        
+		double _ADX         = ADXIndicator.getValue((int) (periodsToCalculate-1)) !=null 	?  ADXIndicator.getValue((int) (periodsToCalculate-1)).doubleValue() : 0;
+		double _ADXR 		 = ADXIndicator.getValue((int) (periodsToCalculate-1))!=null 	? (_ADX + ADXIndicator.getValue((int) (periodsToCalculate-1 - ConfigKeys.ADXR_PERIODS)).doubleValue()) / 2 : 0;
+           
+		System.out.println("_ADX:" + _ADX);	
+	    System.out.println("_ADXR:" + _ADXR);	
+			
+        MACDIndicator _macdIndicator = new MACDIndicator(closePrice, Long.valueOf(5).intValue(), Long.valueOf(13).intValue());
+       
+		for (int j=0;j<periodsToCalculate;j++)
+		{ 
+			try {System.out.println("_macdIndicator:" + j + ":" +  _macdIndicator.getValue(j).doubleValue());} catch (Exception e) {}	
+		}
+        
+
+	    
+	    
+		barTime.add(Calendar.MINUTE, -timebar); 
 		realtime  = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));barTime.add(Calendar.SECOND, -2); realtime.setValue(	182	);realtime.setGroupId(groupId);realtime.setCompanyId(companyId);realtime.setShareId(shareId); realtime.setCreateDate(barTime.getTime()); realtime.setModifiedDate(barTime.getTime());RealtimeLocalServiceUtil.updateRealtime(realtime);realtime.setValue(	134	);realtime.setGroupId(groupId);realtime.setCompanyId(companyId);realtime.setShareId(shareId); realtime.setCreateDate(barTime.getTime()); realtime.setModifiedDate(barTime.getTime());RealtimeLocalServiceUtil.updateRealtime(realtime);barTime.add(Calendar.SECOND, +1);realtime.setValue(	151	);realtime.setGroupId(groupId);realtime.setCompanyId(companyId);realtime.setShareId(shareId); realtime.setCreateDate(barTime.getTime()); realtime.setModifiedDate(barTime.getTime());RealtimeLocalServiceUtil.updateRealtime(realtime);barTime.add(Calendar.MINUTE, -timebar);
 		realtime  = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));barTime.add(Calendar.SECOND, -2); realtime.setValue(	190	);realtime.setGroupId(groupId);realtime.setCompanyId(companyId);realtime.setShareId(shareId); realtime.setCreateDate(barTime.getTime()); realtime.setModifiedDate(barTime.getTime());RealtimeLocalServiceUtil.updateRealtime(realtime);realtime.setValue(	143	);realtime.setGroupId(groupId);realtime.setCompanyId(companyId);realtime.setShareId(shareId); realtime.setCreateDate(barTime.getTime()); realtime.setModifiedDate(barTime.getTime());RealtimeLocalServiceUtil.updateRealtime(realtime);barTime.add(Calendar.SECOND, +1);realtime.setValue(	189	);realtime.setGroupId(groupId);realtime.setCompanyId(companyId);realtime.setShareId(shareId); realtime.setCreateDate(barTime.getTime()); realtime.setModifiedDate(barTime.getTime());RealtimeLocalServiceUtil.updateRealtime(realtime);barTime.add(Calendar.MINUTE, -timebar);
 		realtime  = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));barTime.add(Calendar.SECOND, -2); realtime.setValue(	183	);realtime.setGroupId(groupId);realtime.setCompanyId(companyId);realtime.setShareId(shareId); realtime.setCreateDate(barTime.getTime()); realtime.setModifiedDate(barTime.getTime());RealtimeLocalServiceUtil.updateRealtime(realtime);realtime.setValue(	141	);realtime.setGroupId(groupId);realtime.setCompanyId(companyId);realtime.setShareId(shareId); realtime.setCreateDate(barTime.getTime()); realtime.setModifiedDate(barTime.getTime());RealtimeLocalServiceUtil.updateRealtime(realtime);barTime.add(Calendar.SECOND, +1);realtime.setValue(	157	);realtime.setGroupId(groupId);realtime.setCompanyId(companyId);realtime.setShareId(shareId); realtime.setCreateDate(barTime.getTime()); realtime.setModifiedDate(barTime.getTime());RealtimeLocalServiceUtil.updateRealtime(realtime);barTime.add(Calendar.MINUTE, -timebar);
@@ -312,7 +392,7 @@ public class MobileAvgUtil {
 	 *   lastBarIncluded --> Avgsimple , en la ewtrategia de medias simples, no incluimos la ultima barra para la media 
 	 *   				  --> en la exponencial SI 
 	 *  */
-	protected  static List<String> getPeriodsMinutesMobileAvg(Date to, long PeriodN, long TimeBars, boolean lastBarIncluded, Market market)
+	public   static List<String> getPeriodsMinutesMobileAvg(Date to, long PeriodN, long TimeBars, boolean lastBarIncluded, Market market)
 	{
 		SimpleDateFormat _sdf = new SimpleDateFormat(Utilities.__IBTRADER_SQL_DATE_);
 		SimpleDateFormat _sdfdebug = new SimpleDateFormat("yyyyMMdd HH:mm:ss:SSS");
@@ -348,8 +428,8 @@ public class MobileAvgUtil {
 				
 			/* NO ES EN LA BARRA 00, 05, 10, SON PRECIOS DE CIRRE DE CADA BARRA, RESTAMOS UN SEGUNDO */
 			//			
-			lAvgMobileDates.add(_sdf.format(_cPeriodsMinutesMobileAvg.getTime()));
-			_log.debug(_sdfdebug.format(_cPeriodsMinutesMobileAvg.getTime()));
+			lAvgMobileDates.add(_sdf.format(_cPeriodsMinutesMobileAvg.getTime()));			
+			_log.trace(_sdfdebug.format(_cPeriodsMinutesMobileAvg.getTime()));
 			
 		}
 		return lAvgMobileDates;
@@ -430,6 +510,15 @@ public class MobileAvgUtil {
 		Step 3. Just below the cell used in Step 2, enter the EMA formula above
 	 * 
 	 * 
+	 * 
+	 * 
+	 * Since EMA’s use the prior value in their calculation, 
+	 * the values depend on how many prior values you have. Related, there is some question 
+	 * as to how to initialize the first value of an EMA. The first problem is generally 
+	 * solved by including at least 200 Bars of TimeSeries data prior to the indices 
+	 * for which you are interested. 
+	 * The second problem is currently solved by setting the first EMA value to the first data value:
+	 * 
 	 * */
 	public  static Double getExponentialAvgMobile(Date _ActualDateBar, double closeprice,  long TimeBars,long shareId, long companyId, 
 			long groupId, long PeriodN, boolean simulation, Market market)
@@ -478,8 +567,19 @@ public class MobileAvgUtil {
 		
 		ClosePriceIndicator closePrice = new ClosePriceIndicator(series);
         EMAIndicator emea = new EMAIndicator(closePrice, (int) PeriodN);
-        exponentialAvgMobile = emea.getValue(Long.valueOf(PeriodN).intValue()).doubleValue();
-
+      
+        if (_log.isDebugEnabled())
+        {
+			for (int j=0;j<PeriodN;j++)
+			{ 
+				try 
+				{
+					_log.debug("getExponentialAvgMobile:" + j + ":" +  emea.getValue(Long.valueOf(PeriodN).intValue()).doubleValue());
+				} 
+				catch (Exception e) {}	
+			}
+        }
+        exponentialAvgMobile = emea.getValue(Long.valueOf(PeriodN-1).intValue()).doubleValue();
 		}
 	    catch (Exception e)
 		{
@@ -548,6 +648,95 @@ public class MobileAvgUtil {
 		return _macdIndicator;
 		
 
+	}
+	
+	
+	private static StochasticOscillatorDIndicator  getDStochasticDIndicator(Date _ActualDateBar,  long TimeBars,long shareId, long companyId, long groupId, 
+				long periods, boolean simulation,  Market market)
+	{
+		StochasticOscillatorKIndicator _stochasticOscillatorKIndicator = null;
+		StochasticOscillatorDIndicator _stochasticOscillatorDIndicator = null;
+
+		try
+		{		
+		List<String> lStochasticOscillatorDPeriods = new ArrayList<String>();
+		Calendar _cStochasticOscillatorDDateFrom = Calendar.getInstance();
+		_cStochasticOscillatorDDateFrom.setTime(_ActualDateBar);
+		
+	//	int periodsToCalculate = ConfigKeys.INDICATORS_MIN_SERIE_COUNT;
+		long  periodsToCalculate = periods;
+		
+		lStochasticOscillatorDPeriods = getPeriodsMinutesMobileAvg(_ActualDateBar, periodsToCalculate , TimeBars, Boolean.TRUE, market);
+		
+		/* MODIFICACION, MEDIAS MOVILES HASTA EL PERIDO N, N-1, N-2 */
+		_cStochasticOscillatorDDateFrom.add(Calendar.MINUTE,  (int) - ((periodsToCalculate) * TimeBars));
+		_cStochasticOscillatorDDateFrom.set(Calendar.MILLISECOND,0);	
+
+		// le resto un segundo para que coga la primera barra especificada, asi coge el 59:59 
+		_cStochasticOscillatorDDateFrom.add(Calendar.SECOND,-1);
+		
+
+        /* ESTE FROM ESTA RESTADO DE LAS BARRAS POR LOS PERIODOS, PERO NO CONTEMPLA LOS CIERRES Y APERTURAS DE MERCADO */
+    	/* SOLUCION, COGER EL FROM DE LA PRIMERA BARRA DE getPeriodsMinutesMobileAvg, QUE SI CONTEMPLA LAS APERTURAS */
+        SimpleDateFormat _sdf = new SimpleDateFormat(Utilities.__IBTRADER_SQL_DATE_);
+        Date fromWithOpenMarketsTimes=null;
+        Calendar cfromWithOpenMarketsTimes = null;
+        try {
+			 fromWithOpenMarketsTimes = _sdf.parse(lStochasticOscillatorDPeriods.get(lStochasticOscillatorDPeriods.size()-1));
+			 cfromWithOpenMarketsTimes = Calendar.getInstance();
+			 cfromWithOpenMarketsTimes.setTimeInMillis(fromWithOpenMarketsTimes.getTime());
+			 cfromWithOpenMarketsTimes.add(Calendar.MINUTE, 1);
+			 cfromWithOpenMarketsTimes.add(Calendar.SECOND, -1);
+			 cfromWithOpenMarketsTimes.set(Calendar.MILLISECOND, 0);
+		} catch (ParseException e) {}
+		
+		
+				
+		TimeSeries series = new BaseTimeSeries("getStochasticOscillatorD");
+		
+		/* el calculo del estocastico requiere los min max y cieres */
+		series = BarSeriesCacheUtil.closeMinMaxBarTimeSeries(shareId, companyId, groupId, _ActualDateBar, simulation, TimeBars,periodsToCalculate, lStochasticOscillatorDPeriods);
+
+		//series = BarSeriesCacheUtil.closeBarTimeSeries(shareId, companyId, groupId, cfromWithOpenMarketsTimes.getTime(), _ActualDateBar, lStochasticOscillatorDPeriods, simulation, TimeBars);
+	     
+		_stochasticOscillatorKIndicator =  new StochasticOscillatorKIndicator(series, Long.valueOf(periods).intValue());
+		_stochasticOscillatorDIndicator =  new StochasticOscillatorDIndicator(_stochasticOscillatorKIndicator);
+        if (_log.isDebugEnabled())
+        {
+			for (int j=0;j<periodsToCalculate;j++)
+			{ 
+				try {_log.debug("_stochasticOscillatorDIndicator:" + j + ":" +  _stochasticOscillatorDIndicator.getValue(j).doubleValue());} catch (Exception e) {}	
+			}
+        }
+		}
+        catch (Exception e)
+		{
+			_log.debug(e.getMessage());
+		}
+		return _stochasticOscillatorDIndicator;
+		
+
+	}
+	
+	public  static Double getDStochastic(Date _ActualDateBar,  long TimeBars, long shareId, long companyId, long groupId, long periods, 
+					boolean simulation, Market market)
+	{
+		double stochastic = 0d;
+		try
+		{		
+			
+			long result_index = periods-1;
+			StochasticOscillatorDIndicator  DStochasticIndicator = getDStochasticDIndicator(_ActualDateBar, TimeBars , shareId, companyId, groupId, periods,simulation, market);
+			_log.debug(DStochasticIndicator.getValue(Long.valueOf(result_index).intValue()));			
+			stochastic =  DStochasticIndicator.getValue(Long.valueOf(result_index).intValue()).doubleValue();
+		}
+		catch (Exception e)
+		{
+			_log.debug(e.getMessage());
+		}
+		return stochastic;
+				
+		
 	}
 	
 	public  static Double getMACD(Date _ActualDateBar,  long TimeBars,long shareId, long companyId, long groupId, long shortMACDPeriods, long longMACDPeriods, boolean simulation, Market market)

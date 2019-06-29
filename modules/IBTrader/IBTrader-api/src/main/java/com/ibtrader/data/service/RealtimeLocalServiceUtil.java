@@ -106,9 +106,11 @@ public class RealtimeLocalServiceUtil {
 	}
 
 	public static com.ibtrader.data.model.Realtime findCloseRealTime(
-		long shareId, long companyId, long groupId, java.util.Date closeDate) {
+		long shareId, long companyId, long groupId, java.util.Date closeDate,
+		boolean isClosedDate) {
 		return getService()
-				   .findCloseRealTime(shareId, companyId, groupId, closeDate);
+				   .findCloseRealTime(shareId, companyId, groupId, closeDate,
+			isClosedDate);
 	}
 
 	public static com.ibtrader.data.model.Realtime findLastCompanyShare(
@@ -370,6 +372,10 @@ public class RealtimeLocalServiceUtil {
 		java.util.Date to, long shareId, long companyId, long groupId) {
 		getService()
 			.removeRealtimeFromToDate(from, to, shareId, companyId, groupId);
+	}
+
+	public static void removeScheduledRealTimes(long companyId, long groupId) {
+		getService().removeScheduledRealTimes(companyId, groupId);
 	}
 
 	public static RealtimeLocalService getService() {

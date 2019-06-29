@@ -2,6 +2,7 @@ package com.ibtrader.cron;
 
 import com.ibtrader.data.model.IBOrder;
 import com.ibtrader.data.service.IBOrderLocalServiceUtil;
+import com.ibtrader.scheduler.impl.StorageTypeAwareSchedulerEntryImpl;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.BaseSchedulerEntryMessageListener;
@@ -18,6 +19,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.liferay.portal.kernel.messaging.DestinationNames;
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.scheduler.SchedulerEngineHelper;
+import com.liferay.portal.kernel.scheduler.StorageType;
 import com.liferay.portal.kernel.scheduler.TimeUnit;
 import com.liferay.portal.kernel.scheduler.TriggerFactory;
 import com.liferay.portal.kernel.scheduler.TriggerFactoryUtil;
@@ -32,6 +34,8 @@ public class IBTraderOrderRequestMaintance  extends BaseSchedulerEntryMessageLis
 
 	Log _log = LogFactoryUtil.getLog(IBTraderOrderRequestMaintance.class);
 	private SchedulerEngineHelper _schedulerEngineHelper;
+    private volatile boolean runningJob = false;
+    private volatile boolean _initialized = false;
 
 	
 	@Reference(unbind = "-")
@@ -84,18 +88,48 @@ public class IBTraderOrderRequestMaintance  extends BaseSchedulerEntryMessageLis
 	/* 	 que se dispare en el proximo minuto y el dia +28   
 		schedulerEntryImpl.setTrigger(TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(),
 				calendar.getTime(),cron.toString())); */
-	 
-	     schedulerEntryImpl.setTrigger(TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(),6, TimeUnit.HOUR));  
+		   // if we were initialized (i.e. if this is called due to CA modification)
+	    schedulerEntryImpl = new StorageTypeAwareSchedulerEntryImpl(schedulerEntryImpl, StorageType.PERSISTED);
+	    // update the trigger for the scheduled job.
+		
+	    schedulerEntryImpl.setTrigger(TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(),6, TimeUnit.HOUR));  
 		_log.info("Activating CRON..."  + schedulerEntryImpl.getTrigger());
-		_schedulerEngineHelper.register(this, schedulerEntryImpl, DestinationNames.SCHEDULER_DISPATCH);
+		
+		if (_initialized) {
+		      // first deactivate the current job before we schedule.
+		      deactivate();
+		}
+		
+		 // set the initialized flag.
+		_initialized = true;
+		
+	   _schedulerEngineHelper.register(this, schedulerEntryImpl, DestinationNames.SCHEDULER_DISPATCH);
 		
 	}
 	
 	@Override
 	protected void doReceive(Message message) throws Exception {
+			
+	   if(runningJob) 
+	   {
+		   		_log.debug("StartDeletingOldOrderRequestCron already running, not starting again");
+		   	
+		        return;
+	   }	
+		try
+		{
+			runningJob = true;					
+			CronUtil cronThread = new CronUtil();
+			_log.debug(" Start IBTraderFillRequiredPastRealtime doReceive");
+			cronThread.StartDeletingOldOrderRequestCron(message);
+		}
+		catch (Exception e)
+		{
+			runningJob = false;
+			_log.debug("StartDeletingOldOrderRequestCron doReceive" + e.getMessage());
+		}
+		runningJob = false; 
 		
-		CronUtil.StartDeletingOldOrderRequestCron(message);
-	 	 
 			
 	} // END RECEIVER
 }// END CLASS

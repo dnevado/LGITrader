@@ -119,16 +119,19 @@ public class IBStrategyClosePosition extends StrategyImpl {
 	try
     {
 		String position_mode = Utilities.getPositionModeType(backtestingdDate, _share.getCompanyId(),_share.getGroupId());
-
+		closePosition = null;
 		/* cancelada y abierta */
-		lToClose = PositionLocalServiceUtil.findByCloseCompanyGroup(_share.getCompanyId(), _share.getGroupId(), Boolean.TRUE,position_mode); 
+		lToClose = PositionLocalServiceUtil.findByCloseCompanyGroup(_share.getCompanyId(), _share.getGroupId(), _share.getShareId(), Boolean.TRUE,position_mode); 
 		if (lToClose!=null && !lToClose.isEmpty())
 		{
+			_log.debug("Found positions to close : "  + lToClose.size() );
 			for (Position position : lToClose)
 			{
+				_log.debug("Found position to close : shareId:"  + position.getShareId()  + ",positionId:" + position.getPositionId() );
 				if (position.IsOpen() && position.IsCloseable())
 				{
-					closePosition  =position;
+					closePosition  = position;
+					_log.debug("Open y Closeable : shareId:"  + position.getShareId()  + ",positionId:" + position.getPositionId() );
 					verified = Boolean.TRUE;
 					break;
 				}

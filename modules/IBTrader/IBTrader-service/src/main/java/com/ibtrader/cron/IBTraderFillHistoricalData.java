@@ -14,9 +14,13 @@ import org.osgi.service.component.annotations.Reference;
 import com.liferay.portal.kernel.messaging.DestinationNames;
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.scheduler.SchedulerEngineHelper;
+import com.liferay.portal.kernel.scheduler.SchedulerException;
+import com.liferay.portal.kernel.scheduler.StorageType;
+import com.liferay.portal.kernel.scheduler.StorageTypeAware;
 import com.liferay.portal.kernel.scheduler.TimeUnit;
 import com.liferay.portal.kernel.scheduler.TriggerFactory;
 import com.liferay.portal.kernel.scheduler.TriggerFactoryUtil;
+import com.ibtrader.scheduler.impl.StorageTypeAwareSchedulerEntryImpl;
 import com.ibtrader.util.CronUtil;
 
 
@@ -27,7 +31,8 @@ public class IBTraderFillHistoricalData  extends BaseSchedulerEntryMessageListen
 
 	Log _log = LogFactoryUtil.getLog(IBTraderFillHistoricalData.class);
 	
-    private static boolean runningJob = false;
+	private volatile boolean runningJob = false;
+	private volatile boolean _initialized = false;
 
 	
 	private SchedulerEngineHelper _schedulerEngineHelper;
@@ -46,8 +51,32 @@ public class IBTraderFillHistoricalData  extends BaseSchedulerEntryMessageListen
 	
 	@Deactivate
 	protected void deactivate() {
-		_schedulerEngineHelper.unregister(this);
+		// if we previously were initialized
+	    if (_initialized) {
+	      // unschedule the job so it is cleaned up
+	      try {
+	        _schedulerEngineHelper.unschedule(schedulerEntryImpl, getStorageType());
+	      } catch (SchedulerException se) {
+	        if (_log.isWarnEnabled()) {
+	          _log.warn("Unable to unschedule trigger", se);
+	        }
+	      }
+
+	      // unregister this listener
+	      _schedulerEngineHelper.unregister(this);
+	    }
+	    
+	    // clear the initialized flag
+	    _initialized = false;
 	}
+	
+ protected StorageType getStorageType() {
+	    if (schedulerEntryImpl instanceof StorageTypeAware) {
+	      return ((StorageTypeAware) schedulerEntryImpl).getStorageType();
+	    }
+	    
+	    return StorageType.MEMORY_CLUSTERED;
+	  }
 	
 	@Activate
 	@Modified
@@ -58,12 +87,22 @@ public class IBTraderFillHistoricalData  extends BaseSchedulerEntryMessageListen
 				calendar.getTime(),cron.toString())); */
 		
 		
-		
-	     schedulerEntryImpl.setTrigger(TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(),5, TimeUnit.SECOND));  
-		
-	     
-		_log.info("Activating CRON..."  + schedulerEntryImpl.getTrigger());
-		_schedulerEngineHelper.register(this, schedulerEntryImpl, DestinationNames.SCHEDULER_DISPATCH);
+		 schedulerEntryImpl = new StorageTypeAwareSchedulerEntryImpl(schedulerEntryImpl, StorageType.PERSISTED);
+		    // update the trigger for the scheduled job.
+			
+		    schedulerEntryImpl.setTrigger(TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(),30, TimeUnit.SECOND));  
+			_log.info("Activating CRON..."  + schedulerEntryImpl.getTrigger());
+			
+			if (_initialized) {
+			      // first deactivate the current job before we schedule.
+			      deactivate();
+			}
+			
+			 // set the initialized flag.
+			_initialized = true;
+			
+		   _schedulerEngineHelper.register(this, schedulerEntryImpl, DestinationNames.SCHEDULER_DISPATCH);
+			
 		
 	}
 	
@@ -76,17 +115,20 @@ public class IBTraderFillHistoricalData  extends BaseSchedulerEntryMessageListen
 		
 	   if(runningJob) 
 	   {
-		   		_log.debug("IBTraderFillHistoricalData already running, not starting again");
+		   		_log.debug("IBTraderFillHistoricalData already running, not starting again");		   		
 		        return;
-	   }
-		runningJob = true;
+	   }		
 		try
 		{
-			CronUtil.StartFillHistoricalDataCron(message);
+			runningJob = true;					
+			CronUtil cronThread = new CronUtil();			
+			cronThread.StartFillHistoricalDataCron(message);
+		
 		}
 		catch (Exception e)
 		{
 			runningJob = false;
+			_log.debug("Exception runningJob = false;");
 		}
 		runningJob = false; 
 			

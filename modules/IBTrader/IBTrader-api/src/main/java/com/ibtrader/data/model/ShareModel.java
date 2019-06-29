@@ -489,6 +489,21 @@ public interface ShareModel extends BaseModel<Share>, ShardedModel, StagedModel 
 	 */
 	public void setSimulation_end_date(Date simulation_end_date);
 
+	/**
+	 * Returns the trading_hours of this share.
+	 *
+	 * @return the trading_hours of this share
+	 */
+	@AutoEscape
+	public String getTrading_hours();
+
+	/**
+	 * Sets the trading_hours of this share.
+	 *
+	 * @param trading_hours the trading_hours of this share
+	 */
+	public void setTrading_hours(String trading_hours);
+
 	@Override
 	public boolean isNew();
 
