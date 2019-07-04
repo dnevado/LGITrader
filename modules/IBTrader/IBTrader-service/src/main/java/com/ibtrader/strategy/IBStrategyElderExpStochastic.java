@@ -14,6 +14,7 @@ import com.ib.client.Order;
 import com.ib.contracts.FutContract;
 import com.ib.contracts.StkContract;
 import com.ibtrader.constants.IBTraderConstants;
+import com.ibtrader.data.model.AuditIndicatorsStrategy;
 import com.ibtrader.data.model.HistoricalRealtime;
 import com.ibtrader.data.model.Market;
 import com.ibtrader.data.model.Position;
@@ -21,9 +22,12 @@ import com.ibtrader.data.model.Realtime;
 import com.ibtrader.data.model.Share;
 import com.ibtrader.data.model.StrategyShare;
 import com.ibtrader.data.model.impl.StrategyImpl;
+import com.ibtrader.data.service.AuditIndicatorsStrategyLocalServiceUtil;
 import com.ibtrader.data.service.HistoricalRealtimeLocalServiceUtil;
 import com.ibtrader.data.service.PositionLocalServiceUtil;
 import com.ibtrader.data.service.RealtimeLocalServiceUtil;
+import com.ibtrader.data.service.persistence.AuditIndicatorsStrategyPK;
+import com.ibtrader.data.service.persistence.impl.AuditIndicatorsStrategyPersistenceImpl;
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.expando.kernel.model.ExpandoColumn;
 import com.liferay.expando.kernel.model.ExpandoColumnConstants;
@@ -37,6 +41,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.ibtrader.util.BaseIndicatorUtil;
 import com.ibtrader.util.AroonIndicatorUtil;
@@ -81,7 +86,8 @@ public class IBStrategyElderExpStochastic extends StrategyImpl {
 	JSONObject _tradeDescription;// // acumular la traza de los valores introducidos
 	
 	SimpleDateFormat TimeFormat = new SimpleDateFormat (Utilities.__IBTRADER_SHORT_HOUR_FORMAT);
-	
+	SimpleDateFormat auditTimeFormat = new SimpleDateFormat (Utilities.__IBTRADER_HISTORICAL_DATE_FORMAT);
+
 	@Override
 	public long  execute(Share _share, Market _market,  Date backtestingdDate)
 	{
@@ -273,15 +279,13 @@ public class IBStrategyElderExpStochastic extends StrategyImpl {
 		}			
 //		StrategyShare _strategyshare = StrategyShareLocalServiceUtil.getByCommpanyShareStrategyId(_share.getGroupId(),_share.getCompanyId(),_share.getShareId(),_strategyImpl.getStrategyId());
 				
-		_num_macdP       = this.getJsonStrategyShareParams().getLong(_EXPANDO_MOBILE_AVERAGE_PERIODS_NUMBER,0);
-		_num_macdT 		 = this.getJsonStrategyShareParams().getLong(_EXPANDO_MOBILE_AVERAGE_CANDLE_SIZE,0);
+		_num_macdP      				= this.getJsonStrategyShareParams().getLong(_EXPANDO_MOBILE_AVERAGE_PERIODS_NUMBER,0);
+		_num_macdT 		 				= this.getJsonStrategyShareParams().getLong(_EXPANDO_MOBILE_AVERAGE_CANDLE_SIZE,0);
 		_num_stochastic_rate_overbought = this.getJsonStrategyShareParams().getLong(_EXPANDO_STOCHASTUC_OVERBOUGHT_RATE,0);
 		_num_stochastic_rate_oversold   = this.getJsonStrategyShareParams().getLong(_EXPANDO_STOCHASTUC_OVERSOLD_RATE,0);
-		_num_stochasticP      = this.getJsonStrategyShareParams().getLong(_EXPANDO_STOCHASTUC_PERIDOS,0);  
-		
-		_num_ticks_fromLastbar = this.getJsonStrategyShareParams().getLong(_EXPANDO_X_TICKS_ENTRYPRICE,0);
-		
-		operationfilter = this.getJsonStrategyShareParams().getString(_EXPANDO_MOBILE_AVERAGE_TRADE_OPERATIONS_TYPE,"ALL").trim();
+		_num_stochasticP      			= this.getJsonStrategyShareParams().getLong(_EXPANDO_STOCHASTUC_PERIDOS,0);  		
+		_num_ticks_fromLastbar 			= this.getJsonStrategyShareParams().getLong(_EXPANDO_X_TICKS_ENTRYPRICE,0);		
+		operationfilter					= this.getJsonStrategyShareParams().getString(_EXPANDO_MOBILE_AVERAGE_TRADE_OPERATIONS_TYPE,"ALL").trim();
 		
 		if (_num_stochasticP==0 || _num_macdP==0 || _num_macdT==0 || _num_stochastic_rate_overbought==0 || _num_stochastic_rate_oversold==0 || _num_ticks_fromLastbar==0)
 			return Boolean.FALSE;
@@ -375,7 +379,9 @@ public class IBStrategyElderExpStochastic extends StrategyImpl {
 					
 					if (_avgMobileExponential!=null)
 					{
-								
+					
+					
+						
 					double stochasticD = 0d; //new DirectionalMovementADXRUtil(_calendarFromNow.getTime(), _num_macdT, _num_macdP,_share.getShareId(), _share.getCompanyId(), _share.getGroupId());					
 					
 					
@@ -429,7 +435,7 @@ public class IBStrategyElderExpStochastic extends StrategyImpl {
 						_log.debug("lastRealtime.doubleValue() >_avgMobileExponential.doubleValue() && bBuyStochasticSignal && bBuyEntryBasedLastBarTicks:" + _BuySuccess);
 						_log.debug("lastRealtime.doubleValue() <_avgMobileExponential.doubleValue() && bSellStochasticSignal && bSellEntryBasedLastBarTick:" + _SellSuccess);
 
-
+						
 					}
 					
 					if (_BuySuccess || _SellSuccess)
@@ -455,7 +461,36 @@ public class IBStrategyElderExpStochastic extends StrategyImpl {
 						_tradeDescription.put("operationfilter", operationfilter);						
 						_tradeDescription.put("stochasticD", stochasticD);												
 					
-					}						
+					}
+					
+					/* ALMACENAMOS LOS VALORES DE AUDITORIA SI ES TIEMPO REAL */
+					if (!isSimulation_mode())
+					{
+						jsonStrategyIndicators= JSONFactoryUtil.createJSONObject();
+						jsonStrategyIndicators.put("_avgMobileExponential", _avgMobileExponential);
+						jsonStrategyIndicators.put("shareId", _share.getShareId());
+						jsonStrategyIndicators.put("bartime", _calendarFromNow.getTime());
+						jsonStrategyIndicators.put("lastRealtime", lastRealtime.doubleValue());
+						jsonStrategyIndicators.put("periods", _num_macdP);
+						jsonStrategyIndicators.put("barsize", _num_macdT);								
+						jsonStrategyIndicators.put("stochasticD", stochasticD);								
+							
+						AuditIndicatorsStrategyPK pkAudit = new AuditIndicatorsStrategyPK(_share.getGroupId(), _share.getCompanyId(), auditTimeFormat.format(_calendarFromNow.getTime()), _strategyImpl.getClass().getName(), _share.getShareId());
+						AuditIndicatorsStrategy auditStrategy = AuditIndicatorsStrategyLocalServiceUtil.fetchAuditIndicatorsStrategy(pkAudit);
+						if (Validator.isNull(auditStrategy))
+						{
+							auditStrategy = AuditIndicatorsStrategyLocalServiceUtil.createAuditIndicatorsStrategy(pkAudit);
+							auditStrategy.setAuditData(Validator.isNotNull(jsonStrategyIndicators) ? jsonStrategyIndicators.toString() : StringPool.BLANK);
+							AuditIndicatorsStrategyLocalServiceUtil.addAuditIndicatorsStrategy(auditStrategy);
+							
+						}
+						
+					}	
+					
+					
+					
+					
+					
 				 } // if  (Validator.isNotNull(oShareLastRTime))			   	
 				} // if (_avgMobileExponential!=null)			
 			}// NO EXISTE POSICION 

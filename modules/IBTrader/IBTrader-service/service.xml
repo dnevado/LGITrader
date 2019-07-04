@@ -389,6 +389,26 @@
 
 	</entity>
 	
+	<!--  ME SIRVE PARA ALMACENADR LOS PRINCIPALES INDICAADORES Y DATOS A TENER EN CUENTA  -->
+	<entity  cache-enabled="true" local-service="true" name="AuditIndicatorsStrategy" remote-service="true" uuid="true">
+
+		<!-- PK fields 
+		<column name="auditId" primary="true" type="long" />
+		-->
+		<!-- Group instance -->
+
+		<column name="groupId" primary = "true"  type="long" />
+		<column name="companyId" primary = "true"  type="long" />
+	
+		<column name="auditDate" primary = "true" type="String" />
+		<column name="auditstrategy" primary = "true" type="String" />
+		<column name="shareId" primary = "true" type="long" />
+		<!-- Audit fields -->
+		<column name="auditData" type="String" />
+		
+
+	</entity>
+	
 	
 	<entity local-service="true" name="IBOrder" remote-service="true" uuid="true">
 

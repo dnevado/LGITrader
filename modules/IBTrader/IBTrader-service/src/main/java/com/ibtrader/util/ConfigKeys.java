@@ -4,6 +4,11 @@ import java.util.ArrayList;
 
 public class ConfigKeys {
 
+	
+	/* DIAS PARA CERRAR UN ONTRATO ANTES DE SU EXPIRACION  Y PARA PODER ENTRAR */
+    public static final Long NUM_DAYS_CLOSE_FUTURE_CONTRACT= new Long(1);
+
+	
     public static final String NUM_DAYS_PAST_REALTIME = "NUM_DAYS_PAST_REALTIME";
     public static final Long STRATEGY_BUY_MIN_MAX = new Long(1);
     public static final Long STRATEGY_SELL_STOP_PROFIT = new Long(2);

@@ -16,6 +16,7 @@ package com.ibtrader.data.service.base;
 
 import com.ibtrader.data.model.HistoricalRealtime;
 import com.ibtrader.data.service.HistoricalRealtimeService;
+import com.ibtrader.data.service.persistence.AuditIndicatorsStrategyPersistence;
 import com.ibtrader.data.service.persistence.BackTestingPersistence;
 import com.ibtrader.data.service.persistence.ConfigPersistence;
 import com.ibtrader.data.service.persistence.HistoricalRealtimeFinder;
@@ -64,6 +65,63 @@ public abstract class HistoricalRealtimeServiceBaseImpl extends BaseServiceImpl
 	 *
 	 * Never modify or reference this class directly. Always use {@link com.ibtrader.data.service.HistoricalRealtimeServiceUtil} to access the historical realtime remote service.
 	 */
+
+	/**
+	 * Returns the audit indicators strategy local service.
+	 *
+	 * @return the audit indicators strategy local service
+	 */
+	public com.ibtrader.data.service.AuditIndicatorsStrategyLocalService getAuditIndicatorsStrategyLocalService() {
+		return auditIndicatorsStrategyLocalService;
+	}
+
+	/**
+	 * Sets the audit indicators strategy local service.
+	 *
+	 * @param auditIndicatorsStrategyLocalService the audit indicators strategy local service
+	 */
+	public void setAuditIndicatorsStrategyLocalService(
+		com.ibtrader.data.service.AuditIndicatorsStrategyLocalService auditIndicatorsStrategyLocalService) {
+		this.auditIndicatorsStrategyLocalService = auditIndicatorsStrategyLocalService;
+	}
+
+	/**
+	 * Returns the audit indicators strategy remote service.
+	 *
+	 * @return the audit indicators strategy remote service
+	 */
+	public com.ibtrader.data.service.AuditIndicatorsStrategyService getAuditIndicatorsStrategyService() {
+		return auditIndicatorsStrategyService;
+	}
+
+	/**
+	 * Sets the audit indicators strategy remote service.
+	 *
+	 * @param auditIndicatorsStrategyService the audit indicators strategy remote service
+	 */
+	public void setAuditIndicatorsStrategyService(
+		com.ibtrader.data.service.AuditIndicatorsStrategyService auditIndicatorsStrategyService) {
+		this.auditIndicatorsStrategyService = auditIndicatorsStrategyService;
+	}
+
+	/**
+	 * Returns the audit indicators strategy persistence.
+	 *
+	 * @return the audit indicators strategy persistence
+	 */
+	public AuditIndicatorsStrategyPersistence getAuditIndicatorsStrategyPersistence() {
+		return auditIndicatorsStrategyPersistence;
+	}
+
+	/**
+	 * Sets the audit indicators strategy persistence.
+	 *
+	 * @param auditIndicatorsStrategyPersistence the audit indicators strategy persistence
+	 */
+	public void setAuditIndicatorsStrategyPersistence(
+		AuditIndicatorsStrategyPersistence auditIndicatorsStrategyPersistence) {
+		this.auditIndicatorsStrategyPersistence = auditIndicatorsStrategyPersistence;
+	}
 
 	/**
 	 * Returns the back testing local service.
@@ -882,6 +940,12 @@ public abstract class HistoricalRealtimeServiceBaseImpl extends BaseServiceImpl
 		}
 	}
 
+	@BeanReference(type = com.ibtrader.data.service.AuditIndicatorsStrategyLocalService.class)
+	protected com.ibtrader.data.service.AuditIndicatorsStrategyLocalService auditIndicatorsStrategyLocalService;
+	@BeanReference(type = com.ibtrader.data.service.AuditIndicatorsStrategyService.class)
+	protected com.ibtrader.data.service.AuditIndicatorsStrategyService auditIndicatorsStrategyService;
+	@BeanReference(type = AuditIndicatorsStrategyPersistence.class)
+	protected AuditIndicatorsStrategyPersistence auditIndicatorsStrategyPersistence;
 	@BeanReference(type = com.ibtrader.data.service.BackTestingLocalService.class)
 	protected com.ibtrader.data.service.BackTestingLocalService backTestingLocalService;
 	@BeanReference(type = com.ibtrader.data.service.BackTestingService.class)

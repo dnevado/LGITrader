@@ -1795,21 +1795,37 @@ public class CronUtil {
 	 * */
 	public  void StartVerifyFuturesDatesCron(Message _message) throws Exception {					
 		
-	try
-	{	
+		
 	    List<Share> lFutures = ShareLocalServiceUtil.findByActiveFuturesDates(Boolean.TRUE);
 	    SimpleDateFormat sdfSHORT = new SimpleDateFormat();
     	sdfSHORT.applyPattern(Utilities._IBTRADER_FUTURE_LONG_DATE);
 		for (Share oShare : lFutures)
 		{			
-			oShare.setExpiry_date(sdfSHORT.parse(Utilities.getActiveFutureDate(Arrays.asList(oShare.getExpiry_expression().split(",")))));
-			ShareLocalServiceUtil.updateShare(oShare);
+			/* EXPIRATION TB SE COMPLETA CON HORA DEL CONTRACT DETAILS, UNA VEZ HECHO EL ROLLOVER  
+			 * NO PIERDO AL MENOS LA HORA ORIGINAL */	
+			try
+			{
+				Calendar cOldExp = Calendar.getInstance();
+				cOldExp.setTimeInMillis(oShare.getExpiry_date().getTime());
+				Date _newExpirationDate = sdfSHORT.parse(Utilities.getActiveFutureDate(Arrays.asList(oShare.getExpiry_expression().split(","))));
+				Calendar cNewExp = Calendar.getInstance();
+				
+				
+				cNewExp.setTimeInMillis(_newExpirationDate.getTime());
+				cNewExp.set(Calendar.HOUR, cOldExp.get(Calendar.HOUR));
+				cNewExp.set(Calendar.MINUTE, cOldExp.get(Calendar.MINUTE));
+				cNewExp.set(Calendar.SECOND, 0);
+				
+				oShare.setExpiry_date(cNewExp.getTime());			
+				ShareLocalServiceUtil.updateShare(oShare);
+			}
+			catch (Exception e)
+			{
+				_log.debug(e.getMessage());
+			}
 		}
-	}
-	catch (Exception e)
-	{
-		_log.debug(e.getMessage());
-	}
+	
+	
 		
 		
 

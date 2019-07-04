@@ -1,6 +1,9 @@
 <?xml version="1.0"?>
 
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" default-destroy-method="destroy" default-init-method="afterPropertiesSet" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	<bean class="com.ibtrader.data.service.impl.AuditIndicatorsStrategyLocalServiceImpl" id="com.ibtrader.data.service.AuditIndicatorsStrategyLocalService" />
+	<bean class="com.ibtrader.data.service.impl.AuditIndicatorsStrategyServiceImpl" id="com.ibtrader.data.service.AuditIndicatorsStrategyService" />
+	<bean class="com.ibtrader.data.service.persistence.impl.AuditIndicatorsStrategyPersistenceImpl" id="com.ibtrader.data.service.persistence.AuditIndicatorsStrategyPersistence" parent="basePersistence" />
 	<bean class="com.ibtrader.data.service.impl.BackTestingLocalServiceImpl" id="com.ibtrader.data.service.BackTestingLocalService" />
 	<bean class="com.ibtrader.data.service.impl.BackTestingServiceImpl" id="com.ibtrader.data.service.BackTestingService" />
 	<bean class="com.ibtrader.data.service.persistence.impl.BackTestingPersistenceImpl" id="com.ibtrader.data.service.persistence.BackTestingPersistence" parent="basePersistence" />

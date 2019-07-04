@@ -73,6 +73,7 @@ import com.ibtrader.constants.IBTraderConstants;
 import com.ibtrader.data.model.Config;
 import com.ibtrader.data.model.Market;
 import com.ibtrader.data.model.Position;
+import com.ibtrader.data.model.Share;
 import com.ibtrader.data.model.StrategyShare;
 import com.ibtrader.data.service.ConfigLocalService;
 import com.ibtrader.data.service.ConfigLocalServiceUtil;
@@ -97,7 +98,8 @@ public class Utilities {
    public final static String __IBTRADER_SQL_DATE_="yyyy-MM-dd HH:mm"; // PARA EL CUSTOM SQL DE MOBILE AVERAGE 
    public final static String __IBTRADER_ORDERS_EXECUTED__DATE_FORMAT ="yyyymmdd hh:mm:ss"; // PARA EL execution time de ordenes de la tws 
    public final static String __IBTRADER_HISTORICAL_DATE_FORMAT ="yyyyMMdd HH:mm:ss"; // PARA EL execution time de ordenes de la tws 
-   public final static String __IBTRADER_TRADINHOURS_DATE_FORMAT ="yyyyMMdd HHmm"; //  
+   public final static String __IBTRADER_TRADINHOURS_DATE_FORMAT ="yyyyMMdd HHmm"; //
+   public final static String __IBTRADER_CONTRACTEXPIRATION_DATE_FORMAT ="yyyyMMdd HH:mm"; //  
 
    
    //public final static String _IBTRADER_DATE_FORMAT="HHmm";
@@ -130,6 +132,34 @@ public class Utilities {
 		_configLocalService = configLocalService;
 	}
 
+	
+	/* FORMATEOS DE LAS TRADING HOURS Y EXPIRATION DE LOS CONTRACTOS DE VUELTA DE LA TWS */
+	public static String  getConvertedUTCStringDate(String stringDate, DateTimeFormatter formatter, String TWSTimeZoneId)
+	{
+		
+		// error IB BUG with CST no supported and EST  
+		ZoneId tws_timezone;
+		if (TWSTimeZoneId.contains("CST"))														
+			tws_timezone = ZoneId.of("CST6CDT");
+		else
+			if (TWSTimeZoneId.contains("EST"))														
+					tws_timezone = ZoneId.of("EST5EDT");
+			else
+					tws_timezone = ZoneId.of(TWSTimeZoneId);		
+		
+		// from 
+		LocalDateTime localtDateAndTime = LocalDateTime.parse(stringDate, formatter);
+		ZonedDateTime dateAndTimeMarketShare = ZonedDateTime.of(localtDateAndTime, tws_timezone);
+		_log.trace("Current date and time in a particular timezone :" + TWSTimeZoneId + " "  + dateAndTimeMarketShare.toLocalDateTime());
+								
+		ZonedDateTime utcDate = dateAndTimeMarketShare.withZoneSameInstant(ZoneOffset.UTC); 
+		_log.trace("Current date and time in UTTC timezone : " + utcDate.toLocalDateTime());
+		return formatter.format(utcDate);
+		
+	}
+	
+	
+	
    
 	/* OBTIENE LA HORA DE INICIO Y FIN ACTUAL SI EXISTE PARA ACTUALIZAR LOS HORARIOS DE LOS MERCADOS EN CUESTION */
 	/* OJO CON LOS FUTUROS QUE PUEDEN ESTAR DE 00 A 23:59 */
@@ -183,6 +213,25 @@ public class Utilities {
 	return market;
 		
 	}
+	
+	/* SI SE PUEDE OPERAR CON UN FUTURO POR QUE EXPIRA PRONTO */
+	public static boolean IsFutureTradeable(Share share)
+	{
+		
+		boolean IsFutureTradeable = Boolean.TRUE;
+		
+		if (share.getSecurity_type().equals(ConfigKeys.SECURITY_TYPE_FUTUROS))
+		{
+	 		Calendar cExpirationDate = Calendar.getInstance();
+	 		Calendar cNow = Calendar.getInstance();
+	 		cExpirationDate.setTimeInMillis(share.getExpiry_date().getTime());
+	 		cExpirationDate.add(-Calendar.DATE, ConfigKeys.NUM_DAYS_CLOSE_FUTURE_CONTRACT.intValue());
+	 		IsFutureTradeable = cNow.after(cExpirationDate);
+		}			
+	return IsFutureTradeable;
+		
+	}
+	
 	
 	public static boolean IsTradingEnabledFromHours(String _jsonTradingHours)
 	{

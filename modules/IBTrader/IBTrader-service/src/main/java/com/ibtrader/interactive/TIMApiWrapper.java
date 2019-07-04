@@ -583,16 +583,31 @@ public class TIMApiWrapper implements EWrapper {
 		/* GENERAMOS EL JSON CON LOS DATOS DEL HORAS DE TRADING SEGUN UTC */					
 		JSONArray    jsonTradingHours = JSONFactoryUtil.createJSONArray();		
 		
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Utilities.__IBTRADER_TRADINHOURS_DATE_FORMAT);
+		DateTimeFormatter expirationformatter = DateTimeFormatter.ofPattern(Utilities.__IBTRADER_CONTRACTEXPIRATION_DATE_FORMAT);		
+		
+		SimpleDateFormat returnedExpiration =  new SimpleDateFormat(Utilities.__IBTRADER_CONTRACTEXPIRATION_DATE_FORMAT);
+
 		
 		
-		 IBOrder _ibOrder;		 	
+		IBOrder _ibOrder;		 	
 		 //_ibOrder = IBOrderLocalServiceUtil.fetchIBOrder(reqId);
-		 _ibOrder = IBOrderLocalServiceUtil.findByOrderShareClientGroupCompany(reqId, _ibtarget_share.getShareId(),_clientId, _ibtarget_organization.getCompanyId(),_ibtarget_share.getGroupId());
-	 	 if (_ibOrder==null)  // error en una posicion dada abierta		
+		_ibOrder = IBOrderLocalServiceUtil.findByOrderShareClientGroupCompany(reqId, _ibtarget_share.getShareId(),_clientId, _ibtarget_organization.getCompanyId(),_ibtarget_share.getGroupId());
+	 	if (_ibOrder==null)  // error en una posicion dada abierta		
 	 		 return;
 		
-	 	 Share oShare = ShareLocalServiceUtil.fetchShare(_ibOrder.getShareID());  					
-
+	 	Share oShare = ShareLocalServiceUtil.fetchShare(_ibOrder.getShareID());  						 	 
+	 	
+		// PARA FUTUROS m_lastTradedateOrContractMonth	"20190828 13:30 EST" (id=567)	
+	 	// lo utilizamos para  saber fecha expiracion exacta 
+	 	if (oShare.getSecurity_type().equals(ConfigKeys.SECURITY_TYPE_FUTUROS))
+		{
+		 	String[] lastTrade = Arrays.stream(contractDetails.contract().lastTradeDateOrContractMonth().split(StringPool.SPACE)).map(String::trim).toArray(String[]::new); 	 
+		 	oShare.setExpiry_date(returnedExpiration.parse(Utilities.getConvertedUTCStringDate(lastTrade[0].concat(" ").concat(lastTrade[1]), expirationformatter, contractDetails.timeZoneId())));		 	
+		 	
+		}
+	 	
+	 	
 	 	/* EXTRA�O, PARA APPLE, LAS TRADINHOURS PARECEN INCORRETAS PERO NO PARA LOS FUTURES, QUE SON MAS APROPIADAS Y CERTEREZAS LAS TRADING */
 		/* PARECE UNA �APA 
 		 * https://www.cmegroup.com/trading/equity-index/us-index/sandp-500_contract_specifications.html
@@ -603,6 +618,7 @@ public class TIMApiWrapper implements EWrapper {
 		{
 			_traingHours = contractDetails.liquidHours();
 		}
+	
 		if (!_traingHours.isEmpty()) // 					
 		{
 						
@@ -628,35 +644,8 @@ public class TIMApiWrapper implements EWrapper {
 						String[] from = Arrays.stream(tradingHour[0].split(StringPool.COLON)).map(String::trim).toArray(String[]::new);
 						String[] to =   Arrays.stream(tradingHour[1].split(StringPool.COLON)).map(String::trim).toArray(String[]::new);
 						
-					
-						// error IB BUG with CST no supported 
-						ZoneId tws_timezone;
-						if (contractDetails.timeZoneId().contains("CST"))														
-							tws_timezone = ZoneId.of("CST6CDT");
-						else
-							tws_timezone = ZoneId.of(contractDetails.timeZoneId());		
-						
-						DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
-						// from 
-						LocalDateTime localtDateAndTime = LocalDateTime.parse(from[0].concat(" ").concat(from[1]), formatter);
-						ZonedDateTime dateAndTimeMarketShare = ZonedDateTime.of(localtDateAndTime, tws_timezone );
-						_log.trace("Current date and time in a particular timezone :" + contractDetails.timeZoneId() + " "  + dateAndTimeMarketShare.toLocalDateTime());
-												
-						ZonedDateTime utcDate = dateAndTimeMarketShare.withZoneSameInstant(ZoneOffset.UTC); 
-						_log.trace("Current date and time in UTTC timezone : " + utcDate.toLocalDateTime());
-						jsonTradingHour.put("fromDate", formatter.format(utcDate));
-										
-						// to 
-						localtDateAndTime = LocalDateTime.parse(to[0].concat(" ").concat(to[1]), formatter);
-						dateAndTimeMarketShare = ZonedDateTime.of(localtDateAndTime, tws_timezone );
-						utcDate = dateAndTimeMarketShare.withZoneSameInstant(ZoneOffset.UTC);
-					
-						_log.trace("Current date and time in a particular timezone :" + contractDetails.timeZoneId() + " "  + dateAndTimeMarketShare.toLocalDateTime());
-						_log.trace("Current date and time in UTTC timezone : " + utcDate.toLocalDateTime());
-
-					
-						jsonTradingHour.put("toDate", formatter.format(utcDate));						
-
+						jsonTradingHour.put("fromDate", Utilities.getConvertedUTCStringDate(from[0].concat(" ").concat(from[1]), formatter, contractDetails.timeZoneId()));
+						jsonTradingHour.put("toDate", Utilities.getConvertedUTCStringDate(to[0].concat(" ").concat(to[1]), formatter, contractDetails.timeZoneId()));
 						jsonTradingHours.put(jsonTradingHour);
 						
 					}
@@ -666,24 +655,23 @@ public class TIMApiWrapper implements EWrapper {
 			_log.trace("LiquidHours:" + contractDetails.liquidHours());
 			_log.trace("TIMApiWrapper ContractDetails. ReqId: ["+reqId+"] - TimeZoneTrading: ["+contractDetails.timeZoneId()+ "] - ["+contractDetails.contract().symbol()+"], ["+contractDetails.contract().secType()+"], ConId: ["+contractDetails.contract().conid()+"] @ ["+contractDetails.contract().exchange()+"]");		
 		 		 
-			Share share = ShareLocalServiceUtil.fetchShare(_ibOrder.getShareID());  	
 
 			LocalDate now = LocalDate.now();
 			ZoneId UTCZone = ZoneId.systemDefault(); // UTC 	
 	   		ZonedDateTime zonedDateTime = now.atStartOfDay(UTCZone);   	
 	   		zonedDateTime = zonedDateTime.minus(-1, ChronoUnit.SECONDS);
 	   		
-			share.setDate_validated_trader_provider(Date.from(zonedDateTime.toInstant()));			
-			share.setValidated_trader_provider(Boolean.TRUE);
-			share.setLast_error_trader_provider(null);			
-			share.setTrading_hours(jsonTradingHours.toString());
+	   		oShare.setDate_validated_trader_provider(Date.from(zonedDateTime.toInstant()));			
+	   		oShare.setValidated_trader_provider(Boolean.TRUE);
+	   		oShare.setLast_error_trader_provider(null);			
+	   		oShare.setTrading_hours(jsonTradingHours.toString());
 			/* actualizamos datos error de operativa */
-			_log.trace("Updating contractDetails share:" + share.getSymbol());			
-			ShareLocalServiceUtil.updateShare(share);			
+			_log.trace("Updating contractDetails share:" + oShare.getSymbol());			
+			ShareLocalServiceUtil.updateShare(oShare);			
 			Market updateMarket = Utilities.fillOpenEndHoursMarket(jsonTradingHours.toString());
 			if (Validator.isNotNull(updateMarket))
 			{
-				Market market = MarketLocalServiceUtil.fetchMarket(share.getMarketId());
+				Market market = MarketLocalServiceUtil.fetchMarket(oShare.getMarketId());
 				market.setStart_hour(updateMarket.getStart_hour());
 				market.setEnd_hour(updateMarket.getEnd_hour());
 				MarketLocalServiceUtil.updateMarket(market);
@@ -695,10 +683,15 @@ public class TIMApiWrapper implements EWrapper {
 	}
 	catch (Exception e)
 	{
-		_log.debug(e.getMessage());
+		_log.info("Error getting contract details :" + e.getMessage());
 	}
 		
 	}
+	
+	
+	
+	
+	
 	//! [contractdetails]
 	@Override
 	public void bondContractDetails(int reqId, ContractDetails contractDetails) {

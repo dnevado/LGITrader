@@ -53,7 +53,7 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 	private static HashMap<String, String> Parameters = new HashMap<String,String>();
 	private List<ExpandoColumn> ExpandoColumns = new ArrayList<ExpandoColumn>(); 
 	
-	private static String _EXPANDO_MOBILE_AVERAGE_PERIODS_NUMBER = "Mobile Average Periods Number";  // offset desde inicio de mercado en minutos
+	private static String _EXPANDO_MOBILE_AVERAGE_PERIODS_NUMBER = "Exponencial Mobile Average Periods Number  {26}";  // offset desde inicio de mercado en minutos
 	private static String _EXPANDO_MOBILE_AVERAGE_CANDLE_SIZE = "Mobile Average Candle Size (Minutes) {5}";  // offset hasta desde inicio de mercado en minutos
 	private static String _EXPANDO_MOBILE_ADX_PASSED_RATE= "ADXR Passed Rate {25}"; // operar hasta minutos antes de cierre mercado	
 	private static String _EXPANDO_AROON_PERIODS= "Aroon Periods {25}"; // operar hasta minutos antes de cierre mercado

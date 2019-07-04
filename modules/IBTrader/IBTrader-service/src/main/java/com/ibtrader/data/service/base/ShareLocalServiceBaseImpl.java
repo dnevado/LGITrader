@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.ibtrader.data.model.Share;
 import com.ibtrader.data.service.ShareLocalService;
+import com.ibtrader.data.service.persistence.AuditIndicatorsStrategyPersistence;
 import com.ibtrader.data.service.persistence.BackTestingPersistence;
 import com.ibtrader.data.service.persistence.ConfigPersistence;
 import com.ibtrader.data.service.persistence.HistoricalRealtimeFinder;
@@ -431,6 +432,44 @@ public abstract class ShareLocalServiceBaseImpl extends BaseLocalServiceImpl
 	@Override
 	public Share updateShare(Share share) {
 		return sharePersistence.update(share);
+	}
+
+	/**
+	 * Returns the audit indicators strategy local service.
+	 *
+	 * @return the audit indicators strategy local service
+	 */
+	public com.ibtrader.data.service.AuditIndicatorsStrategyLocalService getAuditIndicatorsStrategyLocalService() {
+		return auditIndicatorsStrategyLocalService;
+	}
+
+	/**
+	 * Sets the audit indicators strategy local service.
+	 *
+	 * @param auditIndicatorsStrategyLocalService the audit indicators strategy local service
+	 */
+	public void setAuditIndicatorsStrategyLocalService(
+		com.ibtrader.data.service.AuditIndicatorsStrategyLocalService auditIndicatorsStrategyLocalService) {
+		this.auditIndicatorsStrategyLocalService = auditIndicatorsStrategyLocalService;
+	}
+
+	/**
+	 * Returns the audit indicators strategy persistence.
+	 *
+	 * @return the audit indicators strategy persistence
+	 */
+	public AuditIndicatorsStrategyPersistence getAuditIndicatorsStrategyPersistence() {
+		return auditIndicatorsStrategyPersistence;
+	}
+
+	/**
+	 * Sets the audit indicators strategy persistence.
+	 *
+	 * @param auditIndicatorsStrategyPersistence the audit indicators strategy persistence
+	 */
+	public void setAuditIndicatorsStrategyPersistence(
+		AuditIndicatorsStrategyPersistence auditIndicatorsStrategyPersistence) {
+		this.auditIndicatorsStrategyPersistence = auditIndicatorsStrategyPersistence;
 	}
 
 	/**
@@ -1025,6 +1064,10 @@ public abstract class ShareLocalServiceBaseImpl extends BaseLocalServiceImpl
 		}
 	}
 
+	@BeanReference(type = com.ibtrader.data.service.AuditIndicatorsStrategyLocalService.class)
+	protected com.ibtrader.data.service.AuditIndicatorsStrategyLocalService auditIndicatorsStrategyLocalService;
+	@BeanReference(type = AuditIndicatorsStrategyPersistence.class)
+	protected AuditIndicatorsStrategyPersistence auditIndicatorsStrategyPersistence;
 	@BeanReference(type = com.ibtrader.data.service.BackTestingLocalService.class)
 	protected com.ibtrader.data.service.BackTestingLocalService backTestingLocalService;
 	@BeanReference(type = BackTestingPersistence.class)

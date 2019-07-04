@@ -1,3 +1,14 @@
+create table ibtrader_AuditIndicatorsStrategy (
+	uuid_ VARCHAR(75) null,
+	groupId LONG not null,
+	companyId LONG not null,
+	auditDate VARCHAR(75) not null,
+	auditstrategy VARCHAR(75) not null,
+	shareId LONG not null,
+	auditData VARCHAR(75) null,
+	primary key (groupId, companyId, auditDate, auditstrategy, shareId)
+);
+
 create table ibtrader_BackTesting (
 	uuid_ VARCHAR(75) null,
 	backTId LONG not null primary key,

@@ -45,6 +45,9 @@ import java.util.Properties;
  * 
  * https://developers.google.com/oauthplayground/
  * https://github.com/pablo127/gmail-api-sample
+ * 
+ * https://medium.com/@pablo127/google-api-authentication-with-oauth-2-on-the-example-of-gmail-a103c897fd98
+ * 
  */
 
 public final class GmailServiceImpl implements GmailService {
