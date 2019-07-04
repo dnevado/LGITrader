@@ -59,10 +59,3 @@
 			</#list>	
 	  </ul>
 	</nav>
-<script>
-$('.navbar-primary').toggleClass('collapsed');
-$('.btn-expand-collapse').click(function(e) {
-				e.preventDefault();
-				$('.navbar-primary').toggleClass('collapsed');
-});
-</script>
