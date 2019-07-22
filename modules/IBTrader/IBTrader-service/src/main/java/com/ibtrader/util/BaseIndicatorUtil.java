@@ -538,10 +538,15 @@ public class BaseIndicatorUtil {
 		_cExponentialAvgMobile.setTime(_ActualDateBar);
 		/* MODIFICACION, MEDIAS MOVILES HASTA EL PERIDO N, N-1, N-2 */
 		/* SUMAMOS UN PERIOD */
-		lExponentialAvgPeriods = getPeriodsMinutesMobileAvg(_ActualDateBar, PeriodN + 1 , TimeBars, Boolean.TRUE, market);
+		
+		/* CPM EL NUMERO DE PERIODOS, PERDEMOS PRECISION POR EL PROBLEMA DEL TAG4J  A LA HORA DE CALCULAR */
+		int periodsToCalculate = ConfigKeys.INDICATORS_MIN_SERIE_COUNT;
+
+		
+		lExponentialAvgPeriods = getPeriodsMinutesMobileAvg(_ActualDateBar, periodsToCalculate , TimeBars, Boolean.TRUE, market);
 		
 		/* MODIFICACION, MEDIAS MOVILES HASTA EL PERIDO N, N-1, N-2 */
-		_cExponentialAvgMobile.add(Calendar.MINUTE,  (int) - ((PeriodN) * TimeBars));
+		_cExponentialAvgMobile.add(Calendar.MINUTE,  (int) - ((periodsToCalculate) * TimeBars));
 		_cExponentialAvgMobile.add(Calendar.SECOND,-1);		
 		
 
@@ -570,16 +575,16 @@ public class BaseIndicatorUtil {
       
         if (_log.isDebugEnabled())
         {
-			for (int j=0;j<PeriodN;j++)
+			for (int j=0;j<periodsToCalculate;j++)
 			{ 
 				try 
 				{
-					_log.debug("getExponentialAvgMobile:" + j + ":" +  emea.getValue(Long.valueOf(PeriodN).intValue()).doubleValue());
+					_log.debug("getExponentialAvgMobile:" + j + ":" +  emea.getValue(Long.valueOf(j).intValue()).doubleValue());
 				} 
 				catch (Exception e) {}	
 			}
         }
-        exponentialAvgMobile = emea.getValue(Long.valueOf(PeriodN-1).intValue()).doubleValue();
+        exponentialAvgMobile = emea.getValue(Long.valueOf(periodsToCalculate-1).intValue()).doubleValue();
 		}
 	    catch (Exception e)
 		{

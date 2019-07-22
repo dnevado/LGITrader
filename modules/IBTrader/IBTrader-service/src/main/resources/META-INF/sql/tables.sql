@@ -5,7 +5,7 @@ create table ibtrader_AuditIndicatorsStrategy (
 	auditDate VARCHAR(75) not null,
 	auditstrategy VARCHAR(75) not null,
 	shareId LONG not null,
-	auditData VARCHAR(75) null,
+	auditData TEXT null,
 	primary key (groupId, companyId, auditDate, auditstrategy, shareId)
 );
 
@@ -179,7 +179,8 @@ create table ibtrader_Share (
 	date_validated_trader_provider DATE null,
 	last_error_trader_provider TEXT null,
 	simulation_end_date DATE null,
-	trading_hours TEXT null
+	trading_hours TEXT null,
+	date_filled_realtime_gaps DATE null
 );
 
 create table ibtrader_Strategy (

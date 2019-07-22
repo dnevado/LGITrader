@@ -283,7 +283,11 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 						if (_log.isDebugEnabled())
 							_log.debug("_BuySuccess._SellSuccess, _AvgMovil_InsideBar for :" + _share.getSymbol() + _BuySuccess + "," + _SellSuccess+ "," +_AvgMovil_InsideBar );
 						
-						if (_AvgMovil_InsideBar  && (_BuySuccess || _SellSuccess))
+						
+						/* fecha hora venicmiento  NO proxima */ 
+						boolean  IsFutureTradeable = Utilities.IsFutureTradeable(_share);
+						
+						if (IsFutureTradeable && _AvgMovil_InsideBar  && (_BuySuccess || _SellSuccess))
 						{
 							
 						    this.setValueIn(vRealtime.doubleValue());											

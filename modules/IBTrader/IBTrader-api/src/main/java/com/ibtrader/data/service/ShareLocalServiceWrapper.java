@@ -143,6 +143,13 @@ public class ShareLocalServiceWrapper implements ShareLocalService,
 			name);
 	}
 
+	@Override
+	public com.ibtrader.data.model.Share findTargetShareToFillRealtime(
+		boolean _active, boolean validated_trader_provider) {
+		return _shareLocalService.findTargetShareToFillRealtime(_active,
+			validated_trader_provider);
+	}
+
 	/**
 	* Returns the share with the primary key.
 	*

@@ -6,6 +6,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.ta4j.core.BaseBar;
@@ -38,11 +39,26 @@ import com.liferay.portal.kernel.util.Validator;
 public class BarSeriesCacheUtil {
 	
 	
-	private static TimeSeries closeMinMaxBarTimeSeries =  null;
+	/* private static TimeSeries closeMinMaxBarTimeSeries =  null;
 	private static String closeMinMaxBarTimeBarKey  =  null;  // SHAREID + COMPANY + TO
 	
 	private static TimeSeries closeBarTimeSeries =  null;
 	private static String closeBarTimeBarKey  =  null;  // SHAREID + COMPANY + TO
+	*/
+	private static int CACHE_MAX_ELEMENTS = 50; 
+	
+	/*- LinkedHashMapproporciona un constructor especial que nos permite especificar, entre el factor de carga personalizado (LF) 
+	y la capacidad inicial,un mecanismo/estrategia de ordenamiento diferente denominado orden de acceso:
+
+	El primer parámetro es la capacidad inicial, seguido del factor de carga y el último parámetroes 
+	el modo de pedido. Por lo tanto, al pasartrue, obtuvimos el orden de acceso, mientras que el 
+	orden predeterminado era el orden de inserción.
+	*/
+	
+	/* Caches  LINKEDIN HASKMAP PARA MANTENER CACHES Y ORDEN Y ELIMINAR LOS MENOS USADOS RECIENTEMENTE  */
+	private static LinkedHashMap<String, TimeSeries> closeBarTimeSeriesCacheLRUMap  = new LinkedHashMap<String,TimeSeries>();
+	private static LinkedHashMap<String,TimeSeries> closeMinMaxBarTimeSeriesLRUMap  = new LinkedHashMap<String,TimeSeries>();
+	
 	
 	private static final Log _log = LogFactoryUtil.getLog(BarSeriesCacheUtil.class.getClass());
 	
@@ -68,11 +84,13 @@ public class BarSeriesCacheUtil {
 		keyBuilder.append(StringPool.PIPE);
 		keyBuilder.append(String.valueOf(closingDates.size()));  // puede ser que las series esten para una media exponencia de 27 periodos y los macd para 125 
 		
+		TimeSeries returnTimeSeries = null;
+		
 		try 
 		{
 		/* COINCIDE EL CACHE */
-		if (Validator.isNotNull(closeBarTimeBarKey) &&  closeBarTimeBarKey.equals(keyBuilder.toString()))
-				return closeBarTimeSeries;
+		if (Validator.isNotNull(closeBarTimeSeriesCacheLRUMap) &&  closeBarTimeSeriesCacheLRUMap.containsKey(keyBuilder.toString()))
+				returnTimeSeries =  closeBarTimeSeriesCacheLRUMap.get(keyBuilder.toString());
 		else
 		{
 			TimeSeries tmpTimeSeries = new BaseTimeSeries("barTimeSeries");
@@ -103,15 +121,21 @@ public class BarSeriesCacheUtil {
 				}
 	
 			}
-			closeBarTimeSeries = tmpTimeSeries;
-			closeBarTimeBarKey = keyBuilder.toString();			
+			/* lo creamos la primera vez */
+			if (Validator.isNull(closeBarTimeSeriesCacheLRUMap))		
+						closeBarTimeSeriesCacheLRUMap = new PriceTimeSeriesCacheList<>(CACHE_MAX_ELEMENTS, .75f, true);						
+			
+			closeBarTimeSeriesCacheLRUMap.put(keyBuilder.toString(), tmpTimeSeries);
+			returnTimeSeries =  closeBarTimeSeriesCacheLRUMap.get(keyBuilder.toString());
+			/* closeBarTimeSeries = tmpTimeSeries;
+			closeBarTimeBarKey = keyBuilder.toString(); */			
 		}
 		}// end try
 		catch (Exception e)
 		{
 			_log.debug(e.getMessage());
 		}
-		return closeBarTimeSeries;
+		return returnTimeSeries;
 		
 	}
 	
@@ -137,12 +161,15 @@ public class BarSeriesCacheUtil {
 		
 		TimeSeries series = new BaseTimeSeries("closeMinMaxBarTimeSeries");
 
+		TimeSeries returnTimeSeries = null;
+
+		
 		try 
 		{
 			
-		/* COINCIDE EL CACHE */
-		if (Validator.isNotNull(closeMinMaxBarTimeBarKey) &&  closeMinMaxBarTimeBarKey.equals(keyBuilder.toString()))
-				return closeMinMaxBarTimeSeries;
+		/* COINCIDE EL CACHE */			
+		if (Validator.isNotNull(closeMinMaxBarTimeSeriesLRUMap) &&  closeMinMaxBarTimeSeriesLRUMap.containsKey(keyBuilder.toString()))
+			returnTimeSeries =  closeMinMaxBarTimeSeriesLRUMap.get(keyBuilder.toString());	
 		else
 		{
 			Calendar  cPeriodFrom = Calendar.getInstance(); 
@@ -244,18 +271,22 @@ public class BarSeriesCacheUtil {
 	        	}
 	        	
 	        }
-	        
+	        /* lo creamos la primera vez */
+			if (Validator.isNull(closeMinMaxBarTimeSeriesLRUMap))		
+				closeMinMaxBarTimeSeriesLRUMap = new PriceTimeSeriesCacheList<>(CACHE_MAX_ELEMENTS, .75f, true);						
+			
+			closeMinMaxBarTimeSeriesLRUMap.put(keyBuilder.toString(), series);
+			returnTimeSeries =  closeMinMaxBarTimeSeriesLRUMap.get(keyBuilder.toString());
 			
 		}
 		}// end try
 		catch (Exception e)
 		{
 			_log.debug(e.getMessage());
-		}
-		
-        closeMinMaxBarTimeSeries = series;
-		closeMinMaxBarTimeBarKey = keyBuilder.toString();
-		return closeMinMaxBarTimeSeries;
+		}		
+       /*  closeMinMaxBarTimeSeries = series;
+		closeMinMaxBarTimeBarKey = keyBuilder.toString(); */
+		return returnTimeSeries;
 	}
 
 }

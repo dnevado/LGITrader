@@ -51,9 +51,9 @@ public class ShareImpl extends ShareBaseImpl {
 	public boolean IsTradeable() {
 		
 		boolean  isTradingEnabled = Utilities.IsTradingEnabledFromHours(this.getTrading_hours());
-		/* fecha hora venvimiernto */
+		/* fecha hora venvimiernto proxima  
 		boolean  IsFutureTradeable = Utilities.IsFutureTradeable(this);
-		
-		return this.isActive() && this.isValidated_trader_provider() && isTradingEnabled && IsFutureTradeable;
+		*/
+		return this.isActive() && this.isValidated_trader_provider() && isTradingEnabled;// && IsFutureTradeable;
 	}
 }

@@ -50,6 +50,10 @@ import com.ibtrader.util.DirectionalMovementADXRUtil;
 import com.ibtrader.util.PositionStates;
 import com.ibtrader.util.Utilities;
 
+
+/* https://compraraccionesdebolsa.com/los-sistemas-de-trading/triple-pantalla-Elder/ 
+ * http://www.megabolsa.com/2015/08/01/tecnica-de-trading-de-triple-pantalla/*/
+
 public class IBStrategyElderExpStochastic extends StrategyImpl {
 
 	private static final long serialVersionUID = 1L;
@@ -397,7 +401,8 @@ public class IBStrategyElderExpStochastic extends StrategyImpl {
 					boolean bBuyStochasticSignal =  Validator.isNotNull(stochasticD) && stochasticD>0 && stochasticD <=_num_stochastic_rate_oversold;
 				    boolean bSellStochasticSignal = Validator.isNotNull(stochasticD) && stochasticD>0 && stochasticD >=_num_stochastic_rate_overbought;
 				    
-				    /* Si la primera pantalla tiene tendencia alcista y en la segunda pantalla los osciladores indican sobre venta, abrimos una posición de compra si en la tercera pantalla  el oscilador está en sobre venta y el precio supera el máximo del día o el de la sesión anterior.
+				    /* Si la primera pantalla tiene tendencia alcista y en la segunda pantalla los osciladores indican sobre venta, 
+				     * abrimos una posición de compra si en la tercera pantalla  el oscilador está en sobre venta y el precio supera el máximo del día o el de la sesión anterior.
 				    Si en la primera pantalla se identifica un movimiento de tendencia a la baja y el oscilador en la segunda pantalla se mueve al alza, hay que estar listos para abrir una posición corta una vez que la tercera pantalla de la señal.
 				    
 				    * Valores menores de 20 en el oscilador indican condiciones de sobre venta que pueden anticipar un rebote y alza del precio
@@ -438,7 +443,11 @@ public class IBStrategyElderExpStochastic extends StrategyImpl {
 						
 					}
 					
-					if (_BuySuccess || _SellSuccess)
+					/* fecha hora venicmiento  NO proxima */ 
+					boolean  IsFutureTradeable = Utilities.IsFutureTradeable(_share);
+					
+					
+					if (IsFutureTradeable && (_BuySuccess || _SellSuccess))
 					{
 					
 					    this.setValueIn(lastRealtime.doubleValue());											
@@ -469,21 +478,26 @@ public class IBStrategyElderExpStochastic extends StrategyImpl {
 						jsonStrategyIndicators= JSONFactoryUtil.createJSONObject();
 						jsonStrategyIndicators.put("_avgMobileExponential", _avgMobileExponential);
 						jsonStrategyIndicators.put("shareId", _share.getShareId());
-						jsonStrategyIndicators.put("bartime", _calendarFromNow.getTime());
+						jsonStrategyIndicators.put("bartime", auditTimeFormat.format(_calendarFromNow.getTime()));
 						jsonStrategyIndicators.put("lastRealtime", lastRealtime.doubleValue());
 						jsonStrategyIndicators.put("periods", _num_macdP);
 						jsonStrategyIndicators.put("barsize", _num_macdT);								
 						jsonStrategyIndicators.put("stochasticD", stochasticD);								
-							
-						AuditIndicatorsStrategyPK pkAudit = new AuditIndicatorsStrategyPK(_share.getGroupId(), _share.getCompanyId(), auditTimeFormat.format(_calendarFromNow.getTime()), _strategyImpl.getClass().getName(), _share.getShareId());
-						AuditIndicatorsStrategy auditStrategy = AuditIndicatorsStrategyLocalServiceUtil.fetchAuditIndicatorsStrategy(pkAudit);
-						if (Validator.isNull(auditStrategy))
+						
+						
+						try 
 						{
-							auditStrategy = AuditIndicatorsStrategyLocalServiceUtil.createAuditIndicatorsStrategy(pkAudit);
-							auditStrategy.setAuditData(Validator.isNotNull(jsonStrategyIndicators) ? jsonStrategyIndicators.toString() : StringPool.BLANK);
-							AuditIndicatorsStrategyLocalServiceUtil.addAuditIndicatorsStrategy(auditStrategy);
-							
+							AuditIndicatorsStrategyPK pkAudit = new AuditIndicatorsStrategyPK(_share.getGroupId(), _share.getCompanyId(), auditTimeFormat.format(_calendarFromNow.getTime()), _strategyImpl.getClass().getName(), _share.getShareId());
+							AuditIndicatorsStrategy auditStrategy = AuditIndicatorsStrategyLocalServiceUtil.fetchAuditIndicatorsStrategy(pkAudit);
+							if (Validator.isNull(auditStrategy))
+							{
+								auditStrategy = AuditIndicatorsStrategyLocalServiceUtil.createAuditIndicatorsStrategy(pkAudit);
+								auditStrategy.setAuditData(Validator.isNotNull(jsonStrategyIndicators) ? jsonStrategyIndicators.toString() : StringPool.BLANK);
+								AuditIndicatorsStrategyLocalServiceUtil.addAuditIndicatorsStrategy(auditStrategy);
+								
+							}
 						}
+						catch (Exception e)	{}
 						
 					}	
 					

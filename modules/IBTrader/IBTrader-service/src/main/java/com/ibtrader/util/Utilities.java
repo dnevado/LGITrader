@@ -225,8 +225,9 @@ public class Utilities {
 	 		Calendar cExpirationDate = Calendar.getInstance();
 	 		Calendar cNow = Calendar.getInstance();
 	 		cExpirationDate.setTimeInMillis(share.getExpiry_date().getTime());
-	 		cExpirationDate.add(-Calendar.DATE, ConfigKeys.NUM_DAYS_CLOSE_FUTURE_CONTRACT.intValue());
-	 		IsFutureTradeable = cNow.after(cExpirationDate);
+	 		cExpirationDate.add(Calendar.DATE, -ConfigKeys.NUM_DAYS_CLOSE_FUTURE_CONTRACT.intValue());
+	 		/* SI LA FECHA DE AHORA ES MENOR QUE EL TRAMO DE DIAS PARA OPERAR , 1 DIA */ 
+	 		IsFutureTradeable = cNow.before(cExpirationDate);
 		}			
 	return IsFutureTradeable;
 		

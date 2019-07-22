@@ -14,6 +14,7 @@ import com.ib.client.Order;
 import com.ib.contracts.FutContract;
 import com.ib.contracts.StkContract;
 import com.ibtrader.constants.IBTraderConstants;
+import com.ibtrader.data.model.AuditIndicatorsStrategy;
 import com.ibtrader.data.model.HistoricalRealtime;
 import com.ibtrader.data.model.Market;
 import com.ibtrader.data.model.Position;
@@ -21,9 +22,11 @@ import com.ibtrader.data.model.Realtime;
 import com.ibtrader.data.model.Share;
 import com.ibtrader.data.model.StrategyShare;
 import com.ibtrader.data.model.impl.StrategyImpl;
+import com.ibtrader.data.service.AuditIndicatorsStrategyLocalServiceUtil;
 import com.ibtrader.data.service.HistoricalRealtimeLocalServiceUtil;
 import com.ibtrader.data.service.PositionLocalServiceUtil;
 import com.ibtrader.data.service.RealtimeLocalServiceUtil;
+import com.ibtrader.data.service.persistence.AuditIndicatorsStrategyPK;
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.expando.kernel.model.ExpandoColumn;
 import com.liferay.expando.kernel.model.ExpandoColumnConstants;
@@ -37,6 +40,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.ibtrader.util.BaseIndicatorUtil;
 import com.ibtrader.util.AroonIndicatorUtil;
@@ -249,13 +253,16 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 
 		boolean verified = Boolean.FALSE;
 		boolean existsPosition = Boolean.FALSE;
-
+		
 		try
 	    {
 			
 		if (_strategyImpl.getStrategyparamsoverride()==null)
 			return Boolean.FALSE;
-			
+		
+		SimpleDateFormat auditTimeFormat = new SimpleDateFormat (Utilities.__IBTRADER_HISTORICAL_DATE_FORMAT);
+
+		
 	    this.setJsonStrategyShareParams(JSONFactoryUtil.createJSONObject(_strategyImpl.getStrategyparamsoverride()));					
 		User _IBUser = UserLocalServiceUtil.getUser(_share.getUserCreatedId());
 		String HoraActual = "";
@@ -445,7 +452,11 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 							(operationfilter.equals("ALL") || operationfilter.equals(PositionStates.statusTWSFire.SELL.toString()));
 					
 					
-					if (_BuySuccess || _SellSuccess)
+					/* fecha hora venicmiento  NO proxima */ 
+					boolean  IsFutureTradeable = Utilities.IsFutureTradeable(_share);
+					
+					
+					if (IsFutureTradeable && (_BuySuccess || _SellSuccess))
 					{
 					
 					    this.setValueIn(lastRealtime.doubleValue());											
@@ -470,6 +481,7 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 						_tradeDescription.put("crossMACDSignalUp", crossMACDSignalUp);
 						_tradeDescription.put("crossMACDSignalDown", crossMACDSignalDown);
 						_tradeDescription.put("ADXR", ADXR.getADXR());
+						_tradeDescription.put("Aroon", Aroon);						
 						_tradeDescription.put("ADXR.isCrossDIUpWard", ADXR.isCrossDIUpWard());
 						_tradeDescription.put("ADXR.isCrossDIDownWard", ADXR.isCrossDIDownWard());		
 						_tradeDescription.put("Aroon.isCrossAroonUpWard", Aroon.isCrossAroonUpWard());
@@ -480,7 +492,46 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 						_tradeDescription.put("Aroon.getLastAroonUp", Aroon.getLastAroonUp());
 						
 					
-					}						
+					}	
+					
+					
+					/* ALMACENAMOS LOS VALORES DE AUDITORIA SI ES TIEMPO REAL */
+					if (!isSimulation_mode())
+					{
+						jsonStrategyIndicators= JSONFactoryUtil.createJSONObject();
+						jsonStrategyIndicators.put("_avgMobileExponential", _avgMobileExponential);
+						jsonStrategyIndicators.put("shareId", _share.getShareId());
+						jsonStrategyIndicators.put("bartime", auditTimeFormat.format(_calendarFromNow.getTime()));
+						jsonStrategyIndicators.put("lastRealtime", lastRealtime.doubleValue());
+						jsonStrategyIndicators.put("periods", _num_macdP);
+						jsonStrategyIndicators.put("barsize", _num_macdT);								
+						jsonStrategyIndicators.put("_num_shortAvgMACD_P", _num_shortAvgMACD_P);								
+						jsonStrategyIndicators.put("_num_longAvgMACD_P", _num_longAvgMACD_P);
+						jsonStrategyIndicators.put("_num_signalLineMACD_P", _num_signalLineMACD_P);
+						jsonStrategyIndicators.put("previousMACD", previousMACD);
+						jsonStrategyIndicators.put("MACD", MACD);
+						jsonStrategyIndicators.put("_macd_SignalAvgMobileExponential", _macd_SignalAvgMobileExponential);
+						jsonStrategyIndicators.put("_macd_PreviousSignalAvgMobileExponential", _macd_PreviousSignalAvgMobileExponential);
+						jsonStrategyIndicators.put("ADXR", ADXR.getADXR());
+						jsonStrategyIndicators.put("Aroon", Aroon);																		
+						
+						
+						try 
+						{
+							AuditIndicatorsStrategyPK pkAudit = new AuditIndicatorsStrategyPK(_share.getGroupId(), _share.getCompanyId(), auditTimeFormat.format(_calendarFromNow.getTime()), _strategyImpl.getClass().getName(), _share.getShareId());
+							AuditIndicatorsStrategy auditStrategy = AuditIndicatorsStrategyLocalServiceUtil.fetchAuditIndicatorsStrategy(pkAudit);
+							if (Validator.isNull(auditStrategy))
+							{
+								auditStrategy = AuditIndicatorsStrategyLocalServiceUtil.createAuditIndicatorsStrategy(pkAudit);
+								auditStrategy.setAuditData(Validator.isNotNull(jsonStrategyIndicators) ? jsonStrategyIndicators.toString() : StringPool.BLANK);
+								AuditIndicatorsStrategyLocalServiceUtil.addAuditIndicatorsStrategy(auditStrategy);
+								
+							}
+						}
+						catch (Exception e)	{}
+						
+					}	
+					
 				 } // if  (Validator.isNotNull(oShareLastRTime))			   	
 				} // if (_avgMobileExponential!=null)			
 			}// NO EXISTE POSICION 

@@ -964,6 +964,11 @@ public class TIMApiWrapper implements EWrapper {
 		_stbB.append(str);				
 		
 		
+		try
+		
+		{
+			
+		
 		Position _ErrorPosition = null;
 		Share oErrorShare = null;
 		
@@ -1056,8 +1061,13 @@ public class TIMApiWrapper implements EWrapper {
 			
 			}  // end default
 			
-			} // end switch 				
-		}			 
+			} // end switch 	
+		} // end try 
+		catch (Exception e)
+		{
+			_log.error("error:" + e.getMessage());
+		}
+	}			 
 	//! [error]
 	@Override
 	public void connectionClosed() {
@@ -1403,7 +1413,7 @@ public class TIMApiWrapper implements EWrapper {
 		
 		HistoricalRealtime existsHistoricalRealtime = HistoricalRealtimeLocalServiceUtil.findCloseRealTime(this.get_ibtarget_share().getShareId(), this.get_ibtarget_share().getCompanyId(), this.get_ibtarget_share().getGroupId(), _barDate.getTime());
 		
-		_log.debug("Exists HistoricalRealtime for  " +  this.get_ibtarget_share().getSymbol() + " " + _barDate.getTime() + "?:" + Validator.isNotNull(existsHistoricalRealtime));
+		_log.trace("Exists HistoricalRealtime for  " +  this.get_ibtarget_share().getSymbol() + " " + _barDate.getTime() + "?:" + Validator.isNotNull(existsHistoricalRealtime));
 
 		
 		if (Validator.isNull(existsHistoricalRealtime)) // no duplicamos 
@@ -1412,7 +1422,7 @@ public class TIMApiWrapper implements EWrapper {
 		
 			HistoricalRealtime historicalrealtime = HistoricalRealtimeLocalServiceUtil.createHistoricalRealtime(CounterLocalServiceUtil.increment(HistoricalRealtime.class.getName()));
 			
-			_log.debug("Adding historicalData for " +  this.get_ibtarget_share().getSymbol() + " " + _barDate.getTime());
+			_log.trace("Adding historicalData for " +  this.get_ibtarget_share().getSymbol() + " " + _barDate.getTime());
 	
 			
 			historicalrealtime.setCreateDate(_barDate.getTime());
@@ -1450,6 +1460,8 @@ public class TIMApiWrapper implements EWrapper {
 	{
 				
 		Calendar _calNow = Calendar.getInstance();
+		/* A VECES LA ULTIMA BARRA ESTA POR ENCIMA DEL MOMENTO ACTUAL, ESTA LA IGNORAMOS */
+		Calendar now = Calendar.getInstance();
 		/* PRECIO CIERRE ES EL DIA ANTERIOR SEGUN DOCUM DE IB */
 		
 		if (IsClosePrice)
@@ -1482,8 +1494,7 @@ public class TIMApiWrapper implements EWrapper {
 			
 			/* BUSCANDO EL REALTIME CON HISTORICAL DATA EN UTC ME LO DEVUELVE EN EL HUSO DEL USUARIO */
 			
-			/* A VECES LA ULTIMA BARRA ESTA POR ENCIMA DEL MOMENTO ACTUAL, ESTA LA IGNORAMOS */
-			Calendar now = Calendar.getInstance();
+			
 			if (_calNow.after(now))
 				return;
 			
@@ -1491,13 +1502,13 @@ public class TIMApiWrapper implements EWrapper {
 		}
 		Realtime existsClosePrice = RealtimeLocalServiceUtil.findCloseRealTime(this.get_ibtarget_share().getShareId(), this.get_ibtarget_share().getCompanyId(), this.get_ibtarget_share().getGroupId(), _calNow.getTime(), IsClosePrice);
 		
-		_log.debug("Exists Realtime for  " +  this.get_ibtarget_share().getSymbol() + " " + _calNow.getTime() + "?:" + Validator.isNotNull(existsClosePrice));
+		_log.trace("Exists Realtime for  " +  this.get_ibtarget_share().getSymbol() + " " + _calNow.getTime() + "?:" + Validator.isNotNull(existsClosePrice));
 
 		
 		if (Validator.isNull(existsClosePrice)) // no duplicamos 
 		{
 			
-			_log.debug("Adding Required Realtime for  " +  this.get_ibtarget_share().getSymbol() + " " + parsedDate + ",value:" + bar.close());
+			_log.trace("Adding Required Realtime for  " +  this.get_ibtarget_share().getSymbol() + " " + parsedDate + ",value:" + bar.close());
 			
 
 			try // avoid duplicate entry due to milliseconds 
@@ -1511,6 +1522,15 @@ public class TIMApiWrapper implements EWrapper {
 				oReal.setCreateDate(_calNow.getTime());
 				oReal.setModifiedDate(_calNow.getTime());		
 				RealtimeLocalServiceUtil.updateRealtime(oReal);
+				
+				
+				/* si es relleno de huecos, actualizo el campo para saber que cual es el ultimo share actualizado y no buscarle en la siguiente iteracion */
+				if (this.isFilledData())
+				{
+					Share updatedShare =ShareLocalServiceUtil.fetchShare(this.get_ibtarget_share().getShareId()); 
+					updatedShare.setDate_filled_realtime_gaps(now.getTime());
+					ShareLocalServiceUtil.updateShare(updatedShare);
+				}
 			}
 			catch  (Exception e) {}
 		}

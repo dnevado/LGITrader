@@ -69,7 +69,7 @@ public class AuditIndicatorsStrategyModelImpl extends BaseModelImpl<AuditIndicat
 			{ "auditDate", Types.VARCHAR },
 			{ "auditstrategy", Types.VARCHAR },
 			{ "shareId", Types.BIGINT },
-			{ "auditData", Types.VARCHAR }
+			{ "auditData", Types.CLOB }
 		};
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP = new HashMap<String, Integer>();
 
@@ -80,10 +80,10 @@ public class AuditIndicatorsStrategyModelImpl extends BaseModelImpl<AuditIndicat
 		TABLE_COLUMNS_MAP.put("auditDate", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("auditstrategy", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("shareId", Types.BIGINT);
-		TABLE_COLUMNS_MAP.put("auditData", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("auditData", Types.CLOB);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table ibtrader_AuditIndicatorsStrategy (uuid_ VARCHAR(75) null,groupId LONG not null,companyId LONG not null,auditDate VARCHAR(75) not null,auditstrategy VARCHAR(75) not null,shareId LONG not null,auditData VARCHAR(75) null,primary key (groupId, companyId, auditDate, auditstrategy, shareId))";
+	public static final String TABLE_SQL_CREATE = "create table ibtrader_AuditIndicatorsStrategy (uuid_ VARCHAR(75) null,groupId LONG not null,companyId LONG not null,auditDate VARCHAR(75) not null,auditstrategy VARCHAR(75) not null,shareId LONG not null,auditData TEXT null,primary key (groupId, companyId, auditDate, auditstrategy, shareId))";
 	public static final String TABLE_SQL_DROP = "drop table ibtrader_AuditIndicatorsStrategy";
 	public static final String ORDER_BY_JPQL = " ORDER BY auditIndicatorsStrategy.id.groupId ASC, auditIndicatorsStrategy.id.companyId ASC, auditIndicatorsStrategy.id.auditDate ASC, auditIndicatorsStrategy.id.auditstrategy ASC, auditIndicatorsStrategy.id.shareId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY ibtrader_AuditIndicatorsStrategy.groupId ASC, ibtrader_AuditIndicatorsStrategy.companyId ASC, ibtrader_AuditIndicatorsStrategy.auditDate ASC, ibtrader_AuditIndicatorsStrategy.auditstrategy ASC, ibtrader_AuditIndicatorsStrategy.shareId ASC";

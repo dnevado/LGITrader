@@ -408,7 +408,12 @@ public class IBStrategyMinMax extends StrategyImpl {
 			bReachedMin = bReachedMin &&  
 					(operationfilter.equals("ALL") || operationfilter.equals(PositionStates.statusTWSFire.SELL.toString())); 
 			
-			if (bReachedMax || bReachedMin )					
+			
+			/* fecha hora venicmiento  NO proxima */ 
+			boolean  IsFutureTradeable = Utilities.IsFutureTradeable(_share);
+			
+			
+			if (IsFutureTradeable && (bReachedMax || bReachedMin))					
 			{
 				
 			    this.setValueIn(lastRealtime.doubleValue());

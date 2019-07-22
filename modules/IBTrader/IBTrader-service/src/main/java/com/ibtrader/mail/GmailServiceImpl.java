@@ -147,8 +147,8 @@ public final class GmailServiceImpl implements GmailService {
     	
     	  // Load client secrets.
     	
-
-    	java.io.File TOKENS_DIRECTORY_PATH = new java.io.File((Validator.isNotNull(System.getProperty("catalina.base")) ? System.getProperty("catalina.base") : "") + "./tokens");
+    	/* OJO A LA RUTAS WINDOWS / LUNUX  ,/tokens*/
+    	java.io.File TOKENS_DIRECTORY_PATH = new java.io.File((Validator.isNotNull(System.getProperty("catalina.base")) ? System.getProperty("catalina.base") : "") + "/tokens");
         // Build flow and trigger user authorization request.
         GoogleAuthorizationCodeFlow flow = null;
        try {

@@ -54,7 +54,7 @@ public class IBStrategyCloseAllPositions extends StrategyImpl {
 	private static HashMap<String, Integer> Parameters = new HashMap<String,Integer>();
 	private List<ExpandoColumn> ExpandoColumns = new ArrayList<ExpandoColumn>(); 
 	
-	private static String _EXPANDO_DEADLINE_UNTIL_CLOSEMARKET = "Close All Open Positions After x Minutes To Close Market";  // offset desde inicio de mercado en minutos
+	private static String _EXPANDO_DEADLINE_UNTIL_CLOSEMARKET = "Close All Positions After x Min To Close Market {5}, 0 if not applicable";  // offset desde inicio de mercado en minutos
 	private Position currentPosition = null;
 
 	
@@ -178,14 +178,19 @@ public class IBStrategyCloseAllPositions extends StrategyImpl {
 	if (calFechaActualWithDeadLine.after(calFechaFinMercado))
 		return false;
 	
-	calFechaActualWithDeadLine.add(Calendar.MINUTE, this.getJsonStrategyShareParams().getInt(_EXPANDO_DEADLINE_UNTIL_CLOSEMARKET));
+	/* CONTROLAMOS QUE SE PUEDAN METER -1 E IGNORAR LA HORA DE CIERRE, ASI FUNCIONA PARA LOS FUTUROS */
+	int deadline_until_closemarket = this.getJsonStrategyShareParams().getInt(_EXPANDO_DEADLINE_UNTIL_CLOSEMARKET,0);
+	boolean nextToClose =  Boolean.FALSE;
+	if (deadline_until_closemarket>0)
+	{
+		calFechaActualWithDeadLine.add(Calendar.MINUTE, deadline_until_closemarket);
+		nextToClose = calFechaActualWithDeadLine.after(calFechaFinMercado);
+	}
 	currentPosition = PositionLocalServiceUtil.findPositionToExit(_share.getGroupId(), _share.getCompanyId(), _share.getShareId(),position_mode, Validator.isNotNull(this.getCurrentBackTesting()) ?  this.getCurrentBackTesting().getBackTId() : ConfigKeys.DEFAULT_BACKTESTINGID_VALUE);
 	
-	
-	boolean nextToClose = calFechaActualWithDeadLine.after(calFechaFinMercado);
 	/* SI VA A EXPIRAR EN UN DIA, CERRAMOS POSICION Y NO ENTRAMOS HASTA EL CONTRATO NUEVO 
 	 * TODO EN UTC */
-	boolean  nextToExpiration = Utilities.IsFutureTradeable(_share);
+	boolean  nextToExpiration = !Utilities.IsFutureTradeable(_share);
 
 	if ((nextToClose || nextToExpiration) && currentPosition!=null) 		  // ya esta en el limite 
 	{		    		
@@ -293,8 +298,8 @@ public class IBStrategyCloseAllPositions extends StrategyImpl {
 		boolean bOK = Boolean.TRUE;
 		for (Map.Entry<String, String> parameter : paramValues.entrySet()) {
 			String _paramValue = parameter.getValue();
-			
-			if (!Validator.isNumber(_paramValue) && Integer.parseInt(_paramValue)>=0)
+			/* PERMITIMOS 0  PARA IGNORAR */
+			if (!Validator.isNumber(_paramValue)  && Integer.parseInt(_paramValue)>=0)
 			{
 				bOK=Boolean.FALSE;
 				this.setValidateParamsKeysError("strategyshare.strategyminmax.errorparams");

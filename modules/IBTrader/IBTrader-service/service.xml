@@ -496,6 +496,7 @@
 	        <column name="last_error_trader_provider" type="String"></column> <!--  si esta validado contra interactive brokers -->
 	        <column name="simulation_end_date" type="Date"></column> <!--  ultimo dia de datos historicos almacenados   -->
 	        <column name="trading_hours" type="String"></column> <!--  FECHAS HORAS DEL SIGUIENTE MES    -->
+	        <column name="date_filled_realtime_gaps" type="Date"></column> <!--  CUANDO SE RELLE4NA LOS  HUECOS DE REALTIME PARA ORDENARLO POR ESTE  CAMPO     -->
 	        
 	        
     <!--    	<reference package-path="com.ibtrader.data" entity="Market"></reference>-->

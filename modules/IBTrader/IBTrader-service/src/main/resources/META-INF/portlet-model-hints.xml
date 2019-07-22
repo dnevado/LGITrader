@@ -8,7 +8,9 @@
 		<field name="auditDate" type="String" />
 		<field name="auditstrategy" type="String" />
 		<field name="shareId" type="long" />
-		<field name="auditData" type="String" />
+		<field name="auditData" type="String">
+			<hint-collection name="CLOB" />
+		</field>
 	</model>
 	<model name="com.ibtrader.data.model.BackTesting">
 		<field name="uuid" type="String" />
@@ -190,6 +192,7 @@
 		<field name="trading_hours" type="String">
 			<hint-collection name="CLOB" />
 		</field>
+		<field name="date_filled_realtime_gaps" type="Date" />
 	</model>
 	<model name="com.ibtrader.data.model.Strategy">
 		<field name="uuid" type="String" />
