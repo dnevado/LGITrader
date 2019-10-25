@@ -29,7 +29,8 @@ Liferay Workspace, Mysql 5.7 database and source code added
 
 ## Authors
 
-
+David Nevado Martin
+https://es.linkedin.com/in/dnevado
 
 ## License
 
