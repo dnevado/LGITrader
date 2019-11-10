@@ -1,0 +1,4 @@
+Bundle-Name: IBTrader-productnavigation
+Bundle-SymbolicName: IBTrader.productnavigation
+Bundle-Version: 1.0.0
+Export-Package: IBTrader.productnavigation.constants
