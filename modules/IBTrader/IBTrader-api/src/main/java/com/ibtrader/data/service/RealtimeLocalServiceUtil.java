@@ -105,12 +105,12 @@ public class RealtimeLocalServiceUtil {
 		return getService().fetchRealtimeByUuidAndGroupId(uuid, groupId);
 	}
 
-	public static com.ibtrader.data.model.Realtime findCloseRealTime(
-		long shareId, long companyId, long groupId, java.util.Date closeDate,
-		boolean isClosedDate) {
+	public static com.ibtrader.data.model.Realtime findFirstRealTimeBetweenDates(
+		long shareId, long companyId, long groupId, java.util.Date from,
+		java.util.Date to) {
 		return getService()
-				   .findCloseRealTime(shareId, companyId, groupId, closeDate,
-			isClosedDate);
+				   .findFirstRealTimeBetweenDates(shareId, companyId, groupId,
+			from, to);
 	}
 
 	public static com.ibtrader.data.model.Realtime findLastCompanyShare(
@@ -135,6 +135,11 @@ public class RealtimeLocalServiceUtil {
 		long groupId) {
 		return getService()
 				   .findMinMaxRealTime(from, to, shareId, companyId, groupId);
+	}
+
+	public static com.ibtrader.data.model.Realtime findRealTime(long shareId,
+		long companyId, long groupId, java.util.Date closeDate) {
+		return getService().findRealTime(shareId, companyId, groupId, closeDate);
 	}
 
 	public static com.ibtrader.data.model.Realtime findSimpleMobileAvgGroupByPeriods(

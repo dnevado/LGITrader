@@ -45,6 +45,9 @@ public class ConfigKeys {
     
     public static final int DEFAULT_TIMEBAR_MINUTES = 5;  // barra por detecto para recargar realtimes 
     
+    public static final int DAYTRADER_PATTERN_MAX_DAYS = 4;  // MAXIMO NUMERO DE DIAS CON OPERACIONES INTRADIA PARA ENTRAR EN DAYTRADER_PATTERN   
+    public static final int DAYTRADER_PATTERN_PERIOD = 7;  // QUE PERIODO CONTAR ESOS 4 DAY TRADING ANTERIORES, ES DECIR, 4 DIAS EN 5 BUSINESS DAYS, 1 SEMANA YA QUE SABADO Y DOMINGO NO CUENTA 
+    
     public static final String ERROR_CODE_PACING_VIOLATION = "162";
     
     public static final long DEFAULT_BACKTESTINGID_VALUE = -1;
@@ -71,7 +74,8 @@ public class ConfigKeys {
     public static final String _FIELD_STOP_PROFIT = "percentual_stop_profit";   // 5 SEGUNDOS SE GRABA EL MODIFIED DATABASE
     public static final String _FIELD_PERCENTUAL_LIMIT_GAP_IN = "percentual_limit_buy";   // 5 SEGUNDOS SE GRABA EL MODIFIED DATABASE
     
-    
+    public static final String _LASTBAR_TWS_STRING_HISTORICAL = "finished";   // 5 SEGUNDOS SE GRABA EL MODIFIED DATABASE
+
 
     
     public enum IDENTITY_VALUE_TYPE {

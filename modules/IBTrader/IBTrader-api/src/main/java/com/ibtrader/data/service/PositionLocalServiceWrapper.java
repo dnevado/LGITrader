@@ -47,6 +47,14 @@ public class PositionLocalServiceWrapper implements PositionLocalService,
 			shareId, positionMode, backtestingId);
 	}
 
+	@Override
+	public boolean satisfyDayTraderPattern(java.util.Date from,
+		java.util.Date to, long groupId, long companyId,
+		java.lang.String positionMode) {
+		return _positionLocalService.satisfyDayTraderPattern(from, to, groupId,
+			companyId, positionMode);
+	}
+
 	/**
 	* Adds the position to the database. Also notifies the appropriate model listeners.
 	*

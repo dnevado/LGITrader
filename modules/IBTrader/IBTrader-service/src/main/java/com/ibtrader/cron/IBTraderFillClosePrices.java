@@ -99,7 +99,7 @@ public class IBTraderFillClosePrices  extends BaseSchedulerEntryMessageListener 
 	    schedulerEntryImpl = new StorageTypeAwareSchedulerEntryImpl(schedulerEntryImpl, StorageType.PERSISTED);
 	    // update the trigger for the scheduled job.
 		
-	    schedulerEntryImpl.setTrigger(TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(),60, TimeUnit.MINUTE));  
+	    schedulerEntryImpl.setTrigger(TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(),30, TimeUnit.SECOND));  
 		_log.info("Activating CRON..."  + schedulerEntryImpl.getTrigger());
 		
 		if (_initialized) {
@@ -133,7 +133,7 @@ public class IBTraderFillClosePrices  extends BaseSchedulerEntryMessageListener 
 			runningJob = true;					
 			CronUtil cronThread = new CronUtil();
 			_log.debug(" Start IBTraderFillClosePrices doReceive");
-	//		cronThread.StartFillClosePrices(message);
+		   // cronThread.StartFillClosePrices(message);
 		}
 		catch (Exception e)
 		{

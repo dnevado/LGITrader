@@ -88,6 +88,13 @@ public class RealtimeLocalServiceImpl extends RealtimeLocalServiceBaseImpl {
 		}
 		
 	}
+	
+	public Realtime findFirstRealTimeBetweenDates(long shareId, long companyId, long groupId, Date from, Date to)
+	{ 
+		return realtimeFinder.findFirstRealTimeBetweenDates(shareId, companyId, groupId,from,to);
+
+	}
+	
 	/* OBTIENE EL MIN Y MAX DE UN  ACTIVO */	
 	public Realtime findMinMaxRealTime(Date from, Date to, long shareId, long companyId, long groupId)
 	{
@@ -168,10 +175,22 @@ public class RealtimeLocalServiceImpl extends RealtimeLocalServiceBaseImpl {
 		 realtimeFinder.removeScheduledRealTimes(companyId, groupId);
 	}
 	
-	public Realtime findCloseRealTime(long shareId, long companyId, long groupId, Date closeDate,boolean isClosedDate)
+
+	public Realtime findRealTime(long shareId, long companyId, long groupId, Date closeDate)
+	{
+		List<Realtime> realtimes = realtimePersistence.findByCompanyShareDate(companyId, shareId, closeDate);
+		/* hay tiempo real*/ 
+		if (!realtimes.isEmpty())		
+			return  realtimes.get(0);
+		else
+			return null;	
+		
+	}	
+	
+	/* public Realtime findCloseRealTime(long shareId, long companyId, long groupId, Date closeDate,boolean isClosedDate)
 	{
 		return realtimeFinder.findCloseRealTimeDate(shareId, companyId, groupId,closeDate, isClosedDate);
-	}
+	}*/
 	public List<Realtime> findCloseRealTimes( long shareId, long companyId, long groupId,Date from, Date to, List<String> closingDates)
 	{
 		return realtimeFinder.findCloseRealTimes(shareId, companyId, groupId,from,to, closingDates);

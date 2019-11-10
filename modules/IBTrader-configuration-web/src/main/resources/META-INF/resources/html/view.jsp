@@ -105,8 +105,9 @@
 	                <aui:validator name="maxLength">75</aui:validator>                          
 	       </aui:input>         	   
       	 </liferay-ui:panel>
-	 </liferay-ui:panel-container>     
+	 </liferay-ui:panel-container>    
        <aui:fieldset  label="interactive.tws.notifications" id="interactive.tws.notifications">            
+         	<aui:input label="daytrader_pattern" name="daytrader_pattern" type="toggle-card" checked="${_DAYTRADER_PATTERN eq '1' ? 'true':''}"/>              
         	<aui:input label="desktop_notifications" name="desktop_notifications" type="toggle-card" checked="${_DESTOP_NOTIFICATION eq '1' ? 'true':''}"/>       
         	<aui:input label="email_notifications" name="email_notifications"   type="toggle-card" checked="${_MAIL_NOTIFICATION  eq '1' ? 'true':''}"/>                     
         	<aui:input label="simulation_mode" name="simulation_mode"   type="toggle-card" checked="${_SIMULATION_MODE eq SIMULATION_VALUE ? 'true':''}"/>        	

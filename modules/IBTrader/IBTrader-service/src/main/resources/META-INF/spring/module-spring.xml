@@ -17,6 +17,7 @@
 	<bean class="com.ibtrader.data.service.impl.IBOrderLocalServiceImpl" id="com.ibtrader.data.service.IBOrderLocalService" />
 	<bean class="com.ibtrader.data.service.impl.IBOrderServiceImpl" id="com.ibtrader.data.service.IBOrderService" />
 	<bean class="com.ibtrader.data.service.persistence.impl.IBOrderPersistenceImpl" id="com.ibtrader.data.service.persistence.IBOrderPersistence" parent="basePersistence" />
+	<bean class="com.ibtrader.data.service.persistence.impl.IBOrderFinderImpl" id="com.ibtrader.data.service.persistence.IBOrderFinder" parent="basePersistence" />
 	<bean class="com.ibtrader.data.service.impl.MarketLocalServiceImpl" id="com.ibtrader.data.service.MarketLocalService" />
 	<bean class="com.ibtrader.data.service.impl.MarketServiceImpl" id="com.ibtrader.data.service.MarketService" />
 	<bean class="com.ibtrader.data.service.persistence.impl.MarketPersistenceImpl" id="com.ibtrader.data.service.persistence.MarketPersistence" parent="basePersistence" />

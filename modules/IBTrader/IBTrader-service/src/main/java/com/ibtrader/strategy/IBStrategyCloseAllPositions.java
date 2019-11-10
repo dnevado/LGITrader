@@ -150,28 +150,38 @@ public class IBStrategyCloseAllPositions extends StrategyImpl {
 		
 	String position_mode = Utilities.getPositionModeType(backtestingdDate, _share.getCompanyId(),_share.getGroupId());
 	
-	User _IBUser = UserLocalServiceUtil.getUser(_share.getUserCreatedId());
 	
 	String HoraActual = "";	
 	Calendar calFechaActualWithDeadLine;
 	Calendar calFechaFinMercado;
-
+	
+	currentPosition = PositionLocalServiceUtil.findPositionToExit(_share.getGroupId(), _share.getCompanyId(), _share.getShareId(),position_mode, Validator.isNotNull(this.getCurrentBackTesting()) ?  this.getCurrentBackTesting().getBackTId() : ConfigKeys.DEFAULT_BACKTESTINGID_VALUE);
+    if (Validator.isNull(currentPosition))
+    	return false;
+	
+	/* TIMEZONE AJUSTADO */
+	//Date _FromNow =  !isSimulation_mode() ?    Utilities.getDate(_IBUser) : backtestingdDate;
+	Date _FromNow =  !isSimulation_mode() ?    new Date() : backtestingdDate;
+	Calendar _calendarFromNow = Calendar.getInstance();
+	_calendarFromNow.setTime(_FromNow);
+	
+	
+	User _IBUser = UserLocalServiceUtil.getUser(_share.getUserCreatedId());
+	HoraActual = Utilities.getWebFormattedTime(_calendarFromNow.getTime());
+	
+	Market marketRealOpenCloseTimes = Utilities.getOpenCloseMarket(_share, backtestingdDate, isSimulation_mode());
+	if (Validator.isNull(marketRealOpenCloseTimes)) return false;
 	if (!isSimulation_mode())
 	{
-		HoraActual = Utilities.getHourNowFormat(_IBUser);		
-		calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(HoraActual);
-		calFechaFinMercado = Utilities.getNewCalendarWithHour(_market.getEnd_hour());
-
-
+		calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(HoraActual); 
+		calFechaFinMercado = Utilities.getNewCalendarWithHour(marketRealOpenCloseTimes.getEnd_hour()); 
 	}
 	else	
 	{
-		HoraActual = Utilities.getHourNowFormat(_IBUser,backtestingdDate);
+			
 		calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(backtestingdDate, HoraActual);
-		calFechaFinMercado = Utilities.getNewCalendarWithHour(backtestingdDate, _market.getEnd_hour());			
-
-
-	}		
+		calFechaFinMercado = Utilities.getNewCalendarWithHour(backtestingdDate, marketRealOpenCloseTimes.getEnd_hour()); 			
+	}	
 	this.setJsonStrategyShareParams(JSONFactoryUtil.createJSONObject(_strategyImpl.getStrategyparamsoverride()));					
 
 	/* MERCADO ABIERTO */	
@@ -186,7 +196,6 @@ public class IBStrategyCloseAllPositions extends StrategyImpl {
 		calFechaActualWithDeadLine.add(Calendar.MINUTE, deadline_until_closemarket);
 		nextToClose = calFechaActualWithDeadLine.after(calFechaFinMercado);
 	}
-	currentPosition = PositionLocalServiceUtil.findPositionToExit(_share.getGroupId(), _share.getCompanyId(), _share.getShareId(),position_mode, Validator.isNotNull(this.getCurrentBackTesting()) ?  this.getCurrentBackTesting().getBackTId() : ConfigKeys.DEFAULT_BACKTESTINGID_VALUE);
 	
 	/* SI VA A EXPIRAR EN UN DIA, CERRAMOS POSICION Y NO ENTRAMOS HASTA EL CONTRATO NUEVO 
 	 * TODO EN UTC */
@@ -195,8 +204,6 @@ public class IBStrategyCloseAllPositions extends StrategyImpl {
 	if ((nextToClose || nextToExpiration) && currentPosition!=null) 		  // ya esta en el limite 
 	{		    		
 			/* TIMEZONE AJUSTADO */
-			Date _FromNow =  !isSimulation_mode() ?   Utilities.getDate(_IBUser) : backtestingdDate;
-			Calendar _calendarFromNow = Calendar.getInstance();
 			_calendarFromNow.setTime(_FromNow);		
 			_calendarFromNow.set(Calendar.SECOND, 0);
 			_calendarFromNow.set(Calendar.MILLISECOND, 0);

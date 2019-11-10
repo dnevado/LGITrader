@@ -147,7 +147,7 @@ public class IBStrategyStopLost extends StrategyImpl {
 		/* CAMBIAMOS POR EL ULTIMO VALOR MENOR QUE AHORA PARA QUE SE PUEDAN METER VALORES FUTURES COMO CONJUNTO DE PRUEBAS */
 		User _IBUser = UserLocalServiceUtil.getUser(_share.getUserCreatedId());
 		
-		Date _ToNow   = !isSimulation_mode() ?   Utilities.getDate(_IBUser) : backtestingdDate;
+		Date _ToNow   =  !isSimulation_mode() ?    new Date() : backtestingdDate;
 		
 		Double lastRealtime = null;												
 		if (!isSimulation_mode())

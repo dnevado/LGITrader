@@ -79,7 +79,7 @@ public class AroonIndicatorUtil {
 		
 		int periodsToCalculate = ConfigKeys.INDICATORS_MIN_SERIE_COUNT;
 		
-		lMACDPeriods = BaseIndicatorUtil.getPeriodsMinutesMobileAvg(dateTo, periodsToCalculate , timebar, Boolean.TRUE, market);
+		lMACDPeriods = BaseIndicatorUtil.getPeriodsMinutesMobileAvg(dateTo, periodsToCalculate , timebar, Boolean.TRUE, market, simulation, shareId);
 	
         /* ESTE FROM ESTA RESTADO DE LAS BARRAS POR LOS PERIODOS, PERO NO CONTEMPLA LOS CIERRES Y APERTURAS DE MERCADO */
     	/* SOLUCION, COGER EL FROM DE LA PRIMERA BARRA DE getPeriodsMinutesMobileAvg, QUE SI CONTEMPLA LAS APERTURAS */

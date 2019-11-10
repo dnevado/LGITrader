@@ -4,7 +4,10 @@ import IBTrader.simulationmode.web.constants.IBTraderSimulationmodeWebPortletKey
 
 import com.ibtrader.constants.IBTraderConstants;
 import com.ibtrader.data.service.ConfigLocalServiceUtil;
+import com.ibtrader.util.CronUtil;
 import com.ibtrader.util.Utilities;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -37,6 +40,9 @@ import org.osgi.service.component.annotations.Component;
 )
 public class IBTraderSimulationmodeWebPortlet extends MVCPortlet {
 
+	private final  Log _log = LogFactoryUtil.getLog(IBTraderSimulationmodeWebPortlet.class);
+
+	
 	@Override
 	public void render(RenderRequest renderRequest, RenderResponse renderResponse)
 			throws IOException, PortletException {
@@ -46,7 +52,9 @@ public class IBTraderSimulationmodeWebPortlet extends MVCPortlet {
  
 
 		boolean bSIMULATED_TRADING = Utilities.getSimulatedTrading(themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
+		boolean IsDayTraderPattern = Utilities.IsDayTraderPattern( themeDisplay.getScopeGroupId(), themeDisplay.getCompanyId());
 		renderRequest.setAttribute("simulated", bSIMULATED_TRADING);
+		renderRequest.setAttribute("IsDayTraderPattern", IsDayTraderPattern);
 		super.render(renderRequest, renderResponse);
 	}
 }

@@ -116,8 +116,8 @@ public interface RealtimeLocalService extends BaseLocalService,
 	public Realtime fetchRealtimeByUuidAndGroupId(java.lang.String uuid,
 		long groupId);
 
-	public Realtime findCloseRealTime(long shareId, long companyId,
-		long groupId, Date closeDate, boolean isClosedDate);
+	public Realtime findFirstRealTimeBetweenDates(long shareId, long companyId,
+		long groupId, Date from, Date to);
 
 	public Realtime findLastCompanyShare(long companyId, long shareId,
 		long groupId);
@@ -129,6 +129,9 @@ public interface RealtimeLocalService extends BaseLocalService,
 
 	public Realtime findMinMaxRealTime(Date from, Date to, long shareId,
 		long companyId, long groupId);
+
+	public Realtime findRealTime(long shareId, long companyId, long groupId,
+		Date closeDate);
 
 	public Realtime findSimpleMobileAvgGroupByPeriods(long shareId,
 		long companyId, long groupId, Date from, Date to,

@@ -265,22 +265,30 @@ public class IBStrategyElderExpStochastic extends StrategyImpl {
 			return Boolean.FALSE;
 			
 	    this.setJsonStrategyShareParams(JSONFactoryUtil.createJSONObject(_strategyImpl.getStrategyparamsoverride()));					
-		User _IBUser = UserLocalServiceUtil.getUser(_share.getUserCreatedId());
 		String HoraActual = "";
 		Calendar calFechaActualWithDeadLine;
 		Calendar calFechaFinMercado;
+		/* TIMEZONE AJUSTADO */
+		//Date _FromNow =  !isSimulation_mode() ?    Utilities.getDate(_IBUser) : backtestingdDate;
+		Date _FromNow =  !isSimulation_mode() ?    new Date() : backtestingdDate;
+		Calendar _calendarFromNow = Calendar.getInstance();
+		_calendarFromNow.setTime(_FromNow);
+		User _IBUser = UserLocalServiceUtil.getUser(_share.getUserCreatedId());
+		HoraActual = Utilities.getWebFormattedTime(_calendarFromNow.getTime());
+		
+		Market marketRealOpenCloseTimes = Utilities.getOpenCloseMarket(_share, backtestingdDate, isSimulation_mode());
+		if (Validator.isNull(marketRealOpenCloseTimes)) return false;
 		if (!isSimulation_mode())
 		{
-			HoraActual = Utilities.getHourNowFormat(_IBUser);
-			calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(HoraActual);
-			calFechaFinMercado = Utilities.getNewCalendarWithHour(_market.getEnd_hour());
+			calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(HoraActual); 
+			calFechaFinMercado = Utilities.getNewCalendarWithHour(marketRealOpenCloseTimes.getEnd_hour()); 
 		}
 		else	
 		{
-			HoraActual = Utilities.getHourNowFormat(_IBUser,backtestingdDate);
+				
 			calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(backtestingdDate, HoraActual);
-			calFechaFinMercado = Utilities.getNewCalendarWithHour(backtestingdDate, _market.getEnd_hour());			
-		}			
+			calFechaFinMercado = Utilities.getNewCalendarWithHour(backtestingdDate, marketRealOpenCloseTimes.getEnd_hour()); 			
+		}	
 //		StrategyShare _strategyshare = StrategyShareLocalServiceUtil.getByCommpanyShareStrategyId(_share.getGroupId(),_share.getCompanyId(),_share.getShareId(),_strategyImpl.getStrategyId());
 				
 		_num_macdP      				= this.getJsonStrategyShareParams().getLong(_EXPANDO_MOBILE_AVERAGE_PERIODS_NUMBER,0);
@@ -297,9 +305,7 @@ public class IBStrategyElderExpStochastic extends StrategyImpl {
 		/* SOLO PODEMOS ENTRAR EN EL PERIODO MARCADO DE CADA MINUTO, PARA LO CUAL OBTENEMOS EL RESTO */	
 		
 		/* TIMEZONE AJUSTADO */
-		Date _FromNow =  !isSimulation_mode() ?   Utilities.getDate(_IBUser) : backtestingdDate;
-		Calendar _calendarFromNow = Calendar.getInstance();
-		_calendarFromNow.setTime(_FromNow);
+	
 	
 		long currentSeconds = _calendarFromNow.get(Calendar.SECOND);
 		
@@ -334,9 +340,9 @@ public class IBStrategyElderExpStochastic extends StrategyImpl {
 			// HORA DE FIN DE CALCULO DE MAX Y MINIMOS.
 			String StartHourTrading = "";
 			if (!isSimulation_mode())
-				 StartHourTrading =  Utilities.getActualHourFormatPlusMinutes(_calendarFromNow, _market.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET));
+				 StartHourTrading =  Utilities.getActualHourFormatPlusMinutes(_calendarFromNow, marketRealOpenCloseTimes.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET));
 			else				
-				 StartHourTrading = Utilities.getActualHourFormatPlusMinutes(_market.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET));
+				 StartHourTrading = Utilities.getActualHourFormatPlusMinutes(marketRealOpenCloseTimes.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET));
 			// COMPROBAMOS ALGUN TIPO DE ERROR 
 			if (StartHourTrading.contains("-1"))
 			{
@@ -397,6 +403,8 @@ public class IBStrategyElderExpStochastic extends StrategyImpl {
 				
 					_num_stochastic_rate_overbought = this.getJsonStrategyShareParams().getLong(_EXPANDO_STOCHASTUC_OVERBOUGHT_RATE,0);
 					_num_stochastic_rate_oversold   = this.getJsonStrategyShareParams().getLong(_EXPANDO_STOCHASTUC_OVERSOLD_RATE,0);
+					
+					/* https://www.tecnicasdetrading.com/2010/06/el-oscilador-estocastico.html */
 					
 					boolean bBuyStochasticSignal =  Validator.isNotNull(stochasticD) && stochasticD>0 && stochasticD <=_num_stochastic_rate_oversold;
 				    boolean bSellStochasticSignal = Validator.isNotNull(stochasticD) && stochasticD>0 && stochasticD >=_num_stochastic_rate_overbought;

@@ -109,10 +109,9 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 	    this.setJsonStrategyShareParams(JSONFactoryUtil.createJSONObject(_strategyImpl.getStrategyparamsoverride()));					
 
 	    /* SOLO PODEMOS ENTRAR EN EL PERIODO MARCADO DE CADA MINUTO, PARA LO CUAL OBTENEMOS EL RESTO */	
-		User _IBUser = UserLocalServiceUtil.getUser(_share.getUserCreatedId());
 
 		/* TIMEZONE AJUSTADO */
-		Date _FromNow =  !isSimulation_mode() ?   Utilities.getDate(_IBUser) : backtestingdDate;
+		Date _FromNow =  !isSimulation_mode() ?    new Date() : backtestingdDate;
 		Calendar _calendarFromNow = Calendar.getInstance();
 		_calendarFromNow.setTime(_FromNow);		
 		_calendarFromNow.set(Calendar.SECOND, 0);
@@ -127,17 +126,21 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 		Calendar calFechaActualWithDeadLine;
 		Calendar calFechaFinMercado;
 		
+		User _IBUser = UserLocalServiceUtil.getUser(_share.getUserCreatedId());
+		HoraActual = Utilities.getWebFormattedTime(_calendarFromNow.getTime());
+		
+		Market marketRealOpenCloseTimes = Utilities.getOpenCloseMarket(_share, backtestingdDate, isSimulation_mode());
+		if (Validator.isNull(marketRealOpenCloseTimes)) return false;
 		if (!isSimulation_mode())
 		{
-			HoraActual = Utilities.getHourNowFormat(_IBUser);
-			calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(HoraActual);
-			calFechaFinMercado = Utilities.getNewCalendarWithHour(_market.getEnd_hour());
+			calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(HoraActual); 
+			calFechaFinMercado = Utilities.getNewCalendarWithHour(marketRealOpenCloseTimes.getEnd_hour()); 
 		}
 		else	
 		{
-			HoraActual = Utilities.getHourNowFormat(_IBUser,backtestingdDate);
+				
 			calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(backtestingdDate, HoraActual);
-			calFechaFinMercado = Utilities.getNewCalendarWithHour(backtestingdDate, _market.getEnd_hour());			
+			calFechaFinMercado = Utilities.getNewCalendarWithHour(backtestingdDate, marketRealOpenCloseTimes.getEnd_hour()); 			
 		}		
 		
 //		StrategyShare _strategyshare = StrategyShareLocalServiceUtil.getByCommpanyShareStrategyId(_share.getGroupId(),_share.getCompanyId(),_share.getShareId(),_strategyImpl.getStrategyId());
@@ -171,12 +174,12 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 			// HORA DE FIN DE CALCULO DE MAX Y MINIMOS.		
 			String StartHourTrading = "";
 			if (!isSimulation_mode())
-				 StartHourTrading =  Utilities.getActualHourFormatPlusMinutes(_calendarFromNow, _market.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET));
+				 StartHourTrading =  Utilities.getActualHourFormatPlusMinutes(_calendarFromNow, marketRealOpenCloseTimes.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET));
 			else				
-				 StartHourTrading = Utilities.getActualHourFormatPlusMinutes(_market.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET));			// COMPROBAMOS ALGUN TIPO DE ERROR 
+				 StartHourTrading = Utilities.getActualHourFormatPlusMinutes(marketRealOpenCloseTimes.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET));			// COMPROBAMOS ALGUN TIPO DE ERROR 
 			if (StartHourTrading.contains("-1"))
 			{
-				_log.info("[ Errores formateando las horas de StarHourTrading de la accion. Hora[" + _market.getStart_hour()  + "], Offset1[" + this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET)+ "]");
+				_log.info("[ Errores formateando las horas de StarHourTrading de la accion. Hora[" + marketRealOpenCloseTimes.getStart_hour()  + "], Offset1[" + this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET)+ "]");
 				return Boolean.FALSE;
 			}
 				

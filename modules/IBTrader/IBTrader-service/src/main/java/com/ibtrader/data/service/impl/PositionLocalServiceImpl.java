@@ -243,6 +243,44 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 		return (!_lPosition.isEmpty() && _lPosition.size()>0);
 				
 	}
+	
+	/* NOS DICE SI CUMPLE CON EL DAY TRADER PATTERN, 4 DIAS DE INTRADIA EN 5 DIAS SEGUIDOS 
+	 * 
+	 *  https://www.timothysykes.com/blog/pattern-day-trader-rule/
+	 *  */
+	public boolean  satisfyDayTraderPattern(Date from, Date to, long groupId, long companyId, String positionMode)
+	{	
+						
+		List positionDates =  positionFinder.getDayTradingPatternPositions(from, to, groupId, companyId, positionMode, PositionStates.status.SELL_OK.toString());
+		String serilizeString=null;				
+		
+		long operationsByDate  = 0; 
+		
+		boolean satisfiedDayTraderPattern = Boolean.FALSE;  // no cumple, puede seguir operando  
+		
+		/* nos da un total de operaciones en el tramo dado */ 
+		if (positionDates!=null && !positionDates.isEmpty())
+		{
+			for (Object oPosition : positionDates)
+			{
+				//[1,3,23,545,23]
+				serilizeString=JSONFactoryUtil.serialize(oPosition);
+				serilizeString = serilizeString.replace("[","").replace("]","");
+				String[] arrayData = serilizeString.split(",");
+				
+				operationsByDate = Long.valueOf(arrayData[0]);
+				
+			}
+			if (operationsByDate>0)
+			{
+				satisfiedDayTraderPattern = operationsByDate >= ConfigKeys.DAYTRADER_PATTERN_MAX_DAYS; //  4 o mas dias intradia en 5 dias de operativa 
+			}
+		}
+		
+		
+		return satisfiedDayTraderPattern;
+	}
+	
 	/* BUY_OK  y no fecha de salida real */
 	public boolean  ExistsPositionToExit(long groupId, long companyId, long shareId,String positionMode, long backtestingId )
 	{		

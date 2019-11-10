@@ -159,7 +159,7 @@ public class MailUtil {
 	    if ((profit>0.0 && position.getType().equals(PositionStates.statusTWSFire.SELL.toString())) || 
 	    		(profit<0.0 && position.getType().equals(PositionStates.statusTWSFire.BUY.toString())))
 	    			_symbolProfitLoss = "\u2B07"; // flecha abajo	    
-		profit = Utilities.RoundPrice(profit);
+		profit = Math.abs(Utilities.RoundPrice(profit));
 		if (!_symbolProfitLoss.equals(""))
 		{
 			_Subject += StringPool.SPACE +  profit + StringPool.PERCENT  + StringPool.SPACE + _symbolProfitLoss;	 	 	

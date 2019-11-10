@@ -12,11 +12,13 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -68,18 +70,23 @@ import com.liferay.portal.kernel.scheduler.messaging.SchedulerResponse;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.ibtrader.constants.IBTraderConstants;
 import com.ibtrader.data.model.Config;
+import com.ibtrader.data.model.HistoricalRealtime;
 import com.ibtrader.data.model.Market;
 import com.ibtrader.data.model.Position;
+import com.ibtrader.data.model.Realtime;
 import com.ibtrader.data.model.Share;
 import com.ibtrader.data.model.StrategyShare;
 import com.ibtrader.data.service.ConfigLocalService;
 import com.ibtrader.data.service.ConfigLocalServiceUtil;
+import com.ibtrader.data.service.HistoricalRealtimeLocalServiceUtil;
 import com.ibtrader.data.service.MarketLocalServiceUtil;
 import com.ibtrader.data.service.PositionLocalService;
 import com.ibtrader.data.service.PositionLocalServiceUtil;
+import com.ibtrader.data.service.RealtimeLocalServiceUtil;
 
 
 
@@ -158,9 +165,61 @@ public class Utilities {
 		
 	}
 	
+	/* DEVUUELVE EL MARKET CON LAS HORAS DE INICIO Y FIN DE UNA FECHA */
 	
-	
-   
+	public static Market getOpenCloseMarket(Share share, Date tradingDate, boolean simulation)
+	{
+		Market market = MarketLocalServiceUtil.createMarket(-1);
+		
+		LocalTime closeTrading;
+		LocalTime openTrading;
+		String close = "";
+		String open  = "";
+		try
+		{
+		    if (!simulation)
+			{
+				
+				closeTrading  = Utilities.getUTCTodayCloseTradingHours(share.getTrading_hours()); // 1500
+				openTrading = Utilities.getUTCTodayOpenTradingHours(share.getTrading_hours()); // 1500
+				if (Validator.isNull(closeTrading) || Validator.isNull(openTrading))
+				{
+					_log.debug("closeTrading or openTrading : null for " + share.getSymbol()  + " " +  new Date());
+					return null;
+				}
+				/* HoraActual = Utilities.getHourNowFormat(_IBUser);*/ 			
+				close =  String.valueOf(closeTrading).replace(":","").substring(0,4);
+				open =  String.valueOf(openTrading).replace(":","").substring(0,4);
+			
+			}
+			else	
+			{
+			
+				closeTrading  = Utilities.getPastCloseTradingHours(share, tradingDate);
+				openTrading = Utilities.getPastOpemTradingHours(share, tradingDate);
+				if (Validator.isNull(closeTrading) || Validator.isNull(openTrading))
+				{
+					_log.debug("closeTrading or openTrading : null for " + share.getSymbol()  + " " +  new Date());
+					return null;
+				}
+				close =  String.valueOf(closeTrading).replace(":","").substring(0,4);
+				open =  String.valueOf(openTrading).replace(":","").substring(0,4);
+				/* HoraActual = Utilities.getHourNowFormat(_IBUser,backtestingdDate); */ 
+						
+			}	
+		}
+		catch (Exception e)
+		{
+			_log.error("closeTrading or openTrading : null for " + share.getSymbol()  + " " +  new Date());
+			return null;
+		}
+		market.setStart_hour(open);
+		market.setEnd_hour(close);
+		return market;
+    
+	}
+    
+    
 	/* OBTIENE LA HORA DE INICIO Y FIN ACTUAL SI EXISTE PARA ACTUALIZAR LOS HORARIOS DE LOS MERCADOS EN CUESTION */
 	/* OJO CON LOS FUTUROS QUE PUEDEN ESTAR DE 00 A 23:59 */
 	public static Market fillOpenEndHoursMarket(String _jsonTradingHours)
@@ -214,6 +273,43 @@ public class Utilities {
 		
 	}
 	
+	/* OPERO HOY, VERIFICO QUE NO HAYA DAYTRADER, OPERACIONES DESDE AYER HASTA UNA SEMANA ATRAS 
+	 *   Pattern Day Trader is someone who effects 4 or more day trades within a 5 business day period
+	 * 
+	 * */
+	public static boolean IsDayTraderPattern(long groupId, long companyId)
+	{
+		
+		Calendar dayPatternCalendarTo = Calendar.getInstance();
+		Calendar dayPatternCalendarFrom = Calendar.getInstance();
+		dayPatternCalendarTo.add(Calendar.DAY_OF_MONTH, -1);
+		dayPatternCalendarTo.set(Calendar.HOUR_OF_DAY, 23);
+		dayPatternCalendarTo.set(Calendar.MINUTE, 59);
+		dayPatternCalendarTo.set(Calendar.SECOND, 59);
+		
+		dayPatternCalendarFrom.add(Calendar.DATE, -ConfigKeys.DAYTRADER_PATTERN_PERIOD);
+		dayPatternCalendarFrom.set(Calendar.HOUR_OF_DAY, 0);
+		dayPatternCalendarFrom.set(Calendar.MINUTE, 0);
+		dayPatternCalendarFrom.set(Calendar.SECOND, 0);
+		
+
+		Date _to = dayPatternCalendarTo.getTime(); 
+		Date _from = dayPatternCalendarFrom.getTime(); 
+		String position_mode = Utilities.getPositionModeType(null, companyId,groupId);
+		
+		boolean bSIMULATED_TRADING = Utilities.getSimulatedTrading(companyId, groupId);
+		boolean IsDayTraderPattern = PositionLocalServiceUtil.satisfyDayTraderPattern(_from, _to, groupId, companyId, position_mode);
+		String dayTraderPattern = Utilities.getConfigurationValue(IBTraderConstants.keyDAY_TRADER_PATTER, companyId,groupId);
+		boolean bdayTraderPatternVerificationEnabled = dayTraderPattern.equals("1") ? Boolean.TRUE : Boolean.FALSE;
+		
+		/* es day trader pattern con 4 operaciones en una semana y no es modo simulado y tiene que estar activado que lo tienes 
+		 * que cumplir en la configuracion  */
+		
+		return IsDayTraderPattern && !bSIMULATED_TRADING && bdayTraderPatternVerificationEnabled;			
+		
+	}
+	
+	
 	/* SI SE PUEDE OPERAR CON UN FUTURO POR QUE EXPIRA PRONTO */
 	public static boolean IsFutureTradeable(Share share)
 	{
@@ -265,19 +361,29 @@ public class Utilities {
 		
 	}
 	
+	
+	/* OBTIENE LOS 7 PRIMEROS PERIODOS CONVERTIDO  A LA ZONA DEL USUARIO */
+	public static List<String> getCurrentUTCTradingHours(String _jsonTradingHours)
+	{
+			  return getCurrentTradingHours(_jsonTradingHours, null);
+		
+	}
+	
+	
 	/* OBTIENE LOS 7 PRIMEROS PERIODOS CONVERTIDO  A LA ZONA DEL USUARIO */
 	public static List<String> getCurrentTradingHours(String _jsonTradingHours, User user)
 	{
 		List<String> tradingHours = new ArrayList<String>();
 		/* HOURS IN UTC, BUSCAMOS EL DIA DE HOY  */		
 		try {
-			JSONArray   jsonTradingHours = JSONFactoryUtil.createJSONArray(_jsonTradingHours);			
+			JSONArray   jsonTradingHours = JSONFactoryUtil.createJSONArray(_jsonTradingHours);		
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Utilities.__IBTRADER_TRADINHOURS_DATE_FORMAT);
+
 			for (int i = 0; i < jsonTradingHours.length();	 i++) 
 			{
 				  if (i<ConfigKeys.MAX_TRADING_PERIODS_TO_SHOW)
 				  {	  
 					  JSONObject tradingDate = (JSONObject) jsonTradingHours.getJSONObject(i);			      
-					  DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Utilities.__IBTRADER_TRADINHOURS_DATE_FORMAT);
 	
 				      /* UTC DATES */
 				      LocalDateTime fromDate = LocalDateTime.parse(tradingDate.getString("fromDate"),formatter);
@@ -288,7 +394,7 @@ public class Utilities {
 				      Instant instantTo = to.toInstant(ZoneOffset.UTC);
 
 				      String _periodHours = Utilities.getWebFormattedDate(Date.from(instantFrom),user);
-				      _periodHours = _periodHours.concat(" ");
+				      _periodHours = _periodHours.concat(StringPool.SPACE);
 				      _periodHours = _periodHours.concat(Utilities.getWebFormattedDate(Date.from(instantTo),user));
 				      tradingHours.add( _periodHours);
 				     
@@ -303,7 +409,324 @@ public class Utilities {
 		
 	}
 	
+	/* BUSCAMOS EN HISTORICAL LA PRIMERA BARRA Y LA ULTIMA 
+	 * 
+	 * 2019-09-25 15:34:58.000000 --> MAX Y MIN 
+	 * 2019-09-25 15:34:59.000000 --> CIERRE DE BARRA   
+	 * 
+	 * */
 	
+	
+	/* confiamos en la apertura que esta hecha con todo el tiempo real, si no, las barras pueden 
+	 * variar como en el historical, 
+	 * 
+	 *  Puede ser si el mercado tiene datos desde el principio y abre a las 1530
+	 *  1. haya datos a las 153001
+	 *  2. haya datos a las 153458 
+	 *  3. QUE NO HAYA DATOS
+	 *  4. HAYA DATOS ENTRE MEDIAS MENOS PROBABLE
+	 *  
+	 *  
+	 *   --> PATRON SERA SI SUMAMOS DOS SEGUNDOS, TIENE QUE SER MULTIPLO DE timebars y milisegundos a cero
+	 *   15:54:58.000000  --> 15:54: 58
+	 *  
+	 */
+	private  static LocalTime getOpenRealTradingHours(Share share, Date tradingDate, long timebars)
+	{
+		
+		LocalTime openTrading = null;
+		
+		Calendar from = Calendar.getInstance();		
+		from.setTime(tradingDate); 
+		from.set(Calendar.HOUR_OF_DAY, 0);
+		from.set(Calendar.MINUTE, 0);
+		from.set(Calendar.SECOND, 0);
+		Calendar to = Calendar.getInstance();		
+		to.setTime(tradingDate); 
+		to.set(Calendar.HOUR_OF_DAY, 23);
+		to.set(Calendar.MINUTE, 59);
+		to.set(Calendar.SECOND,59);
+		
+		Realtime openSession = RealtimeLocalServiceUtil.findFirstRealTimeBetweenDates(share.getShareId(), share.getCompanyId(), 
+					share.getGroupId(), from.getTime(), to.getTime());
+		
+		if (Validator.isNotNull(openSession))
+		{
+			LocalDateTime dt = LocalDateTime.ofInstant(openSession.getCreateDate().toInstant(),ZoneId.systemDefault());
+			openTrading = dt.toLocalTime();
+			// 15:54:58.000000  ---> 15:35:00  es?
+			openTrading = openTrading.plusSeconds(2);	
+			long moduleTimeBars = openTrading.getMinute() % timebars;
+			if (moduleTimeBars == 0)		
+				openTrading = openTrading.minusMinutes(timebars);		
+			else // redondeamos a la primeera barra anterior multiplo de timbars, si tengo 15:33.... -> 15:30 
+				openTrading = openTrading.minusMinutes(moduleTimeBars);
+			
+			
+		}
+		return openTrading;
+	}
+	
+	/* confiamos en la apertura que esta hecha con todo el tiempo real, si no, las barras pueden 
+	 * variar como en el historical, 
+	 * 
+	 *  Puede ser si el mercado tiene datos desde el principio y abre a las 1530
+	 *  1. haya datos a las 153001
+	 *  2. haya datos a las 153458 
+	 *  3. QUE NO HAYA DATOS
+	 *  4. HAYA DATOS ENTRE MEDIAS MENOS PROBABLE
+	 *  
+	 *  
+	 *   --> PATRON SERA SI SUMAMOS DOS SEGUNDOS, TIENE QUE SER MULTIPLO DE timebars y milisegundos a cero
+	 *   15:54:58.000000  --> 15:54: 58
+	 *  
+	 */
+	
+	public static LocalTime getOpenTradingHour(Share share, Date tradingDate, long timebars, boolean simulation)
+	{
+	if (simulation)				
+		return getPastOpenTradingHours(share, tradingDate, timebars);
+	else
+		return getOpenRealTradingHours(share, tradingDate, timebars);
+	}
+	private static LocalTime getPastOpenTradingHours(Share share, Date tradingDate, long timebars)
+	{
+		
+		LocalTime openTrading = null;
+		
+		Calendar from = Calendar.getInstance();		
+		from.setTime(tradingDate); 
+		from.set(Calendar.HOUR_OF_DAY, 0);
+		from.set(Calendar.MINUTE, 0);
+		from.set(Calendar.SECOND, 0);
+		Calendar to = Calendar.getInstance();		
+		to.setTime(tradingDate); 
+		to.set(Calendar.HOUR_OF_DAY, 23);
+		to.set(Calendar.MINUTE, 59);
+		to.set(Calendar.SECOND,59);
+		
+		
+		/* primera barra en 15:34:58.000000 */
+		HistoricalRealtime openSession = HistoricalRealtimeLocalServiceUtil.findFirstRealTimeBetweenDates(share.getShareId(), share.getCompanyId(), 
+					share.getGroupId(), from.getTime(), to.getTime());
+		
+		if (Validator.isNotNull(openSession))
+		{
+			LocalDateTime dt = LocalDateTime.ofInstant(openSession.getCreateDate().toInstant(),ZoneId.systemDefault());
+			openTrading = dt.toLocalTime();
+			openTrading = openTrading.plusSeconds(2);
+			long moduleTimeBars = openTrading.getMinute() % timebars;
+			if (moduleTimeBars == 0)		
+				   openTrading = openTrading.minusMinutes(timebars);		
+			else // redondeamos a la primeera barra anterior multiplo de timbars, si tengo 15:33.... -> 15:30 
+				   openTrading = openTrading.minusMinutes(moduleTimeBars);
+		}
+		return openTrading;
+	}
+	/* BUSCAMOS EN HISTORICAL LA PRIMERA BARRA Y LA ULTIMA
+	 * 
+	 *  
+	 *  	 * 
+	 * 2019-09-25 15:34:58.000000 --> MAX Y MIN 
+	 * 2019-09-25 15:34:59.000000 --> CIERRE DE BARRA   
+	 *
+	 *  */
+	public static LocalTime getPastCloseTradingHours(Share share, Date tradingDate)
+	{
+		
+		LocalTime closeTrading = null;
+		
+		
+		
+		HistoricalRealtime closeSession = HistoricalRealtimeLocalServiceUtil.findCloseRealTime(share.getShareId(), share.getCompanyId(), 
+					share.getGroupId(), tradingDate);
+		
+		if (Validator.isNotNull(closeSession))
+		{
+			LocalDateTime dt = LocalDateTime.ofInstant(closeSession.getCreateDate().toInstant(),ZoneId.systemDefault());
+			closeTrading = dt.toLocalTime();
+			closeTrading = closeTrading.plusSeconds(1);
+		}
+		return closeTrading;
+		
+	}
+	public static LocalTime getPastOpemTradingHours(Share share, Date tradingDate)
+	{
+		
+		LocalTime openTrading = null;
+
+		Calendar from = Calendar.getInstance();
+		from.setTime(tradingDate);
+		from.set(Calendar.HOUR_OF_DAY, 0);
+		from.set(Calendar.MINUTE, 0);
+		from.set(Calendar.SECOND, 0);
+		
+		HistoricalRealtime openeSession = HistoricalRealtimeLocalServiceUtil.findFirstRealTimeBetweenDates(share.getShareId(), share.getCompanyId(),
+					share.getGroupId(), from.getTime(),tradingDate);
+		
+		if (Validator.isNotNull(openeSession))
+		{
+			LocalDateTime dt = LocalDateTime.ofInstant(openeSession.getCreateDate().toInstant(),ZoneId.systemDefault());
+			openTrading = dt.toLocalTime();
+			// 2018-12-10 14:34:58.000000
+			openTrading = openTrading.plusSeconds(2);
+			openTrading = openTrading.minusMinutes(ConfigKeys.DEFAULT_TIMEBAR_MINUTES);
+		}
+		return openTrading;
+		
+	}
+
+	
+	/* OBTIENE LOS 7 PRIMEROS PERIODOS CONVERTIDO  A LA ZONA DEL USUARIO */
+	public static LocalTime getUTCTodayOpenTradingHours(String _jsonTradingHour)
+	{
+		return getTodayOpenTradingHours(_jsonTradingHour,null);
+	}
+		
+	
+	/* OBTIENE LOS 7 PRIMEROS PERIODOS CONVERTIDO  A LA ZONA DEL USUARIO 
+	 * 
+	 * 
+	 * [{"fromDate":"20191015 2200","toDate":"20191016 2015"},{"fromDate":"20191016 2030","toDate":"20191016 2100"}
+	 * ,{"fromDate":"20191016 2200","toDate":"20191017 2015"},{"fromDate":"20191017 2030","toDate":"20191017 2100"},
+	 * {"fromDate":"20191017 2200","toDate":"20191018 2015"},{"fromDate":"20191018 2030","toDate":"20191018 2100"},
+	 * {"fromDate":"20191020 2200","toDate":"20191021 2015"},{"fromDate":"20191021 2030","toDate":"20191021 2100"},
+	 * {"fromDate":"20191021 2200","toDate":"20191022 2015"},{"fromDate":"20191022 2030","toDate":"20191022 2100"},
+	 * {"fromDate":"20191022 2200","toDate":"20191023 2015"},{"fromDate":"20191023 2030","toDate":"20191023 2100"},
+	 * {"fromDate":"20191023 2200","toDate":"20191024 2015"},{"fromDate":"20191024 2030","toDate":"20191024 2100"},
+	 * {"fromDate":"20191024 2200","toDate":"20191025 2015"},{"fromDate":"20191025 2030","toDate":"20191025 2100"},
+	 * {"fromDate":"20191027 2200","toDate":"20191028 2015"},{"fromDate":"20191028 2030","toDate":"20191028 2100"},	 * 
+	 * 	 *  * {"fromDate":"20191027 2200","toDate":"20191028 2015"},{"fromDate":"20191028 2030","toDate":"20191028 2100"},	 * 
+	 * 
+	 * [{"fromDate":"20191020 2300","toDate":"20191021 2115"},{"fromDate":"20191021 2130","toDate":"20191021 2200"},{"fromDate":"20191021 2300","toDate":"20191022 2115"},{"fromDate":"20191022 2130","toDate":"20191022 2200"},{"fromDate":"20191022 2300","toDate":"20191023 2115"},{"fromDate":"20191023 2130","toDate":"20191023 2200"},{"fromDate":"20191023 2300","toDate":"20191024 2115"},{"fromDate":"20191024 2130","toDate":"20191024 2200"},{"fromDate":"20191024 2300","toDate":"20191025 2115"},{"fromDate":"20191025 2130","toDate":"20191025 2200"},{"fromDate":"20191027 2300","toDate":"20191028 2115"},{"fromDate":"20191028 2130","toDate":"20191028 2200"},{"fromDate":"20191028 2300","toDate":"20191029 2115"},{"fromDate":"20191029 2130","toDate":"20191029 2200"},{"fromDate":"20191029 2300","toDate":"20191030 2115"},{"fromDate":"20191030 2130","toDate":"20191030 2200"},{"fromDate":"20191030 2300","toDate":"20191031 2115"},{"fromDate":"20191031 2130","toDate":"20191031 2200"},{"fromDate":"20191031 2300","toDate":"20191101 2115"},{"fromDate":"20191101 2130","toDate":"20191101 2200"},{"fromDate":"20191103 2300","toDate":"20191104 2115"},{"fromDate":"20191104 2130","toDate":"20191104 2200"},{"fromDate":"20191104 2300","toDate":"20191105 2115"},{"fromDate":"20191105 2130","toDate":"20191105 2200"},{"fromDate":"20191105 2300","toDate":"20191106 2115"},{"fromDate":"20191106 2130","toDate":"20191106 2200"},{"fromDate":"20191106 2300","toDate":"20191107 2115"},{"fromDate":"20191107 2130","toDate":"20191107 2200"},{"fromDate":"20191107 2300","toDate":"20191108 2115"},{"fromDate":"20191108 2130","toDate":"20191108 2200"},{"fromDate":"20191110 2300","toDate":"20191111 2115"},{"fromDate":"20191111 2130","toDate":"20191111 2200"},{"fromDate":"20191111 2300","toDate":"20191112 2115"},{"fromDate":"20191112 2130","toDate":"20191112 2200"},{"fromDate":"20191112 2300","toDate":"20191113 2115"},{"fromDate":"20191113 2130","toDate":"20191113 2200"},{"fromDate":"20191113 2300","toDate":"20191114 2115"},{"fromDate":"20191114 2130","toDate":"20191114 2200"},{"fromDate":"20191114 2300","toDate":"20191115 2115"},{"fromDate":"20191115 2130","toDate":"20191115 2200"},{"fromDate":"20191117 2300","toDate":"20191118 2115"},{"fromDate":"20191118 2130","toDate":"20191118 2200"},{"fromDate":"20191118 2300","toDate":"20191119 2115"},{"fromDate":"20191119 2130","toDate":"20191119 2200"},{"fromDate":"20191119 2300","toDate":"20191120 2115"},{"fromDate":"20191120 2130","toDate":"20191120 2200"},{"fromDate":"20191120 2300","toDate":"20191121 2115"},{"fromDate":"20191121 2130","toDate":"20191121 2200"},{"fromDate":"20191121 2300","toDate":"20191122 2115"},{"fromDate":"20191122 2130","toDate":"20191122 2200"}]
+	 * */
+	public static LocalTime getTodayOpenTradingHours(String _jsonTradingHours, User user)
+	{
+		List<String> tradingHours = getCurrentTradingHours(_jsonTradingHours,user);
+		//	DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Utilities.__IBTRADER_LONG_DATE_FORMAT);
+			DateTimeFormatter datetimeformatter =DateTimeFormatter.ofPattern(Utilities._IBTRADER_WEB_FORMAT_DATE);   
+			
+			LocalTime   retHour =  null;
+
+			try
+			{
+				for (String tradinghours : tradingHours)
+				{
+				   String[] OpenClose = tradinghours.split(StringPool.SPACE);
+							   /* UTC DATES 01-10-2019 20:00 */
+			       LocalDateTime  fromDateT = LocalDateTime.parse(OpenClose[0].trim().concat(StringPool.SPACE).concat(OpenClose[1]),datetimeformatter);
+			       LocalDateTime  toDateT = LocalDateTime.parse(OpenClose[2].trim().concat(StringPool.SPACE).concat(OpenClose[3]),datetimeformatter);
+			       
+			       LocalDate   fromDate   = fromDateT.toLocalDate();
+			       LocalDate   toDate   = toDateT.toLocalDate();
+
+			       if (fromDate.isEqual(LocalDate.now()) && toDate.isEqual(LocalDate.now()))
+			       {		    	   
+			    	   retHour  = fromDateT.toLocalTime();		    	   
+			    	 //  break;
+			       }
+			       if (fromDate.isEqual(LocalDate.now()) && !toDate.isEqual(LocalDate.now()) ||
+			    		   !fromDate.isEqual(LocalDate.now()) && toDate.isEqual(LocalDate.now()))
+			       {		    	   
+			    	   retHour  = LocalTime.parse("00:00");			    	   
+			    	   break;
+			       }			       
+				}
+			
+
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+			//	e.printStackTrace();
+			}		
+		  return retHour;
+		
+	}
+	
+	public static Date  getBeforeDayTradinng(Share share, Date currentDate,  boolean simulation)
+	{
+		
+		Realtime  _lastBarDayR;
+		HistoricalRealtime  _lastBarDayH;
+		Date  lastTradingDay = null;
+		try 
+		{
+			if  (!simulation)
+			{
+				_lastBarDayR = RealtimeLocalServiceUtil.findLastRealTimeLessThanDate(share.getShareId(), share.getCompanyId(), share.getGroupId(), currentDate);
+				 lastTradingDay = Validator.isNotNull(_lastBarDayR) ? _lastBarDayR.getCreateDate() : null;
+			}
+			else
+			{
+				_lastBarDayH = HistoricalRealtimeLocalServiceUtil.findLastRealTimeLessThanDate(share.getShareId(), share.getCompanyId(), share.getGroupId(), currentDate);
+				 lastTradingDay = Validator.isNotNull(_lastBarDayH) ? _lastBarDayH.getCreateDate() : null;
+
+			}
+		}
+		catch (Exception e)
+		{
+			_log.error(e.getMessage());
+		}
+		
+		return lastTradingDay;
+		
+	}
+	
+	
+	
+	/* OBTIENE LOS 7 PRIMEROS PERIODOS CONVERTIDO  A LA ZONA DEL USUARIO */
+	public static LocalTime getUTCTodayCloseTradingHours(String _jsonTradingHour)
+	{
+		return getTodayCloseTradingHours(_jsonTradingHour,null);
+	}
+		
+	
+	/* OBTIENE LOS 7 PRIMEROS PERIODOS CONVERTIDO  A LA ZONA DEL USUARIO 
+	 * 
+	 * 
+	 *  * {"fromDate":"20191027 2200","toDate":"20191028 2015"},{"fromDate":"20191028 2030","toDate":"20191028 2100"},	 * 
+	 * */
+	public static LocalTime getTodayCloseTradingHours(String _jsonTradingHours, User user)
+	{
+		List<String> tradingHours = getCurrentTradingHours(_jsonTradingHours,user);
+	//	DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Utilities.__IBTRADER_LONG_DATE_FORMAT);
+		DateTimeFormatter datetimeformatter =DateTimeFormatter.ofPattern(Utilities._IBTRADER_WEB_FORMAT_DATE);   
+		
+		LocalTime   retHour =  null;
+
+		try
+		{
+			for (String tradinghours : tradingHours)
+			{
+			   String[] OpenClose = tradinghours.split(StringPool.SPACE);
+						   /* UTC DATES 01-10-2019 20:00 */
+			   LocalDateTime  fromDateT = LocalDateTime.parse(OpenClose[0].trim().concat(StringPool.SPACE).concat(OpenClose[1]),datetimeformatter);
+		       LocalDateTime  toDateT = LocalDateTime.parse(OpenClose[2].trim().concat(StringPool.SPACE).concat(OpenClose[3]),datetimeformatter);
+		       
+		       LocalDate   fromDate   = fromDateT.toLocalDate();
+		       LocalDate   toDate   = toDateT.toLocalDate();
+
+		       
+		       if (fromDate.isEqual(LocalDate.now()) && toDate.isEqual(LocalDate.now()))
+		       {		    	   
+		    	   retHour  = toDateT.toLocalTime();		    	   
+		    	  // break;
+		       }
+		       if (fromDate.isEqual(LocalDate.now()) && !toDate.isEqual(LocalDate.now()))
+		       {		    	   
+		    	   retHour  = LocalTime.parse("23:59");			    	   
+		    	   break;
+		       }
+		     	    
+			}
+		
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+		//	e.printStackTrace();
+		}		
+	  return retHour;
+		
+	}
 
   
    public static boolean isNumber (String amount){
@@ -463,10 +886,36 @@ public class Utilities {
     	
     	/* SHORT */
 	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Utilities._IBTRADER_WEB_FORMAT_DATE);
-	  
-    	return  formatter.format(getIBDateByUserDate(user,_date));
+	    if (Validator.isNotNull(user))
+	    	return  formatter.format(getIBDateByUserDate(user,_date));
+	    else
+	    {
+	    	ZoneId zoneId = ZoneId.systemDefault(); // UTC  
+			return  formatter.format(LocalDateTime.ofInstant(_date.toInstant(), zoneId));
+
+	    }
+	    		
    		
    	}
+    
+    public static String  getWebFormattedDate(Date _date)
+   	{
+    	
+    	return getWebFormattedDate(_date, null);
+    	
+   	}
+    
+    public static String  getWebFormattedTime(Date _date)
+   	{       	
+    	
+    	/* SHORT */
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Utilities.__IBTRADER_LONG_HOUR_FORMAT);
+    	ZoneId zoneId = ZoneId.systemDefault(); // UTC     	
+		return  formatter.format(LocalDateTime.ofInstant(_date.toInstant(), zoneId));
+
+   		
+   	}
+    
     public static String  getWebFormattedTime(Date _date, User user)
    	{       	
     	
@@ -1139,6 +1588,26 @@ public class Utilities {
 
     public static void main(String[] args) throws Exception {
  		// TODO Auto-generated method stub
+    	
+    	
+    	Calendar dayPatternCalendarTo = Calendar.getInstance();
+		Calendar dayPatternCalendarFrom = Calendar.getInstance();
+		dayPatternCalendarTo.add(Calendar.DAY_OF_MONTH, -1);
+		dayPatternCalendarTo.set(Calendar.HOUR, 23);
+		dayPatternCalendarTo.set(Calendar.MINUTE, 59);
+		dayPatternCalendarTo.set(Calendar.SECOND, 59);
+		
+		dayPatternCalendarFrom.add(Calendar.DATE, -ConfigKeys.DAYTRADER_PATTERN_PERIOD);
+		dayPatternCalendarFrom.set(Calendar.HOUR, 0);
+		dayPatternCalendarFrom.set(Calendar.MINUTE, 0);
+		dayPatternCalendarFrom.set(Calendar.SECOND, 0);
+		
+
+		Date _to = dayPatternCalendarTo.getTime(); 
+		Date _from = dayPatternCalendarFrom.getTime(); 
+		
+    	
+    	
     	System.out.println(new Date());
     	Calendar now = Calendar.getInstance();
         

@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -85,7 +86,9 @@ public class BarSeriesCacheUtil {
 		keyBuilder.append(String.valueOf(closingDates.size()));  // puede ser que las series esten para una media exponencia de 27 periodos y los macd para 125 
 		
 		TimeSeries returnTimeSeries = null;
-		
+
+		_log.debug("closeBarTimeSeries  for shareId " + shareId + ",from:" + from + ",to:" + to + ",simulation:" + simulation);
+
 		try 
 		{
 		/* COINCIDE EL CACHE */
@@ -94,15 +97,20 @@ public class BarSeriesCacheUtil {
 		else
 		{
 			TimeSeries tmpTimeSeries = new BaseTimeSeries("barTimeSeries");
-	        ZonedDateTime endTime = ZonedDateTime.now();
+	        ZonedDateTime endTime = ZonedDateTime.now(); // PRA 
 	        int counter = 1;
 			if (!simulation)
-			{		
+			{	
+				
 				List<Realtime> closeRealTimes = RealtimeLocalServiceUtil.findCloseRealTimes(shareId, companyId, groupId, from, to, closingDates);
-				if (Validator.isNotNull(closeRealTimes))
+				List<Realtime> modifiableCloseRealTimes = new ArrayList<Realtime>(closeRealTimes);
+				modifiableCloseRealTimes.sort(Comparator.comparing(Realtime::getCreateDate));
+
+				if (Validator.isNotNull(modifiableCloseRealTimes))
 				{
-						for (Realtime closepricebar : closeRealTimes)
+						for (Realtime closepricebar : modifiableCloseRealTimes)
 						{
+							_log.debug("Realtime Close Price: " + closepricebar.getValue() + " for " + closepricebar.getCreateDate());
 							tmpTimeSeries.addBar(new BaseBar(endTime.plusMinutes(timebars*counter),0.0,0.0,0.0, closepricebar.getValue(),0.0));
 							counter++;
 						}
@@ -111,10 +119,14 @@ public class BarSeriesCacheUtil {
 			else
 			{
 				List<HistoricalRealtime> closeRealTimes = HistoricalRealtimeLocalServiceUtil.findCloseRealTimes(shareId, companyId, groupId, from, to, closingDates);
-				if (Validator.isNotNull(closeRealTimes))
+				List<HistoricalRealtime> modifiableCloseRealTimes = new ArrayList<HistoricalRealtime>(closeRealTimes);
+				modifiableCloseRealTimes.sort(Comparator.comparing(HistoricalRealtime::getCreateDate));
+				if (Validator.isNotNull(modifiableCloseRealTimes))
 				{				
-					for (HistoricalRealtime closepricebar : closeRealTimes)
-			        {
+					for (HistoricalRealtime closepricebar : modifiableCloseRealTimes)
+			        {	
+						_log.debug("HistoricalRealtime Close Price: " + closepricebar.getValue() + " for " + closepricebar.getCreateDate());
+						
 						tmpTimeSeries.addBar(new BaseBar(endTime.plusMinutes(timebars*counter),0.0,0.0,0.0, closepricebar.getValue(),0.0));
 			        	counter++;
 			        }
@@ -172,17 +184,11 @@ public class BarSeriesCacheUtil {
 			returnTimeSeries =  closeMinMaxBarTimeSeriesLRUMap.get(keyBuilder.toString());	
 		else
 		{
-			Calendar  cPeriodFrom = Calendar.getInstance(); 
-		    cPeriodFrom.setTimeInMillis(to.getTime());
-		    cPeriodFrom.add(Calendar.MINUTE, - new Long(timebars * (periodsToCalculate) ).intValue());
-		    cPeriodFrom.set(Calendar.MILLISECOND,0);	
-		    
-	        ZonedDateTime endTime = ZonedDateTime.now();
+			ZonedDateTime endTime = ZonedDateTime.now(); // PRA
 			List<String> lClosingPeriods = new ArrayList<String>();
 			
 			Share share =  ShareLocalServiceUtil.fetchShare(shareId);
 			Market market =  MarketLocalServiceUtil.fetchMarket(share.getMarketId());			
-			lClosingPeriods = BaseIndicatorUtil.getPeriodsMinutesMobileAvg(to, periodsToCalculate , timebars, Boolean.TRUE, market);
 
 			double max_value = 0;
 	        double min_value = 0;
@@ -196,7 +202,7 @@ public class BarSeriesCacheUtil {
 	        Date fromWithOpenMarketsTimes=null;
 	        Calendar cfromWithOpenMarketsTimes = null;
 	        try {
-				 fromWithOpenMarketsTimes = _sdf.parse(lClosingPeriods.get(lClosingPeriods.size()-1));
+				 fromWithOpenMarketsTimes = _sdf.parse(closingDates.get(closingDates.size()-1));
 				 cfromWithOpenMarketsTimes = Calendar.getInstance();
 				 cfromWithOpenMarketsTimes.setTimeInMillis(fromWithOpenMarketsTimes.getTime());
 				 cfromWithOpenMarketsTimes.add(Calendar.MINUTE, 1);
@@ -210,21 +216,33 @@ public class BarSeriesCacheUtil {
 	        	
 	        	
 	        	List<Realtime> lRMinMax = RealtimeLocalServiceUtil.findMinMaxRealTimesGroupedByBars(cfromWithOpenMarketsTimes.getTime(), to, shareId, companyId, groupId,timebars,market);
+	        	List<Realtime> modifiableRMinMax = new ArrayList<Realtime>(lRMinMax);
+				modifiableRMinMax.sort(Comparator.comparing(Realtime::getCreateDate));
 	        	// findCloseRealTimes
 	        	List<Realtime> lRcloseValue = RealtimeLocalServiceUtil.findCloseRealTimes(shareId, companyId, groupId, cfromWithOpenMarketsTimes.getTime(), to, lClosingPeriods);
+	        	List<Realtime> modifiableRcloseValue = new ArrayList<Realtime>(lRcloseValue);
+	        	modifiableRcloseValue.sort(Comparator.comparing(Realtime::getCreateDate));
+
 	        	
-	        	if (Validator.isNotNull(lRMinMax) && Validator.isNotNull(lRcloseValue) 
-	        			&& lRcloseValue.size()==periodsToCalculate && lRMinMax.size()==periodsToCalculate)
+	        	List<Realtime> lRMinMaxShorter = null;
+	        	List<Realtime> lRcloseShorter = null;
+	        	
+	        	/* NOS INTERESAN LOS X ULTIMOS VALORES EN ORDEN */
+	        	
+	        	// && lRcloseValue.size()==periodsToCalculate && lRMinMax.size()==periodsToCalculate
+	        	if (Validator.isNotNull(modifiableRMinMax) && Validator.isNotNull(modifiableRcloseValue))  // ya se rellenan los datos con loe huecos 
+	        			
 	        			/* TODO OK */
 	        	{
-	        		  for (int j=0;j<lRcloseValue.size();j++)
+	        		lRcloseShorter   = modifiableRcloseValue.subList((int) (modifiableRcloseValue.size()-periodsToCalculate), modifiableRcloseValue.size());
+	        		lRMinMaxShorter  =  modifiableRMinMax.subList((int) (modifiableRMinMax.size()-periodsToCalculate), modifiableRMinMax.size());
+	        		  
+	        		  
+	        		  for (int j=0;j<lRMinMaxShorter.size();j++)
 	        		  {
 	        			
-	        			  
-	        			
-	        			  
-	        			  Realtime realtimeMINMAX = lRMinMax.get(j);
-	        			  Realtime realtimeCLOSE = lRcloseValue.get(j);
+	        			  Realtime realtimeMINMAX = lRMinMaxShorter.get(j);
+	        			  Realtime realtimeCLOSE = lRcloseShorter.get(j);
 	        			  if (realtimeMINMAX.getMax_value()<=0  || realtimeMINMAX.getMin_value()<=0 || realtimeCLOSE.getValue()<=0)
 							break;
 	        			  
@@ -232,6 +250,7 @@ public class BarSeriesCacheUtil {
 				          min_value = realtimeMINMAX.getMin_value();
 				          close_value = realtimeCLOSE.getValue();
 	        			  
+				          /* ANTES TENIA PLUSMINUTES, COMO LO  CAMBIA LA QUERY EL ORDEN A DESC, LO NECESIO*/
 	        			  series.addBar(new BaseBar(endTime.plusMinutes(timebars*j),0.0,max_value ,min_value, close_value,0.0));
 	        			  
 	        			  _log.debug("Periodo:" + j + "from:" + cfromWithOpenMarketsTimes.getTime() + ",to:" + to + ",MinMax:" +  max_value + "," + min_value + ",CloseValue:" + close_value);
@@ -245,28 +264,41 @@ public class BarSeriesCacheUtil {
 	        else
 	        {
 	        	
-	        	List<HistoricalRealtime> lHMinMax = HistoricalRealtimeLocalServiceUtil.findMinMaxRealTimesGroupedByBars(cfromWithOpenMarketsTimes.getTime(), to, shareId, companyId, groupId,timebars,market);	        	
-	        	List<HistoricalRealtime> lHcloseValue = HistoricalRealtimeLocalServiceUtil.findCloseRealTimes(shareId, companyId, groupId, cfromWithOpenMarketsTimes.getTime(), to, lClosingPeriods);
 	        	
-	        	if (Validator.isNotNull(lHMinMax) && Validator.isNotNull(lHcloseValue) 
-	        			&& lHcloseValue.size()==periodsToCalculate && lHMinMax.size()==periodsToCalculate)
+	        	List<HistoricalRealtime> lRMinMax = HistoricalRealtimeLocalServiceUtil.findMinMaxRealTimesGroupedByBars(cfromWithOpenMarketsTimes.getTime(), to, shareId, companyId, groupId,timebars,market);
+	        	List<HistoricalRealtime> modifiableRMinMax = new ArrayList<HistoricalRealtime>(lRMinMax);
+				modifiableRMinMax.sort(Comparator.comparing(HistoricalRealtime::getCreateDate));
+	        	// findCloseRealTimes
+	        	List<HistoricalRealtime> lRcloseValue = HistoricalRealtimeLocalServiceUtil.findCloseRealTimes(shareId, companyId, groupId, cfromWithOpenMarketsTimes.getTime(), to, lClosingPeriods);
+	        	List<HistoricalRealtime> modifiableRcloseValue = new ArrayList<HistoricalRealtime>(lRcloseValue);
+	        	modifiableRcloseValue.sort(Comparator.comparing(HistoricalRealtime::getCreateDate));
+	        	
+	        	
+	        	List<HistoricalRealtime> lRMinMaxShorter = null;
+	        	List<HistoricalRealtime> lRcloseShorter = null;
+	        	
+	        	/* NOS INTERESAN LOS X ULTIMOS VALORES EN ORDEN */
+	        	if (Validator.isNotNull(modifiableRMinMax) && Validator.isNotNull(modifiableRcloseValue))
 	        			/* TODO OK */
 	        	{
-	        		  for (int j=0;j<lHcloseValue.size();j++)
+	        		lRcloseShorter  = modifiableRcloseValue.subList((int) (modifiableRcloseValue.size()-periodsToCalculate), modifiableRcloseValue.size());
+	        		lRMinMaxShorter =  modifiableRMinMax.subList((int) (modifiableRMinMax.size()-periodsToCalculate), modifiableRMinMax.size());
+	        		  
+	        		  for (int j=0;j<lRMinMaxShorter.size();j++)
 	        		  {
 	        			
-	        			  HistoricalRealtime realtimeMINMAX = lHMinMax.get(j);
-	        			  HistoricalRealtime realtimeCLOSE = lHcloseValue.get(j);
+	        			  HistoricalRealtime realtimeMINMAX = lRMinMaxShorter.get(j);
+	        			  HistoricalRealtime realtimeCLOSE = lRcloseShorter.get(j);
 	        			  if (realtimeMINMAX.getMax_value()<=0  || realtimeMINMAX.getMin_value()<=0 || realtimeCLOSE.getValue()<=0)
 							break;
 	        			  
 				          max_value = realtimeMINMAX.getMax_value();
 				          min_value = realtimeMINMAX.getMin_value();
 				          close_value =realtimeCLOSE.getValue();
-	        			  
+				          /* ANTES TENIA PLUSMINUTES, COMO LO  CAMBIA LA QUERY EL ORDEN A DESC, LO NECESIO */
 	        			  series.addBar(new BaseBar(endTime.plusMinutes(timebars*j),0.0,max_value ,min_value, close_value,0.0));
 
-	        			  
+	        			
 	        		  }
 	        	}
 	        	

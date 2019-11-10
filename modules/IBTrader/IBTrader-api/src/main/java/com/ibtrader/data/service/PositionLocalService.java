@@ -71,6 +71,9 @@ public interface PositionLocalService extends BaseLocalService,
 	public boolean ExistsPositionToExit(long groupId, long companyId,
 		long shareId, java.lang.String positionMode, long backtestingId);
 
+	public boolean satisfyDayTraderPattern(Date from, Date to, long groupId,
+		long companyId, java.lang.String positionMode);
+
 	/**
 	* Adds the position to the database. Also notifies the appropriate model listeners.
 	*

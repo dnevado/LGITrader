@@ -100,11 +100,11 @@ public class RealtimeLocalServiceWrapper implements RealtimeLocalService,
 	}
 
 	@Override
-	public com.ibtrader.data.model.Realtime findCloseRealTime(long shareId,
-		long companyId, long groupId, java.util.Date closeDate,
-		boolean isClosedDate) {
-		return _realtimeLocalService.findCloseRealTime(shareId, companyId,
-			groupId, closeDate, isClosedDate);
+	public com.ibtrader.data.model.Realtime findFirstRealTimeBetweenDates(
+		long shareId, long companyId, long groupId, java.util.Date from,
+		java.util.Date to) {
+		return _realtimeLocalService.findFirstRealTimeBetweenDates(shareId,
+			companyId, groupId, from, to);
 	}
 
 	@Override
@@ -134,6 +134,13 @@ public class RealtimeLocalServiceWrapper implements RealtimeLocalService,
 		long groupId) {
 		return _realtimeLocalService.findMinMaxRealTime(from, to, shareId,
 			companyId, groupId);
+	}
+
+	@Override
+	public com.ibtrader.data.model.Realtime findRealTime(long shareId,
+		long companyId, long groupId, java.util.Date closeDate) {
+		return _realtimeLocalService.findRealTime(shareId, companyId, groupId,
+			closeDate);
 	}
 
 	@Override

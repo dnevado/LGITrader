@@ -21,6 +21,7 @@ import com.ibtrader.data.service.persistence.BackTestingPersistence;
 import com.ibtrader.data.service.persistence.ConfigPersistence;
 import com.ibtrader.data.service.persistence.HistoricalRealtimeFinder;
 import com.ibtrader.data.service.persistence.HistoricalRealtimePersistence;
+import com.ibtrader.data.service.persistence.IBOrderFinder;
 import com.ibtrader.data.service.persistence.IBOrderPersistence;
 import com.ibtrader.data.service.persistence.MarketPersistence;
 import com.ibtrader.data.service.persistence.PositionFinder;
@@ -366,6 +367,24 @@ public abstract class RealtimeServiceBaseImpl extends BaseServiceImpl
 	 */
 	public void setIBOrderPersistence(IBOrderPersistence ibOrderPersistence) {
 		this.ibOrderPersistence = ibOrderPersistence;
+	}
+
+	/**
+	 * Returns the ib order finder.
+	 *
+	 * @return the ib order finder
+	 */
+	public IBOrderFinder getIBOrderFinder() {
+		return ibOrderFinder;
+	}
+
+	/**
+	 * Sets the ib order finder.
+	 *
+	 * @param ibOrderFinder the ib order finder
+	 */
+	public void setIBOrderFinder(IBOrderFinder ibOrderFinder) {
+		this.ibOrderFinder = ibOrderFinder;
 	}
 
 	/**
@@ -971,6 +990,8 @@ public abstract class RealtimeServiceBaseImpl extends BaseServiceImpl
 	protected com.ibtrader.data.service.IBOrderService ibOrderService;
 	@BeanReference(type = IBOrderPersistence.class)
 	protected IBOrderPersistence ibOrderPersistence;
+	@BeanReference(type = IBOrderFinder.class)
+	protected IBOrderFinder ibOrderFinder;
 	@BeanReference(type = com.ibtrader.data.service.MarketLocalService.class)
 	protected com.ibtrader.data.service.MarketLocalService marketLocalService;
 	@BeanReference(type = com.ibtrader.data.service.MarketService.class)

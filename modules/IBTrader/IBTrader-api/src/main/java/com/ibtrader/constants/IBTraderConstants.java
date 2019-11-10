@@ -12,7 +12,7 @@ public class IBTraderConstants {
 	public static String IBCONTROLLER_TRADING_MODE ="Paper";
 	
 	
-	public static String IBCONTROLLER_UNIX_PATH ="/home/tradeable/ibcontroller";
+	public static String IBCONTROLLER_UNIX_PATH ="/servicios";
 	public static String IBCONTROLLER_WINDOWS_PATH ="c:/IbController";
 	
 	
@@ -41,8 +41,8 @@ public class IBTraderConstants {
 	public static long   	vENABLE_DESKTOP_NOTIFICATIONS = 1;  // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
 	public static long   	vENABLE_MAIL_NOTIFICATIONS = 1;  // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
 	public static String   	vSIMULATION_MODE = "";  // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
-	public static String    vPATH_TO_CONFIGURATION_FILE = "{PLATFORM_PATH}/IbController_live/IBController.ini";   // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
-	public static String   	vPATH_TO_EXECUTABLE_FILE = "{PLATFORM_PATH}/IbController_live/IBControllerStart";   // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
+	public static String    vPATH_TO_CONFIGURATION_FILE = "{PLATFORM_PATH}/IBCLinux-3.8.1/config.ini";   // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
+	public static String   	vPATH_TO_EXECUTABLE_FILE = "{PLATFORM_PATH}/IBCLinux-3.8.1/twsstart";   // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
 
 	public static long   	vFAKE_MODE = 0;  // 1, entramos en fake mode, para testeo 
 	
@@ -51,8 +51,10 @@ public class IBTraderConstants {
 	public static String    vPAPER_ACCOUNT_IB_NAME = "PAPER_ACCOUNT_IB_NAME";
 	public static String    vPAPER_TWS_HOST = "127.0.0.1";
 	public static long      vPAPER_TWS_PORT = 7498;
-	public static String    vPAPER_PATH_TO_CONFIGURATION_FILE = "{PLATFORM_PATH}/IbController_paper/IBController.ini";  // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
-	public static String    vPAPER_PATH_TO_EXECUTABLE_FILE = "{PLATFORM_PATH}/IbController_paper/IBControllerStart";  // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
+	public static String    vPAPER_PATH_TO_CONFIGURATION_FILE = "{PLATFORM_PATH}/IBCLinux-3.8.1_Test/config.ini";   // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
+	public static String    vPAPER_PATH_TO_EXECUTABLE_FILE = "{PLATFORM_PATH}/IBCLinux-3.8.1_Test/twsstart";   // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
+	
+	public static long     vDAY_TRADER_PATTER = 0;    // CHECK IF 4 TRADERS ARE PERFORMED IN THE 5 BUSINESS DAYS L-V 
 	
 	/* keys */
 	
@@ -93,6 +95,9 @@ public class IBTraderConstants {
 	public static String   keyPAPER_TWS_PORT = "PAPER_TWS_PORT";
 	public static String   keyPAPER_PATH_TO_CONFIGURATION_FILE = "PAPER_PATH_TO_CONFIGURATION_FILE";
 	public static String   keyPAPER_PATH_TO_EXECUTABLE_FILE = "PAPER_PATH_TO_EXECUTABLE_FILE";  
+	
+	public static String   keyDAY_TRADER_PATTER = "DAY_TRADER_PATTER";   // CHECK IF 4 TRADERS ARE PERFORMED IN THE 5 BUSINESS DAYS L-V  
+
 	
 	public enum statusSimulation {	    
 	    Pending  ("Pending"),

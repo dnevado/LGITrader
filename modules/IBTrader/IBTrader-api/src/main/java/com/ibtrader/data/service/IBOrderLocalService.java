@@ -304,4 +304,6 @@ public interface IBOrderLocalService extends BaseLocalService,
 
 	public void deleteByOrderCompanyGroup(long iborderId, long companyId,
 		long groupId, long ibclientId, long shareId);
+
+	public void deleteRemovable(Date untilDate);
 }

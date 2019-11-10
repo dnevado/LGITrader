@@ -59,6 +59,14 @@ public class IBOrderLocalServiceImpl extends IBOrderLocalServiceBaseImpl {
 
 	
 	/* AQUI BORRAMOS TODAS , ANTIGUAS */
+	public 	void deleteRemovable(Date untilDate)
+	{
+	
+		 ibOrderFinder.deleteRemovableIBOrders(untilDate);
+	}
+	
+	
+	/* AQUI BORRAMOS TODAS , ANTIGUAS */
 	public 	List<IBOrder> findByDate(Date untilDate)
 	{
 		DynamicQuery _DQ = IBOrderLocalServiceUtil.dynamicQuery();
@@ -146,6 +154,9 @@ public class IBOrderLocalServiceImpl extends IBOrderLocalServiceBaseImpl {
 		
 		
 	}
+	
+	
+	
 	/* sacamos el maximo de las ordenes metidas en las posiciones para saber si usar estas o el currentOrderId de la TWS */
 	public long findMaxOrderClientCompanyGroup(long companyId, long groupId, long clientId)
 	{

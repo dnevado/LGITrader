@@ -1,5 +1,6 @@
 package com.ibtrader.strategy;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -252,24 +253,30 @@ public class IBStrategyMinMax extends StrategyImpl {
 	try
     {
 		
-	User _IBUser = UserLocalServiceUtil.getUser(_share.getUserCreatedId());
 	String HoraActual = "";
 	
 	Calendar calFechaActualWithDeadLine;
 	Calendar calFechaFinMercado;
-
+	User _IBUser = UserLocalServiceUtil.getUser(_share.getUserCreatedId());
+	/* TIMEZONE AJUSTADO */
+	//Date _FromNow =  !isSimulation_mode() ?    Utilities.getDate(_IBUser) : backtestingdDate;
+	Date _FromNow =  !isSimulation_mode() ?    new Date() : backtestingdDate;
+	Calendar _calendarFromNow = Calendar.getInstance();
+	_calendarFromNow.setTime(_FromNow);	HoraActual = Utilities.getWebFormattedTime(_calendarFromNow.getTime());
+	
+	Market marketRealOpenCloseTimes = Utilities.getOpenCloseMarket(_share, backtestingdDate, isSimulation_mode());
+	if (Validator.isNull(marketRealOpenCloseTimes)) return false;
 	if (!isSimulation_mode())
 	{
-		HoraActual = Utilities.getHourNowFormat(_IBUser);
-		calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(HoraActual);
-		calFechaFinMercado = Utilities.getNewCalendarWithHour(_market.getEnd_hour());
+		calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(HoraActual); 
+		calFechaFinMercado = Utilities.getNewCalendarWithHour(marketRealOpenCloseTimes.getEnd_hour()); 
 	}
 	else	
 	{
-		HoraActual = Utilities.getHourNowFormat(_IBUser,backtestingdDate);
+			
 		calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(backtestingdDate, HoraActual);
-		calFechaFinMercado = Utilities.getNewCalendarWithHour(backtestingdDate, _market.getEnd_hour());			
-	}
+		calFechaFinMercado = Utilities.getNewCalendarWithHour(backtestingdDate, marketRealOpenCloseTimes.getEnd_hour()); 			
+	}		
 	
 	
 //	StrategyShare _strategyshare = StrategyShareLocalServiceUtil.getByCommpanyShareStrategyId(_share.getGroupId(),_share.getCompanyId(),_share.getShareId(),_strategyImpl.getStrategyId());
@@ -297,33 +304,31 @@ public class IBStrategyMinMax extends StrategyImpl {
 		// HHMM
 		// HORA DE FIN DE CALCULO DE MAX Y MINIMOS.
 		
-		String HoraInicioLecturaMaxMin = "";
-		String HoraFinLecturaMaxMin = "";
+		String HoraInicioLecturaMaxMin = "-1";
+		String HoraFinLecturaMaxMin = "-1";
 		
-		Date _FromNow =  !isSimulation_mode() ?   Utilities.getDate(_IBUser) : backtestingdDate;
-		Calendar _calendarFromNow = Calendar.getInstance();
 		_calendarFromNow.setTime(_FromNow);		
 		_calendarFromNow.set(Calendar.SECOND, 0);
 		_calendarFromNow.set(Calendar.MILLISECOND, 0);
 		
 		if (!isSimulation_mode())
 		{
-			HoraInicioLecturaMaxMin = Utilities.getActualHourFormatPlusMinutes(_calendarFromNow, _market.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_OFFSET1_FROM_OPENMARKET));
-			HoraFinLecturaMaxMin = Utilities.getActualHourFormatPlusMinutes(_calendarFromNow, _market.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_OFFSET2_FROM_OPENMARKET));
+			HoraInicioLecturaMaxMin = Utilities.getActualHourFormatPlusMinutes(_calendarFromNow, marketRealOpenCloseTimes.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_OFFSET1_FROM_OPENMARKET));
+			HoraFinLecturaMaxMin = Utilities.getActualHourFormatPlusMinutes(_calendarFromNow, marketRealOpenCloseTimes.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_OFFSET2_FROM_OPENMARKET));
 
 		}
 		else
-		{
-			HoraInicioLecturaMaxMin = Utilities.getActualHourFormatPlusMinutes(_market.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_OFFSET1_FROM_OPENMARKET));
-			HoraFinLecturaMaxMin = Utilities.getActualHourFormatPlusMinutes(_market.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_OFFSET2_FROM_OPENMARKET));
-			 
+		{						
+			HoraInicioLecturaMaxMin = Utilities.getActualHourFormatPlusMinutes(marketRealOpenCloseTimes.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_OFFSET1_FROM_OPENMARKET));
+			HoraFinLecturaMaxMin = Utilities.getActualHourFormatPlusMinutes(marketRealOpenCloseTimes.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_OFFSET2_FROM_OPENMARKET));
+		 
 		}
 		
 		// COMPROBAMOS ALGUN TIPO DE ERROR 
 		if (HoraInicioLecturaMaxMin.contains("-1") || HoraFinLecturaMaxMin.contains("-1"))
 		{
 			_log.info("[Estrategia:StrategyMinMax]: Errores formateando las horas de Max y Min de la acción. "
-					+ "Hora[" + _market.getStart_hour()  + "], Offset1[" + this.getJsonStrategyShareParams().getInt(_EXPANDO_OFFSET1_FROM_OPENMARKET)+ "]");
+					+ "Hora[" + marketRealOpenCloseTimes.getStart_hour()  + "], Offset1[" + this.getJsonStrategyShareParams().getInt(_EXPANDO_OFFSET1_FROM_OPENMARKET)+ "]");
 			return false;
 		}
 			
@@ -333,9 +338,9 @@ public class IBStrategyMinMax extends StrategyImpl {
 		
 		// ya no obtenemos el maximo y minimo, sino el correspondiente al tramo que me han dicho
 		/* TIMEZONE AJUSTADO */
-		Date _FromIniMarket =  !isSimulation_mode() ?   Utilities.getDate(_IBUser) : backtestingdDate;
-		Date _ToIniMarket   =  !isSimulation_mode() ?   Utilities.getDate(_IBUser) : backtestingdDate;
-		Date _ToNow  		=  !isSimulation_mode() ?   Utilities.getDate(_IBUser) : backtestingdDate;
+		Date _FromIniMarket =  !isSimulation_mode() ?    new Date() : backtestingdDate;
+		Date _ToIniMarket   =  !isSimulation_mode() ?    new Date() : backtestingdDate;
+		Date _ToNow  		=  !isSimulation_mode() ?    new Date() : backtestingdDate;
 
 		
 		_FromIniMarket = Utilities.setDateWithHour(_FromIniMarket,HoraInicioLecturaMaxMin);
@@ -358,6 +363,8 @@ public class IBStrategyMinMax extends StrategyImpl {
 		}					
 		else
 		{
+			
+			
 			HistoricalRealtime MinMaxRealTime =  HistoricalRealtimeLocalServiceUtil.findMinMaxRealTime(_FromIniMarket, _ToIniMarket, _share.getShareId(), _share.getCompanyId(), _share.getGroupId());
 			HistoricalRealtime oShareLastRTime =  HistoricalRealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(),_ToNow);
 			lastRealtime = Validator.isNull(oShareLastRTime) ? null : oShareLastRTime.getValue();
