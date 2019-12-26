@@ -1,4 +1,4 @@
-# Project Title
+# Tradeable. An automated platform to trade under Interactive Brokers API service
 
 Full platform developed under Liferay 7 with automated trading strategies integrated with Interactive Brokers API. More than 15 available strategies to be configured by trader. It leverages Liferay API to support realtime capabilities.
 
