@@ -48,6 +48,14 @@ public class PositionLocalServiceWrapper implements PositionLocalService,
 	}
 
 	@Override
+	public boolean IsinRangeUserBudget(
+		com.liferay.portal.kernel.model.User user, double newTargetPosition,
+		java.lang.String positionMode, long companyId, long groupId) {
+		return _positionLocalService.IsinRangeUserBudget(user,
+			newTargetPosition, positionMode, companyId, groupId);
+	}
+
+	@Override
 	public boolean satisfyDayTraderPattern(java.util.Date from,
 		java.util.Date to, long groupId, long companyId,
 		java.lang.String positionMode) {
@@ -244,6 +252,13 @@ public class PositionLocalServiceWrapper implements PositionLocalService,
 		java.io.Serializable primaryKeyObj)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _positionLocalService.getPersistedModel(primaryKeyObj);
+	}
+
+	@Override
+	public double findTotalLiquidPositionOpen(long groupId, long companyId,
+		java.lang.String positionMode) {
+		return _positionLocalService.findTotalLiquidPositionOpen(groupId,
+			companyId, positionMode);
 	}
 
 	/**

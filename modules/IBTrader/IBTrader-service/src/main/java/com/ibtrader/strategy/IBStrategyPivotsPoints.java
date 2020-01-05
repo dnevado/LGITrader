@@ -178,6 +178,12 @@ public class IBStrategyPivotsPoints extends StrategyImpl {
 	    		if (this.getJsonStrategyShareParams()!=null && this.getJsonStrategyShareParams().getInt(ConfigKeys._FIELD_NUMBER_TO_PURCHASE,0)>0)
 	    			number_to_purchase =this.getJsonStrategyShareParams().getInt(ConfigKeys._FIELD_NUMBER_TO_PURCHASE,0);    	
 				
+	    		
+	    		User user = UserLocalServiceUtil.getUser(_share.getUserCreatedId());
+			    boolean bOrderIsWithinBudget =   PositionLocalServiceUtil.IsinRangeUserBudget(user,_share.getMultiplier() *  this.getValueIn() * number_to_purchase, position_mode, _share.getCompanyId(), _share.getGroupId());
+			    if (!bOrderIsWithinBudget)
+			    	return returnValue;
+	    		
 				BuyPositionTWS.totalQuantity(number_to_purchase);
 				BuyPositionTWS.orderType(PositionStates.ordertypes.MKT.toString());		    
 				// precio del tick más o menos un porcentaje ...normalmente %1
@@ -368,7 +374,7 @@ public class IBStrategyPivotsPoints extends StrategyImpl {
 				return Boolean.FALSE;
 			}
 				
-			
+			_log.debug("HoraActual:" + HoraActual + ",StartHourTrading:" + StartHourTrading);
 			if (HoraActual.compareTo(StartHourTrading)>0)   // hora actyual ya ha pasado, podemos entrar en la operativa
 			{
 			

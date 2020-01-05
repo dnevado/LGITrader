@@ -195,15 +195,40 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 			
 				
 			Double vRealtime = null;
+			
+			/* PRUEBA , FALTA EL REAL TIME IMPLEMETAT */
+			int   _volume = 0;
+			boolean bVolIncreased = Boolean.FALSE;
+			
+			Calendar _previousBarDate = Calendar.getInstance();
+			_previousBarDate.setTime(_calendarFromNow.getTime());
+			_previousBarDate.add(Calendar.MINUTE, - (int) _num_macdT);
+			
 			if (!isSimulation_mode())
 			{
 				Realtime oRTimeEnTramo =  RealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _calendarFromNow.getTime());
 				vRealtime  = Validator.isNull(oRTimeEnTramo) ? null : oRTimeEnTramo.getValue();
+				_volume =  Validator.isNull(oRTimeEnTramo) ? null : oRTimeEnTramo.getVolume();
+				if (_volume>0)
+				{					
+					Realtime oPreviousBarRTime =  RealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _previousBarDate.getTime());
+					if (Validator.isNotNull(oPreviousBarRTime) && oPreviousBarRTime.getVolume()>0)
+						bVolIncreased  = _volume > oPreviousBarRTime.getVolume();
+				}
 			}
 			else
 			{
 				HistoricalRealtime oRTimeEnTramo =  HistoricalRealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _calendarFromNow.getTime());
 				vRealtime  = Validator.isNull(oRTimeEnTramo) ? null : oRTimeEnTramo.getValue();
+				_volume =  Validator.isNull(oRTimeEnTramo) ? null : oRTimeEnTramo.getVolume();
+				if (_volume>0)
+				{					
+					HistoricalRealtime oPreviousBarRTime =  HistoricalRealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _previousBarDate.getTime());
+					if (Validator.isNotNull(oPreviousBarRTime) && oPreviousBarRTime.getVolume()>0)
+						bVolIncreased  = _volume > oPreviousBarRTime.getVolume();
+				}
+				
+				
 			}
 				
 
@@ -212,7 +237,8 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 				// todo fue bien, tenemos media movil y de los periodos solicitados.
 				// buscamos el cierre de la barra, ultimo valor < que el MINUTE.00  (15.00, 20,00, 25.00)
 				
-				Double _avgMobileSimple = BaseIndicatorUtil.getExponentialAvgMobile(_calendarFromNow.getTime(), vRealtime.doubleValue(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_macdP , isSimulation_mode(), _market);
+				//Double _avgMobileSimple = BaseIndicatorUtil.getExponentialAvgMobile(_calendarFromNow.getTime(), vRealtime.doubleValue(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_macdP , isSimulation_mode(), _market);
+				Double _avgMobileSimple = BaseIndicatorUtil.getSimpleAvgMobile(_calendarFromNow.getTime(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_macdP, isSimulation_mode(), _market);
 
 				
 				if (_log.isDebugEnabled())
@@ -253,12 +279,12 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 						if (_log.isDebugEnabled())
 							_log.debug("_WidthRangeBar for :" + _share.getSymbol() + ":MAX" + max_value + ",MIN:" + min_value );
 						
-						boolean _AvgMovil_InsideBar  = (max_value > _avgMobileSimple.doubleValue()  &&
+						boolean _avgMovilInsidebar  = (max_value > _avgMobileSimple.doubleValue()  &&
 								min_value< _avgMobileSimple.doubleValue());
 						
 						
 						if (_log.isDebugEnabled())
-							_log.debug("_AvgMovil_InsideBar for :" + _share.getSymbol() + _AvgMovil_InsideBar);
+							_log.debug("_AvgMovil_InsideBar for :" + _share.getSymbol() + _avgMovilInsidebar);
 						
 						boolean _BuySuccess = false;
 						boolean _SellSuccess = false;
@@ -284,13 +310,13 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 								(operationfilter.equals("ALL") || operationfilter.equals(PositionStates.statusTWSFire.SELL.toString()));
 						
 						if (_log.isDebugEnabled())
-							_log.debug("_BuySuccess._SellSuccess, _AvgMovil_InsideBar for :" + _share.getSymbol() + _BuySuccess + "," + _SellSuccess+ "," +_AvgMovil_InsideBar );
+							_log.debug("_BuySuccess._SellSuccess, _AvgMovil_InsideBar for :" + _share.getSymbol() + _BuySuccess + "," + _SellSuccess+ "," +_avgMovilInsidebar );
 						
 						
 						/* fecha hora venicmiento  NO proxima */ 
 						boolean  IsFutureTradeable = Utilities.IsFutureTradeable(_share);
 						
-						if (IsFutureTradeable && _AvgMovil_InsideBar  && (_BuySuccess || _SellSuccess))
+						if (bVolIncreased &&  IsFutureTradeable && _avgMovilInsidebar  && (_BuySuccess || _SellSuccess))
 						{
 							
 						    this.setValueIn(vRealtime.doubleValue());											
@@ -305,7 +331,7 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 							
 							_tradeDescription = JSONFactoryUtil.createJSONObject();
 							_tradeDescription.put("_WidthBarRangePercent", _WidthBarRangePercent);
-							_tradeDescription.put("_AvgMovil_InsideBar", _AvgMovil_InsideBar);
+							_tradeDescription.put("_AvgMovil_InsideBar", _avgMovilInsidebar);
 							_tradeDescription.put("_WidthRangeBar", _WidthRangeBar);
 							_tradeDescription.put("oRTimeWidthRange.getMax_value()", max_value);
 							_tradeDescription.put("oRTimeWidthRange.getMin_value()", min_value);
@@ -387,6 +413,11 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 	    		if (this.getJsonStrategyShareParams()!=null && this.getJsonStrategyShareParams().getInt(ConfigKeys._FIELD_NUMBER_TO_PURCHASE,0)>0)
 	    			number_to_purchase =this.getJsonStrategyShareParams().getInt(ConfigKeys._FIELD_NUMBER_TO_PURCHASE,0);    	
 				
+	    		User user = UserLocalServiceUtil.getUser(_share.getUserCreatedId());
+			    boolean bOrderIsWithinBudget =   PositionLocalServiceUtil.IsinRangeUserBudget(user, this.getValueIn() * number_to_purchase, position_mode, _share.getCompanyId(), _share.getGroupId());
+			    if (!bOrderIsWithinBudget)
+			    	return returnValue;
+	    		
 				BuyPositionTWS.totalQuantity(number_to_purchase);
 				BuyPositionTWS.orderType(PositionStates.ordertypes.MKT.toString());		    
 				// precio del tick más o menos un porcentaje ...normalmente %1

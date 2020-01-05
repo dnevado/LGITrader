@@ -129,6 +129,11 @@ public class IBStrategyMinMax extends StrategyImpl {
 	    		if (this.getJsonStrategyShareParams()!=null && this.getJsonStrategyShareParams().getInt(ConfigKeys._FIELD_NUMBER_TO_PURCHASE,0)>0)
 	    			number_to_purchase =this.getJsonStrategyShareParams().getInt(ConfigKeys._FIELD_NUMBER_TO_PURCHASE,0);    	
 				
+	    		User user = UserLocalServiceUtil.getUser(_share.getUserCreatedId());
+			    boolean bOrderIsWithinBudget =   PositionLocalServiceUtil.IsinRangeUserBudget(user,_share.getMultiplier() *  this.getValueIn() * number_to_purchase, position_mode, _share.getCompanyId(), _share.getGroupId());
+			    if (!bOrderIsWithinBudget)
+			    	return returnValue;
+	    		
 				BuyPositionTWS.totalQuantity(number_to_purchase);
 				// precio del tick más o menos un porcentaje ...normalmente %1
 				// ojo con los FUTUROS..llevan cambios porcentuales
@@ -169,7 +174,7 @@ public class IBStrategyMinMax extends StrategyImpl {
 
     		/* 5 PUNTOS o 5%  POR DEFECTO EN LOS FUTUROS */			
     		double _defaultstop_percent = 0;
-    		boolean _IsFuture = (_share.getSecurity_type()!=null && _share.getSecurity_type().equals(ConfigKeys.SECURITY_TYPE_STOCK) ? true : false);
+    		boolean _IsFuture = (_share.getSecurity_type()!=null && _share.getSecurity_type().equals(ConfigKeys.SECURITY_TYPE_FUTUROS) ? true : false);
     		if (_IsFuture)
     		{	    			    			
     			_defaultstop_percent = (5 * 100) / this.getValueIn();   

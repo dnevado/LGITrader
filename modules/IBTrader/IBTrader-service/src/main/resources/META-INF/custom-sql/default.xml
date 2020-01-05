@@ -170,7 +170,8 @@
     
 			    SELECT  
 						(sum(beneficio*acciones*multiplier) / SUM(PRECIOENTRADA*multiplier*acciones)*100)  MARGENBENEFICIO, 
-						 sum(beneficio*acciones*multiplier) BENEFICIO
+						 sum(beneficio*acciones*multiplier) BENEFICIO,
+						 SUM(PRECIOENTRADA*multiplier*acciones) LIQUIDO
 				FROM
 				(	SELECT case type_
 						   WHEN 'BUY' then IF(price_real_out>0,price_real_out,REALTIME.value) - price_real_in
@@ -207,6 +208,29 @@
 	 
      ]]>
     </sql>
+    
+     <sql id="com.ibtrader.data.service.persistence.PositionFinder.getCurrentLiquidTraded">
+    <![CDATA[
+   					SELECT 
+							SUM(price_real_in*SHARE.multiplier*share_number) LIQUIDO
+					FROM 
+							IBTrader_Position, IBTrader_share SHARE
+					WHERE
+						
+						(IBTrader_Position.date_real_out) IS NULL												
+						AND (IBTrader_Position.companyid=?)
+	            		AND (IBTrader_Position.groupid=?)
+	            		AND (IBTrader_Position.position_mode=?)         		            
+						AND	 (IBTrader_Position.companyid=SHARE.companyid)
+						AND	 (IBTrader_Position.groupid=SHARE.groupid)
+						AND	 (IBTrader_Position.shareId=SHARE.shareId) 
+	           		    	
+				
+	 
+     ]]>
+    </sql>
+    
+    
     
      <!--  
     incluimos el multiplicador del activo para los futuros o 1 para el resto -->
@@ -701,7 +725,8 @@
     
 			    SELECT  
 						(sum(beneficio*acciones*multiplier) / SUM(PRECIOENTRADA*multiplier*acciones)*100)  MARGENBENEFICIO, 
-						 sum(beneficio*acciones*multiplier) BENEFICIO
+						 sum(beneficio*acciones*multiplier) BENEFICIO,
+						 SUM(PRECIOENTRADA*multiplier*acciones) LIQUIDO
 				FROM
 				(	SELECT case type_
 						   WHEN 'BUY' then IF(price_real_out>0,price_real_out,REALTIME.value) - price_real_in

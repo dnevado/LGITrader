@@ -1,0 +1,4 @@
+Bundle-Name: IBTrader-usercashavailable-web
+Bundle-SymbolicName: com.ibtrader.budget.usercashavailable
+Bundle-Version: 1.0.0
+Export-Package: com.ibtrader.budget.usercashavailable.constants

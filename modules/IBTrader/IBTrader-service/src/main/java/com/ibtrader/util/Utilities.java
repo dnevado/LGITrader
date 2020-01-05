@@ -619,11 +619,11 @@ public class Utilities {
 			       
 			       LocalDate   fromDate   = fromDateT.toLocalDate();
 			       LocalDate   toDate   = toDateT.toLocalDate();
-
+			       /* SI HAY VARIOS TRAMOS EN EL MISMO DIA , COGEMOS EL PRIMER Y SALIMOS */	
 			       if (fromDate.isEqual(LocalDate.now()) && toDate.isEqual(LocalDate.now()))
 			       {		    	   
 			    	   retHour  = fromDateT.toLocalTime();		    	   
-			    	 //  break;
+			    	   break; 
 			       }
 			       if (fromDate.isEqual(LocalDate.now()) && !toDate.isEqual(LocalDate.now()) ||
 			    		   !fromDate.isEqual(LocalDate.now()) && toDate.isEqual(LocalDate.now()))

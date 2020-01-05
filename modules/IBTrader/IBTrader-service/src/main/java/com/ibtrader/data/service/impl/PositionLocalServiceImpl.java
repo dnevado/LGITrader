@@ -17,6 +17,8 @@ package com.ibtrader.data.service.impl;
 import java.util.Date;
 import java.util.List;
 
+import org.mortbay.log.Log;
+
 import com.ibtrader.data.exception.NoSuchPositionException;
 import com.ibtrader.data.model.Position;
 import com.ibtrader.data.model.Realtime;
@@ -38,6 +40,12 @@ import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
+import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
+import com.liferay.portal.kernel.util.Validator;
 
 
 /**
@@ -60,7 +68,8 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 	 *
 	 * Never reference this class directly. Always use {@link com.ibtrader.data.service.PositionLocalServiceUtil} to access the position local service.
 	 */
-	
+	private final  com.liferay.portal.kernel.log.Log _log = LogFactoryUtil.getLog(PositionLocalServiceImpl.class);
+
 	
 	public List<Position> findByCloseCompanyGroup(long companyId, long groupId, long shareId, boolean forceclose, String positionMode)
 	{	
@@ -359,7 +368,8 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 				JSONObject positionResult = JSONFactoryUtil.createJSONObject();
 				
 				positionResult.put("MARGENBENEFICIO", Utilities.RoundPrice(Double.parseDouble(arrayData[0])));
-				positionResult.put("BENEFICIO", Utilities.RoundPrice(Double.parseDouble(arrayData[1])));								
+				positionResult.put("BENEFICIO", Utilities.RoundPrice(Double.parseDouble(arrayData[1])));
+				positionResult.put("LIQUIDO", Utilities.RoundPrice(Double.parseDouble(arrayData[2])));		
 				
 				positionResults.put(positionResult);
 				
@@ -370,6 +380,66 @@ public class PositionLocalServiceImpl extends PositionLocalServiceBaseImpl {
 			}
 		}
 		return 	positionResults;
+	}
+	
+	
+	public boolean IsinRangeUserBudget (User user, double newTargetPosition, String positionMode, long companyId, long groupId)
+	{
+		boolean isInRange = Boolean.FALSE;
+		try 
+		{
+			double currentOpenAmount = findTotalLiquidPositionOpen(groupId,companyId,positionMode);
+			PermissionChecker checker = PermissionCheckerFactoryUtil.create(user);
+			PermissionThreadLocal.setPermissionChecker(checker);
+			Long userBudget  = (Long) user.getExpandoBridge().getAttribute(ConfigKeys._BUDGET_USER_EXPANDO);
+			
+			if (userBudget.longValue()>0)
+			{
+				isInRange = userBudget > (currentOpenAmount + newTargetPosition);
+			}
+			
+		}
+		catch (Exception e)
+		{
+			_log.error("IsinRangeUserBudget:" + e.getMessage());
+		}
+		return isInRange;
+		
+
+	}
+	
+	
+	public double findTotalLiquidPositionOpen(long groupId, long companyId, String positionMode)
+	{
+		//return realtimeFinder.findSimpleMobileAvgGroupByPeriods( shareId, companyId,  groupId,from, to, mobileAvgDates);
+		List lResults = null;
+		lResults = positionFinder.getCurrentLiquidTraded(groupId,companyId,positionMode); 
+		String serilizeString=null;				
+		
+	
+		double  totalLiquid = 0;
+		
+		if (lResults!=null && !lResults.isEmpty())
+		{
+			for (Object oPosition : lResults)
+			{
+				//[1,3,23,545,23]
+				serilizeString=JSONFactoryUtil.serialize(oPosition);
+				serilizeString = serilizeString.replace("[","").replace("]","");
+				String[] arrayData = serilizeString.split(",");
+				
+				
+				/* LIQUID COLUIMN */
+				if (Validator.isNotNull(arrayData[0]))
+					totalLiquid  += Utilities.RoundPrice(Double.parseDouble(arrayData[0]));
+				
+				/* solo cogemos el array de cobjectos la primera posicion dodne viene serializado todo */
+				break;
+				
+				
+			}
+		}
+		return 	totalLiquid;
 	}
 	
 	

@@ -375,7 +375,28 @@ public class TIMApiWrapper implements EWrapper {
 	
 	@Override
 	public void tickSize(int tickerId, int field, int size) {
-		//_log.debug("Tick Size. Ticker Id:" + tickerId + ", Field: " + field + ", Size: " + size);
+		
+		
+		IBOrder MyOrder = null;
+		
+		if (size>0 && (field==ConfigKeys._TICKTYPE_VOLUME)) { //|| field==ConfigKeys. _TICKTYPE_CLOSE)
+
+			//MyOrder =  IBOrderLocalServiceUtil.fetchIBOrder(tickerId);
+			MyOrder =  IBOrderLocalServiceUtil.findByOrderClientGroupCompany(tickerId, _clientId, _ibtarget_organization.getCompanyId(),_ibtarget_organization.getGroupId());
+			if (MyOrder == null) {
+				
+				_log.debug("No se encuentra el ID " + tickerId);
+				return;
+			}
+			// verificamos si esta en modo simulation con precios introducidos a mano 
+			Share share = ShareLocalServiceUtil.fetchShare(MyOrder.getShareID());
+			if (share!=null) 
+			{			
+		
+				_log.debug("Tick Size for . " + share.getSymbol() + ", Ticker Id:" + tickerId + ", Field: " + field + ", Size: " + size);
+			}
+		}
+		
 	}
 	//! [ticksize]
 	//! [tickoptioncomputation]
@@ -618,12 +639,12 @@ public class TIMApiWrapper implements EWrapper {
 		/* PARECE UNA �APA 
 		 * https://www.cmegroup.com/trading/equity-index/us-index/sandp-500_contract_specifications.html
 		 * */			 
-		String _traingHours = contractDetails.tradingHours();
+		String _traingHours = contractDetails.liquidHours();
 
-		if (oShare.getSecurity_type().equals(ConfigKeys.SECURITY_TYPE_STOCK))
+		/* if (oShare.getSecurity_type().equals(ConfigKeys.SECURITY_TYPE_STOCK))
 		{
 			_traingHours = contractDetails.liquidHours();
-		}
+		}*/
 	
 		if (!_traingHours.isEmpty()) // 					
 		{
@@ -1382,7 +1403,7 @@ public class TIMApiWrapper implements EWrapper {
 	@Override
 	public void historicalData(int reqId, Bar bar) {
 	
-	_log.debug("historicalData , reqId: + " + reqId + " for " + this.get_ibtarget_share().getSymbol() + ",close:" + bar.close() + ",time:" + bar.time());	
+	_log.debug("historicalData , volumen:" + bar.volume() + ", reqId: + " + reqId + " for " + this.get_ibtarget_share().getSymbol() + ",close:" + bar.close() + ",time:" + bar.time());	
 	
 	SimpleDateFormat fDateHistorical = new SimpleDateFormat(Utilities.__IBTRADER_HISTORICAL_DATE_FORMAT);
 	SimpleDateFormat fDateClosePrice = new SimpleDateFormat(Utilities.__IBTRADER_LONG_DATE_FORMAT);
@@ -1469,7 +1490,7 @@ public class TIMApiWrapper implements EWrapper {
 				historicalrealtime.setCompanyId(this.get_ibtarget_share().getCompanyId());
 				historicalrealtime.setShareId(this.get_ibtarget_share().getShareId());
 				historicalrealtime.setValue(bar.close());
-				
+				historicalrealtime.setVolume(new Long(bar.volume()).intValue());
 				HistoricalRealtimeLocalServiceUtil.updateHistoricalRealtime(historicalrealtime);
 			}
 			catch (Exception e) {}
@@ -1484,6 +1505,7 @@ public class TIMApiWrapper implements EWrapper {
 				historicalrealtime.setCompanyId(this.get_ibtarget_share().getCompanyId());
 				historicalrealtime.setShareId(this.get_ibtarget_share().getShareId());
 				historicalrealtime.setValue(bar.low());
+				historicalrealtime.setVolume(new Long(bar.volume()).intValue());
 				
 				HistoricalRealtimeLocalServiceUtil.updateHistoricalRealtime(historicalrealtime);
 			}
@@ -1497,6 +1519,7 @@ public class TIMApiWrapper implements EWrapper {
 				historicalrealtime.setCompanyId(this.get_ibtarget_share().getCompanyId());
 				historicalrealtime.setShareId(this.get_ibtarget_share().getShareId());
 				historicalrealtime.setValue(bar.high());
+				historicalrealtime.setVolume(new Long(bar.volume()).intValue());
 	
 				HistoricalRealtimeLocalServiceUtil.updateHistoricalRealtime(historicalrealtime);
 				/* guardamos la ultinma barra para saber la cultima cargada cuando venga el finished */
@@ -1560,6 +1583,7 @@ public class TIMApiWrapper implements EWrapper {
 				oReal.setCloseprice(Boolean.FALSE);
 				oReal.setCreateDate(_calNow.getTime());
 				oReal.setModifiedDate(new Date());		
+				oReal.setVolume(new Long(bar.volume()).intValue());
 				RealtimeLocalServiceUtil.updateRealtime(oReal);
 				
 				/* MINIMO  */
@@ -1573,6 +1597,8 @@ public class TIMApiWrapper implements EWrapper {
 				oReal.setCloseprice(Boolean.FALSE);
 				oReal.setCreateDate(_calNow.getTime());
 				oReal.setModifiedDate(new Date());		
+				oReal.setVolume(new Long(bar.volume()).intValue());
+
 				RealtimeLocalServiceUtil.updateRealtime(oReal);
 				
 				/* MAXIMO  */
@@ -1585,6 +1611,8 @@ public class TIMApiWrapper implements EWrapper {
 				oReal.setCloseprice(Boolean.FALSE);
 				oReal.setCreateDate(_calNow.getTime());
 				oReal.setModifiedDate(new Date());		
+				oReal.setVolume(new Long(bar.volume()).intValue());
+
 				RealtimeLocalServiceUtil.updateRealtime(oReal);
 				
 				

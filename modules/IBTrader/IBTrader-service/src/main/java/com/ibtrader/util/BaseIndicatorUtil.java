@@ -42,6 +42,7 @@ import com.ibtrader.data.service.ShareLocalServiceUtil;
 import com.ibtrader.strategy.IBStrategySimpleMobileAverage;
 import com.ibtrader.techindicadors.IBTraderEMAIndicator;
 import com.ibtrader.techindicadors.IBTraderPivotPointIndicator;
+import com.ibtrader.techindicadors.IBTraderSMAIndicador;
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -728,6 +729,10 @@ public class BaseIndicatorUtil {
 		List<String> lAvgPeriods = new ArrayList<String>();
 		
 		Calendar _cSimpleAvgMobileDateFrom = Calendar.getInstance();
+		
+		try
+		{
+		
 		_cSimpleAvgMobileDateFrom.setTime(_ActualDateBar);
 		
 		
@@ -758,9 +763,44 @@ public class BaseIndicatorUtil {
 		
 		/* formato 04:54:59*/
 			
+		TimeSeries series = new BaseTimeSeries("getSimpleAvgMobile");
+		series = BarSeriesCacheUtil.closeBarTimeSeries(shareId, companyId, groupId, cfromWithOpenMarketsTimes.getTime(), _ActualDateBar, lAvgPeriods, simulation, TimeBars);
 		
+		double[] closesprices = new double[(int) PeriodN];		
+		_log.debug("Periodos para Media Movil  hasta " + _ActualDateBar);
+		int counter = 0;
+		for (int   i = (int) (series.getBarCount() - PeriodN) ; i <= series.getBarCount() - 1  ; i++) 
+		{
+			org.ta4j.core.Bar currentBar = series.getBar(i);		
+			closesprices[counter]  = currentBar.getClosePrice().doubleValue();
+			_log.debug(closesprices[counter]);
+			counter++;			
+		}
+		IBTraderSMAIndicador SMA = new IBTraderSMAIndicador();
+		SMA.calculate(closesprices, (int) PeriodN-1);
+		returnAvgValue = SMA.getSMA()[(int) PeriodN-1];
+    	_log.debug("Calculting SMA  from " + cfromWithOpenMarketsTimes.getTime() + " until :" + _ActualDateBar + ",shareId:" + shareId);
+    	
+    	if (_log.isDebugEnabled())
+    	{
+    		for (int j=0;j<PeriodN;j++)
+    		{ 
+    			try 
+    			{
+    				_log.trace("getSimpleAvgMobile: 9 " + j + ":" + SMA.getSMA()[j]+ "closeprice:" + closesprices[j]);}
+    				//System.out.print(closesprices[j] + ","); 
+    			catch (Exception e) {}	
+    		}
+    	}
+    	
+		}
+		catch (Exception e)
+		{
+			_log.debug(e.getMessage());
+		}
+        
 		
-		if (!simulation)
+		/* if (!simulation)
 		{
 			Realtime simpleAvgMobile = RealtimeLocalServiceUtil.findSimpleMobileAvgGroupByPeriods(shareId, companyId, groupId, cfromWithOpenMarketsTimes.getTime(), _ActualDateBar, lAvgPeriods);
 			returnAvgValue =  simpleAvgMobile!=null && simpleAvgMobile.getVolume()==lAvgPeriods.size() ?  simpleAvgMobile.getValue() : null;
@@ -769,7 +809,7 @@ public class BaseIndicatorUtil {
 		{
 			HistoricalRealtime simpleHistoricalAvgMobile =  HistoricalRealtimeLocalServiceUtil.findSimpleMobileAvgGroupByPeriods(shareId, companyId, groupId, cfromWithOpenMarketsTimes.getTime(), _ActualDateBar, lAvgPeriods);
 			returnAvgValue =  simpleHistoricalAvgMobile!=null && simpleHistoricalAvgMobile.getVolume()==lAvgPeriods.size() ?  simpleHistoricalAvgMobile.getValue() : null;
-		}
+		}*/
 		
 		return returnAvgValue;
 				

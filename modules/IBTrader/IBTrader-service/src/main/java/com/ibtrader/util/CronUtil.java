@@ -8,6 +8,7 @@ import java.time.LocalDateTime ;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -167,6 +168,8 @@ public class CronUtil {
 	    		    DateDayFin.set(Calendar.MINUTE, 59);
 	    		    DateDayFin.set(Calendar.SECOND, 59);
 	    		    
+	    		    _log.debug("Backtesting for " + oShare.getSymbol()  + ",date:" + DateDayIni.getTime());
+	    		    
 	    		    /* 	si no hay realtime ese dia lo saltamos */
 	    			HistoricalRealtime existsRealTime = HistoricalRealtimeLocalServiceUtil.findFirstRealTimeBetweenDates(backtesting.getShareId(), backtesting.getCompanyId(), backtesting.getGroupId(), DateDayIni.getTime(), DateDayFin.getTime());
 	    			if (!Validator.isNull(existsRealTime)) // hay tiempo real ese dia, tratamos de buscar operaciones 
@@ -179,8 +182,23 @@ public class CronUtil {
 		    			
 		    				DateDayIni.add(Calendar.MINUTE, ConfigKeys.SIMULATION_MINUTES_BAR_SIZE ); //00:05 el primero 
 		    				
+		    				
+		    				_log.debug("Backtesting for " + oShare.getSymbol()  + ",timeframe :" +  DateDayIni.getTime());
+		    				
 		    				List<Strategy> _lStrategiesOfShare = StrategyShareLocalServiceUtil.findByActiveStrategies(Boolean.TRUE,
 		    						backtesting.getShareId(),backtesting.getCompanyId(), backtesting.getGroupId());
+		    				
+		    				
+		    				/* TENEMOS QUE ORDENARLAS POR SI ES UNA ESTRATEGIA DE SALIDA PRIMERO, 
+		    				 * POR SI EN EL MISMO TRAMO SE SALE Y ENTRA A LA VEZ (P.E. MEDIAS MOVILES 
+		    				 * 
+		    				 *  PRIMERO LAS OUT Y DESPUES LAS IN 
+		    				 * */
+		    				
+		    				Comparator<Strategy> strategyTypeComparator = Comparator.comparing(Strategy::getType);
+		    				Comparator<Strategy> strategyTypeComparatorReversed  = strategyTypeComparator.reversed();
+		    				_lStrategiesOfShare.sort(strategyTypeComparatorReversed);
+		    				
 		    				
 		    				for (Strategy oStrategyShare :_lStrategiesOfShare)
 			    			{
@@ -227,8 +245,12 @@ public class CronUtil {
 				
 				
 				/* llamamos al servicio para actualizar los totales */
+    			Calendar _cSimulationTo = Calendar.getInstance();
+    			_cSimulationTo.setTime(_freshBackTesting.getEndDate());  // 1 dia mas
+    			_cSimulationTo.add(Calendar.DATE, 1);
+    			 
 				String position_mode = Utilities.getPositionModeType(_freshBackTesting.getFromDate(), _freshBackTesting.getCompanyId(),_freshBackTesting.getGroupId()); 
-				JSONArray results = PositionLocalServiceUtil.findPositionClosedResults(_freshBackTesting.getFromDate(), _freshBackTesting.getToDate(), _freshBackTesting.getGroupId(), _freshBackTesting.getCompanyId(), position_mode, _freshBackTesting.getBackTId());
+				JSONArray results = PositionLocalServiceUtil.findPositionClosedResults(_freshBackTesting.getFromDate(), _cSimulationTo.getTime(), _freshBackTesting.getGroupId(), _freshBackTesting.getCompanyId(), position_mode, _freshBackTesting.getBackTId());
 				long totalpositions_buy=0;
 				long totalpositions_sell=0;
 				String  type  = "";

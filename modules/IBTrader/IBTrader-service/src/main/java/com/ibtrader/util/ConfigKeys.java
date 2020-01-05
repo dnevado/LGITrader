@@ -21,6 +21,7 @@ public class ConfigKeys {
     public static int  _TICKTYPE_CLOSE = 9;
     public static int _TICKTYPE_LAST  =4;
     public static int _TICKTYPE_DELAYED_LAST  =68;
+    public static int _TICKTYPE_VOLUME  =8;
     		
     
     public static final Long RULE_TRADE_TIME_PERIOD = new Long(1);
@@ -35,7 +36,11 @@ public class ConfigKeys {
     
     public static final String SECURITY_TYPE_STOCK = "STK";
     public static final String SECURITY_TYPE_FUTUROS = "FUT";
+    public static final String SECURITY_TYPE_INDICES = "IND";
     
+    
+	 public static final String   _BUDGET_USER_EXPANDO = "maxuserbudgetfortrading";
+
     
     public static final String CURRENCY_DOLLAR = "USD";
     public static final String CURRENCY_EURO = "EUR";

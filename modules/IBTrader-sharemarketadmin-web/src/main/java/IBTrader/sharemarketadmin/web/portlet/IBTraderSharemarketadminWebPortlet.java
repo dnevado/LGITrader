@@ -234,7 +234,7 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 		boolean bExchangeOK = _shareLocalService.ExistsExchange(exchange);
 		boolean bPrimaryExchangeOK = _shareLocalService.ExistsPrimaryExchange(primary_exchange);		
 		boolean bSecurityOK = _shareLocalService.ExistsSecurityType(security_type);
-		boolean bFutureOK = security_type.equals(ConfigKeys.SECURITY_TYPE_STOCK) || (security_type.equals(ConfigKeys.SECURITY_TYPE_FUTUROS) && !expirationdate.equals(""));
+		boolean bFutureOK = security_type.equals(ConfigKeys.SECURITY_TYPE_INDICES) || security_type.equals(ConfigKeys.SECURITY_TYPE_STOCK) || (security_type.equals(ConfigKeys.SECURITY_TYPE_FUTUROS) && !expirationdate.equals(""));
 		
 		boolean bNumberParamsOK = numbertopurchase>=1 && 
 						percentual_limit_buy>=0 && percentual_limit_buy<=100  && 

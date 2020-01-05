@@ -9,7 +9,7 @@
 
 <%	ThemeDisplay _themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);	%> 
 
-<div class="strategyshareresultscontainer-fluid-1280">
+<div class="strategyshareresults container-fluid-1280">
 
 <%@include file="/html/includes/tabs.jsp"%>
 <aui:container cssClass='super-awesome-container'>

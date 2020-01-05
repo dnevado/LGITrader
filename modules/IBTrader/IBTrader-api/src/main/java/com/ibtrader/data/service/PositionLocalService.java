@@ -29,6 +29,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.model.PersistedModel;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.BaseLocalService;
@@ -70,6 +71,9 @@ public interface PositionLocalService extends BaseLocalService,
 
 	public boolean ExistsPositionToExit(long groupId, long companyId,
 		long shareId, java.lang.String positionMode, long backtestingId);
+
+	public boolean IsinRangeUserBudget(User user, double newTargetPosition,
+		java.lang.String positionMode, long companyId, long groupId);
 
 	public boolean satisfyDayTraderPattern(Date from, Date to, long groupId,
 		long companyId, java.lang.String positionMode);
@@ -197,6 +201,9 @@ public interface PositionLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
 		throws PortalException;
+
+	public double findTotalLiquidPositionOpen(long groupId, long companyId,
+		java.lang.String positionMode);
 
 	/**
 	* Returns the number of positions.

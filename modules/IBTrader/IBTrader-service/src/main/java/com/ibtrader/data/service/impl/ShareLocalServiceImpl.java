@@ -227,7 +227,7 @@ public class ShareLocalServiceImpl extends ShareLocalServiceBaseImpl {
 	
 	public boolean ExistsSecurityType(String type)
 	{
-		return (type.equals(ConfigKeys.SECURITY_TYPE_FUTUROS) || type.equals(ConfigKeys.SECURITY_TYPE_STOCK)); 
+		return (type.equals(ConfigKeys.SECURITY_TYPE_FUTUROS) || type.equals(ConfigKeys.SECURITY_TYPE_STOCK) || type.equals(ConfigKeys.SECURITY_TYPE_INDICES)); 
 	}
 	public boolean ExistsExchange(String exchange)
 	{
