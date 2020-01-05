@@ -281,7 +281,7 @@ html {
 				}
 			}
 
-			> li > a {
+			li > a {
 				padding: 4px 15px 5px;
 			}
 
@@ -707,6 +707,34 @@ html {
 	.table thead th   {color : #ffffff; background: #8cb29d;}
 	table.dataTable thead th, table.dataTable tfoot th {font-weight : normal}
 	
+	.topLogo	   { max-height: 60px;}
+	.navbar-brand {    	
+    	padding-top: 2px;
+	}
+	.navbar {    max-height: 80px;}
+	
+	.userbudget .portlet  {
+     background: none;
+     margin-bottom: 0px;     
+     padding-top: 10px;
+	}
+	
+	.userbudget-detail {width:200px;color : #ffffff;}
+	.userbudget-detail .progress-bar {background-color : #8cb29d} 
+	nav div.container-fluid {max-height :80px}
+	
+	#p_p_id_IBTraderSimulationmodeWeb_ {padding:10px} 
+	
+	@media (max-width: 600px) {
+		.navbar-primary  {
+		width: 60px;	}
+		.navbar-primary  .nav-label {
+	 		 display: none;
+		}
+	}
+	@media (min-width: 600px) {
+		.navbar-primary  { width: 200px;}
+	}
 	/* ocultamos topper para user 
 	.normal_user .portlet-topper {
   		display: none !important;
@@ -728,18 +756,19 @@ html {
 	  color: white;
 	}
 
-	.navbar-global .navbar-user > li > a
+	.navbar-global .navbar-user  li  a
 	{
 	  color: white;
 	}
+
+	
 
 	.navbar-primary {
 	  background-color: #333;
 	  bottom: 0px;
 	  left: 0px;
 	  position: absolute;
-	  top: 69px;
-	  width: 200px;
+	  top: 13px;	
 	  z-index: 8;
 	  overflow: hidden;
 	  -webkit-transition: all 0.1s ease-in-out;
