@@ -14,6 +14,7 @@ import com.ib.client.Order;
 import com.ib.contracts.FutContract;
 import com.ib.contracts.StkContract;
 import com.ibtrader.constants.IBTraderConstants;
+import com.ibtrader.data.model.AuditIndicatorsStrategy;
 import com.ibtrader.data.model.HistoricalRealtime;
 import com.ibtrader.data.model.Market;
 import com.ibtrader.data.model.Position;
@@ -21,9 +22,12 @@ import com.ibtrader.data.model.Realtime;
 import com.ibtrader.data.model.Share;
 import com.ibtrader.data.model.StrategyShare;
 import com.ibtrader.data.model.impl.StrategyImpl;
+import com.ibtrader.data.service.AuditIndicatorsStrategyLocalServiceUtil;
 import com.ibtrader.data.service.HistoricalRealtimeLocalServiceUtil;
 import com.ibtrader.data.service.PositionLocalServiceUtil;
 import com.ibtrader.data.service.RealtimeLocalServiceUtil;
+import com.ibtrader.data.service.persistence.AuditIndicatorsStrategyPK;
+import com.ibtrader.data.service.persistence.impl.AuditIndicatorsStrategyPersistenceImpl;
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.expando.kernel.model.ExpandoColumn;
 import com.liferay.expando.kernel.model.ExpandoColumnConstants;
@@ -37,6 +41,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.ibtrader.util.BaseIndicatorUtil;
 import com.ibtrader.util.AroonIndicatorUtil;
@@ -44,6 +49,10 @@ import com.ibtrader.util.ConfigKeys;
 import com.ibtrader.util.DirectionalMovementADXRUtil;
 import com.ibtrader.util.PositionStates;
 import com.ibtrader.util.Utilities;
+
+
+/* https://compraraccionesdebolsa.com/los-sistemas-de-trading/triple-pantalla-Elder/ 
+ * http://www.megabolsa.com/2015/08/01/tecnica-de-trading-de-triple-pantalla/*/
 
 public class IBStrategyElderExpStochastic extends StrategyImpl {
 
@@ -81,7 +90,8 @@ public class IBStrategyElderExpStochastic extends StrategyImpl {
 	JSONObject _tradeDescription;// // acumular la traza de los valores introducidos
 	
 	SimpleDateFormat TimeFormat = new SimpleDateFormat (Utilities.__IBTRADER_SHORT_HOUR_FORMAT);
-	
+	SimpleDateFormat auditTimeFormat = new SimpleDateFormat (Utilities.__IBTRADER_HISTORICAL_DATE_FORMAT);
+
 	@Override
 	public long  execute(Share _share, Market _market,  Date backtestingdDate)
 	{
@@ -134,6 +144,12 @@ public class IBStrategyElderExpStochastic extends StrategyImpl {
 	    		if (this.getJsonStrategyShareParams()!=null && this.getJsonStrategyShareParams().getInt(ConfigKeys._FIELD_NUMBER_TO_PURCHASE,0)>0)
 	    			number_to_purchase =this.getJsonStrategyShareParams().getInt(ConfigKeys._FIELD_NUMBER_TO_PURCHASE,0);    	
 				
+	    		User user = UserLocalServiceUtil.getUser(_share.getUserCreatedId());
+			    boolean bOrderIsWithinBudget =   PositionLocalServiceUtil.IsinRangeUserBudget(user,_share.getMultiplier() *  this.getValueIn() * number_to_purchase, position_mode, _share.getCompanyId(), _share.getGroupId());
+			    if (!bOrderIsWithinBudget)
+			    	return returnValue;
+			    
+			    
 				BuyPositionTWS.totalQuantity(number_to_purchase);
 				BuyPositionTWS.orderType(PositionStates.ordertypes.MKT.toString());		    
 				// precio del tick mÃ¡s o menos un porcentaje ...normalmente %1
@@ -255,33 +271,39 @@ public class IBStrategyElderExpStochastic extends StrategyImpl {
 			return Boolean.FALSE;
 			
 	    this.setJsonStrategyShareParams(JSONFactoryUtil.createJSONObject(_strategyImpl.getStrategyparamsoverride()));					
-		User _IBUser = UserLocalServiceUtil.getUser(_share.getUserCreatedId());
 		String HoraActual = "";
 		Calendar calFechaActualWithDeadLine;
 		Calendar calFechaFinMercado;
+		/* TIMEZONE AJUSTADO */
+		//Date _FromNow =  !isSimulation_mode() ?    Utilities.getDate(_IBUser) : backtestingdDate;
+		Date _FromNow =  !isSimulation_mode() ?    new Date() : backtestingdDate;
+		Calendar _calendarFromNow = Calendar.getInstance();
+		_calendarFromNow.setTime(_FromNow);
+		User _IBUser = UserLocalServiceUtil.getUser(_share.getUserCreatedId());
+		HoraActual = Utilities.getWebFormattedTime(_calendarFromNow.getTime());
+		
+		Market marketRealOpenCloseTimes = Utilities.getOpenCloseMarket(_share, backtestingdDate, isSimulation_mode());
+		if (Validator.isNull(marketRealOpenCloseTimes)) return false;
 		if (!isSimulation_mode())
 		{
-			HoraActual = Utilities.getHourNowFormat(_IBUser);
-			calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(HoraActual);
-			calFechaFinMercado = Utilities.getNewCalendarWithHour(_market.getEnd_hour());
+			calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(HoraActual); 
+			calFechaFinMercado = Utilities.getNewCalendarWithHour(marketRealOpenCloseTimes.getEnd_hour()); 
 		}
 		else	
 		{
-			HoraActual = Utilities.getHourNowFormat(_IBUser,backtestingdDate);
+				
 			calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(backtestingdDate, HoraActual);
-			calFechaFinMercado = Utilities.getNewCalendarWithHour(backtestingdDate, _market.getEnd_hour());			
-		}			
+			calFechaFinMercado = Utilities.getNewCalendarWithHour(backtestingdDate, marketRealOpenCloseTimes.getEnd_hour()); 			
+		}	
 //		StrategyShare _strategyshare = StrategyShareLocalServiceUtil.getByCommpanyShareStrategyId(_share.getGroupId(),_share.getCompanyId(),_share.getShareId(),_strategyImpl.getStrategyId());
 				
-		_num_macdP       = this.getJsonStrategyShareParams().getLong(_EXPANDO_MOBILE_AVERAGE_PERIODS_NUMBER,0);
-		_num_macdT 		 = this.getJsonStrategyShareParams().getLong(_EXPANDO_MOBILE_AVERAGE_CANDLE_SIZE,0);
+		_num_macdP      				= this.getJsonStrategyShareParams().getLong(_EXPANDO_MOBILE_AVERAGE_PERIODS_NUMBER,0);
+		_num_macdT 		 				= this.getJsonStrategyShareParams().getLong(_EXPANDO_MOBILE_AVERAGE_CANDLE_SIZE,0);
 		_num_stochastic_rate_overbought = this.getJsonStrategyShareParams().getLong(_EXPANDO_STOCHASTUC_OVERBOUGHT_RATE,0);
 		_num_stochastic_rate_oversold   = this.getJsonStrategyShareParams().getLong(_EXPANDO_STOCHASTUC_OVERSOLD_RATE,0);
-		_num_stochasticP      = this.getJsonStrategyShareParams().getLong(_EXPANDO_STOCHASTUC_PERIDOS,0);  
-		
-		_num_ticks_fromLastbar = this.getJsonStrategyShareParams().getLong(_EXPANDO_X_TICKS_ENTRYPRICE,0);
-		
-		operationfilter = this.getJsonStrategyShareParams().getString(_EXPANDO_MOBILE_AVERAGE_TRADE_OPERATIONS_TYPE,"ALL").trim();
+		_num_stochasticP      			= this.getJsonStrategyShareParams().getLong(_EXPANDO_STOCHASTUC_PERIDOS,0);  		
+		_num_ticks_fromLastbar 			= this.getJsonStrategyShareParams().getLong(_EXPANDO_X_TICKS_ENTRYPRICE,0);		
+		operationfilter					= this.getJsonStrategyShareParams().getString(_EXPANDO_MOBILE_AVERAGE_TRADE_OPERATIONS_TYPE,"ALL").trim();
 		
 		if (_num_stochasticP==0 || _num_macdP==0 || _num_macdT==0 || _num_stochastic_rate_overbought==0 || _num_stochastic_rate_oversold==0 || _num_ticks_fromLastbar==0)
 			return Boolean.FALSE;
@@ -289,9 +311,7 @@ public class IBStrategyElderExpStochastic extends StrategyImpl {
 		/* SOLO PODEMOS ENTRAR EN EL PERIODO MARCADO DE CADA MINUTO, PARA LO CUAL OBTENEMOS EL RESTO */	
 		
 		/* TIMEZONE AJUSTADO */
-		Date _FromNow =  !isSimulation_mode() ?   Utilities.getDate(_IBUser) : backtestingdDate;
-		Calendar _calendarFromNow = Calendar.getInstance();
-		_calendarFromNow.setTime(_FromNow);
+	
 	
 		long currentSeconds = _calendarFromNow.get(Calendar.SECOND);
 		
@@ -326,9 +346,9 @@ public class IBStrategyElderExpStochastic extends StrategyImpl {
 			// HORA DE FIN DE CALCULO DE MAX Y MINIMOS.
 			String StartHourTrading = "";
 			if (!isSimulation_mode())
-				 StartHourTrading =  Utilities.getActualHourFormatPlusMinutes(_calendarFromNow, _market.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET));
+				 StartHourTrading =  Utilities.getActualHourFormatPlusMinutes(_calendarFromNow, marketRealOpenCloseTimes.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET));
 			else				
-				 StartHourTrading = Utilities.getActualHourFormatPlusMinutes(_market.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET));
+				 StartHourTrading = Utilities.getActualHourFormatPlusMinutes(marketRealOpenCloseTimes.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET));
 			// COMPROBAMOS ALGUN TIPO DE ERROR 
 			if (StartHourTrading.contains("-1"))
 			{
@@ -375,7 +395,9 @@ public class IBStrategyElderExpStochastic extends StrategyImpl {
 					
 					if (_avgMobileExponential!=null)
 					{
-								
+					
+					
+						
 					double stochasticD = 0d; //new DirectionalMovementADXRUtil(_calendarFromNow.getTime(), _num_macdT, _num_macdP,_share.getShareId(), _share.getCompanyId(), _share.getGroupId());					
 					
 					
@@ -388,10 +410,13 @@ public class IBStrategyElderExpStochastic extends StrategyImpl {
 					_num_stochastic_rate_overbought = this.getJsonStrategyShareParams().getLong(_EXPANDO_STOCHASTUC_OVERBOUGHT_RATE,0);
 					_num_stochastic_rate_oversold   = this.getJsonStrategyShareParams().getLong(_EXPANDO_STOCHASTUC_OVERSOLD_RATE,0);
 					
+					/* https://www.tecnicasdetrading.com/2010/06/el-oscilador-estocastico.html */
+					
 					boolean bBuyStochasticSignal =  Validator.isNotNull(stochasticD) && stochasticD>0 && stochasticD <=_num_stochastic_rate_oversold;
 				    boolean bSellStochasticSignal = Validator.isNotNull(stochasticD) && stochasticD>0 && stochasticD >=_num_stochastic_rate_overbought;
 				    
-				    /* Si la primera pantalla tiene tendencia alcista y en la segunda pantalla los osciladores indican sobre venta, abrimos una posición de compra si en la tercera pantalla  el oscilador está en sobre venta y el precio supera el máximo del día o el de la sesión anterior.
+				    /* Si la primera pantalla tiene tendencia alcista y en la segunda pantalla los osciladores indican sobre venta, 
+				     * abrimos una posición de compra si en la tercera pantalla  el oscilador está en sobre venta y el precio supera el máximo del día o el de la sesión anterior.
 				    Si en la primera pantalla se identifica un movimiento de tendencia a la baja y el oscilador en la segunda pantalla se mueve al alza, hay que estar listos para abrir una posición corta una vez que la tercera pantalla de la señal.
 				    
 				    * Valores menores de 20 en el oscilador indican condiciones de sobre venta que pueden anticipar un rebote y alza del precio
@@ -429,10 +454,14 @@ public class IBStrategyElderExpStochastic extends StrategyImpl {
 						_log.debug("lastRealtime.doubleValue() >_avgMobileExponential.doubleValue() && bBuyStochasticSignal && bBuyEntryBasedLastBarTicks:" + _BuySuccess);
 						_log.debug("lastRealtime.doubleValue() <_avgMobileExponential.doubleValue() && bSellStochasticSignal && bSellEntryBasedLastBarTick:" + _SellSuccess);
 
-
+						
 					}
 					
-					if (_BuySuccess || _SellSuccess)
+					/* fecha hora venicmiento  NO proxima */ 
+					boolean  IsFutureTradeable = Utilities.IsFutureTradeable(_share);
+					
+					
+					if (IsFutureTradeable && (_BuySuccess || _SellSuccess))
 					{
 					
 					    this.setValueIn(lastRealtime.doubleValue());											
@@ -455,7 +484,41 @@ public class IBStrategyElderExpStochastic extends StrategyImpl {
 						_tradeDescription.put("operationfilter", operationfilter);						
 						_tradeDescription.put("stochasticD", stochasticD);												
 					
-					}						
+					}
+					
+					/* ALMACENAMOS LOS VALORES DE AUDITORIA SI ES TIEMPO REAL */
+					if (!isSimulation_mode())
+					{
+						jsonStrategyIndicators= JSONFactoryUtil.createJSONObject();
+						jsonStrategyIndicators.put("_avgMobileExponential", _avgMobileExponential);
+						jsonStrategyIndicators.put("shareId", _share.getShareId());
+						jsonStrategyIndicators.put("bartime", auditTimeFormat.format(_calendarFromNow.getTime()));
+						jsonStrategyIndicators.put("lastRealtime", lastRealtime.doubleValue());
+						jsonStrategyIndicators.put("periods", _num_macdP);
+						jsonStrategyIndicators.put("barsize", _num_macdT);								
+						jsonStrategyIndicators.put("stochasticD", stochasticD);								
+						
+						
+						try 
+						{
+							AuditIndicatorsStrategyPK pkAudit = new AuditIndicatorsStrategyPK(_share.getGroupId(), _share.getCompanyId(), auditTimeFormat.format(_calendarFromNow.getTime()), _strategyImpl.getClass().getName(), _share.getShareId());
+							AuditIndicatorsStrategy auditStrategy = AuditIndicatorsStrategyLocalServiceUtil.fetchAuditIndicatorsStrategy(pkAudit);
+							if (Validator.isNull(auditStrategy))
+							{
+								auditStrategy = AuditIndicatorsStrategyLocalServiceUtil.createAuditIndicatorsStrategy(pkAudit);
+								auditStrategy.setAuditData(Validator.isNotNull(jsonStrategyIndicators) ? jsonStrategyIndicators.toString() : StringPool.BLANK);
+								AuditIndicatorsStrategyLocalServiceUtil.addAuditIndicatorsStrategy(auditStrategy);
+								
+							}
+						}
+						catch (Exception e)	{}
+						
+					}	
+					
+					
+					
+					
+					
 				 } // if  (Validator.isNotNull(oShareLastRTime))			   	
 				} // if (_avgMobileExponential!=null)			
 			}// NO EXISTE POSICION 

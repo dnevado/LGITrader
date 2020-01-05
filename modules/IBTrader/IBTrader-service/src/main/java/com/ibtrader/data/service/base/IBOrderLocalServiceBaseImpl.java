@@ -18,10 +18,12 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.ibtrader.data.model.IBOrder;
 import com.ibtrader.data.service.IBOrderLocalService;
+import com.ibtrader.data.service.persistence.AuditIndicatorsStrategyPersistence;
 import com.ibtrader.data.service.persistence.BackTestingPersistence;
 import com.ibtrader.data.service.persistence.ConfigPersistence;
 import com.ibtrader.data.service.persistence.HistoricalRealtimeFinder;
 import com.ibtrader.data.service.persistence.HistoricalRealtimePersistence;
+import com.ibtrader.data.service.persistence.IBOrderFinder;
 import com.ibtrader.data.service.persistence.IBOrderPersistence;
 import com.ibtrader.data.service.persistence.MarketPersistence;
 import com.ibtrader.data.service.persistence.PositionFinder;
@@ -436,6 +438,44 @@ public abstract class IBOrderLocalServiceBaseImpl extends BaseLocalServiceImpl
 	}
 
 	/**
+	 * Returns the audit indicators strategy local service.
+	 *
+	 * @return the audit indicators strategy local service
+	 */
+	public com.ibtrader.data.service.AuditIndicatorsStrategyLocalService getAuditIndicatorsStrategyLocalService() {
+		return auditIndicatorsStrategyLocalService;
+	}
+
+	/**
+	 * Sets the audit indicators strategy local service.
+	 *
+	 * @param auditIndicatorsStrategyLocalService the audit indicators strategy local service
+	 */
+	public void setAuditIndicatorsStrategyLocalService(
+		com.ibtrader.data.service.AuditIndicatorsStrategyLocalService auditIndicatorsStrategyLocalService) {
+		this.auditIndicatorsStrategyLocalService = auditIndicatorsStrategyLocalService;
+	}
+
+	/**
+	 * Returns the audit indicators strategy persistence.
+	 *
+	 * @return the audit indicators strategy persistence
+	 */
+	public AuditIndicatorsStrategyPersistence getAuditIndicatorsStrategyPersistence() {
+		return auditIndicatorsStrategyPersistence;
+	}
+
+	/**
+	 * Sets the audit indicators strategy persistence.
+	 *
+	 * @param auditIndicatorsStrategyPersistence the audit indicators strategy persistence
+	 */
+	public void setAuditIndicatorsStrategyPersistence(
+		AuditIndicatorsStrategyPersistence auditIndicatorsStrategyPersistence) {
+		this.auditIndicatorsStrategyPersistence = auditIndicatorsStrategyPersistence;
+	}
+
+	/**
 	 * Returns the back testing local service.
 	 *
 	 * @return the back testing local service
@@ -601,6 +641,24 @@ public abstract class IBOrderLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 */
 	public void setIBOrderPersistence(IBOrderPersistence ibOrderPersistence) {
 		this.ibOrderPersistence = ibOrderPersistence;
+	}
+
+	/**
+	 * Returns the ib order finder.
+	 *
+	 * @return the ib order finder
+	 */
+	public IBOrderFinder getIBOrderFinder() {
+		return ibOrderFinder;
+	}
+
+	/**
+	 * Sets the ib order finder.
+	 *
+	 * @param ibOrderFinder the ib order finder
+	 */
+	public void setIBOrderFinder(IBOrderFinder ibOrderFinder) {
+		this.ibOrderFinder = ibOrderFinder;
 	}
 
 	/**
@@ -1027,6 +1085,10 @@ public abstract class IBOrderLocalServiceBaseImpl extends BaseLocalServiceImpl
 		}
 	}
 
+	@BeanReference(type = com.ibtrader.data.service.AuditIndicatorsStrategyLocalService.class)
+	protected com.ibtrader.data.service.AuditIndicatorsStrategyLocalService auditIndicatorsStrategyLocalService;
+	@BeanReference(type = AuditIndicatorsStrategyPersistence.class)
+	protected AuditIndicatorsStrategyPersistence auditIndicatorsStrategyPersistence;
 	@BeanReference(type = com.ibtrader.data.service.BackTestingLocalService.class)
 	protected com.ibtrader.data.service.BackTestingLocalService backTestingLocalService;
 	@BeanReference(type = BackTestingPersistence.class)
@@ -1045,6 +1107,8 @@ public abstract class IBOrderLocalServiceBaseImpl extends BaseLocalServiceImpl
 	protected IBOrderLocalService ibOrderLocalService;
 	@BeanReference(type = IBOrderPersistence.class)
 	protected IBOrderPersistence ibOrderPersistence;
+	@BeanReference(type = IBOrderFinder.class)
+	protected IBOrderFinder ibOrderFinder;
 	@BeanReference(type = com.ibtrader.data.service.MarketLocalService.class)
 	protected com.ibtrader.data.service.MarketLocalService marketLocalService;
 	@BeanReference(type = MarketPersistence.class)

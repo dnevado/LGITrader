@@ -107,8 +107,25 @@ public class ShareLocalServiceImpl extends ShareLocalServiceBaseImpl {
 		
 	}
 	
-	
-	
+	/* BUSCAMOS EL MAS ANTIGUO SHARE NO ACTUALIZADO PARA RELLENAR LOS GAPS DE REALTIME */
+	public Share findTargetShareToFillRealtime(boolean _active,boolean validated_trader_provider)
+	{
+		
+		Share oShare  = null;
+		
+		DynamicQuery _DQ = shareLocalService.dynamicQuery();
+		
+		_DQ.add(RestrictionsFactoryUtil.eq("active", _active));
+		_DQ.addOrder(OrderFactoryUtil.asc("date_filled_realtime_gaps"));
+		_DQ.add(RestrictionsFactoryUtil.eq("validated_trader_provider", validated_trader_provider));
+			List<Share> lShare = shareLocalService.dynamicQuery(_DQ);
+		if (!lShare.isEmpty() && lShare.size()>0)
+		{
+			oShare = lShare.get(0);
+		}
+		return oShare;
+		
+	}
 	
 	public List<Share> findByActiveMarketGroupCompany(long _marketId, boolean _active, long groupId, long companyId)
 	{
@@ -210,7 +227,7 @@ public class ShareLocalServiceImpl extends ShareLocalServiceBaseImpl {
 	
 	public boolean ExistsSecurityType(String type)
 	{
-		return (type.equals(ConfigKeys.SECURITY_TYPE_FUTUROS) || type.equals(ConfigKeys.SECURITY_TYPE_STOCK)); 
+		return (type.equals(ConfigKeys.SECURITY_TYPE_FUTUROS) || type.equals(ConfigKeys.SECURITY_TYPE_STOCK) || type.equals(ConfigKeys.SECURITY_TYPE_INDICES)); 
 	}
 	public boolean ExistsExchange(String exchange)
 	{

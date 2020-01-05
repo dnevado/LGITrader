@@ -360,6 +360,10 @@ public class IBOrderLocalServiceUtil {
 			ibclientId, shareId);
 	}
 
+	public static void deleteRemovable(java.util.Date untilDate) {
+		getService().deleteRemovable(untilDate);
+	}
+
 	public static IBOrderLocalService getService() {
 		return _serviceTracker.getService();
 	}

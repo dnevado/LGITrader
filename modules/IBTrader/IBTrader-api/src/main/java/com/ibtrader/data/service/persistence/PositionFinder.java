@@ -32,4 +32,11 @@ public interface PositionFinder {
 
 	public java.util.List getPositionOpenResults(java.util.Date to,
 		long groupId, long companyId, java.lang.String positionMode);
+
+	public java.util.List getCurrentLiquidTraded(long groupId, long companyId,
+		java.lang.String positionMode);
+
+	public java.util.List getDayTradingPatternPositions(java.util.Date from,
+		java.util.Date to, long groupId, long companyId,
+		java.lang.String positionMode, java.lang.String positionState);
 }

@@ -271,7 +271,19 @@ public class ConfigLocalServiceImpl extends ConfigLocalServiceBaseImpl {
 			 _conf.setGlobaldefault(false);
 			 _conf.setIscron(Boolean.FALSE);
 			 configLocalService.updateConfig(_conf);   	
-				 
+			
+			 
+			 _conf = configLocalService.createConfig(counterLocalService.increment(Config.class.getName()));
+			 _conf.setGroupId(_group);
+			 _conf.setCompanyId(_company);
+			 _conf.setConfig_key(IBTraderConstants.keyDAY_TRADER_PATTER);
+			 _conf.setValue(String.valueOf(IBTraderConstants.vDAY_TRADER_PATTER));
+			 _conf.setName(IBTraderConstants.keyDAY_TRADER_PATTER);
+			 _conf.setDescription(IBTraderConstants.keyDAY_TRADER_PATTER);
+			 _conf.setGlobaldefault(false);
+			 _conf.setIscron(Boolean.FALSE);
+			 configLocalService.updateConfig(_conf);   	
+			 
 				   
 			 _conf = configLocalService.createConfig(counterLocalService.increment(Config.class.getName()));
 			 _conf.setGroupId(_group);

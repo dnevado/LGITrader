@@ -1,0 +1,4 @@
+Bundle-Name: IBTrader-usercurrentbudget-web
+Bundle-SymbolicName: com.ibtrader.usercurrent.budget
+Bundle-Version: 1.0.0
+Export-Package: com.ibtrader.current.budget.constants

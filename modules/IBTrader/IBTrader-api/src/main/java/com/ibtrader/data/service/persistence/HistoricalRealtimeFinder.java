@@ -42,6 +42,10 @@ public interface HistoricalRealtimeFinder {
 	public com.ibtrader.data.model.HistoricalRealtime findLastRealTimeLessThanDate(
 		long shareId, long companyId, long groupId, java.util.Date To);
 
+	public com.ibtrader.data.model.HistoricalRealtime findFirstRealTimeBetweenDates(
+		long shareId, long companyId, long groupId, java.util.Date from,
+		java.util.Date to);
+
 	public java.util.List findSimpleMobileAvgGroupByPeriods(long shareId,
 		long companyId, long groupId, java.util.Date from, java.util.Date to,
 		java.util.List<java.lang.String> mobileAvgDates);

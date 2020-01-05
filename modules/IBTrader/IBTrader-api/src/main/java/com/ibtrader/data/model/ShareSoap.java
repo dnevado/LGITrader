@@ -63,6 +63,7 @@ public class ShareSoap implements Serializable {
 		soapModel.setLast_error_trader_provider(model.getLast_error_trader_provider());
 		soapModel.setSimulation_end_date(model.getSimulation_end_date());
 		soapModel.setTrading_hours(model.getTrading_hours());
+		soapModel.setDate_filled_realtime_gaps(model.getDate_filled_realtime_gaps());
 
 		return soapModel;
 	}
@@ -358,6 +359,14 @@ public class ShareSoap implements Serializable {
 		_trading_hours = trading_hours;
 	}
 
+	public Date getDate_filled_realtime_gaps() {
+		return _date_filled_realtime_gaps;
+	}
+
+	public void setDate_filled_realtime_gaps(Date date_filled_realtime_gaps) {
+		_date_filled_realtime_gaps = date_filled_realtime_gaps;
+	}
+
 	private String _uuid;
 	private long _shareId;
 	private String _name;
@@ -387,4 +396,5 @@ public class ShareSoap implements Serializable {
 	private String _last_error_trader_provider;
 	private Date _simulation_end_date;
 	private String _trading_hours;
+	private Date _date_filled_realtime_gaps;
 }

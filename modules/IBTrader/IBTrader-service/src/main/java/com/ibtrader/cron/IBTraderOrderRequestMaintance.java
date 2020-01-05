@@ -8,6 +8,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.BaseSchedulerEntryMessageListener;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -58,22 +59,12 @@ public class IBTraderOrderRequestMaintance  extends BaseSchedulerEntryMessageLis
 		{
 			
 			_log.info("Deleting iborders requestid while rebooting...");
-			/* DEJAMOS 7 DIAS PARA LOS REINICIOS PREVENTIVOS */
-			Calendar cNow = Calendar.getInstance();	
-			cNow.set(Calendar.HOUR_OF_DAY,23);
-			cNow.set(Calendar.MINUTE,59);
-			cNow.set(Calendar.SECOND,59);
+			IBOrderLocalServiceUtil.deleteRemovable(new Date());
 			
-			List<IBOrder> _ordersToRemove =  IBOrderLocalServiceUtil.findByRemovableDate(cNow.getTime(), Boolean.TRUE);
-			
-			for (IBOrder order : _ordersToRemove)
-			{
-				IBOrderLocalServiceUtil.deleteIBOrder(order);
-			}
 		}
 		catch (Exception e)
 		{
-			
+			_log.debug("deactivate Deleting iborders" + e.getMessage());
 		}
 		 	 
 		_schedulerEngineHelper.unregister(this);
@@ -109,27 +100,12 @@ public class IBTraderOrderRequestMaintance  extends BaseSchedulerEntryMessageLis
 	
 	@Override
 	protected void doReceive(Message message) throws Exception {
-			
-	   if(runningJob) 
-	   {
-		   		_log.debug("StartDeletingOldOrderRequestCron already running, not starting again");
-		   	
-		        return;
-	   }	
-		try
-		{
-			runningJob = true;					
-			CronUtil cronThread = new CronUtil();
-			_log.debug(" Start IBTraderFillRequiredPastRealtime doReceive");
-			cronThread.StartDeletingOldOrderRequestCron(message);
-		}
-		catch (Exception e)
-		{
-			runningJob = false;
-			_log.debug("StartDeletingOldOrderRequestCron doReceive" + e.getMessage());
-		}
-		runningJob = false; 
 		
+	    /* SOLO DEJAMOS EL BORRADO AL REINICIAR, SUPUESTAMENTE CADA 24H EN MADRUGADA 	
+		
+	   IBOrderLocalServiceUtil.deleteRemovable(new Date());
+	   */
+				 
 			
 	} // END RECEIVER
 }// END CLASS

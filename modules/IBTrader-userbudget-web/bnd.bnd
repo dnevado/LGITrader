@@ -1,0 +1,5 @@
+Bundle-Name: IBTrader-userbudget-web
+Bundle-SymbolicName: IBTrader.userbudget.web
+Bundle-Version: 1.0.0
+Export-Package: IBTrader.userbudget.web.constants
+Web-ContextPath: /IBTrader-userbudget-web

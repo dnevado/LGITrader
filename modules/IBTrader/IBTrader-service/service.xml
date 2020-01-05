@@ -389,6 +389,26 @@
 
 	</entity>
 	
+	<!--  ME SIRVE PARA ALMACENADR LOS PRINCIPALES INDICAADORES Y DATOS A TENER EN CUENTA  -->
+	<entity  cache-enabled="true" local-service="true" name="AuditIndicatorsStrategy" remote-service="true" uuid="true">
+
+		<!-- PK fields 
+		<column name="auditId" primary="true" type="long" />
+		-->
+		<!-- Group instance -->
+
+		<column name="groupId" primary = "true"  type="long" />
+		<column name="companyId" primary = "true"  type="long" />
+	
+		<column name="auditDate" primary = "true" type="String" />
+		<column name="auditstrategy" primary = "true" type="String" />
+		<column name="shareId" primary = "true" type="long" />
+		<!-- Audit fields -->
+		<column name="auditData" type="String" />
+		
+
+	</entity>
+	
 	
 	<entity local-service="true" name="IBOrder" remote-service="true" uuid="true">
 
@@ -476,6 +496,7 @@
 	        <column name="last_error_trader_provider" type="String"></column> <!--  si esta validado contra interactive brokers -->
 	        <column name="simulation_end_date" type="Date"></column> <!--  ultimo dia de datos historicos almacenados   -->
 	        <column name="trading_hours" type="String"></column> <!--  FECHAS HORAS DEL SIGUIENTE MES    -->
+	        <column name="date_filled_realtime_gaps" type="Date"></column> <!--  CUANDO SE RELLE4NA LOS  HUECOS DE REALTIME PARA ORDENARLO POR ESTE  CAMPO     -->
 	        
 	        
     <!--    	<reference package-path="com.ibtrader.data" entity="Market"></reference>-->

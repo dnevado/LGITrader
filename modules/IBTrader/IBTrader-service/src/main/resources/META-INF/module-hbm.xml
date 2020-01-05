@@ -2,6 +2,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping auto-import="false" default-lazy="false">
+	<import class="com.ibtrader.data.model.AuditIndicatorsStrategy" />
 	<import class="com.ibtrader.data.model.BackTesting" />
 	<import class="com.ibtrader.data.model.Config" />
 	<import class="com.ibtrader.data.model.HistoricalRealtime" />
@@ -12,6 +13,17 @@
 	<import class="com.ibtrader.data.model.Share" />
 	<import class="com.ibtrader.data.model.Strategy" />
 	<import class="com.ibtrader.data.model.StrategyShare" />
+	<class name="com.ibtrader.data.model.impl.AuditIndicatorsStrategyImpl" table="ibtrader_AuditIndicatorsStrategy">
+		<composite-id class="com.ibtrader.data.service.persistence.AuditIndicatorsStrategyPK" name="primaryKey">
+			<key-property name="groupId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+			<key-property name="companyId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+			<key-property name="auditDate" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+			<key-property name="auditstrategy" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+			<key-property name="shareId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		</composite-id>
+		<property column="uuid_" name="uuid" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="auditData" type="com.liferay.portal.dao.orm.hibernate.StringClobType" />
+	</class>
 	<class name="com.ibtrader.data.model.impl.BackTestingImpl" table="ibtrader_BackTesting">
 		<id name="backTId" type="long">
 			<generator class="assigned" />
@@ -192,6 +204,7 @@
 		<property name="last_error_trader_provider" type="com.liferay.portal.dao.orm.hibernate.StringClobType" />
 		<property name="simulation_end_date" type="org.hibernate.type.TimestampType" />
 		<property name="trading_hours" type="com.liferay.portal.dao.orm.hibernate.StringClobType" />
+		<property name="date_filled_realtime_gaps" type="org.hibernate.type.TimestampType" />
 	</class>
 	<class name="com.ibtrader.data.model.impl.StrategyImpl" table="ibtrader_Strategy">
 		<id name="strategyID" type="long">

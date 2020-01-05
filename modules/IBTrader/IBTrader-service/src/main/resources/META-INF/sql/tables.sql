@@ -1,3 +1,14 @@
+create table ibtrader_AuditIndicatorsStrategy (
+	uuid_ VARCHAR(75) null,
+	groupId LONG not null,
+	companyId LONG not null,
+	auditDate VARCHAR(75) not null,
+	auditstrategy VARCHAR(75) not null,
+	shareId LONG not null,
+	auditData TEXT null,
+	primary key (groupId, companyId, auditDate, auditstrategy, shareId)
+);
+
 create table ibtrader_BackTesting (
 	uuid_ VARCHAR(75) null,
 	backTId LONG not null primary key,
@@ -168,7 +179,8 @@ create table ibtrader_Share (
 	date_validated_trader_provider DATE null,
 	last_error_trader_provider TEXT null,
 	simulation_end_date DATE null,
-	trading_hours TEXT null
+	trading_hours TEXT null,
+	date_filled_realtime_gaps DATE null
 );
 
 create table ibtrader_Strategy (

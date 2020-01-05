@@ -140,6 +140,13 @@ public class ShareLocalServiceUtil {
 		return getService().findBySymbolCompanyGroup(companyId, groupId, name);
 	}
 
+	public static com.ibtrader.data.model.Share findTargetShareToFillRealtime(
+		boolean _active, boolean validated_trader_provider) {
+		return getService()
+				   .findTargetShareToFillRealtime(_active,
+			validated_trader_provider);
+	}
+
 	/**
 	* Returns the share with the primary key.
 	*

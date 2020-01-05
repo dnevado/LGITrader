@@ -95,7 +95,7 @@ public class IBTraderFillRequiredPastRealtime  extends BaseSchedulerEntryMessage
 	    schedulerEntryImpl = new StorageTypeAwareSchedulerEntryImpl(schedulerEntryImpl, StorageType.PERSISTED);
 	    // update the trigger for the scheduled job.
 		
-	    schedulerEntryImpl.setTrigger(TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(),120, TimeUnit.SECOND));  
+	    schedulerEntryImpl.setTrigger(TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(),45, TimeUnit.SECOND));  
 		_log.info("NO LO EJECUTAMOS PÀRA VER LOS ESTOCASTICOS Activating CRON..."  + schedulerEntryImpl.getTrigger());
 		
 		if (_initialized) {
@@ -125,7 +125,7 @@ public class IBTraderFillRequiredPastRealtime  extends BaseSchedulerEntryMessage
 		{
 			runningJob = true;					
 			CronUtil cronThread = new CronUtil();			
-		//	cronThread.StartFillRequiredRealtime(message);
+			cronThread.StartFillRequiredRealtime(message);
 		}
 		catch (Exception e)
 		{

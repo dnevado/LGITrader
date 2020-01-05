@@ -119,7 +119,7 @@ public class IBTraderRead  extends BaseSchedulerEntryMessageListener {
 			   
 	   if(runningJob) 
 	   {			 	
-		   		_log.info("TradingRead already running, not starting again");
+		   		_log.debug("TradingRead already running, not starting again");
 		        return;
 	   }		
 		try

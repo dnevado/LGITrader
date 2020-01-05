@@ -70,7 +70,11 @@ public class StrategyImpl extends StrategyBaseImpl {
  	
 	private Contract _targetContract;
 	
-	private JSONObject jsonStrategyShareParams;	
+	private JSONObject jsonStrategyShareParams;
+	
+	/* json con indicadores por fecha usados para ser serializados */
+	protected  JSONObject jsonStrategyIndicators;	
+	
 	private boolean verified = false;	
 	/* PRECIOS DE ENTRADA SALIDA  */	
 	/* nos sirve para devolver los session errors de la funciona validatPara	ms*/

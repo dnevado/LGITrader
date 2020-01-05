@@ -10,11 +10,15 @@ import java.util.Date;
 import java.util.List;
 
 import com.ibtrader.constants.IBTraderConstants;
+import com.ibtrader.data.model.HistoricalRealtime;
 import com.ibtrader.data.model.Realtime;
+import com.ibtrader.data.model.impl.HistoricalRealtimeImpl;
 import com.ibtrader.data.model.impl.RealtimeImpl;
 import com.ibtrader.data.service.ConfigLocalServiceUtil;
+import com.ibtrader.data.service.persistence.HistoricalRealtimeFinder;
 import com.ibtrader.data.service.persistence.RealtimeFinder;
 import com.ibtrader.interactive.TIMApiWrapper;
+import com.ibtrader.util.ConfigKeys;
 import com.ibtrader.util.Utilities;
 import com.liferay.portal.dao.orm.custom.sql.CustomSQLUtil;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
@@ -144,8 +148,10 @@ public class RealtimeFinderImpl extends RealtimeFinderBaseImpl  implements Realt
 	        qPos.add(groupId);
 	        qPos.add(openMarketUTC);
 	        qPos.add(closeMarketUTC);
+	        q.setMaxResults(ConfigKeys.INDICATORS_MIN_SERIE_COUNT);
 	        
-	        lRealtime = (List<Realtime>) QueryUtil.list(q, getDialect(), 0, 10000);
+	        
+	        lRealtime = (List<Realtime>) QueryUtil.list(q, getDialect(), 0, ConfigKeys.INDICATORS_MIN_SERIE_COUNT);
 	        
 	        if (_log.isDebugEnabled())
 	        	_log.info(sql);
@@ -216,7 +222,7 @@ public class RealtimeFinderImpl extends RealtimeFinderBaseImpl  implements Realt
 		}
 	
 	
-	@SuppressWarnings("unchecked")
+	/* @SuppressWarnings("unchecked")
 	public Realtime findCloseRealTimeDate(long shareId, long companyId, long groupId, Date date, boolean isClosePrice)
 	{
 	 List<Realtime> lRealtime = null;
@@ -258,7 +264,7 @@ public class RealtimeFinderImpl extends RealtimeFinderBaseImpl  implements Realt
 
 		return null;
 		}
-	
+	*/
 	@SuppressWarnings("unchecked")
 	public Realtime findLastRealTimeLessThanDate(long shareId, long companyId, long groupId, Date To)
 	{
@@ -390,28 +396,32 @@ public class RealtimeFinderImpl extends RealtimeFinderBaseImpl  implements Realt
         instanceAddedDate = instanceAddedDate.plusSeconds(1);
         to = Date.from(instanceAddedDate);        
         
-        String Dates_IN = String.join("','", mobileAvgDates);
+        /* String Dates_IN = String.join("','", mobileAvgDates);
         StringBuilder sDatesIN = new StringBuilder("'");
         sDatesIN.append(Dates_IN);
         //StringBuilder sDatesIN = new StringBuilder(Dates_IN);
         sDatesIN.append("'");
         sql = StringUtil.replace(sql, "[$TIMEBAR_DATES$]", sDatesIN.toString());
-
+		*/
         SQLQuery q = session.createSQLQuery(sql);        
         q.setCacheable(false);
         q.addEntity("IBTrader_Realtime", RealtimeImpl.class);
-         
+        q.setMaxResults(ConfigKeys.INDICATORS_MIN_SERIE_COUNT);
+        
         QueryPos qPos = QueryPos.getInstance(q);	    
         qPos.add(from);
         qPos.add(to);
         qPos.add(shareId);
         qPos.add(companyId);
         qPos.add(groupId);        
+        qPos.add(ConfigKeys.DEFAULT_TIMEBAR_MINUTES); // 5 
+        qPos.add(ConfigKeys.DEFAULT_TIMEBAR_MINUTES-1); // RESTO PARA QUE SEAM 34 39 44 
+        
+       
         
         
         
-        
-        lExponentialMobile = (List<Realtime>) QueryUtil.list(q, getDialect(), 0, 1000);
+        lExponentialMobile = (List<Realtime>) QueryUtil.list(q, getDialect(), 0, ConfigKeys.INDICATORS_MIN_SERIE_COUNT);
         
        
         _log.debug(sql + ",periods:" + mobileAvgDates + ",from:" + from + ",to:" + to + ",share:" + shareId + ",compamy:" + companyId + ",groupid:" + groupId + ",results:" + (lExponentialMobile.isEmpty() ? 0 :lExponentialMobile.size()));
@@ -447,6 +457,52 @@ public class RealtimeFinderImpl extends RealtimeFinderBaseImpl  implements Realt
 
 		return null;
 		}
+	
+	@SuppressWarnings("unchecked")
+	public Realtime findFirstRealTimeBetweenDates(long shareId, long companyId, long groupId, Date from, Date to)
+	{
+	 List<Realtime> lRealtime = null;
+	 Session session = null;
+	    try {
+	        session = openSession();
+
+	        String sql = CustomSQLUtil.get(getClass(),FIND_FIRST_REALTIME_LESS_THAN_DATE);
+
+	        SQLQuery q = session.createSQLQuery(sql);
+	        q.setCacheable(false);	   	  
+	        q.addEntity("IBTrader_Realtime", RealtimeImpl.class);
+
+	        QueryPos qPos = QueryPos.getInstance(q);	    
+	        qPos.add(shareId);
+	        qPos.add(companyId);
+	        qPos.add(groupId);
+	        qPos.add(shareId);
+	        qPos.add(companyId);
+	        qPos.add(groupId);
+	        qPos.add(from);
+	        qPos.add(to);
+
+	        lRealtime = (List<Realtime>) QueryUtil.list(q, getDialect(), 0, 10);
+	        if (!lRealtime.isEmpty())
+	        		return lRealtime.get(0);
+	        else
+	        		return null;
+	        
+	    }
+	    catch (Exception e) {
+	        try {
+	            throw new SystemException(e);
+	        }
+	        catch (SystemException se) {
+	            se.printStackTrace();
+	        }
+	    }
+	    finally {
+	        closeSession(session);
+	    }
+
+		return null;
+		}
 		
 	
 		public static final String FIND_MINMAX_REALTIME = RealtimeFinder.class.getName() + ".findMinMaxRealTime";
@@ -457,6 +513,8 @@ public class RealtimeFinderImpl extends RealtimeFinderBaseImpl  implements Realt
 		public static final String FIND_CLOSE_REALTIMES = RealtimeFinder.class.getName() + ".findCloseRealTimes";
 		public static final String FIND_MINMAX_REALTIME_GROUPED_BY_BARS = RealtimeFinder.class.getName() + ".findMinMaxRealTimesBars";
 		public static final String REMOVE_SCHEDULED_REALTIME = RealtimeFinder.class.getName() + ".removeScheduledRealTimes";
+		public static final String FIND_FIRST_REALTIME_LESS_THAN_DATE = RealtimeFinder.class.getName() + ".findFirstRealTimeBetweenDates";		
+
 
 		
 }

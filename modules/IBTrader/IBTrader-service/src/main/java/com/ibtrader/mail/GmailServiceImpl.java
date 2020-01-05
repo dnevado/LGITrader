@@ -45,6 +45,9 @@ import java.util.Properties;
  * 
  * https://developers.google.com/oauthplayground/
  * https://github.com/pablo127/gmail-api-sample
+ * 
+ * https://medium.com/@pablo127/google-api-authentication-with-oauth-2-on-the-example-of-gmail-a103c897fd98
+ * 
  */
 
 public final class GmailServiceImpl implements GmailService {
@@ -144,8 +147,8 @@ public final class GmailServiceImpl implements GmailService {
     	
     	  // Load client secrets.
     	
-
-    	java.io.File TOKENS_DIRECTORY_PATH = new java.io.File((Validator.isNotNull(System.getProperty("catalina.base")) ? System.getProperty("catalina.base") : "") + "./tokens");
+    	/* OJO A LA RUTAS WINDOWS / LUNUX  ,/tokens*/
+    	java.io.File TOKENS_DIRECTORY_PATH = new java.io.File((Validator.isNotNull(System.getProperty("catalina.base")) ? System.getProperty("catalina.base") : "") + "/tokens");
         // Build flow and trigger user authorization request.
         GoogleAuthorizationCodeFlow flow = null;
        try {

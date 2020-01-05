@@ -236,23 +236,25 @@ public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
 	
 		
 	    this.setJsonStrategyShareParams(JSONFactoryUtil.createJSONObject(_strategyImpl.getStrategyparamsoverride()));					
-	
-		User _IBUser = UserLocalServiceUtil.getUser(_share.getUserCreatedId());
+	    
+	    
+	    Date _FromNow =  !isSimulation_mode() ?    new Date() : backtestingdDate;
+		Calendar _calendarFromNow = Calendar.getInstance();
+		_calendarFromNow.setTime(_FromNow);		
+		_calendarFromNow.set(Calendar.SECOND, 0);
+		_calendarFromNow.set(Calendar.MILLISECOND, 0);
+	    
 		
 		String HoraActual = "";
-		
+		HoraActual = Utilities.getWebFormattedTime(_calendarFromNow.getTime());
 		Calendar calFechaActualWithDeadLine = null;
 		
+		Market marketRealOpenCloseTimes = Utilities.getOpenCloseMarket(_share, backtestingdDate, isSimulation_mode());
+		if (Validator.isNull(marketRealOpenCloseTimes)) return false;
 		if (!isSimulation_mode())
-		{
-			HoraActual = Utilities.getHourNowFormat(_IBUser);
-			calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(HoraActual);
-		}
+			calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(HoraActual); 
 		else	
-		{
-			HoraActual = Utilities.getHourNowFormat(_IBUser,backtestingdDate);
-			calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(backtestingdDate, HoraActual);					
-		}		
+			calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(backtestingdDate, HoraActual);
 		
 									
 		calFechaActualWithDeadLine.add(Calendar.MINUTE, this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_TO_CLOSEMARKET));
@@ -276,12 +278,7 @@ public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
 		
 		/* SOLO PODEMOS ENTRAR EN EL PERIODO MARCADO DE CADA MINUTO, PARA LO CUAL OBTENEMOS EL RESTO */	
 		/* TIMEZONE AJUSTADO */
-		Date _FromNow =  !isSimulation_mode() ?   Utilities.getDate(_IBUser) : backtestingdDate;
-
-		Calendar _calendarFromNow = Calendar.getInstance();
-		_calendarFromNow.setTime(_FromNow);		
-		_calendarFromNow.set(Calendar.SECOND, 0);
-		_calendarFromNow.set(Calendar.MILLISECOND, 0);
+		
 		
 		long _ModMinuteToEntry = _calendarFromNow.get(Calendar.MINUTE) % _num_macdT;
 		if (_ModMinuteToEntry!=0)  // NO ESTOY EN EL MINUTO 5,10,15,20..etc (para las barras de 5)
@@ -293,12 +290,12 @@ public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
 		// HORA DE FIN DE CALCULO DE MAX Y MINIMOS.		
 		String StartHourTrading = "";
 		if (!isSimulation_mode())
-			 StartHourTrading =  Utilities.getActualHourFormatPlusMinutes(_calendarFromNow, _market.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET));
+			 StartHourTrading =  Utilities.getActualHourFormatPlusMinutes(_calendarFromNow, marketRealOpenCloseTimes.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET));
 		else				
-			 StartHourTrading = Utilities.getActualHourFormatPlusMinutes(_market.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET));		// COMPROBAMOS ALGUN TIPO DE ERROR 
+			 StartHourTrading = Utilities.getActualHourFormatPlusMinutes(marketRealOpenCloseTimes.getStart_hour(), this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET));		// COMPROBAMOS ALGUN TIPO DE ERROR 
 		if (StartHourTrading.contains("-1"))
 		{
-			_log.info("[ Errores formateando las horas de StarHourTrading de la accion. Hora[" + _market.getStart_hour()  + "], Offset1[" + this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET)+ "]");
+			_log.info("[ Errores formateando las horas de StarHourTrading de la accion. Hora[" + marketRealOpenCloseTimes.getStart_hour()  + "], Offset1[" + this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET)+ "]");
 			return Boolean.FALSE;
 		}
 			
@@ -316,15 +313,35 @@ public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
 			return Boolean.FALSE;
 		
 		Double vRealtime = null;
+		int   _volume = 0;
+		boolean bVolIncreased = Boolean.FALSE;
+		Calendar _previousBarDate = Calendar.getInstance();
+		_previousBarDate.setTime(_calendarFromNow.getTime());
+		_previousBarDate.add(Calendar.MINUTE, - (int) _num_macdT);
+		
 		if (!isSimulation_mode())
 		{
 			Realtime oRTimeEnTramo =  RealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _calendarFromNow.getTime());
 			vRealtime  = Validator.isNull(oRTimeEnTramo) ? null : oRTimeEnTramo.getValue();
+			_volume =  Validator.isNull(oRTimeEnTramo) ? null : oRTimeEnTramo.getVolume();
+			if (_volume>0)
+			{				
+				Realtime oPreviousBarRTime =  RealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _previousBarDate.getTime());
+				if (Validator.isNotNull(oPreviousBarRTime) && oPreviousBarRTime.getVolume()>0)
+					bVolIncreased  = _volume > oPreviousBarRTime.getVolume();
+			}
 		}
 		else
 		{
 			HistoricalRealtime oRTimeEnTramo =  HistoricalRealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _calendarFromNow.getTime());
 			vRealtime  = Validator.isNull(oRTimeEnTramo) ? null : oRTimeEnTramo.getValue();
+			_volume =  Validator.isNull(oRTimeEnTramo) ? null : oRTimeEnTramo.getVolume();
+			if (_volume>0)
+			{				
+				HistoricalRealtime oPreviousBarRTime =  HistoricalRealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _previousBarDate.getTime());
+				if (Validator.isNotNull(oPreviousBarRTime) && oPreviousBarRTime.getVolume()>0)
+					bVolIncreased  = _volume > oPreviousBarRTime.getVolume();
+			}
 		}
 		
 		
@@ -333,8 +350,8 @@ public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
 		{
 			// todo fue bien, tenemos media movil y de los periodos solicitados.
 			// buscamos el cierre de la barra, ultimo valor < que el MINUTE.00  (15.00, 20,00, 25.00)
-//			Double _avgMobileSimple = MobileAvgUtil.getSimpleAvgMobile(_calendarFromNow.getTime(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_macdP, isSimulation_mode(), _market);
-			Double _avgMobileSimple = BaseIndicatorUtil.getExponentialAvgMobile(_calendarFromNow.getTime(), vRealtime.doubleValue(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_macdP , isSimulation_mode(), _market);
+			Double _avgMobileSimple = BaseIndicatorUtil.getSimpleAvgMobile(_calendarFromNow.getTime(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_macdP, isSimulation_mode(), _market);
+			//Double _avgMobileSimple = BaseIndicatorUtil.getExponentialAvgMobile(_calendarFromNow.getTime(), vRealtime.doubleValue(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_macdP , isSimulation_mode(), _market);
 
 			if (Validator.isNotNull(_avgMobileSimple))
 			{
@@ -377,7 +394,7 @@ public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
 					double _WidthBarRangePercent =  _WidthRangeBar *  _entryrate;
 					
 					/* HAY CAMBIO DE TENDENCIA */
-					boolean _MarketTrendChanged = true;
+					boolean _MarketTrendChanged = Boolean.TRUE;
 					if (currentPosition.getType().equals(PositionStates.statusTWSFire.BUY.toString()) && 
 							vRealtime.doubleValue() >_avgMobileSimple.doubleValue())
 					{
@@ -387,8 +404,7 @@ public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
 							vRealtime.doubleValue() <_avgMobileSimple.doubleValue())
 					{
 									_MarketTrendChanged = false;
-					}
-					
+					}					
 					
 					/* A/ La barra debe cruzar la MM8 y al cierre el 75% de su cuerpo debe ser superior al precio cierre de la MM.
 					y B/ Además, el precio cierre de la barra será => que el 75% del rango.*/
@@ -401,15 +417,9 @@ public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
 					_SellSuccess = BaseIndicatorUtil._IsSellSignalMM8_5MINBar(_avgMobileSimple, max_value,min_value, _WidthBarRangePercent, vRealtime);
 					_SellSuccess = (_SellSuccess && currentPosition.getType().equals(PositionStates.statusTWSFire.BUY.toString()));
 
-					/*_BuySuccess = _BuySuccess &&  
-							(_OperationFilter.equals("ALL") || _OperationFilter.equals(PositionStates.statusTWSFire.BUY.toString())); 
-
-					
-					_SellSuccess = _SellSuccess  &&  
-							(_OperationFilter.equals("ALL") || _OperationFilter.equals(PositionStates.statusTWSFire.SELL.toString()));
-					*/
 					/*  DNM_RAFADIESTRO  2015 06 16. COMENTAMOS LA CLAUSULA DE QUE NO LA CORTE */ 
-					if  ((!_AvgMovil_InsideBar  &&_MarketTrendChanged)  ||  (_AvgMovil_InsideBar && (_SellSuccess || _BuySuccess)))
+					 if  ((!_AvgMovil_InsideBar  &&_MarketTrendChanged)  ||  (_AvgMovil_InsideBar && (_SellSuccess || _BuySuccess)))
+					//if  (_AvgMovil_InsideBar && (_SellSuccess || _BuySuccess))
 					{
 						
 					    this.setValueIn(vRealtime.doubleValue());											

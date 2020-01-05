@@ -131,6 +131,9 @@ public interface ShareLocalService extends BaseLocalService,
 	public Share findBySymbolCompanyGroup(long companyId, long groupId,
 		java.lang.String name);
 
+	public Share findTargetShareToFillRealtime(boolean _active,
+		boolean validated_trader_provider);
+
 	/**
 	* Returns the share with the primary key.
 	*

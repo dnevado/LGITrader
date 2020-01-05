@@ -98,6 +98,29 @@
     </sql>
     
     
+    
+    <sql id="com.ibtrader.data.service.persistence.RealtimeFinder.findFirstRealTimeBetweenDates">
+    <![CDATA[ 
+        SELECT 
+        		*
+        FROM 
+        		IBTrader_Realtime      
+        WHERE            
+            (IBTrader_Realtime.shareId=?)
+            AND (IBTrader_Realtime.companyid=?)
+            AND (IBTrader_Realtime.groupid=?)
+         	AND (IBTrader_Realtime.createDate)=  (SELECT  min(IBTrader_Realtime.createDate) FROM 
+					         			IBTrader_Realtime       
+					      	  		WHERE            
+					           			 (IBTrader_Realtime.shareId=?)
+					          		  AND (IBTrader_Realtime.companyid=?)
+					          		  AND (IBTrader_Realtime.groupid=?)
+					          		  AND (IBTrader_Realtime.createDate>=?)
+					          		  AND (IBTrader_Realtime.createDate<=?))
+     ]]>
+    </sql>
+    
+   <!-- 	AND  DATE_FORMAT(createDate, '%Y-%m-%d %H:%i') in ([$TIMEBAR_DATES$])  -->
     <sql id="com.ibtrader.data.service.persistence.RealtimeFinder.findCloseRealTimes">
     <![CDATA[ 
     	SELECT 
@@ -116,7 +139,7 @@
 		        	AND (IBTrader_Realtime.shareId=?)
 	            	AND (IBTrader_Realtime.companyid=?)
 	            	AND (IBTrader_Realtime.groupid=?)         	
-	         		AND  DATE_FORMAT(createDate, '%Y-%m-%d %H:%i') in ([$TIMEBAR_DATES$])
+	         		AND mod(minute(BTrader_Realtime.createDate),?) = ?
 		        ORDER  BY 	
 	        	 	IBTrader_Realtime.createdate
 	        	 ) as  T
@@ -133,6 +156,7 @@
 	        and  treal.groupId= IBTrader_Realtime.groupId
 	   ORDER BY
 	   			IBTrader_Realtime.createdate
+	   LIMIT ?
 	          
 	          
  
@@ -146,7 +170,8 @@
     
 			    SELECT  
 						(sum(beneficio*acciones*multiplier) / SUM(PRECIOENTRADA*multiplier*acciones)*100)  MARGENBENEFICIO, 
-						 sum(beneficio*acciones*multiplier) BENEFICIO
+						 sum(beneficio*acciones*multiplier) BENEFICIO,
+						 SUM(PRECIOENTRADA*multiplier*acciones) LIQUIDO
 				FROM
 				(	SELECT case type_
 						   WHEN 'BUY' then IF(price_real_out>0,price_real_out,REALTIME.value) - price_real_in
@@ -184,6 +209,29 @@
      ]]>
     </sql>
     
+     <sql id="com.ibtrader.data.service.persistence.PositionFinder.getCurrentLiquidTraded">
+    <![CDATA[
+   					SELECT 
+							SUM(price_real_in*SHARE.multiplier*share_number) LIQUIDO
+					FROM 
+							IBTrader_Position, IBTrader_share SHARE
+					WHERE
+						
+						(IBTrader_Position.date_real_out) IS NULL												
+						AND (IBTrader_Position.companyid=?)
+	            		AND (IBTrader_Position.groupid=?)
+	            		AND (IBTrader_Position.position_mode=?)         		            
+						AND	 (IBTrader_Position.companyid=SHARE.companyid)
+						AND	 (IBTrader_Position.groupid=SHARE.groupid)
+						AND	 (IBTrader_Position.shareId=SHARE.shareId) 
+	           		    	
+				
+	 
+     ]]>
+    </sql>
+    
+    
+    
      <!--  
     incluimos el multiplicador del activo para los futuros o 1 para el resto -->
      <sql id="com.ibtrader.data.service.persistence.PositionFinder.getPositionClosedResults">
@@ -213,6 +261,31 @@
 	            		
 				)	 rt 
 				GROUP BY tipo
+	 
+     ]]>
+    </sql>
+    
+    
+    <!--  DAY TRADER PATTERN, CUANTOS DIAS CON POSICIONES QUE SE ABREN Y CIERRAN EN EL DIA, SI ES SIMULADO, NO APLICA 
+    
+    	getDayTradingPatternPositions
+    
+     -->
+     <sql id="com.ibtrader.data.service.persistence.PositionFinder.getDayTradingPatternPositions">
+    <![CDATA[
+    				SELECT 
+    						COUNT(*)   as totaloperaciones 
+    				FROM  
+    						ibtrader_position
+					WHERE
+						IBTrader_Position.date_real_in <=?   
+						AND IBTrader_Position.date_real_in >=?
+						AND IBTrader_Position.position_mode = ? 
+						AND IBTrader_Position.state_ = ?
+						AND (IBTrader_Position.companyid=?)
+	            		AND (IBTrader_Position.groupid=?)      	            		
+	            		AND date(IBTrader_Position.date_real_in)  = date(IBTrader_Position.date_real_out)    
+	            		       
 	 
      ]]>
     </sql>
@@ -250,11 +323,34 @@
             (IBTrader_HistoricalRealtime.shareId=?)
             AND (IBTrader_HistoricalRealtime.companyid=?)
             AND (IBTrader_HistoricalRealtime.groupid=?)
-           	AND (IBTrader_HistoricalRealtime.createDate = ?)  
+           	AND (date(IBTrader_HistoricalRealtime.createDate) = date(?))  
         	AND  (IBTrader_HistoricalRealtime.closeprice=?)         	
      ]]>
     </sql>
 
+	<!--  puede ser util para los maximos y minimos historicos de un dia en un tramo desde la apertura del mercado, que no se guarda en 
+	ningun sitio  -->
+	<sql id="com.ibtrader.data.service.persistence.HistoricalRealtimeFinder.findFirstRealTimeBetweenDates">
+    <![CDATA[ 
+        SELECT 
+        		*
+        FROM 
+        		IBTrader_HistoricalRealtime      
+        WHERE            
+            (IBTrader_HistoricalRealtime.shareId=?)
+            AND (IBTrader_HistoricalRealtime.companyid=?)
+            AND (IBTrader_HistoricalRealtime.groupid=?)
+         	AND (IBTrader_HistoricalRealtime.createDate)=  (SELECT  min(IBTrader_HistoricalRealtime.createDate) FROM 
+					         			IBTrader_HistoricalRealtime       
+					      	  		WHERE            
+					           			 (IBTrader_HistoricalRealtime.shareId=?)
+					          		  AND (IBTrader_HistoricalRealtime.companyid=?)
+					          		  AND (IBTrader_HistoricalRealtime.groupid=?)
+					          		  AND (IBTrader_HistoricalRealtime.createDate>=?)
+					          		  AND (IBTrader_HistoricalRealtime.createDate<=?))
+     ]]>
+    </sql>
+	
 	
 	<sql id="com.ibtrader.data.service.persistence.HistoricalRealtimeFinder.findLastRealTimeLessThanDate">
     <![CDATA[ 
@@ -296,7 +392,8 @@
         GROUP BY 
         		barDate 
         ORDER BY 
-        		barDate
+        		barDate DESC 
+        	
      ]]>
     </sql>
     
@@ -401,7 +498,7 @@
      ]]>
     </sql>
     
-    
+    <!--  AND  DATE_FORMAT(createDate, '%Y-%m-%d %H:%i') in ([$TIMEBAR_DATES$])  -->
     <sql id="com.ibtrader.data.service.persistence.HistoricalRealtimeFinder.findCloseRealTimes">
     <![CDATA[ 
     	SELECT 
@@ -419,8 +516,8 @@
 		        	(IBTrader_HistoricalRealtime.createDate>=?) AND (IBTrader_HistoricalRealtime.createDate<?) 
 		        	AND (IBTrader_HistoricalRealtime.shareId=?)
 	            	AND (IBTrader_HistoricalRealtime.companyid=?)
-	            	AND (IBTrader_HistoricalRealtime.groupid=?)         	
-	         		AND  DATE_FORMAT(createDate, '%Y-%m-%d %H:%i') in ([$TIMEBAR_DATES$])
+	            	AND (IBTrader_HistoricalRealtime.groupid=?)
+	            	AND mod(minute(IBTrader_HistoricalRealtime.createDate),?) = ?         		         		
 		        ORDER  BY 	
 	        	 	IBTrader_HistoricalRealtime.createdate
 	        	 ) as  T
@@ -436,8 +533,7 @@
 	        and  treal.companyId= IBTrader_HistoricalRealtime.companyId
 	        and  treal.groupId= IBTrader_HistoricalRealtime.groupId
 	   ORDER BY
-	   			IBTrader_HistoricalRealtime.createdate
-	          
+	   			IBTrader_HistoricalRealtime.createdate DESC
 	          
  
      ]]>
@@ -453,7 +549,7 @@
             (IBTrader_Realtime.shareId=?)
             AND (IBTrader_Realtime.companyid=?)
             AND (IBTrader_Realtime.groupid=?)            
-         	AND (IBTrader_Realtime.createDate = ?)  
+         	AND (date(IBTrader_Realtime.createDate) = date(?))  
          	AND  (IBTrader_Realtime.closeprice=?)
      ]]>
     </sql>
@@ -497,8 +593,9 @@
 				(TIME_FORMAT(IBTrader_Realtime.createDate,'%H%i')<=?)
         GROUP BY 
         		barDate 
-        ORDER BY 
-        		barDate
+        ORDER BY  
+        		barDate DESC
+         
      ]]>
     </sql>
     <!--  aplica a una barra  -->
@@ -598,7 +695,7 @@
 		        	AND (IBTrader_Realtime.shareId=?)
 	            	AND (IBTrader_Realtime.companyid=?)
 	            	AND (IBTrader_Realtime.groupid=?)         	
-	         		AND  DATE_FORMAT(createDate, '%Y-%m-%d %H:%i') in ([$TIMEBAR_DATES$])
+	         		AND mod(minute(IBTrader_Realtime.createDate),?) = ?         		         	
 		        ORDER  BY 	
 	        	 	IBTrader_Realtime.createdate
 	        	 ) as  T
@@ -614,7 +711,7 @@
 	        and  treal.companyId= IBTrader_Realtime.companyId
 	        and  treal.groupId= IBTrader_Realtime.groupId
 	   ORDER BY
-	   			IBTrader_Realtime.createdate
+	   			IBTrader_Realtime.createdate DESC			
 	          
 	          
  
@@ -628,7 +725,8 @@
     
 			    SELECT  
 						(sum(beneficio*acciones*multiplier) / SUM(PRECIOENTRADA*multiplier*acciones)*100)  MARGENBENEFICIO, 
-						 sum(beneficio*acciones*multiplier) BENEFICIO
+						 sum(beneficio*acciones*multiplier) BENEFICIO,
+						 SUM(PRECIOENTRADA*multiplier*acciones) LIQUIDO
 				FROM
 				(	SELECT case type_
 						   WHEN 'BUY' then IF(price_real_out>0,price_real_out,REALTIME.value) - price_real_in
@@ -747,5 +845,21 @@
 	 
      ]]>
     </sql>
+    
+    
+    <sql id="com.ibtrader.data.service.persistence.IBOrderFinder.deleteRemovableIBOrders"> 
+    <![CDATA[
+    
+    				DELETE 
+    				FROM 
+    						IBTrader_IBOrder
+					WHERE  
+							date(IBTrader_IBOrder.createdate)< date(DATE_ADD(now(), INTERVAL -? DAY)) 
+							and  IBTrader_IBOrder.removable_on_reboot = 1
+					
+	 
+     ]]>
+    </sql>
+    
     
 </custom-sql>

@@ -1,3 +1,6 @@
+create index IX_C19C77D4 on ibtrader_AuditIndicatorsStrategy (uuid_[$COLUMN_LENGTH:75$], companyId);
+create unique index IX_49C8E356 on ibtrader_AuditIndicatorsStrategy (uuid_[$COLUMN_LENGTH:75$], groupId);
+
 create index IX_A4DA9DB5 on ibtrader_BackTesting (shareId, companyId, groupId);
 create index IX_48457CB on ibtrader_BackTesting (status[$COLUMN_LENGTH:75$], companyId, groupId, shareId);
 create index IX_3325966B on ibtrader_BackTesting (uuid_[$COLUMN_LENGTH:75$], companyId);

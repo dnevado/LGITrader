@@ -55,6 +55,22 @@ public class PositionLocalServiceUtil {
 			positionMode, backtestingId);
 	}
 
+	public static boolean IsinRangeUserBudget(
+		com.liferay.portal.kernel.model.User user, double newTargetPosition,
+		java.lang.String positionMode, long companyId, long groupId) {
+		return getService()
+				   .IsinRangeUserBudget(user, newTargetPosition, positionMode,
+			companyId, groupId);
+	}
+
+	public static boolean satisfyDayTraderPattern(java.util.Date from,
+		java.util.Date to, long groupId, long companyId,
+		java.lang.String positionMode) {
+		return getService()
+				   .satisfyDayTraderPattern(from, to, groupId, companyId,
+			positionMode);
+	}
+
 	/**
 	* Adds the position to the database. Also notifies the appropriate model listeners.
 	*
@@ -229,6 +245,12 @@ public class PositionLocalServiceUtil {
 		java.io.Serializable primaryKeyObj)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService().getPersistedModel(primaryKeyObj);
+	}
+
+	public static double findTotalLiquidPositionOpen(long groupId,
+		long companyId, java.lang.String positionMode) {
+		return getService()
+				   .findTotalLiquidPositionOpen(groupId, companyId, positionMode);
 	}
 
 	/**

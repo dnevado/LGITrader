@@ -381,6 +381,11 @@ public class IBOrderLocalServiceWrapper implements IBOrderLocalService,
 	}
 
 	@Override
+	public void deleteRemovable(java.util.Date untilDate) {
+		_ibOrderLocalService.deleteRemovable(untilDate);
+	}
+
+	@Override
 	public IBOrderLocalService getWrappedService() {
 		return _ibOrderLocalService;
 	}

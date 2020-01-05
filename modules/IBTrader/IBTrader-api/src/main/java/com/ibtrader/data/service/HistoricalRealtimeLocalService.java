@@ -125,6 +125,9 @@ public interface HistoricalRealtimeLocalService extends BaseLocalService,
 	public HistoricalRealtime findFirstRealTime(long shareId, long companyId,
 		long groupId);
 
+	public HistoricalRealtime findFirstRealTimeBetweenDates(long shareId,
+		long companyId, long groupId, Date _from, Date _to);
+
 	public HistoricalRealtime findLastCompanyShare(long companyId,
 		long shareId, long groupId);
 
@@ -136,6 +139,9 @@ public interface HistoricalRealtimeLocalService extends BaseLocalService,
 
 	public HistoricalRealtime findMinMaxRealTime(Date from, Date to,
 		long shareId, long companyId, long groupId);
+
+	public HistoricalRealtime findRealTime(long shareId, long companyId,
+		long groupId, Date closeDate);
 
 	public HistoricalRealtime findSimpleMobileAvgGroupByPeriods(long shareId,
 		long companyId, long groupId, Date from, Date to,

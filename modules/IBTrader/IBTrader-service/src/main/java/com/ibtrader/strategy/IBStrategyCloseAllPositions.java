@@ -2,6 +2,7 @@ package com.ibtrader.strategy;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -31,6 +32,7 @@ import com.liferay.expando.kernel.service.ExpandoColumnLocalServiceUtil;
 import com.liferay.expando.kernel.service.ExpandoTableLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
@@ -52,9 +54,13 @@ public class IBStrategyCloseAllPositions extends StrategyImpl {
 	private static HashMap<String, Integer> Parameters = new HashMap<String,Integer>();
 	private List<ExpandoColumn> ExpandoColumns = new ArrayList<ExpandoColumn>(); 
 	
-	private static String _EXPANDO_DEADLINE_UNTIL_CLOSEMARKET = "Close All Open Positions After x Minutes To Close Market";  // offset desde inicio de mercado en minutos
+	private static String _EXPANDO_DEADLINE_UNTIL_CLOSEMARKET = "Close All Positions After x Min To Close Market {5}, 0 if not applicable";  // offset desde inicio de mercado en minutos
 	private Position currentPosition = null;
 
+	
+	JSONObject _tradeDescription;
+
+	
 	
 	@Override
 	public long execute(Share _share, Market _market, Date backtestingdDate) {
@@ -103,7 +109,7 @@ public class IBStrategyCloseAllPositions extends StrategyImpl {
 		/* si metemos el date sell en las parciales, no entran las siguientes */
 		/* acumulo las acciones vendidas y a vender en la operativa */
 		currentPosition.setDate_out(!isSimulation_mode() ? new Date() : backtestingdDate);
-		currentPosition.setDescription(currentPosition.getDescription() + StringPool.RETURN_NEW_LINE + this.getClass().getName());
+		currentPosition.setDescription(currentPosition.getDescription() + StringPool.RETURN_NEW_LINE + this._tradeDescription.toString());
 		currentPosition.setStrategy_out(this.getClass().getName());		 		
 		
 		/* MODO FAKE CUENTA DEMO */
@@ -144,41 +150,60 @@ public class IBStrategyCloseAllPositions extends StrategyImpl {
 		
 	String position_mode = Utilities.getPositionModeType(backtestingdDate, _share.getCompanyId(),_share.getGroupId());
 	
-	User _IBUser = UserLocalServiceUtil.getUser(_share.getUserCreatedId());
 	
 	String HoraActual = "";	
 	Calendar calFechaActualWithDeadLine;
 	Calendar calFechaFinMercado;
-
+	
+	currentPosition = PositionLocalServiceUtil.findPositionToExit(_share.getGroupId(), _share.getCompanyId(), _share.getShareId(),position_mode, Validator.isNotNull(this.getCurrentBackTesting()) ?  this.getCurrentBackTesting().getBackTId() : ConfigKeys.DEFAULT_BACKTESTINGID_VALUE);
+    if (Validator.isNull(currentPosition))
+    	return false;
+	
+	/* TIMEZONE AJUSTADO */
+	//Date _FromNow =  !isSimulation_mode() ?    Utilities.getDate(_IBUser) : backtestingdDate;
+	Date _FromNow =  !isSimulation_mode() ?    new Date() : backtestingdDate;
+	Calendar _calendarFromNow = Calendar.getInstance();
+	_calendarFromNow.setTime(_FromNow);
+	
+	
+	User _IBUser = UserLocalServiceUtil.getUser(_share.getUserCreatedId());
+	HoraActual = Utilities.getWebFormattedTime(_calendarFromNow.getTime());
+	
+	Market marketRealOpenCloseTimes = Utilities.getOpenCloseMarket(_share, backtestingdDate, isSimulation_mode());
+	if (Validator.isNull(marketRealOpenCloseTimes)) return false;
 	if (!isSimulation_mode())
 	{
-		HoraActual = Utilities.getHourNowFormat(_IBUser);		
-		calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(HoraActual);
-		calFechaFinMercado = Utilities.getNewCalendarWithHour(_market.getEnd_hour());
-
-
+		calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(HoraActual); 
+		calFechaFinMercado = Utilities.getNewCalendarWithHour(marketRealOpenCloseTimes.getEnd_hour()); 
 	}
 	else	
 	{
-		HoraActual = Utilities.getHourNowFormat(_IBUser,backtestingdDate);
+			
 		calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(backtestingdDate, HoraActual);
-		calFechaFinMercado = Utilities.getNewCalendarWithHour(backtestingdDate, _market.getEnd_hour());			
-
-
-	}		
+		calFechaFinMercado = Utilities.getNewCalendarWithHour(backtestingdDate, marketRealOpenCloseTimes.getEnd_hour()); 			
+	}	
 	this.setJsonStrategyShareParams(JSONFactoryUtil.createJSONObject(_strategyImpl.getStrategyparamsoverride()));					
 
 	/* MERCADO ABIERTO */	
 	if (calFechaActualWithDeadLine.after(calFechaFinMercado))
 		return false;
 	
-	calFechaActualWithDeadLine.add(Calendar.MINUTE, this.getJsonStrategyShareParams().getInt(_EXPANDO_DEADLINE_UNTIL_CLOSEMARKET));
-	currentPosition = PositionLocalServiceUtil.findPositionToExit(_share.getGroupId(), _share.getCompanyId(), _share.getShareId(),position_mode, Validator.isNotNull(this.getCurrentBackTesting()) ?  this.getCurrentBackTesting().getBackTId() : ConfigKeys.DEFAULT_BACKTESTINGID_VALUE);
-	if (calFechaActualWithDeadLine.after(calFechaFinMercado) && currentPosition!=null) 		  // ya esta en el limite 
+	/* CONTROLAMOS QUE SE PUEDAN METER -1 E IGNORAR LA HORA DE CIERRE, ASI FUNCIONA PARA LOS FUTUROS */
+	int deadline_until_closemarket = this.getJsonStrategyShareParams().getInt(_EXPANDO_DEADLINE_UNTIL_CLOSEMARKET,0);
+	boolean nextToClose =  Boolean.FALSE;
+	if (deadline_until_closemarket>0)
+	{
+		calFechaActualWithDeadLine.add(Calendar.MINUTE, deadline_until_closemarket);
+		nextToClose = calFechaActualWithDeadLine.after(calFechaFinMercado);
+	}
+	
+	/* SI VA A EXPIRAR EN UN DIA, CERRAMOS POSICION Y NO ENTRAMOS HASTA EL CONTRATO NUEVO 
+	 * TODO EN UTC */
+	boolean  nextToExpiration = !Utilities.IsFutureTradeable(_share);
+
+	if ((nextToClose || nextToExpiration) && currentPosition!=null) 		  // ya esta en el limite 
 	{		    		
 			/* TIMEZONE AJUSTADO */
-			Date _FromNow =  !isSimulation_mode() ?   Utilities.getDate(_IBUser) : backtestingdDate;
-			Calendar _calendarFromNow = Calendar.getInstance();
 			_calendarFromNow.setTime(_FromNow);		
 			_calendarFromNow.set(Calendar.SECOND, 0);
 			_calendarFromNow.set(Calendar.MILLISECOND, 0);
@@ -199,6 +224,11 @@ public class IBStrategyCloseAllPositions extends StrategyImpl {
 			
 			if (Validator.isNotNull(lastRealtime))
 			{
+				
+				_tradeDescription = JSONFactoryUtil.createJSONObject();
+				_tradeDescription.put("nextToClose", nextToClose);
+				_tradeDescription.put("nextToExpiration", nextToExpiration);
+				
 				double current_price = lastRealtime.doubleValue();
 				this.setVerified(Boolean.TRUE);		
 				this.setValueOut(current_price);												
@@ -275,8 +305,8 @@ public class IBStrategyCloseAllPositions extends StrategyImpl {
 		boolean bOK = Boolean.TRUE;
 		for (Map.Entry<String, String> parameter : paramValues.entrySet()) {
 			String _paramValue = parameter.getValue();
-			
-			if (!Validator.isNumber(_paramValue) && Integer.parseInt(_paramValue)>=0)
+			/* PERMITIMOS 0  PARA IGNORAR */
+			if (!Validator.isNumber(_paramValue)  && Integer.parseInt(_paramValue)>=0)
 			{
 				bOK=Boolean.FALSE;
 				this.setValidateParamsKeysError("strategyshare.strategyminmax.errorparams");

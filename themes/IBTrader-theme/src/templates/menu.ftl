@@ -16,7 +16,19 @@
 		  </a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
-          <ul class="nav navbar-nav navbar-user navbar-right">
+          <ul class="nav navbar-nav navbar-user navbar-right">          
+          	<#if is_signed_in>
+          	<li> 
+				    <@liferay_portlet["runtime"]				    
+					    portletName="IBTraderSimulationmodeWeb"
+					/>
+			</li>
+			</#if>
+          	<li class="userbudget">          		
+					<@liferay_portlet["runtime"]				    
+					    portletName="IBTraderUserCashAvailablePortlet"
+					/>          	         
+			</li>          	
             <li><a href="/web${theme_display.getScopeGroup().getFriendlyURL()}/perfil"><span class="glyphicon glyphicon-user"></span>  ${user.getLastName()} ${user.getFirstName()}</a></li>
             <li><a href="/c/portal/logout"><span class="glyphicon glyphicon-log-out"></span></a></li>
           </ul>
@@ -59,10 +71,3 @@
 			</#list>	
 	  </ul>
 	</nav>
-<script>
-$('.navbar-primary').toggleClass('collapsed');
-$('.btn-expand-collapse').click(function(e) {
-				e.preventDefault();
-				$('.navbar-primary').toggleClass('collapsed');
-});
-</script>

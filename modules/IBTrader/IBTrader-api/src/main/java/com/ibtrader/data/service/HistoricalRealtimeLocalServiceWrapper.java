@@ -119,6 +119,14 @@ public class HistoricalRealtimeLocalServiceWrapper
 	}
 
 	@Override
+	public com.ibtrader.data.model.HistoricalRealtime findFirstRealTimeBetweenDates(
+		long shareId, long companyId, long groupId, java.util.Date _from,
+		java.util.Date _to) {
+		return _historicalRealtimeLocalService.findFirstRealTimeBetweenDates(shareId,
+			companyId, groupId, _from, _to);
+	}
+
+	@Override
 	public com.ibtrader.data.model.HistoricalRealtime findLastCompanyShare(
 		long companyId, long shareId, long groupId) {
 		return _historicalRealtimeLocalService.findLastCompanyShare(companyId,
@@ -145,6 +153,13 @@ public class HistoricalRealtimeLocalServiceWrapper
 		long groupId) {
 		return _historicalRealtimeLocalService.findMinMaxRealTime(from, to,
 			shareId, companyId, groupId);
+	}
+
+	@Override
+	public com.ibtrader.data.model.HistoricalRealtime findRealTime(
+		long shareId, long companyId, long groupId, java.util.Date closeDate) {
+		return _historicalRealtimeLocalService.findRealTime(shareId, companyId,
+			groupId, closeDate);
 	}
 
 	@Override

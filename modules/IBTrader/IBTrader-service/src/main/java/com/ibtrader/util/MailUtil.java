@@ -152,12 +152,14 @@ public class MailUtil {
 		/* SALIDA */ 
 		double profit = 0; 
 		if (price_out>0) profit = ( price_out - price_in) / price_in * 100;
-	    String _symbolProfitLoss = "";
-	    if (profit>0.0)
-	    	_symbolProfitLoss = "\u2B06"; // flecha arriba
-	    if (profit<0.0)
-	    	_symbolProfitLoss = "\u2B07"; // flecha abajo	    
-		profit = Utilities.RoundPrice(profit);
+	    String _symbolProfitLoss = "";	    
+	    if ((profit>0.0 && position.getType().equals(PositionStates.statusTWSFire.BUY.toString())) || 
+	    		(profit<0.0 && position.getType().equals(PositionStates.statusTWSFire.SELL.toString())))
+	    				_symbolProfitLoss = "\u2B06"; // flecha arriba
+	    if ((profit>0.0 && position.getType().equals(PositionStates.statusTWSFire.SELL.toString())) || 
+	    		(profit<0.0 && position.getType().equals(PositionStates.statusTWSFire.BUY.toString())))
+	    			_symbolProfitLoss = "\u2B07"; // flecha abajo	    
+		profit = Math.abs(Utilities.RoundPrice(profit));
 		if (!_symbolProfitLoss.equals(""))
 		{
 			_Subject += StringPool.SPACE +  profit + StringPool.PERCENT  + StringPool.SPACE + _symbolProfitLoss;	 	 	

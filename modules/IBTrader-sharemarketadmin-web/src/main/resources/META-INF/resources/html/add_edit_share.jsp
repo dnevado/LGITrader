@@ -216,9 +216,11 @@ if (_share!=null)
 				   <% 
 				   	  boolean _selectedStock = _share!=null && _share.getSecurity_type().equals(ConfigKeys.SECURITY_TYPE_STOCK) ? true : false;    
 				      boolean _selectedFutures = _share!=null && _share.getSecurity_type().equals(ConfigKeys.SECURITY_TYPE_FUTUROS) ? true: false; 				   	
+				      boolean _selectedIndexes = _share!=null && _share.getSecurity_type().equals(ConfigKeys.SECURITY_TYPE_INDICES) ? true: false;
 				   	%>				   
 		        	<aui:option  value="<%=ConfigKeys.SECURITY_TYPE_STOCK%>" selected="<%=_selectedStock %>" ><%=ConfigKeys.SECURITY_TYPE_STOCK%></aui:option>
 					<aui:option cssClass="futures" value="<%=ConfigKeys.SECURITY_TYPE_FUTUROS%>" selected="<%=_selectedFutures %>"><%=ConfigKeys.SECURITY_TYPE_FUTUROS%></aui:option>										
+					<aui:option value="<%=ConfigKeys.SECURITY_TYPE_INDICES%>" selected="<%=_selectedIndexes %>"><%=ConfigKeys.SECURITY_TYPE_INDICES%></aui:option>
 				</aui:select>
 		    </aui:fieldset>
 		    </aui:col>

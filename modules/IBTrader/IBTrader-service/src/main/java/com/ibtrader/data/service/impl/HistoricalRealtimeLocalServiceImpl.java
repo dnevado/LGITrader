@@ -162,6 +162,16 @@ public class HistoricalRealtimeLocalServiceImpl	extends HistoricalRealtimeLocalS
 
 	}
 	
+	public HistoricalRealtime findRealTime(long shareId, long companyId, long groupId, Date closeDate)
+	{
+		List<HistoricalRealtime> historicalrelatimes = historicalRealtimePersistence.findByCompanyShareDate(companyId, shareId, closeDate);
+		/* hay tiempo real*/ 
+		if (!historicalrelatimes.isEmpty())		
+			return  historicalrelatimes.get(0);
+		else
+			return null;	
+		
+	}	
 	public HistoricalRealtime findCloseRealTime(long shareId, long companyId, long groupId, Date closeDate)
 	{
 		return historicalRealtimeFinder.findCloseRealTimeDate(shareId, companyId, groupId,closeDate);
@@ -183,6 +193,11 @@ public class HistoricalRealtimeLocalServiceImpl	extends HistoricalRealtimeLocalS
 	{
 		return historicalRealtimeFinder.findLastRealTimeLessThanDate(shareId, companyId, groupId, _to);
 	}
+	public HistoricalRealtime findFirstRealTimeBetweenDates(long shareId, long companyId, long groupId, Date _from, Date _to)
+	{
+		return historicalRealtimeFinder.findFirstRealTimeBetweenDates(shareId, companyId, groupId, _from,  _to);
+	}
+	
 	public HistoricalRealtime findSimpleMobileAvgGroupByPeriods( long shareId, long companyId, long groupId,Date from, Date to, List<String> mobileAvgDates)
 	{
 		//return realtimeFinder.findSimpleMobileAvgGroupByPeriods( shareId, companyId,  groupId,from, to, mobileAvgDates);

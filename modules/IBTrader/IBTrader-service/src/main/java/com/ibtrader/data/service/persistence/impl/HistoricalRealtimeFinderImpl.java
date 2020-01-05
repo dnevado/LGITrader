@@ -10,6 +10,7 @@ import com.ibtrader.data.model.impl.RealtimeImpl;
 import com.ibtrader.data.service.persistence.HistoricalRealtimeFinder;
 import com.ibtrader.data.service.persistence.RealtimeFinder;
 import com.ibtrader.interactive.TIMApiWrapper;
+import com.ibtrader.util.ConfigKeys;
 import com.liferay.portal.dao.orm.custom.sql.CustomSQLUtil;
 import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
@@ -95,8 +96,9 @@ public class HistoricalRealtimeFinderImpl extends HistoricalRealtimeFinderBaseIm
 	        qPos.add(groupId);
 	        qPos.add(openMarketUTC);
 	        qPos.add(closeMarketUTC);
+	        q.setMaxResults(ConfigKeys.INDICATORS_MIN_SERIE_COUNT);
 	        
-	        lRealtime = (List<HistoricalRealtime>) QueryUtil.list(q, getDialect(), 0, 10000);
+	        lRealtime = (List<HistoricalRealtime>) QueryUtil.list(q, getDialect(), 0, ConfigKeys.INDICATORS_MIN_SERIE_COUNT);
 	        if (!lRealtime.isEmpty())
 	        		return lRealtime;
 	        else
@@ -227,7 +229,7 @@ public class HistoricalRealtimeFinderImpl extends HistoricalRealtimeFinderBaseIm
 	        qPos.add(companyId);
 	        qPos.add(groupId);	     
 	        qPos.add(date);
-	        qPos.add(Boolean.FALSE);
+	        qPos.add(Boolean.TRUE);
 	        
 	     
 
@@ -275,6 +277,53 @@ public class HistoricalRealtimeFinderImpl extends HistoricalRealtimeFinderBaseIm
 	        qPos.add(companyId);
 	        qPos.add(groupId);
 	        qPos.add(To);
+
+	        lRealtime = (List<HistoricalRealtime>) QueryUtil.list(q, getDialect(), 0, 10);
+	        if (!lRealtime.isEmpty())
+	        		return lRealtime.get(0);
+	        else
+	        		return null;
+	        
+	    }
+	    catch (Exception e) {
+	        try {
+	            throw new SystemException(e);
+	        }
+	        catch (SystemException se) {
+	            se.printStackTrace();
+	        }
+	    }
+	    finally {
+	        closeSession(session);
+	    }
+
+		return null;
+		}
+	
+	
+	@SuppressWarnings("unchecked")
+	public HistoricalRealtime findFirstRealTimeBetweenDates(long shareId, long companyId, long groupId, Date from, Date to)
+	{
+	 List<HistoricalRealtime> lRealtime = null;
+	 Session session = null;
+	    try {
+	        session = openSession();
+
+	        String sql = CustomSQLUtil.get(getClass(),FIND_FIRST_REALTIME_LESS_THAN_DATE);
+
+	        SQLQuery q = session.createSQLQuery(sql);
+	        q.setCacheable(false);	   	  
+	        q.addEntity("IBTrader_HistoricalRealtime", HistoricalRealtimeImpl.class);
+
+	        QueryPos qPos = QueryPos.getInstance(q);	    
+	        qPos.add(shareId);
+	        qPos.add(companyId);
+	        qPos.add(groupId);
+	        qPos.add(shareId);
+	        qPos.add(companyId);
+	        qPos.add(groupId);
+	        qPos.add(from);
+	        qPos.add(to);
 
 	        lRealtime = (List<HistoricalRealtime>) QueryUtil.list(q, getDialect(), 0, 10);
 	        if (!lRealtime.isEmpty())
@@ -376,25 +425,33 @@ public class HistoricalRealtimeFinderImpl extends HistoricalRealtimeFinderBaseIm
 
         String sql = CustomSQLUtil.get(getClass(),FIND_CLOSE_REALTIMES);
         
-        String Dates_IN = String.join("','", mobileAvgDates);
+      /*   String Dates_IN = String.join("','", mobileAvgDates);
         StringBuilder sDatesIN = new StringBuilder("'");
         sDatesIN.append(Dates_IN);
         //StringBuilder sDatesIN = new StringBuilder(Dates_IN);
         sDatesIN.append("'");
         sql = StringUtil.replace(sql, "[$TIMEBAR_DATES$]", sDatesIN.toString());
-
+		*/
         SQLQuery q = session.createSQLQuery(sql);        
         q.setCacheable(false);
         q.addEntity("IBTrader_HistoricalRealtime", HistoricalRealtimeImpl.class);
-         
+       
+        
+        
         QueryPos qPos = QueryPos.getInstance(q);	    
         qPos.add(from);
         qPos.add(to);
         qPos.add(shareId);
         qPos.add(companyId);
         qPos.add(groupId);        
+        qPos.add(ConfigKeys.DEFAULT_TIMEBAR_MINUTES); // 5 
+        qPos.add(ConfigKeys.DEFAULT_TIMEBAR_MINUTES-1); // RESTO PARA QUE SEAM 34 39 44 
+        q.setMaxResults(ConfigKeys.INDICATORS_MIN_SERIE_COUNT);
         
-        lExponentialMobile = (List<HistoricalRealtime>) QueryUtil.list(q, getDialect(), 0, 1000);
+        
+        
+        
+        lExponentialMobile = (List<HistoricalRealtime>) QueryUtil.list(q, getDialect(), 0, ConfigKeys.INDICATORS_MIN_SERIE_COUNT);
         
         if (_log.isDebugEnabled())
         	_log.info(sql + ",from:" + from + ",to:" + to + ",share:" + shareId + ",compamy:" + companyId + ",groupid:" + groupId + ",isnull:" + lExponentialMobile.isEmpty());
@@ -426,6 +483,7 @@ public class HistoricalRealtimeFinderImpl extends HistoricalRealtimeFinderBaseIm
 		public static final String FIND_FIRST_REALTIME = HistoricalRealtimeFinder.class.getName() + ".findFirstRealTime";		
 		public static final String FIND_LAST_REALTIMES_GROUP_BY_PERIODS = HistoricalRealtimeFinder.class.getName() + ".findSimpleMobileAvgGroupByPeriods";
 		public static final String FIND_LAST_REALTIME_LESS_THAN_DATE = HistoricalRealtimeFinder.class.getName() + ".findLastRealTimeLessThanDate";
+		public static final String FIND_FIRST_REALTIME_LESS_THAN_DATE = HistoricalRealtimeFinder.class.getName() + ".findFirstRealTimeBetweenDates";		
 		public static final String FIND_CLOSE_REALTIME_DATE = HistoricalRealtimeFinder.class.getName() + ".findCloseRealTimeDate";
 		public static final String FIND_CLOSE_REALTIMES = HistoricalRealtimeFinder.class.getName() + ".findCloseRealTimes";
 		public static final String FIND_MINMAX_REALTIME_GROUPED_BY_BARS = HistoricalRealtimeFinder.class.getName() + ".findMinMaxRealTimesBars";

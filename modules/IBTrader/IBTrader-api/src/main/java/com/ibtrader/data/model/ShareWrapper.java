@@ -93,6 +93,8 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 			getLast_error_trader_provider());
 		attributes.put("simulation_end_date", getSimulation_end_date());
 		attributes.put("trading_hours", getTrading_hours());
+		attributes.put("date_filled_realtime_gaps",
+			getDate_filled_realtime_gaps());
 
 		return attributes;
 	}
@@ -279,6 +281,13 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 
 		if (trading_hours != null) {
 			setTrading_hours(trading_hours);
+		}
+
+		Date date_filled_realtime_gaps = (Date)attributes.get(
+				"date_filled_realtime_gaps");
+
+		if (date_filled_realtime_gaps != null) {
+			setDate_filled_realtime_gaps(date_filled_realtime_gaps);
 		}
 	}
 
@@ -553,6 +562,16 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 	}
 
 	/**
+	* Returns the date_filled_realtime_gaps of this share.
+	*
+	* @return the date_filled_realtime_gaps of this share
+	*/
+	@Override
+	public Date getDate_filled_realtime_gaps() {
+		return _share.getDate_filled_realtime_gaps();
+	}
+
+	/**
 	* Returns the date_validated_trader_provider of this share.
 	*
 	* @return the date_validated_trader_provider of this share
@@ -710,6 +729,16 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 	@Override
 	public void setCreateDate(Date createDate) {
 		_share.setCreateDate(createDate);
+	}
+
+	/**
+	* Sets the date_filled_realtime_gaps of this share.
+	*
+	* @param date_filled_realtime_gaps the date_filled_realtime_gaps of this share
+	*/
+	@Override
+	public void setDate_filled_realtime_gaps(Date date_filled_realtime_gaps) {
+		_share.setDate_filled_realtime_gaps(date_filled_realtime_gaps);
 	}
 
 	/**

@@ -117,6 +117,14 @@ public class HistoricalRealtimeLocalServiceUtil {
 		return getService().findFirstRealTime(shareId, companyId, groupId);
 	}
 
+	public static com.ibtrader.data.model.HistoricalRealtime findFirstRealTimeBetweenDates(
+		long shareId, long companyId, long groupId, java.util.Date _from,
+		java.util.Date _to) {
+		return getService()
+				   .findFirstRealTimeBetweenDates(shareId, companyId, groupId,
+			_from, _to);
+	}
+
 	public static com.ibtrader.data.model.HistoricalRealtime findLastCompanyShare(
 		long companyId, long shareId, long groupId) {
 		return getService().findLastCompanyShare(companyId, shareId, groupId);
@@ -139,6 +147,11 @@ public class HistoricalRealtimeLocalServiceUtil {
 		long groupId) {
 		return getService()
 				   .findMinMaxRealTime(from, to, shareId, companyId, groupId);
+	}
+
+	public static com.ibtrader.data.model.HistoricalRealtime findRealTime(
+		long shareId, long companyId, long groupId, java.util.Date closeDate) {
+		return getService().findRealTime(shareId, companyId, groupId, closeDate);
 	}
 
 	public static com.ibtrader.data.model.HistoricalRealtime findSimpleMobileAvgGroupByPeriods(

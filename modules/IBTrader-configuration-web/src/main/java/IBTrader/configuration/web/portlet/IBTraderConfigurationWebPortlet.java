@@ -101,6 +101,7 @@ public class IBTraderConfigurationWebPortlet extends MVCPortlet {
 		    	String  _PWD_TWS = Utilities.getConfigurationValue(IBTraderConstants.keyUSER_PWD, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
 		    	String  _DESTOP_NOTIFICATION= Utilities.getConfigurationValue(IBTraderConstants.keyENABLE_DESKTOP_NOTIFICATIONS, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
 		    	String  _MAIL_NOTIFICATION = Utilities.getConfigurationValue(IBTraderConstants.keyENABLE_MAIL_NOTIFICATIONS, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());		    	
+		    	String  _DAYTRADER_PATTERN = Utilities.getConfigurationValue(IBTraderConstants.keyDAY_TRADER_PATTER, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
 		    	String  _SIMULATION_MODE = Utilities.getConfigurationValue(IBTraderConstants.keySIMULATION_MODE, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
 		    	String  _PATH_TO_CONFIGURATION_FILE = Utilities.getConfigurationValue(IBTraderConstants.keyPATH_TO_CONFIGURATION_FILE, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
 		    	String  _PATH_TO_EXECUTABLE_FILE = Utilities.getConfigurationValue(IBTraderConstants.keyPATH_TO_EXECUTABLE_FILE, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
@@ -117,6 +118,7 @@ public class IBTraderConfigurationWebPortlet extends MVCPortlet {
 		        renderRequest.setAttribute("_PWD_TWS", _PWD_TWS);
 		        renderRequest.setAttribute("_DESTOP_NOTIFICATION", _DESTOP_NOTIFICATION);
 		        renderRequest.setAttribute("_MAIL_NOTIFICATION", _MAIL_NOTIFICATION);
+		        renderRequest.setAttribute("_DAYTRADER_PATTERN", _DAYTRADER_PATTERN);		        
 		        renderRequest.setAttribute("_HOST", _HOST);
 		        renderRequest.setAttribute("_PORT", _PORT);	  
 		        renderRequest.setAttribute("_SIMULATION_MODE", _SIMULATION_MODE);
@@ -188,6 +190,7 @@ public class IBTraderConfigurationWebPortlet extends MVCPortlet {
 		String user = ParamUtil.get(actionRequest, "user", "");
 		String password = ParamUtil.get(actionRequest, "password", "");
 		boolean  desktop_notifications = ParamUtil.get(actionRequest, "desktop_notifications", Boolean.FALSE);
+		boolean  daytrader_pattern = ParamUtil.get(actionRequest, "daytrader_pattern", Boolean.FALSE);		
 		boolean email_notifications = ParamUtil.get(actionRequest, "email_notifications", Boolean.FALSE);
 		boolean simulation_mode = ParamUtil.get(actionRequest, "simulation_mode", Boolean.FALSE);
 		
@@ -388,6 +391,18 @@ public class IBTraderConfigurationWebPortlet extends MVCPortlet {
 				_configLocalService.updateConfig(_config);
 				
 			}
+			
+			/* keydaytrader_pattern */
+			_config = _configLocalService.findByKeyCompanyGroup(IBTraderConstants.keyDAY_TRADER_PATTER, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
+			if (_config!=null)
+			{
+				String _val = String.valueOf(daytrader_pattern ? "1" : "0");
+				_config.setValue(_val);
+				_configLocalService.updateConfig(_config);
+				
+			}
+			
+			
 			/* keyENABLE_DESKTOP_NOTIFICATIONS */
 			_config = _configLocalService.findByKeyCompanyGroup(IBTraderConstants.keyENABLE_DESKTOP_NOTIFICATIONS, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
 			if (_config!=null)

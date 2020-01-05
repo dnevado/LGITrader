@@ -504,6 +504,20 @@ public interface ShareModel extends BaseModel<Share>, ShardedModel, StagedModel 
 	 */
 	public void setTrading_hours(String trading_hours);
 
+	/**
+	 * Returns the date_filled_realtime_gaps of this share.
+	 *
+	 * @return the date_filled_realtime_gaps of this share
+	 */
+	public Date getDate_filled_realtime_gaps();
+
+	/**
+	 * Sets the date_filled_realtime_gaps of this share.
+	 *
+	 * @param date_filled_realtime_gaps the date_filled_realtime_gaps of this share
+	 */
+	public void setDate_filled_realtime_gaps(Date date_filled_realtime_gaps);
+
 	@Override
 	public boolean isNew();
 

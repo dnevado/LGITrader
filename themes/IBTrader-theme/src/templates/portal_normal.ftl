@@ -74,12 +74,7 @@
 		   </#if>
 		</header>
 		<div id="content">
-			<div id="main-content">
-				<#if is_signed_in> 
-				    <@liferay_portlet["runtime"]				    
-					    portletName="IBTraderSimulationmodeWeb"
-					/>
-				</#if>
+			<div id="main-content">				
 				<#if selectable>
 					<@liferay_util["include"] page=content_include />
 				<#else>
