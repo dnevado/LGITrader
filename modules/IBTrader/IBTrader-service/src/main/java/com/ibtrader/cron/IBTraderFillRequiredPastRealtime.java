@@ -57,9 +57,6 @@ public class IBTraderFillRequiredPastRealtime  extends BaseSchedulerEntryMessage
 	@Deactivate
 	protected void deactivate() {
 		
-		System.out.println("IBTraderFillRequiredPastRealtime deactivate runningJob:" + runningJob); 
-
-		
 		// if we previously were initialized
 	    if (_initialized) {
 	      // unschedule the job so it is cleaned up
@@ -125,7 +122,7 @@ public class IBTraderFillRequiredPastRealtime  extends BaseSchedulerEntryMessage
 		{
 			runningJob = true;					
 			CronUtil cronThread = new CronUtil();			
-			cronThread.StartFillRequiredRealtime(message);
+		//	cronThread.StartFillRequiredRealtime(message);
 		}
 		catch (Exception e)
 		{

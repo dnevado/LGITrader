@@ -87,7 +87,7 @@ String portletId= "_" + portletDisplay.getId();
     <aui:fieldset collapsed="false" collapsible="true"  label="share.paramdata" id="datashare">
   		  <aui:row>      
 	   		<aui:col span="12">   
- 			 <aui:input type="number" label="share.number" name="numbertopurchase"  value="${strategyshare_numbertopurchase>=0  ? share.numbertopurchase : strategyshare_numbertopurchase}">
+ 			 <aui:input type="number" label="share.number" name="numbertopurchase"  value="${strategyshare_numbertopurchase>=0  ?  strategyshare_numbertopurchase : share.numbertopurchase}">
 		 	<aui:validator  name="required"  />	
 		  	<aui:validator name="min">1</aui:validator>
 		  	<aui:validator name="digits"/>

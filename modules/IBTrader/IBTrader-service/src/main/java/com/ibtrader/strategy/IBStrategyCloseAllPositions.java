@@ -68,12 +68,12 @@ public class IBStrategyCloseAllPositions extends StrategyImpl {
 	long returnValue=-1;
 	try		
     {
-		_log.info("UserAccount: detectada posible entrada de " + _share.getName() +  "Tick:" + _share.getSymbol() + ",PrecioCompra:" + this.getValueIn());
+		_log.info("UserAccount: detectada salida de " + _share.getName() +  "Tick:" + _share.getSymbol() + ",PrecioCompra:" + this.getValueIn());
 		// hace falta???????? ..creo que si, para tener control sobre la operacion de compra /venta 
 		SimpleDateFormat sdf = new SimpleDateFormat (Utilities._IBTRADER_FUTURE_SHORT_DATE);
 		boolean bIsFutureStock = _share.getSecurity_type().equals(ConfigKeys.SECURITY_TYPE_FUTUROS)  && _share.getExpiry_date()!=null;
 		String _Expiration = "";
-	    if (bIsFutureStock)
+	    if (bIsFutureStock)	
 			_Expiration = sdf.format(_share.getExpiry_date());		    
 	    Contract oContrat = null;
 	    
@@ -109,7 +109,8 @@ public class IBStrategyCloseAllPositions extends StrategyImpl {
 		/* si metemos el date sell en las parciales, no entran las siguientes */
 		/* acumulo las acciones vendidas y a vender en la operativa */
 		currentPosition.setDate_out(!isSimulation_mode() ? new Date() : backtestingdDate);
-		currentPosition.setDescription(currentPosition.getDescription() + StringPool.RETURN_NEW_LINE + this._tradeDescription.toString());
+		String _description = currentPosition.getDescription().concat(StringPool.RETURN_NEW_LINE).concat(_tradeDescription.toString());
+		currentPosition.setDescription(_description);			
 		currentPosition.setStrategy_out(this.getClass().getName());		 		
 		
 		/* MODO FAKE CUENTA DEMO */
@@ -233,6 +234,10 @@ public class IBStrategyCloseAllPositions extends StrategyImpl {
 				this.setVerified(Boolean.TRUE);		
 				this.setValueOut(current_price);												
 				verified = true;
+				
+				
+				_log.info("Verify  nextToClose:" + nextToClose + ",symbol:" + _share.getSymbol() + ",deadline_until_closemarket:" + deadline_until_closemarket);
+
 			}
     }
     }

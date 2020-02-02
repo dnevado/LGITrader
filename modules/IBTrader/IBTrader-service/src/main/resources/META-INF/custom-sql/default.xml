@@ -231,6 +231,49 @@
     </sql>
     
     
+
+    
+    <sql id="com.ibtrader.data.service.persistence.RealtimeFinder.findVolumenBetweenDates">
+    <![CDATA[
+   					SELECT 
+							realtimeId, uuid_, groupId, companyId, shareId, 
+							value, createDate, modifiedDate, max_value, min_value, 
+							avg_volume, closeprice, SUM(volume) as  volume
+					FROM 
+							IBTrader_Realtime
+					WHERE
+																							
+						(IBTrader_Realtime.companyid=?)
+	            		AND (IBTrader_Realtime.groupid=?)
+	            		AND (IBTrader_Realtime.shareId=?)
+	            		AND (IBTrader_Realtime.createDate>=?)
+	            		AND (IBTrader_Realtime.createDate<?)
+	 
+     ]]>
+    </sql>
+    <sql id="com.ibtrader.data.service.persistence.HistoricalRealtimeFinder.findVolumenBetweenDates">
+    <![CDATA[
+   					SELECT 							
+							realtimeId, uuid_, groupId, companyId, shareId, 
+							value, createDate, modifiedDate, max_value, min_value, 
+							avg_volume, closeprice, SUM(volume) as  volume
+					FROM 
+							IBTrader_HistoricalRealtime
+					WHERE
+																							
+						(IBTrader_HistoricalRealtime.companyid=?)
+	            		AND (IBTrader_HistoricalRealtime.groupid=?)
+	            		AND (IBTrader_HistoricalRealtime.shareId=?)
+	            		AND (IBTrader_HistoricalRealtime.createDate>=?)
+	            		AND (IBTrader_HistoricalRealtime.createDate<?)
+	 
+     ]]>
+    </sql>
+    
+    
+    
+    
+    
     
      <!--  
     incluimos el multiplicador del activo para los futuros o 1 para el resto -->

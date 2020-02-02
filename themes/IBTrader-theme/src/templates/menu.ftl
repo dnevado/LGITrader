@@ -17,11 +17,11 @@
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav navbar-user navbar-right">          
-          	<#if is_signed_in>
-          	<li> 
-				    <@liferay_portlet["runtime"]				    
+          	<#if is_signed_in>        
+			<li> 
+				  <@liferay_portlet["runtime"]				    
 					    portletName="IBTraderSimulationmodeWeb"
-					/>
+					/>			
 			</li>
 			</#if>
           	<li class="userbudget">          		

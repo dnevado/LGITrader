@@ -88,7 +88,11 @@ public class IBStrategyStopProfit extends StrategyImpl {
 		currentPosition.setPrice_out(this.getValueOut());
 	//	currentPosition.setState_out(PositionStates.statusTWSCallBack.PendingSubmit.toString());
 		currentPosition.setDate_out(!isSimulation_mode() ?  new Date() : backtestingdDate);
-		currentPosition.setDescription(currentPosition.getDescription() + StringPool.RETURN_NEW_LINE + this.getClass().getName());
+	
+
+		String _description = currentPosition.getDescription().concat(StringPool.RETURN_NEW_LINE).concat(this.getClass().getName());
+		currentPosition.setDescription(_description);	
+		
 		currentPosition.setStrategy_out(this.getClass().getName());
 		
 		/* MODO FAKE CUENTA DEMO */

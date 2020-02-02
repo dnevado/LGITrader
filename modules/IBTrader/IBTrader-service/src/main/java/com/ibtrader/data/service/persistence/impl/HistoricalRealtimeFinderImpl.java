@@ -26,7 +26,56 @@ import com.liferay.portal.kernel.util.StringUtil;
 public class HistoricalRealtimeFinderImpl extends HistoricalRealtimeFinderBaseImpl  implements HistoricalRealtimeFinder {
 	
 	Log _log = LogFactoryUtil.getLog(HistoricalRealtimeFinderImpl.class);
+	
 	@SuppressWarnings("unchecked")
+	public HistoricalRealtime  findSumVolumeBetweenBars(Date from, Date to, long shareId, long companyId, long groupId)
+	{
+	 List<HistoricalRealtime> lRealtime = null;
+	 Session session = null;
+	  try {
+	        session = openSession();
+
+	        String sql = CustomSQLUtil.get(getClass(),FIND_VOLUMEN_BETWEEN_BARS);
+
+	        SQLQuery q = session.createSQLQuery(sql);
+	        q.setCacheable(false);
+	        q.addEntity("IBTrader_HistoricalRealtime", HistoricalRealtimeImpl.class);
+	       // q.addScalar("total_volume", com.liferay.portal.kernel.dao.orm.Type.LONG);
+	        QueryPos qPos = QueryPos.getInstance(q);        
+	        qPos.add(companyId);
+	        qPos.add(groupId);
+	        qPos.add(shareId);
+	        qPos.add(from);
+	        qPos.add(to);
+	        
+	        
+	        lRealtime = (List) QueryUtil.list(q, getDialect(), 0, 10);
+	        if (!lRealtime.isEmpty())
+	        		return lRealtime.get(0);
+	        else
+	        		return null;
+	        
+	    }
+	    catch (Exception e) {
+	        try {
+	            throw new SystemException(e);
+	        }
+	        catch (SystemException se) {
+	            se.printStackTrace();
+	        }
+	    }
+	    finally {
+	        closeSession(session);
+	    }
+
+		return null;
+		}
+	
+	
+	
+	
+	
+	
 	public List findMinMaxRealTime(Date from, Date to, long shareId, long companyId, long groupId)
 	{
 	 List lRealtime = null;
@@ -487,6 +536,7 @@ public class HistoricalRealtimeFinderImpl extends HistoricalRealtimeFinderBaseIm
 		public static final String FIND_CLOSE_REALTIME_DATE = HistoricalRealtimeFinder.class.getName() + ".findCloseRealTimeDate";
 		public static final String FIND_CLOSE_REALTIMES = HistoricalRealtimeFinder.class.getName() + ".findCloseRealTimes";
 		public static final String FIND_MINMAX_REALTIME_GROUPED_BY_BARS = HistoricalRealtimeFinder.class.getName() + ".findMinMaxRealTimesBars";
+		public static final String FIND_VOLUMEN_BETWEEN_BARS = HistoricalRealtimeFinder.class.getName() + ".findVolumenBetweenDates";
 
 
 		

@@ -7,6 +7,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -134,6 +135,8 @@ public class Utilities {
    
    private static Log log = LogFactoryUtil.getLog(Utilities.class.getName());
 
+	private static DecimalFormat df = new DecimalFormat("#.00"); 		
+   
 	@Reference(unbind = "-")
 	protected void setConfigService(ConfigLocalService configLocalService) {
 		_configLocalService = configLocalService;
@@ -785,6 +788,18 @@ public class Utilities {
       return detectedOS;
     }
   
+  /* ME DICE SI ACTIVO LA OPERACION O NO */  
+  public static boolean getTradingEnabled(long companyId, long groupId)
+  {
+  
+	boolean return_enabled = Boolean.FALSE;  
+	String enabled = Utilities.getConfigurationValue(IBTraderConstants.keyENABLED_GLOBAL_TRADING, companyId, groupId);
+	return_enabled =  enabled.equals("1") ? Boolean.TRUE : Boolean.FALSE;
+	return return_enabled;
+	 	
+  
+  }
+  
   public static boolean getSimulatedTrading(long companyId, long groupId)
   {
   
@@ -1349,7 +1364,7 @@ public class Utilities {
     
 	public static double _Porcentaje100(double num)
 	{
-		return (num * 100);		
+		return Double.valueOf(df.format(num * 100));		
 	}
 		
 	
@@ -1357,7 +1372,9 @@ public class Utilities {
 		double result = num * 100;
 		result = Math.round(result);
 		result = result / 100;
-		return result;
+		
+	
+		return Double.valueOf(df.format(result));		
 		}
 	
 	public static int secondsDiff( Date earlierDate, Date laterDate )

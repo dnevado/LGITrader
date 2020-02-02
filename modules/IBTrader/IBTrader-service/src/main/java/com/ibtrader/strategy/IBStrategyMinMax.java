@@ -38,6 +38,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.ibtrader.util.BaseIndicatorUtil;
 import com.ibtrader.util.ConfigKeys;
 import com.ibtrader.util.PositionStates;
 import com.ibtrader.util.Utilities;
@@ -57,7 +58,8 @@ public class IBStrategyMinMax extends StrategyImpl {
 	
 
 	String operationfilter="";    // ALL, BUY, SELL
-	
+	boolean volume_increased = Boolean.FALSE;
+	long _num_macdT = 0;
 	private List<ExpandoColumn> ExpandoColumns = new ArrayList<ExpandoColumn>(); 
 	
 	private static String _EXPANDO_OFFSET1_FROM_OPENMARKET = "Initial OffSet From Open Market (Minutes)";  // offset desde inicio de mercado en minutos
@@ -65,6 +67,9 @@ public class IBStrategyMinMax extends StrategyImpl {
 	private static String _EXPANDO_TRADE_OFFSET_TO_CLOSEMARKET = "Trade Until x Minutes From CloseMarket"; // operar hasta minutos antes de cierre mercado
 	private static String _EXPANDO_PERCENTUAL_GAP = "Percentual Gap To Reach From Min/nMax Value Found";   // porcentaje de subida o baja hasta que se puede comprar, dentro de los limites 
 	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OPERATIONS_TYPE = "Operation Type [ALL, BUY, SELL]";  // offset desde inicio de mercado en minutos
+	private static String _EXPANDO_MINMAX_MOBILE_AVERAGE_VOLUME_INCREASED  = "Volume Increased [TRUE, FALSE]";  // offset desde inicio de mercado en minutos
+
+	/* ojo , min max no contempla barras par verificar volumen, pero una por defecto de 5 minutos en el momento estaría bien */
 	
 	JSONObject _tradeDescription;
 	 
@@ -290,6 +295,10 @@ public class IBStrategyMinMax extends StrategyImpl {
 		return Boolean.FALSE;
 		
     this.setJsonStrategyShareParams(JSONFactoryUtil.createJSONObject(_strategyImpl.getStrategyparamsoverride()));					
+	volume_increased = this.getJsonStrategyShareParams().getBoolean(_EXPANDO_MINMAX_MOBILE_AVERAGE_VOLUME_INCREASED,Boolean.TRUE);
+
+	/* STRATEGIA MIN MAX NO CONTEMPLA BARRAS PERO TENEMOS QUE SABER SI HAY VOLUMEN CRECIENTE, TOMAMOS LAS BARRAS DE 6 MINUTOS */
+    _num_macdT = ConfigKeys.DEFAULT_TIMEBAR_MINUTES;
 	
 	calFechaActualWithDeadLine.add(Calendar.MINUTE, this.getJsonStrategyShareParams().getInt(_EXPANDO_TRADE_OFFSET_TO_CLOSEMARKET));
 	String position_mode = Utilities.getPositionModeType(backtestingdDate, _share.getCompanyId(),_share.getGroupId());
@@ -385,7 +394,27 @@ public class IBStrategyMinMax extends StrategyImpl {
 		{	
 			/* double ValueToBuy =0.0; */
 			/* estos son los dos limites que debe rotar la accion para comprar */
-			
+			/* PRUEBA , FALTA EL REAL TIME IMPLEMETAT */
+			long    _volume = 0;
+			long _volume_previous = 0;
+			boolean bVolIncreased = Boolean.TRUE;
+			Calendar _previousBarDate = Calendar.getInstance();
+			Calendar _previousInitialBarDate = Calendar.getInstance();
+
+			if (volume_increased)
+			{
+				_previousBarDate.setTime(_calendarFromNow.getTime());
+				_previousBarDate.add(Calendar.MINUTE, - (int) _num_macdT);
+				_volume = BaseIndicatorUtil.getVolumeBetweenBars(_previousBarDate.getTime(), _calendarFromNow.getTime(), _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), isSimulation_mode());
+				//_volume =  Validator.isNull(oRTimeEnTramo) ? null : oRTimeEnTramo.getVolume();
+				if (_volume>0)
+				{	
+					_previousInitialBarDate.setTime(_previousBarDate.getTime());
+					_previousInitialBarDate.add(Calendar.MINUTE, - (int) _num_macdT);				
+					_volume_previous = BaseIndicatorUtil.getVolumeBetweenBars(_previousInitialBarDate.getTime(), _previousBarDate.getTime(), _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), isSimulation_mode());				
+					bVolIncreased  = _volume > _volume_previous;
+				}
+			}
 			
 			
 			double MaxValue =  MaxRealtime.doubleValue();
@@ -425,8 +454,13 @@ public class IBStrategyMinMax extends StrategyImpl {
 			boolean  IsFutureTradeable = Utilities.IsFutureTradeable(_share);
 			
 			
-			if (IsFutureTradeable && (bReachedMax || bReachedMin))					
+			if (IsFutureTradeable && bVolIncreased && (bReachedMax || bReachedMin))					
 			{
+								
+				_log.info("bVolIncreased:" + bVolIncreased + ",volume:" + _volume  + ",volume_previous:" + _volume_previous 
+						+ ",Volume From:" + _previousBarDate.getTime()  + ",Volume Until:" + _calendarFromNow.getTime()  +
+						",Volume_Previous  From:" + _previousInitialBarDate.getTime()  + ",Volume Until:" + _previousBarDate.getTime()  + 
+						".bReachedMax:," + bReachedMax   + ".bReachedMin:," + bReachedMin + " for :" + _share.getSymbol());
 				
 			    this.setValueIn(lastRealtime.doubleValue());
 			    if (bReachedMax)
@@ -449,6 +483,7 @@ public class IBStrategyMinMax extends StrategyImpl {
 				_tradeDescription.put("oShareLastRTime.getValue()", lastRealtime.doubleValue());
 				_tradeDescription.put("_FromIniMarket", _FromIniMarket);
 				_tradeDescription.put("_ToIniMarket", _ToIniMarket);
+				_tradeDescription.put("VolumeIncreased", bVolIncreased);
 				
 				this.setVerified(Boolean.TRUE);												
 				verified = true;
@@ -482,6 +517,8 @@ public class IBStrategyMinMax extends StrategyImpl {
 		Parameters.put(_EXPANDO_TRADE_OFFSET_TO_CLOSEMARKET,  String.valueOf(ExpandoColumnConstants.INTEGER));		
 		Parameters.put(_EXPANDO_PERCENTUAL_GAP,  String.valueOf(ExpandoColumnConstants.DOUBLE));
 		Parameters.put(_EXPANDO_MOBILE_AVERAGE_TRADE_OPERATIONS_TYPE,  String.valueOf(ExpandoColumnConstants.STRING_ARRAY));  // ESTE ES EL UNICO DOUBLE
+		Parameters.put(_EXPANDO_MINMAX_MOBILE_AVERAGE_VOLUME_INCREASED,  String.valueOf(ExpandoColumnConstants.STRING_ARRAY));  // ESTE ES EL UNICO DOUBLE
+
 		ExpandoTable expandoTable;
 		try {
 			expandoTable = ExpandoTableLocalServiceUtil.addDefaultTable(companyId, IBStrategyMinMax.class.getName());

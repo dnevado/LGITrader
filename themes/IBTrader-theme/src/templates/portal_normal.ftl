@@ -51,7 +51,21 @@
 
 </head>
 
-<body class="${css_class} ">
+
+<#assign permission_checker = themeDisplay.getPermissionChecker() />
+
+<#assign is_group_admin = permission_checker.isGroupAdmin(group_id) />
+<#assign is_omniadmin = permission_checker.isOmniadmin() />
+
+<#assign admin = is_omniadmin/>
+
+<!-- PARA QUITAR LOS CONTROLES DE LF7 PARA LOS USERS, BUG -->
+
+<#if admin>
+	<body class="${css_class} omniadmin_yes">
+<#else>
+	<body class="${css_class} omniadmin_no">
+</#if>
 
 <@liferay_ui["quick-access"] contentId="#main-content" />
 
@@ -59,15 +73,7 @@
 
 
 
-<#assign ibtrader_profile = "" />
-<#if themeDisplay.getPermissionChecker().isOmniadmin()>
-	<@liferay.control_menu />
-<#else>
-	<#assign ibtrader_profile = " normal_user" />
-</#if>
-
-
-<div id="wrapper" class="container-fluid${ibtrader_profile}">
+<div id="wrapper" class="container-fluid">
 		<header>
 			<#if has_navigation || is_signed_in>
 							<#include "${full_templates_path}/menu.ftl" />

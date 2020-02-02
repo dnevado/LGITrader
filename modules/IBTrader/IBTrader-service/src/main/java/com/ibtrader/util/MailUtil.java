@@ -252,6 +252,7 @@ public class MailUtil {
         
         for  (int j=0;j<to.length;j++)
         {
+        	Thread.sleep(3000); // a veces nos dio errores 500
         	gmailService.sendMessage(to[j], subject,body);	
         }
   

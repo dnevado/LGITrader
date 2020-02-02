@@ -22,6 +22,10 @@ import aQute.bnd.annotation.ProviderType;
  */
 @ProviderType
 public interface HistoricalRealtimeFinder {
+	public com.ibtrader.data.model.HistoricalRealtime findSumVolumeBetweenBars(
+		java.util.Date from, java.util.Date to, long shareId, long companyId,
+		long groupId);
+
 	public java.util.List findMinMaxRealTime(java.util.Date from,
 		java.util.Date to, long shareId, long companyId, long groupId);
 

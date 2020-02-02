@@ -122,7 +122,7 @@ public class IBTraderFillHistoricalData  extends BaseSchedulerEntryMessageListen
 		{
 			runningJob = true;					
 			CronUtil cronThread = new CronUtil();			
-			cronThread.StartFillHistoricalDataCron(message);
+				cronThread.StartFillHistoricalDataCron(message);
 		
 		}
 		catch (Exception e)

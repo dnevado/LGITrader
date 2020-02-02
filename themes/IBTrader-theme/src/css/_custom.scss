@@ -719,11 +719,22 @@ html {
      padding-top: 10px;
 	}
 	
+	
+	
 	.userbudget-detail {width:200px;color : #ffffff;}
 	.userbudget-detail .progress-bar {background-color : #8cb29d} 
 	nav div.container-fluid {max-height :80px}
+
+
+	.badge { font-size: 14px;     line-height: 3;}	
+	#p_p_id_IBTraderSimulationmodeWeb_  .portlet {padding:5px;background:none;}
 	
-	#p_p_id_IBTraderSimulationmodeWeb_ {padding:10px} 
+	
+	#portlet_IBTraderSimulationmodeWeb .btn-label {position: relative;left: -12px;display: inline-block;padding: 6px 12px;background: rgba(0,0,0,0.12);border-radius: 3px 0 0 3px;}
+	#portlet_IBTraderSimulationmodeWeb  .btn-labeled {padding-top: 0;padding-bottom: 0;} 
+	#portlet_IBTraderSimulationmodeWeb  .btn { margin-bottom:10px; } 
+	
+	body.omniadmin_no .portlet .portlet-topper  {display :none}
 	
 	@media (max-width: 600px) {
 		.navbar-primary  {
@@ -741,6 +752,9 @@ html {
 	}*/
 
 	/* ---------- IE8 ---------- */
+	
+	
+	
 
 	&.ie8 {
 		.dockbar-split .dockbar .navbar-inner .info-button a {

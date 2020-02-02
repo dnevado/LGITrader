@@ -19,9 +19,9 @@ public class ConfigKeys {
     
     
     public static int  _TICKTYPE_CLOSE = 9;
-    public static int _TICKTYPE_LAST  =4;
-    public static int _TICKTYPE_DELAYED_LAST  =68;
-    public static int _TICKTYPE_VOLUME  =8;
+    public static int _TICKTYPE_LAST  = 4;
+    public static int _TICKTYPE_DELAYED_LAST  = 68;
+    public static int _TICKTYPE_VOLUME  = 8;
     		
     
     public static final Long RULE_TRADE_TIME_PERIOD = new Long(1);

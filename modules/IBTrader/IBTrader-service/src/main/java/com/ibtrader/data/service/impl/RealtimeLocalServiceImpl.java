@@ -30,8 +30,11 @@ import com.ibtrader.data.service.base.RealtimeLocalServiceBaseImpl;
 import com.ibtrader.util.Utilities;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Projection;
+import com.liferay.portal.kernel.dao.orm.ProjectionFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.ProjectionList;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.Type;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
@@ -39,6 +42,7 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.Validator;
 
 /**
  * The implementation of the realtime local service.
@@ -64,6 +68,45 @@ public class RealtimeLocalServiceImpl extends RealtimeLocalServiceBaseImpl {
 	
 	private static final Log _log = LogFactoryUtil.getLog(RealtimeLocalServiceImpl.class);
 
+	
+	
+	
+	public long findSumVolumeBetweenBars(Date from, Date to, long shareId, long companyId, long groupId)
+	{
+		
+	 	Realtime volumeRealtime = null;
+	 	volumeRealtime = realtimeFinder.findSumVolumeBetweenBars(from, to, shareId, companyId,  groupId);
+		long volume = 0;
+		if (Validator.isNotNull(volumeRealtime))
+		{
+			volume =  volumeRealtime.getVolume();
+		}
+		return 	volume;
+		
+		
+		
+		
+	/* DynamicQuery _DQ = realtimeLocalService.dynamicQuery();
+		
+
+		_DQ.add(RestrictionsFactoryUtil.eq("companyId", companyId));
+		_DQ.add(RestrictionsFactoryUtil.eq("shareId", shareId));
+		_DQ.add(RestrictionsFactoryUtil.ge("createDate", from));
+		_DQ.add(RestrictionsFactoryUtil.lt("createDate", to));
+		_DQ.add(RestrictionsFactoryUtil.eq("groupId", groupId));
+		
+		_DQ.setProjection(ProjectionFactoryUtil.sum("volume"));
+
+		
+		List<Realtime> dRealTime = realtimeLocalService.dynamicQuery(_DQ);
+		if (dRealTime.isEmpty() || dRealTime.get(0) == null)
+			return 0;
+		else
+			return ((Number) dRealTime.get(0)).longValue();*/
+		
+	}
+	
+	
 	
 	public void removeRealtimeFromToDate(Date from, Date to, long shareId, long companyId, long groupId)
 	{
