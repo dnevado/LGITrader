@@ -310,6 +310,9 @@ public interface RealtimeLocalService extends BaseLocalService,
 	public long dynamicQueryCount(DynamicQuery dynamicQuery,
 		Projection projection);
 
+	public long findSumVolumeBetweenBars(Date from, Date to, long shareId,
+		long companyId, long groupId);
+
 	public void removeRealtimeFromToDate(Date from, Date to, long shareId,
 		long companyId, long groupId);
 

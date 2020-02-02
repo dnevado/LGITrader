@@ -1578,8 +1578,12 @@ public class CronUtil {
 				    				StrategyShare strategyShare =  StrategyShareLocalServiceUtil.getByCommpanyShareStrategyId(oShare.getGroupId(), oShare.getCompanyId(), oShare.getShareId(), oStrategyShare.getStrategyID());
 			    					_strategyImpl.init(oShare.getCompanyId());   // verify if custom fields are created and filled
 			    				
+			    					/* SOLO PARA LAS DE SALIDA SI NO ESTA HABILITADO LA OPERCION, QUEREMOS AL MENOS SALIR */
+			    					boolean IsTradingEnabled = Utilities.getTradingEnabled(oShare.getCompanyId(), oShare.getGroupId());
+			    					IsTradingEnabled = 	(IsTradingEnabled || (!IsTradingEnabled && oStrategyShare.getType().equals(IBTraderConstants.STRATEGY_OUT_TYPE))); 
+			    					
 			    					if (_strategyImpl.verify(oShare, oMarket,strategyShare,null) && wrapper.isConnected() 
-			    							&& !Utilities.IsDayTraderPattern(oShare.getGroupId(), oShare.getCompanyId()))
+			    							&& !Utilities.IsDayTraderPattern(oShare.getGroupId(), oShare.getCompanyId()) && IsTradingEnabled)
 			    					{		
 			    										    										    						
 			    							long positionId = _strategyImpl.execute(oShare, oMarket,null);
@@ -1600,7 +1604,7 @@ public class CronUtil {
 			    									}
 				    								continue;
 			    								} // fin de wrapper.isConnected()
-			    								_log.debug("Opening order CronUTIL,threadID:" + Thread.currentThread().getId()  +",wrapper:" + wrapper.getClient().connectedHost() + "," + _PORT + ",group:" + _Organization.getGroupId() + ",_CLIENT_ID:" + _CLIENT_ID);
+			    								_log.info("Opening order CronUTIL,threadID:" + Thread.currentThread().getId()  +",wrapper:" + wrapper.getClient().connectedHost() + "," + _PORT + ",group:" + _Organization.getGroupId() + ",_CLIENT_ID:" + _CLIENT_ID);
 			    								wrapper.set_ibtarget_share(oShare);
 			    								//	wrapper.setStrategyshare(oStrategyShare);
 			    								//  1. ABRIMOS CANCELACION EN SU CASO 

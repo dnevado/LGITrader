@@ -1512,6 +1512,17 @@ public class BaseIndicatorUtil {
 	}
 	
 	
+	
+	public  static long getVolumeBetweenBars(Date from, Date to,long shareId, long companyId, long groupId,  boolean simulation)
+	{
+		if (!simulation)
+			return RealtimeLocalServiceUtil.findSumVolumeBetweenBars(from, to, shareId, companyId, groupId);
+		else
+			return HistoricalRealtimeLocalServiceUtil.findSumVolumeBetweenBars(from, to, shareId, companyId, groupId);
+		
+		
+	}
+	
 	/*public static Realtime getMinMaxBarFromShare( Calendar _To, int TimeBars, int ShareStrategyID, boolean Simulation )
 	{
 		

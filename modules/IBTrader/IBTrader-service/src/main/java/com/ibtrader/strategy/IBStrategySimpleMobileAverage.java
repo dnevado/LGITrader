@@ -81,13 +81,14 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_TO_CLOSEMARKET = "Mobile Average Trade Until x Minutes From CloseMarket"; // operar hasta minutos antes de cierre mercado
 	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET = "OffSet From Open Market (Minutes) To Start Trading";  // offset desde inicio de mercado en minutos
 	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OPERATIONS_TYPE = "Operation Type [ALL, BUY, SELL]";  // offset desde inicio de mercado en minutos
+	private static String _EXPANDO_MOBILE_AVERAGE_VOLUME_INCREASED  = "Volume Increased [TRUE, FALSE]";  // offset desde inicio de mercado en minutos
 	
 	long _num_macdP = 8;   // Periodos
 	long  _num_macdT = 5;   // Tiempo de barras
 	
 	double _entryrate=75.0;    // Umbral de superacion, en porcentaje
 	String operationfilter="";    // ALL, BUY, SELL
-	
+	boolean volume_increased = Boolean.FALSE;
 	
 	boolean bBuyOperation = Boolean.FALSE;									
 	boolean bSellOperation = Boolean.FALSE;
@@ -160,6 +161,8 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 		_num_macdT = this.getJsonStrategyShareParams().getLong(_EXPANDO_MOBILE_AVERAGE_CANDLE_SIZE,0);
 		_entryrate = this.getJsonStrategyShareParams().getDouble(_EXPANDO_MOBILE_AVERAGE_GAP_SIZE,0.0f) / 100;
 		operationfilter = this.getJsonStrategyShareParams().getString(_EXPANDO_MOBILE_AVERAGE_TRADE_OPERATIONS_TYPE,"ALL").trim();
+		volume_increased = this.getJsonStrategyShareParams().getBoolean(_EXPANDO_MOBILE_AVERAGE_VOLUME_INCREASED,Boolean.FALSE);
+		
 		
 		if (_num_macdP==0 || _num_macdT==0 || _entryrate==0)
 			return Boolean.FALSE;
@@ -197,40 +200,45 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 			Double vRealtime = null;
 			
 			/* PRUEBA , FALTA EL REAL TIME IMPLEMETAT */
-			int   _volume = 0;
-			boolean bVolIncreased = Boolean.FALSE;
-			
+			long    _volume = 0;
+			long _volume_previous = 0;
+			boolean bVolIncreased = Boolean.TRUE;
 			Calendar _previousBarDate = Calendar.getInstance();
-			_previousBarDate.setTime(_calendarFromNow.getTime());
-			_previousBarDate.add(Calendar.MINUTE, - (int) _num_macdT);
+			Calendar _previousInitialBarDate = Calendar.getInstance();
+
+			if (volume_increased)
+			{
+				_previousBarDate.setTime(_calendarFromNow.getTime());
+				_previousBarDate.add(Calendar.MINUTE, - (int) _num_macdT);
+				
+				_volume = BaseIndicatorUtil.getVolumeBetweenBars(_previousBarDate.getTime(), _calendarFromNow.getTime(), _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), isSimulation_mode());
+				//_volume =  Validator.isNull(oRTimeEnTramo) ? null : oRTimeEnTramo.getVolume();
+				if (_volume>0)
+				{	
+					_previousInitialBarDate.setTime(_previousBarDate.getTime());
+					_previousInitialBarDate.add(Calendar.MINUTE, - (int) _num_macdT);				
+					_volume_previous = BaseIndicatorUtil.getVolumeBetweenBars(_previousInitialBarDate.getTime(), _previousBarDate.getTime(), _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), isSimulation_mode());				
+					bVolIncreased  = _volume > _volume_previous;
+				}
+			}
+			
+			
 			
 			if (!isSimulation_mode())
 			{
 				Realtime oRTimeEnTramo =  RealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _calendarFromNow.getTime());
-				vRealtime  = Validator.isNull(oRTimeEnTramo) ? null : oRTimeEnTramo.getValue();
-				_volume =  Validator.isNull(oRTimeEnTramo) ? null : oRTimeEnTramo.getVolume();
-				if (_volume>0)
-				{					
-					Realtime oPreviousBarRTime =  RealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _previousBarDate.getTime());
-					if (Validator.isNotNull(oPreviousBarRTime) && oPreviousBarRTime.getVolume()>0)
-						bVolIncreased  = _volume > oPreviousBarRTime.getVolume();
-				}
+				vRealtime  = Validator.isNull(oRTimeEnTramo) ? null : oRTimeEnTramo.getValue();				
 			}
 			else
 			{
 				HistoricalRealtime oRTimeEnTramo =  HistoricalRealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _calendarFromNow.getTime());
-				vRealtime  = Validator.isNull(oRTimeEnTramo) ? null : oRTimeEnTramo.getValue();
-				_volume =  Validator.isNull(oRTimeEnTramo) ? null : oRTimeEnTramo.getVolume();
-				if (_volume>0)
-				{					
-					HistoricalRealtime oPreviousBarRTime =  HistoricalRealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _previousBarDate.getTime());
-					if (Validator.isNotNull(oPreviousBarRTime) && oPreviousBarRTime.getVolume()>0)
-						bVolIncreased  = _volume > oPreviousBarRTime.getVolume();
-				}
-				
-				
+				vRealtime  = Validator.isNull(oRTimeEnTramo) ? null : oRTimeEnTramo.getValue();								
 			}
-				
+			
+			
+			if (_log.isDebugEnabled())
+			_log.debug("Volumen Increasead for  :" + _share.getSymbol() + ":" +  bVolIncreased + ",last:" + _volume + ",previous:" + _volume_previous);
+		
 
 			if (vRealtime!=null)
 			{
@@ -318,6 +326,11 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 						
 						if (bVolIncreased &&  IsFutureTradeable && _avgMovilInsidebar  && (_BuySuccess || _SellSuccess))
 						{
+							_log.info("bVolIncreased:" + bVolIncreased + ",volume:" + _volume  + ",volume_previous:" + _volume_previous 
+									+ ",Volume From:" + _previousBarDate.getTime()  + ",Volume Until:" + _calendarFromNow.getTime()  +
+									",Volume_Previous  From:" + _previousInitialBarDate.getTime()  + ",Volume Until:" + _previousBarDate.getTime()  + 
+									"._SellSuccess, _AvgMovil_InsideBar for :" + _share.getSymbol() + _BuySuccess + "," + _SellSuccess+ "," +_avgMovilInsidebar );
+
 							
 						    this.setValueIn(vRealtime.doubleValue());											
 							this.setVerified(Boolean.TRUE);												
@@ -342,6 +355,7 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 							_tradeDescription.put("_barentryrate", _entryrate);
 							_tradeDescription.put("operationfilter", operationfilter);						
 							_tradeDescription.put("_calendarFromNow", TimeFormat.format(_calendarFromNow.getTime()));
+							_tradeDescription.put("VolumeIncreased", bVolIncreased);
 							
 							
 							
@@ -506,6 +520,7 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 	Parameters.put(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_TO_CLOSEMARKET,  String.valueOf(ExpandoColumnConstants.INTEGER));  // ESTE ES EL UNICO DOUBLE
 	Parameters.put(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET,  String.valueOf(ExpandoColumnConstants.INTEGER));  // ESTE ES EL UNICO DOUBLE
 	Parameters.put(_EXPANDO_MOBILE_AVERAGE_TRADE_OPERATIONS_TYPE,  String.valueOf(ExpandoColumnConstants.STRING_ARRAY));  // ESTE ES EL UNICO DOUBLE
+	Parameters.put(_EXPANDO_MOBILE_AVERAGE_VOLUME_INCREASED,  String.valueOf(ExpandoColumnConstants.STRING_ARRAY));  // ESTE ES EL UNICO DOUBLE
 		
 	ExpandoTable expandoTable;
 	try {

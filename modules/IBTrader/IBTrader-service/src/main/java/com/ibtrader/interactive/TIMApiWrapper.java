@@ -41,13 +41,16 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.ta4j.core.TimeSeries;
 
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.regex.Pattern;
 
 import com.ib.client.Bar;
 import com.ib.client.CommissionReport;
@@ -94,6 +97,8 @@ import com.ibtrader.data.service.RealtimeLocalServiceUtil;
 import com.ibtrader.data.service.ShareLocalServiceUtil;
 import com.ibtrader.util.ConfigKeys;
 import com.ibtrader.util.PositionStates;
+import com.ibtrader.util.PriceTimeSeriesCacheList;
+import com.ibtrader.util.RealTimeCallBacksCacheList;
 import com.ibtrader.util.Utilities;
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -110,6 +115,7 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -160,7 +166,21 @@ public class TIMApiWrapper implements EWrapper {
 	private String userTWS = "";  
 	private String historicalDataRequest = ""; // me vale solo cuando soy un usuario edemo  y la TWS solo me da el historical del dia de hoy, entonces, lo uso para simular
 
-	private boolean historialDataEnd = Boolean.FALSE; 
+	private boolean historialDataEnd = Boolean.FALSE;
+	
+	
+	/* Modelo de cache de,
+	 * 
+	 *  Price : Para poder asociar el price del tick a la siguiente callback que es tickSize (despues de una invoación a tickPrice viene un 
+	 *  tickSize para el volumen)
+	 *  
+	 */
+	private static int CACHE_MAX_ELEMENTS = 50; 
+
+	private static LinkedHashMap<String, String> stockRealTimePricesCacheLRUMap = new RealTimeCallBacksCacheList<>(CACHE_MAX_ELEMENTS, .75f, true);	// new LinkedHashMap<String, String>();
+	
+	
+	
 	//! [socket_declare]
 	
 	//! [socket_init]
@@ -213,6 +233,25 @@ public class TIMApiWrapper implements EWrapper {
 	public void cancelMarketData(int requestId)
 	{
 		clientSocket.cancelMktData(requestId);
+	}
+	
+	/* TICKER ID , SHAREID , COMPANYID, GROUPUID */
+	private String getUniqueWrapperConnectionId(int tickerId)
+	{
+		
+		StringBundler  keyBuilder= new StringBundler(String.valueOf(tickerId));
+		keyBuilder.append(StringPool.PIPE);
+		keyBuilder.append(String.valueOf(_clientId));		
+		keyBuilder.append(StringPool.PIPE);
+		keyBuilder.append(String.valueOf(_ibtarget_organization.getCompanyId()));
+		keyBuilder.append(StringPool.PIPE);
+		keyBuilder.append(String.valueOf(_ibtarget_organization.getGroupId()));
+		/* keyBuilder.append(StringPool.PIPE);
+		keyBuilder.append(String.valueOf(field == ConfigKeys. _TICKTYPE_CLOSE ? Boolean.TRUE : Boolean.FALSE)); */
+	
+		
+		return  keyBuilder.toString();
+		
 	}
 	
 	public void getHistoricalData(int requestId, Contract contract, String EndTime){
@@ -375,27 +414,93 @@ public class TIMApiWrapper implements EWrapper {
 	
 	@Override
 	public void tickSize(int tickerId, int field, int size) {
+	try
+	{
+		_log.trace("tickSize called");
 		
-		
-		IBOrder MyOrder = null;
-		
-		if (size>0 && (field==ConfigKeys._TICKTYPE_VOLUME)) { //|| field==ConfigKeys. _TICKTYPE_CLOSE)
-
-			//MyOrder =  IBOrderLocalServiceUtil.fetchIBOrder(tickerId);
-			MyOrder =  IBOrderLocalServiceUtil.findByOrderClientGroupCompany(tickerId, _clientId, _ibtarget_organization.getCompanyId(),_ibtarget_organization.getGroupId());
-			if (MyOrder == null) {
-				
-				_log.debug("No se encuentra el ID " + tickerId);
+		// TODO Auto-generated method stub
+	    //_log.debug("Impl tickPrice : + " + tickerId + ",prices:" + price + ",field" + field);		
+		// TODO Auto-generated method stub
+		if (size>0 && (field==ConfigKeys._TICKTYPE_VOLUME)) 
+		{
+			/* si no lo contiene, deberia estar relleno por el TickPrice  */
+			if (!stockRealTimePricesCacheLRUMap.containsKey(getUniqueWrapperConnectionId(tickerId)))
+			{
 				return;
 			}
-			// verificamos si esta en modo simulation con precios introducidos a mano 
-			Share share = ShareLocalServiceUtil.fetchShare(MyOrder.getShareID());
-			if (share!=null) 
-			{			
-		
-				_log.debug("Tick Size for . " + share.getSymbol() + ", Ticker Id:" + tickerId + ", Field: " + field + ", Size: " + size);
+			/* lo contiene el price
+			 * 
+			 */
+			/* PRICE|(CIERRE(S/N)|SHAREID|PERSISTED(S/N)
+			 * 
+			 * Persisted: Lo ponemos a 0 la primera vez ya que se llama varias veces a TickSize antes de tener el cambio de precio */
+			String priceBuilder = stockRealTimePricesCacheLRUMap.get(getUniqueWrapperConnectionId(tickerId));		
+			String[] priceArray =  priceBuilder.split(Pattern.quote(StringPool.PIPE));  		
+			
+			double tickPrice = Double.valueOf(priceArray[0]);  // ES EL ULTIMO, PUESTO QUE DESPUES SE LLAMA AQUI. 
+			boolean bClosePrice =  Boolean.valueOf(priceArray[1]);  
+			long shareId = Long.valueOf(priceArray[2]);
+			int  previousVolume = Integer.valueOf(priceArray[3]);
+			int  currentVolume = (previousVolume>0 ?  size - previousVolume : size);
+			boolean bPersisted =  Boolean.valueOf(priceArray[4]);
+			
+			if (!bPersisted) /// ya ha sido persistido para ese precio , en otro cambio se pone a 0
+			{				
+			
+				_log.trace("tickSize called and persisted RealTime ");
+				
+				Date cNow = new Date();
+				Calendar _calNow = Calendar.getInstance();
+				_calNow.setTime(cNow);
+													
+				Realtime  oReal = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));
+				oReal.setGroupId(this._ibtarget_organization.getGroupId());
+				oReal.setCompanyId(_ibtarget_organization.getCompanyId());
+				oReal.setShareId(shareId);
+				oReal.setValue(tickPrice);					
+				oReal.setCloseprice(bClosePrice ? Boolean.TRUE : Boolean.FALSE);
+				
+				if (oReal.getCloseprice())
+				{
+					_calNow.add(-1, Calendar.DATE);
+					_calNow.set(Calendar.HOUR, 23);
+					_calNow.set(Calendar.MINUTE, 59);
+					_calNow.set(Calendar.SECOND, 59);
+				}
+				
+				oReal.setCreateDate(_calNow.getTime());
+				oReal.setModifiedDate(_calNow.getTime());
+				oReal.setVolume(currentVolume);
+				
+				RealtimeLocalServiceUtil.addRealtime(oReal);
 			}
+			
+			
+			/* ACTUALIZAMOS EL VOLUMEN PARA LA PROXIMA BARRA */
+			/* PRICE|(CIERRE(S/N)|SHAREID|PERSISTED(S/N)
+			 * 
+			 * Persisted: Lo ponemos a 0 la primera vez ya que se llama varias veces a TickSize antes de tener el cambio de precio */
+			StringBuilder sb = new StringBuilder();
+			sb.append(tickPrice);
+			sb.append(StringPool.PIPE);
+			sb.append(bClosePrice);
+			sb.append(StringPool.PIPE);
+			sb.append(String.valueOf(shareId));
+			sb.append(StringPool.PIPE);
+			sb.append(String.valueOf(size));
+			sb.append(StringPool.PIPE);
+			sb.append(String.valueOf(Boolean.TRUE));  // se guardo, evitamos que se persista mas 
+			
+			
+			stockRealTimePricesCacheLRUMap.put(getUniqueWrapperConnectionId(tickerId), sb.toString());	
+			
 		}
+			
+	}
+	catch (Exception e)
+	{
+		_log.debug(e.getMessage());
+	}
 		
 	}
 	//! [ticksize]
@@ -492,7 +597,7 @@ public class TIMApiWrapper implements EWrapper {
 		PositionLocalServiceUtil.updatePosition(_position);
 		clientSocket.placeOrder(new Long(_INCREMENT_ORDER_ID).intValue(), contract, parentOrder);
 		
-		_log.info("placeOrder _INCREMENT_ORDER_ID: " + _INCREMENT_ORDER_ID +",symbol"+  contract.symbol()+",groupid::" + _ibtarget_share.getGroupId() + " IP:" + this._host + ",port:" + this._port + ",client:" + this._clientId + ",Isconnected:" + this.isConnected());
+		_log.info("placeOrder _INCREMENT_ORDER_ID: " + _INCREMENT_ORDER_ID +",number:" + _position.getShare_number()  + ",symbol:"+  contract.symbol()+",groupid::" + _ibtarget_share.getGroupId() + " IP:" + this._host + ",port:" + this._port + ",client:" + this._clientId + ",Isconnected:" + this.isConnected());
 
 		//	_log.info("1. openOrder...." +  positionId + "," + _INCREMENT_ORDER_ID);
 		// Si hay hijas, aseguramos el transmit correcto,
@@ -1127,80 +1232,74 @@ public class TIMApiWrapper implements EWrapper {
 	public void tickPrice(int tickerId, int field, double price, TickAttr attrib) {
 	try
 	{
+		
+		_log.trace("TickPrice called");
+		
     	 //  TODO Auto-generated method stub
 	    //_log.debug("Impl tickPrice : + " + tickerId + ",prices:" + price + ",field" + field);		
 		// TODO Auto-generated method stub
 		IBOrder MyOrder = null;
+
+		boolean closePrice = Boolean.FALSE;
+		long shareId = 0;
+		long volumen = 0;
+		
 		
 		if (price>0 && (field==ConfigKeys._TICKTYPE_LAST || field==ConfigKeys. _TICKTYPE_DELAYED_LAST)) { //|| field==ConfigKeys. _TICKTYPE_CLOSE)
-
-			//MyOrder =  IBOrderLocalServiceUtil.fetchIBOrder(tickerId);
-			MyOrder =  IBOrderLocalServiceUtil.findByOrderClientGroupCompany(tickerId, _clientId, _ibtarget_organization.getCompanyId(),_ibtarget_organization.getGroupId());
-			if (MyOrder == null) {
+			
+			/* si no lo contiene  */
+			if (!stockRealTimePricesCacheLRUMap.containsKey(getUniqueWrapperConnectionId(tickerId)))
+			{				
+				MyOrder =  IBOrderLocalServiceUtil.findByOrderClientGroupCompany(tickerId, _clientId, _ibtarget_organization.getCompanyId(),_ibtarget_organization.getGroupId());
+				if (MyOrder == null) {
+					
+					_log.debug("No se encuentra el ID " + tickerId);
+					return;
+				}
+				// verificamos si esta en modo simulation con precios introducidos a mano 
+				Share share = ShareLocalServiceUtil.fetchShare(MyOrder.getShareID());
+				if (share==null) 
+				{
+					_log.debug("No se encuentra share for OrderId + " + MyOrder.getShareID());
+					return;
+				}
 				
-				_log.debug("No se encuentra el ID " + tickerId);
-				return;
+				closePrice = (field == ConfigKeys. _TICKTYPE_CLOSE ? Boolean.TRUE : Boolean.FALSE);
+				shareId = share.getShareId();
 			}
-			
-			Date cNow = new Date();
-			Calendar _calNow = Calendar.getInstance();
-			_calNow.setTime(cNow);
-		//	_calNow.set(Calendar.MILLISECOND,0);
-			
-			// verificamos si esta en modo simulation con precios introducidos a mano 
-			Share share = ShareLocalServiceUtil.fetchShare(MyOrder.getShareID());
-			if (share!=null) 
-			{			
-						
-					Realtime  oReal = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));
-					oReal.setGroupId(MyOrder.getGroupId());
-					oReal.setCompanyId(MyOrder.getCompanyId());
-					oReal.setShareId(MyOrder.getShareID());
-					oReal.setValue(price);					
-					oReal.setCloseprice(field==ConfigKeys. _TICKTYPE_CLOSE ? Boolean.TRUE : Boolean.FALSE);
-					
-					/* PRECIO CIERRE ES EL DIA ANTERIOR SEGUN DOCUM DE IB */
-					if (oReal.getCloseprice())
-					{
-						_calNow.add(-1, Calendar.DATE);
-						_calNow.set(Calendar.HOUR, 23);
-						_calNow.set(Calendar.MINUTE, 59);
-						_calNow.set(Calendar.SECOND, 59);
-					}
-					
-					oReal.setCreateDate(_calNow.getTime());
-					oReal.setModifiedDate(_calNow.getTime());
-					
-					/* CAMBIO ADD  EN VEZ DE UPDATE PARA QUE NO INCLUYA EL SELECT PREVIO DE VERIFICACION */
-					RealtimeLocalServiceUtil.addRealtime(oReal);
-					
-					/* MODO FAKE, UN SOLO TWS, REPLICAMOS REALTIME PARA CADA SYMBOL IGUAL  */
-					if (standalone_mode)
-					{
-						List<Share> fakesharelist = ShareLocalServiceUtil.findBySymbolExcludingId(share.getSymbol(), share.getShareId());
-						for (Share fakeshare : fakesharelist)
-						{
-							oReal = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));
-							oReal.setGroupId(fakeshare.getGroupId());
-							oReal.setCompanyId(fakeshare.getCompanyId());
-							oReal.setShareId(fakeshare.getShareId());
-							oReal.setCloseprice(field==ConfigKeys. _TICKTYPE_CLOSE ? Boolean.TRUE : Boolean.FALSE);
-							oReal.setValue(price);
-							oReal.setCreateDate(_calNow.getTime());
-							oReal.setModifiedDate(_calNow.getTime());
-							RealtimeLocalServiceUtil.updateRealtime(oReal);
-						}
-						
-						
-						
-					}						
-						
-			}
+			// encuentra la clave, actualizamos el realtime  
 			else
 			{
-				_log.debug("No se encuentra share for OrderId + " + MyOrder.getShareID());
-
+				/* PRICE|(CIERRE(S/N)|SHAREID|VOLUMENPREVIO*/
+				String priceBuilder = stockRealTimePricesCacheLRUMap.get(getUniqueWrapperConnectionId(tickerId));		
+				String[] priceArray =  priceBuilder.split(Pattern.quote(StringPool.PIPE));   		
+				
+				closePrice =  Boolean.valueOf(priceArray[1]);  
+				shareId = Long.valueOf(priceArray[2]);
+				volumen =  Long.valueOf(priceArray[3]);
 			}
+			
+			/* PRICE|(CIERRE(S/N)|SHAREID|PERSISTED(S/N)
+			 * 
+			 * Persisted: Lo ponemos a 0 la primera vez ya que se llama varias veces a TickSize antes de tener el cambio de precio */
+			
+			_log.trace("TickPrice called and filled");
+
+			
+			StringBuilder priceBuilder = new StringBuilder();
+			priceBuilder.append(price);
+			priceBuilder.append(StringPool.PIPE);
+			priceBuilder.append(closePrice);
+			priceBuilder.append(StringPool.PIPE);
+			priceBuilder.append(String.valueOf(shareId));
+			priceBuilder.append(StringPool.PIPE);
+			priceBuilder.append(String.valueOf(volumen));
+			priceBuilder.append(StringPool.PIPE);
+			priceBuilder.append(String.valueOf(Boolean.FALSE));
+			
+			
+			stockRealTimePricesCacheLRUMap.put(getUniqueWrapperConnectionId(tickerId), priceBuilder.toString());	
+
 		
 		}
 	
@@ -1253,7 +1352,6 @@ public class TIMApiWrapper implements EWrapper {
 			
 		}
 		
-		_log.debug("orderStatus for " + orderId + ",status:" +  status);
 		
 		/* SUPOEMOS UNA POSICION */
 		Share sharePosition = ShareLocalServiceUtil.fetchShare(_oPosition.getShareId());
@@ -1269,12 +1367,13 @@ public class TIMApiWrapper implements EWrapper {
 			if (_oPosition.getState_out()==null || (_oPosition.getState_out()!=null && !_oPosition.getState_out().toLowerCase().equals(status.toLowerCase())))
     			changed = true;
 		}
-		if (changed)
+		_log.debug("orderStatus for " + orderId + ",status:" +  status +   ",remaining:" + remaining + " share:" + sharePosition.getSymbol());
+
+		if (changed )
 		{	    			
 			// controlamos todas las canceladas			
 			if (!bIsSellOperation)   // ENTRADA OPERATION ... CANCELLED? --> LA BORRAMOS PARA QUE NO CONSTE
 			{
-				_oPosition.setState_in(status);
 				/* cancelada compra  */
 				/* 21.09.2013 QUITO EL OR DE INACTIVE PARA CONTROLARLO EN LA RUTINA DE ERRORES*/
 				if (PositionStates.statusTWSCallBack.Cancelled.toString().equals(status))
@@ -1295,6 +1394,7 @@ public class TIMApiWrapper implements EWrapper {
 					// procedemos a borrarla y desactivar
 					/* FUTURO VENCIDO D-1 DEL VENCIMIENTO */
 					//Actualizamos campos de errores.
+					_oPosition.setState_in(status);
 				    _oPosition.setState(PositionStates.status.SELL_OK.toString());
 				    _oPosition.setState_out(PositionStates.statusTWSCallBack.Inactive.toString());
 				    _oPosition.setPrice_real_in(_oPosition.getPrice_in());
@@ -1310,8 +1410,9 @@ public class TIMApiWrapper implements EWrapper {
 	    		}
 				
 				/* OJO, PUEDEN SER VENTAS/COMPRAS  PARCIALES..ENTRADA...SOLO OPERACIONES TOTALES */
-				if (PositionStates.statusTWSCallBack.Filled.toString().equals(status))
+				if (PositionStates.statusTWSCallBack.Filled.toString().equals(status) )
 	    		{
+					_oPosition.setState_in(status);
 	    			_oPosition.setDate_real_in(new Date());			    			
 	    			_oPosition.setPrice_real_in(avgFillPrice);  // cogemos el avg que nos manda el TWS	    			
 	    			// ACTUALIZAMOS EL PRECIO DE SALIDA CON EL PORCENTAJE PORQUE ES EL VALOR QUE TRATAMOS
@@ -1339,7 +1440,7 @@ public class TIMApiWrapper implements EWrapper {
 				 * PARA PODER SEGUIR VENDIENDO. 
 				 * PASARIA POR AQUI Y ACTUALIZARIA DOS VECES ERROREO EL CAMPO OPERATIONS.
 				 */
-				if (PositionStates.statusTWSCallBack.Filled.toString().equals(status) && _oPosition.getState_out()!=null)
+				if (PositionStates.statusTWSCallBack.Filled.toString().equals(status) && _oPosition.getState_out()!=null && remaining==0)
 	    		{
 				_oPosition.setState_out(status);	 
 				_oPosition.setDate_out(new Date()) ; // OJO TIMESTAMP.

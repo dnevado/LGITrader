@@ -16,7 +16,9 @@ public class IBTraderConstants {
 	public static String IBCONTROLLER_WINDOWS_PATH ="c:/IbController";
 	
 	
-	
+	public static String STRATEGY_IN_TYPE ="IN";
+	public static String STRATEGY_OUT_TYPE ="OUT";
+
 	
 	
 
@@ -55,7 +57,8 @@ public class IBTraderConstants {
 	public static String    vPAPER_PATH_TO_EXECUTABLE_FILE = "{PLATFORM_PATH}/IBCLinux-3.8.1_Test/twsstart";   // para saber si esta ejecutando o no , ojo a las caidas y exceptiones
 	
 	public static long     vDAY_TRADER_PATTER = 0;    // CHECK IF 4 TRADERS ARE PERFORMED IN THE 5 BUSINESS DAYS L-V 
-	
+	public static long    VENABLED_GLOBAL_TRADING = 1;
+
 	/* keys */
 	
 	public static String    keyNUM_DAYS_PAST_REALTIME ="NUM_DAYS_PAST_REALTIME";
@@ -97,7 +100,7 @@ public class IBTraderConstants {
 	public static String   keyPAPER_PATH_TO_EXECUTABLE_FILE = "PAPER_PATH_TO_EXECUTABLE_FILE";  
 	
 	public static String   keyDAY_TRADER_PATTER = "DAY_TRADER_PATTER";   // CHECK IF 4 TRADERS ARE PERFORMED IN THE 5 BUSINESS DAYS L-V  
-
+	public static String   keyENABLED_GLOBAL_TRADING = "ENABLED_GLOBAL_TRADING";
 	
 	public enum statusSimulation {	    
 	    Pending  ("Pending"),

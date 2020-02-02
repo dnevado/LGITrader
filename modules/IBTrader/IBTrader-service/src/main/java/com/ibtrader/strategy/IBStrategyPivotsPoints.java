@@ -111,11 +111,15 @@ public class IBStrategyPivotsPoints extends StrategyImpl {
 	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_TO_CLOSEMARKET = "Mobile Average Trade Until x Minutes From CloseMarket {0}"; // operar hasta minutos antes de cierre mercado
 	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET = "OffSet From Open Market (Minutes) To Start Trading {0}";  // offset desde inicio de mercado en minutos
 	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OPERATIONS_TYPE = "Operation Type [ALL, BUY, SELL]";  // offset desde inicio de mercado en minutos
-		
+	private static String _EXPANDO_PIVOTSPOINTS_VOLUME_INCREASED  = "Volume Increased [TRUE, FALSE]";  // offset desde inicio de mercado en minutos
+
+	
+	
 	long  _num_macdT = 5;   // Tiempo de barras
 	long _num_macdP = 0;
 	String operationfilter="";    // ALL, BUY, SELL
-	
+	boolean volume_increased = Boolean.FALSE;
+
 	
 	boolean bBuyOperation = Boolean.FALSE;									
 	boolean bSellOperation = Boolean.FALSE;
@@ -346,6 +350,8 @@ public class IBStrategyPivotsPoints extends StrategyImpl {
 		_num_macdP 						= this.getJsonStrategyShareParams().getLong(_EXPANDO_MOBILE_AVERAGE_PERIODS_NUMBER,0);
 		_num_macdT 		 				= this.getJsonStrategyShareParams().getLong(_EXPANDO_PIVOTPOINT_CANDLE_SIZE,0);		
 		operationfilter					= this.getJsonStrategyShareParams().getString(_EXPANDO_MOBILE_AVERAGE_TRADE_OPERATIONS_TYPE,"ALL").trim();
+		volume_increased 				= this.getJsonStrategyShareParams().getBoolean(_EXPANDO_PIVOTSPOINTS_VOLUME_INCREASED,Boolean.FALSE);
+
 		
 		if (_num_macdT==0 || _num_macdT ==0)
 			return Boolean.FALSE;
@@ -477,9 +483,32 @@ public class IBStrategyPivotsPoints extends StrategyImpl {
 						boolean   _SellSuccessS3 = Boolean.FALSE; 	
 						
 						
-						
+						boolean bVolIncreased = Boolean.TRUE;
+						long    _volume = 0;
+						long _volume_previous = 0;
+						Calendar _previousBarDate = Calendar.getInstance();
+						Calendar _previousInitialBarDate = Calendar.getInstance();
+
 						if (_BuySuccess || _SellSuccess)
 						{
+							
+							if (volume_increased)
+							{
+								_previousBarDate.setTime(_calendarFromNow.getTime());
+								_previousBarDate.add(Calendar.MINUTE, - (int) _num_macdT);
+								
+								_volume = BaseIndicatorUtil.getVolumeBetweenBars(_previousBarDate.getTime(), _calendarFromNow.getTime(), _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), isSimulation_mode());
+								//_volume =  Validator.isNull(oRTimeEnTramo) ? null : oRTimeEnTramo.getVolume();
+								if (_volume>0)
+								{	
+									_previousInitialBarDate.setTime(_previousBarDate.getTime());
+									_previousInitialBarDate.add(Calendar.MINUTE, - (int) _num_macdT);				
+									_volume_previous = BaseIndicatorUtil.getVolumeBetweenBars(_previousInitialBarDate.getTime(), _previousBarDate.getTime(), _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), isSimulation_mode());				
+									bVolIncreased  = _volume > _volume_previous;
+								}
+							}
+							
+							
 							/* SACAMOS EL MAXIMO DE LA SESION PARA DESCARTAR VOLVER A ENTRAR EN  LAS MISMAS ZONAS */
 							
 							double  minSession=0;	 
@@ -553,10 +582,15 @@ public class IBStrategyPivotsPoints extends StrategyImpl {
 						boolean  IsFutureTradeable = Utilities.IsFutureTradeable(_share);
 						
 						
-						if (IsFutureTradeable && (_BuySuccess || _SellSuccess))
+						if (bVolIncreased && IsFutureTradeable && (_BuySuccess || _SellSuccess))
 						{
 							
-						
+							_log.info("bVolIncreased:" + bVolIncreased + ",volume:" + _volume  + ",volume_previous:" + _volume_previous 
+									+ ",Volume From:" + _previousBarDate.getTime()  + ",Volume Until:" + _calendarFromNow.getTime()  +
+									",Volume_Previous  From:" + _previousInitialBarDate.getTime()  + ",Volume Until:" + _previousBarDate.getTime()  + 
+									"._BuySuccess:," + _BuySuccess   + "._SellSuccess:," + _SellSuccess + " for :" + _share.getSymbol());
+							
+							
 						    this.setValueIn(lastRealtime.doubleValue());											
 							this.setVerified(Boolean.TRUE);												
 							verified = true;							
@@ -575,6 +609,7 @@ public class IBStrategyPivotsPoints extends StrategyImpl {
 							_tradeDescription.put("_pivotPointData.R2()", _pivotPointData.getPivotPointResistance2());												
 							_tradeDescription.put("_pivotPointData.S2()", _pivotPointData.getPivotPointSupport2());
 							_tradeDescription.put("stopLost", stopLost);																			
+							_tradeDescription.put("VolumeIncreased", bVolIncreased);
 							
 
 						
@@ -639,7 +674,8 @@ public class IBStrategyPivotsPoints extends StrategyImpl {
 	Parameters.put(_EXPANDO_GAP_TO_ENTER_PIVOTPOINTREACHED,  String.valueOf(ExpandoColumnConstants.DOUBLE));  // ESTE ES EL UNICO DOUBLE
 	Parameters.put(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET,  String.valueOf(ExpandoColumnConstants.INTEGER));  // ESTE ES EL UNICO DOUBLE
 	Parameters.put(_EXPANDO_MOBILE_AVERAGE_TRADE_OPERATIONS_TYPE,  String.valueOf(ExpandoColumnConstants.STRING_ARRAY));  // ESTE ES EL UNICO DOUBLE
-	
+	Parameters.put(_EXPANDO_PIVOTSPOINTS_VOLUME_INCREASED,  String.valueOf(ExpandoColumnConstants.STRING_ARRAY));  // ESTE ES EL UNICO DOUBLE
+
 	
 	ExpandoTable expandoTable;
 	try {

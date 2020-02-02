@@ -394,6 +394,13 @@ public class RealtimeLocalServiceWrapper implements RealtimeLocalService,
 	}
 
 	@Override
+	public long findSumVolumeBetweenBars(java.util.Date from,
+		java.util.Date to, long shareId, long companyId, long groupId) {
+		return _realtimeLocalService.findSumVolumeBetweenBars(from, to,
+			shareId, companyId, groupId);
+	}
+
+	@Override
 	public void removeRealtimeFromToDate(java.util.Date from,
 		java.util.Date to, long shareId, long companyId, long groupId) {
 		_realtimeLocalService.removeRealtimeFromToDate(from, to, shareId,

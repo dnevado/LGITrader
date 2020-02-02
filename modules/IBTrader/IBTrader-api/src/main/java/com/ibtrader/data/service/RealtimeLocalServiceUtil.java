@@ -373,6 +373,13 @@ public class RealtimeLocalServiceUtil {
 		return getService().dynamicQueryCount(dynamicQuery, projection);
 	}
 
+	public static long findSumVolumeBetweenBars(java.util.Date from,
+		java.util.Date to, long shareId, long companyId, long groupId) {
+		return getService()
+				   .findSumVolumeBetweenBars(from, to, shareId, companyId,
+			groupId);
+	}
+
 	public static void removeRealtimeFromToDate(java.util.Date from,
 		java.util.Date to, long shareId, long companyId, long groupId) {
 		getService()

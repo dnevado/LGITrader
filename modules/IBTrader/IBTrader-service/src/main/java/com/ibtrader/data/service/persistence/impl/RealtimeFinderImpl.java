@@ -76,6 +76,51 @@ public class RealtimeFinderImpl extends RealtimeFinderBaseImpl  implements Realt
 	    
 	}
 	
+	@SuppressWarnings("unchecked")
+	public Realtime findSumVolumeBetweenBars(Date from, Date to, long shareId, long companyId, long groupId)
+	{
+	 List<Realtime> lRealtime = null;
+	 Session session = null;
+	  try {
+	        session = openSession();
+
+	        String sql = CustomSQLUtil.get(getClass(),FIND_VOLUMEN_BETWEEN_BARS);
+
+	        SQLQuery q = session.createSQLQuery(sql);
+	        q.setCacheable(false);
+	        q.addEntity("IBTrader_Realtime", RealtimeImpl.class);
+	       // q.addScalar("total_volume", com.liferay.portal.kernel.dao.orm.Type.LONG);
+	        QueryPos qPos = QueryPos.getInstance(q);        
+	        qPos.add(companyId);
+	        qPos.add(groupId);
+	        qPos.add(shareId);
+	        qPos.add(from);
+	        qPos.add(to);
+	        
+	        
+	        lRealtime = (List) QueryUtil.list(q, getDialect(), 0, 10);
+	        if (!lRealtime.isEmpty())
+	        		return lRealtime.get(0);
+	        else
+	        		return null;
+	        
+	    }
+	    catch (Exception e) {
+	        try {
+	            throw new SystemException(e);
+	        }
+	        catch (SystemException se) {
+	            se.printStackTrace();
+	        }
+	    }
+	    finally {
+	        closeSession(session);
+	    }
+
+		return null;
+		}
+	
+	
 	
 	@SuppressWarnings("unchecked")
 	public List findMinMaxRealTime(Date from, Date to, long shareId, long companyId, long groupId)
@@ -514,6 +559,8 @@ public class RealtimeFinderImpl extends RealtimeFinderBaseImpl  implements Realt
 		public static final String FIND_MINMAX_REALTIME_GROUPED_BY_BARS = RealtimeFinder.class.getName() + ".findMinMaxRealTimesBars";
 		public static final String REMOVE_SCHEDULED_REALTIME = RealtimeFinder.class.getName() + ".removeScheduledRealTimes";
 		public static final String FIND_FIRST_REALTIME_LESS_THAN_DATE = RealtimeFinder.class.getName() + ".findFirstRealTimeBetweenDates";		
+		public static final String FIND_VOLUMEN_BETWEEN_BARS = RealtimeFinder.class.getName() + ".findVolumenBetweenDates";
+		
 
 
 		

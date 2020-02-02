@@ -417,6 +417,13 @@ public class HistoricalRealtimeLocalServiceWrapper
 	}
 
 	@Override
+	public long findSumVolumeBetweenBars(java.util.Date from,
+		java.util.Date to, long shareId, long companyId, long groupId) {
+		return _historicalRealtimeLocalService.findSumVolumeBetweenBars(from,
+			to, shareId, companyId, groupId);
+	}
+
+	@Override
 	public void removeRealtimeFromToDate(java.util.Date from,
 		java.util.Date to, long shareId, long companyId, long groupId) {
 		_historicalRealtimeLocalService.removeRealtimeFromToDate(from, to,
