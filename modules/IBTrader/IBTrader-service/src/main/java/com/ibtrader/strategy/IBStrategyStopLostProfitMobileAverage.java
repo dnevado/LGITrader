@@ -547,7 +547,9 @@ public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
 	for (Map.Entry<String, String> parameter : paramValues.entrySet()) {
 		String _paramValue = parameter.getValue();
 		
-		if (!Utilities.isNumber(_paramValue))
+		/* PUEDEN VENIR LISTA DE VALORES EN EL NOMBRE DEL EXPANDO []  */		
+		 boolean bParamList = parameter.getKey().contains("[") && parameter.getKey().contains("]");
+		if (!bParamList && !Utilities.isNumber(_paramValue))
 		{
 			bOK=Boolean.FALSE;
 			this.setValidateParamsKeysError("strategyshare.strategyminmax.errorparams");
