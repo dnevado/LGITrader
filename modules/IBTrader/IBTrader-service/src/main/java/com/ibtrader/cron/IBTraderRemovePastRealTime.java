@@ -52,7 +52,7 @@ public class IBTraderRemovePastRealTime  extends BaseSchedulerEntryMessageListen
 	      return ((StorageTypeAware) schedulerEntryImpl).getStorageType();
 	    }
 	    
-	    return StorageType.MEMORY_CLUSTERED;
+	    return StorageType.PERSISTED ;
 	  }
 	@Deactivate
 	protected void deactivate() {

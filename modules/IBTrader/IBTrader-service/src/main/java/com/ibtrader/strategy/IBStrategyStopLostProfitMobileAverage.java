@@ -84,15 +84,17 @@ public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
 	private static String _EXPANDO_MOBILE_AVERAGE_PERIODS_NUMBER = "Mobile Average Periods Number {8}";  // offset desde inicio de mercado en minutos
 	private static String _EXPANDO_MOBILE_AVERAGE_CANDLE_SIZE = "Mobile Average Candle Size (Minutes) {5}";  // offset hasta desde inicio de mercado en minutos
 	private static String _EXPANDO_MOBILE_AVERAGE_GAP_SIZE = "Mobile Average Percentual Gap Size {75}"; // operar hasta minutos antes de cierre mercado
-	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_TO_CLOSEMARKET = "Mobile Average Trade Until x Minutes From CloseMarket"; // operar hasta minutos antes de cierre mercado
-	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET = "OffSet From Open Market (Minutes) To Start Trading";  // offset desde inicio de mercado en minutos
+	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_TO_CLOSEMARKET = "Mobile Average Trade Until x Minutes From CloseMarket {10}"; // operar hasta minutos antes de cierre mercado
+	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET = "OffSet From Open Market (Minutes) To Start Trading {30}";  // offset desde inicio de mercado en minutos
 	private static String _EXPANDO_STOPLOSTMOBILE_AVERAGE_VOLUME_INCREASED  = "Volume Increased [TRUE, FALSE]";  // offset desde inicio de mercado en minutos
+	private static String _EXPANDO_MOBILE_ATR_INCREASED  = "ATR Increased [TRUE, FALSE]";  // offset desde inicio de mercado en minutos
 
 
 	long _num_macdP = 8;   // Periodos
 	long  _num_macdT = 5;   // Tiempo de barras
 	double _entryrate=75.0;    // Umbral de superacion en la barra en porcentaje 
 	boolean volume_increased = Boolean.FALSE;
+	boolean atr_increased = Boolean.FALSE;
 
 	boolean bBuyOperation = Boolean.FALSE;									
 	boolean bSellOperation = Boolean.FALSE;
@@ -251,7 +253,8 @@ public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
 		String HoraActual = "";
 		HoraActual = Utilities.getWebFormattedTime(_calendarFromNow.getTime());
 		Calendar calFechaActualWithDeadLine = null;
-		
+		long currentSeconds = _calendarFromNow.get(Calendar.SECOND);
+
 		Market marketRealOpenCloseTimes = Utilities.getOpenCloseMarket(_share, backtestingdDate, isSimulation_mode());
 		if (Validator.isNull(marketRealOpenCloseTimes)) return false;
 		if (!isSimulation_mode())
@@ -271,10 +274,11 @@ public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
 		// 00
 		//_log.info("existsPosition:" +  existsPosition);
 		
-		_num_macdP = this.getJsonStrategyShareParams().getLong(_EXPANDO_MOBILE_AVERAGE_PERIODS_NUMBER,0);
-		_num_macdT = this.getJsonStrategyShareParams().getLong(_EXPANDO_MOBILE_AVERAGE_CANDLE_SIZE,0);
-		_entryrate = this.getJsonStrategyShareParams().getDouble(_EXPANDO_MOBILE_AVERAGE_GAP_SIZE,0.0f) / 100;
-		volume_increased = this.getJsonStrategyShareParams().getBoolean(_EXPANDO_STOPLOSTMOBILE_AVERAGE_VOLUME_INCREASED,Boolean.FALSE);
+		_num_macdP 						= this.getJsonStrategyShareParams().getLong(_EXPANDO_MOBILE_AVERAGE_PERIODS_NUMBER,0);
+		_num_macdT 						= this.getJsonStrategyShareParams().getLong(_EXPANDO_MOBILE_AVERAGE_CANDLE_SIZE,0);
+		_entryrate 						= this.getJsonStrategyShareParams().getDouble(_EXPANDO_MOBILE_AVERAGE_GAP_SIZE,0.0f) / 100;
+		volume_increased 				= this.getJsonStrategyShareParams().getBoolean(_EXPANDO_STOPLOSTMOBILE_AVERAGE_VOLUME_INCREASED,Boolean.FALSE);
+		atr_increased 					= this.getJsonStrategyShareParams().getBoolean(_EXPANDO_MOBILE_ATR_INCREASED,Boolean.FALSE);
 
 		
 		if (_num_macdP==0 || _num_macdT==0 || (!(_entryrate>0)))
@@ -423,10 +427,24 @@ public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
 							bVolIncreased  = _volume > _volume_previous;
 						}
 					}
-					
+					boolean bATRIncreased  = Boolean.TRUE;
+
+					if ((_BuySuccess || _SellSuccess) && atr_increased)
+					{
+						
+						bATRIncreased = BaseIndicatorUtil.isATRUp(_calendarFromNow.getTime(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(),  isSimulation_mode(), _market);
+						//_atr = BaseIndicatorUtil.getATR(_calendarFromNow.getTime(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(),  isSimulation_mode(), _market);
+						
+						if (currentSeconds<3)						
+						{
+
+							_log.debug("bATRIncreased:" + bATRIncreased + " for :" + _share.getSymbol());
+												
+						}
+					}
 					
 					/*  DNM_RAFADIESTRO  2015 06 16. COMENTAMOS LA CLAUSULA DE QUE NO LA CORTE */ 
-					 if  (bVolIncreased && ((!_AvgMovil_InsideBar  &&_MarketTrendChanged)  ||  (_AvgMovil_InsideBar && (_SellSuccess || _BuySuccess))))
+					 if  (bATRIncreased && bVolIncreased && ((!_AvgMovil_InsideBar  &&_MarketTrendChanged)  ||  (_AvgMovil_InsideBar && (_SellSuccess || _BuySuccess))))
 					//if  (_AvgMovil_InsideBar && (_SellSuccess || _BuySuccess))
 					{
 						
@@ -458,6 +476,9 @@ public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
 						_tradeDescription.put("_candlesize(minutes):", _num_macdT);
 						_tradeDescription.put("_barentryrate", _entryrate);										
 						_tradeDescription.put("_calendarFromNow", TimeFormat.format(_calendarFromNow.getTime()));
+						_tradeDescription.put("bATRIncreased", bATRIncreased);
+						_tradeDescription.put("_volume", _volume);
+						_tradeDescription.put("_volume_previous", _volume_previous);
 					
 					}
 				} // 				if (oRTimeWidthRange!=null  && oRTimeWidthRange.getMax_value()>0 && oRTimeWidthRange.getMin_value()>0)
@@ -490,6 +511,7 @@ public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
 	Parameters.put(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_TO_CLOSEMARKET,  String.valueOf(ExpandoColumnConstants.INTEGER));  // ESTE ES EL UNICO DOUBLE
 	Parameters.put(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET,  String.valueOf(ExpandoColumnConstants.INTEGER));  // ESTE ES EL UNICO DOUBLE
 	Parameters.put(_EXPANDO_STOPLOSTMOBILE_AVERAGE_VOLUME_INCREASED,  String.valueOf(ExpandoColumnConstants.STRING_ARRAY));  // ESTE ES EL UNICO DOUBLE
+	Parameters.put(_EXPANDO_MOBILE_ATR_INCREASED,  String.valueOf(ExpandoColumnConstants.STRING_ARRAY));  // ESTE ES EL UNICO DOUBLE
 
 		
 	ExpandoTable expandoTable;
@@ -547,7 +569,9 @@ public class IBStrategyStopLostProfitMobileAverage extends StrategyImpl {
 	for (Map.Entry<String, String> parameter : paramValues.entrySet()) {
 		String _paramValue = parameter.getValue();
 		
-		if (!Utilities.isNumber(_paramValue))
+		/* PUEDEN VENIR LISTA DE VALORES EN EL NOMBRE DEL EXPANDO []  */		
+		 boolean bParamList = parameter.getKey().contains("[") && parameter.getKey().contains("]");
+		if (!bParamList && !Utilities.isNumber(_paramValue))
 		{
 			bOK=Boolean.FALSE;
 			this.setValidateParamsKeysError("strategyshare.strategyminmax.errorparams");

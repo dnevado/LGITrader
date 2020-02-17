@@ -214,7 +214,7 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 			setTick_futures(tick_futures);
 		}
 
-		Long multiplier = (Long)attributes.get("multiplier");
+		Double multiplier = (Double)attributes.get("multiplier");
 
 		if (multiplier != null) {
 			setMultiplier(multiplier);
@@ -369,6 +369,16 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 	@Override
 	public com.liferay.portal.kernel.model.CacheModel<Share> toCacheModel() {
 		return _share.toCacheModel();
+	}
+
+	/**
+	* Returns the multiplier of this share.
+	*
+	* @return the multiplier of this share
+	*/
+	@Override
+	public double getMultiplier() {
+		return _share.getMultiplier();
 	}
 
 	/**
@@ -642,16 +652,6 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 	}
 
 	/**
-	* Returns the multiplier of this share.
-	*
-	* @return the multiplier of this share
-	*/
-	@Override
-	public long getMultiplier() {
-		return _share.getMultiplier();
-	}
-
-	/**
 	* Returns the numbertopurchase of this share.
 	*
 	* @return the numbertopurchase of this share
@@ -845,7 +845,7 @@ public class ShareWrapper implements Share, ModelWrapper<Share> {
 	* @param multiplier the multiplier of this share
 	*/
 	@Override
-	public void setMultiplier(long multiplier) {
+	public void setMultiplier(double multiplier) {
 		_share.setMultiplier(multiplier);
 	}
 

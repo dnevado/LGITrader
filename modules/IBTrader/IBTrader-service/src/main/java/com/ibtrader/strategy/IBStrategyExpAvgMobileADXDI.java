@@ -62,7 +62,7 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 	private static String _EXPANDO_MOBILE_ADX_PASSED_RATE= "ADXR Passed Rate {25}"; // operar hasta minutos antes de cierre mercado	
 	private static String _EXPANDO_AROON_PERIODS= "Aroon Periods {25}"; // operar hasta minutos antes de cierre mercado
 	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_TO_CLOSEMARKET = "Mobile Average Trade Until x Minutes From CloseMarket"; // operar hasta minutos antes de cierre mercado
-	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET = "OffSet From Open Market (Minutes) To Start Trading";  // offset desde inicio de mercado en minutos
+	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET = "OffSet From Open Market (Minutes) To Start Trading {30}";  // offset desde inicio de mercado en minutos
 	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OPERATIONS_TYPE = "Operation Type [ALL, BUY, SELL]";  // offset desde inicio de mercado en minutos
 	private static String _EXPANDO_MACD_PERIODOS_SHORT_EXP_MOBILE = "MACD Short-Avg Mobile Periods {12}";  // {} SINTAXIS PARA VALORES POR DEFECTO   
 	private static String _EXPANDO_MACD_PERIODOS_LONG_EXP_MOBILE = "MACD  Long-Avg Mobile Periods {26}";  //   SINTAXIS PARA VALORES POR DEFECTO	

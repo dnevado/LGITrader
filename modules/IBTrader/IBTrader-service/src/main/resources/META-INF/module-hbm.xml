@@ -193,7 +193,7 @@
 		<property name="expiry_date" type="org.hibernate.type.TimestampType" />
 		<property name="expiry_expression" type="com.liferay.portal.dao.orm.hibernate.StringClobType" />
 		<property name="tick_futures" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
-		<property name="multiplier" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="multiplier" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
 		<property name="security_type" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="exchange" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="primary_exchange" type="com.liferay.portal.dao.orm.hibernate.StringType" />

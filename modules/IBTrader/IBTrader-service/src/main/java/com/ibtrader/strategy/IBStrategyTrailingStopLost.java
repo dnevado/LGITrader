@@ -18,6 +18,8 @@ import com.ibtrader.data.model.impl.StrategyImpl;
 import com.ibtrader.data.service.HistoricalRealtimeLocalServiceUtil;
 import com.ibtrader.data.service.PositionLocalServiceUtil;
 import com.ibtrader.data.service.RealtimeLocalServiceUtil;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
@@ -34,6 +36,10 @@ public class IBStrategyTrailingStopLost extends StrategyImpl {
 	private static final long serialVersionUID = 1L;
 	private static Log _log = LogFactoryUtil.getLog(IBStrategyTrailingStopLost.class);
 	private Position currentPosition = null;
+	
+	JSONObject _tradeDescription;// // acumular la traza de los valores introducidos
+
+	
 	@Override
 	public long execute(Share _share, Market _market, Date backtestingdDate) {
 		// TODO Auto-generated method stub
@@ -49,6 +55,8 @@ public class IBStrategyTrailingStopLost extends StrategyImpl {
 			return -1;
 		
 		_log.info("UserAccount: detectada posible salida  de " + _share.getName() +  "Tick:" + _share.getSymbol() + ",PrecioCompra:" + this.getValueIn());
+		_log.info(_tradeDescription);
+
 		// hace falta???????? ..creo que si, para tener control sobre la operacion de compra /venta 
 		SimpleDateFormat sdf = new SimpleDateFormat (Utilities._IBTRADER_FUTURE_SHORT_DATE);
 		boolean bIsFutureStock = _share.getSecurity_type().equals(ConfigKeys.SECURITY_TYPE_FUTUROS)  && _share.getExpiry_date()!=null;
@@ -89,8 +97,9 @@ public class IBStrategyTrailingStopLost extends StrategyImpl {
 		currentPosition.setPrice_out(this.getValueOut());
 		//currentPosition.setState_out(PositionStates.statusTWSCallBack.PendingSubmit.toString());
 		currentPosition.setDate_out(!isSimulation_mode() ?  new Date() : backtestingdDate);
-		String _description = currentPosition.getDescription().concat(StringPool.RETURN_NEW_LINE).concat(this.getClassName());
-		currentPosition.setDescription(_description);	
+		
+		String _description = currentPosition.getDescription().concat(StringPool.RETURN_NEW_LINE).concat(_tradeDescription.toString());
+		currentPosition.setDescription(_description);
 		currentPosition.setStrategy_out(this.getClass().getName());
 		
 		/* MODO FAKE CUENTA DEMO */
@@ -170,6 +179,15 @@ public class IBStrategyTrailingStopLost extends StrategyImpl {
 			    this.setValueLimitOut(current_price);	
 				this.setVerified(Boolean.TRUE);												
 				verified = true;
+				
+				
+				_tradeDescription = JSONFactoryUtil.createJSONObject();
+				_tradeDescription.put("lastRealtime", lastRealtime.doubleValue());
+				_tradeDescription.put("percentual_trailling_stop_lost", percentual_trailling_stop_lost);	
+				_tradeDescription.put("trailling_stop_lost", trailling_stop_lost);
+				
+				
+				
 			}
 			else // ajustamos el trailing dinámicamente 
 			{

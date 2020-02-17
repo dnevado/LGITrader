@@ -300,7 +300,7 @@ public class ShareCacheModel implements CacheModel<Share>, Externalizable {
 
 		tick_futures = objectInput.readDouble();
 
-		multiplier = objectInput.readLong();
+		multiplier = objectInput.readDouble();
 		security_type = objectInput.readUTF();
 		exchange = objectInput.readUTF();
 		primary_exchange = objectInput.readUTF();
@@ -373,7 +373,7 @@ public class ShareCacheModel implements CacheModel<Share>, Externalizable {
 
 		objectOutput.writeDouble(tick_futures);
 
-		objectOutput.writeLong(multiplier);
+		objectOutput.writeDouble(multiplier);
 
 		if (security_type == null) {
 			objectOutput.writeUTF(StringPool.BLANK);
@@ -440,7 +440,7 @@ public class ShareCacheModel implements CacheModel<Share>, Externalizable {
 	public long expiry_date;
 	public String expiry_expression;
 	public double tick_futures;
-	public long multiplier;
+	public double multiplier;
 	public String security_type;
 	public String exchange;
 	public String primary_exchange;

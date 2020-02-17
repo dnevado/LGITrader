@@ -193,10 +193,21 @@ public class ShareLocalServiceImpl extends ShareLocalServiceBaseImpl {
 	}
 	
 
-	public List<Share> findCompanyGroup(long companyId, long groupId) {
-		// TODO Auto-generated method stub
-		return getSharePersistence().findByCompanyGroup(companyId, groupId);
-	}
+	public List<Share> findCompanyGroup(long companyId, long groupId) { 
+		//return getSharePersistence().findByCompanyGroup(companyId, groupId);
+		DynamicQuery _DQ = shareLocalService.dynamicQuery();		
+		_DQ.add(RestrictionsFactoryUtil.eq("companyId", companyId));
+		_DQ.add(RestrictionsFactoryUtil.eq("groupId", groupId));
+		
+		Order defaultOrder = OrderFactoryUtil.desc("active");
+		Order defaultOrder2 = OrderFactoryUtil.asc("name");
+	
+		
+		_DQ.addOrder(defaultOrder);
+		_DQ.addOrder(defaultOrder2);
+		return shareLocalService.dynamicQuery(_DQ);
+		
+	} 
 	
 	public Share findBySymbolCompanyGroup(long companyId, long groupId, String name) {
 		// TODO Auto-generated method stub

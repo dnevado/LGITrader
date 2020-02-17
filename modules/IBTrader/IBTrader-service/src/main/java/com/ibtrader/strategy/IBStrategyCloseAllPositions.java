@@ -201,7 +201,20 @@ public class IBStrategyCloseAllPositions extends StrategyImpl {
 	/* SI VA A EXPIRAR EN UN DIA, CERRAMOS POSICION Y NO ENTRAMOS HASTA EL CONTRATO NUEVO 
 	 * TODO EN UTC */
 	boolean  nextToExpiration = !Utilities.IsFutureTradeable(_share);
+	
+	/*  SACAMOS DEPURACION EN DURANTE LOS TRES PRIMEROS SEGUNDOS EN LOS CORTES DE BARRAS */
+	long currentSeconds = _calendarFromNow.get(Calendar.SECOND);
 
+	if (currentSeconds<3)						
+	{
+		_log.debug("deadline_until_closemarket:" + deadline_until_closemarket + ",nextToClose:" + nextToClose +
+				",nextToExpiration:" + nextToExpiration + ",symbol:" + _share.getSymbol()  + ",calFechaActualWithDeadLine:" + calFechaActualWithDeadLine.getTime() + 
+				" calFechaFinMercado;" + calFechaFinMercado.getTime());
+		
+	}
+	
+
+	
 	if ((nextToClose || nextToExpiration) && currentPosition!=null) 		  // ya esta en el limite 
 	{		    		
 			/* TIMEZONE AJUSTADO */

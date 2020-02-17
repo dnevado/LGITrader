@@ -75,6 +75,17 @@ create table ibtrader_IBOrder (
 	removable_on_reboot BOOLEAN
 );
 
+create table ibtrader_Indicators (
+	uuid_ VARCHAR(75) null,
+	groupId LONG not null,
+	companyId LONG not null,
+	createDate DATE not null,
+	name VARCHAR(75) not null,
+	value DOUBLE not null,
+	shareId LONG,
+	primary key (groupId, companyId, createDate, name, value)
+);
+
 create table ibtrader_Market (
 	uuid_ VARCHAR(75) null,
 	marketId LONG not null primary key,
@@ -169,7 +180,7 @@ create table ibtrader_Share (
 	expiry_date DATE null,
 	expiry_expression TEXT null,
 	tick_futures DOUBLE,
-	multiplier LONG,
+	multiplier DOUBLE,
 	security_type VARCHAR(75) null,
 	exchange VARCHAR(75) null,
 	primary_exchange VARCHAR(75) null,

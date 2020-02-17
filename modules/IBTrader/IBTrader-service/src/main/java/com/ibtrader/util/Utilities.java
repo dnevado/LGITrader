@@ -8,6 +8,7 @@ import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -135,8 +136,10 @@ public class Utilities {
    
    private static Log log = LogFactoryUtil.getLog(Utilities.class.getName());
 
-	private static DecimalFormat df = new DecimalFormat("#.00"); 		
+	private static DecimalFormat df = new DecimalFormat("0.00"); 		
+    static DecimalFormatSymbols dfs = new DecimalFormatSymbols();
    
+    
 	@Reference(unbind = "-")
 	protected void setConfigService(ConfigLocalService configLocalService) {
 		_configLocalService = configLocalService;
@@ -1364,6 +1367,10 @@ public class Utilities {
     
 	public static double _Porcentaje100(double num)
 	{
+		
+		dfs.setDecimalSeparator('.');
+		df.setDecimalFormatSymbols(dfs);   
+		
 		return Double.valueOf(df.format(num * 100));		
 	}
 		
@@ -1372,7 +1379,8 @@ public class Utilities {
 		double result = num * 100;
 		result = Math.round(result);
 		result = result / 100;
-		
+		dfs.setDecimalSeparator('.');
+		df.setDecimalFormatSymbols(dfs);   
 	
 		return Double.valueOf(df.format(result));		
 		}
