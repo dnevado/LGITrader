@@ -2,6 +2,7 @@ package com.ibtrader.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -105,7 +106,7 @@ public class BarSeriesCacheUtil {
 				List<Realtime> closeRealTimes = RealtimeLocalServiceUtil.findCloseRealTimes(shareId, companyId, groupId, from, to, closingDates);
 				List<Realtime> modifiableCloseRealTimes = new ArrayList<Realtime>(closeRealTimes);
 				modifiableCloseRealTimes.sort(Comparator.comparing(Realtime::getCreateDate));
-
+				
 				if (Validator.isNotNull(modifiableCloseRealTimes))
 				{
 						for (Realtime closepricebar : modifiableCloseRealTimes)
@@ -122,11 +123,14 @@ public class BarSeriesCacheUtil {
 				List<HistoricalRealtime> modifiableCloseRealTimes = new ArrayList<HistoricalRealtime>(closeRealTimes);
 				modifiableCloseRealTimes.sort(Comparator.comparing(HistoricalRealtime::getCreateDate));
 				if (Validator.isNotNull(modifiableCloseRealTimes))
-				{				
+				{		
+					
+					HistoricalRealtime firstCloseBar = modifiableCloseRealTimes.get(0);
+					endTime = ZonedDateTime.ofInstant(firstCloseBar.getCreateDate().toInstant(), ZoneId.systemDefault());
+					
 					for (HistoricalRealtime closepricebar : modifiableCloseRealTimes)
 			        {	
-						_log.debug("HistoricalRealtime Close Price: " + closepricebar.getValue() + " for " + closepricebar.getCreateDate());
-						
+						_log.debug("HistoricalRealtime Close Price: " + closepricebar.getValue() + " for " + closepricebar.getCreateDate());						
 						tmpTimeSeries.addBar(new BaseBar(endTime.plusMinutes(timebars*counter),0.0,0.0,0.0, closepricebar.getValue(),0.0));
 			        	counter++;
 			        }
@@ -283,7 +287,11 @@ public class BarSeriesCacheUtil {
 	        	{
 	        		lRcloseShorter  = modifiableRcloseValue.subList((int) (modifiableRcloseValue.size()-periodsToCalculate), modifiableRcloseValue.size());
 	        		lRMinMaxShorter =  modifiableRMinMax.subList((int) (modifiableRMinMax.size()-periodsToCalculate), modifiableRMinMax.size());
-	        		  
+	        		 
+	        		HistoricalRealtime firstCloseBar = lRcloseShorter.get(0);
+					endTime = ZonedDateTime.ofInstant(firstCloseBar.getCreateDate().toInstant(), ZoneId.systemDefault());
+
+	        		
 	        		  for (int j=0;j<lRMinMaxShorter.size();j++)
 	        		  {
 	        			
@@ -297,6 +305,7 @@ public class BarSeriesCacheUtil {
 				          close_value =realtimeCLOSE.getValue();
 				          /* ANTES TENIA PLUSMINUTES, COMO LO  CAMBIA LA QUERY EL ORDEN A DESC, LO NECESIO */
 	        			  series.addBar(new BaseBar(endTime.plusMinutes(timebars*j),0.0,max_value ,min_value, close_value,0.0));
+	        			  _log.debug("Periodo:" + j + "from:" + cfromWithOpenMarketsTimes.getTime() + ",to:" + to + ",MinMax:" +  max_value + "," + min_value + ",CloseValue:" + close_value);
 
 	        			
 	        		  }

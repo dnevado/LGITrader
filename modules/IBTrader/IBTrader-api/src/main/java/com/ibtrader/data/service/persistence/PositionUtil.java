@@ -996,6 +996,261 @@ public class PositionUtil {
 	}
 
 	/**
+	* Returns all the positions where companyId = &#63; and groupId = &#63; and shareId = &#63; and state = &#63; and position_mode = &#63; and backtestingId = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param shareId the share ID
+	* @param state the state
+	* @param position_mode the position_mode
+	* @param backtestingId the backtesting ID
+	* @return the matching positions
+	*/
+	public static List<Position> findByPositionShareStateBacktestingId(
+		long companyId, long groupId, long shareId, java.lang.String state,
+		java.lang.String position_mode, long backtestingId) {
+		return getPersistence()
+				   .findByPositionShareStateBacktestingId(companyId, groupId,
+			shareId, state, position_mode, backtestingId);
+	}
+
+	/**
+	* Returns a range of all the positions where companyId = &#63; and groupId = &#63; and shareId = &#63; and state = &#63; and position_mode = &#63; and backtestingId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param shareId the share ID
+	* @param state the state
+	* @param position_mode the position_mode
+	* @param backtestingId the backtesting ID
+	* @param start the lower bound of the range of positions
+	* @param end the upper bound of the range of positions (not inclusive)
+	* @return the range of matching positions
+	*/
+	public static List<Position> findByPositionShareStateBacktestingId(
+		long companyId, long groupId, long shareId, java.lang.String state,
+		java.lang.String position_mode, long backtestingId, int start, int end) {
+		return getPersistence()
+				   .findByPositionShareStateBacktestingId(companyId, groupId,
+			shareId, state, position_mode, backtestingId, start, end);
+	}
+
+	/**
+	* Returns an ordered range of all the positions where companyId = &#63; and groupId = &#63; and shareId = &#63; and state = &#63; and position_mode = &#63; and backtestingId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param shareId the share ID
+	* @param state the state
+	* @param position_mode the position_mode
+	* @param backtestingId the backtesting ID
+	* @param start the lower bound of the range of positions
+	* @param end the upper bound of the range of positions (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching positions
+	*/
+	public static List<Position> findByPositionShareStateBacktestingId(
+		long companyId, long groupId, long shareId, java.lang.String state,
+		java.lang.String position_mode, long backtestingId, int start, int end,
+		OrderByComparator<Position> orderByComparator) {
+		return getPersistence()
+				   .findByPositionShareStateBacktestingId(companyId, groupId,
+			shareId, state, position_mode, backtestingId, start, end,
+			orderByComparator);
+	}
+
+	/**
+	* Returns an ordered range of all the positions where companyId = &#63; and groupId = &#63; and shareId = &#63; and state = &#63; and position_mode = &#63; and backtestingId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PositionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param shareId the share ID
+	* @param state the state
+	* @param position_mode the position_mode
+	* @param backtestingId the backtesting ID
+	* @param start the lower bound of the range of positions
+	* @param end the upper bound of the range of positions (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching positions
+	*/
+	public static List<Position> findByPositionShareStateBacktestingId(
+		long companyId, long groupId, long shareId, java.lang.String state,
+		java.lang.String position_mode, long backtestingId, int start, int end,
+		OrderByComparator<Position> orderByComparator, boolean retrieveFromCache) {
+		return getPersistence()
+				   .findByPositionShareStateBacktestingId(companyId, groupId,
+			shareId, state, position_mode, backtestingId, start, end,
+			orderByComparator, retrieveFromCache);
+	}
+
+	/**
+	* Returns the first position in the ordered set where companyId = &#63; and groupId = &#63; and shareId = &#63; and state = &#63; and position_mode = &#63; and backtestingId = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param shareId the share ID
+	* @param state the state
+	* @param position_mode the position_mode
+	* @param backtestingId the backtesting ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching position
+	* @throws NoSuchPositionException if a matching position could not be found
+	*/
+	public static Position findByPositionShareStateBacktestingId_First(
+		long companyId, long groupId, long shareId, java.lang.String state,
+		java.lang.String position_mode, long backtestingId,
+		OrderByComparator<Position> orderByComparator)
+		throws com.ibtrader.data.exception.NoSuchPositionException {
+		return getPersistence()
+				   .findByPositionShareStateBacktestingId_First(companyId,
+			groupId, shareId, state, position_mode, backtestingId,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the first position in the ordered set where companyId = &#63; and groupId = &#63; and shareId = &#63; and state = &#63; and position_mode = &#63; and backtestingId = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param shareId the share ID
+	* @param state the state
+	* @param position_mode the position_mode
+	* @param backtestingId the backtesting ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching position, or <code>null</code> if a matching position could not be found
+	*/
+	public static Position fetchByPositionShareStateBacktestingId_First(
+		long companyId, long groupId, long shareId, java.lang.String state,
+		java.lang.String position_mode, long backtestingId,
+		OrderByComparator<Position> orderByComparator) {
+		return getPersistence()
+				   .fetchByPositionShareStateBacktestingId_First(companyId,
+			groupId, shareId, state, position_mode, backtestingId,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the last position in the ordered set where companyId = &#63; and groupId = &#63; and shareId = &#63; and state = &#63; and position_mode = &#63; and backtestingId = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param shareId the share ID
+	* @param state the state
+	* @param position_mode the position_mode
+	* @param backtestingId the backtesting ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching position
+	* @throws NoSuchPositionException if a matching position could not be found
+	*/
+	public static Position findByPositionShareStateBacktestingId_Last(
+		long companyId, long groupId, long shareId, java.lang.String state,
+		java.lang.String position_mode, long backtestingId,
+		OrderByComparator<Position> orderByComparator)
+		throws com.ibtrader.data.exception.NoSuchPositionException {
+		return getPersistence()
+				   .findByPositionShareStateBacktestingId_Last(companyId,
+			groupId, shareId, state, position_mode, backtestingId,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the last position in the ordered set where companyId = &#63; and groupId = &#63; and shareId = &#63; and state = &#63; and position_mode = &#63; and backtestingId = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param shareId the share ID
+	* @param state the state
+	* @param position_mode the position_mode
+	* @param backtestingId the backtesting ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching position, or <code>null</code> if a matching position could not be found
+	*/
+	public static Position fetchByPositionShareStateBacktestingId_Last(
+		long companyId, long groupId, long shareId, java.lang.String state,
+		java.lang.String position_mode, long backtestingId,
+		OrderByComparator<Position> orderByComparator) {
+		return getPersistence()
+				   .fetchByPositionShareStateBacktestingId_Last(companyId,
+			groupId, shareId, state, position_mode, backtestingId,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the positions before and after the current position in the ordered set where companyId = &#63; and groupId = &#63; and shareId = &#63; and state = &#63; and position_mode = &#63; and backtestingId = &#63;.
+	*
+	* @param positionId the primary key of the current position
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param shareId the share ID
+	* @param state the state
+	* @param position_mode the position_mode
+	* @param backtestingId the backtesting ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next position
+	* @throws NoSuchPositionException if a position with the primary key could not be found
+	*/
+	public static Position[] findByPositionShareStateBacktestingId_PrevAndNext(
+		long positionId, long companyId, long groupId, long shareId,
+		java.lang.String state, java.lang.String position_mode,
+		long backtestingId, OrderByComparator<Position> orderByComparator)
+		throws com.ibtrader.data.exception.NoSuchPositionException {
+		return getPersistence()
+				   .findByPositionShareStateBacktestingId_PrevAndNext(positionId,
+			companyId, groupId, shareId, state, position_mode, backtestingId,
+			orderByComparator);
+	}
+
+	/**
+	* Removes all the positions where companyId = &#63; and groupId = &#63; and shareId = &#63; and state = &#63; and position_mode = &#63; and backtestingId = &#63; from the database.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param shareId the share ID
+	* @param state the state
+	* @param position_mode the position_mode
+	* @param backtestingId the backtesting ID
+	*/
+	public static void removeByPositionShareStateBacktestingId(long companyId,
+		long groupId, long shareId, java.lang.String state,
+		java.lang.String position_mode, long backtestingId) {
+		getPersistence()
+			.removeByPositionShareStateBacktestingId(companyId, groupId,
+			shareId, state, position_mode, backtestingId);
+	}
+
+	/**
+	* Returns the number of positions where companyId = &#63; and groupId = &#63; and shareId = &#63; and state = &#63; and position_mode = &#63; and backtestingId = &#63;.
+	*
+	* @param companyId the company ID
+	* @param groupId the group ID
+	* @param shareId the share ID
+	* @param state the state
+	* @param position_mode the position_mode
+	* @param backtestingId the backtesting ID
+	* @return the number of matching positions
+	*/
+	public static int countByPositionShareStateBacktestingId(long companyId,
+		long groupId, long shareId, java.lang.String state,
+		java.lang.String position_mode, long backtestingId) {
+		return getPersistence()
+				   .countByPositionShareStateBacktestingId(companyId, groupId,
+			shareId, state, position_mode, backtestingId);
+	}
+
+	/**
 	* Returns all the positions where groupId = &#63; and companyId = &#63; and shareId = &#63; and state = &#63; and date_real_out = &#63; and date_out = &#63; and position_mode = &#63; and backtestingId = &#63;.
 	*
 	* @param groupId the group ID

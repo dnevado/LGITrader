@@ -446,33 +446,39 @@ public class TIMApiWrapper implements EWrapper {
 			
 			if (!bPersisted) /// ya ha sido persistido para ese precio , en otro cambio se pone a 0
 			{				
-			
-				_log.trace("tickSize called and persisted RealTime ");
 				
-				Date cNow = new Date();
-				Calendar _calNow = Calendar.getInstance();
-				_calNow.setTime(cNow);
-													
-				Realtime  oReal = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));
-				oReal.setGroupId(this._ibtarget_organization.getGroupId());
-				oReal.setCompanyId(_ibtarget_organization.getCompanyId());
-				oReal.setShareId(shareId);
-				oReal.setValue(tickPrice);					
-				oReal.setCloseprice(bClosePrice ? Boolean.TRUE : Boolean.FALSE);
-				
-				if (oReal.getCloseprice())
-				{
-					_calNow.add(-1, Calendar.DATE);
-					_calNow.set(Calendar.HOUR, 23);
-					_calNow.set(Calendar.MINUTE, 59);
-					_calNow.set(Calendar.SECOND, 59);
-				}
-				
-				oReal.setCreateDate(_calNow.getTime());
-				oReal.setModifiedDate(_calNow.getTime());
-				oReal.setVolume(currentVolume);
-				
-				RealtimeLocalServiceUtil.addRealtime(oReal);
+				/* SOLO ALMACENAMOS DATOS DE LAS HORAS DE OPERATIVA PARA NO SALVAR REALTIME DE HORAS FUERA DE MERCADO.*/
+				/* Share _share =  ShareLocalServiceUtil.fetchShare(shareId);
+				if (Utilities.IsTradingEnabledFromHours(_share.getTrading_hours()))
+				{*/
+				 				
+					_log.trace("tickSize called and persisted RealTime ");
+					
+					Date cNow = new Date();
+					Calendar _calNow = Calendar.getInstance();
+					_calNow.setTime(cNow);
+														
+					Realtime  oReal = RealtimeLocalServiceUtil.createRealtime(CounterLocalServiceUtil.increment(Realtime.class.getName()));
+					oReal.setGroupId(this._ibtarget_organization.getGroupId());
+					oReal.setCompanyId(_ibtarget_organization.getCompanyId());
+					oReal.setShareId(shareId);
+					oReal.setValue(tickPrice);					
+					oReal.setCloseprice(bClosePrice ? Boolean.TRUE : Boolean.FALSE);
+					
+					if (oReal.getCloseprice())
+					{
+						_calNow.add(-1, Calendar.DATE);
+						_calNow.set(Calendar.HOUR, 23);
+						_calNow.set(Calendar.MINUTE, 59);
+						_calNow.set(Calendar.SECOND, 59);
+					}
+					
+					oReal.setCreateDate(_calNow.getTime());
+					oReal.setModifiedDate(_calNow.getTime());
+					oReal.setVolume(currentVolume);
+					
+					RealtimeLocalServiceUtil.addRealtime(oReal);
+				/* } */
 			}
 			
 			

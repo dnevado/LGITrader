@@ -342,14 +342,14 @@ public interface ShareModel extends BaseModel<Share>, ShardedModel, StagedModel 
 	 *
 	 * @return the multiplier of this share
 	 */
-	public long getMultiplier();
+	public double getMultiplier();
 
 	/**
 	 * Sets the multiplier of this share.
 	 *
 	 * @param multiplier the multiplier of this share
 	 */
-	public void setMultiplier(long multiplier);
+	public void setMultiplier(double multiplier);
 
 	/**
 	 * Returns the security_type of this share.

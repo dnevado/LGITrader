@@ -3,14 +3,25 @@
 <%@ include file="/init.jsp" %>
 <%@ page import="com.liferay.portal.kernel.json.*" %>
 
-<canvas id="percentageprofit" width="400" height="350"></canvas>
-<canvas id="profit" width="400" height="350"></canvas>
+ <div class="chart-container">
+        <canvas id="percentageprofit"></canvas>
+ </div>
+ <div class="chart-container">
+        <canvas id="profit"></canvas>
+ </div>
+
 <style>
 	canvas {
 		-moz-user-select: none;
 		-webkit-user-select: none;
 		-ms-user-select: none;
 	}
+	    .chart-container {
+        position: relative;
+        margin: auto;
+        height: 15vh;
+        width: 15vw;
+        }
 	</style>
 
 <portlet:resourceURL var="PositionResultsResourceURL">
@@ -71,7 +82,7 @@ function <portlet:namespace/>showResults(data) {
 			
 		
 		/* lo quitamos el signo ya que el color da el valor */
-		profitrate = Math.abs(profitrate);
+		//profitrate = Math.abs(profitrate);
 		remaining = 100-profitrate;	
 		Chart.pluginService.register({
 		    beforeDraw: function (chart) {

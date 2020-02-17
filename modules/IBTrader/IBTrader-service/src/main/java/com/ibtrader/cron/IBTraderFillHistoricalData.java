@@ -75,7 +75,7 @@ public class IBTraderFillHistoricalData  extends BaseSchedulerEntryMessageListen
 	      return ((StorageTypeAware) schedulerEntryImpl).getStorageType();
 	    }
 	    
-	    return StorageType.MEMORY_CLUSTERED;
+	    return StorageType.PERSISTED ;
 	  }
 	
 	@Activate

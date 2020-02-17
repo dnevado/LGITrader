@@ -177,7 +177,7 @@
 			<hint-collection name="CLOB" />
 		</field>
 		<field name="tick_futures" type="double" />
-		<field name="multiplier" type="long" />
+		<field name="multiplier" type="double" />
 		<field name="security_type" type="String" />
 		<field name="exchange" type="String" />
 		<field name="primary_exchange" type="String" />

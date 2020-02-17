@@ -49,6 +49,9 @@ public class ConfigKeys {
     public static final int INDICATORS_MIN_SERIE_COUNT = 125;  // PARA EL CALCULO DEL ADXR / MACD ..., NECESITAMOS PARA TENER PRECISION 125 BARRAS 
     
     public static final int DEFAULT_TIMEBAR_MINUTES = 5;  // barra por detecto para recargar realtimes 
+    public static final int DEFAULT_ATR_VALUE = 14;  // barra por detecto para recargar realtimes
+    public static final int DEFAULT_ATR_NUM_PERIODS_UP = 4;  // CUANTOS PERIDOS SEGUIDS ULTIMOS  CONTAR PARA SABER SI ES CRECIENTE  
+
     
     public static final int DAYTRADER_PATTERN_MAX_DAYS = 4;  // MAXIMO NUMERO DE DIAS CON OPERACIONES INTRADIA PARA ENTRAR EN DAYTRADER_PATTERN   
     public static final int DAYTRADER_PATTERN_PERIOD = 7;  // QUE PERIODO CONTAR ESOS 4 DAY TRADING ANTERIORES, ES DECIR, 4 DIAS EN 5 BUSINESS DAYS, 1 SEMANA YA QUE SABADO Y DOMINGO NO CUENTA 
@@ -81,7 +84,16 @@ public class ConfigKeys {
     
     public static final String _LASTBAR_TWS_STRING_HISTORICAL = "finished";   // 5 SEGUNDOS SE GRABA EL MODIFIED DATABASE
 
+    
+    public static final String  _FIELD_PIVOTS_POINTS_PARAMS_TIMEBARS = "_num_macdT";   // 5 SEGUNDOS SE GRABA EL MODIFIED DATABASE
+    public static final String _FIELD_PIVOTS_POINTS_PARAMS_GAPTOENTER = "_gaptoEnter";   // 5 SEGUNDOS SE GRABA EL MODIFIED DATABASE
+    public static final String _FIELD_PIVOTS_POINTS_PARAMS_OPERATIONFILTER = "operationfilter";   // 5 SEGUNDOS SE GRABA EL MODIFIED DATABASE
+    public static final String _FIELD_PIVOTS_POINTS_PARAMS_VOLUMEN_INCREASED = "volume_increased";   // 5 SEGUNDOS SE GRABA EL MODIFIED DATABASE
+    public static final String _FIELD_PIVOTS_POINTS_PARAMS_ATR_INCREASED = "atr_increased";   // 5 SEGUNDOS SE GRABA EL MODIFIED DATABASE
+    
+    
 
+    
     
     public enum IDENTITY_VALUE_TYPE {
 	    MAX ("Maximo"),
@@ -94,8 +106,8 @@ public class ConfigKeys {
 	    }
 	}
     
-    public static String[] _MARKET_EXCHANGES = new String[]{"SMART","GLOBEX","DTB","NYMEX","IPE","BM","MATIF"};
-    public static String[] _PRIMARY_MARKET_EXCHANGES = new String[]{"NASDAQ","GLOBEX","DTB","NYMEX","IPE", "BM","MATIF"};
+    public static String[] _MARKET_EXCHANGES = new String[]{"SMART","GLOBEX","DTB","NYMEX","IPE","BM","MATIF","ECBOT"};
+    public static String[] _PRIMARY_MARKET_EXCHANGES = new String[]{"NASDAQ","GLOBEX","DTB","NYMEX","IPE", "BM","MATIF","ECBOT"};
     
     public static String[] _FUTURES_MONTHS = new String[]{"January","February","March","April","May","June","July","August","September","October","November","December"};
     

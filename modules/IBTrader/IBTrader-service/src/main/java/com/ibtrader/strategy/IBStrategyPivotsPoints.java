@@ -109,17 +109,17 @@ public class IBStrategyPivotsPoints extends StrategyImpl {
 	private static String _EXPANDO_PIVOTPOINT_CANDLE_SIZE = "PivotPoint Candle Size (Minutes) {5}";  // offset hasta desde inicio de mercado en minutos
 	private static String _EXPANDO_GAP_TO_ENTER_PIVOTPOINTREACHED  = "% Gap To Buy Sell After PIVOT POINT Value {0.3}";  // offset hasta desde inicio de mercado en minutos		
 	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_TO_CLOSEMARKET = "Mobile Average Trade Until x Minutes From CloseMarket {0}"; // operar hasta minutos antes de cierre mercado
-	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET = "OffSet From Open Market (Minutes) To Start Trading {0}";  // offset desde inicio de mercado en minutos
+	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET = "OffSet From Open Market (Minutes) To Start Trading {30}";  // offset desde inicio de mercado en minutos
 	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OPERATIONS_TYPE = "Operation Type [ALL, BUY, SELL]";  // offset desde inicio de mercado en minutos
 	private static String _EXPANDO_PIVOTSPOINTS_VOLUME_INCREASED  = "Volume Increased [TRUE, FALSE]";  // offset desde inicio de mercado en minutos
+	private static String _EXPANDO_PIVOTSPOINTS_ATR_INCREASED  = "ATR Increased [TRUE, FALSE]";  // offset desde inicio de mercado en minutos
 
-	
 	
 	long  _num_macdT = 5;   // Tiempo de barras
 	long _num_macdP = 0;
 	String operationfilter="";    // ALL, BUY, SELL
 	boolean volume_increased = Boolean.FALSE;
-
+	boolean atr_increased = Boolean.FALSE;
 	
 	boolean bBuyOperation = Boolean.FALSE;									
 	boolean bSellOperation = Boolean.FALSE;
@@ -304,6 +304,8 @@ public class IBStrategyPivotsPoints extends StrategyImpl {
 		boolean verified = Boolean.FALSE;
 		boolean existsPosition = Boolean.FALSE;
 
+		
+		
 		try
 	    {
 			
@@ -351,6 +353,7 @@ public class IBStrategyPivotsPoints extends StrategyImpl {
 		_num_macdT 		 				= this.getJsonStrategyShareParams().getLong(_EXPANDO_PIVOTPOINT_CANDLE_SIZE,0);		
 		operationfilter					= this.getJsonStrategyShareParams().getString(_EXPANDO_MOBILE_AVERAGE_TRADE_OPERATIONS_TYPE,"ALL").trim();
 		volume_increased 				= this.getJsonStrategyShareParams().getBoolean(_EXPANDO_PIVOTSPOINTS_VOLUME_INCREASED,Boolean.FALSE);
+		atr_increased 					= this.getJsonStrategyShareParams().getBoolean(_EXPANDO_PIVOTSPOINTS_ATR_INCREASED,Boolean.FALSE);
 
 		
 		if (_num_macdT==0 || _num_macdT ==0)
@@ -380,7 +383,7 @@ public class IBStrategyPivotsPoints extends StrategyImpl {
 				return Boolean.FALSE;
 			}
 				
-			_log.debug("HoraActual:" + HoraActual + ",StartHourTrading:" + StartHourTrading);
+			_log.debug("HoraActual:" + HoraActual + ",StartHourTrading:" + StartHourTrading + ",_num_macdP:" + _num_macdP + ",volume_increased" + volume_increased + ",atr_increased:" + atr_increased) ;
 			if (HoraActual.compareTo(StartHourTrading)>0)   // hora actyual ya ha pasado, podemos entrar en la operativa
 			{
 			
@@ -400,195 +403,48 @@ public class IBStrategyPivotsPoints extends StrategyImpl {
 					
 				}
 				
+				_log.debug("Isnotnull lastRealtime:" + Validator.isNotNull(lastRealtime) + ",share: " + _share.getSymbol());
+
 				if  (Validator.isNotNull(lastRealtime))
 				{
 					Double _avgMobileExponential = BaseIndicatorUtil.getExponentialAvgMobile(_calendarFromNow.getTime(), lastRealtime.doubleValue(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_macdP , isSimulation_mode(), _market);
 					
 					
 					
-					
+					_log.debug("Isnotnull _avgMobileExponential:" + Validator.isNotNull(_avgMobileExponential) + ",share: " + _share.getSymbol());
 					if (Validator.isNull(_avgMobileExponential))
 						return Boolean.FALSE;
-						
-					/* MODO PIVOT POINTS DE LA ULTIMA SESION */
-					IBTraderPivotPointIndicator  _pivotPointData  = BaseIndicatorUtil.getSessionPivotPointIndicator(_calendarFromNow.getTime(), _num_macdT, _share, isSimulation_mode(), _market);
-					/* MODO PIVOT POINTS DE LA ULTIMA  BARRA 
-					IBTraderPivotPointIndicator _pivotPreviousBarPointData  = BaseIndicatorUtil.getBarPivotPointIndicator(_calendarFromNow.getTime(), _num_macdT, _share, isSimulation_mode(), _market);
-					*/
-					 
 					
-					if (currentSeconds<3)						
-					{
-						_log.debug(_share.getSymbol() + " " + Utilities.getWebFormattedDate(_calendarFromNow.getTime(), _IBUser));								
-						_log.debug("lastRealtime.doubleValue() " + lastRealtime);
-						_log.debug("avgMobileExponential.doubleValue():" + (Validator.isNotNull(_avgMobileExponential) ? _avgMobileExponential.doubleValue() : 0));						
-						_log.debug("Last Bar Session PP :" + (Validator.isNotNull(_pivotPointData) ? _pivotPointData.getPivotPoint() : 0));
-						_log.debug("Last Bar Session   PP R1 :" + (Validator.isNotNull(_pivotPointData) ? _pivotPointData.getPivotPointResistance1() : 0));
-						_log.debug("Last Bar Session  PP S1 :" + (Validator.isNotNull(_pivotPointData) ? _pivotPointData.getPivotPointSupport1() : 0));
-						
-						/* _log.debug("Last Session  PP :" + (Validator.isNotNull(_pivotSessionPointData) ? _pivotSessionPointData.getPivotPoint() : 0));
-						_log.debug("Last Session  PP R1 :" + (Validator.isNotNull(_pivotSessionPointData) ? _pivotSessionPointData.getPivotPointResistance1() : 0));
-						_log.debug("Last Session  PP S1 :" + (Validator.isNotNull(_pivotSessionPointData) ? _pivotSessionPointData.getPivotPointSupport1() : 0));
+					JSONObject pivotsPointsParams = JSONFactoryUtil.createJSONObject();
+					pivotsPointsParams.put(ConfigKeys._FIELD_PIVOTS_POINTS_PARAMS_TIMEBARS, _num_macdT);
+					pivotsPointsParams.put(ConfigKeys._FIELD_PIVOTS_POINTS_PARAMS_GAPTOENTER, this.getJsonStrategyShareParams().getDouble(_EXPANDO_GAP_TO_ENTER_PIVOTPOINTREACHED));
+					pivotsPointsParams.put(ConfigKeys._FIELD_PIVOTS_POINTS_PARAMS_OPERATIONFILTER, operationfilter);
+					pivotsPointsParams.put(ConfigKeys._FIELD_PIVOTS_POINTS_PARAMS_VOLUMEN_INCREASED, volume_increased);
+					pivotsPointsParams.put(ConfigKeys._FIELD_PIVOTS_POINTS_PARAMS_ATR_INCREASED, atr_increased);
+					
+					
+					JSONObject pivotsPointsSignal = BaseIndicatorUtil._getPivotsPointsSignal(_calendarFromNow.getTime(), _avgMobileExponential.doubleValue(), lastRealtime, pivotsPointsParams, this.isSimulation_mode(), _share, _market); 
 
-						*/
-					}
-					
-					
-					
-					if (_avgMobileExponential!=null && _pivotPointData!=null &&  _pivotPointData.getPivotPoint()>0)
+					if (_avgMobileExponential!=null && Validator.isNotNull(pivotsPointsSignal))
 					{
 					
-										
-						boolean _BuySuccess = false;
-						boolean _SellSuccess = false;
+						_log.debug("Verificando señales de entrada.. ");								
 						
-						/* usamos r1 o s1 , 2, 3  como ruptura */
-						double BuyValueWithGapR1 = 
-								(_pivotPointData.getPivotPointResistance1() * this.getJsonStrategyShareParams().getDouble(_EXPANDO_GAP_TO_ENTER_PIVOTPOINTREACHED) / 100) +  _pivotPointData.getPivotPointResistance1();
-						double BuyValueWithGapR2 = 
-								(_pivotPointData.getPivotPointResistance2() * this.getJsonStrategyShareParams().getDouble(_EXPANDO_GAP_TO_ENTER_PIVOTPOINTREACHED) / 100) +  _pivotPointData.getPivotPointResistance2();
-						double BuyValueWithGapR3 = 
-								(_pivotPointData.getPivotPointResistance3() * this.getJsonStrategyShareParams().getDouble(_EXPANDO_GAP_TO_ENTER_PIVOTPOINTREACHED) / 100) +  _pivotPointData.getPivotPointResistance3();		
+						boolean _BuySuccess    = pivotsPointsSignal.getBoolean("_BuySuccess");
+						boolean _SellSuccess   = pivotsPointsSignal.getBoolean("_SellSuccess");
+						boolean  bVolIncreased =  pivotsPointsSignal.getBoolean("bVolIncreased");
+						boolean  bATRIncreased =  pivotsPointsSignal.getBoolean("bATRIncreased");
+						IBTraderPivotPointIndicator _pivotPointData =  (IBTraderPivotPointIndicator) pivotsPointsSignal.get("_pivotPointData");
 												
-											
-						double SellValueWithGapS1 = _pivotPointData.getPivotPointSupport1()  - (_pivotPointData.getPivotPointSupport1()  * this.getJsonStrategyShareParams().getDouble(_EXPANDO_GAP_TO_ENTER_PIVOTPOINTREACHED) / 100) ;  
-						double SellValueWithGapS2 = _pivotPointData.getPivotPointSupport2()  - (_pivotPointData.getPivotPointSupport2()  * this.getJsonStrategyShareParams().getDouble(_EXPANDO_GAP_TO_ENTER_PIVOTPOINTREACHED) / 100) ;  
-						double SellValueWithGapS3 = _pivotPointData.getPivotPointSupport3()  - (_pivotPointData.getPivotPointSupport3()  * this.getJsonStrategyShareParams().getDouble(_EXPANDO_GAP_TO_ENTER_PIVOTPOINTREACHED) / 100) ;  
-
-						
-						// 
-						_BuySuccess =   lastRealtime.doubleValue() >_avgMobileExponential.doubleValue() &&
-											(lastRealtime.doubleValue() > BuyValueWithGapR1 ||
-													lastRealtime.doubleValue() > BuyValueWithGapR2 ||
-															lastRealtime.doubleValue() > BuyValueWithGapR3);
-						// 
-						_SellSuccess =  lastRealtime.doubleValue() <_avgMobileExponential.doubleValue() &&
-										(lastRealtime.doubleValue() < SellValueWithGapS1 
-											|| lastRealtime.doubleValue() < SellValueWithGapS2
-												|| lastRealtime.doubleValue() < SellValueWithGapS3);
-						
-						
-						_BuySuccess = _BuySuccess &&  
-								(operationfilter.equals("ALL") || operationfilter.equals(PositionStates.statusTWSFire.BUY.toString())); 
-	
-						_SellSuccess = _SellSuccess  &&  
-								(operationfilter.equals("ALL") || operationfilter.equals(PositionStates.statusTWSFire.SELL.toString()));
-						
-						boolean   _BuySuccessR1 = Boolean.FALSE;							
-						boolean   _BuySuccessR2 = Boolean.FALSE; 								
-						boolean   _BuySuccessR3 = Boolean.FALSE; 
-										
-						boolean   _SellSuccessS1 = Boolean.FALSE; 							
-						boolean   _SellSuccessS2 = Boolean.FALSE; 								
-						boolean   _SellSuccessS3 = Boolean.FALSE; 	
-						
-						
-						boolean bVolIncreased = Boolean.TRUE;
-						long    _volume = 0;
-						long _volume_previous = 0;
-						Calendar _previousBarDate = Calendar.getInstance();
-						Calendar _previousInitialBarDate = Calendar.getInstance();
-
-						if (_BuySuccess || _SellSuccess)
-						{
-							
-							if (volume_increased)
-							{
-								_previousBarDate.setTime(_calendarFromNow.getTime());
-								_previousBarDate.add(Calendar.MINUTE, - (int) _num_macdT);
-								
-								_volume = BaseIndicatorUtil.getVolumeBetweenBars(_previousBarDate.getTime(), _calendarFromNow.getTime(), _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), isSimulation_mode());
-								//_volume =  Validator.isNull(oRTimeEnTramo) ? null : oRTimeEnTramo.getVolume();
-								if (_volume>0)
-								{	
-									_previousInitialBarDate.setTime(_previousBarDate.getTime());
-									_previousInitialBarDate.add(Calendar.MINUTE, - (int) _num_macdT);				
-									_volume_previous = BaseIndicatorUtil.getVolumeBetweenBars(_previousInitialBarDate.getTime(), _previousBarDate.getTime(), _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), isSimulation_mode());				
-									bVolIncreased  = _volume > _volume_previous;
-								}
-							}
-							
-							
-							/* SACAMOS EL MAXIMO DE LA SESION PARA DESCARTAR VOLVER A ENTRAR EN  LAS MISMAS ZONAS */
-							
-							double  minSession=0;	 
-							double  maxSession=0;
-							
-							
-							/* INICIO DEL DIA Y FIN PARA SACAR EL MAXIMO Y MINIMO DE LA SESION,
-							 * DEL HISTORICAL SOLO SACAMOS HASTA EL MOMENTO  */
-							Calendar _dayFrom = Calendar.getInstance();
-							_dayFrom.setTime(_calendarFromNow.getTime());
-							_dayFrom.set(Calendar.HOUR_OF_DAY, 0); 
-							_dayFrom.set(Calendar.MINUTE, 0);
-							_dayFrom.set(Calendar.SECOND, 0);
-							Calendar _dayTo = Calendar.getInstance();
-							_dayTo.setTime(_calendarFromNow.getTime()); // YA VIENE RELLENA CON LA FECHA DEL MOMENTO DEL BACKTESTING 
-							
-							
-							/* VERIFICAMOPS QUE NO SE HAYAN ALCANZADO PREVIAMENTE LOS VALORES, EXCEPTO EN LA BARRA ACTUAL  */
-							_dayTo.add(Calendar.MINUTE, - (int) _num_macdT);
-							if (!isSimulation_mode())
-							{								
-								Realtime MinMaxSession =  RealtimeLocalServiceUtil.findMinMaxRealTime(_dayFrom.getTime(), _dayTo.getTime(), _share.getShareId(), _share.getCompanyId(), _share.getGroupId());
-								if (Validator.isNotNull(MinMaxSession))
-								{
-									maxSession =  MinMaxSession.getMax_value();					
-									minSession	= MinMaxSession.getMin_value();
-								}
-							}					
-							else
-							{
-								
-								HistoricalRealtime MinMaxSessionH =  HistoricalRealtimeLocalServiceUtil.findMinMaxRealTime(_dayFrom.getTime(), _dayTo.getTime(), _share.getShareId(), _share.getCompanyId(), _share.getGroupId());
-								if (Validator.isNotNull(MinMaxSessionH))
-								{
-									maxSession =  MinMaxSessionH.getMax_value();					
-									minSession	= MinMaxSessionH.getMin_value();
-								}								
-								
-							}
-							
-							/* CONTROLAMOS QUE NO HAYAN  SUPERADO EN LA SESION LOS SOPORTES Y RESISTENCIAS */
-							_BuySuccessR1 = lastRealtime.doubleValue() > BuyValueWithGapR1 && maxSession <= lastRealtime.doubleValue();				
-							_BuySuccessR2 = lastRealtime.doubleValue() > BuyValueWithGapR2 && maxSession <= lastRealtime.doubleValue();			
-							_BuySuccessR3 = lastRealtime.doubleValue() > BuyValueWithGapR3 && maxSession <= lastRealtime.doubleValue();	
-							
-							_SellSuccessS1 = lastRealtime.doubleValue() < SellValueWithGapS1 && minSession >= lastRealtime.doubleValue();								
-							_SellSuccessS2 = lastRealtime.doubleValue() < SellValueWithGapS2 && minSession >= lastRealtime.doubleValue();							
-							_SellSuccessS3 = lastRealtime.doubleValue() < SellValueWithGapS3 && minSession >= lastRealtime.doubleValue();		
-							
-							
-							_BuySuccess = _BuySuccess && (_BuySuccessR1 || _BuySuccessR2 || _BuySuccessR3);
-							_SellSuccess = _SellSuccess && (_SellSuccessS1 || _SellSuccessS2 || _SellSuccessS3);
-							
-						}
-						
-						
-						/*  SACAMOS DEPURACION EN DURANTE LOS TRES PRIMEROS SEGUNDOS EN LOS CORTES DE BARRAS */
-						if (currentSeconds<3)						
-						{
-							_log.debug("_pivotPointData.getPivotPoint() for :" + _share.getSymbol() + ":" +  (Validator.isNotNull(_pivotPointData) ? _pivotPointData.getPivotPoint() : 0) + " " + Utilities.getWebFormattedDate(_calendarFromNow.getTime(), _IBUser));
-							_log.debug("_pivotPointData.getPivotPoint() for :" + _share.getSymbol() + ":" +  (Validator.isNotNull(_pivotPointData) ? _pivotPointData.getPivotPoint() : 0) + " " + Utilities.getWebFormattedDate(_calendarFromNow.getTime(), _IBUser));
-							_log.debug("_pivotPointData.R1 for :" + _share.getSymbol() + ":" +  (Validator.isNotNull(_pivotPointData) ? _pivotPointData.getPivotPointResistance1() : 0) + " " + Utilities.getWebFormattedDate(_calendarFromNow.getTime(), _IBUser));
-							_log.debug("_pivotPointData.S1 for :" + _share.getSymbol() + ":" +  (Validator.isNotNull(_pivotPointData) ? _pivotPointData.getPivotPointSupport1() : 0) + " " + Utilities.getWebFormattedDate(_calendarFromNow.getTime(), _IBUser));
-							_log.debug("lastRealtime.doubleValue() >_avgMobileExponential.doubleValue()" + _BuySuccess);
-							_log.debug("lastRealtime.doubleValue() <_avgMobileExponential.doubleValue()" + _SellSuccess);
-	
-							
-						}
-						
 						/* fecha hora venicmiento  NO proxima */ 
 						boolean  IsFutureTradeable = Utilities.IsFutureTradeable(_share);
 						
 						
-						if (bVolIncreased && IsFutureTradeable && (_BuySuccess || _SellSuccess))
+						if (bVolIncreased && bATRIncreased &&  IsFutureTradeable && (_BuySuccess || _SellSuccess))
 						{
 							
-							_log.info("bVolIncreased:" + bVolIncreased + ",volume:" + _volume  + ",volume_previous:" + _volume_previous 
-									+ ",Volume From:" + _previousBarDate.getTime()  + ",Volume Until:" + _calendarFromNow.getTime()  +
-									",Volume_Previous  From:" + _previousInitialBarDate.getTime()  + ",Volume Until:" + _previousBarDate.getTime()  + 
-									"._BuySuccess:," + _BuySuccess   + "._SellSuccess:," + _SellSuccess + " for :" + _share.getSymbol());
+							_log.info("Open order bATRIncreased: " + bATRIncreased  + ",bVolIncreased:" + bVolIncreased + ",volume:" 									
+									+ "._BuySuccess:," + _BuySuccess   + "._SellSuccess:," + _SellSuccess + " for :" + _share.getSymbol());
 							
 							
 						    this.setValueIn(lastRealtime.doubleValue());											
@@ -604,51 +460,17 @@ public class IBStrategyPivotsPoints extends StrategyImpl {
 							_tradeDescription.put("_num_macdT", _num_macdT);
 							_tradeDescription.put("operationfilter", operationfilter);						
 							_tradeDescription.put("_pivotPointData.getPivotPoint()", _pivotPointData.getPivotPoint());	
-							_tradeDescription.put("_pivotPointData.R1()", _pivotPointData.getPivotPointResistance1());												
-							_tradeDescription.put("_pivotPointData.S1()", _pivotPointData.getPivotPointSupport1());			
-							_tradeDescription.put("_pivotPointData.R2()", _pivotPointData.getPivotPointResistance2());												
-							_tradeDescription.put("_pivotPointData.S2()", _pivotPointData.getPivotPointSupport2());
+							_tradeDescription.put("_pivotPointData.R1()", (Validator.isNotNull(_pivotPointData.getPivotPointResistance1()) ? _pivotPointData.getPivotPointResistance1() : 0));												
+							_tradeDescription.put("_pivotPointData.S1()", (Validator.isNotNull(_pivotPointData.getPivotPointSupport1()) ? _pivotPointData.getPivotPointSupport1() : 0));			
+							_tradeDescription.put("_pivotPointData.R2()", (Validator.isNotNull(_pivotPointData.getPivotPointResistance2()) ? _pivotPointData.getPivotPointResistance2() : 0));												
+							_tradeDescription.put("_pivotPointData.S2()", (Validator.isNotNull(_pivotPointData.getPivotPointSupport2()) ? _pivotPointData.getPivotPointSupport2() : 0));
 							_tradeDescription.put("stopLost", stopLost);																			
 							_tradeDescription.put("VolumeIncreased", bVolIncreased);
-							
+							_tradeDescription.put("bATRIncreased", bATRIncreased);
+				
+							_log.info("End verify order a true ");
 
-						
 						}
-						
-						/* ALMACENAMOS LOS VALORES DE AUDITORIA SI ES TIEMPO REAL */
-						if (!isSimulation_mode())
-						{
-							jsonStrategyIndicators= JSONFactoryUtil.createJSONObject();
-							jsonStrategyIndicators.put("_avgMobileExponential", _avgMobileExponential);
-							jsonStrategyIndicators.put("shareId", _share.getShareId());
-							jsonStrategyIndicators.put("bartime", auditTimeFormat.format(_calendarFromNow.getTime()));
-							jsonStrategyIndicators.put("lastRealtime", lastRealtime.doubleValue());
-							jsonStrategyIndicators.put("periods", _num_macdP);
-							jsonStrategyIndicators.put("barsize", _num_macdT);								
-							jsonStrategyIndicators.put("_pivotPointData.getPivotPoint()", _pivotPointData.getPivotPoint());								
-							jsonStrategyIndicators.put("_pivotPointData.R1()", _pivotPointData.getPivotPointResistance1());								
-							jsonStrategyIndicators.put("_pivotPointData.S1()", _pivotPointData.getPivotPointSupport1());
-							jsonStrategyIndicators.put("_pivotPointData.R2()", _pivotPointData.getPivotPointResistance2());								
-							jsonStrategyIndicators.put("_pivotPointData.S2()", _pivotPointData.getPivotPointSupport2());	
-							jsonStrategyIndicators.put("stopLost", stopLost);
-							
-
-							
-							try 
-							{
-								AuditIndicatorsStrategyPK pkAudit = new AuditIndicatorsStrategyPK(_share.getGroupId(), _share.getCompanyId(), auditTimeFormat.format(_calendarFromNow.getTime()), _strategyImpl.getClass().getName(), _share.getShareId());
-								AuditIndicatorsStrategy auditStrategy = AuditIndicatorsStrategyLocalServiceUtil.fetchAuditIndicatorsStrategy(pkAudit);
-								if (Validator.isNull(auditStrategy))
-								{
-									auditStrategy = AuditIndicatorsStrategyLocalServiceUtil.createAuditIndicatorsStrategy(pkAudit);
-									auditStrategy.setAuditData(Validator.isNotNull(jsonStrategyIndicators) ? jsonStrategyIndicators.toString() : StringPool.BLANK);
-									AuditIndicatorsStrategyLocalServiceUtil.addAuditIndicatorsStrategy(auditStrategy);
-									
-								}
-							}
-							catch (Exception e)	{}
-							
-						}	
 					
 				 } // if  (Validator.isNotNull(oShareLastRTime))			   	
 				} // if (_avgMobileExponential!=null)			
@@ -675,6 +497,7 @@ public class IBStrategyPivotsPoints extends StrategyImpl {
 	Parameters.put(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET,  String.valueOf(ExpandoColumnConstants.INTEGER));  // ESTE ES EL UNICO DOUBLE
 	Parameters.put(_EXPANDO_MOBILE_AVERAGE_TRADE_OPERATIONS_TYPE,  String.valueOf(ExpandoColumnConstants.STRING_ARRAY));  // ESTE ES EL UNICO DOUBLE
 	Parameters.put(_EXPANDO_PIVOTSPOINTS_VOLUME_INCREASED,  String.valueOf(ExpandoColumnConstants.STRING_ARRAY));  // ESTE ES EL UNICO DOUBLE
+	Parameters.put(_EXPANDO_PIVOTSPOINTS_ATR_INCREASED,  String.valueOf(ExpandoColumnConstants.STRING_ARRAY));  // ESTE ES EL UNICO DOUBLE
 
 	
 	ExpandoTable expandoTable;

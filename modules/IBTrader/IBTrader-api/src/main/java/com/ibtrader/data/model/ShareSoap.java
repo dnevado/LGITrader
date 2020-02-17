@@ -266,11 +266,11 @@ public class ShareSoap implements Serializable {
 		_tick_futures = tick_futures;
 	}
 
-	public long getMultiplier() {
+	public double getMultiplier() {
 		return _multiplier;
 	}
 
-	public void setMultiplier(long multiplier) {
+	public void setMultiplier(double multiplier) {
 		_multiplier = multiplier;
 	}
 
@@ -385,7 +385,7 @@ public class ShareSoap implements Serializable {
 	private Date _expiry_date;
 	private String _expiry_expression;
 	private double _tick_futures;
-	private long _multiplier;
+	private double _multiplier;
 	private String _security_type;
 	private String _exchange;
 	private String _primary_exchange;

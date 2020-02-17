@@ -52,7 +52,7 @@ public class IBTraderFillRequiredPastRealtime  extends BaseSchedulerEntryMessage
 	      return ((StorageTypeAware) schedulerEntryImpl).getStorageType();
 	    }
 	    
-	    return StorageType.MEMORY_CLUSTERED;
+	    return StorageType.PERSISTED ;
 	  }
 	@Deactivate
 	protected void deactivate() {
@@ -87,13 +87,13 @@ public class IBTraderFillRequiredPastRealtime  extends BaseSchedulerEntryMessage
 	/* 	 que se dispare en el proximo minuto y el dia +28   
 		schedulerEntryImpl.setTrigger(TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(),
 				calendar.getTime(),cron.toString())); */
-		_log.info("NO LO EJECUTAMOS PÀRA VER LOS ESTOCASTICOS StartFillRequiredRealtime activate runningJob:" + runningJob); 
+		//_log.info("NO LO EJECUTAMOS PÀRA VER LOS ESTOCASTICOS StartFillRequiredRealtime activate runningJob:" + runningJob); 
 				
 	    schedulerEntryImpl = new StorageTypeAwareSchedulerEntryImpl(schedulerEntryImpl, StorageType.PERSISTED);
 	    // update the trigger for the scheduled job.
 		
 	    schedulerEntryImpl.setTrigger(TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(),45, TimeUnit.SECOND));  
-		_log.info("NO LO EJECUTAMOS PÀRA VER LOS ESTOCASTICOS Activating CRON..."  + schedulerEntryImpl.getTrigger());
+		//_log.info("NO LO EJECUTAMOS PÀRA VER LOS ESTOCASTICOS Activating CRON..."  + schedulerEntryImpl.getTrigger());
 		
 		if (_initialized) {
 		      // first deactivate the current job before we schedule.
@@ -122,7 +122,7 @@ public class IBTraderFillRequiredPastRealtime  extends BaseSchedulerEntryMessage
 		{
 			runningJob = true;					
 			CronUtil cronThread = new CronUtil();			
-		//	cronThread.StartFillRequiredRealtime(message);
+			cronThread.StartFillRequiredRealtime(message);
 		}
 		catch (Exception e)
 		{

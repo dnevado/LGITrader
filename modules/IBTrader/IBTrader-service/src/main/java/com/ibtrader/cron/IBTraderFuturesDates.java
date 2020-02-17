@@ -52,7 +52,7 @@ public class IBTraderFuturesDates  extends BaseSchedulerEntryMessageListener {
 		      return ((StorageTypeAware) schedulerEntryImpl).getStorageType();
 		    }
 		    
-		    return StorageType.MEMORY_CLUSTERED;
+		    return StorageType.PERSISTED ;
 		  }
 		@Deactivate
 		protected void deactivate() {

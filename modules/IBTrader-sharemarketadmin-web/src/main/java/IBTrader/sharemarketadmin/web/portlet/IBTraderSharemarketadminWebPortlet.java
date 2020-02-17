@@ -212,7 +212,7 @@ public class IBTraderSharemarketadminWebPortlet extends MVCPortlet {
 		
 		//Date expiry_date = ParamUtil.getDate(actionRequest,"expiry_date",null, null);
 		double tick_futures=  ParamUtil.getDouble(actionRequest,"tick_futures",0);
-		long multiplier =  ParamUtil.getLong(actionRequest,"multiplier",1); // ponemos uno para que valga para todas al multiplicar el beneficio 
+		double multiplier =  ParamUtil.getDouble(actionRequest,"multiplier",1); // ponemos uno para que valga para todas al multiplicar el beneficio 
 		String security_type = ParamUtil.getString(actionRequest,"security_type","");
 		String primary_exchange = ParamUtil.getString(actionRequest,"primaryexchange","");
 		String exchange = ParamUtil.getString(actionRequest,"exchange","");

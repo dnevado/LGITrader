@@ -408,6 +408,17 @@
 		
 
 	</entity>
+		<!--  ME SIRVE PARA ALMACENADR LOS PRINCIPALES INDICAADORES Y DATOS A TENER EN CUENTA 
+	<entity  cache-enabled="true" local-service="true" name="Indicators" remote-service="true" >
+		<column name="groupId" primary = "true"  type="long" />
+		<column name="companyId" primary = "true"  type="long" />	
+		<column name="createDate" primary = "true" type="Date" />
+		<column name="name" primary = "true" type="String" />
+		<column name="shareId" primary = "true"  type="long" />
+		<column name="value"  type="double" />		
+	</entity> -->
+	
+	
 	
 	
 	<entity local-service="true" name="IBOrder" remote-service="true" uuid="true">
@@ -484,7 +495,7 @@
 			<column name="expiry_date" type="Date" />
 			<column name="expiry_expression" type="String" />
 			<column name="tick_futures" type="double" />
-			<column name="multiplier" type="long" />					
+			<column name="multiplier" type="double" />					
 			<column name="security_type" type="String" />
 			<column name="exchange" type="String" /> 
 			<column name="primary_exchange" type="String" />			
@@ -618,6 +629,14 @@
 			<finder-column name="shareId" />
 			<finder-column name="state" />			
 			<finder-column name="date_out" />
+		</finder>
+		<finder  name="PositionShareStateBacktestingId" return-type="Collection">
+			<finder-column name="companyId"/>			
+			<finder-column name="groupId"/>		
+			<finder-column name="shareId" />
+			<finder-column name="state" />											
+			<finder-column name="position_mode" />
+			<finder-column name="backtestingId" />
 		</finder>
 		<finder  name="PositionShareStateDatesRealOut" return-type="Collection">	
 			<finder-column name="groupId"/>

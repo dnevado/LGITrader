@@ -66,7 +66,7 @@ public class IBStrategyElderExpStochastic extends StrategyImpl {
 	private static String _EXPANDO_MOBILE_AVERAGE_CANDLE_SIZE = "Mobile Average Candle Size (Minutes) {5}";  // offset hasta desde inicio de mercado en minutos
 	private static String _EXPANDO_STOCHASTUC_PERIDOS  = "K Stochastic Periods  {14}";  // offset hasta desde inicio de mercado en minutos
 	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_TO_CLOSEMARKET = "Mobile Average Trade Until x Minutes From CloseMarket {0}"; // operar hasta minutos antes de cierre mercado
-	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET = "OffSet From Open Market (Minutes) To Start Trading {0}";  // offset desde inicio de mercado en minutos
+	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET = "OffSet From Open Market (Minutes) To Start Trading {30}";  // offset desde inicio de mercado en minutos
 	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OPERATIONS_TYPE = "Operation Type [ALL, BUY, SELL]";  // offset desde inicio de mercado en minutos
 	
 	private static String _EXPANDO_STOCHASTUC_OVERBOUGHT_RATE  = "Overbought Stochastic Rate {80}";  // offset hasta desde inicio de mercado en minutos		
@@ -446,16 +446,15 @@ public class IBStrategyElderExpStochastic extends StrategyImpl {
 							(operationfilter.equals("ALL") || operationfilter.equals(PositionStates.statusTWSFire.SELL.toString()));
 
 					/*  SACAMOS DEPURACION EN DURANTE LOS TRES PRIMEROS SEGUNDOS EN LOS CORTES DE BARRAS */
-					if (currentSeconds<3)						
-					{
-						_log.debug("_avgMobileExponential for :" + _share.getSymbol() + ":" +  (Validator.isNotNull(_avgMobileExponential) ? _avgMobileExponential.doubleValue() : 0) + " " + Utilities.getWebFormattedDate(_calendarFromNow.getTime(), _IBUser));
-						_log.debug("stochasticD:" + stochasticD + ",previousmax_value:" +  previousmax_value + "_num_ticks_fromLastbar:" + _num_ticks_fromLastbar + ",lastRealtime>=previousmax_value + Ticks*nticks:" +  bBuyEntryBasedLastBarTicks );
-						_log.debug("stochasticD:" + stochasticD + ",previousmin_value:" +  previousmin_value + "_num_ticks_fromLastbar:" + _num_ticks_fromLastbar + ",lastRealtime<=previousmax_value - Ticks*nticks:" +  bSellEntryBasedLastBarTicks );
-						_log.debug("lastRealtime.doubleValue() >_avgMobileExponential.doubleValue() && bBuyStochasticSignal && bBuyEntryBasedLastBarTicks:" + _BuySuccess);
-						_log.debug("lastRealtime.doubleValue() <_avgMobileExponential.doubleValue() && bSellStochasticSignal && bSellEntryBasedLastBarTick:" + _SellSuccess);
+				
+					_log.debug("_avgMobileExponential for :" + _share.getSymbol() + ":" +  (Validator.isNotNull(_avgMobileExponential) ? _avgMobileExponential.doubleValue() : 0) + " " + Utilities.getWebFormattedDate(_calendarFromNow.getTime(), _IBUser));
+					_log.debug("stochasticD:" + stochasticD + ",previousmax_value:" +  previousmax_value + "_num_ticks_fromLastbar:" + _num_ticks_fromLastbar + ",lastRealtime>=previousmax_value + Ticks*nticks:" +  bBuyEntryBasedLastBarTicks );
+					_log.debug("stochasticD:" + stochasticD + ",previousmin_value:" +  previousmin_value + "_num_ticks_fromLastbar:" + _num_ticks_fromLastbar + ",lastRealtime<=previousmax_value - Ticks*nticks:" +  bSellEntryBasedLastBarTicks );
+					_log.debug("lastRealtime.doubleValue() >_avgMobileExponential.doubleValue() && bBuyStochasticSignal && bBuyEntryBasedLastBarTicks:" + _BuySuccess);
+					_log.debug("lastRealtime.doubleValue() <_avgMobileExponential.doubleValue() && bSellStochasticSignal && bSellEntryBasedLastBarTick:" + _SellSuccess);
 
 						
-					}
+				
 					
 					/* fecha hora venicmiento  NO proxima */ 
 					boolean  IsFutureTradeable = Utilities.IsFutureTradeable(_share);
@@ -477,16 +476,18 @@ public class IBStrategyElderExpStochastic extends StrategyImpl {
 						_tradeDescription.put("_num_macdT", _num_macdT);
 						_tradeDescription.put("_num_stochastic_rate_overbought" , _num_stochastic_rate_overbought);
 						_tradeDescription.put("_num_stochastic_rate_oversold", _num_stochastic_rate_oversold);
-						_tradeDescription.put("bBuyStochasticSignal stochasticD <=_num_stochastic_rate_oversold", bBuyStochasticSignal);
-						_tradeDescription.put("bSellStochasticSignal stochasticD >=_num_stochastic_rate_overbought", bSellStochasticSignal);		
-						_tradeDescription.put("bBuyEntryBasedLastBarTicks previousmax_value > 0 &&  lastRealtime.doubleValue()  >= previousmax_value  + (_share.getTick_futures() * _num_ticks_fromLastbar)", bBuyEntryBasedLastBarTicks);
-						_tradeDescription.put("bSellEntryBasedLastBarTicks previousmin_value > 0 &&  lastRealtime.doubleValue()  <= previousmin_value  - (_share.getTick_futures() * _num_ticks_fromLastbar)", bSellEntryBasedLastBarTicks);
-						_tradeDescription.put("operationfilter", operationfilter);						
-						_tradeDescription.put("stochasticD", stochasticD);												
+						_tradeDescription.put("bBuyStochasticSignal", bBuyStochasticSignal);
+						_tradeDescription.put("bSellStochasticSignal", bSellStochasticSignal);		
+						_tradeDescription.put("previousmax_value", previousmax_value);
+						_tradeDescription.put("previousmin_value", previousmin_value);
+						_tradeDescription.put("operationfilter", operationfilter);		
+						_tradeDescription.put("stochasticD", stochasticD);
+						_tradeDescription.put("_BuySuccess", _BuySuccess);		
+						_tradeDescription.put("_SellSuccess", _SellSuccess);						
 					
 					}
 					
-					/* ALMACENAMOS LOS VALORES DE AUDITORIA SI ES TIEMPO REAL */
+					/* ALMACENAMOS LOS VALORES DE AUDITORIA SI ES TIEMPO REAL
 					if (!isSimulation_mode())
 					{
 						jsonStrategyIndicators= JSONFactoryUtil.createJSONObject();
@@ -513,7 +514,7 @@ public class IBStrategyElderExpStochastic extends StrategyImpl {
 						}
 						catch (Exception e)	{}
 						
-					}	
+					}	 */
 					
 					
 					

@@ -87,7 +87,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 			{ "expiry_date", Types.TIMESTAMP },
 			{ "expiry_expression", Types.CLOB },
 			{ "tick_futures", Types.DOUBLE },
-			{ "multiplier", Types.BIGINT },
+			{ "multiplier", Types.DOUBLE },
 			{ "security_type", Types.VARCHAR },
 			{ "exchange", Types.VARCHAR },
 			{ "primary_exchange", Types.VARCHAR },
@@ -121,7 +121,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		TABLE_COLUMNS_MAP.put("expiry_date", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("expiry_expression", Types.CLOB);
 		TABLE_COLUMNS_MAP.put("tick_futures", Types.DOUBLE);
-		TABLE_COLUMNS_MAP.put("multiplier", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("multiplier", Types.DOUBLE);
 		TABLE_COLUMNS_MAP.put("security_type", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("exchange", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("primary_exchange", Types.VARCHAR);
@@ -135,7 +135,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 		TABLE_COLUMNS_MAP.put("date_filled_realtime_gaps", Types.TIMESTAMP);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table ibtrader_Share (uuid_ VARCHAR(75) null,shareId LONG not null primary key,name VARCHAR(75) null,symbol VARCHAR(75) null,groupId LONG,companyId LONG,createDate DATE null,modifiedDate DATE null,active_ BOOLEAN,numbertopurchase LONG,percentual_limit_buy DOUBLE,percentual_stop_lost DOUBLE,percentual_stop_profit DOUBLE,percentual_stop_profit_position DOUBLE,percentual_trailling_stop_lost DOUBLE,expiry_date DATE null,expiry_expression TEXT null,tick_futures DOUBLE,multiplier LONG,security_type VARCHAR(75) null,exchange VARCHAR(75) null,primary_exchange VARCHAR(75) null,userCreatedId LONG,marketId LONG,validated_trader_provider BOOLEAN,date_validated_trader_provider DATE null,last_error_trader_provider TEXT null,simulation_end_date DATE null,trading_hours TEXT null,date_filled_realtime_gaps DATE null)";
+	public static final String TABLE_SQL_CREATE = "create table ibtrader_Share (uuid_ VARCHAR(75) null,shareId LONG not null primary key,name VARCHAR(75) null,symbol VARCHAR(75) null,groupId LONG,companyId LONG,createDate DATE null,modifiedDate DATE null,active_ BOOLEAN,numbertopurchase LONG,percentual_limit_buy DOUBLE,percentual_stop_lost DOUBLE,percentual_stop_profit DOUBLE,percentual_stop_profit_position DOUBLE,percentual_trailling_stop_lost DOUBLE,expiry_date DATE null,expiry_expression TEXT null,tick_futures DOUBLE,multiplier DOUBLE,security_type VARCHAR(75) null,exchange VARCHAR(75) null,primary_exchange VARCHAR(75) null,userCreatedId LONG,marketId LONG,validated_trader_provider BOOLEAN,date_validated_trader_provider DATE null,last_error_trader_provider TEXT null,simulation_end_date DATE null,trading_hours TEXT null,date_filled_realtime_gaps DATE null)";
 	public static final String TABLE_SQL_DROP = "drop table ibtrader_Share";
 	public static final String ORDER_BY_JPQL = " ORDER BY share.shareId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY ibtrader_Share.shareId ASC";
@@ -425,7 +425,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 			setTick_futures(tick_futures);
 		}
 
-		Long multiplier = (Long)attributes.get("multiplier");
+		Double multiplier = (Double)attributes.get("multiplier");
 
 		if (multiplier != null) {
 			setMultiplier(multiplier);
@@ -812,12 +812,12 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 
 	@JSON
 	@Override
-	public long getMultiplier() {
+	public double getMultiplier() {
 		return _multiplier;
 	}
 
 	@Override
-	public void setMultiplier(long multiplier) {
+	public void setMultiplier(double multiplier) {
 		_multiplier = multiplier;
 	}
 
@@ -1547,7 +1547,7 @@ public class ShareModelImpl extends BaseModelImpl<Share> implements ShareModel {
 	private Date _expiry_date;
 	private String _expiry_expression;
 	private double _tick_futures;
-	private long _multiplier;
+	private double _multiplier;
 	private String _security_type;
 	private String _exchange;
 	private String _primary_exchange;

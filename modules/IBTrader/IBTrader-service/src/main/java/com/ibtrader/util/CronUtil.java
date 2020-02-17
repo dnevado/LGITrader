@@ -572,7 +572,12 @@ public class CronUtil {
 			/* MODIFICACION, MEDIAS MOVILES HASTA EL PERIDO N, N-1, N-2 */
 			/* SUMAMOS UN PERIOD */	
 			
-			lPeriods = BaseIndicatorUtil.getPeriodsMinutesMobileAvg(hoyOpenMarket.getTime(), ConfigKeys.INDICATORS_MIN_SERIE_COUNT + 1 ,ConfigKeys.DEFAULT_TIMEBAR_MINUTES, Boolean.TRUE, market, Boolean.FALSE, share.getShareId());
+		    /* YA QUE PARA BUSCAR LOS PERIODOS BUSCA LOS MERCADOS ABIERTOS ANTERIORES PARA RELLENAR EL REALTIME QUE SEA NECESARIO, LO COGE 
+		     * DEL TRADING HOURS Y AHI NO HAY HORAS DE MERCADOS PASADOS, ASI QUE SUSAMOS EL SUMLATION = TRUE PARA QUE TIRE DEL 
+		     * HISTORICAL Y SABER LA HORA Y FIN DE MERCADO DEL SHARE 
+		     */
+		    
+			lPeriods = BaseIndicatorUtil.getPeriodsMinutesMobileAvg(hoyOpenMarket.getTime(), ConfigKeys.INDICATORS_MIN_SERIE_COUNT + 1 ,ConfigKeys.DEFAULT_TIMEBAR_MINUTES, Boolean.TRUE, market, Boolean.TRUE, share.getShareId());
 			
 			SimpleDateFormat _sdf = new SimpleDateFormat(Utilities.__IBTRADER_SQL_DATE_);
     	    Date toWithOpenMarketsTimes  =null;
@@ -1500,7 +1505,7 @@ public class CronUtil {
 				 wrapper = clientspool.get(_Organization.getOrganizationId());
 				 
 				_log.trace("threadID:" + Thread.currentThread().getId() + ",Wrapper obtained from pool:" + wrapper.getClient().connectedHost() + "," + _PORT + ",group:" + _Organization.getGroupId() + ",_CLIENT_ID:" + _CLIENT_ID);
-				_log.trace("threadID:" + Thread.currentThread().getId() + ",Wrapper obtained from pool:" + wrapper.getClient().connectedHost() + "," + _PORT + ",group:" + _Organization.getGroupId() + ",_CLIENT_ID:" + _CLIENT_ID);
+
 				 
 				 if (!wrapper.isConnected()) 
 				   wrapper.connect(_HOST, _PORT,_CLIENT_ID);
@@ -1580,10 +1585,19 @@ public class CronUtil {
 			    				
 			    					/* SOLO PARA LAS DE SALIDA SI NO ESTA HABILITADO LA OPERCION, QUEREMOS AL MENOS SALIR */
 			    					boolean IsTradingEnabled = Utilities.getTradingEnabled(oShare.getCompanyId(), oShare.getGroupId());
-			    					IsTradingEnabled = 	(IsTradingEnabled || (!IsTradingEnabled && oStrategyShare.getType().equals(IBTraderConstants.STRATEGY_OUT_TYPE))); 
+			    					IsTradingEnabled = 	(IsTradingEnabled || (!IsTradingEnabled && oStrategyShare.getType().equals(IBTraderConstants.STRATEGY_OUT_TYPE.toString()))); 
 			    					
-			    					if (_strategyImpl.verify(oShare, oMarket,strategyShare,null) && wrapper.isConnected() 
-			    							&& !Utilities.IsDayTraderPattern(oShare.getGroupId(), oShare.getCompanyId()) && IsTradingEnabled)
+			    					Calendar _calendarFromNow = Calendar.getInstance();
+			    					long currentSeconds = _calendarFromNow.get(Calendar.SECOND);
+
+			    					if (currentSeconds<3)						
+			    					{
+			    						_log.debug("IsTradingEnabled for " + oShare.getSymbol() + ":" + IsTradingEnabled);
+			    					}
+			    					
+			    					
+			    					if ( IsTradingEnabled && _strategyImpl.verify(oShare, oMarket,strategyShare,null) && wrapper.isConnected() 
+			    							&& !Utilities.IsDayTraderPattern(oShare.getGroupId(), oShare.getCompanyId()))
 			    					{		
 			    										    										    						
 			    							long positionId = _strategyImpl.execute(oShare, oMarket,null);
@@ -1591,7 +1605,7 @@ public class CronUtil {
 			    							if (positionId!=-1) // no hay error 
 			    							{	
 			    								if (!wrapper.isConnected()) // si se produce un error, salimos, eliminando order.
-			    								{
+			    								{	 
 			    									Position _position = PositionLocalServiceUtil.fetchPosition(positionId);
 			    									/* borramos ordenes y posicion */
 			    									if (_position!=null)
