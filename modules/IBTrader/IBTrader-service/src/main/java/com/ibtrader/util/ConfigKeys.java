@@ -86,7 +86,7 @@ public class ConfigKeys {
 
     
     public static final String  _FIELD_PIVOTS_POINTS_PARAMS_TIMEBARS = "_num_macdT";   // 5 SEGUNDOS SE GRABA EL MODIFIED DATABASE
-    public static final String _FIELD_PIVOTS_POINTS_PARAMS_GAPTOENTER = "_gaptoEnter";   // 5 SEGUNDOS SE GRABA EL MODIFIED DATABASE
+    public static final String _FIELD_PIVOTS_POINTS_PARAMS_GAPTOENTER = "_atrmultipler_gaptoEnter";   // 5 SEGUNDOS SE GRABA EL MODIFIED DATABASE
     public static final String _FIELD_PIVOTS_POINTS_PARAMS_OPERATIONFILTER = "operationfilter";   // 5 SEGUNDOS SE GRABA EL MODIFIED DATABASE
     public static final String _FIELD_PIVOTS_POINTS_PARAMS_VOLUMEN_INCREASED = "volume_increased";   // 5 SEGUNDOS SE GRABA EL MODIFIED DATABASE
     public static final String _FIELD_PIVOTS_POINTS_PARAMS_ATR_INCREASED = "atr_increased";   // 5 SEGUNDOS SE GRABA EL MODIFIED DATABASE

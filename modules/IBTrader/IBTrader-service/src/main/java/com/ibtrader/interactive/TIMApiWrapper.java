@@ -448,9 +448,9 @@ public class TIMApiWrapper implements EWrapper {
 			{				
 				
 				/* SOLO ALMACENAMOS DATOS DE LAS HORAS DE OPERATIVA PARA NO SALVAR REALTIME DE HORAS FUERA DE MERCADO.*/
-				/* Share _share =  ShareLocalServiceUtil.fetchShare(shareId);
+				 Share _share =  ShareLocalServiceUtil.fetchShare(shareId);
 				if (Utilities.IsTradingEnabledFromHours(_share.getTrading_hours()))
-				{*/
+				{
 				 				
 					_log.trace("tickSize called and persisted RealTime ");
 					
@@ -478,7 +478,7 @@ public class TIMApiWrapper implements EWrapper {
 					oReal.setVolume(currentVolume);
 					
 					RealtimeLocalServiceUtil.addRealtime(oReal);
-				/* } */
+				 } 
 			}
 			
 			

@@ -458,6 +458,53 @@
             AND (IBTrader_HistoricalRealtime.groupid=?)
      ]]>
     </sql>
+     <!--  aplica a una barra  -->
+    <sql id="com.ibtrader.data.service.persistence.HistoricalRealtimeFinder.findMaxRealTime">
+    <![CDATA[ 
+    	 	SELECT 
+        		IBTrader_HistoricalRealtime.*
+        	FROM 
+        		(SELECT
+					max(value), realtimeId
+				FROM 
+					IBTrader_HistoricalRealtime
+				WHERE  
+					(IBTrader_HistoricalRealtime.createDate>=?) AND
+            		(IBTrader_HistoricalRealtime.createDate<?) AND
+            		(IBTrader_HistoricalRealtime.shareId=?)
+            		AND (IBTrader_HistoricalRealtime.companyid=?)
+            		AND (IBTrader_HistoricalRealtime.groupid=?)
+					) as MAX,
+					 IBTrader_HistoricalRealtime
+			WHERE 
+					MAX.realtimeId = IBTrader_HistoricalRealtime.realtimeId 
+     ]]>
+    </sql>
+      <!--  aplica a una barra  -->
+    <sql id="com.ibtrader.data.service.persistence.HistoricalRealtimeFinder.findMinRealTime">
+    <![CDATA[ 
+    	 	SELECT 
+        		IBTrader_HistoricalRealtime.*
+        	FROM 
+        		(SELECT
+					min(value), realtimeId
+				FROM 
+					IBTrader_Realtime
+				WHERE  
+					(IBTrader_HistoricalRealtime.createDate>=?) AND
+            		(IBTrader_HistoricalRealtime.createDate<?) AND
+            		(IBTrader_HistoricalRealtime.shareId=?)
+            		AND (IBTrader_HistoricalRealtime.companyid=?)
+            		AND (IBTrader_HistoricalRealtime.groupid=?)
+					) as MIN,
+					 IBTrader_HistoricalRealtime
+			WHERE 
+					MIN.realtimeId = IBTrader_HistoricalRealtime.realtimeId 
+     ]]>
+    </sql>
+    
+    
+    
      <sql id="com.ibtrader.data.service.persistence.HistoricalRealtimeFinder.findLastRealTime">
     <![CDATA[ 
         SELECT 
@@ -656,6 +703,56 @@
             AND (IBTrader_Realtime.groupid=?)
      ]]>
     </sql>
+    
+     <!--  aplica a una barra  -->
+    <sql id="com.ibtrader.data.service.persistence.RealtimeFinder.findMaxRealTime">
+    <![CDATA[ 
+    	 	SELECT 
+        		IBTrader_Realtime.*
+        	FROM 
+        		(SELECT
+					max(value), realtimeId
+				FROM 
+					IBTrader_Realtime
+				WHERE  
+					(IBTrader_Realtime.createDate>=?) AND
+            		(IBTrader_Realtime.createDate<?) AND
+            		(IBTrader_Realtime.shareId=?)
+            		AND (IBTrader_Realtime.companyid=?)
+            		AND (IBTrader_Realtime.groupid=?)
+					) as MAX,
+					 IBTrader_Realtime
+			WHERE 
+					MAX.realtimeId = IBTrader_Realtime.realtimeId 
+     ]]>
+    </sql>
+      <!--  aplica a una barra  -->
+    <sql id="com.ibtrader.data.service.persistence.RealtimeFinder.findMinRealTime">
+    <![CDATA[ 
+    	 	SELECT 
+        		IBTrader_Realtime.*
+        	FROM 
+        		(SELECT
+					min(value), realtimeId
+				FROM 
+					IBTrader_Realtime
+				WHERE  
+					(IBTrader_Realtime.createDate>=?) AND
+            		(IBTrader_Realtime.createDate<?) AND
+            		(IBTrader_Realtime.shareId=?)
+            		AND (IBTrader_Realtime.companyid=?)
+            		AND (IBTrader_Realtime.groupid=?)
+					) as MIN,
+					 IBTrader_Realtime
+			WHERE 
+					MIN.realtimeId = IBTrader_Realtime.realtimeId 
+     ]]>
+    </sql>
+    
+    
+    
+    
+    
      <sql id="com.ibtrader.data.service.persistence.RealtimeFinder.findLastRealTime">
     <![CDATA[ 
         SELECT 

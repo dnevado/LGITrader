@@ -1,50 +1,8 @@
-/* 
- * 
- * 
- * https://www.rankia.com/blog/opiniones/3132668-utilizando-pivot-points-para-entrar-mercado
-https://www.mql5.com/es/articles/1465
-
-Pivot Points existen en todos los plazos temporales: cinco minutos, 1 hora, diario, semanal o mensual. 
-
-ESTRATEGIA :
-
-1) Calcular los R1-PP-S1 de la barra Inicial ( BARRA 0 )
-2) Considerar la apertura de BARRA 1 ( Nivel 1 )
-3) Si Nivel1 > PP ( Abrir CORTOS )
-4) Si Nivel1 < PP ( Abrir LARGOS )
-5) STOP en los niveles R1 y S1
-6) PROFIT en PP
-
-
-CONDICIONES PREVIAS
-
-Valores Optimizables
-
-a) Considerar siempre como nivel de ENTRADA = Nivel1 + o - ( 5 ) Puntos
-b) Distancia desde ENTRADA - PROFIT ( 10 )
-c) Distancia desde ENTRADA - (R1 o S1) ( 50 )
-d) Riesgo.......Ratio ENTRADA-(R1 o S1) / ENTRADA-PROFIT ( 2.5 )
-
-De esta manera limitamos la operativa a las barras que nos son favorables, auqellas que tienen recorrido hasta el PP, y no tienen mucha distancia hasta el nivel R1 o S1.
-
-
-P (Pivot Point, o punto de giro)= (Máximo del periodo anterior+Mínimo del periodo anterior+Cierre) todo dividido entre tres.
-Podríamos pensar que el punto de giro, se debería encontrar justo en el centro, pero no es así. Al incluir el cierre en la ecuación, el punto de giro, puede coincidir o no con la parte central del rango de la barra anterior.
-Resistencia 1=2*El Pivot Point-El mínimo de la cotización.
-Resistencia 2=Pivot Point+(Resistencia primera-El soporte primero)
-Soporte 1=2* (Pivot Point-El máximo de la cotización)
-Soporte 2= Pivot Point-(Resistencia primera-Soporte primero)
- * 
- * 
- * 
- */
-
 
 
 package com.ibtrader.strategy;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -70,7 +28,8 @@ import com.ibtrader.data.service.PositionLocalServiceUtil;
 import com.ibtrader.data.service.RealtimeLocalServiceUtil;
 import com.ibtrader.data.service.persistence.AuditIndicatorsStrategyPK;
 import com.ibtrader.data.service.persistence.impl.AuditIndicatorsStrategyPersistenceImpl;
-import com.ibtrader.techindicadors.IBTraderPivotPointIndicator;
+import com.ibtrader.techindicadors.IBTraderPricesPeaksValleyIndicator;
+import com.ibtrader.techindicadors.IBTraderPeaksValleyIndicator;
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.expando.kernel.model.ExpandoColumn;
 import com.liferay.expando.kernel.model.ExpandoColumnConstants;
@@ -94,31 +53,53 @@ import com.ibtrader.util.PositionStates;
 import com.ibtrader.util.Utilities;
 
 
-/* https://compraraccionesdebolsa.com/los-sistemas-de-trading/triple-pantalla-Elder/ 
- * http://www.megabolsa.com/2015/08/01/tecnica-de-trading-de-triple-pantalla/*/
-
-public class IBStrategyPivotsPoints extends StrategyImpl {
+/* 
+ * La divergencia alcista se identifica cuando se forman dos mínimos consecutivos, y el más reciente ha alcanzado un nivel más bajo que su precedente. Al mismo tiempo, el histograma del MACD alcanza dos mínimos alcistas, esto es que el más reciente de los cuales se encuentra a un nivel superior que el mínimo anterior.
+  La divergencia bajista se identifica cuando se forman dos máximos consecutivos alcistas, el más reciente es más alto que su precedente. A la vez, el histograma del MACD tiene dos máximos descendientes consecutivos, el más reciente de los cuales se encuentra más bajo que el anterior.
+ * 
+ * divergencia floja, porque el indicador no llega a cruzar cero entre ambos picos negativos, que sería lo ideal.
+ * 
+ * 
+ *
+ * 
+ * 
+ * STRATEGIA DESCRITA AQUI 
+ * 
+ *  1. DIVERGENCIAS PRECIO 
+ *  2- ROTURAS MINIMOS / MAXIMOS RELATIVOS 
+ *  		A) ENTRAR EN LA ROTURA PARA CONFIRMAR LA DIVERGENCIA 
+ *  		B) ENTRAR EN LA CONFIFORMACION SEGUN COMENTA EL GRAFICO 
+ *  https://www.rankia.com/blog/vender-para-comprar/2556484-estrategia-usando-divergencia-macd 
+ *  https://www.rankia.com/blog/vender-para-comprar/2561254-aplicando-macd-analisis-iag
+ *  
+ *  */
+public class IBStrategyPriceDivergences extends StrategyImpl {
 
 	private static final long serialVersionUID = 1L;
-	private static Log _log = LogFactoryUtil.getLog(IBStrategyPivotsPoints.class);
+	private static Log _log = LogFactoryUtil.getLog(IBStrategyPriceDivergences.class);
 	/* PAIR NAME / DATA TYPE PARAMETERES */	
 	private static HashMap<String, String> Parameters = new HashMap<String,String>();
 	private List<ExpandoColumn> ExpandoColumns = new ArrayList<ExpandoColumn>(); 
 	
-	private static String _EXPANDO_MOBILE_AVERAGE_PERIODS_NUMBER = "Exponencial Mobile Average Periods Number {26}";  // offset desde inicio de mercado en minutos	
-	private static String _EXPANDO_PIVOTPOINT_CANDLE_SIZE = "PivotPoint Candle Size (Minutes) {5}";  // offset hasta desde inicio de mercado en minutos
-	private static String _EXPANDO_X_TIMES_ATR_GAP_TO_ENTER_  = "ATR Multipler Gap To Buy Sell After PIVOT POINT reached  {1.5}";  // offset hasta desde inicio de mercado en minutos		
+	private static String _EXPANDO_MOBILE_AVERAGE_CANDLE_SIZE = "Mobile Average Candle Size (Minutes) {5}";  // offset hasta desde inicio de mercado en minutos
 	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_TO_CLOSEMARKET = "Mobile Average Trade Until x Minutes From CloseMarket {0}"; // operar hasta minutos antes de cierre mercado
 	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET = "OffSet From Open Market (Minutes) To Start Trading {30}";  // offset desde inicio de mercado en minutos
 	private static String _EXPANDO_MOBILE_AVERAGE_TRADE_OPERATIONS_TYPE = "Operation Type [ALL, BUY, SELL]";  // offset desde inicio de mercado en minutos
-	private static String _EXPANDO_PIVOTSPOINTS_VOLUME_INCREASED  = "Volume Increased [TRUE, FALSE]";  // offset desde inicio de mercado en minutos
-
+	private static String _EXPANDO_MACD_PERIODOS_SHORT_EXP_MOBILE = "MACD Short-Avg Mobile Periods {12}";  // {} SINTAXIS PARA VALORES POR DEFECTO   
+	private static String _EXPANDO_MACD_PERIODOS_LONG_EXP_MOBILE = "MACD  Long-Avg Mobile Periods {26}";  //   SINTAXIS PARA VALORES POR DEFECTO	
+	private static String _EXPANDO_MACD_PERIODOS_SIGNALLINE_EXP_MOBILE = "MACD  Signal Line Avg Mobile Periods {9}";  //   SINTAXIS PARA VALORES POR DEFECTO
 	
+	long  _num_stochasticP = 8;   // Periodos
+	long  _num_macdP = 8;   // Periodos
 	long  _num_macdT = 5;   // Tiempo de barras
-	long _num_macdP = 0;
+	
+	long  _num_shortAvgMACD_P = 12;   // Tiempo de barras
+	long  _num_longAvgMACD_P = 26;   // Tiempo de barras
+	long  _num_signalLineMACD_P = 9;   // Tiempo de barras
+	
+	
 	String operationfilter="";    // ALL, BUY, SELL
-	boolean volume_increased = Boolean.FALSE;
-	boolean atr_increased = Boolean.FALSE;
+	
 	
 	boolean bBuyOperation = Boolean.FALSE;									
 	boolean bSellOperation = Boolean.FALSE;
@@ -127,8 +108,6 @@ public class IBStrategyPivotsPoints extends StrategyImpl {
 	SimpleDateFormat TimeFormat = new SimpleDateFormat (Utilities.__IBTRADER_SHORT_HOUR_FORMAT);
 	SimpleDateFormat auditTimeFormat = new SimpleDateFormat (Utilities.__IBTRADER_HISTORICAL_DATE_FORMAT);
 
-	double stopLost = 0 ; // metemos el stop lost calculado  segun BUY o SELL , de acuerdo a la R2 o S2
-	
 	@Override
 	public long  execute(Share _share, Market _market,  Date backtestingdDate)
 	{
@@ -181,12 +160,12 @@ public class IBStrategyPivotsPoints extends StrategyImpl {
 	    		if (this.getJsonStrategyShareParams()!=null && this.getJsonStrategyShareParams().getInt(ConfigKeys._FIELD_NUMBER_TO_PURCHASE,0)>0)
 	    			number_to_purchase =this.getJsonStrategyShareParams().getInt(ConfigKeys._FIELD_NUMBER_TO_PURCHASE,0);    	
 				
-	    		
 	    		User user = UserLocalServiceUtil.getUser(_share.getUserCreatedId());
 			    boolean bOrderIsWithinBudget =   PositionLocalServiceUtil.IsinRangeUserBudget(user,_share.getMultiplier() *  this.getValueIn() * number_to_purchase, position_mode, _share.getCompanyId(), _share.getGroupId());
 			    if (!bOrderIsWithinBudget)
 			    	return returnValue;
-	    		
+			    
+			    
 				BuyPositionTWS.totalQuantity(number_to_purchase);
 				BuyPositionTWS.orderType(PositionStates.ordertypes.MKT.toString());		    
 				// precio del tick mÃ¡s o menos un porcentaje ...normalmente %1
@@ -230,11 +209,8 @@ public class IBStrategyPivotsPoints extends StrategyImpl {
 			BuyPositionSystem.setPosition_mode(position_mode);			
     		BuyPositionSystem = Utilities.fillStatesOrder(BuyPositionSystem);
 			/* END MODO FAKE CUENTA DEMO */
-       		
-    		/* BuyPositionSystem.setPercentualstoplost_out(Utilities.RoundPrice(Math.abs(this.getValueIn() - stopLost)  / this.getValueIn() * 100));
-       		BuyPositionSystem.setPricestoplost_out(Utilities.RoundPrice(stopLost));
-       		*/
-    		double stoplost =_share.getPercentual_stop_lost();
+ 
+       		double stoplost =_share.getPercentual_stop_lost();
     		/* EXISTE ALGO SOBREESCRITO */
     		if (this.getJsonStrategyShareParams()!=null && this.getJsonStrategyShareParams().getDouble(ConfigKeys._FIELD_STOP_LOST,0)>0)
     			stoplost =this.getJsonStrategyShareParams().getDouble(ConfigKeys._FIELD_STOP_LOST,0);    			
@@ -267,6 +243,7 @@ public class IBStrategyPivotsPoints extends StrategyImpl {
     		
     		if (stopprofit>0)
     			BuyPositionSystem.setPercentualstopprofit_out(stopprofit);
+    			
     		
 			
 			PositionLocalServiceUtil.updatePosition(BuyPositionSystem);
@@ -287,11 +264,7 @@ public class IBStrategyPivotsPoints extends StrategyImpl {
 	}
 	
 	
-	public IBStrategyPivotsPoints() {
-		
-		super();
-		// TODO Auto-generated constructor stub
-	}
+
 	
 	/* 
 	backtestingdDate --> backtestingdDate, SI ES BACKTESTING  O NO 
@@ -302,35 +275,22 @@ public class IBStrategyPivotsPoints extends StrategyImpl {
 
 		boolean verified = Boolean.FALSE;
 		boolean existsPosition = Boolean.FALSE;
-
-		
 		
 		try
 	    {
 			
 		if (_strategyImpl.getStrategyparamsoverride()==null)
 			return Boolean.FALSE;
-		
+			
+	    this.setJsonStrategyShareParams(JSONFactoryUtil.createJSONObject(_strategyImpl.getStrategyparamsoverride()));					
+		String HoraActual = "";
+		Calendar calFechaActualWithDeadLine;
+		Calendar calFechaFinMercado;
 		/* TIMEZONE AJUSTADO */
 		//Date _FromNow =  !isSimulation_mode() ?    Utilities.getDate(_IBUser) : backtestingdDate;
 		Date _FromNow =  !isSimulation_mode() ?    new Date() : backtestingdDate;
 		Calendar _calendarFromNow = Calendar.getInstance();
 		_calendarFromNow.setTime(_FromNow);
-	
-		long currentSeconds = _calendarFromNow.get(Calendar.SECOND);
-		_calendarFromNow.set(Calendar.SECOND, 0);
-		_calendarFromNow.set(Calendar.MILLISECOND, 0);
-		
-		long _ModMinuteToEntry = _calendarFromNow.get(Calendar.MINUTE) % _num_macdT;
-		if (_ModMinuteToEntry!=0)  // NO ESTOY EN EL MINUTO 5,10,15,20..etc (para las barras de 5)
-			return Boolean.FALSE;
-		
-	    this.setJsonStrategyShareParams(JSONFactoryUtil.createJSONObject(_strategyImpl.getStrategyparamsoverride()));					
-		
-		String HoraActual = "";
-		Calendar calFechaActualWithDeadLine;
-		Calendar calFechaFinMercado;
-		User _IBUser = UserLocalServiceUtil.getUser(_share.getUserCreatedId());
 		HoraActual = Utilities.getWebFormattedTime(_calendarFromNow.getTime());
 		
 		Market marketRealOpenCloseTimes = Utilities.getOpenCloseMarket(_share, backtestingdDate, isSimulation_mode());
@@ -346,23 +306,34 @@ public class IBStrategyPivotsPoints extends StrategyImpl {
 			calFechaActualWithDeadLine = Utilities.getNewCalendarWithHour(backtestingdDate, HoraActual);
 			calFechaFinMercado = Utilities.getNewCalendarWithHour(backtestingdDate, marketRealOpenCloseTimes.getEnd_hour()); 			
 		}	
-		
-		
-		_num_macdP 						= this.getJsonStrategyShareParams().getLong(_EXPANDO_MOBILE_AVERAGE_PERIODS_NUMBER,0);
-		_num_macdT 		 				= this.getJsonStrategyShareParams().getLong(_EXPANDO_PIVOTPOINT_CANDLE_SIZE,0);		
+//		StrategyShare _strategyshare = StrategyShareLocalServiceUtil.getByCommpanyShareStrategyId(_share.getGroupId(),_share.getCompanyId(),_share.getShareId(),_strategyImpl.getStrategyId());
+						
+		_num_macdT 		 				= this.getJsonStrategyShareParams().getLong(_EXPANDO_MOBILE_AVERAGE_CANDLE_SIZE,0);
 		operationfilter					= this.getJsonStrategyShareParams().getString(_EXPANDO_MOBILE_AVERAGE_TRADE_OPERATIONS_TYPE,"ALL").trim();
-		volume_increased 				= this.getJsonStrategyShareParams().getBoolean(_EXPANDO_PIVOTSPOINTS_VOLUME_INCREASED,Boolean.FALSE);
-
+		_num_shortAvgMACD_P   			= this.getJsonStrategyShareParams().getLong(_EXPANDO_MACD_PERIODOS_SHORT_EXP_MOBILE,0);
+		_num_longAvgMACD_P    			= this.getJsonStrategyShareParams().getLong(_EXPANDO_MACD_PERIODOS_LONG_EXP_MOBILE,0); 
+		_num_signalLineMACD_P 			= this.getJsonStrategyShareParams().getLong(_EXPANDO_MACD_PERIODOS_SIGNALLINE_EXP_MOBILE,0);
 		
-		if (_num_macdT==0 || _num_macdT ==0)
+		if (_num_macdT==0  || _num_shortAvgMACD_P==0 || _num_longAvgMACD_P==0 || _num_signalLineMACD_P==0)
 			return Boolean.FALSE;
 		
-
+		/* SOLO PODEMOS ENTRAR EN EL PERIODO MARCADO DE CADA MINUTO, PARA LO CUAL OBTENEMOS EL RESTO */	
+		
+		/* TIMEZONE AJUSTADO */
+	
+		_calendarFromNow.set(Calendar.SECOND, 0);
+		_calendarFromNow.set(Calendar.MILLISECOND, 0);
+		
+		long _ModMinuteToEntry = _calendarFromNow.get(Calendar.MINUTE) % _num_macdT;
+		if (_ModMinuteToEntry!=0)  // NO ESTOY EN EL MINUTO 5,10,15,20..etc (para las barras de 5)
+			return Boolean.FALSE;
+		
 		
 		calFechaActualWithDeadLine.add(Calendar.MINUTE, this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_TO_CLOSEMARKET));
+		
 		existsPosition = PositionLocalServiceUtil.ExistsOpenPosition (_share.getGroupId(),_share.getCompanyId(),_share.getShareId(),
 				Utilities.getPositionModeType(backtestingdDate, _share.getCompanyId(),_share.getGroupId()), Validator.isNotNull(this.getCurrentBackTesting()) ?  this.getCurrentBackTesting().getBackTId() : ConfigKeys.DEFAULT_BACKTESTINGID_VALUE);
-		
+
 		if (!existsPosition &&  !calFechaActualWithDeadLine.after(calFechaFinMercado))		
 		{	
 			// supuestamente estamos leyendo...verificamos si con respecto al mercado ya tenemos los max y min
@@ -377,104 +348,191 @@ public class IBStrategyPivotsPoints extends StrategyImpl {
 			// COMPROBAMOS ALGUN TIPO DE ERROR 
 			if (StartHourTrading.contains("-1"))
 			{
-				_log.info("[ Errores formateando las horas de StarHourTrading de la accion. Hora[" + marketRealOpenCloseTimes.getStart_hour()  + "], Offset1[" + this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET)+ "]");
+				_log.info("[ Errores formateando las horas de StarHourTrading de la accion. Hora[" + _market.getStart_hour()  + "], Offset1[" + this.getJsonStrategyShareParams().getInt(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET)+ "]");
 				return Boolean.FALSE;
 			}
 				
-			_log.debug("HoraActual:" + HoraActual + ",StartHourTrading:" + StartHourTrading + ",_num_macdP:" + _num_macdP + ",volume_increased" + volume_increased + ",atr_increased:" + atr_increased) ;
+			
 			if (HoraActual.compareTo(StartHourTrading)>0)   // hora actyual ya ha pasado, podemos entrar en la operativa
 			{
-			
-				// ya no obtenemos el maximo y minimo, sino el correspondiente al tramo que me han dicho
-				Double lastRealtime = null;	
-								
-				if (!isSimulation_mode())
+				IBTraderPricesPeaksValleyIndicator pricePeaksValleyIndicator =  BaseIndicatorUtil.getPricesPeaksValleyIndicator(_calendarFromNow,  _num_macdT, _share,
+						marketRealOpenCloseTimes,isSimulation_mode()) ; // DATOS DE INTRADIA 
+				
+				boolean _BuySuccess = false;
+				boolean _SellSuccess = false;
+				
+				long barValleyFoundedFirstIndex = 0 ;
+				long barValleyFoundedLastIndex = 0;
+				
+				long barPeakFoundedFirstIndex = 0 ;
+				long barPeakFoundedLastIndex = 0;
+				
+				boolean priceIsMinimumDecreasing  = pricePeaksValleyIndicator.IsMinimumDecreasing();
+				boolean priceIsMaximumIncreasing  = pricePeaksValleyIndicator.IsMaximumIncreasing();
+
+				/* SI HAY MINIMOS DECRECIENTES O MAXIMOS CRECIENTES EN EL PRECIO, BUSCAMOS SI HAY MAXIMOS Y MINIMOS EN EL ESTOCASTICO */
+				
+				
+				/* Calendar calBarBefore = Calendar.getInstance();
+				calBarBefore.setTime( _calendarFromNow.getTime());
+				calBarBefore.add(Calendar.MINUTE,  (int) - _num_macdT);
+				*/
+				
+			 	if (priceIsMinimumDecreasing) //
 				{
-					Realtime oShareLastRTime =  RealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(),_FromNow);
-					lastRealtime = Validator.isNull(oShareLastRTime) ? null : oShareLastRTime.getValue();
-					
-				}					
-				else
-				{
-					HistoricalRealtime oShareLastRTime = HistoricalRealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(),_FromNow);
-					lastRealtime = Validator.isNull(oShareLastRTime) ? null : oShareLastRTime.getValue();
+					barValleyFoundedFirstIndex = pricePeaksValleyIndicator.getFoundedIndFirstValley();
+					barValleyFoundedLastIndex = pricePeaksValleyIndicator.getFoundedIndLastValley();
+
 					
 				}
-				
-				_log.debug("Isnotnull lastRealtime:" + Validator.isNotNull(lastRealtime) + ",share: " + _share.getSymbol());
-
-				if  (Validator.isNotNull(lastRealtime))
+				if (priceIsMaximumIncreasing) // ES EL INDICE CON LA BARRA ENCONTRADA, LA BARRA 0 ES LA BARRA ANTERIOR A LA ACTUAL, YA QUE QUITAMOS LA
 				{
-					Double _avgMobileExponential = BaseIndicatorUtil.getExponentialAvgMobile(_calendarFromNow.getTime(), lastRealtime.doubleValue(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_macdP , isSimulation_mode(), _market);
-					
-					
-					
-					_log.debug("Isnotnull _avgMobileExponential:" + Validator.isNotNull(_avgMobileExponential) + ",share: " + _share.getSymbol());
-					if (Validator.isNull(_avgMobileExponential))
-						return Boolean.FALSE;
-					
-					JSONObject pivotsPointsParams = JSONFactoryUtil.createJSONObject();
-					pivotsPointsParams.put(ConfigKeys._FIELD_PIVOTS_POINTS_PARAMS_TIMEBARS, _num_macdT);
-					pivotsPointsParams.put(ConfigKeys._FIELD_PIVOTS_POINTS_PARAMS_GAPTOENTER, this.getJsonStrategyShareParams().getDouble(_EXPANDO_X_TIMES_ATR_GAP_TO_ENTER_));
-					pivotsPointsParams.put(ConfigKeys._FIELD_PIVOTS_POINTS_PARAMS_OPERATIONFILTER, operationfilter);
-					pivotsPointsParams.put(ConfigKeys._FIELD_PIVOTS_POINTS_PARAMS_VOLUMEN_INCREASED, volume_increased);
-					
-					
-					JSONObject pivotsPointsSignal = BaseIndicatorUtil._getPivotsPointsSignal(_calendarFromNow.getTime(), _avgMobileExponential.doubleValue(), lastRealtime, pivotsPointsParams, this.isSimulation_mode(), _share, _market); 
+ 					barPeakFoundedFirstIndex = pricePeaksValleyIndicator.getFoundedIndFirstPeak();
+ 					barPeakFoundedLastIndex = pricePeaksValleyIndicator.getFoundedIndLastPeak();
+ 					
+				}
+				
 
-					if (_avgMobileExponential!=null && Validator.isNotNull(pivotsPointsSignal))
+				if (priceIsMaximumIncreasing || priceIsMinimumDecreasing ) //
+				{
+				
+					/* BUSCAMOS EL PRIMER VALLE * PICO 
+					 * IGNORAMOS LA PRIMERA BARRA QUE YA LA USE PARA CALCULAR EL CURRENT MACD
+					 * */
+					
+					//double   currentMACD  =  BaseIndicatorUtil.getMACD(_calendarFromNow.getTime(),  _num_macdT , _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_shortAvgMACD_P,_num_longAvgMACD_P ,isSimulation_mode(),_market);
+
+					
+					IBTraderPeaksValleyIndicator MACDPeaksValleyIndicator =  BaseIndicatorUtil.getMACDPeaksValleyIndicator(_calendarFromNow, 
+									_num_macdT,_num_shortAvgMACD_P,_num_longAvgMACD_P,_share,marketRealOpenCloseTimes,isSimulation_mode());
+				
+					
+					/* HACEMOS COINCIDIR PICOS Y VALLES ENTRE PRECIO E INDICADOR , MAXIMOS CON MAXIMOS Y MINIMOS CON MINIMOS
+					 * 
+					 * 
+					 * 
+					 *  FALTAN DESARROLLAR LAS DIVERGENCIAS OCULTAS!!!  */
+					
+					boolean bMACDMinimumIncreasing = MACDPeaksValleyIndicator.IsMinimumIncreasing() 
+								&& MACDPeaksValleyIndicator.getFoundedIndFirstValley()==barValleyFoundedFirstIndex
+									&& MACDPeaksValleyIndicator.getFoundedIndLastValley()==barValleyFoundedLastIndex;
+					
+					
+					boolean bMACDMaximumDecreasing = MACDPeaksValleyIndicator.IsMaximumDecreasing()
+														&& MACDPeaksValleyIndicator.getFoundedIndFirstPeak()==barPeakFoundedFirstIndex 
+															&& MACDPeaksValleyIndicator.getFoundedIndLastPeak()==barPeakFoundedLastIndex; 
+					
+					
+					if (bMACDMinimumIncreasing)
+					{
+						_log.debug("Date:" + _calendarFromNow.getTime()  + ",for:" + _share.getSymbol() + ",priceIsMinimumDecreasing:"  + priceIsMinimumDecreasing + ",bMACDMinimumIncreasing:" + bMACDMinimumIncreasing);
+						_log.debug("MACDPeaksValleyIndicator.getFoundedIndFirstValley():" + MACDPeaksValleyIndicator.getFoundedIndFirstValley()  + ",barValleyFoundedFirstIndex:" + barValleyFoundedFirstIndex);
+						_log.debug("MACDPeaksValleyIndicator.getFoundedIndLastValley():" + MACDPeaksValleyIndicator.getFoundedIndLastValley()  + ",barValleyFoundedLastIndex:" + barValleyFoundedLastIndex);
+					}
+					if (bMACDMaximumDecreasing)
+					{
+						_log.debug("Date:" + _calendarFromNow.getTime()  + ",for:" + _share.getSymbol() + ",priceIsMaximumIncreasing:"  + priceIsMaximumIncreasing + ",bMACDMaximumDecreasing:" + bMACDMinimumIncreasing);
+						_log.debug("MACDPeaksValleyIndicator.getFoundedIndFirstPeak():" + MACDPeaksValleyIndicator.getFoundedIndFirstPeak()  + ",barPeakFoundedFirstIndex:" + barPeakFoundedFirstIndex);
+						_log.debug("MACDPeaksValleyIndicator.getFoundedIndLastPeak():" + MACDPeaksValleyIndicator.getFoundedIndLastPeak()  + ",barPeakFoundedLastIndex:" + barPeakFoundedLastIndex);
+					}
+					
+					/* DIVERGENCIA ??? */
+					_BuySuccess = priceIsMinimumDecreasing && bMACDMinimumIncreasing;
+					_SellSuccess = priceIsMaximumIncreasing && bMACDMaximumDecreasing;
+					
+					_BuySuccess = _BuySuccess &&  
+							(operationfilter.equals("ALL") || operationfilter.equals(PositionStates.statusTWSFire.BUY.toString())); 
+
+					_SellSuccess = _SellSuccess  &&  
+							(operationfilter.equals("ALL") || operationfilter.equals(PositionStates.statusTWSFire.SELL.toString()));
+					
+					
+					
+					Double lastRealtime = null;	
+					
+					if (!isSimulation_mode())
+					{
+						Realtime oShareLastRTime =  RealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(),_FromNow);
+						lastRealtime = Validator.isNull(oShareLastRTime) ? null : oShareLastRTime.getValue();
+						
+					}					
+					else
+					{
+						HistoricalRealtime oShareLastRTime = HistoricalRealtimeLocalServiceUtil.findLastRealTimeLessThanDate(_share.getShareId(), _share.getCompanyId(), _share.getGroupId(),_FromNow);
+						lastRealtime = Validator.isNull(oShareLastRTime) ? null : oShareLastRTime.getValue();
+						
+					}
+					
+					/* COGEMOS LOS MAXIMOS Y MINIMOS RELATIVOS ENTRE LA DIVERGENCIA PARA CONFIRMAR LA SEÑAL */						
+					_BuySuccess = _BuySuccess && lastRealtime > pricePeaksValleyIndicator.getRelativeMaxOfValley();
+					_SellSuccess = _SellSuccess && lastRealtime < pricePeaksValleyIndicator.getRelativeMinOfPeak();
+					
+					
+					/*  SACAMOS DEPURACION EN DURANTE LOS TRES PRIMEROS SEGUNDOS EN LOS CORTES DE BARRAS */
+				
+					
+					
+					
+					/* fecha hora venicmiento  NO proxima */ 
+					boolean  IsFutureTradeable = Utilities.IsFutureTradeable(_share);
+					
+					
+					if (IsFutureTradeable && (_BuySuccess || _SellSuccess))
 					{
 					
-						_log.debug("Verificando señales de entrada.. ");								
 						
-						boolean _BuySuccess    = pivotsPointsSignal.getBoolean("_BuySuccess");
-						boolean _SellSuccess   = pivotsPointsSignal.getBoolean("_SellSuccess");
-						boolean  bVolIncreased =  pivotsPointsSignal.getBoolean("bVolIncreased");
-						double currentATR =  pivotsPointsSignal.getDouble("ATR");
-						IBTraderPivotPointIndicator _pivotPointData =  (IBTraderPivotPointIndicator) pivotsPointsSignal.get("_pivotPointData");
-												
-						/* fecha hora venicmiento  NO proxima */ 
-						boolean  IsFutureTradeable = Utilities.IsFutureTradeable(_share);
+					    this.setValueIn(lastRealtime.doubleValue());											
+						this.setVerified(Boolean.TRUE);												
+						verified = true;							
+						this.bBuyOperation = _BuySuccess;									
+						this.bSellOperation = _SellSuccess;
 						
 						
-						if (bVolIncreased &&  IsFutureTradeable && (_BuySuccess || _SellSuccess))
-						{
-							
-							_log.info("Open order  ,bVolIncreased:" + bVolIncreased + ",volume:" 									
-									+ "._BuySuccess:," + _BuySuccess   + "._SellSuccess:," + _SellSuccess + " for :" + _share.getSymbol());
-							
-							
-						    this.setValueIn(lastRealtime.doubleValue());											
-							this.setVerified(Boolean.TRUE);												
-							verified = true;							
-							this.bBuyOperation = _BuySuccess;									
-							this.bSellOperation = _SellSuccess;
-														
-							_tradeDescription = JSONFactoryUtil.createJSONObject();
-							_tradeDescription.put("lastRealtime.doubleValue()", lastRealtime.doubleValue());
-							_tradeDescription.put("_avgMobileExponential", _avgMobileExponential);	
-							_tradeDescription.put("_num_macdP", _num_macdP);
-							_tradeDescription.put("_num_macdT", _num_macdT);
-							_tradeDescription.put("operationfilter", operationfilter);						
-							_tradeDescription.put("_pivotPointData.getPivotPoint()", _pivotPointData.getPivotPoint());	
-							_tradeDescription.put("_pivotPointData.R1()", (Validator.isNotNull(_pivotPointData.getPivotPointResistance1()) ? _pivotPointData.getPivotPointResistance1() : 0));												
-							_tradeDescription.put("_pivotPointData.S1()", (Validator.isNotNull(_pivotPointData.getPivotPointSupport1()) ? _pivotPointData.getPivotPointSupport1() : 0));			
-							_tradeDescription.put("_pivotPointData.R2()", (Validator.isNotNull(_pivotPointData.getPivotPointResistance2()) ? _pivotPointData.getPivotPointResistance2() : 0));												
-							_tradeDescription.put("_pivotPointData.S2()", (Validator.isNotNull(_pivotPointData.getPivotPointSupport2()) ? _pivotPointData.getPivotPointSupport2() : 0));
-							_tradeDescription.put("stopLost", stopLost);																			
-							_tradeDescription.put("VolumeIncreased", bVolIncreased);
-							_tradeDescription.put("currentATR", currentATR);
-							_tradeDescription.put("ATR_ Multiplier_gap:", pivotsPointsParams.get(ConfigKeys._FIELD_PIVOTS_POINTS_PARAMS_GAPTOENTER));
-							
-				
-							_log.info("End verify order a true ");
-
-						}
+						_log.debug("lastRealtime for :" + _share.getSymbol() + " " +  lastRealtime);
+						_log.debug("MACDD for :" + _share.getSymbol() + ",date:" + _calendarFromNow.getTime());
+						_log.debug("priceIsMinimumDecreasing:" + priceIsMinimumDecreasing);					
+						_log.debug("priceIsMaximumIncreasing:" + priceIsMaximumIncreasing);
+						_log.debug("bMACDMinimumIncreasing :" + bMACDMinimumIncreasing );
+						_log.debug("bMACDMaximumDecreasing:" + bMACDMaximumDecreasing);
+						_log.debug("barPeakFoundedFirstIndex:" + barPeakFoundedFirstIndex);
+						_log.debug("barPeakFoundedLastIndex:" + barPeakFoundedLastIndex);
+						_log.debug("barValleyFoundedFirstIndex:" + barValleyFoundedFirstIndex);
+						_log.debug("barValleyFoundedLastIndex:" + barValleyFoundedLastIndex);
+						_log.debug("priceIsMaximumIncreasing:" + priceIsMaximumIncreasing);						
+						_log.debug("barValleyFounded:" + barValleyFoundedFirstIndex);						
+						_log.debug("MACDPeaksValleyIndicator.getFoundedIndFirstValley():" + MACDPeaksValleyIndicator.getFoundedIndFirstValley()  + ",barValleyFoundedFirstIndex:" + barValleyFoundedFirstIndex);
+						_log.debug("MACDPeaksValleyIndicator.getFoundedIndLastValley():" + MACDPeaksValleyIndicator.getFoundedIndLastValley()  + ",barValleyFoundedLastIndex:" + barValleyFoundedLastIndex);
+						_log.debug("MACDPeaksValleyIndicator.getFoundedIndFirstPeak():" + MACDPeaksValleyIndicator.getFoundedIndFirstPeak()  + ",barPeakFoundedFirstIndex:" + barPeakFoundedFirstIndex);
+						_log.debug("MACDPeaksValleyIndicator.getFoundedIndLastPeak():" + MACDPeaksValleyIndicator.getFoundedIndLastPeak()  + ",barPeakFoundedLastIndex:" + barPeakFoundedLastIndex);
+						
+						
+						_tradeDescription = JSONFactoryUtil.createJSONObject();
+						_tradeDescription.put("priceIsMinimumDecreasing:", priceIsMinimumDecreasing);
+						_tradeDescription.put("priceIsMaximumIncreasing:", priceIsMaximumIncreasing);
+						_tradeDescription.put("bMACDMinimumIncreasing :" , bMACDMinimumIncreasing );
+						_tradeDescription.put("bMACDMaximumDecreasing:" , bMACDMaximumDecreasing);						
+						_tradeDescription.put("barPeakFoundedFirstIndex:" , barPeakFoundedFirstIndex);						
+						_tradeDescription.put("barPeakFoundedLastIndex:" , barPeakFoundedLastIndex);
+						_tradeDescription.put("barValleyFoundedFirstIndex:" , barValleyFoundedFirstIndex);
+						_tradeDescription.put("barValleyFoundedLastIndex:" , barValleyFoundedLastIndex);
+						_tradeDescription.put("MACDPeaksValleyIndicator.getFoundedIndFirstValley():" , MACDPeaksValleyIndicator.getFoundedIndFirstValley());
+						_tradeDescription.put("MACDPeaksValleyIndicator.getFoundedIndLastValley():" , MACDPeaksValleyIndicator.getFoundedIndLastValley());
+						_tradeDescription.put("MACDPeaksValleyIndicator.getFoundedIndFirstPeak():" , MACDPeaksValleyIndicator.getFoundedIndFirstPeak());
+						_tradeDescription.put("MACDPeaksValleyIndicator.getFoundedIndLastPeak():" , MACDPeaksValleyIndicator.getFoundedIndLastPeak());
+						_tradeDescription.put("lastRealtime:" , lastRealtime);						
+						_tradeDescription.put("_BuySuccess", _BuySuccess);		
+						_tradeDescription.put("_SellSuccess", _SellSuccess);
+						_tradeDescription.put("price RelativeMaxOfValley()", pricePeaksValleyIndicator.getRelativeMaxOfValley());
+						_tradeDescription.put("price getRelativeMinOfPeak()", pricePeaksValleyIndicator.getRelativeMinOfPeak());
+						
+						
+						
+					}
+					
 					
 				 } // if  (Validator.isNotNull(oShareLastRTime))			   	
-				} // if (_avgMobileExponential!=null)			
-			}// NO EXISTE POSICION 
-		} // if (HoraActual.compareTo(StartHourTrading)>0)   // hora actyual ya ha pasado, podemos entrar en la operativa	
+			} // if (_avgMobileExponential!=null)			
+		}// NO EXISTE POSICION 
 	    }
 		catch (Exception er)
 	    {
@@ -490,17 +548,19 @@ public class IBStrategyPivotsPoints extends StrategyImpl {
 	// TODO Auto-generated method stub
 	// CREAMOS LOS EXPANDOS NECESARIOS 
 		
-	Parameters.put(_EXPANDO_MOBILE_AVERAGE_PERIODS_NUMBER, String.valueOf(ExpandoColumnConstants.INTEGER));
-	Parameters.put(_EXPANDO_PIVOTPOINT_CANDLE_SIZE,  String.valueOf(ExpandoColumnConstants.INTEGER));		
-	Parameters.put(_EXPANDO_X_TIMES_ATR_GAP_TO_ENTER_,  String.valueOf(ExpandoColumnConstants.DOUBLE));  // ESTE ES EL UNICO DOUBLE
+	
+	Parameters.put(_EXPANDO_MOBILE_AVERAGE_CANDLE_SIZE,  String.valueOf(ExpandoColumnConstants.INTEGER));		
+	Parameters.put(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_TO_CLOSEMARKET,  String.valueOf(ExpandoColumnConstants.INTEGER));  // ESTE ES EL UNICO DOUBLE
 	Parameters.put(_EXPANDO_MOBILE_AVERAGE_TRADE_OFFSET_FROM_OPENMARKET,  String.valueOf(ExpandoColumnConstants.INTEGER));  // ESTE ES EL UNICO DOUBLE
 	Parameters.put(_EXPANDO_MOBILE_AVERAGE_TRADE_OPERATIONS_TYPE,  String.valueOf(ExpandoColumnConstants.STRING_ARRAY));  // ESTE ES EL UNICO DOUBLE
-	Parameters.put(_EXPANDO_PIVOTSPOINTS_VOLUME_INCREASED,  String.valueOf(ExpandoColumnConstants.STRING_ARRAY));  // ESTE ES EL UNICO DOUBLE
-
+	Parameters.put(_EXPANDO_MACD_PERIODOS_SHORT_EXP_MOBILE,  String.valueOf(ExpandoColumnConstants.INTEGER));  // ESTE ES EL UNICO DOUBLE
+	Parameters.put(_EXPANDO_MACD_PERIODOS_LONG_EXP_MOBILE,  String.valueOf(ExpandoColumnConstants.INTEGER));  // ESTE ES EL UNICO DOUBLE
+	Parameters.put(_EXPANDO_MACD_PERIODOS_SIGNALLINE_EXP_MOBILE,  String.valueOf(ExpandoColumnConstants.INTEGER));  // ESTE ES EL UNICO DOUBLE
+	
 	
 	ExpandoTable expandoTable;
 	try {
-		expandoTable = ExpandoTableLocalServiceUtil.addDefaultTable(companyId, IBStrategyPivotsPoints.class.getName());
+		expandoTable = ExpandoTableLocalServiceUtil.addDefaultTable(companyId, IBStrategyPriceDivergences.class.getName());
 		long i = 0;
 		for (Map.Entry<String, String> parameter : Parameters.entrySet()) {
 		

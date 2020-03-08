@@ -44,8 +44,10 @@ import com.ibtrader.data.service.RealtimeServiceUtil;
 import com.ibtrader.data.service.ShareLocalServiceUtil;
 import com.ibtrader.strategy.IBStrategySimpleMobileAverage;
 import com.ibtrader.techindicadors.IBTraderEMAIndicator;
+import com.ibtrader.techindicadors.IBTraderPricesPeaksValleyIndicator;
 import com.ibtrader.techindicadors.IBTraderPivotPointIndicator;
 import com.ibtrader.techindicadors.IBTraderSMAIndicador;
+import com.ibtrader.techindicadors.IBTraderPeaksValleyIndicator;
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -658,6 +660,8 @@ public class BaseIndicatorUtil {
 	 *  type = ALL, BUY, SELL , nos vale para asegurar de que no haya dado señal previa si decimos que busque una especifica 
 	 * */
 	
+	
+	// https://slowinver.com/volatilidad-soportes-y-resistencias-para-un-metodo-ganador-en-bolsa/
 	public static JSONObject _getPivotsPointsSignal (Date currentDate, double avgExponential, double lastRealtime,  JSONObject _pivotsPointsParams, 
 				boolean simulationMode, Share _share, Market _market)
 	{
@@ -669,10 +673,10 @@ public class BaseIndicatorUtil {
 		{		  
 			
 		long _num_macdT = _pivotsPointsParams.getLong(ConfigKeys._FIELD_PIVOTS_POINTS_PARAMS_TIMEBARS,0);
-		double _gaptoEnter = _pivotsPointsParams.getDouble(ConfigKeys._FIELD_PIVOTS_POINTS_PARAMS_GAPTOENTER, 0);
+		double _atr_multipler_gaptoEnter = _pivotsPointsParams.getDouble(ConfigKeys._FIELD_PIVOTS_POINTS_PARAMS_GAPTOENTER, 0);
 		String operationfilter = _pivotsPointsParams.getString(ConfigKeys._FIELD_PIVOTS_POINTS_PARAMS_OPERATIONFILTER, ""); 
 		boolean volume_increased =  _pivotsPointsParams.getBoolean(ConfigKeys._FIELD_PIVOTS_POINTS_PARAMS_VOLUMEN_INCREASED, Boolean.FALSE);
-		boolean atr_increased =  _pivotsPointsParams.getBoolean(ConfigKeys._FIELD_PIVOTS_POINTS_PARAMS_ATR_INCREASED, Boolean.FALSE);
+		//boolean atr_increased =  _pivotsPointsParams.getBoolean(ConfigKeys._FIELD_PIVOTS_POINTS_PARAMS_ATR_INCREASED, Boolean.FALSE);
 	
 		
 		/* MODO PIVOT POINTS DE LA ULTIMA SESION */
@@ -702,19 +706,25 @@ public class BaseIndicatorUtil {
 		_log.debug("Last Bar Session   PP R3 :" + (Validator.isNotNull(_pivotPointData.getPivotPointResistance3()) ? _pivotPointData.getPivotPointResistance3() : 0));
 		_log.debug("Last Bar Session  PP S3 :" + (Validator.isNotNull(_pivotPointData.getPivotPointSupport3()) ? _pivotPointData.getPivotPointSupport3() : 0));
 		
-					
+													
+
+		double ATR  = BaseIndicatorUtil.getATRCurrent(currentDate, _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(),  simulationMode, _market);
+		//_atr = BaseIndicatorUtil.getATR(_calendarFromNow.getTime(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(),  isSimulation_mode(), _market);
+		
+		_log.debug("ATR:" + ATR);	
+		
 		/* usamos r1 o s1 , 2, 3  como ruptura */
 		double BuyValueWithGapR1 = 
-				(_pivotPointData.getPivotPointResistance1() * _gaptoEnter / 100) +  _pivotPointData.getPivotPointResistance1();
+				(ATR * _atr_multipler_gaptoEnter) +  _pivotPointData.getPivotPointResistance1();
 		double BuyValueWithGapR2 = 
-				(_pivotPointData.getPivotPointResistance2() * _gaptoEnter / 100) +  _pivotPointData.getPivotPointResistance2();
+				(ATR * _atr_multipler_gaptoEnter) +  _pivotPointData.getPivotPointResistance2();
 		double BuyValueWithGapR3 = 
-				(_pivotPointData.getPivotPointResistance3() * _gaptoEnter / 100) +  _pivotPointData.getPivotPointResistance3();		
+				(ATR * _atr_multipler_gaptoEnter) +  _pivotPointData.getPivotPointResistance3();		
 								
 							
-		double SellValueWithGapS1 = _pivotPointData.getPivotPointSupport1()  - (_pivotPointData.getPivotPointSupport1()  * _gaptoEnter / 100) ;  
-		double SellValueWithGapS2 = _pivotPointData.getPivotPointSupport2()  - (_pivotPointData.getPivotPointSupport2()  * _gaptoEnter / 100) ;  
-		double SellValueWithGapS3 = _pivotPointData.getPivotPointSupport3()  - (_pivotPointData.getPivotPointSupport3()  * _gaptoEnter/ 100) ;  
+		double SellValueWithGapS1 = _pivotPointData.getPivotPointSupport1()  - (ATR * _atr_multipler_gaptoEnter) ;  
+		double SellValueWithGapS2 = _pivotPointData.getPivotPointSupport2()  - (ATR * _atr_multipler_gaptoEnter) ;  
+		double SellValueWithGapS3 = _pivotPointData.getPivotPointSupport3()  - (ATR * _atr_multipler_gaptoEnter) ;  
 
 		
 		// 
@@ -748,7 +758,6 @@ public class BaseIndicatorUtil {
 		
 		
 		boolean bVolIncreased = Boolean.TRUE;
-		boolean bATRIncreased  = Boolean.TRUE;
 		long    _volume = 0;
 		long _volume_previous = 0;
 
@@ -761,8 +770,8 @@ public class BaseIndicatorUtil {
 			
 			_log.debug("volume_increased:" + volume_increased);								
 				
-		
-			if (volume_increased)
+			/* volumen siempre al alza en operaciones a largo*/		
+			if (volume_increased && _BuySuccess)
 			{
 				_previousBarDate.setTime(currentDate);
 				_previousBarDate.add(Calendar.MINUTE, - (int) _num_macdT);
@@ -773,25 +782,15 @@ public class BaseIndicatorUtil {
 				{	
 					_previousInitialBarDate.setTime(_previousBarDate.getTime());
 					_previousInitialBarDate.add(Calendar.MINUTE, - (int) _num_macdT);				
-					_volume_previous = BaseIndicatorUtil.getVolumeBetweenBars(_previousInitialBarDate.getTime(), _previousBarDate.getTime(), _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), simulationMode);				
-					bVolIncreased  = _volume > _volume_previous;
+					_volume_previous = BaseIndicatorUtil.getVolumeBetweenBars(_previousInitialBarDate.getTime(), _previousBarDate.getTime(), _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), simulationMode);
+						
+					bVolIncreased  = _volume > _volume_previous ;
+					
 				}
 			}
 		
 				
-			_log.debug("Inicio atr_increased:" + atr_increased);								
-
-			if (atr_increased)
-			{
-				
-				_log.debug("Dentro  atr_increased:" + atr_increased);								
-
-				bATRIncreased = BaseIndicatorUtil.isATRUp(currentDate, _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(),  simulationMode, _market);
-				//_atr = BaseIndicatorUtil.getATR(_calendarFromNow.getTime(), _num_macdT, _share.getShareId(), _share.getCompanyId(), _share.getGroupId(),  isSimulation_mode(), _market);
-				_log.debug("bATRIncreased:" + bATRIncreased + " for :" + _share.getSymbol());
-							
-			}
-			_log.debug("Fin atr_increased:" + atr_increased);								
+										
 			
 			/* SACAMOS EL MAXIMO DE LA SESION PARA DESCARTAR VOLVER A ENTRAR EN  LAS MISMAS ZONAS */
 			/* SACAMOS EL MAXIMO DE LA SESION PARA DESCARTAR VOLVER A ENTRAR EN  LAS MISMAS ZONAS 
@@ -858,9 +857,9 @@ public class BaseIndicatorUtil {
 			result.put("_SellSuccessS1", _SellSuccessS1);
 			result.put("_SellSuccessS2", _SellSuccessS2);
 			result.put("_SellSuccessS3", _SellSuccessS3);		
-			result.put("bATRIncreased", bATRIncreased);
 			result.put("bVolIncreased", bVolIncreased);
 			result.put("_pivotPointData", _pivotPointData);
+			result.put("ATR", ATR);
 			
 			
 			
@@ -1511,6 +1510,72 @@ public class BaseIndicatorUtil {
 	
 	/* NOS DEVUELE UNA LISTA DE LOS VALORES DE ATR DE INDICATORS_MIN_SERIE_COUNT A 0, ASI PODEMOS COMPARAR SI HAY CRECIENTE LA TENDENCIA,
 	 * VERIFICAMOS QUE AL MENOS HAYA 5 VALORES , PARA VERIFICAR LA TENDENCIA  */
+	public  static List<Double> getDStochasticList(Date _ActualDateBar,  long TimeBars, long shareId, long companyId, long groupId, long periods,
+			boolean simulation, Market market)
+	{
+	List<Double>  DStochasticList = new ArrayList<Double>();
+	try
+	{		
+		
+		int result_index = ConfigKeys.INDICATORS_MIN_SERIE_COUNT-1;
+		StochasticOscillatorDIndicator  DStochasticIndicator = getDStochasticDIndicator(_ActualDateBar, TimeBars , shareId, companyId, groupId, periods,simulation, market);
+		if (Validator.isNotNull(DStochasticIndicator.getTimeSeries()))
+		{
+			_log.debug("getDStochasticList:" +  DStochasticIndicator.getValue(Long.valueOf(result_index).intValue()));
+			for (int  j=DStochasticIndicator.getTimeSeries().getEndIndex();j>=0;j--)
+			{ 			
+				_log.debug("getMACDIndicator:" + j + ":" +  DStochasticIndicator.getValue(j).doubleValue());
+				DStochasticList.add(DStochasticIndicator.getValue(j).doubleValue());						
+			}        
+		}
+      
+	}
+	catch (Exception e)
+	{
+		_log.debug(e.getMessage());
+	}
+	return DStochasticList.isEmpty() ? null : DStochasticList;
+			
+	
+	}
+	
+	
+	
+	/* NOS DEVUELE UNA LISTA DE LOS VALORES DE ATR DE INDICATORS_MIN_SERIE_COUNT A 0, ASI PODEMOS COMPARAR SI HAY CRECIENTE LA TENDENCIA,
+	 * VERIFICAMOS QUE AL MENOS HAYA 5 VALORES , PARA VERIFICAR LA TENDENCIA  */
+	public  static List<Double> getMACDList(Date _ActualDateBar,  long TimeBars, long shareId, long companyId, long groupId, long shortMACDPeriods,long longMACDPeriods,
+			boolean simulation, Market market)
+	{
+	List<Double>  MACDList = new ArrayList<Double>();
+	try
+	{		
+		
+		int result_index = ConfigKeys.INDICATORS_MIN_SERIE_COUNT-1;
+		MACDIndicator  MACDIndicator = getMACDIndicator(_ActualDateBar, TimeBars , shareId, companyId, groupId, shortMACDPeriods,longMACDPeriods,simulation, market);
+		if (Validator.isNotNull(MACDIndicator.getTimeSeries()))
+		{
+			_log.debug("getMACDList:" +  MACDIndicator.getValue(Long.valueOf(result_index).intValue()));
+			for (int  j=MACDIndicator.getTimeSeries().getEndIndex();j>=0;j--)
+			{ 			
+				_log.debug("getMACDIndicator:" + j + ":" +  MACDIndicator.getValue(j).doubleValue());
+				MACDList.add(MACDIndicator.getValue(j).doubleValue());						
+			}        
+		}
+      
+	}
+	catch (Exception e)
+	{
+		_log.debug(e.getMessage());
+	}
+	return MACDList.isEmpty() ? null : MACDList;
+			
+	
+	}
+	
+	
+	
+	/* NOS DEVUELE UNA LISTA DE LOS VALORES DE ATR DE INDICATORS_MIN_SERIE_COUNT A 0, ASI PODEMOS COMPARAR SI HAY CRECIENTE LA TENDENCIA,
+	 * VERIFICAMOS QUE AL MENOS HAYA 5 VALORES , PARA VERIFICAR LA TENDENCIA  */
 	public  static List<Double> getATR(Date _ActualDateBar,  long TimeBars, long shareId, long companyId, long groupId, 
 			boolean simulation, Market market)
 	{
@@ -1540,14 +1605,14 @@ public class BaseIndicatorUtil {
 	
 	}
 	
-	/* public  static Double getATRPrevious(Date _ActualDateBar,  long TimeBars, long shareId, long companyId, long groupId, 
+	public  static Double getATRCurrent(Date _ActualDateBar,  long TimeBars, long shareId, long companyId, long groupId, 
 			boolean simulation, Market market)
 	{
 	double atr = 0d;
 	try
 	{		
 		
-		long result_index = ConfigKeys.INDICATORS_MIN_SERIE_COUNT-2;
+		long result_index = ConfigKeys.INDICATORS_MIN_SERIE_COUNT-1;
 		ATRIndicator  _indicator = getATRIndicator(_ActualDateBar, TimeBars , shareId, companyId, groupId,simulation, market);
 		_log.debug("getATRIndicator:" +  _indicator.getValue(Long.valueOf(result_index).intValue()));			
 		atr =  _indicator.getValue(Long.valueOf(result_index).intValue()).doubleValue();
@@ -1559,7 +1624,9 @@ public class BaseIndicatorUtil {
 	return atr;
 			
 	
-	} */
+	} 
+	
+	
 	
 	public  static boolean  isATRUp(Date _ActualDateBar,  long TimeBars,long shareId, long companyId, long groupId, 
 			 boolean simulation,  Market market)
@@ -2041,7 +2108,259 @@ public class BaseIndicatorUtil {
 		
 	}
 	
+	/* MINIMOS DECRECIENTES 
+	 * 
+	 * market   : marketRealOpenCloseTimes con las horas de inicio y fin cargadas segun sea tiempo real o historical 
+	 *   
+	public static IBTraderPeaksValleyIndicator getStochasticsPeaksValleyIndicator(Calendar _To, long TimeBars, long periods, Share share, 
+			Market market, boolean isSimulation, double current_stochastic)
+	{		
+		List<Double> stochasticValue =  getDStochasticList(_To.getTime(), TimeBars, share.getShareId(), share.getCompanyId(), share.getGroupId(), periods, isSimulation, market);
+		double[] stochasticValues = stochasticValue.stream().mapToDouble(d -> d).toArray(); //identity function, Java unboxes automatically to get the double value
+		IBTraderPeaksValleyIndicator peakvalleyIndicator = new IBTraderPeaksValleyIndicator(stochasticValues, current_stochastic);		
+		return peakvalleyIndicator;
+	}*/
+	
+	
+	public static IBTraderPeaksValleyIndicator getMACDPeaksValleyIndicator(Calendar _To, long TimeBars, long shortMACDPeriods, long longMACDPeriods, Share share, 
+			Market market, boolean isSimulation)
+	{
+		/* double stochasticD   = getDStochastic(_To.getTime(),  TimeBars , share.getShareId(), share.getCompanyId(), share.getGroupId(), periods ,isSimulation,market);*/
+		List<Double> MACDValue =  getMACDList(_To.getTime(), TimeBars, share.getShareId(), share.getCompanyId(), share.getGroupId(), shortMACDPeriods, longMACDPeriods, isSimulation, market);
+		double[] MACDValues = MACDValue.stream().mapToDouble(d -> d).toArray(); //identity function, Java unboxes automatically to get the double value
+		IBTraderPeaksValleyIndicator peakvalleyIndicator = new IBTraderPeaksValleyIndicator(MACDValues);
+		/* es el primera montaña empezando por el monento actual */
+		return peakvalleyIndicator;
+	}
+	
+	
+
+	/* MINIMOS DECRECIENTES 
+	 * 
+	 * market   : marketRealOpenCloseTimes con las horas de inicio y fin cargadas segun sea tiempo real o historical 
+	 * */  
+	public static IBTraderPricesPeaksValleyIndicator getPricesPeaksValleyIndicator(Calendar _To, long TimeBars, Share share, Market market, boolean isSimulation)
+	{
+		
+		Calendar calStartMarket = Utilities.getNewCalendarWithHour(_To.getTime(), market.getStart_hour());
+		/* QUITAMOS LA ULTIMA  QUE ES LA QUE USAMOS PARA COMPARAR 
+		Calendar calEndBar = Calendar.getInstance();
+		calEndBar.setTimeInMillis(_To.getTimeInMillis());	
+		calEndBar.add(Calendar.MINUTE, (int) -(TimeBars));*/
+		
+		Calendar calEndBar = Calendar.getInstance();
+		calEndBar.setTimeInMillis(_To.getTimeInMillis());
+		
+		double[] min_values;
+		double[] max_values;
+	
+		
+		if (!isSimulation)
+		{
+			/* YA BIENE ORDENADAS DESCENDENTEMENTE */ 
+			List<Realtime> lRealtimes = RealtimeLocalServiceUtil.findMinMaxRealTimesGroupedByBars(calStartMarket.getTime(), 
+					calEndBar.getTime(), share.getShareId(), share.getCompanyId(), share.getGroupId(),TimeBars, market);
+			
+			/* Realtime oShareMinMax =  RealtimeLocalServiceUtil.findMinMaxRealTime(calEndBar.getTime(), _To.getTime(), share.getShareId(), share.getCompanyId(), share.getGroupId());
+			Realtime oRTimeEnTramo =  RealtimeLocalServiceUtil.findLastRealTimeLessThanDate(share.getShareId(), share.getCompanyId(), share.getGroupId(), _To.getTime());
+			lastRealtime  = Validator.isNull(oRTimeEnTramo) ? null : oRTimeEnTramo.getValue();
+			min_current = Validator.isNull(oShareMinMax) ? null : oShareMinMax.getMin_value();
+			max_current = Validator.isNull(oShareMinMax) ? null : oShareMinMax.getMax_value();
+			*/
+			 min_values = new double[(int) lRealtimes.size()];
+			 max_values = new double[(int) lRealtimes.size()];
+			int counter = 0;
+			for (Realtime realtime :  lRealtimes)
+			{				
+				if (counter==0)
+						_log.debug("Adding first realtime to  IBTraderPricesPeaksValleyIndicator:" + realtime.getCreateDate());
+				max_values[counter]  = realtime.getMax_value();			
+				min_values[counter]  = realtime.getMin_value();				
+				counter++;
+				if (counter==lRealtimes.size())
+					_log.debug("Adding last realtime to  IBTraderPricesPeaksValleyIndicator:" + realtime.getCreateDate());
+			}						
+				
+		}
+		else
+		{
+			/* YA BIENE ORDENADAS DESCENDENTEMENTE */ 
+			List<HistoricalRealtime> lRealtimes =  HistoricalRealtimeLocalServiceUtil.findMinMaxRealTimesGroupedByBars(calStartMarket.getTime(), 
+					calEndBar.getTime(), share.getShareId(), share.getCompanyId(), share.getGroupId(),TimeBars, market);
+			/* HistoricalRealtime oShareMinMax =  HistoricalRealtimeLocalServiceUtil.findMinMaxRealTime(calEndBar.getTime(), _To.getTime(), share.getShareId(), share.getCompanyId(), share.getGroupId());
+			HistoricalRealtime oRTimeEnTramo =  HistoricalRealtimeLocalServiceUtil.findLastRealTimeLessThanDate(share.getShareId(), share.getCompanyId(), share.getGroupId(), _To.getTime());
+			lastRealtime  = Validator.isNull(oRTimeEnTramo) ? null : oRTimeEnTramo.getValue();
+			min_current = Validator.isNull(oShareMinMax) ? null : oShareMinMax.getMin_value();
+			max_current = Validator.isNull(oShareMinMax) ? null : oShareMinMax.getMax_value();
+			*/
+			min_values = new double[(int) lRealtimes.size()];
+			max_values = new double[(int) lRealtimes.size()];
+			int counter = 0;
+			for (HistoricalRealtime realtime :  lRealtimes)
+			{					
+				if (counter==0)
+					_log.debug("Adding first realtime to  IBTraderPricesPeaksValleyIndicator:" + realtime.getCreateDate());
+				max_values[counter]  = realtime.getMax_value();			
+				min_values[counter]  = realtime.getMin_value();				
+				counter++;
+				if (counter==lRealtimes.size())
+				{
+					_log.debug("Adding last realtime to  IBTraderPricesPeaksValleyIndicator:" + realtime.getCreateDate());
+				}
+			}
+			
+		}
+		if (min_values.length==0 ||  max_values.length==0)
+			return null;
+		
+		
+		IBTraderPricesPeaksValleyIndicator peakvalleyIndicator = new IBTraderPricesPeaksValleyIndicator(max_values, min_values);
+		/* es el primera montaña empezando por el monento actual */
+		return peakvalleyIndicator;
+		
+	}
+	
+	
+	
 	/* >= y <= */
+	
+	/* EXCLUIMOS LA BARRA DEL MOMENTO POR DEFECTO, ES DECIR, SI LA SEÑAL DE VERIFICAR ES 
+	 * A LAS 18:00, EL MAXIMO ME LO TIENE QUE DAR HASSTA LA VELA ACTUAL ELIMINANDOLA 17:54:59 */
+	 
+	
+	/* NO PROBADO */
+	public static JSONObject  getIntradiaMinMaxBarFromShare( Calendar _To, long TimeBars, long shareId, long companyId, long groupId, Market market, boolean IsSimulation) 
+	{
+		
+		JSONObject result=null;
+		result = JSONFactoryUtil.createJSONObject();
+		Calendar calStartMarket = Utilities.getNewCalendarWithHour(_To.getTime(), market.getStart_hour());
+		/* QUITAMOS LA ULTIMA  QUE ES LA QUE USAMOS PARA COMPARAR */
+		Calendar calEndBar = Calendar.getInstance();
+		calEndBar.setTimeInMillis(_To.getTimeInMillis());	
+		calEndBar.add(Calendar.MINUTE, (int) -(TimeBars));
+		try
+		{
+		
+			if (!IsSimulation)
+			{
+				Realtime oRTimeWidthRange = RealtimeLocalServiceUtil.findMinMaxRealTime(calStartMarket.getTime(), calEndBar.getTime(), shareId, companyId, groupId);
+				if (Validator.isNotNull(oRTimeWidthRange))
+				{	
+					result.put("max_value",oRTimeWidthRange.getMax_value()); 
+					result.put("min_value",oRTimeWidthRange.getMin_value());
+				}			
+			}
+			else
+			{
+				HistoricalRealtime oRTimeWidthRange = HistoricalRealtimeLocalServiceUtil.findMinMaxRealTime(calStartMarket.getTime(), calEndBar.getTime(), shareId, companyId, groupId);
+				if (Validator.isNotNull(oRTimeWidthRange))
+				{	
+					result.put("max_value",oRTimeWidthRange.getMax_value()); 
+					result.put("min_value",oRTimeWidthRange.getMin_value());
+				}			
+			}
+		}
+		catch (Exception e)
+		{
+			_log.error(e.getMessage());
+		}
+		
+		
+		return result;
+	}
+	
+	public static JSONObject  getIntradiaMaxBarFromShare( Calendar _To, long TimeBars, long shareId, long companyId, long groupId, Market market, boolean IsSimulation) 
+	{
+		
+		JSONObject result=null;
+		SimpleDateFormat _sdf = new SimpleDateFormat(Utilities.__IBTRADER_SQL_DATE_);
+		result = JSONFactoryUtil.createJSONObject();
+		
+		Calendar calStartMarket = Utilities.getNewCalendarWithHour(_To.getTime(), market.getStart_hour());
+		/* QUITAMOS LA ULTIMA  QUE ES LA QUE USAMOS PARA COMPARAR */
+		Calendar calEndBar = Calendar.getInstance();
+		calEndBar.setTimeInMillis(_To.getTimeInMillis());	
+		calEndBar.add(Calendar.MINUTE, (int) -(TimeBars));
+		try
+		{
+		
+			if (!IsSimulation)
+			{
+				Realtime realtime = RealtimeLocalServiceUtil.findMaxRealTime(calStartMarket.getTime(), calEndBar.getTime(), shareId, companyId, groupId);
+				if (Validator.isNotNull(result))
+				{	
+					result.put("max_value",realtime.getMax_value()); 
+					result.put("createDate", _sdf.format(realtime.getCreateDate()));
+				}	
+							
+			}
+			else
+			{
+				HistoricalRealtime realtime = HistoricalRealtimeLocalServiceUtil.findMaxRealTime(calStartMarket.getTime(), calEndBar.getTime(), shareId, companyId, groupId);
+				if (Validator.isNotNull(realtime))
+				{	
+					result.put("max_value",realtime.getMax_value()); 
+					result.put("createDate",_sdf.format(realtime.getCreateDate()));
+				}	
+			}
+		}
+		catch (Exception e)
+		{
+			_log.error(e.getMessage());
+		}
+		
+
+		return result;
+	}
+	
+	public static JSONObject  getIntradiaMinBarFromShare( Calendar _To, long TimeBars, long shareId, long companyId, long groupId, Market market, boolean IsSimulation) 
+	{
+		
+		JSONObject result=null;
+		result = JSONFactoryUtil.createJSONObject();
+		
+		SimpleDateFormat _sdf = new SimpleDateFormat(Utilities.__IBTRADER_SQL_DATE_);
+
+		Calendar calStartMarket = Utilities.getNewCalendarWithHour(_To.getTime(), market.getStart_hour());
+		/* QUITAMOS LA ULTIMA  QUE ES LA QUE USAMOS PARA COMPARAR */
+		Calendar calEndBar = Calendar.getInstance();
+		calEndBar.setTimeInMillis(_To.getTimeInMillis());	
+		calEndBar.add(Calendar.MINUTE, (int) -(TimeBars));
+		try
+		{
+		
+			if (!IsSimulation)
+			{
+				Realtime realtime = RealtimeLocalServiceUtil.findMinRealTime(calStartMarket.getTime(), calEndBar.getTime(), shareId, companyId, groupId);
+				if (Validator.isNotNull(result))
+				{	
+					result.put("min_value",realtime.getMax_value()); 
+					result.put("createDate",_sdf.format(realtime.getCreateDate()));
+				}	
+							
+			}
+			else
+			{
+				HistoricalRealtime realtime = HistoricalRealtimeLocalServiceUtil.findMinRealTime(calStartMarket.getTime(), calEndBar.getTime(), shareId, companyId, groupId);
+				if (Validator.isNotNull(realtime))
+				{	
+					result.put("min_value",realtime.getMax_value()); 
+					result.put("createDate",_sdf.format(realtime.getCreateDate()));
+				}	
+			}
+		}
+		catch (Exception e)
+		{
+			_log.error(e.getMessage());
+		}
+		
+
+		return result;
+	}
+	
+	
+	
 	
 	public static Realtime getMinMaxBarFromShare( Calendar _To, long TimeBars,long PeriodN, long shareId, long companyId, long groupId)
 	{

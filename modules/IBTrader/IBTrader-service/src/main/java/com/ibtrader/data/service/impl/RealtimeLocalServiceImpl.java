@@ -138,6 +138,17 @@ public class RealtimeLocalServiceImpl extends RealtimeLocalServiceBaseImpl {
 
 	}
 	
+
+	public Realtime findMaxRealTime(Date from, Date to, long shareId, long companyId, long groupId)	{ 
+		return realtimeFinder.findMaxRealTime(from, to, shareId, companyId, groupId);
+
+	}
+
+	public Realtime findMinRealTime(Date from, Date to, long shareId, long companyId, long groupId)	{ 
+		return realtimeFinder.findMinRealTime(from, to, shareId, companyId, groupId);
+
+	}
+	
 	/* OBTIENE EL MIN Y MAX DE UN  ACTIVO */	
 	public Realtime findMinMaxRealTime(Date from, Date to, long shareId, long companyId, long groupId)
 	{
@@ -212,6 +223,8 @@ public class RealtimeLocalServiceImpl extends RealtimeLocalServiceBaseImpl {
 		
 
 	}
+	
+	
 	
 	public void removeScheduledRealTimes(long companyId, long groupId)
 	{

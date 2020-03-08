@@ -247,7 +247,7 @@
 	</entity>
 	
 	
-	<entity cache-enabled="true" local-service="true" name="Config" remote-service="true" uuid="true">
+	<entity cache-enabled="false" local-service="true" name="Config" remote-service="true" uuid="true">
 
 		<!-- PK fields -->
 

@@ -127,7 +127,13 @@ public interface RealtimeLocalService extends BaseLocalService,
 	public Realtime findLastRealTimeLessThanDate(long shareId, long companyId,
 		long groupId, Date _to);
 
+	public Realtime findMaxRealTime(Date from, Date to, long shareId,
+		long companyId, long groupId);
+
 	public Realtime findMinMaxRealTime(Date from, Date to, long shareId,
+		long companyId, long groupId);
+
+	public Realtime findMinRealTime(Date from, Date to, long shareId,
 		long companyId, long groupId);
 
 	public Realtime findRealTime(long shareId, long companyId, long groupId,
