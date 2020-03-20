@@ -46,6 +46,7 @@ import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.ibtrader.util.BaseIndicatorUtil;
+import com.ibtrader.util.CandleUtil;
 import com.ibtrader.util.AroonIndicatorUtil;
 import com.ibtrader.util.ConfigKeys;
 import com.ibtrader.util.DirectionalMovementADXRUtil;
@@ -71,7 +72,7 @@ import com.ibtrader.util.Utilities;
  *  		B) ENTRAR EN LA CONFIFORMACION SEGUN COMENTA EL GRAFICO 
  *  https://www.rankia.com/blog/vender-para-comprar/2556484-estrategia-usando-divergencia-macd 
  *  https://www.rankia.com/blog/vender-para-comprar/2561254-aplicando-macd-analisis-iag
- *  
+ *  https://www.babypips.com/learn/forex/9-rules-for-trading-divergences
  *  */
 public class IBStrategyPriceDivergences extends StrategyImpl {
 
@@ -402,7 +403,8 @@ public class IBStrategyPriceDivergences extends StrategyImpl {
 					
 					//double   currentMACD  =  BaseIndicatorUtil.getMACD(_calendarFromNow.getTime(),  _num_macdT , _share.getShareId(), _share.getCompanyId(), _share.getGroupId(), _num_shortAvgMACD_P,_num_longAvgMACD_P ,isSimulation_mode(),_market);
 
-					
+					// INDEX 2 Y 7 DE PRUEBA, MAXIMOS CRECIENTES Y MAXIMOS DECRECIENTES EN EL INDICADOR
+					// DUDA  SI BUSCAR EL MAYOR MAXIMO EN TODA LA SERIE O EL PRIMERO 
 					IBTraderPeaksValleyIndicator MACDPeaksValleyIndicator =  BaseIndicatorUtil.getMACDPeaksValleyIndicator(_calendarFromNow, 
 									_num_macdT,_num_shortAvgMACD_P,_num_longAvgMACD_P,_share,marketRealOpenCloseTimes,isSimulation_mode());
 				
@@ -463,18 +465,18 @@ public class IBStrategyPriceDivergences extends StrategyImpl {
 						
 					}
 					
-					/* COGEMOS LOS MAXIMOS Y MINIMOS RELATIVOS ENTRE LA DIVERGENCIA PARA CONFIRMAR LA SEÑAL */						
-					_BuySuccess = _BuySuccess && lastRealtime > pricePeaksValleyIndicator.getRelativeMaxOfValley();
-					_SellSuccess = _SellSuccess && lastRealtime < pricePeaksValleyIndicator.getRelativeMinOfPeak();
-					
-					
+					/* COGEMOS LOS MAXIMOS Y MINIMOS RELATIVOS ENTRE LA DIVERGENCIA PARA CONFIRMAR LA SEÑAL 
+					 *  O BIEN  BUSCAMOS UNA VELA DOJI CON SUFICIENTE MECHA ARRIBA O ABAJO */					 					
+					_BuySuccess = _BuySuccess && (lastRealtime > pricePeaksValleyIndicator.getRelativeMaxOfValley() || CandleUtil.wickDown(_FromNow, _share, isSimulation_mode(), _num_macdT));
+					_SellSuccess = _SellSuccess && (lastRealtime < pricePeaksValleyIndicator.getRelativeMinOfPeak() || CandleUtil.wickUp(_FromNow, _share, isSimulation_mode(), _num_macdT));
+										
 					/*  SACAMOS DEPURACION EN DURANTE LOS TRES PRIMEROS SEGUNDOS EN LOS CORTES DE BARRAS */
 				
 					
 					
 					
 					/* fecha hora venicmiento  NO proxima */ 
-					boolean  IsFutureTradeable = Utilities.IsFutureTradeable(_share);
+					boolean  IsFutureTradeable =  Utilities.IsFutureTradeable(_share,isSimulation_mode());
 					
 					
 					if (IsFutureTradeable && (_BuySuccess || _SellSuccess))

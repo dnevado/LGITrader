@@ -317,12 +317,12 @@ public class Utilities {
 	
 	
 	/* SI SE PUEDE OPERAR CON UN FUTURO POR QUE EXPIRA PRONTO */
-	public static boolean IsFutureTradeable(Share share)
+	public static boolean IsFutureTradeable(Share share, boolean simulation)
 	{
 		
 		boolean IsFutureTradeable = Boolean.TRUE;
 		
-		if (share.getSecurity_type().equals(ConfigKeys.SECURITY_TYPE_FUTUROS))
+		if (!simulation && share.getSecurity_type().equals(ConfigKeys.SECURITY_TYPE_FUTUROS))
 		{
 	 		Calendar cExpirationDate = Calendar.getInstance();
 	 		Calendar cNow = Calendar.getInstance();

@@ -489,7 +489,7 @@
         		(SELECT
 					min(value), realtimeId
 				FROM 
-					IBTrader_Realtime
+					IBTrader_HistoricalRealtime
 				WHERE  
 					(IBTrader_HistoricalRealtime.createDate>=?) AND
             		(IBTrader_HistoricalRealtime.createDate<?) AND

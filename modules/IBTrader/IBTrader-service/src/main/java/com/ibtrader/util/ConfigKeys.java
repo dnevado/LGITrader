@@ -37,11 +37,12 @@ public class ConfigKeys {
     public static final String SECURITY_TYPE_STOCK = "STK";
     public static final String SECURITY_TYPE_FUTUROS = "FUT";
     public static final String SECURITY_TYPE_INDICES = "IND";
+    public static final String SECURITY_TYPE_FOREX = "CASH";
     
     
 	 public static final String   _BUDGET_USER_EXPANDO = "maxuserbudgetfortrading";
 
-    
+	 
     public static final String CURRENCY_DOLLAR = "USD";
     public static final String CURRENCY_EURO = "EUR";
     
@@ -51,7 +52,13 @@ public class ConfigKeys {
     public static final int DEFAULT_TIMEBAR_MINUTES = 5;  // barra por detecto para recargar realtimes 
     public static final int DEFAULT_ATR_VALUE = 14;  // barra por detecto para recargar realtimes
     public static final int DEFAULT_ATR_NUM_PERIODS_UP = 4;  // CUANTOS PERIDOS SEGUIDS ULTIMOS  CONTAR PARA SABER SI ES CRECIENTE  
-
+    public static final int DEFAULT_MIN_BARS_PEAKS_VALLEY = 1;
+    
+    
+    /* PARA LAS MECHAS DE LAS VELAS */
+    public static final double  AVERAGE_WICK_SIZE = 0.5; // 75 % DE LA BARRA SON SOMBRAS 
+    
+    
     
     public static final int DAYTRADER_PATTERN_MAX_DAYS = 4;  // MAXIMO NUMERO DE DIAS CON OPERACIONES INTRADIA PARA ENTRAR EN DAYTRADER_PATTERN   
     public static final int DAYTRADER_PATTERN_PERIOD = 7;  // QUE PERIODO CONTAR ESOS 4 DAY TRADING ANTERIORES, ES DECIR, 4 DIAS EN 5 BUSINESS DAYS, 1 SEMANA YA QUE SABADO Y DOMINGO NO CUENTA 
@@ -106,8 +113,8 @@ public class ConfigKeys {
 	    }
 	}
     
-    public static String[] _MARKET_EXCHANGES = new String[]{"SMART","GLOBEX","DTB","NYMEX","IPE","BM","MATIF","ECBOT"};
-    public static String[] _PRIMARY_MARKET_EXCHANGES = new String[]{"NASDAQ","GLOBEX","DTB","NYMEX","IPE", "BM","MATIF","ECBOT"};
+    public static String[] _MARKET_EXCHANGES = new String[]{"SMART","GLOBEX","DTB","NYMEX","IPE","BM","MATIF","ECBOT","IDEALPRO"};
+    public static String[] _PRIMARY_MARKET_EXCHANGES = new String[]{"NASDAQ","GLOBEX","DTB","NYMEX","IPE", "BM","MATIF","ECBOT","IDEALPRO"};
     
     public static String[] _FUTURES_MONTHS = new String[]{"January","February","March","April","May","June","July","August","September","October","November","December"};
     

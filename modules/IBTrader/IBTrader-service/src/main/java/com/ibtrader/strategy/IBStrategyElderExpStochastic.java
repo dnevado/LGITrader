@@ -457,8 +457,7 @@ public class IBStrategyElderExpStochastic extends StrategyImpl {
 				
 					
 					/* fecha hora venicmiento  NO proxima */ 
-					boolean  IsFutureTradeable = Utilities.IsFutureTradeable(_share);
-					
+					boolean  IsFutureTradeable = Utilities.IsFutureTradeable(_share,isSimulation_mode());					
 					
 					if (IsFutureTradeable && (_BuySuccess || _SellSuccess))
 					{

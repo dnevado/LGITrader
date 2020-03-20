@@ -434,7 +434,7 @@ public class IBStrategyPivotsPoints extends StrategyImpl {
 						IBTraderPivotPointIndicator _pivotPointData =  (IBTraderPivotPointIndicator) pivotsPointsSignal.get("_pivotPointData");
 												
 						/* fecha hora venicmiento  NO proxima */ 
-						boolean  IsFutureTradeable = Utilities.IsFutureTradeable(_share);
+						boolean  IsFutureTradeable =  Utilities.IsFutureTradeable(_share,isSimulation_mode());
 						
 						
 						if (bVolIncreased &&  IsFutureTradeable && (_BuySuccess || _SellSuccess))

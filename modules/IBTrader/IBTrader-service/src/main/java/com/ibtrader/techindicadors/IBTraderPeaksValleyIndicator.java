@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.ibtrader.util.ConfigKeys;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 
@@ -20,7 +21,7 @@ public class IBTraderPeaksValleyIndicator {
 	// PEAKS
 	private double[] values;
 	// VALLEYS	
-	private int  num_bars_peakvalley = 3; // para considerar un valle o un peak
+	private int  num_bars_peakvalley = ConfigKeys.DEFAULT_MIN_BARS_PEAKS_VALLEY; // para considerar un valle o un peak
 	
 	public enum StochasticValleysPeaksMode {
 	    FIRST_PEAK ("FIRST_PEAK"),
@@ -51,8 +52,8 @@ public class IBTraderPeaksValleyIndicator {
 	/* VALOR MINIMO DE LA SERIE ENCONTRADO HASTA EL PRIMER VALLE PARA COMPARARLO CON EL VALLE  Y VER 
 	 * SI LA LINEA RECTA NO SE CORTA ENTRE MEDIAS, PARA QUE SEA UN MINIMO CRECIENTE  * /  
 	 */
-	private double min_until_first_valley;
-	private double max_until_first_peak;  
+	private double min_until_first_valley = 9999999999.0;
+	private double max_until_first_peak = 0.0;  
 
 
 	private static Log _log = LogFactoryUtil.getLog(IBTraderPeaksValleyIndicator.class);
@@ -69,10 +70,10 @@ public class IBTraderPeaksValleyIndicator {
 			this.getAllValley();
 			if (valleys_values.size()==2)		
 			{
-				double firtvalley =  valleys_values.size()>0 ? valleys_values.get(0).doubleValue() : 0;				
+				double valleys_min =    valleys_values.get(1)  < valleys_values.get(0) ? valleys_values.get(1) : valleys_values.get(0);		 				
 
 				IsMinimumIncreasing  =  valleys_values.get(0) > valleys_values.get(1) &&
-												min_until_first_valley >= firtvalley;
+												min_until_first_valley >= valleys_min;
 			}		
 			if (IsMinimumIncreasing)
 			{
@@ -97,9 +98,9 @@ public class IBTraderPeaksValleyIndicator {
 			
 			if (peaks_values.size()==2)		
 			{
-				double firtpeak =   peaks_values.size()>0 ? peaks_values.get(0).doubleValue() : 0;			
+				double peaks_max =    peaks_values.get(1)  > peaks_values.get(0) ? peaks_values.get(1) : peaks_values.get(0);			
 				IsMaximumDecreasing  =  peaks_values.get(1) > peaks_values.get(0) &&
-						max_until_first_peak <= firtpeak; 
+						max_until_first_peak <= peaks_max; 
 			}
 			if (IsMaximumDecreasing)
 			{
@@ -174,30 +175,28 @@ public class IBTraderPeaksValleyIndicator {
 		
 		peaks_values = new ArrayList<Double>();
 
-		 for (int i = 0; i < values.length-num_bars_peakvalley; i++)
+		 for (int i = num_bars_peakvalley; i < values.length-num_bars_peakvalley; i++)
 		 {	
 			 	
 			/* VAMOS ALMACENANDO EL MINIMO VALOR HASTA EL PRIMER VALLE */
 			 max_until_first_peak = values[i] > max_until_first_peak ? values[i] : max_until_first_peak;
 		 
-		    if (i>=num_bars_peakvalley)
-		    {	 
-			 
-				if (values[i - 1] < values[i] && values[i] > values[i + 1]
-			 			&& values[i - 2] < values[i-1] && values[i+1] > values[i + 2]
-			 					&& values[i - 3] < values[i-2] && values[i+2] > values[i + 3] )
-				{    
-						
-						peaks_values.add(values[i]);
-						if (peaks_values.size()==1) // INDICE DEL PRIMER PICO ENCONTRADO 
-							foundedIndFirstPeak = i;
-						foundedIndLastPeak = i; // 
-						
-						if (peaks_values.size()==2) break;
-						
-						
-				}
-		    }
+	 
+			if (values[i - 1] < values[i] && values[i] > values[i + 1]	)
+		 			//&& values[i - 2] < values[i-1] && values[i+1] > values[i + 2]		 			
+				//&& values[i - 3] < values[i-2] && values[i+2] > values[i + 3] 
+			{    
+					
+					peaks_values.add(values[i]);
+					if (peaks_values.size()==1) // INDICE DEL PRIMER PICO ENCONTRADO 
+						foundedIndFirstPeak = i;
+					foundedIndLastPeak = i; // 
+					
+					if (peaks_values.size()==2) break;
+					
+					
+			}
+		 
 		 } 
 		
 		 Double[] array = (Double[]) peaks_values.toArray(new Double[peaks_values.size()]);
@@ -211,29 +210,28 @@ public class IBTraderPeaksValleyIndicator {
 		valleys_values = new ArrayList<Double>();
 
 		
-		 for (int i = 0; i < values.length-num_bars_peakvalley; i++)
+		 for (int i = num_bars_peakvalley; i < values.length-num_bars_peakvalley; i++)
 		 {	
 			 
 				/* VAMOS ALMACENANDO EL MINIMO VALOR HASTA EL PRIMER VALLE */
 			 	min_until_first_valley = values[i] < min_until_first_valley ? values[i] : min_until_first_valley;
 			 
-			    if (i>=num_bars_peakvalley)
-			    {
-				 	if (values[i - 1] > values[i] && values[i] < values[i + 1]
-				 			&& values[i - 2] > values[i-1] && values[i+1] < values[i + 2]
-				 					&& values[i - 3] > values[i-2] && values[i+2] < values[i + 3])
-				 	{
-						valleys_values.add(values[i]);
-						if (valleys_values.size()==1) // INDICE DEL PRIMER PICO ENCONTRADO 
-							foundedIndFirstValley = i;
-						foundedIndLastValley = i; // 
-						
-						if (valleys_values.size()==2) break;
-						
+			   
+			 	if (values[i - 1] > values[i] && values[i] < values[i + 1])
+			 		//&& values[i - 2] > values[i-1] && values[i+1] < values[i + 2]
+			 		//&& values[i - 3] > values[i-2] && values[i+2] < values[i + 3]
+			 	{
+					valleys_values.add(values[i]);
+					if (valleys_values.size()==1) // INDICE DEL PRIMER PICO ENCONTRADO 
+						foundedIndFirstValley = i;
+					foundedIndLastValley = i; // 
+					
+					if (valleys_values.size()==2) break;
+					
 
-						
-				 	}	
-			    }
+					
+			 	}	
+			  
 		}	 
 		 Double[] array = (Double[]) valleys_values.toArray(new Double[valleys_values.size()]);
 			 

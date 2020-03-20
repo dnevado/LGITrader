@@ -340,7 +340,7 @@ public class IBStrategySimpleMobileAverage extends StrategyImpl {
 							}
 						}
 						/* fecha hora venicmiento  NO proxima */ 
-						boolean  IsFutureTradeable = Utilities.IsFutureTradeable(_share);
+						boolean  IsFutureTradeable = Utilities.IsFutureTradeable(_share,isSimulation_mode());
 						
 						if (bATRIncreased && bVolIncreased &&  IsFutureTradeable && _avgMovilInsidebar  && (_BuySuccess || _SellSuccess))
 						{

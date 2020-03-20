@@ -133,7 +133,7 @@ public class HistoricalRealtimeFinderImpl extends HistoricalRealtimeFinderBaseIm
 
 	        SQLQuery q = session.createSQLQuery(sql);
 	        q.setCacheable(false);
-	        q.addEntity("IBTrader_Realtime", RealtimeImpl.class);
+	        q.addEntity("IBTrader_HistoricalRealtime", HistoricalRealtimeImpl.class);
 
 	        QueryPos qPos = QueryPos.getInstance(q);
 	        qPos.add(from);
@@ -176,7 +176,7 @@ public class HistoricalRealtimeFinderImpl extends HistoricalRealtimeFinderBaseIm
 
 	        SQLQuery q = session.createSQLQuery(sql);
 	        q.setCacheable(false);
-	        q.addEntity("IBTrader_Realtime", RealtimeImpl.class);
+	        q.addEntity("IBTrader_HistoricalRealtime", HistoricalRealtimeImpl.class);
 
 	        QueryPos qPos = QueryPos.getInstance(q);
 	        qPos.add(from);

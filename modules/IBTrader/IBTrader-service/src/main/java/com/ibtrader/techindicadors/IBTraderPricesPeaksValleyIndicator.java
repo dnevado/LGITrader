@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.ibtrader.util.ConfigKeys;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 
@@ -23,7 +24,7 @@ public class IBTraderPricesPeaksValleyIndicator {
 	// VALLEYS
 	private double[] min_values;
 	
-	private int  num_bars_peakvalley = 3; // para considerar un valle o un peak
+	private int  num_bars_peakvalley =  ConfigKeys.DEFAULT_MIN_BARS_PEAKS_VALLEY ; // para considerar un valle o un peak
 	
 	public enum PricesValleysPeaksMode {
 	    FIRST_PEAK ("FIRST_PEAK"),
@@ -54,8 +55,8 @@ public class IBTraderPricesPeaksValleyIndicator {
 	/* VALOR MINIMO DE LA SERIE ENCONTRADO HASTA EL PRIMER VALLE PARA COMPARARLO CON EL VALLE  Y VER 
 	 * SI LA LINEA RECTA NO SE CORTA ENTRE MEDIAS, PARA QUE SEA UN MINIMO CRECIENTE  * /  
 	 */
-	private double min_until_first_valley;
-	private double max_until_first_peak;  
+	private double min_until_first_valley = 99999999999999.0;
+	private double max_until_first_peak = 0.0;  
 
 	double relativeMinOfPeak = 0;
 	double RelativeMaxOfValley = 0;
@@ -77,9 +78,9 @@ public class IBTraderPricesPeaksValleyIndicator {
 			
 			if (valleys_values.size()==2) // valles decrecientes y que no haya un valor menor entre ellos 
 			{
-				double firtvalley =  valleys_values.size()>0 ? valleys_values.get(0).doubleValue() : 0;				
-				IsMinimumDecreasing  =  valleys_values.get(0) > valleys_values.get(1) &&
-													min_until_first_valley >= firtvalley; 
+				double valleys_min =    valleys_values.get(1)  < valleys_values.get(0) ? valleys_values.get(1) : valleys_values.get(0);		 				
+				IsMinimumDecreasing  =  valleys_values.get(0) < valleys_values.get(1) &&
+													min_until_first_valley >= valleys_min; 
 			}
 			if (IsMinimumDecreasing)
 			{
@@ -101,9 +102,9 @@ public class IBTraderPricesPeaksValleyIndicator {
 			
 			if (peaks_values.size()==2)	
 			{
-				double firtpeak =   peaks_values.size()>0 ? peaks_values.get(0).doubleValue() : 0;			
-				IsMaximumIncreasing  =  peaks_values.get(1) > peaks_values.get(0) &&
-								max_until_first_peak <= firtpeak; 
+				double peaks_max =    peaks_values.get(1)  > peaks_values.get(0) ? peaks_values.get(1) : peaks_values.get(0);			
+				IsMaximumIncreasing  =  peaks_values.get(0) > peaks_values.get(1) &&
+								max_until_first_peak <= peaks_max; 
 			}
 			if (IsMaximumIncreasing)
 			{
@@ -204,39 +205,39 @@ public class IBTraderPricesPeaksValleyIndicator {
 		peaks_values = new ArrayList<Double>();
 		
 		
-		for (int i = 0; i < max_values.length-num_bars_peakvalley; i++)
+		for (int i = num_bars_peakvalley; i < max_values.length-num_bars_peakvalley; i++)
 		 {	
 			 	
 			/* VAMOS ALMACENANDO EL maximo  VALOR HASTA EL PRIMER PICO  */
 			 max_until_first_peak = max_values[i] > max_until_first_peak ? max_values[i] : max_until_first_peak;
-		 
-			
-		    if (i>=num_bars_peakvalley)
-		    {	 
-			 
-				if (max_values[i - 1] < max_values[i] && max_values[i] > max_values[i + 1]
-			 			&& max_values[i - 2] < max_values[i-1] && max_values[i+1] > max_values[i + 2]
-			 					&& max_values[i - 3] < max_values[i-2] && max_values[i+2] > max_values[i + 3] )
-				{    
-						peaks_values.add(max_values[i]);
-						if (peaks_values.size()==1) // INDICE DEL PRIMER PICO ENCONTRADO 
-							foundedIndFirstPeak = i;
-						foundedIndLastPeak = i; // 
-						
-						if (peaks_values.size()==2) break;
-						
-				}
-		    }
+		 	 
+			if (max_values[i - 1] < max_values[i] && max_values[i] > max_values[i + 1])
+				//&& max_values[i - 2] < max_values[i-1] && max_values[i+1] > max_values[i + 2]
+				//&& max_values[i - 3] < max_values[i-2] && max_values[i+2] > max_values[i + 3] 
+			{    
+					peaks_values.add(max_values[i]);
+					if (peaks_values.size()==1) // INDICE DEL PRIMER PICO ENCONTRADO 
+						foundedIndFirstPeak = i;
+					foundedIndLastPeak = i; // 
+					
+					if (peaks_values.size()==2) break;
+					
+			}
+		  
 		 } 
 		 Double[] array = (Double[]) peaks_values.toArray(new Double[peaks_values.size()]);
 	 
-		 double[] prices_between_peak;
-		 prices_between_peak  = Arrays.copyOfRange(min_values, this.foundedIndFirstPeak, this.foundedIndLastPeak + 1);
-		 if (prices_between_peak.length >0)
+		 if (this.foundedIndFirstPeak< this.foundedIndLastPeak) 
 		 {
-			 this.relativeMinOfPeak =  Arrays.stream(prices_between_peak).min().getAsDouble();
+			 double[] prices_between_peak;
+			 prices_between_peak  = Arrays.copyOfRange(max_values, this.foundedIndFirstPeak+1, this.foundedIndLastPeak);
+			 if (prices_between_peak.length >0)
+			 {
+				 this.relativeMinOfPeak =  Arrays.stream(prices_between_peak).min().getAsDouble();
+			 }
 		 }
-		   
+		 
+		
 		 
 		 return array; // fill the array 		 
 	}
@@ -246,36 +247,38 @@ public class IBTraderPricesPeaksValleyIndicator {
 		
 		valleys_values = new ArrayList<Double>();
 
-		 for (int i = 0; i < min_values.length-num_bars_peakvalley; i++)
+		 for (int i = num_bars_peakvalley; i < min_values.length-num_bars_peakvalley; i++)
 		 {	
 			 	/* VAMOS ALMACENANDO EL MINIMO VALOR HASTA EL PRIMER VALLE */
 			 	min_until_first_valley = min_values[i] < min_until_first_valley ? min_values[i] : min_until_first_valley;
 		
-				
-			    if (i>=num_bars_peakvalley)
-			    {
-				 	if (min_values[i - 1] > min_values[i] && min_values[i] < min_values[i + 1]
-				 			&& min_values[i - 2] > min_values[i-1] && min_values[i+1] < min_values[i + 2]
-				 					&& min_values[i - 3] > min_values[i-2] && min_values[i+2] < min_values[i + 3])
-				 	{
-				 		
-				 		valleys_values.add(min_values[i]);
-						if (valleys_values.size()==1) // INDICE DEL PRIMER PICO ENCONTRADO 
-							foundedIndFirstValley = i;
-						foundedIndLastValley = i; // 
-						
-						if (valleys_values.size()==2) break;
-				 	}	
-			    }
+			 	if (min_values[i - 1] > min_values[i] && min_values[i] < min_values[i + 1])
+			 			//&& min_values[i - 2] > min_values[i-1] && min_values[i+1] < min_values[i + 2]			 				
+			 			//&& min_values[i - 3] > min_values[i-2] && min_values[i+2] < min_values[i + 3]
+			 	{
+			 		
+			 		valleys_values.add(min_values[i]);
+					if (valleys_values.size()==1) // INDICE DEL PRIMER PICO ENCONTRADO 
+						foundedIndFirstValley = i;
+					foundedIndLastValley = i; // 
+					
+					if (valleys_values.size()==2) break;
+			 	}	
+			 
 		}	 
 		
 		 Double[] array = (Double[]) valleys_values.toArray(new Double[valleys_values.size()]);
 		
-		 double[] prices_between_valley;
-		 prices_between_valley  = Arrays.copyOfRange(max_values, this.foundedIndFirstValley, this.foundedIndLastValley + 1);
-		 if (prices_between_valley.length >0)
+		 
+		 this.RelativeMaxOfValley = 0;
+		 if (this.foundedIndFirstValley< this.foundedIndLastValley) 
 		 {
-			 this.RelativeMaxOfValley =  Arrays.stream(prices_between_valley).max().getAsDouble();
+			 double[] prices_between_valley;
+			 prices_between_valley  = Arrays.copyOfRange(min_values, this.foundedIndFirstValley+1, this.foundedIndLastValley);
+			 if (prices_between_valley.length >0)
+			 {
+				 this.RelativeMaxOfValley =  Arrays.stream(prices_between_valley).max().getAsDouble();
+			 }
 		 }
 		 
 		 return array; // fill the array 

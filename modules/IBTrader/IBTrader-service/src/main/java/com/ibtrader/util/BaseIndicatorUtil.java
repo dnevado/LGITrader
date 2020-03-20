@@ -728,14 +728,15 @@ public class BaseIndicatorUtil {
 
 		
 		// 
-		boolean _BuySuccess = lastRealtime >avgExponential &&
-							(lastRealtime > BuyValueWithGapR1 ||
-									lastRealtime > BuyValueWithGapR2 ||
+		boolean _BuySuccess = lastRealtime > avgExponential &&
+							((lastRealtime > BuyValueWithGapR1 && lastRealtime <_pivotPointData.getPivotPointResistance2())  ||
+									(lastRealtime > BuyValueWithGapR2 && lastRealtime <_pivotPointData.getPivotPointResistance3()) || 									
 									lastRealtime> BuyValueWithGapR3);
 		// 
-		boolean _SellSuccess = lastRealtime <avgExponential &&  (lastRealtime < SellValueWithGapS1
-									|| lastRealtime< SellValueWithGapS2
-										|| lastRealtime < SellValueWithGapS3);
+		boolean _SellSuccess = lastRealtime < avgExponential &&  
+								((lastRealtime < SellValueWithGapS1 && lastRealtime > _pivotPointData.getPivotPointSupport2())
+										|| (lastRealtime< SellValueWithGapS2  && lastRealtime > _pivotPointData.getPivotPointSupport3())
+												|| lastRealtime < SellValueWithGapS3);
 		
 		
 		_BuySuccess = _BuySuccess &&  
@@ -2125,11 +2126,20 @@ public class BaseIndicatorUtil {
 	public static IBTraderPeaksValleyIndicator getMACDPeaksValleyIndicator(Calendar _To, long TimeBars, long shortMACDPeriods, long longMACDPeriods, Share share, 
 			Market market, boolean isSimulation)
 	{
-		/* double stochasticD   = getDStochastic(_To.getTime(),  TimeBars , share.getShareId(), share.getCompanyId(), share.getGroupId(), periods ,isSimulation,market);*/
-		List<Double> MACDValue =  getMACDList(_To.getTime(), TimeBars, share.getShareId(), share.getCompanyId(), share.getGroupId(), shortMACDPeriods, longMACDPeriods, isSimulation, market);
-		double[] MACDValues = MACDValue.stream().mapToDouble(d -> d).toArray(); //identity function, Java unboxes automatically to get the double value
-		IBTraderPeaksValleyIndicator peakvalleyIndicator = new IBTraderPeaksValleyIndicator(MACDValues);
-		/* es el primera montaña empezando por el monento actual */
+		IBTraderPeaksValleyIndicator peakvalleyIndicator = null;
+		try 
+		{
+			List<Double> MACDValue =  getMACDList(_To.getTime(), TimeBars, share.getShareId(), share.getCompanyId(), share.getGroupId(), shortMACDPeriods, longMACDPeriods, isSimulation, market);
+			double[] MACDValues = MACDValue.stream().mapToDouble(d -> d).toArray(); //identity function, Java unboxes automatically to get the double value
+			//double[] min  = {1,2,4,1,1,1,6,4}; // 2 y 3 
+			//peakvalleyIndicator = new IBTraderPeaksValleyIndicator(MACDValues);
+			peakvalleyIndicator = new IBTraderPeaksValleyIndicator(MACDValues);			
+			/* es el primera montaña empezando por el monento actual */
+		}
+		catch (Exception e)
+		{
+				_log.debug(e.getMessage());	
+		}
 		return peakvalleyIndicator;
 	}
 	
@@ -2210,10 +2220,15 @@ public class BaseIndicatorUtil {
 			}
 			
 		}
+		
+
+		
+		
 		if (min_values.length==0 ||  max_values.length==0)
 			return null;
 		
 		
+		//IBTraderPricesPeaksValleyIndicator peakvalleyIndicator = new IBTraderPricesPeaksValleyIndicator(max_values, min_values);
 		IBTraderPricesPeaksValleyIndicator peakvalleyIndicator = new IBTraderPricesPeaksValleyIndicator(max_values, min_values);
 		/* es el primera montaña empezando por el monento actual */
 		return peakvalleyIndicator;

@@ -1632,6 +1632,24 @@ public class TIMApiWrapper implements EWrapper {
 				/* guardamos la ultinma barra para saber la cultima cargada cuando venga el finished */
 				}
 			catch (Exception e) {}
+			/* APERTURA   */
+			try
+				{
+				/* DEJO LA APERTURA PARA EL SEGUNDO PRIMERO DE LA BARRA */
+				barTime.add(Calendar.SECOND, 3); //00:00:01 second 
+				barTime.add(Calendar.MINUTE, -ConfigKeys.DEFAULT_TIMEBAR_MINUTES);				
+				historicalrealtime = HistoricalRealtimeLocalServiceUtil.createHistoricalRealtime(CounterLocalServiceUtil.increment(HistoricalRealtime.class.getName()));	
+				historicalrealtime.setCreateDate(barTime.getTime());
+				historicalrealtime.setGroupId(this.get_ibtarget_share().getGroupId());
+				historicalrealtime.setCompanyId(this.get_ibtarget_share().getCompanyId());
+				historicalrealtime.setShareId(this.get_ibtarget_share().getShareId());
+				historicalrealtime.setValue(bar.open());
+				historicalrealtime.setVolume(new Long(bar.volume()).intValue());
+	
+				HistoricalRealtimeLocalServiceUtil.updateHistoricalRealtime(historicalrealtime);
+				/* guardamos la ultinma barra para saber la cultima cargada cuando venga el finished */
+				}
+			catch (Exception e) {}
 			
 		}
 	}
