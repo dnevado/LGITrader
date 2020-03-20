@@ -29,6 +29,14 @@ public interface HistoricalRealtimeFinder {
 	public java.util.List findMinMaxRealTime(java.util.Date from,
 		java.util.Date to, long shareId, long companyId, long groupId);
 
+	public com.ibtrader.data.model.HistoricalRealtime findMaxRealTime(
+		java.util.Date from, java.util.Date to, long shareId, long companyId,
+		long groupId);
+
+	public com.ibtrader.data.model.HistoricalRealtime findMinRealTime(
+		java.util.Date from, java.util.Date to, long shareId, long companyId,
+		long groupId);
+
 	public java.util.List findMinMaxRealTimesGroupedByBars(
 		java.util.Date from, java.util.Date to, long shareId, long companyId,
 		long groupId, long timebars, java.lang.String openMarketUTC,

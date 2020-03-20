@@ -37,7 +37,7 @@ public class IBStrategyClosePosition extends StrategyImpl {
 	long returnValue=-1;
 	try		
     {
-		_log.info("UserAccount: detectada posible entrada de " + _share.getName() +  "Tick:" + _share.getSymbol() + ",PrecioCompra:" + this.getValueIn());
+		_log.info("UserAccount: detectada posible salida de " + _share.getName() +  "Tick:" + _share.getSymbol() + ",PrecioCompra:" + this.getValueIn());
 		// hace falta???????? ..creo que si, para tener control sobre la operacion de compra /venta 
 		SimpleDateFormat sdf = new SimpleDateFormat (Utilities._IBTRADER_FUTURE_SHORT_DATE);
 		boolean bIsFutureStock = _share.getSecurity_type().equals(ConfigKeys.SECURITY_TYPE_FUTUROS)  && _share.getExpiry_date()!=null;
@@ -77,6 +77,7 @@ public class IBStrategyClosePosition extends StrategyImpl {
 		closePosition.setDate_out(!isSimulation_mode() ? new Date() : backtestingdDate);
 		closePosition.setDescription(closePosition.getDescription() + StringPool.RETURN_NEW_LINE + this.getClass().getName());
 		closePosition.setStrategy_out(this.getClass().getName());
+		closePosition.setForceclose(Boolean.FALSE); // no se ejecuta dos veces 
 		
 		/* MODO FAKE CUENTA DEMO */
 		closePosition = Utilities.fillStatesOrder(closePosition);

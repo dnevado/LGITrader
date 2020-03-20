@@ -200,7 +200,7 @@ public class IBStrategyCloseAllPositions extends StrategyImpl {
 	
 	/* SI VA A EXPIRAR EN UN DIA, CERRAMOS POSICION Y NO ENTRAMOS HASTA EL CONTRATO NUEVO 
 	 * TODO EN UTC */
-	boolean  nextToExpiration = !Utilities.IsFutureTradeable(_share);
+	boolean  nextToExpiration = !Utilities.IsFutureTradeable(_share,isSimulation_mode());
 	
 	/*  SACAMOS DEPURACION EN DURANTE LOS TRES PRIMEROS SEGUNDOS EN LOS CORTES DE BARRAS */
 	long currentSeconds = _calendarFromNow.get(Calendar.SECOND);

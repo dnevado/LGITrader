@@ -464,8 +464,9 @@ public class IBStrategyExpAvgMobileADXDI extends StrategyImpl {
 							(operationfilter.equals("ALL") || operationfilter.equals(PositionStates.statusTWSFire.SELL.toString()));
 					
 					
-					/* fecha hora venicmiento  NO proxima */ 
-					boolean  IsFutureTradeable = Utilities.IsFutureTradeable(_share);
+					/* fecha hora venicmiento  NO proxima */ 	
+
+					boolean  IsFutureTradeable =  Utilities.IsFutureTradeable(_share,isSimulation_mode());
 					
 					
 					if (IsFutureTradeable && (_BuySuccess || _SellSuccess))

@@ -137,8 +137,14 @@ public interface HistoricalRealtimeLocalService extends BaseLocalService,
 	public HistoricalRealtime findLastRealTimeLessThanDate(long shareId,
 		long companyId, long groupId, Date _to);
 
+	public HistoricalRealtime findMaxRealTime(Date from, Date to, long shareId,
+		long companyId, long groupId);
+
 	public HistoricalRealtime findMinMaxRealTime(Date from, Date to,
 		long shareId, long companyId, long groupId);
+
+	public HistoricalRealtime findMinRealTime(Date from, Date to, long shareId,
+		long companyId, long groupId);
 
 	public HistoricalRealtime findRealTime(long shareId, long companyId,
 		long groupId, Date closeDate);

@@ -129,10 +129,26 @@ public class RealtimeLocalServiceWrapper implements RealtimeLocalService,
 	}
 
 	@Override
+	public com.ibtrader.data.model.Realtime findMaxRealTime(
+		java.util.Date from, java.util.Date to, long shareId, long companyId,
+		long groupId) {
+		return _realtimeLocalService.findMaxRealTime(from, to, shareId,
+			companyId, groupId);
+	}
+
+	@Override
 	public com.ibtrader.data.model.Realtime findMinMaxRealTime(
 		java.util.Date from, java.util.Date to, long shareId, long companyId,
 		long groupId) {
 		return _realtimeLocalService.findMinMaxRealTime(from, to, shareId,
+			companyId, groupId);
+	}
+
+	@Override
+	public com.ibtrader.data.model.Realtime findMinRealTime(
+		java.util.Date from, java.util.Date to, long shareId, long companyId,
+		long groupId) {
+		return _realtimeLocalService.findMinRealTime(from, to, shareId,
 			companyId, groupId);
 	}
 

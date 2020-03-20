@@ -130,11 +130,25 @@ public class RealtimeLocalServiceUtil {
 			_to);
 	}
 
+	public static com.ibtrader.data.model.Realtime findMaxRealTime(
+		java.util.Date from, java.util.Date to, long shareId, long companyId,
+		long groupId) {
+		return getService()
+				   .findMaxRealTime(from, to, shareId, companyId, groupId);
+	}
+
 	public static com.ibtrader.data.model.Realtime findMinMaxRealTime(
 		java.util.Date from, java.util.Date to, long shareId, long companyId,
 		long groupId) {
 		return getService()
 				   .findMinMaxRealTime(from, to, shareId, companyId, groupId);
+	}
+
+	public static com.ibtrader.data.model.Realtime findMinRealTime(
+		java.util.Date from, java.util.Date to, long shareId, long companyId,
+		long groupId) {
+		return getService()
+				   .findMinRealTime(from, to, shareId, companyId, groupId);
 	}
 
 	public static com.ibtrader.data.model.Realtime findRealTime(long shareId,

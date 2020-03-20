@@ -126,6 +126,18 @@ public class HistoricalRealtimeLocalServiceImpl	extends HistoricalRealtimeLocalS
 		}
 		
 	}
+	
+	
+	public HistoricalRealtime findMaxRealTime(Date from, Date to, long shareId, long companyId, long groupId)	{ 
+		return historicalRealtimeFinder.findMaxRealTime(from, to, shareId, companyId, groupId);
+
+	}
+
+	public HistoricalRealtime findMinRealTime(Date from, Date to, long shareId, long companyId, long groupId)	{ 
+		return historicalRealtimeFinder.findMinRealTime(from, to, shareId, companyId, groupId);
+
+	}
+	
 	/* OBTIENE EL MIN Y MAX DE UN  ACTIVO */	
 	public HistoricalRealtime findMinMaxRealTime(Date from, Date to, long shareId, long companyId, long groupId)
 	{

@@ -142,11 +142,25 @@ public class HistoricalRealtimeLocalServiceUtil {
 			_to);
 	}
 
+	public static com.ibtrader.data.model.HistoricalRealtime findMaxRealTime(
+		java.util.Date from, java.util.Date to, long shareId, long companyId,
+		long groupId) {
+		return getService()
+				   .findMaxRealTime(from, to, shareId, companyId, groupId);
+	}
+
 	public static com.ibtrader.data.model.HistoricalRealtime findMinMaxRealTime(
 		java.util.Date from, java.util.Date to, long shareId, long companyId,
 		long groupId) {
 		return getService()
 				   .findMinMaxRealTime(from, to, shareId, companyId, groupId);
+	}
+
+	public static com.ibtrader.data.model.HistoricalRealtime findMinRealTime(
+		java.util.Date from, java.util.Date to, long shareId, long companyId,
+		long groupId) {
+		return getService()
+				   .findMinRealTime(from, to, shareId, companyId, groupId);
 	}
 
 	public static com.ibtrader.data.model.HistoricalRealtime findRealTime(

@@ -168,6 +168,93 @@ public class RealtimeFinderImpl extends RealtimeFinderBaseImpl  implements Realt
 		return null;
 		}
 	
+	@SuppressWarnings("unchecked")
+	public Realtime findMaxRealTime(Date from, Date to, long shareId, long companyId, long groupId)
+	{
+	 List<Realtime> lRealtime = null;
+	 Session session = null;
+	  try {
+	        session = openSession();
+
+	        String sql = CustomSQLUtil.get(getClass(),FIND_MAX_REALTIME);
+
+	        SQLQuery q = session.createSQLQuery(sql);
+	        q.setCacheable(false);
+	        q.addEntity("IBTrader_Realtime", RealtimeImpl.class);
+
+	        QueryPos qPos = QueryPos.getInstance(q);
+	        qPos.add(from);
+	        qPos.add(to);
+	        qPos.add(shareId);
+	        qPos.add(companyId);
+	        qPos.add(groupId);
+	        
+	        lRealtime = (List<Realtime>) QueryUtil.list(q, getDialect(), 0, 10);
+	        if (!lRealtime.isEmpty())
+	        		return lRealtime.get(0);
+	        else
+	        		return null;
+	        
+	    }
+	    catch (Exception e) {
+	        try {
+	            throw new SystemException(e);
+	        }
+	        catch (SystemException se) {
+	            se.printStackTrace();
+	        }
+	    }
+	    finally {
+	        closeSession(session);
+	    }
+
+		return null;
+		}
+	
+	@SuppressWarnings("unchecked")
+	public Realtime findMinRealTime(Date from, Date to, long shareId, long companyId, long groupId)
+	{
+	 List<Realtime> lRealtime = null;
+	 Session session = null;
+	  try {
+	        session = openSession();
+
+	        String sql = CustomSQLUtil.get(getClass(),FIND_MIN_REALTIME);
+
+	        SQLQuery q = session.createSQLQuery(sql);
+	        q.setCacheable(false);
+	        q.addEntity("IBTrader_Realtime", RealtimeImpl.class);
+
+	        QueryPos qPos = QueryPos.getInstance(q);
+	        qPos.add(from);
+	        qPos.add(to);
+	        qPos.add(shareId);
+	        qPos.add(companyId);
+	        qPos.add(groupId);
+	        
+	        lRealtime = (List<Realtime>) QueryUtil.list(q, getDialect(), 0, 10);
+	        if (!lRealtime.isEmpty())
+	        		return lRealtime.get(0);
+	        else
+	        		return null;
+	        
+	    }
+	    catch (Exception e) {
+	        try {
+	            throw new SystemException(e);
+	        }
+	        catch (SystemException se) {
+	            se.printStackTrace();
+	        }
+	    }
+	    finally {
+	        closeSession(session);
+	    }
+
+		return null;
+		}
+	
+	
 	public List findMinMaxRealTimesGroupedByBars(Date from, Date to, long shareId, long companyId, long groupId, long timebars,String openMarketUTC,String closeMarketUTC)
 	{
 	 List lRealtime = null;
@@ -551,6 +638,8 @@ public class RealtimeFinderImpl extends RealtimeFinderBaseImpl  implements Realt
 		
 	
 		public static final String FIND_MINMAX_REALTIME = RealtimeFinder.class.getName() + ".findMinMaxRealTime";
+		public static final String FIND_MAX_REALTIME = RealtimeFinder.class.getName() + ".findMaxRealTime";
+		public static final String FIND_MIN_REALTIME = RealtimeFinder.class.getName() + ".findMinRealTime";
 		public static final String FIND_LAST_REALTIME = RealtimeFinder.class.getName() + ".findLastRealTime";
 		public static final String FIND_LAST_REALTIMES_GROUP_BY_PERIODS = RealtimeFinder.class.getName() + ".findSimpleMobileAvgGroupByPeriods";
 		public static final String FIND_LAST_REALTIME_LESS_THAN_DATE = RealtimeFinder.class.getName() + ".findLastRealTimeLessThanDate";
