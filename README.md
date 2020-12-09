@@ -7,7 +7,6 @@ Full platform developed under Liferay 7 with automated trading strategies integr
 
 Please contact author to get full support https://github.com/dnevado
 
-Please visit http://tradeable.es to have a look how it looks like
 
 ### Prerequisites
 
