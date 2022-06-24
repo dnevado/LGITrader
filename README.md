@@ -30,7 +30,7 @@ Liferay Workspace, Mysql 5.7 database and source code added
 ## Authors
 
 David Nevado Martin
-https://es.linkedin.com/in/dnevado
+https:/www.linkedin.com/in/david-nevado-martin-pmp-software-it-leader-mba-safe
 
 ## License
 
@@ -70,7 +70,7 @@ Liferay Workspace, Mysql 5.7 database and source code added
 ## Authors
 
 David Nevado Martin
-https://es.linkedin.com/in/dnevado
+https://www.linkedin.com/in/david-nevado-martin-pmp-software-it-leader-mba-safe
 
 ## License
 
